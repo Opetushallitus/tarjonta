@@ -629,7 +629,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     private Koulutusmoduuli createOsaamisalaKomoIfNeeded(final KoulutusV1RDTO dto, Koulutusmoduuli komo) {
         switch (dto.getToteutustyyppi()) {
             case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
-            case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
             case AMMATILLINEN_PERUSTUTKINTO:
                 if (komo.getModuuliTyyppi().equals(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.TUTKINTO)) {
 
