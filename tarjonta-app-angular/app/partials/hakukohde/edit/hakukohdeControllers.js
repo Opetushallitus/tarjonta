@@ -237,33 +237,29 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             $scope.loadPainotettavatOppiainevaihtoehdot();
         }
         var populateHakukohteenNimetByKoulutus = function(koulutus) {
-            if (koulutus.koulutusohjelma.uri !== undefined) {
-                var pohjakoulutusvaatimus = koulutus.pohjakoulutusvaatimus;
-                Koodisto.getAlapuolisetKoodit(koulutus.koulutusohjelma.uri, AuthService.getLanguage())
-                .then(function(koulutusohjelmanKoodit) {
-                    angular.forEach(koulutusohjelmanKoodit, function(koulutusohjelmanKoodi) {
-                        if (koulutusohjelmanKoodi.koodiKoodisto === 'hakukohteet') {
-                            Koodisto.getYlapuolisetKoodit(koulutusohjelmanKoodi.koodiUri, AuthService.getLanguage())
-                            .then(function(hakukohteenYlapuolisetKoodit) {
-                                angular.forEach(hakukohteenYlapuolisetKoodit, function(hakukohteenYlapuolinenKoodi) {
-                                    if (hakukohteenYlapuolinenKoodi.koodiUri === pohjakoulutusvaatimus.uri) {
-                                        var hakukohteenNimi = {
-                                            uri: koulutusohjelmanKoodi.koodiUri +
-                                                '#' + koulutusohjelmanKoodi.koodiVersio,
-                                            label: koulutusohjelmanKoodi.koodiNimi
-                                        };
-                                        $scope.model.hakukohteenNimet.push(hakukohteenNimi);
-                                    }
-                                });
+            var uri = koulutus.koulutusohjelma.uri ? koulutus.koulutusohjelma.uri : koulutus.koulutuskoodi.uri;
+            var pohjakoulutusvaatimus = koulutus.pohjakoulutusvaatimus;
+
+            Koodisto.getAlapuolisetKoodit(uri, AuthService.getLanguage())
+            .then(function(koulutusohjelmanKoodit) {
+                angular.forEach(koulutusohjelmanKoodit, function(koulutusohjelmanKoodi) {
+                    if (koulutusohjelmanKoodi.koodiKoodisto === 'hakukohteet') {
+                        Koodisto.getYlapuolisetKoodit(koulutusohjelmanKoodi.koodiUri, AuthService.getLanguage())
+                        .then(function(hakukohteenYlapuolisetKoodit) {
+                            angular.forEach(hakukohteenYlapuolisetKoodit, function(hakukohteenYlapuolinenKoodi) {
+                                if (hakukohteenYlapuolinenKoodi.koodiUri === pohjakoulutusvaatimus.uri) {
+                                    var hakukohteenNimi = {
+                                        uri: koulutusohjelmanKoodi.koodiUri +
+                                            '#' + koulutusohjelmanKoodi.koodiVersio,
+                                        label: koulutusohjelmanKoodi.koodiNimi
+                                    };
+                                    $scope.model.hakukohteenNimet.push(hakukohteenNimi);
+                                }
                             });
-                        }
-                    });
+                        });
+                    }
                 });
-            } else {
-                var uri = koulutus.koulutuskoodi.uri;
-                var label = koulutus.koulutuskoodi.meta[LocalisationService.getKieliUri()].nimi;
-                $scope.model.hakukohteenNimet.push({uri: uri, label: label});
-            }
+            });
         };
         if ($scope.toisenAsteenKoulutus($scope.model.hakukohde.toteutusTyyppi)) {
             $scope.model.hakukohteenNimet = [];
