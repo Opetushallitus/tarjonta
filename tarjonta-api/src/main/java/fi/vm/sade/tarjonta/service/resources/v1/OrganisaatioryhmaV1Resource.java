@@ -17,6 +17,7 @@ public interface OrganisaatioryhmaV1Resource {
     @POST
     @Path("/{oid}/lisaa")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
     @ApiOperation(
             value = "Lisää hakukohteet annettuun organisaatioryhmään",
             response = ResultV1RDTO.class)
@@ -27,7 +28,7 @@ public interface OrganisaatioryhmaV1Resource {
     @POST
     @Path("/{oid}/poista")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
     @ApiOperation(
             value = "Poistaa hakukohteet annetusta organisaatioryhmästä",
             response = ResultV1RDTO.class)
