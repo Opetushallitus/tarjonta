@@ -888,6 +888,17 @@ app.controller('BaseEditController', [
                         }
                         $scope.uiModel.enableOsaamisala = $scope.uiModel.koulutusohjelma.length > 0;
                         if (!$scope.uiModel.enableOsaamisala) {
+
+                            // Amm. pt. erityisopetuksena tilapäisesti disabloitu, koska
+                            // tätä ei ole otettu huomioon Tutke 2 muutoksia speksatuessa
+                            // ja KI ei vielä tue tällaisia koulutuksia
+                            if ($scope.model.toteutustyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA') {
+                                $scope.model.koulutuskoodi.uri = null;
+                                alert('Koulutuksen tallentaminen ammatillisena peruskoulutuksena' +
+                                        ' erityisopetuksena on tilapäisesti estetty');
+                                return;
+                            }
+
                             $scope.model.komoOid = $scope.uiModel.tutkintoModules[uriNew].oid;
                         }
                     });
