@@ -894,13 +894,13 @@ app.controller('BaseEditController', [
                             // ja KI ei vielä tue tällaisia koulutuksia
                             if ($scope.model.toteutustyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA') {
                                 $scope.model.koulutuskoodi.uri = null;
-                                alert('Koulutuksen tallentaminen ammatillisena peruskoulutuksena' +
-                                        ' erityisopetuksena on tilapäisesti estetty');
+                                $scope.ammPtEritysopetuksenaEstetty = true;
                                 return;
                             }
 
                             $scope.model.komoOid = $scope.uiModel.tutkintoModules[uriNew].oid;
                         }
+                        $scope.ammPtEritysopetuksenaEstetty = false;
                     });
                 });
             }
