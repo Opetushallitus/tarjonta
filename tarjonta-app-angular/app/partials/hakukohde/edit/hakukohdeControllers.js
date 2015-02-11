@@ -253,7 +253,9 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
                                             '#' + koulutusohjelmanKoodi.koodiVersio,
                                         label: koulutusohjelmanKoodi.koodiNimi
                                     };
-                                    $scope.model.hakukohteenNimet.push(hakukohteenNimi);
+                                    if (!_.findWhere($scope.model.hakukohteenNimet, {uri: hakukohteenNimi.uri})) {
+                                        $scope.model.hakukohteenNimet.push(hakukohteenNimi);
+                                    }
                                 }
                             });
                         });
