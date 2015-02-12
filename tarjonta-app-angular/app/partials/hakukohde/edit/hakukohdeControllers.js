@@ -240,7 +240,7 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             var uri = koulutus.koulutusohjelma.uri ? koulutus.koulutusohjelma.uri : koulutus.koulutuskoodi.uri;
             var pohjakoulutusvaatimus = koulutus.pohjakoulutusvaatimus;
 
-            var currentUri = window.oph.removeKoodiVersion($scope.model.hakukohde.hakukohteenNimiUri);
+            var currentUri = window.oph.removeKoodiVersion($scope.model.hakukohde.hakukohteenNimiUri || '');
 
             Koodisto.getAlapuolisetKoodit(uri, AuthService.getLanguage())
             .then(function(koulutusohjelmanKoodit) {
