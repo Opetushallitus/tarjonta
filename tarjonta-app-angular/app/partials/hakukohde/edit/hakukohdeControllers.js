@@ -240,6 +240,8 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             var uri = koulutus.koulutusohjelma.uri ? koulutus.koulutusohjelma.uri : koulutus.koulutuskoodi.uri;
             var pohjakoulutusvaatimus = koulutus.pohjakoulutusvaatimus;
 
+            var currentUri = window.oph.removeKoodiVersion($scope.model.hakukohde.hakukohteenNimiUri);
+
             Koodisto.getAlapuolisetKoodit(uri, AuthService.getLanguage())
             .then(function(koulutusohjelmanKoodit) {
                 angular.forEach(koulutusohjelmanKoodit, function(koulutusohjelmanKoodi) {
@@ -248,13 +250,35 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
                         .then(function(hakukohteenYlapuolisetKoodit) {
                             angular.forEach(hakukohteenYlapuolisetKoodit, function(hakukohteenYlapuolinenKoodi) {
                                 if (hakukohteenYlapuolinenKoodi.koodiUri === pohjakoulutusvaatimus.uri) {
-                                    var hakukohteenNimi = {
+                                    var koodi = {
                                         uri: koulutusohjelmanKoodi.koodiUri +
                                             '#' + koulutusohjelmanKoodi.koodiVersio,
-                                        label: koulutusohjelmanKoodi.koodiNimi
+                                        label: koulutusohjelmanKoodi.koodiNimi,
+                                        uriWithoutVersion: koulutusohjelmanKoodi.koodiUri,
+                                        version: parseInt(koulutusohjelmanKoodi.koodiVersio)
                                     };
-                                    if (!_.findWhere($scope.model.hakukohteenNimet, {uri: hakukohteenNimi.uri})) {
-                                        $scope.model.hakukohteenNimet.push(hakukohteenNimi);
+
+                                    // Default index -> append new item
+                                    var index = $scope.model.hakukohteenNimet.length;
+
+                                    var sameKoodi = _.find($scope.model.hakukohteenNimet, function(obj, i) {
+                                        if (obj.uriWithoutVersion === koodi.uriWithoutVersion) {
+                                            index = i; // Prev koodi position in array
+                                            return true;
+                                        }
+                                    });
+
+                                    // Same koodi, but older version -> skip
+                                    if (sameKoodi && koodi.version < sameKoodi.version) {
+                                        return;
+                                    }
+
+                                    // Append or replace (depends on index)
+                                    $scope.model.hakukohteenNimet[index] = koodi;
+
+                                    // Update model value to newest koodi version
+                                    if (currentUri === koodi.uriWithoutVersion) {
+                                        $scope.model.hakukohde.hakukohteenNimiUri = currentUri + '#' + koodi.version;
                                     }
                                 }
                             });
