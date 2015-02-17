@@ -183,16 +183,23 @@ public class HakukohdeValidator {
         String hakuOid = hakukohdeDTO.getHakuOid();
         String nimiUri = hakukohdeDTO.getHakukohteenNimiUri();
 
+        if (!includeInDuplicateCheck(TarjontaTila.valueOf(hakukohdeDTO.getTila()))) {
+            return false;
+        }
+
         for (Hakukohde hakukohde : komoto.getHakukohdes()) {
-            if (hakukohde.getHaku().getOid().equals(hakuOid) &&
-                    hakukohde.getHakukohdeNimi().equals(nimiUri) &&
-                    !hakukohde.isPoistettu()) {
-                if (!hakukohde.getOid().equals(hakukohdeDTO.getOid())) {
-                    return true;
-                }
+            if (includeInDuplicateCheck(hakukohde.getTila())
+                    && hakukohde.getHaku().getOid().equals(hakuOid)
+                    && hakukohde.getHakukohdeNimi().equals(nimiUri)
+                    && !hakukohde.getOid().equals(hakukohdeDTO.getOid())) {
+                return true;
             }
         }
         return false;
+    }
+
+    private boolean includeInDuplicateCheck(TarjontaTila tila) {
+        return !tila.equals(TarjontaTila.POISTETTU) && !tila.equals(TarjontaTila.PERUTTU);
     }
 
     /**

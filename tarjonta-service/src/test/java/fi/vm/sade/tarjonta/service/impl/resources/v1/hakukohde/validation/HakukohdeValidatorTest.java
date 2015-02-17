@@ -360,6 +360,7 @@ public class HakukohdeValidatorTest {
         hakukohdeDTO.setHakuOid("hakuOid");
         hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi");
         hakukohdeDTO.getHakukohdeKoulutusOids().add("komotoOid");
+        hakukohdeDTO.setTila("VALMIS");
 
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         komoto.setOid("komotoOid");
@@ -367,6 +368,7 @@ public class HakukohdeValidatorTest {
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setOid("hakukohdeOid");
         hakukohde.setHakukohdeNimi("hakukohdeNimi");
+        hakukohde.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU);
 
         Haku haku = new Haku();
         haku.setOid("hakuOid");
@@ -388,6 +390,7 @@ public class HakukohdeValidatorTest {
         hakukohdeDTO.setHakuOid("hakuOid");
         hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi");
         hakukohdeDTO.getHakukohdeKoulutusOids().add("komotoOid");
+        hakukohdeDTO.setTila("VALMIS");
 
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         komoto.setOid("komotoOid");
@@ -417,6 +420,7 @@ public class HakukohdeValidatorTest {
         hakukohdeDTO.setHakuOid("hakuOid");
         hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi");
         hakukohdeDTO.getHakukohdeKoulutusOids().add("komotoOid");
+        hakukohdeDTO.setTila("VALMIS");
 
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         komoto.setOid("komotoOid");
@@ -425,6 +429,36 @@ public class HakukohdeValidatorTest {
         hakukohde.setOid("hakukohdeOid");
         hakukohde.setHakukohdeNimi("hakukohdeNimi");
         hakukohde.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.POISTETTU);
+
+        Haku haku = new Haku();
+        haku.setOid("hakuOid");
+        hakukohde.setHaku(haku);
+
+        komoto.addHakukohde(hakukohde);
+
+        when(koulutusmoduuliToteutusDAO.findByOid("komotoOid")).thenReturn(komoto);
+
+        List<HakukohdeValidationMessages> messages = hakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
+
+        assertFalse(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_DUPLIKAATTI));
+    }
+
+    @Test
+    public void thatDuplicateHakukohdeCanBeCreatedWhenDuplicateIsPeruttu() {
+        HakukohdeV1RDTO hakukohdeDTO = new HakukohdeV1RDTO();
+        hakukohdeDTO.setToteutusTyyppi("LUKIOKOULUTUS");
+        hakukohdeDTO.setHakuOid("hakuOid");
+        hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi");
+        hakukohdeDTO.getHakukohdeKoulutusOids().add("komotoOid");
+        hakukohdeDTO.setTila("VALMIS");
+
+        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
+        komoto.setOid("komotoOid");
+
+        Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setOid("hakukohdeOid");
+        hakukohde.setHakukohdeNimi("hakukohdeNimi");
+        hakukohde.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.PERUTTU);
 
         Haku haku = new Haku();
         haku.setOid("hakuOid");
