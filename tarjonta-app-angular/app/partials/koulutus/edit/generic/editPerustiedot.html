@@ -18,7 +18,7 @@
     </tr>
 
     <!-- koulutusohjelma -->
-    <tr class="required">
+    <tr class="required" ng-if="!koulutusStructure.params.hideLinja || model.koulutusohjelmanNimiKannassa">
         <th tt="koulutus.edit.linja">Linja</th>
         <td>
             <div ng-if="!model.koulutusohjelmanNimiKannassa">

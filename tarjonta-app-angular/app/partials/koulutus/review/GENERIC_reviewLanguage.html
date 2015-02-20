@@ -31,7 +31,8 @@
         </tr>
 
         <!-- tutkinto-ohjelman tunniste -->
-        <tr ng-if="model.koulutus.koulutusohjelma.meta">
+        <tr ng-if="(model.koulutus.koulutusohjelma.meta && !koulutusStructure.params.hideLinja)
+                    || model.koulutus.koulutusohjelmanNimiKannassa">
             <th tt="{{koulutusStructure.params.reviewOhjelmaLabel || 'koulutus.review.perustiedot.linja'}}">Linja</th>
             <td colspan="2">
                 {{model.koulutus.koulutusohjelma.meta[lang.koodi_uri].nimi}}
