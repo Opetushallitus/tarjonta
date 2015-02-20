@@ -386,6 +386,7 @@ public class PublicationDataServiceImplTest {
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.VALMIS);
         compareDate = getCompareDate();
         tilamuutokset = publicationDataService.updatePublicationStatus(tilat);
+        em.flush();
         check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
         checkLastUpdatedFields(false, true, true, compareDate);
         Assert.assertSame(1,tilamuutokset.getMuutetutHakukohteet().size());
@@ -427,6 +428,7 @@ public class PublicationDataServiceImplTest {
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU); //set the base state
         compareDate = getCompareDate();
         tilamuutokset = publicationDataService.updatePublicationStatus(tilat);
+        em.flush();
         check(TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.PERUTTU);
         checkLastUpdatedFields(false, true, true, compareDate);
         Assert.assertSame(1,tilamuutokset.getMuutetutHakukohteet().size());

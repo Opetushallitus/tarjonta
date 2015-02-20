@@ -30,6 +30,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.xpath.operations.Bool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -409,23 +410,41 @@ public class PublicationDataServiceImpl implements PublicationDataService {
 
     private List<String> updateHakukohdeRelatedKomotos(TarjontaTila toStatus, String userOid, Date lastUpdatedDate, Collection<String> hakukohdeOids, TarjontaTila fromStatus) {
         List<String> returnList = Lists.newArrayList();
-        //hae hakukohdeidt
-        Query q = em.createQuery("select hakukohde.id from Hakukohde as hakukohde inner join hakukohde.haku as haku where haku.tila='JULKAISTU' and hakukohde.oid in(:hakukohdeOIDs)");
 
-        q.setParameter("hakukohdeOIDs", hakukohdeOids);
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
 
-        List<Long> hakukohdeIds = (List<Long>) q.getResultList();
-        if (hakukohdeIds.size() > 0) {
-            //hae komotooidt
-            List<String> komotoOidList = komotoDAO.searchKomotoOIDsByHakukohdesId(hakukohdeIds, fromStatus);
+        final BooleanExpression criteria = qHakukohde.oid.in(hakukohdeOids)
+                .and(qHakukohde.haku.tila.eq(TarjontaTila.JULKAISTU))
+                .and(qKomoto.tila.eq(fromStatus));
 
-            returnList.addAll(komotoOidList);
-            if (komotoOidList.size() > 0) {
-                updateKomotos(toStatus, userOid, lastUpdatedDate, komotoOidList);
+        List<KoulutusmoduuliToteutus> komotos = from(qHakukohde, qKomoto)
+                .join(qKomoto.hakukohdes, qHakukohde)
+                .where(criteria)
+                .distinct()
+                .list(qKomoto);
+
+        for (KoulutusmoduuliToteutus komoto : komotos) {
+            // älä peruuta koulutusta, jos sillä on edelleen julkaistu-tilassa oleva hakukohde
+            if (toStatus.equals(TarjontaTila.PERUTTU)
+                    && komotoHasHakukohdesInPublishedState(komoto, hakukohdeOids)) {
+                continue;
             }
+            updateKomoto(komoto, toStatus, userOid);
+            returnList.add(komoto.getOid());
         }
 
         return returnList;
+    }
+
+    private boolean komotoHasHakukohdesInPublishedState(KoulutusmoduuliToteutus komoto, Collection<String> ignoreHakukohdeOids) {
+        for (Hakukohde hakukohde : komoto.getHakukohdes()) {
+            if (hakukohde.getTila().equals(TarjontaTila.JULKAISTU)
+                    && !ignoreHakukohdeOids.contains(hakukohde.getOid())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -439,14 +458,17 @@ public class PublicationDataServiceImpl implements PublicationDataService {
     @Override
     public List<Hakukohde> searchHakukohteetByKomotoOid(final Collection<String> komotoOids, final TarjontaTila hakuRequiredStatus, final TarjontaTila... hakukohdeRequiredStatus) {
         QHakukohde hakukohde = QHakukohde.hakukohde;
+        QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
 
-        final BooleanExpression criteria
-                = hakukohde.koulutusmoduuliToteutuses.isNotEmpty().
-                and(hakukohde.koulutusmoduuliToteutuses.any().oid.in(komotoOids)).
-                and(hakukohde.haku.tila.eq(hakuRequiredStatus)).
-                and(hakukohde.tila.in(hakukohdeRequiredStatus));
+        final BooleanExpression criteria = komoto.oid.in(komotoOids)
+                                            .and(hakukohde.haku.tila.eq(hakuRequiredStatus))
+                                            .and(hakukohde.tila.in(hakukohdeRequiredStatus));
 
-        return from(hakukohde).where(criteria).distinct().list(hakukohde);
+        return from(hakukohde, komoto)
+                .join(komoto.hakukohdes, hakukohde)
+                .where(criteria)
+                .distinct()
+                .list(hakukohde);
     }
 
     /**
@@ -465,6 +487,12 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         List<Hakukohde> result = searchHakukohteetByKomotoOid(komotoOids, hakuRequiredStatus, hakukohdeRequiredStatus);
 
         for (Hakukohde h : result) {
+
+            // BUG-110, älä peruuta hakukohdetta, jos sillä on edelleen julkaistu-tilassa olevia koulutuksia
+            if (toStatus.equals(TarjontaTila.PERUTTU) && hakukohdeHasKomotosInPublishedState(h, komotoOids)) {
+                continue;
+            }
+
             h.setTila(toStatus);
             h.setLastUpdateDate(lastUpdatedDate);
             h.setLastUpdatedByOid(updaterOid);
@@ -473,6 +501,16 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         }
 
         return oidResult;
+    }
+
+    private boolean hakukohdeHasKomotosInPublishedState(Hakukohde hakukohde, Collection<String> ignoreKomotoOids) {
+        for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
+            if (komoto.getTila().equals(TarjontaTila.JULKAISTU)
+                    && !ignoreKomotoOids.contains(komoto.getOid())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -507,6 +545,11 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         }
         return komotoOids;
 
+    }
+
+    private void updateKomoto(KoulutusmoduuliToteutus komoto, TarjontaTila toStatus, String userOid) {
+        komoto.setTila(toStatus);
+        komoto.setLastUpdatedByOid(userOid);
     }
 
     private void updateKomotos(final TarjontaTila toStatus,
