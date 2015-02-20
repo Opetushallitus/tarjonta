@@ -409,7 +409,9 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
     }
 
     private void addKoulutuskoodiTiedot(SolrInputDocument doc, KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
-        String koulutusUri = koulutusmoduuliToteutus.getKoulutusmoduuli().getKoulutusUri();
+        String koulutusUri = koulutusmoduuliToteutus.getKoulutusUri() != null
+                ? koulutusmoduuliToteutus.getKoulutusUri()
+                : koulutusmoduuliToteutus.getKoulutusmoduuli().getKoulutusUri();
 
         if (koulutusUri == null) {
             logger.error("Data error - koulutus URI missing by KOMOTO OID '{}'", koulutusmoduuliToteutus.getOid());
