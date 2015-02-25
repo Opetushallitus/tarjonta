@@ -1,0 +1,18 @@
+<Context>
+
+    <!-- Default set of monitored resources -->
+    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+
+    <Resource name="jdbc/tarjonta" auth="Container"
+              factory="com.zaxxer.hikari.HikariJNDIFactory"
+              type="javax.sql.DataSource"
+              maximumPoolSize="${postgresql.maxActive}"
+              connectionTimeout="300000"
+              driverClassName="org.postgresql.Driver"
+              connectionTestQuery="SELECT 1"
+              jdbcUrl="jdbc:postgresql://${postgresql.host}:${postgresql.port}/${postgresql.database}"
+              dataSource.implicitCachingEnabled="true"
+              dataSource.user="${postgresql.user}"
+              dataSource.password="${postgresql.password}" />
+
+</Context>
