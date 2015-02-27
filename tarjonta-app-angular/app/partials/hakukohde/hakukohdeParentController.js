@@ -131,7 +131,11 @@ app.controller('HakukohdeParentController', [
                     'ERIKOISAMMATTITUTKINTO': true,
                     'AMMATTITUTKINTO': true
                 }
-            }
+            },
+            disableConfigurableHakuaika: [
+                'VAPAAN_SIVISTYSTYON_KOULUTUS',
+                'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA'
+            ]
         };
         /**
              * Tila asetetetaan jos vanhaa tilaa ei ole tai se on luonnos/peruttu/kopioitu
@@ -512,6 +516,14 @@ app.controller('HakukohdeParentController', [
                 }
                 else if (toteutustyyppi === 'KORKEAKOULUOPINTO') {
                     $scope.model.configurableHakuaika = true;
+                }
+
+                var hasAlreadySavedCustomHakuaika = $scope.model.hakukohde.hakuaikaAlkuPvm ||
+                    $scope.model.hakukohde.hakuaikaLoppuPvm;
+
+                if (!hasAlreadySavedCustomHakuaika &&
+                    _.contains($scope.CONFIGURATION.disableConfigurableHakuaika, toteutustyyppi)) {
+                    $scope.model.configurableHakuaika = false;
                 }
                 if (!$scope.model.configurableHakuaika) {
                     $scope.clearHakuajat();
