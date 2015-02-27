@@ -43,6 +43,7 @@ public class ValintakoeAjankohtaToValintakoeAjankohtaRDTOConverter extends BaseR
         t.setAlkaa(s.getAlkamisaika());
         t.setLisatiedot(s.getLisatietoja());
         t.setLoppuu(s.getPaattymisaika());
+        t.setKellonaikaKaytossa(s.isKellonaikaKaytossa());
 
         t.setOid("" + s.getId());
         t.setVersion(s.getVersion() != null ? s.getVersion().intValue() : 0);
