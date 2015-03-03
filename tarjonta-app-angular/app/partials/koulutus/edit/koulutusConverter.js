@@ -1127,6 +1127,24 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                     }
                 })
             }),
+        AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA:
+            angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+                koulutustyyppiKoodiUri: 'koulutustyyppi_18',
+                RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                    pohjakoulutusvaatimus: {
+                        module: 'TUTKINTO'
+                    }
+                })
+            }),
+        AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER:
+            angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+                koulutustyyppiKoodiUri: 'koulutustyyppi_19',
+                RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                    pohjakoulutusvaatimus: {
+                        module: 'TUTKINTO'
+                    }
+                })
+            }),
         /*******************************************/
         /* MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS INITIALIZATION PARAMETERS  */
         /*******************************************/
