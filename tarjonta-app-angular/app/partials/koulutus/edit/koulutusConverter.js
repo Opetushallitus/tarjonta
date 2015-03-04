@@ -1134,6 +1134,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                     pohjakoulutusvaatimus: {
                         module: 'TUTKINTO'
                     }
+                }),
+                params: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.params, {
+                    hideLinja: true
                 })
             }),
         AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER:
@@ -1143,6 +1146,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                     pohjakoulutusvaatimus: {
                         module: 'TUTKINTO'
                     }
+                }),
+                params: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.params, {
+                    hideLinja: true
                 })
             }),
         /*******************************************/

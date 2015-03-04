@@ -1,5 +1,5 @@
 angular.module('Validator', [])
-    .factory('ValidatorService', function() {
+    .factory('ValidatorService', function(HakukohdeService) {
         'use strict';
 
         function isValidUrl(url) {
@@ -119,21 +119,13 @@ angular.module('Validator', [])
                 'VAPAAN_SIVISTYSTYON_KOULUTUS',
                 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA',
                 'AMMATILLINEN_PERUSTUTKINTO',
-                'KORKEAKOULUOPINTO'
+                'KORKEAKOULUOPINTO',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'
             ], toteutusTyyppi);
         }
         function toisenAsteenKoulutus(toteutusTyyppi) {
-            return _.contains([
-                'AMMATILLINEN_PERUSTUTKINTO',
-                'LUKIOKOULUTUS',
-                'PERUSOPETUKSEN_LISAOPETUS',
-                'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS',
-                'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
-                'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
-                'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
-                'VAPAAN_SIVISTYSTYON_KOULUTUS',
-                'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA'
-            ], toteutusTyyppi);
+            return HakukohdeService.config.isToisenAsteenKoulutus(toteutusTyyppi);
         }
         function needsLiitteidenToimitustiedot(toteutusTyyppi) {
             return _.contains([

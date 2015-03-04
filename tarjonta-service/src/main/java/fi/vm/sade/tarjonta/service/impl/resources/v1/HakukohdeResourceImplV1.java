@@ -524,6 +524,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                         .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
                 break;
             case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+            case AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA:
+            case AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER:
                 validationMessageses.addAll(hakukohdeValidator
                         .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
                 break;

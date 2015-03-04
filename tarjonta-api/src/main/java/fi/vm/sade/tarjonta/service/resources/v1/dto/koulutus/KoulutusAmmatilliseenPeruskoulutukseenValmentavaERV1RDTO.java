@@ -21,10 +21,10 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
  *
  * @author alexGofore
  */
-public class KoulutusAmmatilliseenPeruskoulutukseenValmistavaV1RDTO extends ValmistavaKoulutusV1RDTO {
+public class KoulutusAmmatilliseenPeruskoulutukseenValmentavaERV1RDTO extends ValmistavaKoulutusV1RDTO {
 
-    public KoulutusAmmatilliseenPeruskoulutukseenValmistavaV1RDTO() {
-        super(ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA, ModuulityyppiEnum.TUNTEMATON);
+    public KoulutusAmmatilliseenPeruskoulutukseenValmentavaERV1RDTO() {
+        super(ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER, ModuulityyppiEnum.TUNTEMATON);
     }
 
 }
