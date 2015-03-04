@@ -911,6 +911,7 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
                         if (foundKoulutusInHakukohde === undefined) {
                             if (toisenAsteenKoulutus) {
                                 if (koulutus.koulutuskoodi === hakukohteenKoulutuskoodi &&
+                                    koulutus.pohjakoulutusvaatimus &&
                                     koulutus.pohjakoulutusvaatimus.fi === hakukohteenPohjakoulutusvaatimus.fi) {
                                     prev.push(koulutus);
                                 }
