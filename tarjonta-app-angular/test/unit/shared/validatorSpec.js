@@ -5,7 +5,16 @@ describe('Validator', function() {
     var model = {};
     model.hakukohde = {};
 
+    var CONFIG_ENV_MOCK = {
+        env: {
+        },
+        app: {
+        }
+    };
+
     beforeEach(function() {
+        angular.module('config').value('globalConfig', CONFIG_ENV_MOCK);
+        module('Hakukohde');
         module('Validator');
         module('Organisaatio');
         inject(function($injector) {
