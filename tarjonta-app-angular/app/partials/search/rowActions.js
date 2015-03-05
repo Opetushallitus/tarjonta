@@ -119,6 +119,9 @@ angular.module('search.hakutulokset.rows', [])
             var actionsByPrefix = {
                 hakukohde: function(row) {
                     tt.removable = tt.removable && canRemoveHakukohde(row);
+                    tt.disablePublish = !TarjontaService.parameterCanAddHakukohdeToHaku(row.hakuOid);
+                    tt.disableCancel = !TarjontaService.parameterCanRemoveHakukohdeFromHaku(row.hakuOid);
+                    tt.mutable = tt.mutable && TarjontaService.parameterCanEditHakukohde(row.hakuOid);
                 },
                 jarjestaKoulutus: function() {
                     tt = {};
@@ -181,7 +184,7 @@ angular.module('search.hakutulokset.rows', [])
                 case 'PERUTTU':
                 case 'VALMIS':
                     PermissionService[prefix].canTransition(oid, tila, 'JULKAISTU').then(function(canTransition) {
-                        if (canTransition) {
+                        if (canTransition && !tt.disablePublish) {
                             ret.push({
                                 title: LocalisationService.t('tarjonta.toiminnot.julkaise'),
                                 action: function() {
@@ -197,7 +200,7 @@ angular.module('search.hakutulokset.rows', [])
                     break;
                 case 'JULKAISTU':
                     PermissionService[prefix].canTransition(oid, tila, 'PERUTTU').then(function(canTransition) {
-                        if (canTransition) {
+                        if (canTransition && !tt.disableCancel) {
                             ret.push({
                                 title: LocalisationService.t('tarjonta.toiminnot.peruuta'),
                                 action: function() {

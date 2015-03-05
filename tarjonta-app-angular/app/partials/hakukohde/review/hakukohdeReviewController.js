@@ -406,6 +406,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
             if (AuthService.isUserOph()) {
                 $scope.isMutable = true;
                 $scope.isPartiallyMutable = true;
+                $scope.isRemovable = true;
             } else {
                 var hasPermissionToEdit = results[0] === true;
                 var canEditHakukohdeAtAll = TarjontaService.parameterCanEditHakukohde($scope.model.hakukohde.hakuOid);

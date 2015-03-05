@@ -4,7 +4,7 @@ var app = angular.module('Tarjonta', [
     'Logging'
 ]);
 app.factory('TarjontaService', function($resource, $http, Config, LocalisationService, Koodisto,
-                                        CacheService, $q, $log, OrganisaatioService) {
+                                        CacheService, $q, $log, OrganisaatioService, AuthService) {
     $log = $log.getInstance('TarjontaService');
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + 'hakukohde/search');
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/search');
@@ -747,23 +747,25 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return result;
     };
     dataFactory.parameterCanEditHakukohde = function(hakuOid) {
-        var now = new Date().getTime();
-        var ph_hklpt = dataFactory.getParameter(hakuOid, 'PH_HKLPT', 'LONG', now);
-        var ph_hkmt = dataFactory.getParameter(hakuOid, 'PH_HKMT', 'LONG', now);
-        if (ph_hklpt && ph_hkmt) {
-            result = now <= ph_hklpt && now <= ph_hkmt;
-            $log.debug('parameterCanEditHakukohde: ', hakuOid, ph_hklpt, ph_hkmt, result);
-            return result;
-        }
-        else {
+        if (AuthService.isUserOph()) {
             return true;
         }
+        var now = new Date().getTime();
+        var ph_hklpt = dataFactory.getParameter(hakuOid, 'PH_HKLPT', 'LONG') || now;
+        var ph_hkmt = dataFactory.getParameter(hakuOid, 'PH_HKMT', 'LONG') || now;
+        if (ph_hklpt < now || ph_hkmt < now) {
+            return false;
+        }
+        return true;
     };
     dataFactory.parameterCanEditHakukohdeLimited = function(hakuOid) {
+        if (AuthService.isUserOph()) {
+            return true;
+        }
         var now = new Date().getTime();
         var ph_hkmt = dataFactory.getParameter(hakuOid, 'PH_HKMT', 'LONG', now);
         if (ph_hkmt) {
-            result = now <= ph_hkmt;
+            var result = now <= ph_hkmt;
             $log.debug('parameterCanEditHakukohdeLimited: ', hakuOid, ph_hkmt, result);
             return result;
         }
@@ -772,31 +774,10 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         }
     };
     dataFactory.parameterCanAddHakukohdeToHaku = function(hakuOid) {
-        var now = new Date().getTime();
-        var ph_hklpt = dataFactory.getParameter(hakuOid, 'PH_HKLPT', 'LONG', now);
-        var ph_hkmt = dataFactory.getParameter(hakuOid, 'PH_HKMT', 'LONG', now);
-        if (ph_hklpt && ph_hkmt) {
-            result = now <= ph_hklpt && now <= ph_hkmt;
-            $log.debug('parameterCanAddHakukohdeToHaku: ', hakuOid, ph_hklpt, ph_hkmt, result);
-            return result;
-        }
-        else {
-            $log.info('PP_HKLPT AND PH_HKMT WAS EMPTY');
-            return true;
-        }
+        return dataFactory.parameterCanEditHakukohde(hakuOid);
     };
     dataFactory.parameterCanRemoveHakukohdeFromHaku = function(hakuOid) {
-        var now = new Date().getTime();
-        var ph_hklpt = dataFactory.getParameter(hakuOid, 'PH_HKLPT', 'LONG', now);
-        var ph_hkmt = dataFactory.getParameter(hakuOid, 'PH_HKMT', 'LONG', now);
-        if (ph_hklpt && ph_hkmt) {
-            result = now <= ph_hklpt && now <= ph_hkmt;
-            //$log.debug("parameterCanRemoveHakukohdeFromHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
-            return result;
-        }
-        else {
-            return true;
-        }
+        return dataFactory.parameterCanEditHakukohde(hakuOid);
     };
     return dataFactory;
 });

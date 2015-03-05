@@ -1148,7 +1148,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
 
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
-        if (!parameterService.parameterCanAddHakukohdeToHaku(hakukohde.getHaku().getOid())) {
+        if (!parameterService.parameterCanAddHakukohdeToHaku(hakukohde.getHaku().getOid())
+                && !permissionChecker.isOphCrud()) {
             throw new NotAuthorizedException("no.permission");
         }
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohde.getOid());

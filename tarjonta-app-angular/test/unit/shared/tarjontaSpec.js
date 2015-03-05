@@ -64,6 +64,10 @@ describe('Tarjonta', function() {
         }
     };
 
+    var PH_HKMT = 1399973779271;
+    var PH_HKLPT = 1399887372781;
+
+    beforeEach(module('SharedStateService'));
     beforeEach(module('auth'));
     beforeEach(module('Organisaatio'));
     beforeEach(module('Tarjonta'));
@@ -89,8 +93,8 @@ describe('Tarjonta', function() {
         var parameterResponse = {
             '1.2.3.4': {
 //                'PH_TJT' : { date : 1400149187429 },
-                'PH_HKMT': {date: 1399973779271},
-                'PH_HKLPT': {date: 1399887372781}
+                'PH_HKMT': {date: PH_HKMT},
+                'PH_HKLPT': {date: PH_HKLPT}
             }
         };
 
@@ -107,6 +111,16 @@ describe('Tarjonta', function() {
             $provide.value('LocalisationService', {getLocale: noop, t: noop});
         });
     });
+
+    function mockTime(time, fn) {
+        var __origDate = Date;
+        Date.prototype.getTime = function() {
+            return time;
+        };
+        fn();
+        // Restore date
+        Date = __origDate;
+    }
 
     describe('TarjontaService', function($injector) {
 
@@ -132,6 +146,39 @@ describe('Tarjonta', function() {
             resourceLink.remove({parent: parentOid, child: oid});
             $httpBackend.flush();
         }));
+
+        it('should prevent hakukohde edit when date is > PH_HKMT & PH_HKLPT', function() {
+            inject(function ($httpBackend, TarjontaService) {
+                mockHttp($httpBackend);
+                $httpBackend.flush();
+                mockTime(PH_HKMT + 1, function () {
+                    expect(TarjontaService.parameterCanEditHakukohde('1.2.3.4')).toBeFalsy();
+                    expect(TarjontaService.parameterCanEditHakukohdeLimited('1.2.3.4')).toBeFalsy();
+                });
+            });
+        });
+
+        it('should allow limited hakukohde edit when PH_HKLPT < compare time < PH_HKMT', function() {
+            inject(function ($httpBackend, TarjontaService) {
+                mockHttp($httpBackend);
+                $httpBackend.flush();
+                mockTime(PH_HKMT - 1, function () {
+                    expect(TarjontaService.parameterCanEditHakukohde('1.2.3.4')).toBeFalsy();
+                    expect(TarjontaService.parameterCanEditHakukohdeLimited('1.2.3.4')).toBeTruthy();
+                });
+            });
+        });
+
+        it('should allow full hakukohde edit when compare time < PH_HKMT & PH_HKLPT', function() {
+            inject(function ($httpBackend, TarjontaService) {
+                mockHttp($httpBackend);
+                $httpBackend.flush();
+                mockTime(PH_HKLPT - 1, function () {
+                    expect(TarjontaService.parameterCanEditHakukohde('1.2.3.4')).toBeTruthy();
+                    expect(TarjontaService.parameterCanEditHakukohdeLimited('1.2.3.4')).toBeTruthy();
+                });
+            });
+        });
 
     });
 });
