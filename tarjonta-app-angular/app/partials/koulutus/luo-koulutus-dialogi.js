@@ -274,6 +274,8 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
                 'AMMATILLINEN_PERUSTUTKINTO',
                 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER',
                 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
                 'PERUSOPETUKSEN_LISAOPETUS',
                 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
@@ -292,12 +294,14 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
             }
             var promise = Koodisto.getAlapuolisetKoodit($scope.model.koulutustyyppi.koodiUri);
             promise.then(function(koodis) {
-                for (var i = 0; i < koodis.length; i++) {
-                    if (CONFIG.env['koodisto-uris.koulutuslaji'] === koodis[i].koodiKoodisto) {
-                        $location.path('/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri +
-                            '/' + koodis[i].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid);
-                        break;
-                    }
+                var koulutuslajiKoodis = _.where(koodis, {koodiKoodisto:CONFIG.env['koodisto-uris.koulutuslaji']});
+                if (koulutuslajiKoodis && koulutuslajiKoodis.length === 1) {
+                    $location.path('/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri +
+                    '/' + koulutuslajiKoodis[0].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid);
+                }
+                else {
+                    $location.path('/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri +
+                    '/edit/' + $scope.model.organisaatiot[0].oid);
                 }
                 if ($scope.model.pohjakoulutusvaatimus) {
                     $location.search('pohjakoulutusvaatimus', $scope.model.pohjakoulutusvaatimus);

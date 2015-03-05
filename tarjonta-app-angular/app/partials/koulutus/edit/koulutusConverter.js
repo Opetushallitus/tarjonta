@@ -616,6 +616,56 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             onlyOneOpetuskieli: true
         }
     });
+    var AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA = angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+        KUVAUS_ORDER: [
+            {
+                type: 'SISALTO',
+                isKomo: false,
+                length: 2000
+            },
+            {
+                type: 'KOHDERYHMA',
+                isKomo: false,
+                length: 2000
+            },
+            {
+                type: 'SIJOITTUMINEN_TYOELAMAAN',
+                isKomo: false,
+                length: 2000
+            },
+            {
+                type: 'KANSAINVALISTYMINEN',
+                isKomo: false,
+                length: 2000
+            },
+            {
+                type: 'YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA',
+                isKomo: false,
+                length: 2000
+            }
+        ],
+        RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+            pohjakoulutusvaatimus: {
+                module: 'TUTKINTO'
+            }
+        }),
+        reviewFields: [
+            'TAVOITTEET',
+            'KOULUTUKSEN_RAKENNE',
+            'JATKOOPINTO_MAHDOLLISUUDET',
+            'KOULUTUSOHJELMAN_VALINTA',
+            'SISALTO',
+            'KOHDERYHMA',
+            'SIJOITTUMINEN_TYOELAMAAN',
+            'KANSAINVALISTYMINEN',
+            'YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA',
+            'AMMATTINIMIKKEET'
+        ],
+        params: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.params, {
+            hideLinja: true,
+            hideTutkintonimike: true
+        })
+    });
     var GENERIC_LUKIOKOULUTUS_STRUCTURE = {
         KUVAUS_ORDER: [
             {
@@ -1127,6 +1177,14 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                     }
                 })
             }),
+        AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA:
+            angular.extend({}, AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA, {
+                koulutustyyppiKoodiUri: 'koulutustyyppi_18'
+            }),
+        AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER:
+            angular.extend({}, AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA, {
+                koulutustyyppiKoodiUri: 'koulutustyyppi_19'
+            }),
         /*******************************************/
         /* MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS INITIALIZATION PARAMETERS  */
         /*******************************************/
@@ -1396,7 +1454,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 tutkintonimike: 'tutkintonimikkeet_00000'
             },
             params: {
-                isPerusopetus: true
+                isPerusopetus: true,
+                hideTutkintonimike: true
             }
         }
     };

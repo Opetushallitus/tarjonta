@@ -307,6 +307,25 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
             }
         }
     }
+
+    var hakukohdeConfig = {
+        isToisenAsteenKoulutus: function(toteutusTyyppi) {
+            return _.contains([
+                'AMMATILLINEN_PERUSTUTKINTO',
+                'LUKIOKOULUTUS',
+                'PERUSOPETUKSEN_LISAOPETUS',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS',
+                'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
+                'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
+                'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
+                'VAPAAN_SIVISTYSTYON_KOULUTUS',
+                'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'
+            ], toteutusTyyppi);
+        }
+    };
+
     return {
         addValintakoeIfEmpty: addValintakoeIfEmpty,
         addValintakoe: addValintakoe,
@@ -317,6 +336,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
         addPainotettavaOppiaine: addPainotettavaOppiaine,
         findHakukohdesByKuvausId: function(kuvausId) {
             return $http.get(Config.env.tarjontaRestUrlPrefix + 'hakukohde/findHakukohdesByKuvausId/' + kuvausId);
-        }
+        },
+        config: hakukohdeConfig
     };
 });

@@ -161,13 +161,15 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
         if (toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO' || toteutusTyyppi === 'LUKIOKOULUTUS') {
             return filterHakusForAmmatillinenAndLukio;
         }
-        else if (toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS'
-            || toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS'
-            || toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS'
-            || toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS') {
+        else if (_.contains(['PERUSOPETUKSEN_LISAOPETUS',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS',
+                'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
+                'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA'], toteutusTyyppi)) {
             return filterHakusForAmmatillinenValmistavaAndLisaopetus;
         }
-        else if (toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS') {
+        else if (_.contains(['VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
+                             'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'], toteutusTyyppi)) {
             return filterHakusForValmentavaJaKuntouttavaOpetus;
         }
         else if (toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS') {

@@ -295,7 +295,12 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
                 valmDto.setKoulutusohjelmanNimiKannassa(CommonRestConverters.toStringMap(komoto.getNimi()));
             }
 
-            mergeParentAndChildDataToRDTO(dto, koulutusmoduuliDAO.findParentKomo(komo), komo, komoto, param);
+            Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
+            if (parentKomo == null) {
+                parentKomo = komo;
+            }
+
+            mergeParentAndChildDataToRDTO(dto, parentKomo, komo, komoto, param);
         }
 
         else if (dto instanceof NayttotutkintoV1RDTO) {

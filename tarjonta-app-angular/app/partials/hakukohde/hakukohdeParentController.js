@@ -52,21 +52,13 @@ app.controller('HakukohdeParentController', [
             'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS': toinenAsteHakukohdePartialUri,
             'VAPAAN_SIVISTYSTYON_KOULUTUS': toinenAsteHakukohdePartialUri,
             'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA': toinenAsteHakukohdePartialUri,
-            AIKUISTEN_PERUSOPETUS: aikuLukioHakukohdePartialUri
+            AIKUISTEN_PERUSOPETUS: aikuLukioHakukohdePartialUri,
+            AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA: toinenAsteHakukohdePartialUri,
+            AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER: toinenAsteHakukohdePartialUri
         };
-        $scope.toisenAsteenKoulutus = function(toteutusTyyppi) {
-            return _.contains([
-                    'AMMATILLINEN_PERUSTUTKINTO',
-                    'LUKIOKOULUTUS',
-                    'PERUSOPETUKSEN_LISAOPETUS',
-                    'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS',
-                    'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
-                    'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
-                    'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
-                    'VAPAAN_SIVISTYSTYON_KOULUTUS',
-                    'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA'
-                ], toteutusTyyppi);
-        };
+
+        $scope.toisenAsteenKoulutus = HakukohdeService.config.isToisenAsteenKoulutus;
+
         $scope.needsHakukelpoisuus = function(toteutusTyyppi) {
             return !_.contains([
                 'PERUSOPETUKSEN_LISAOPETUS',
@@ -94,7 +86,9 @@ app.controller('HakukohdeParentController', [
                 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
                 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
                 'VAPAAN_SIVISTYSTYON_KOULUTUS',
-                'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS'
+                'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'
             ], toteutusTyyppi);
         };
         $scope.needsValinnoissaKaytettavatAloituspaikat = function(toteutusTyyppi) {
@@ -131,7 +125,13 @@ app.controller('HakukohdeParentController', [
                     'ERIKOISAMMATTITUTKINTO': true,
                     'AMMATTITUTKINTO': true
                 }
-            }
+            },
+            disableConfigurableHakuaika: [
+                'VAPAAN_SIVISTYSTYON_KOULUTUS',
+                'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'
+            ]
         };
         /**
              * Tila asetetetaan jos vanhaa tilaa ei ole tai se on luonnos/peruttu/kopioitu
@@ -512,6 +512,14 @@ app.controller('HakukohdeParentController', [
                 }
                 else if (toteutustyyppi === 'KORKEAKOULUOPINTO') {
                     $scope.model.configurableHakuaika = true;
+                }
+
+                var hasAlreadySavedCustomHakuaika = $scope.model.hakukohde.hakuaikaAlkuPvm ||
+                    $scope.model.hakukohde.hakuaikaLoppuPvm;
+
+                if (!hasAlreadySavedCustomHakuaika &&
+                    _.contains($scope.CONFIGURATION.disableConfigurableHakuaika, toteutustyyppi)) {
+                    $scope.model.configurableHakuaika = false;
                 }
                 if (!$scope.model.configurableHakuaika) {
                     $scope.clearHakuajat();

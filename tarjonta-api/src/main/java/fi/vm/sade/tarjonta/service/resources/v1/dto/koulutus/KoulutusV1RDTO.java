@@ -52,6 +52,8 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
     @Type(value = KorkeakouluOpintoV1RDTO.class, name = "KORKEAKOULUOPINTO"),
     @Type(value = KoulutusLukioAikuistenOppimaaraV1RDTO.class, name = "LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA"),
     @Type(value = KoulutusLukioV1RDTO.class, name = "LUKIOKOULUTUS"),
+    @Type(value = KoulutusAmmatilliseenPeruskoulutukseenValmentavaV1RDTO.class, name = "AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA"),
+    @Type(value = KoulutusAmmatilliseenPeruskoulutukseenValmentavaERV1RDTO.class, name = "AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER"),
     @Type(value = KoulutusMaahanmuuttajienAmmatilliseenPeruskoulutukseenValmistavaV1RDTO.class, name = "MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS"),
     @Type(value = KoulutusMaahanmuuttajienJaVieraskielistenLukiokoulutukseenValmistavaV1RDTO.class, name = "MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS"),
     @Type(value = KoulutusPerusopetuksenLisaopetusV1RDTO.class, name = "PERUSOPETUKSEN_LISAOPETUS"),

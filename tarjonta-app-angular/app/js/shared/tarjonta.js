@@ -189,7 +189,10 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                         r.nimi = localize(r.nimi);
                         if (!_.contains(['LUKIOKOULUTUS',
                                          'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA',
-                                         'AIKUISTEN_PERUSOPETUS'], r.toteutustyyppiEnum) && r.pohjakoulutusvaatimus) {
+                                         'AIKUISTEN_PERUSOPETUS',
+                                         'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
+                                         'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'], r.toteutustyyppiEnum)
+                            && r.pohjakoulutusvaatimus) {
                             r.nimi += ', ' + localize(r.pohjakoulutusvaatimus);
                         }
                     }
