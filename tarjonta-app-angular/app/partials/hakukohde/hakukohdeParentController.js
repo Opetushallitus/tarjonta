@@ -86,7 +86,9 @@ app.controller('HakukohdeParentController', [
                 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
                 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
                 'VAPAAN_SIVISTYSTYON_KOULUTUS',
-                'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS'
+                'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'
             ], toteutusTyyppi);
         };
         $scope.needsValinnoissaKaytettavatAloituspaikat = function(toteutusTyyppi) {

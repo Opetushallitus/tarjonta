@@ -60,7 +60,7 @@
     </tr>
 
     <!-- tutkintonimike -->
-    <tr>
+    <tr ng-if="!koulutusStructure.params.hideTutkintonimike">
         <th tt="koulutus.edit.tutkintonimike">Tutkintonimike</th>
         <td>{{model.tutkintonimike.nimi}}</td>
         <td></td>
