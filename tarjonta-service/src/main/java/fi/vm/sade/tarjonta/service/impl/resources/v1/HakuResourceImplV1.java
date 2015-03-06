@@ -16,6 +16,8 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
@@ -59,6 +61,9 @@ import javax.ws.rs.core.UriInfo;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * REST API V1 implementation for Haku.
@@ -100,6 +105,11 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Autowired
     private HakukohdeSearchService hakukohdeSearchService;
+
+    private final String FIND_ALL_CACHE_KEY = "findAll";
+
+    private final Cache<String, List<Haku>> hakuCache = CacheBuilder
+            .newBuilder().expireAfterWrite(5, TimeUnit.MINUTES).build();
 
     @Override
     public ResultV1RDTO<List<String>> search(GenericSearchParamsV1RDTO genericSearchParamsDTO, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
@@ -165,7 +175,22 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     private ResultV1RDTO<List<HakuV1RDTO>> findAllHakus(HakuSearchParamsV1RDTO params) {
-        List<Haku> hakus = hakuDAO.findAll();
+        List<Haku> hakus;
+        try {
+            hakus = hakuCache.get(FIND_ALL_CACHE_KEY, new Callable<List<Haku>>() {
+                @Override
+                public List<Haku> call() {
+                    List<Haku> all = hakuDAO.findAll();
+                    hakuCache.put(FIND_ALL_CACHE_KEY, all);
+                    return all;
+                }
+            });
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            hakus = hakuDAO.findAll();
+        }
+
+
         LOG.debug("FOUND  : {} hakus", hakus.size());
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
         if (hakus.size() > 0) {
