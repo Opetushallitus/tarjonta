@@ -81,7 +81,7 @@
                 <th tt="haku.review.haunTiedot.hakuaika">Hakuaika</th>
                 <td colspan="2">
                     <table>
-                    <tr ng-repeat="hakuaika in model.hakux.result.hakuaikas | orderBy:[alkuPvm,loppuPvm,nimi]">
+                    <tr ng-repeat="hakuaika in model.hakux.result.hakuaikas | orderBy:['alkuPvm','loppuPvm','nimi']">
                         <td>{{ hakuaika.nimi || t("haku.review.noname") }} </td>
                         <td><span t-show-date value="hakuaika.alkuPvm" timestamp></span></td>
                         <td> &rarr; </td>
