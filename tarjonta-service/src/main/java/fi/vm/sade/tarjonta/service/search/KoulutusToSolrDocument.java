@@ -256,7 +256,10 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
                     break;
 
                 default:
-                    if (ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO.equals(koulutusmoduuliToteutus.getToteutustyyppi())) {
+                    if (ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO
+                            .equals(koulutusmoduuliToteutus.getToteutustyyppi())
+                        || ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA
+                            .equals(koulutusmoduuliToteutus.getToteutustyyppi())) {
                         addKoulutusohjelmaTiedot(komotoDoc, getKoulutusohjelmaOrOsaamisalaUri(koulutusmoduuliToteutus));
                     } else {
                         if (koulutusmoduuliToteutus.getOsaamisalaUri() != null) {
