@@ -507,6 +507,9 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         }
         return $scope.model.header.nimi;
     };
+    $scope.showKoulutuskoodiTitle = function() {
+        return $scope.getKoulutuskoodiNimi() !== $scope.getKoulutusohjelmaNimi();
+    };
     $scope.getKoulutuskoodiNimi = function() {
         if (!$scope.model.header.koodi) {
             // Get user's language and update scope with it
