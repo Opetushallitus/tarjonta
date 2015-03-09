@@ -8,11 +8,6 @@ app.controller('HakukohdeAikuNayttoEditController', function($scope, $q, $log, L
         SharedStateService) {
     // koulutusohjelmasta tai koulutuskoodista populoidaan tämä
     $scope.osaamisalat = [];
-    $log = $log.getInstance('HakukohdeAikuNayttoEditController');
-    $scope.ui = {
-        showPlaces: true
-    };
-    console.log('setting canSave');
     $scope.model.canSaveAsLuonnos = function() {
         return CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila);
     };
@@ -89,29 +84,4 @@ app.controller('HakukohdeAikuNayttoEditController', function($scope, $q, $log, L
         readOsaamisAlat();
     };
     init();
-    /**
-               * checkSelectedHaku suoritetaan kun haku valinta muuttuu tai kun
-               * model.hakus on asetettu.
-               */
-    $scope.$watch(function() {
-        return $scope.model.hakus.length && $scope.model.hakukohde.hakuOid;
-    }, function(oid) {
-            if (oid) {
-                $scope.model.checkSelectedHaku();
-            }
-        });
-    $scope.model.checkSelectedHaku = function() {
-        var jatkuvaHakuKoodi = 'hakutapa_03';
-        angular.forEach($scope.model.hakus, function(haku) {
-            if (haku.oid === $scope.model.hakukohde.hakuOid) {
-                if ($scope.aContainsB(haku.hakutapaUri, jatkuvaHakuKoodi)) {
-                    $scope.ui.showPlaces = false;
-                    $scope.model.hakukohde.aloituspaikatLkm = null;
-                }
-                else {
-                    $scope.ui.showPlaces = true;
-                }
-            }
-        });
-    };
 });

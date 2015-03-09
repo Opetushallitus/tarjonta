@@ -873,9 +873,6 @@ app.controller('HakukohdeParentController', [
                 $location.path('/hakukohde/' + $scope.model.hakukohde.oid);
             }
         };
-        $scope.aContainsB = function(a, b) {
-            return a.indexOf(b) >= 0;
-        };
         $scope.haeValintaPerusteKuvaus = function() {
             $scope.naytaHaeValintaperusteKuvaus('valintaperustekuvaus');
         };
