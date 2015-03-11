@@ -297,7 +297,7 @@
                     <mk-text model="model.hakukohde.valintaperusteKuvaukset" display="tabs"/>
                 </td>
             </tr>
-            <tr class="collapse" ng-class="model.collapse.sorakuvaukset ? '' : 'open'">
+            <tr ng-if="!config.hideSoraKuvaus()" class="collapse" ng-class="model.collapse.sorakuvaukset ? '' : 'open'">
                 <th colspan="2" tt="hakukohde.review.sorakuvaukset.otsikko" ng-click="model.collapse.sorakuvaukset = !model.collapse.sorakuvaukset"></th>
                 <td><button class="btn" ng-disabled="!isMutable" ng-click="doEdit($event, 'SORA')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></button></td>
             </tr>

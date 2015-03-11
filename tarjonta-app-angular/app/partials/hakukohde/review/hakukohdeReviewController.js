@@ -13,7 +13,7 @@ var app = angular.module('app.kk.edit.hakukohde.review.ctrl', [
 app.controller('HakukohdeReviewController', function($scope, $q, $log, LocalisationService, OrganisaatioService,
              Koodisto, Hakukohde, AuthService, dialogService, HakuService, $modal, Config, $location, $timeout,
              $route, TarjontaService, HakukohdeKoulutukses, SisaltyvyysUtil, TreeHandlers,
-             PermissionService, MyRolesModel) {
+             PermissionService, HakukohdeService, MyRolesModel) {
     $log = $log.getInstance('HakukohdeReviewController');
     $log.debug('init...');
     // by default disable
@@ -477,6 +477,8 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         loadLiitetiedot();
         loadValintakoetiedot();
         loadYhteystiedot();
+        $scope.config = HakukohdeService.config;
+        $scope.config.setToteutustyyppi($scope.model.hakukohde.toteutusTyyppi);
     };
     init();
     $scope.getHakukohteenJaOrganisaationNimi = function(locale) {

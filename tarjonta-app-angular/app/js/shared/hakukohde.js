@@ -309,7 +309,10 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
     }
 
     var hakukohdeConfig = {
-        isToisenAsteenKoulutus: function(toteutusTyyppi) {
+        setToteutustyyppi: function(toteutustyyppi) {
+            this.toteutustyyppi = toteutustyyppi;
+        },
+        isToisenAsteenKoulutus: function(toteutustyyppi) {
             return _.contains([
                 'AMMATILLINEN_PERUSTUTKINTO',
                 'LUKIOKOULUTUS',
@@ -322,7 +325,20 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
                 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'
-            ], toteutusTyyppi);
+            ], toteutustyyppi || this.toteutustyyppi);
+        },
+        hideSoraKuvaus: function(toteutustyyppi) {
+            return _.contains([
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER',
+                'LUKIOKOULUTUS',
+                'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA',
+                'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
+                'PERUSOPETUKSEN_LISAOPETUS',
+                'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
+                'VAPAAN_SIVISTYSTYON_KOULUTUS',
+                'AIKUISTEN_PERUSOPETUS'
+            ], toteutustyyppi || this.toteutustyyppi);
         }
     };
 
