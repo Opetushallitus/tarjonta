@@ -342,6 +342,8 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
         },
         needsValinnoissaKaytettavatAloituspaikat: function(toteutustyyppi) {
             return _.contains([
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER',
                 'AMMATILLINEN_PERUSTUTKINTO',
                 'LUKIOKOULUTUS',
                 'PERUSOPETUKSEN_LISAOPETUS',
