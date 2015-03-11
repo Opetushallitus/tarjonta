@@ -289,7 +289,7 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
                 });
             });
         };
-        if ($scope.toisenAsteenKoulutus($scope.model.hakukohde.toteutusTyyppi)) {
+        if ($scope.config.isToisenAsteenKoulutus()) {
             $scope.model.hakukohteenNimet = [];
             angular.forEach($scope.model.hakukohde.hakukohdeKoulutusOids, function(koulutusOid) {
                 TarjontaService.getKoulutusPromise(koulutusOid).then(function(response) {

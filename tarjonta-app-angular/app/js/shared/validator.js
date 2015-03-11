@@ -124,9 +124,6 @@ angular.module('Validator', [])
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'
             ], toteutusTyyppi);
         }
-        function toisenAsteenKoulutus(toteutusTyyppi) {
-            return HakukohdeService.config.isToisenAsteenKoulutus(toteutusTyyppi);
-        }
         function needsLiitteidenToimitustiedot(toteutusTyyppi) {
             return _.contains([
                 'AMMATILLINEN_PERUSTUTKINTO',
@@ -222,7 +219,7 @@ angular.module('Validator', [])
                     });
                 }
             }
-            if (!toisenAsteenKoulutus(hakukohde.toteutusTyyppi)) {
+            if (!HakukohdeService.config.isToisenAsteenKoulutus(hakukohde.toteutusTyyppi)) {
                 if (!isValidNames(hakukohde)) {
                     errors.push({
                         errorMessageKey: 'hakukohde.edit.nimi.missing'

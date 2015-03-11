@@ -57,6 +57,8 @@ app.controller('HakukohdeParentController', [
             AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER: toinenAsteHakukohdePartialUri
         };
 
+        $scope.config = HakukohdeService.config;
+        $scope.config.setToteutustyyppi($scope.model.hakukohde.toteutusTyyppi);
         $scope.toisenAsteenKoulutus = HakukohdeService.config.isToisenAsteenKoulutus;
 
         $scope.needsHakukelpoisuus = function(toteutusTyyppi) {
@@ -90,21 +92,6 @@ app.controller('HakukohdeParentController', [
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'
             ], toteutusTyyppi);
-        };
-        $scope.needsValinnoissaKaytettavatAloituspaikat = function(toteutusTyyppi) {
-            return _.contains([
-                'AMMATILLINEN_PERUSTUTKINTO',
-                'LUKIOKOULUTUS',
-                'PERUSOPETUKSEN_LISAOPETUS',
-                'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS',
-                'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
-                'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
-                'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
-                'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA'
-            ], toteutusTyyppi);
-        };
-        $scope.ilmoitettavatAloituspaikatMandatory = function(toteutusTyyppi) {
-            return $scope.needsValinnoissaKaytettavatAloituspaikat(toteutusTyyppi);
         };
         $scope.CONFIGURATION = {
             LIITE: {

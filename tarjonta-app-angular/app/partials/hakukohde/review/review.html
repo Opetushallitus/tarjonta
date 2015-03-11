@@ -6,7 +6,7 @@
             dto="model.hakukohde">
             <controls-button icon="arrow-left" tt-key="koulutus.review.takaisin" action="goBack($event)"></controls-button>
             <controls-button disabled="!isRemovable" icon="remove" tt-key="koulutus.review.poista" action="doDelete()"></controls-button>
-            <controls-button ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" tt-key="hakukohde.review.kopioi" action="doCopy()"></controls-button>
+            <controls-button ng-if="!config.isToisenAsteenKoulutus()" tt-key="hakukohde.review.kopioi" action="doCopy()"></controls-button>
             <!-- TODO pitäisikö olla myös viestityyppi 'murupolku' tjsp.. ? -->
             <controls-notify type="message" tt-expr="'hakukohde.review.murupolku'" tt-params="[getHakukohteenJaOrganisaationNimi()]"></controls-notify>
             <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
@@ -56,7 +56,7 @@
                         )
                     </td>
                 </tr>
-                <tr ng-show="!isAiku && !toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)">
+                <tr ng-show="!isAiku && !config.isToisenAsteenKoulutus()">
                     <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimukset"/>
                     <td colspan="2">
                         <span data-ng-repeat="hakukelpoisuusvaatimus in model.hakukelpoisuusVaatimukses">
@@ -72,13 +72,13 @@
                     </td>
                 </tr>
 
-                <tr ng-show="isAiku || toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)">
+                <tr ng-show="isAiku || config.isToisenAsteenKoulutus()">
                     <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
                     <td colspan="2">
                         {{ model.hakukohde.aloituspaikatLkm != 0 ? model.hakukohde.aloituspaikatLkm : ''}}
                     </td>
                 </tr>
-                <tr ng-show="needsValinnoissaKaytettavatAloituspaikat(model.hakukohde.toteutusTyyppi)">
+                <tr ng-show="config.needsValinnoissaKaytettavatAloituspaikat()">
                     <th tt="hakukohde.review.perustiedot.valintojenAloituspaikat"/>
                     <td colspan="2">
                         {{ model.hakukohde.valintojenAloituspaikatLkm }}
@@ -107,7 +107,7 @@
                        </span>
                     </td>
                 </tr>
-                <tr ng-show="!isAiku && !toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)">
+                <tr ng-show="!isAiku && !config.isToisenAsteenKoulutus()">
                     <th tt="hakukohde.review.perustiedot.kaytetaanJarjestelmanValintaPalvelua"></th>
                     <td colspan="2">
                         {{ model.kaytetaanJarjestelmanValintaPalveluaArvo}}
@@ -148,7 +148,7 @@
                         <mk-text model="model.hakukohde.lisatiedot" display="tabs"/>
                     </td>
                 </tr>
-                <tr ng-if="!isAiku && !toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)">
+                <tr ng-if="!isAiku && !config.isToisenAsteenKoulutus()">
                     <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimus.kuvaus"/>
                     <td colspan="2">
                         <mk-text model="model.hakukohde.hakukelpoisuusVaatimusKuvaukset" display="tabs"/>
@@ -166,8 +166,8 @@
                         <mk-tabs model="model.valintakoeKielet" selection="model.selectedValintakoeKieli"></mk-tabs>
                         <table class="table" ng-show="model.selectedValintakoeKieli">
                             <tr>
-                                <th ng-if="toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" tt="hakukohde.review.valintakokeet.tyyppi"/>
-                                <th ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" tt="hakukohde.review.valintakokeet.nimi"/>
+                                <th ng-if="config.isToisenAsteenKoulutus()" tt="hakukohde.review.valintakokeet.tyyppi"/>
+                                <th ng-if="!config.isToisenAsteenKoulutus()" tt="hakukohde.review.valintakokeet.nimi"/>
                                 <th>{{t('hakukohde.review.valintakokeet.kuvaus')}}</th>
                                 <th>{{t('hakukohde.review.valintakokeet.aika')}}</th>
                                 <th>{{t('hakukohde.review.valintakokeet.paikka')}}</th>

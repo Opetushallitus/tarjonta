@@ -104,10 +104,10 @@
                         </td>
                     </tr>
 
-                    <tr class="{{ ilmoitettavatAloituspaikatMandatory(model.hakukohde.toteutusTyyppi) ? 'required' : ''}}">
+                    <tr class="{{ config.needsValinnoissaKaytettavatAloituspaikat() ? 'required' : ''}}">
                         <th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat">Hakijoille ilmoitettavat aloituspaikat</th>
                         <td>
-                            <input ng-if="ilmoitettavatAloituspaikatMandatory(model.hakukohde.toteutusTyyppi)"
+                            <input ng-if="config.needsValinnoissaKaytettavatAloituspaikat()"
                                    name="aloituspaikatlkm"
                                    ng-disabled="model.isPartiallyDeEnabled"
                                    class="thin"
@@ -117,7 +117,7 @@
                                    max="999"
                                    data-ng-model="model.hakukohde.aloituspaikatLkm"
                                    required />
-                            <input ng-if="!ilmoitettavatAloituspaikatMandatory(model.hakukohde.toteutusTyyppi)"
+                            <input ng-if="!config.needsValinnoissaKaytettavatAloituspaikat()"
                                    valid-decimal
                                    name="aloituspaikatlkm"
                                    ng-disabled="model.isPartiallyDeEnabled"
@@ -133,7 +133,7 @@
                         </td>
                     </tr>
 
-                    <tr ng-if="needsValinnoissaKaytettavatAloituspaikat(model.hakukohde.toteutusTyyppi)" class="required">
+                    <tr ng-if="config.needsValinnoissaKaytettavatAloituspaikat()" class="required">
                         <th tt="kk.hakukohde.valinnoissakaytettavataloituspaikat">Valinnoissa käytettävät aloituspaikat</th>
                         <td>
                             <input name="valintojenaloituspaikatlkm" ng-disabled="model.isPartiallyDeEnabled"  class="thin" type="number" ng-pattern="model.integerval" min="1" max="999" data-ng-model="model.hakukohde.valintojenAloituspaikatLkm" required />

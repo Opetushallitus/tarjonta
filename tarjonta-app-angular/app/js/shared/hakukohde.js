@@ -339,6 +339,18 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
                 'VAPAAN_SIVISTYSTYON_KOULUTUS',
                 'AIKUISTEN_PERUSOPETUS'
             ], toteutustyyppi || this.toteutustyyppi);
+        },
+        needsValinnoissaKaytettavatAloituspaikat: function(toteutustyyppi) {
+            return _.contains([
+                'AMMATILLINEN_PERUSTUTKINTO',
+                'LUKIOKOULUTUS',
+                'PERUSOPETUKSEN_LISAOPETUS',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS',
+                'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
+                'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
+                'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
+                'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA'
+            ], toteutustyyppi || this.toteutustyyppi);
         }
     };
 

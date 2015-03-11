@@ -6,15 +6,15 @@
 
             <table class="tarjontaForm">
                 <tr class="required">
-                    <th ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" tt="tarjonta.hakukohde.valintakoe.modal.valintakoenimi"></th>
-                    <th ng-if="toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" tt="tarjonta.hakukohde.valintakoe.modal.valintakoetyyppi"></th>
+                    <th ng-if="!config.isToisenAsteenKoulutus()" tt="tarjonta.hakukohde.valintakoe.modal.valintakoenimi"></th>
+                    <th ng-if="config.isToisenAsteenKoulutus()" tt="tarjonta.hakukohde.valintakoe.modal.valintakoetyyppi"></th>
                     <td>
-                        <input ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" type="text" ng-model="valintakoe.valintakoeNimi" ng-change="status.dirtify()"/>
-                        <select ng-if="toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" name="valintakoetyyppiselect" ng-model="valintakoe.valintakoetyyppi" data-ng-options="valintakoetyyppi.uri as valintakoetyyppi.nimi for valintakoetyyppi in kokeetModel.valintakoetyypit | orderBy: 'nimi'"/>
+                        <input ng-if="!config.isToisenAsteenKoulutus()" type="text" ng-model="valintakoe.valintakoeNimi" ng-change="status.dirtify()"/>
+                        <select ng-if="config.isToisenAsteenKoulutus()" name="valintakoetyyppiselect" ng-model="valintakoe.valintakoetyyppi" data-ng-options="valintakoetyyppi.uri as valintakoetyyppi.nimi for valintakoetyyppi in kokeetModel.valintakoetyypit | orderBy: 'nimi'"/>
                     </td>
                     <td>
-                        <p class="error" ng-show="model.showError && !valintakoe.valintakoeNimi && !toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" tt="tarjonta.hakukohde.valintakoe.errors.nimi">Valintakokeen nimi on pakollinen.</p>
-                        <p class="error" ng-show="model.showError && !valintakoe.valintakoetyyppi && toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" tt="tarjonta.hakukohde.valintakoe.errors.tyyppi">Valintakokeen tyyppi on pakollinen.</p>
+                        <p class="error" ng-show="model.showError && !valintakoe.valintakoeNimi && !config.isToisenAsteenKoulutus()" tt="tarjonta.hakukohde.valintakoe.errors.nimi">Valintakokeen nimi on pakollinen.</p>
+                        <p class="error" ng-show="model.showError && !valintakoe.valintakoetyyppi && config.isToisenAsteenKoulutus()" tt="tarjonta.hakukohde.valintakoe.errors.tyyppi">Valintakokeen tyyppi on pakollinen.</p>
                     </td>
                 </tr>
 

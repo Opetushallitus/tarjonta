@@ -477,8 +477,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         loadLiitetiedot();
         loadValintakoetiedot();
         loadYhteystiedot();
-        $scope.config = HakukohdeService.config;
-        $scope.config.setToteutustyyppi($scope.model.hakukohde.toteutusTyyppi);
     };
     init();
     $scope.getHakukohteenJaOrganisaationNimi = function(locale) {
@@ -741,7 +739,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
                     return $scope.getKomotoTarjoajatiedot();
                 },
                 toisenAsteenKoulutus: function() {
-                    return $scope.toisenAsteenKoulutus($scope.model.hakukohde.toteutusTyyppi);
+                    return $scope.config.isToisenAsteenKoulutus();
                 }
             }
         });
