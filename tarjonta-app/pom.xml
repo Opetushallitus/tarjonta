@@ -300,7 +300,7 @@
                     <webResources>
                         <resource>
                             <!-- this is relative to the pom.xml directory -->
-                            <directory>../tarjonta-app-angular/app</directory>
+                            <directory>../tarjonta-app-angular/dist</directory>
                             <targetPath>/</targetPath>
                         </resource>
                     </webResources>

@@ -1,0 +1,19 @@
+module.exports = [
+    'lib/bootstrap-combined.min.css',
+    'js/shared/directives/zippy.css',
+    'lib/ngGrid/ng-grid.min.css',
+    'css/tree.css',
+    'css/datetimepicker.css',
+    'lib/treeview/css/angular.treeview.css',
+    'css/virkailija.css',
+    'css/app.css',
+    'css/multiselect.css',
+    'css/mktextfield.css',
+    'css/richTextarea.css',
+    'css/mkRichTextarea.css',
+    'css/mktabs.css',
+    'css/mktext.css',
+    'css/tarjontaform.css',
+    'css/dateTime.css',
+    'css/resultsTreeTable.css'
+];
