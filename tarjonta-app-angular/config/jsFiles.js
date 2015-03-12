@@ -14,7 +14,6 @@ module.exports = [
     'lib/bootstrap-datetimepicker.sv.js',
     'lib/underscore/underscore.js',
     'lib/oph.js',
-    'lib/tinymce/tinymce.min.js',
     'lib/ui-angular-tinymce.js',
     'lib/imageupload.js',
     'lib/buckets-minified.js',

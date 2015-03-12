@@ -7,7 +7,6 @@ var concat = require('gulp-concat');
 var del = require('del');
 var runSequence = require('run-sequence');
 var bless = require('gulp-bless');
-var rename = require("gulp-rename");
 
 var BUILD_DIR = './dist';
 
@@ -44,19 +43,6 @@ gulp.task('copy', function() {
     return gulp.src('./app/**/*').pipe(gulp.dest(BUILD_DIR));
 });
 
-// TinyMCE loads js-files dynamically using AJAX.
-// After concat, the url-references are wrong.
-// Fix: copy files to where invalid references point
-gulp.task('fixTinyMCE', function() {
-    return gulp.src('./app/lib/tinymce/**/*')
-            .pipe(rename(function(path) {
-                if (path.extname === '.js') {
-                    path.basename = path.basename.replace('.min', '');
-                }
-            }))
-            .pipe(gulp.dest(BUILD_DIR + '/js'));
-});
-
 gulp.task('inject', function () {
     return gulp.src('./app/index.html')
             .pipe(inject(gulp.src([BUILD_DIR + '/js/all.js', BUILD_DIR + '/css/all.css'], {read:false}), {
@@ -82,7 +68,7 @@ gulp.task('concatCSS', function () {
 gulp.task('build:prod', function(cb) {
     runSequence(
         'clean',
-        ['copy', 'fixTinyMCE'],
+        'copy',
         ['concatJS', 'concatCSS'],
         'inject',
         cb
