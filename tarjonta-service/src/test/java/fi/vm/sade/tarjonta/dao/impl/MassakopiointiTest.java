@@ -178,7 +178,6 @@ public class MassakopiointiTest extends TestData {
         ha2.setAlkamisPvm(new Date());
         ha2.setPaattymisPvm(new Date(ha2.getAlkamisPvm().getTime() + 10000));
         ha2.setHaku(from);
-        ;
         from.addHakuaika(ha2);
         from.setOrganisationOids(new String[]{"o1", "o2"});
         from.setTarjoajaOids(new String[]{"o1", "o2"});
@@ -189,12 +188,15 @@ public class MassakopiointiTest extends TestData {
         getPersistedKomoto1().getKoulutusmoduuli().getTekstit().put(KomoTeksti.KOULUTUKSEN_RAKENNE, new MonikielinenTeksti("fi", "blaah2"));
         getPersistedKomoto1().setKieliValikoima("KIEEEL", Lists.newArrayList("a1", "a2"));
         super.persist(getPersistedKomoto1());
-        getPersistedKomoto2().setTila(TarjontaTila.LUONNOS);
+        getPersistedKomoto1().setTila(TarjontaTila.JULKAISTU);
         kohde1.addKoulutusmoduuliToteutus(getPersistedKomoto2());
         getPersistedKomoto2().addHakukohde(kohde1);
         kohde1.setHakuaika(ha);
         super.persist(getPersistedKomoto2());
 
+        kohde1.setTila(TarjontaTila.JULKAISTU);
+        kohde2.setTila(TarjontaTila.JULKAISTU);
+        kohde3.setTila(TarjontaTila.JULKAISTU);
 
         kohde1.setLisatiedot(new MonikielinenTeksti());
         kohde1.getLisatiedot().addTekstiKaannos("fi", "lisätieto");
