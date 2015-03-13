@@ -46,7 +46,7 @@ public class MassPepareProcess {
 
     private static final Logger LOG = LoggerFactory.getLogger(MassPepareProcess.class);
     private static final int BATCH_SIZE = 100;
-    private static final TarjontaTila[] COPY_TILAS = {TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.VALMIS};
+    private static final TarjontaTila[] COPY_TILAS = {TarjontaTila.JULKAISTU};
 
     private ProcessV1RDTO state;
     private long startTs = 0L;
