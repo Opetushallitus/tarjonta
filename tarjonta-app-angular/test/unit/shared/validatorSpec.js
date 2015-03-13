@@ -14,6 +14,8 @@ describe('Validator', function() {
 
     beforeEach(function() {
         angular.module('config').value('globalConfig', CONFIG_ENV_MOCK);
+        module('KoulutusConverter');
+        module('Koodisto');
         module('Hakukohde');
         module('Validator');
         module('Organisaatio');

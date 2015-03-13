@@ -216,7 +216,8 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
         }
     };
 });
-app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
+app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, KoulutusConverterFactory,
+                                         Koodisto, $q) {
     function addValintakoeIfEmpty(hakukohde) {
         if (hakukohde.valintakokeet.length === 0) {
             var kieli = hakukohde.opetusKielet[0];
@@ -353,6 +354,21 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
                 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
                 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA'
             ], toteutustyyppi || this.toteutustyyppi);
+        },
+        getOptionsFromKoodisto: function(toteutustyyppi, koodisto, lang) {
+            var koulutustyyppiUri = KoulutusConverterFactory.STRUCTURE[toteutustyyppi].koulutustyyppiKoodiUri;
+            var deferred = $q.defer();
+            Koodisto.getAlapuolisetKoodiUrit([koulutustyyppiUri], koodisto, lang)
+                .then(function(koodis) {
+                    var options = _.map(koodis.map, function(koodi) {
+                        return {
+                            nimi: koodi.koodiNimi,
+                            uri: koodi.koodiUri + '#' + koodi.koodiVersio
+                        };
+                    });
+                    deferred.resolve(options);
+                });
+            return deferred.promise;
         }
     };
 

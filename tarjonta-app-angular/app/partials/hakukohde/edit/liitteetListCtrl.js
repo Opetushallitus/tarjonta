@@ -1,7 +1,7 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl');
 app.controller('LiitteetListController', function($scope, $q, LocalisationService, OrganisaatioService, Koodisto,
                 Hakukohde, Liite, dialogService, HakuService, $modal, Config, $location, TarjontaService,
-                HakukohdeService, KoulutusConverterFactory) {
+                HakukohdeService) {
     $scope.model = $scope.model || {};
     $scope.liitteetModel = {};
     $scope.liitteetModel.opetusKielet = [];
@@ -210,16 +210,10 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
             $scope.status.dirtify();
         }
     };
-    var setLiitetyypit = function(toteutusTyyppi) {
-        var koulutustyyppiUri = KoulutusConverterFactory.STRUCTURE[toteutusTyyppi].koulutustyyppiKoodiUri;
-        Koodisto.getAlapuolisetKoodiUrit([koulutustyyppiUri], 'liitetyypitamm', $scope.model.userLang)
-            .then(function(koodis) {
-                _.each(koodis.map, function(koodi) {
-                    $scope.liitteetModel.liitetyypit.push({
-                        nimi: koodi.koodiNimi,
-                        uri: koodi.koodiUri + '#' + koodi.koodiVersio
-                    });
-                });
+    var setLiitetyypit = function(toteutustyyppi) {
+        HakukohdeService.config.getOptionsFromKoodisto(toteutustyyppi, 'liitetyypitamm', $scope.model.userLang)
+            .then(function(options) {
+                $scope.liitteetModel.liitetyypit = options;
             });
     };
     setLiitetyypit($scope.model.hakukohde.toteutusTyyppi);
