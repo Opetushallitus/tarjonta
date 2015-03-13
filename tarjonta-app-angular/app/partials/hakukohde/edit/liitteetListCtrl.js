@@ -25,6 +25,7 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
                 liite.muuOsoiteEnabled = true;
             }
         }
+        liite.liitteenKuvaukset = liite.liitteenKuvaukset || {};
         return liite;
     }
     $scope.$on('liiteAdded', function(event, liite) {
