@@ -52,6 +52,15 @@ gulp.task('inject', function () {
             .pipe(gulp.dest(BUILD_DIR));
 });
 
+gulp.task('injectDev', function () {
+    return gulp.src('./app/index.html')
+        .pipe(inject(gulp.src(_.flatten([jsFiles, cssFiles]), {read:false}), {
+            addRootSlash: false,
+            ignorePath: '/app/'
+        }))
+        .pipe(gulp.dest(BUILD_DIR));
+});
+
 gulp.task('concatJS', function () {
     return gulp.src(jsFiles)
             .pipe(concat('all.js'))
@@ -71,6 +80,15 @@ gulp.task('build:prod', function(cb) {
         'copy',
         ['concatJS', 'concatCSS'],
         'inject',
+        cb
+    );
+});
+
+gulp.task('build:dev', function(cb) {
+    runSequence(
+        'clean',
+        'copy',
+        'injectDev',
         cb
     );
 });
