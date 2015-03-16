@@ -18,7 +18,7 @@ var app = angular.module('app.haku.review.ctrl', [
 ]);
 app.controller('HakuReviewController', function($scope, $route, $log, $routeParams, ParameterService, $location,
                 HakuV1Service, TarjontaService, dialogService, LocalisationService, $q, PermissionService,
-                OrganisaatioService, $modal) {
+                OrganisaatioService, $modal, AuthService) {
     $log = $log.getInstance('HakuReviewController');
     $scope.isMutable = false;
     $scope.isRemovable = false;
@@ -167,4 +167,9 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
     ParameterService.haeParametritUUSI(hakuOid).then(function(parameters) {
         $scope.parametrit = parameters;
     }); // ParameterService.haeHaunParametrit(hakuOid, $scope.parametrit);
+    var lang = AuthService.getLanguage().toLowerCase();
+    $scope.getAloituspaikat = function(hakukohde) {
+        var aloituspaikat = hakukohde.aloituspaikatKuvaukset || {};
+        return aloituspaikat[lang] || aloituspaikat[Object.keys(aloituspaikat)[0]] || hakukohde.aloituspaikat;
+    };
 });
