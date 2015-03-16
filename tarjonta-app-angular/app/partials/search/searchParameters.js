@@ -16,7 +16,8 @@ angular.module('search.hakutulokset.searchparameters', [])
                 kieli: fromParams('kieli', []),
                 kohdejoukko: fromParams('kohdejoukko', '*'),
                 oppilaitostyyppi: fromParams('oppilaitostyyppi', '*'),
-                kunta: fromParams('kunta', '*')
+                kunta: fromParams('kunta', '*'),
+                hakukohderyhma: fromParams('hakukohderyhma', '*')
             },
             reset: function() {
                 this.attributes.terms = '';
@@ -32,6 +33,7 @@ angular.module('search.hakutulokset.searchparameters', [])
                 this.attributes.kohdejoukko = '*';
                 this.attributes.oppilaitostyyppi = '*';
                 this.attributes.kunta = '*';
+                this.attributes.hakukohderyhma = '*';
             },
             addLanguage: function(language) {
                 var found = _.find(this.attributes.kieli, function(element) {
@@ -76,7 +78,8 @@ angular.module('search.hakutulokset.searchparameters', [])
                     kieli: languagesAsList(this.attributes.kieli),
                     kohdejoukko: this.attributes.kohdejoukko == '*' ? null : this.attributes.kohdejoukko,
                     oppilaitostyyppi: this.attributes.oppilaitostyyppi == '*' ? null : this.attributes.oppilaitostyyppi,
-                    kunta: this.attributes.kunta == '*' ? null : this.attributes.kunta
+                    kunta: this.attributes.kunta == '*' ? null : this.attributes.kunta,
+                    hakukohderyhma: this.attributes.hakukohderyhma == '*' ? null : this.attributes.hakukohderyhma
                 };
             },
             filtersActive: function() {
@@ -90,8 +93,8 @@ angular.module('search.hakutulokset.searchparameters', [])
                 this.attributes.kieli.length > 0 ||
                 this.attributes.kohdejoukko !== '*' ||
                 this.attributes.oppilaitostyyppi !== '*' ||
-                this.attributes.kunta !== '*';
-
+                this.attributes.kunta !== '*' ||
+                this.attributes.hakukohderyhma !== '*';
             }
         };
         function getDefaultHakuehdot() {

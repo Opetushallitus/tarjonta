@@ -271,7 +271,8 @@ public interface KoulutusV1Resource {
             @QueryParam("oppilaitostyyppi") String oppilaitostyyppi,
             @QueryParam("kunta") String kunta,
             @QueryParam("opetuskielet") List<String> opetuskielet,
-            @QueryParam("opetusJarjestajat") List<String> opetusJarjestajat
+            @QueryParam("opetusJarjestajat") List<String> opetusJarjestajat,
+            @QueryParam("hakukohderyhma") String hakukohderyhma
     );
 
     /**

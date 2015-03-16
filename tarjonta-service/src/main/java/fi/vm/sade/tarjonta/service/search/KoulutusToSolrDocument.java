@@ -37,6 +37,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ORGANISAATIORYHMAOID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
 import static fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper.getKoodiURIFromVersionedUri;
 
@@ -89,6 +90,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         addPohjakoulutusvaatimukset(komotoDoc, koulutusmoduuliToteutus);
         addKoulutuslajit(komotoDoc, koulutusmoduuliToteutus.getKoulutuslajiKoodiUris());
         addHakukohdeOids(komotoDoc, koulutusmoduuliToteutus);
+        addHakukohderyhmat(komotoDoc, koulutusmoduuliToteutus);
         addKoulutusAlkamisPvm(komotoDoc, koulutusmoduuliToteutus);
         addOppilaitostyypit(komotoDoc, organisaatiotiedot);
         addKunnat(komotoDoc, organisaatiotiedot);
@@ -105,6 +107,14 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         docs.add(komotoDoc);
 
         return docs;
+    }
+
+    private void addHakukohderyhmat(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus komoto) {
+        for (Hakukohde hakukohde : komoto.getHakukohdes()) {
+            for (Ryhmaliitos ryhmaliitos : hakukohde.getRyhmaliitokset()) {
+                komotoDoc.addField(ORGANISAATIORYHMAOID, ryhmaliitos.getRyhmaOid());
+            }
+        }
     }
 
     private void addKoulutusmoduuliTyyppi(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus koulutusmoduuliToteutus) {

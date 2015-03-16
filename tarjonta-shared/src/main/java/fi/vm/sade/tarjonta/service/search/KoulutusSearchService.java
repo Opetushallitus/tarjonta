@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ORGANISAATIORYHMAOID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
 
 @Component
@@ -133,12 +134,19 @@ public class KoulutusSearchService extends SearchService {
         addFilterForKunta(kysely, q);
         addFilterForOpetuskielet(kysely, q);
         addFilterForKoulutusmoduuliTyyppi(kysely.getKoulutusmoduuliTyyppi(), q);
+        addFilterForHakukohderyhma(kysely, q);
 
         // Älä palauta valmistavia koulutuksia. Nämä on aina "liitetty" johonkin toiseen koulutukseen, eikä niitä
         // listata hakutuloksissa siitä syystä
         excludeValmistavatKoulutukset(q);
 
         return q;
+    }
+
+    private void addFilterForHakukohderyhma(KoulutuksetKysely kysely, SolrQuery q) {
+        if (kysely.getHakukohderyhma() != null) {
+            q.addFilterQuery(String.format(matchFull(), ORGANISAATIORYHMAOID, kysely.getHakukohderyhma()));
+        }
     }
 
     private void addFilterForOpetuskielet(KoulutuksetKysely kysely, SolrQuery q) {

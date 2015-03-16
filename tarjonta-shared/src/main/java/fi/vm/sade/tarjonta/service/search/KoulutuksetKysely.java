@@ -44,6 +44,7 @@ public class KoulutuksetKysely implements Serializable {
 
     private TarjontaTila koulutuksenTila;
     private Date koulutuksenAlkamisPvmAlkaen = null;
+    private String hakukohderyhma;
 
     public String getKomoOid() {
         return komoOid;
@@ -262,6 +263,14 @@ public class KoulutuksetKysely implements Serializable {
 
     public List<KoulutusmoduuliTyyppi> getKoulutusmoduuliTyyppi() {
         return koulutusmoduuliTyyppi;
+    }
+
+    public String getHakukohderyhma() {
+        return hakukohderyhma;
+    }
+
+    public void setHakukohderyhma(String hakukohderyhma) {
+        this.hakukohderyhma = hakukohderyhma;
     }
 
 }

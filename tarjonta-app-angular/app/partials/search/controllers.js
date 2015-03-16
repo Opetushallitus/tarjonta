@@ -109,6 +109,15 @@ angular.module('app.search.controllers', [
         $scope.oppilaitostyyppioptions = SearchParameters.fetchCodeElementsToObject('oppilaitostyyppi');
         $scope.kuntaoptions = SearchParameters.fetchCodeElementsToObject('kunta');
         $scope.koulutustyyppioptions = SearchParameters.fetchCodeElementsToObject('koulutustyyppi');
+        OrganisaatioService.getRyhmat().then(function(ryhmat) {
+            var lang = AuthService.getLanguage().toLowerCase();
+            $scope.hakukohderyhmat = _.map(ryhmat, function(ryhma) {
+                return {
+                    key: ryhma.oid,
+                    label: ryhma.nimi[lang] || ryhma.nimi[Object.keys(ryhma.nimi)[0]]
+                };
+            });
+        });
     };
     $scope.selectLanguage = function(item) {
         $scope.spec.addLanguage(item);

@@ -123,7 +123,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             kohdejoukko: args.kohdejoukko ? args.kohdejoukko : null,
             oppilaitostyyppi: args.oppilaitostyyppi ? args.oppilaitostyyppi : null,
             kunta: args.kunta ? args.kunta : null,
-            opetuskielet: args.kieli ? args.kieli : null
+            opetuskielet: args.kieli ? args.kieli : null,
+            organisaatioRyhmaOid: args.hakukohderyhma
         };
         $log.debug('haeHakukohteet()', params);
         return CacheService.lookupResource(searchCacheKey('hakukohde', args), hakukohdeHaku, params, function(result) {
@@ -168,7 +169,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             opetuskielet: args.kieli ? args.kieli : null,
             kohdejoukko: args.kohdejoukko ? args.kohdejoukko : null,
             oppilaitostyyppi: args.oppilaitostyyppi ? args.oppilaitostyyppi : null,
-            kunta: args.kunta ? args.kunta : null
+            kunta: args.kunta ? args.kunta : null,
+            hakukohderyhma: args.hakukohderyhma
         };
         if (args.defaultTarjoaja) {
             params.defaultTarjoaja = args.defaultTarjoaja;

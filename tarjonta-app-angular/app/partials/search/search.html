@@ -172,6 +172,15 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="search-row">
+                    <div class="pull-left search-control">
+                        <div class="search-label">{{t('tarjonta.haku.hakukohderyhma')}}</div>
+                        <select ng-model="spec.attributes.hakukohderyhma" ng-options="ryhma.key as ryhma.label for ryhma in hakukohderyhmat | orderBy: 'label'">
+                            <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
 
