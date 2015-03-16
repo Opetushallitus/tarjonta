@@ -3,7 +3,7 @@ angular.module('Organisaatio', [
     'config',
     'Logging'
 ]) // "organisaatioservice"
-    .factory('OrganisaatioService', function($resource, $log, $q, Config) {
+    .factory('OrganisaatioService', function($resource, $log, $q, Config, $http) {
         $log = $log.getInstance('OrganisaatioService');
         var orgHaku = $resource(Config.env['organisaatio.api.rest.url'] + 'organisaatio/hae', null, {
             get: {
@@ -20,37 +20,29 @@ angular.module('Organisaatio', [
          * Eli jos "ryhmatyypit"-array sisältää "hakukohde" stringing.
          *
          * Esimerkkidataa:
-         * https://itest-virkailija.oph.ware.fi/organisaatio-service/rest/organisaatio/perse/ryhmat
+         * https://itest-virkailija.oph.ware.fi/organisaatio-service/rest/organisaatio/v2/ryhmat
          *
          * @returns {$q@call;defer.promise}
          */
         function getRyhmat(tyyppi) {
             tyyppi = tyyppi || 'hakukohde';
             var ret = $q.defer();
-            var orgRyhmat = $resource(Config.env['organisaatio.api.rest.url'] + 'organisaatio/:oid/ryhmat', {
-                oid: '@oid'
-            }, {
-                get: {
-                    method: 'GET',
-                    withCredentials: true,
-                    isArray: true,
-                    cache: true
-                }
+            var request = $http({
+                url: Config.env['organisaatio.api.rest.url'] + 'organisaatio/v2/ryhmat',
+                method: 'GET',
+                withCredentials: true,
+                cache: true
             });
-            orgRyhmat.get({
-                oid: 'perse'
-            }, function(result) {
-                $log.debug('  got result', result);
-                // Filter correct type
-                var tmp = [];
-                angular.forEach(result, function(group) {
-                    if (group.ryhmatyypit && group.ryhmatyypit.indexOf(tyyppi) >= 0) {
-                        tmp.push(group);
-                    }
-                });
-                ret.resolve(tmp);
-            }, function(err) {
-                $log.error('  got error', err);
+            request.then(function(result) {
+                ret.resolve(
+                    // Filter correct type
+                    _.filter(result.data, function(group) {
+                        return group.ryhmatyypit && group.ryhmatyypit.indexOf(tyyppi) >= 0;
+                    })
+                );
+            });
+            request.catch(function(err) {
+                $log.error('got error', err);
                 ret.reject(err);
             });
             return ret.promise;
