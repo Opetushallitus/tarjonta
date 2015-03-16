@@ -5,7 +5,7 @@
     <parent>
         <artifactId>tarjonta</artifactId>
         <groupId>fi.vm.sade.tarjonta</groupId>
-        <version>2015-10-SNAPSHOT</version>
+        <version>2015-12-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
