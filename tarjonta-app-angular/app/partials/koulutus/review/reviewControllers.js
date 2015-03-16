@@ -332,6 +332,13 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
                 .replace('korkeakoulu', 'ammatillinenaikuiskoulutus') + $scope.model.koulutus.oid +
                 '?lang=' + $scope.model.koodistoLocale;
         }
+        else if (_.contains([
+                    'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
+                    'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'
+                ], $scope.model.koulutus.toteutustyyppi)) {
+            $window.location.href = window.CONFIG.env['web.url.oppija.preview'].replace('korkeakoulu', 'valma') +
+                $scope.model.koulutus.oid + '?lang=' + $scope.model.koodistoLocale;
+        }
     };
     $scope.findHakukohdeNimi = function(lang, hakukohde) {
         var locale = lang && lang.locale || 'FI';
