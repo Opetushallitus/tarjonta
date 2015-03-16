@@ -83,7 +83,7 @@ public class EntityConverterToKomoRDTO {
 
         //other data
         kkDto.setKoulutusasteTyyppi(komo.getKoulutustyyppiEnum().getKoulutusasteTyyppi());
-        kkDto.setKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKoulutusUri(), NO_OVERRIDE_URI, FieldNames.KOULUTUS, NO, restParam));
+        kkDto.setKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKoulutusUri(), NO_OVERRIDE_URI, FieldNames.KOULUTUS, YES, restParam));
         kkDto.setTutkinto(commonConverter.convertToKoodiDTO(komo.getTutkintoUri(), NO_OVERRIDE_URI, FieldNames.TUTKINTO, YES, restParam));
         kkDto.setOpintojenLaajuusarvo(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusarvoUri(), NO_OVERRIDE_URI, FieldNames.OPINTOJEN_LAAJUUSARVO, YES, restParam));
         kkDto.setOpintojenLaajuusyksikko(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusyksikkoUri(), NO_OVERRIDE_URI, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, YES, restParam));
