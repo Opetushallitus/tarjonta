@@ -193,7 +193,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                                          'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA',
                                          'AIKUISTEN_PERUSOPETUS',
                                          'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
-                                         'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'], r.toteutustyyppiEnum)
+                                         'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER',
+                                         'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS'], r.toteutustyyppiEnum)
                             && r.pohjakoulutusvaatimus) {
                             r.nimi += ', ' + localize(r.pohjakoulutusvaatimus);
                         }

@@ -615,7 +615,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             onlyOneOpetuskieli: true
         }
     });
-    var AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA = angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+
+    var VALMA_TELMA = {
         KUVAUS_ORDER: [
             {
                 type: 'SISALTO',
@@ -643,23 +644,27 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 length: 2000
             }
         ],
-        RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
-            pohjakoulutusvaatimus: {
-                module: 'TUTKINTO'
-            }
-        }),
-        reviewFields: [
+        REVIEW_FIELDS: [
             'TAVOITTEET',
             'KOULUTUKSEN_RAKENNE',
             'JATKOOPINTO_MAHDOLLISUUDET',
-            'KOULUTUSOHJELMAN_VALINTA',
             'SISALTO',
             'KOHDERYHMA',
             'SIJOITTUMINEN_TYOELAMAAN',
             'KANSAINVALISTYMINEN',
             'YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA',
             'AMMATTINIMIKKEET'
-        ],
+        ]
+    };
+
+    var AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA = angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+        KUVAUS_ORDER: VALMA_TELMA.KUVAUS_ORDER,
+        RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+            pohjakoulutusvaatimus: {
+                module: 'TUTKINTO'
+            }
+        }),
+        reviewFields: VALMA_TELMA.REVIEW_FIELDS,
         params: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.params, {
             hideLinja: true,
             hideTutkintonimike: true
@@ -1116,6 +1121,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /* VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS INITIALIZATION PARAMETERS  */
         /*******************************************/
         VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+            KUVAUS_ORDER: VALMA_TELMA.KUVAUS_ORDER,
+            reviewFields: VALMA_TELMA.REVIEW_FIELDS,
             koulutustyyppiKoodiUri: 'koulutustyyppi_5',
             RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
                 opintojenLaajuusyksikko: {
