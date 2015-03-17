@@ -62,20 +62,7 @@
 
     <tr ng-show="!model.collapse.koulutukset">
         <th></th>
-        <td colspan="2">
-            <table class="table">
-                <tr data-ng-repeat="koulutus in  model.koulutukses">
-                    <td>
-                        <a ng-href="#/koulutus/{{koulutus.oid}}">{{koulutus.nimi}}</a>
-                    </td>
-                    <td>
-                        <div class="align-right">
-                            <a class="btn" href ng-click="showKoulutusHakukohtees(koulutus)"><span tt="hakukohde.review.koulutus.nayta.hakukohteet"/> <span class="icon-eye-open"></span></a>
-                            <a class="btn" href ng-disabled="!isMutable" ng-click="removeKoulutusFromHakukohde(koulutus)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></a>
-                        </div>
-                    </td>
-                </tr>
-            </table>
+        <td colspan="2" ng-include="'partials/hakukohde/review/koulutukset_listing.html'">
         </td>
     </tr>
 

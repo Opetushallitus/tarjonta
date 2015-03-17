@@ -1,0 +1,19 @@
+<table class="table">
+    <tr data-ng-repeat="hakukohde in model.hakukohteet">
+        <td>
+            <a href="#/hakukohde/{{hakukohde.oid}}">{{hakukohde.nimi}}</a>
+        </td>
+        <td class="tila">
+            {{hakukohde.tilaNimi}}
+        </td>
+        <td>
+            <div class="align-right">
+                <button class="btn" ng-disabled="!canRemoveHakukohdeFromKoulutus(hakukohde)"
+                        ng-click="removeKoulutusFromHakukohde(hakukohde)">
+                    <span tt="hakukohde.review.koulutus.poista">Poista hakukohteelta</span>
+                    <span class="icon-remove"></span>
+                </button>
+            </div>
+        </td>
+    </tr>
+</table>

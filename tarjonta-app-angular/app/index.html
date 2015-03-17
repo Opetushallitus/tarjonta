@@ -95,10 +95,16 @@
                         <h2 tt="hakukohde.title">Hakukohteiden hallinta</h2>
 
                         <div data-ng-switch on="renderPath[1]">
-                            <div data-ng-switch-when="review" data-ng-controller="HakukohdeRoutingController">
+                            <div data-ng-switch-when="review_0" data-ng-controller="HakukohdeRoutingController">
                                 <div data-ng-include="'partials/hakukohde/review/review.html'"></div>
                             </div>
-                            <div data-ng-switch-when="edit" data-ng-controller="HakukohdeRoutingController">
+                            <div data-ng-switch-when="review_1" data-ng-controller="HakukohdeRoutingController">
+                                <div data-ng-include="'partials/hakukohde/review/review.html'"></div>
+                            </div>
+                            <div data-ng-switch-when="edit_0" data-ng-controller="HakukohdeRoutingController">
+                                <div data-ng-include="'partials/hakukohde/edit/edit.html'"></div>
+                            </div>
+                            <div data-ng-switch-when="edit_1" data-ng-controller="HakukohdeRoutingController">
                                 <div data-ng-include="'partials/hakukohde/edit/edit.html'"></div>
                             </div>
                             <div data-ng-switch-default>

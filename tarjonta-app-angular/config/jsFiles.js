@@ -127,6 +127,7 @@ module.exports = [
     'lib/ui-bootstrap-tpls-0.11.0.js',
     'partials/common/dialogService.js',
     'partials/tarjontaApp.js',
+    'partials/common/koulutusHakukohdeListing.js',
     'partials/hakukausi/hakukausi.js',
     'partials/init.js'
 ];

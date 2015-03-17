@@ -13,7 +13,7 @@ var app = angular.module('app.kk.edit.hakukohde.review.ctrl', [
 app.controller('HakukohdeReviewController', function($scope, $q, $log, LocalisationService, OrganisaatioService,
              Koodisto, Hakukohde, AuthService, dialogService, HakuService, $modal, Config, $location, $timeout,
              $route, TarjontaService, HakukohdeKoulutukses, SisaltyvyysUtil, TreeHandlers,
-             PermissionService, HakukohdeService, MyRolesModel) {
+             PermissionService, koulutusHakukohdeListing) {
     $log = $log.getInstance('HakukohdeReviewController');
     $log.debug('init...');
     // by default disable
@@ -354,7 +354,8 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
                                 $scope.isKK = lopullinenTulos.koulutusasteTyyppi == 'KORKEAKOULUTUS';
                                 var koulutus = {
                                     nimi: lopullinenTulos.nimi,
-                                    oid: lopullinenTulos.oid
+                                    oid: lopullinenTulos.oid,
+                                    tilaNimi: lopullinenTulos.tilaNimi
                                 };
                                 // KJOH-778 monta tarjoajaa
                                 var tarjoajatiedot = $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot;
@@ -657,21 +658,9 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         removeKoulutusRelationsFromHakukohde(koulutukset);
     };
     $scope.showKoulutusHakukohtees = function(koulutus) {
-        var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes(koulutus.oid);
-        hakukohdePromise.then(function(hakukohteet) {
-            var modalInstance = $modal.open({
-                templateUrl: 'partials/hakukohde/review/showKoulutusHakukohtees.html',
-                controller: 'ShowKoulutusHakukohtees',
-                windowClass: 'liita-koulutus-modal',
-                resolve: {
-                    hakukohtees: function() {
-                        return hakukohteet.result;
-                    },
-                    selectedLocale: function() {
-                        return $scope.model.userLang;
-                    }
-                }
-            });
+        koulutusHakukohdeListing({
+            type: 'koulutus',
+            oid: koulutus.oid
         });
     };
     $scope.removeKoulutusFromHakukohde = function(koulutus) {
@@ -773,28 +762,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         });
     };
 });
-/*
- *
- * ----------------> Show koulutus hakukohdes modal controller definition
- * <-----------------
- *
- */
-app.controller('ShowKoulutusHakukohtees', function($scope, $log, $modalInstance, LocalisationService, hakukohtees,
-                                                   selectedLocale) {
-    $log = $log.getInstance('ShowKoulutusHakukohtees');
-    $log.debug('init...');
-    $scope.model = {};
-    $scope.model.locale = selectedLocale;
-    $scope.model.hakukohteet = hakukohtees;
-    $scope.model.translations = {
-        title: LocalisationService.t('hakukohde.review.koulutus.hakukohteet.title'),
-        okBtn: LocalisationService.t('hakukohde.review.koulutus.hakukohteet.ok.btn')
-    };
-    $scope.model.cancel = function() {
-        $log.debug('cancel');
-        $modalInstance.dismiss('cancel');
-    };
-});
+
 /*
  *
  * ----------------> Liita koulutus modal controller definition
@@ -892,8 +860,12 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
                     _.each(result.tulokset, function(rootTulos) {
                         _.each(rootTulos.tulokset, function(childTulos) {
                             _.each(childTulos.tarjoajat, function(tarjoaja) {
+                                var koulutuskoodi = '';
+                                if (childTulos.koulutuskoodi) {
+                                    koulutuskoodi = childTulos.koulutuskoodi.split('#')[0].split('_')[1];
+                                }
                                 hakutulos.push({
-                                    koulutuskoodi: childTulos.koulutuskoodi.split('#')[0].split('_')[1],
+                                    koulutuskoodi: koulutuskoodi,
                                     nimi: childTulos.nimi,
                                     tarjoaja: _.find(organizations, function(org) {
                                         return org.oid === tarjoaja;

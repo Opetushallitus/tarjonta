@@ -166,38 +166,6 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
             }
             return promise.promise;
         },
-        getKoulutusHakukohdes: function(koulutusOid) {
-            var promise = $q.defer();
-            if (koulutusOid !== undefined) {
-                var getKoulutusHakukohdesUri = Config.env.tarjontaRestUrlPrefix + 'koulutus/' + koulutusOid +
-                    '/hakukohteet';
-                $http.get(getKoulutusHakukohdesUri).success(function(data) {
-                    promise.resolve(data);
-                }).error(function(data) {
-                    promise.resolve(data);
-                });
-            }
-            else {
-                promise.resolve();
-            }
-            return promise.promise;
-        },
-        getHakukohdeKoulutukses: function(hakukohdeOid) {
-            if (hakukohdeOid !== undefined) {
-                var promise = $q.defer();
-                var getHakukohdeKoulutuksesUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/' + hakukohdeOid +
-                    '/koulutukset';
-                $http.get(getHakukohdeKoulutuksesUri).success(function(data) {
-                    promise.resolve(data);
-                }).error(function(data) {
-                    promise.resolve(data);
-                });
-                return promise.promise;
-            }
-            else {
-                return undefined;
-            }
-        },
         geValidateHakukohdeKomotos: function(komotoIds) {
             var promise = $q.defer();
             var serviceUrl = Config.env.tarjontaRestUrlPrefix + 'hakukohde/komotoSelectedCheck';

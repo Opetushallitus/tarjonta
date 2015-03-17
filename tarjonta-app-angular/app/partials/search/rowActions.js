@@ -1,39 +1,12 @@
 angular.module('search.hakutulokset.rows', [])
     .factory('RowActions', function(TarjontaService, LocalisationService, PermissionService, AuthService,
-                                     $modal, $location, KoulutusService) {
+                                     $modal, $location, KoulutusService, koulutusHakukohdeListing) {
         'use strict';
 
-        var LinksDialogCtrl = function($scope, $modalInstance) {
-            $scope.otsikko = 'tarjonta.linkit.otsikko.' + $scope.prefix;
-            $scope.eohje = 'tarjonta.linkit.eohje.' + $scope.prefix;
-            $scope.items = [];
-            $scope.ok = function() {
-                $modalInstance.close();
-            };
-            var base = $scope.prefix == 'koulutus' ? 'hakukohde' : 'koulutus';
-            var ret = $scope.prefix == 'koulutus' ?
-                TarjontaService.getKoulutuksenHakukohteet($scope.oid) :
-                TarjontaService.getHakukohteenKoulutukset($scope.oid);
-            ret.then(function(ret) {
-                for (var i in ret) {
-                    var s = ret[i];
-                    $scope.items.push({
-                        url: '#/' + base + '/' + s.oid,
-                        nimi: s.nimi
-                    });
-                }
-            });
-        };
-
-        function openLinksDialog(prefix, oid, nimi, $scope) {
-            var ns = $scope.$new();
-            ns.prefix = prefix;
-            ns.oid = oid;
-            ns.nimi = nimi;
-            $modal.open({
-                controller: LinksDialogCtrl,
-                templateUrl: 'partials/search/links-dialog.html',
-                scope: ns
+        function openLinksDialog(prefix, oid) {
+            koulutusHakukohdeListing({
+                type: prefix,
+                oid: oid
             });
         }
 
@@ -176,7 +149,7 @@ angular.module('search.hakutulokset.rows', [])
                 ret.push({
                     title: LocalisationService.t('tarjonta.toiminnot.' + prefix + '.linkit'),
                     action: function() {
-                        openLinksDialog(prefix, oid, nimi, $scope);
+                        openLinksDialog(prefix, oid);
                     }
                 });
             }

@@ -68,11 +68,7 @@ app.factory('MyRolesModel', function($http, $log, Config) {
                             instance.rolesToOrgsMap[role].push(org);
                         }
                     }
-                    else {
-                        $log.info('SKIPPING: \'' + roolit[i] + '\'');
-                    }
                 }
-                $log.info('AuthService: ROLES TO ORGANISATIONS MAP: ', instance.rolesToOrgsMap);
             }
         };
         //        $log.debug("myroles:", instance.myroles);
@@ -255,7 +251,6 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
                     }
                 });
             });
-            $log.debug('isUserInAnyOfRolesInOneOfOrganisations()', roles, organisationOids, result);
             return result;
         },
         /**
@@ -289,7 +284,6 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
                     }
                 });
             });
-            $log.debug('getOrganisations()', roles, result);
             return result;
         }
     };

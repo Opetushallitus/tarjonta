@@ -1,0 +1,16 @@
+<table class="table">
+    <tr data-ng-repeat="koulutus in model.koulutukses">
+        <td>
+            <a ng-href="#/koulutus/{{koulutus.oid}}">{{koulutus.nimi}}</a>
+        </td>
+        <td class="tila">
+            {{koulutus.tilaNimi}}
+        </td>
+        <td>
+            <div class="align-right">
+                <button class="btn" ng-click="showKoulutusHakukohtees(koulutus)"><span tt="hakukohde.review.koulutus.nayta.hakukohteet"/> <span class="icon-eye-open"></span></button>
+                <button class="btn" ng-disabled="!isMutable" ng-click="removeKoulutusFromHakukohde(koulutus)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></button>
+            </div>
+        </td>
+    </tr>
+</table>

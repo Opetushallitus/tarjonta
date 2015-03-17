@@ -576,7 +576,7 @@ angular.module('app').controller('AppRoutingCtrl', [
              * suoraan toisen koulutuksen tarkastelunäkymään ja se edellyttää controllerin alustamista.
              * Tällä kikalla varmistetaan se, että ng-switch match vaihtuu.
              */
-            if (renderPath[1] && renderPath[0] === 'koulutus') {
+            if (renderPath[1] && _.contains(['koulutus', 'hakukohde'], renderPath[0])) {
                 renderPath[1] += $scope.count % 2 === 0 ? '_0' : '_1';
             }
 

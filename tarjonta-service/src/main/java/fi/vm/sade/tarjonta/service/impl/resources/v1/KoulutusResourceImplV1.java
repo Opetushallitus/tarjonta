@@ -1006,7 +1006,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             String kunta,
             List<String> opetuskielet,
             List<String> jarjestajaOids,
-            String hakukohderyhma) {
+            String hakukohderyhma,
+            List<String> hakukohdeOids) {
 
         organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
         jarjestajaOids = jarjestajaOids != null ? jarjestajaOids : new ArrayList<String>();
@@ -1033,6 +1034,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         q.setKunta(kunta);
         q.opetuskielet(opetuskielet);
         q.setHakukohderyhma(hakukohderyhma);
+        q.getHakukohdeOids().addAll(hakukohdeOids);
 
         KoulutuksetVastaus r = koulutusSearchService.haeKoulutukset(q, defaultTarjoaja);
 

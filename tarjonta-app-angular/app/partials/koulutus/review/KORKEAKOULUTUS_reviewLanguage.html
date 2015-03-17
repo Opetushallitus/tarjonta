@@ -284,27 +284,11 @@
     </tr>
 
     <tbody ng-show="!model.collapse.hakukohteet">
-
-    <tr>
-        <th></th>
-        <td colspan="2">
-            <table class="table">
-                <tr data-ng-repeat="hakukohde in  model.hakukohteet">
-                    <td>
-                        <a ng-href="#/hakukohde/{{hakukohde.oid}}">{{findHakukohdeNimi(lang,hakukohde)}}</a>
-                    </td>
-                    <td>
-                        <div class="align-right">
-                            <!-- <a class="btn" href ><span tt="hakukohde.review.koulutus.nayta.koulutus">Näytä koulutus</span> <span class="icon-eye-open"></span></a> -->
-
-                            <a class="btn" ng-disabled="!canRemoveHakukohdeFromKoulutus(hakukohde)" href ng-click="removeKoulutusFromHakukohde(hakukohde)"><span tt="hakukohde.review.koulutus.poista">Poista hakukohteelta</span> <span class="icon-remove"></span></a>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-       </td>
-    </tr>
-
+        <tr>
+            <th></th>
+            <td colspan="2" ng-include="'partials/koulutus/review/hakukohteet_listing.html'">
+            </td>
+        </tr>
     </tbody>
 
 </table>

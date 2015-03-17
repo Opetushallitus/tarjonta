@@ -70,37 +70,43 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
     $scope.model.userLangUri = 'kieli_' + AuthService.getLanguage();
     var koulutusStructure = KoulutusConverterFactory.STRUCTURE[$scope.model.koulutus.toteutustyyppi];
     $scope.koulutusStructure = koulutusStructure;
-    var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.koulutus.oid);
-    hakukohdePromise.then(function(hakukohteet) {
-        $scope.model.hakukohteet = hakukohteet.result;
-    });
-    var checkIsOkToRemoveHakukohde = function(hakukohde) {
-        var hakukohdeQueryPromise = HakukohdeKoulutukses.getHakukohdeKoulutukses(hakukohde.oid);
-        hakukohdeQueryPromise.then(function(hakukohdeKoulutuksesResponse) {
-            if (hakukohdeKoulutuksesResponse.result.length > 1) {
-                var texts = {
-                    title: LocalisationService.t('koulutus.review.perustiedot.remove.koulutus.title'),
-                    description: LocalisationService.t('koulutus.review.perustiedot.remove.koulutus.desc'),
-                    ok: LocalisationService.t('ok'),
-                    cancel: LocalisationService.t('cancel')
-                };
-                var d = dialogService.showDialog(texts);
-                d.result.then(function(data) {
-                    if (data) {
-                        reallyRemoveHakukohdeFromKoulutus(hakukohde);
-                    }
-                });
-            }
-            else {
-                $scope.model.validationmsgs.push('koulutus.review.hakukohde.remove.exp.msg');
-                $scope.model.showError = true;
-            }
+    TarjontaService.getKoulutuksenHakukohteet($scope.model.koulutus.oid)
+        .then(function(hakukohteet) {
+            $scope.model.hakukohteet = hakukohteet;
         });
+    var checkIsOkToRemoveHakukohde = function(hakukohde) {
+        TarjontaService.getHakukohteenKoulutukset(hakukohde.oid)
+            .then(function(koulutukset) {
+                if (koulutukset.length > 1) {
+                    var texts = {
+                        title: LocalisationService.t('koulutus.review.perustiedot.remove.koulutus.title'),
+                        description: LocalisationService.t('koulutus.review.perustiedot.remove.koulutus.desc'),
+                        ok: LocalisationService.t('ok'),
+                        cancel: LocalisationService.t('cancel')
+                    };
+                    var d = dialogService.showDialog(texts);
+                    d.result.then(function(data) {
+                        if (data) {
+                            reallyRemoveHakukohdeFromKoulutus(hakukohde);
+                        }
+                    });
+                }
+                else {
+                    dialogService.showDialog({
+                        title: '',
+                        description: '<p class="errors">' +
+                                        LocalisationService.t('koulutus.review.hakukohde.remove.exp.msg') + '</p>',
+                        cancel: false
+                    });
+                }
+            });
     };
     var reallyRemoveHakukohdeFromKoulutus = function(hakukohde) {
-        var koulutusOids = [];
-        koulutusOids.push($scope.model.koulutus.oid);
-        HakukohdeKoulutukses.removeKoulutuksesFromHakukohde(hakukohde.oid, koulutusOids);
+        var koulutukset = [{
+            oid: $scope.model.koulutus.oid,
+            tarjoajaOid: $scope.model.koulutus.organisaatio.oid
+        }];
+        HakukohdeKoulutukses.removeKoulutuksesFromHakukohde(hakukohde.oid, koulutukset);
         angular.forEach($scope.model.hakukohteet, function(loopHakukohde) {
             if (loopHakukohde.oid === hakukohde.oid) {
                 var indx = $scope.model.hakukohteet.indexOf(loopHakukohde);
@@ -452,7 +458,9 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
     }
     $scope.treeClickHandler = function(obj, event) {};
     $scope.canRemoveHakukohdeFromKoulutus = function(hakukohde) {
-        return TarjontaService.parameterCanRemoveHakukohdeFromHaku(hakukohde.relatedOid);
+        // Not yet possible to remove hakukohde if koulutus has multiple tarjoaja
+        var isMultiTarjoaja = $scope.model.koulutus.organisaatiot && $scope.model.koulutus.organisaatiot.length > 1;
+        return !isMultiTarjoaja && TarjontaService.parameterCanRemoveHakukohdeFromHaku(hakukohde.hakuOid);
     };
     $scope.getKoulutusohjelmaNimi = function() {
         if (!$scope.model.header.nimi) {

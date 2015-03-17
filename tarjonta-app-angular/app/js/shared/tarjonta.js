@@ -124,9 +124,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             oppilaitostyyppi: args.oppilaitostyyppi ? args.oppilaitostyyppi : null,
             kunta: args.kunta ? args.kunta : null,
             opetuskielet: args.kieli ? args.kieli : null,
-            organisaatioRyhmaOid: args.hakukohderyhma
+            organisaatioRyhmaOid: args.hakukohderyhma,
+            koulutusOid: args.koulutusOid
         };
-        $log.debug('haeHakukohteet()', params);
         return CacheService.lookupResource(searchCacheKey('hakukohde', args), hakukohdeHaku, params, function(result) {
             result = result.result;
             // unwrap v1
@@ -148,7 +148,6 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 t.tulokset.sort(compareByName);
             }
             result.tulokset.sort(compareByName);
-            $log.info('haeHakukohteet() params, result', params, result);
             return result;
         });
     };
@@ -170,7 +169,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             kohdejoukko: args.kohdejoukko ? args.kohdejoukko : null,
             oppilaitostyyppi: args.oppilaitostyyppi ? args.oppilaitostyyppi : null,
             kunta: args.kunta ? args.kunta : null,
-            hakukohderyhma: args.hakukohderyhma
+            hakukohderyhma: args.hakukohderyhma,
+            hakukohdeOid: args.hakukohdeOid
         };
         if (args.defaultTarjoaja) {
             params.defaultTarjoaja = args.defaultTarjoaja;
@@ -255,21 +255,39 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         }
         return ret;
     }
-    dataFactory.getKoulutuksenHakukohteet = function(oid) {
-        var ret = $q.defer();
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + oid + '/hakukohteet')
-                        .get({}, function(res) {
-            ret.resolve(cleanAndLocalizeArray(res.result));
+    function flattenSearchResults(results) {
+        return _.chain(results).map(function(resultsForTarjoaja) {
+            return _.map(resultsForTarjoaja.tulokset, function(row) {
+                return _.extend(row, {
+                    tarjoaja: {
+                        oid: resultsForTarjoaja.oid,
+                        nimi: resultsForTarjoaja.nimi
+                    }
+                });
+            });
+        }).flatten(true).value();
+    }
+    dataFactory.getKoulutuksenHakukohteet = function(koulutusOid) {
+        var deferred = $q.defer();
+        dataFactory.haeHakukohteet({
+            koulutusOid: koulutusOid
+        }).then(function(data) {
+            deferred.resolve(
+                flattenSearchResults(data.tulokset)
+            );
         });
-        return ret.promise;
+        return deferred.promise;
     };
-    dataFactory.getHakukohteenKoulutukset = function(oid) {
-        var ret = $q.defer();
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + 'hakukohde/' + oid + '/koulutukset')
-                        .get({}, function(res) {
-            ret.resolve(cleanAndLocalizeArray(res.result));
+    dataFactory.getHakukohteenKoulutukset = function(hakukohdeOid) {
+        var deferred = $q.defer();
+        dataFactory.haeKoulutukset({
+            hakukohdeOid: hakukohdeOid
+        }).then(function(data) {
+            deferred.resolve(
+                flattenSearchResults(data.tulokset)
+            );
         });
-        return ret.promise;
+        return deferred.promise;
     };
     dataFactory.koulutus = function(oid) {
         return $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/', {}, {
