@@ -113,10 +113,14 @@
                     <mk-textfield model="hakuaika.nimet" required="true" name="haunNimet"></mk-textfield>
                 </td>
                 <td>
-                    <t-date-time type="long" name="alkuPvm" timestamp="true" scope-model="hakuaika.alkuPvm" required max="hakuaika.loppuPvm" ></t-date-time>
+                    <t-date-time type="long" name="alkuPvm" timestamp="true" scope-model="hakuaika.alkuPvm"
+                                 tt-bounds="haku.edit.alkuPvm.error"
+                                 required max="hakuaika.loppuPvm" ></t-date-time>
                 </td>
                 <td>
-                    <t-date-time type="long" name="loppuPvm" timestamp="true" scope-model="hakuaika.loppuPvm" ng-required="!isJatkuvaHaku()" min="hakuaika.alkuPvm"></t-date-time>
+                    <t-date-time type="long" name="loppuPvm" timestamp="true" scope-model="hakuaika.loppuPvm"
+                                 tt-bounds="haku.edit.loppuPvm.error"
+                                 ng-required="!isJatkuvaHaku()" min="hakuaika.alkuPvm"></t-date-time>
                 </td>
                 <td class="controls">
                     <button class="btn" ng-click="doRemoveHakuaika(hakuaika, $index)"><!-- <span tt="tarjonta.toiminnot.poista">Poista</span> --> <span class="icon-remove"></span></button>

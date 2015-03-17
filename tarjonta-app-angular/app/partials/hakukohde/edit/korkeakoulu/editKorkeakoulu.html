@@ -80,11 +80,13 @@
                         <td>
                             <span class="datetimepicker-label" tt="kk.hakukohde.alkaa">Alkaa</span>
                             <t-date-time timestamp="true" type="long" min="model.hakuaikaMin"
+                                tt-bounds="hakukohde.edit.hakuaika.errors"
                                 max="model.hakukohde.hakuaikaLoppuPvm ? model.hakukohde.hakuaikaLoppuPvm : model.hakuaikaMax"
                                 scope-model="model.hakukohde.hakuaikaAlkuPvm" change="status.dirtify()"></t-date-time>
 
                             <span class="datetimepicker-label" tt="kk.hakukohde.loppuu">Loppuu</span>
                             <t-date-time timestamp="true" type="long"
+                                tt-bounds="hakukohde.edit.hakuaika.errors"
                                 min="model.hakukohde.hakuaikaAlkuPvm ? model.hakukohde.hakuaikaAlkuPvm : model.hakuaikaMin"
                                 max="model.hakuaikaMax" scope-model="model.hakukohde.hakuaikaLoppuPvm"
                                 change="status.dirtify()"></t-date-time>

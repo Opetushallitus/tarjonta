@@ -130,7 +130,8 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
                 $scope.errors.required = false;
             }
             if ($scope.form) {
-                $scope.form.$setValidity('tDateTime', !$scope.errors.required);
+                var isInvalid = $scope.errors.required || violation;
+                $scope.form.$setValidity('tDateTime', !isInvalid);
                 // Hack: joissain tilanteissa formin referenssi $error muuttujaan katoaa, jolloin
                 // validointi ei enää toimi oikein. Tämä korjaa asian.
                 if ($scope.name) {
@@ -155,8 +156,9 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
         var thisyear = new Date().getFullYear();
         $scope.onFocusOut = function() {
             omitUpdate = false;
-            updateModels();
+            $scope.error = false;
             if ($scope.ttBounds && violation) {
+                $scope.error = true;
                 dialogService.showDialog({
                     ok: LocalisationService.t('ok'),
                     cancel: null,
@@ -167,7 +169,9 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
                         dateTimeToString(maxTime())
                     ])
                 });
+                return;
             }
+            updateModels();
             violation = null;
         };
         $scope.onModelChanged = function() {
