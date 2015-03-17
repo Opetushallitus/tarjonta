@@ -345,9 +345,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
     * ei näytetä koodisto-dropdownia (kuten muilla koulutuksilla), joten
     * sen arvo asetetaan automaattisesti tällä funktiolla.
     */
-    function koulutusohjelmanNimiKannassaInit($scope, opts) {
-        opts = opts || {};
-        if (!$scope.model.koulutusohjelmanNimiKannassa && !opts.skipNew) {
+    function koulutusohjelmanNimiKannassaInit($scope) {
+        if (!$scope.model.koulutusohjelmanNimiKannassa) {
             $scope.model.koulutusohjelmanNimiKannassa = {};
         }
         $scope.$watch('uiModel.koulutusohjelmaModules', function(newVal) {
@@ -1129,11 +1128,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                     module: 'TUTKINTO'
                 }
             }),
-            initFunction: function($scope) {
-                koulutusohjelmanNimiKannassaInit($scope, {skipNew: true});
-            },
             params: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.params, {
-                hideLinja: true
+                hideLinja: true,
+                hideTutkintonimike: true
             })
         }),
         /*******************************************/

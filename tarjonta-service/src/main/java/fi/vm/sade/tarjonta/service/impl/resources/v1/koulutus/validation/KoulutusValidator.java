@@ -216,7 +216,8 @@ public class KoulutusValidator {
     private static void validateKoodistoRelationsGeneric(KoulutusGenericV1RDTO dto, ResultV1RDTO result) {
         if (!(dto instanceof KoulutusAmmatillinenPerustutkintoV1RDTO
                 || dto instanceof KoulutusAmmatilliseenPeruskoulutukseenValmentavaV1RDTO
-                || dto instanceof KoulutusAmmatilliseenPeruskoulutukseenValmentavaERV1RDTO)) {
+                || dto instanceof KoulutusAmmatilliseenPeruskoulutukseenValmentavaERV1RDTO
+                || dto instanceof KoulutusValmentavaJaKuntouttavaV1RDTO)) {
             validateKoodi(
                 result,
                 dto.getKoulutusohjelma(),
