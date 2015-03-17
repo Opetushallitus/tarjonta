@@ -150,59 +150,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     var checkIsOkToRemoveKoulutus = function() {
         return $scope.model.koulutukses.length > 1;
     };
-    var createFormattedDateString = function(date) {
-        return moment(date).format('DD.MM.YYYY HH:mm');
-    };
-    var filterNewKoulutukses = function(koulutukses) {
-        var newKoulutukses = [];
-        angular.forEach(koulutukses, function(koulutusOid) {
-            var wasFound = false;
-            angular.forEach($scope.model.koulutukses, function(koulutus) {
-                if (koulutus.oid === koulutusOid) {
-                    wasFound = true;
-                }
-            });
-            if (!wasFound) {
-                newKoulutukses.push(koulutusOid);
-            }
-        });
-        return newKoulutukses;
-    };
-    var filterRemovedKoulutusFromHakukohde = function(koulutusOid) {
-        angular.forEach($scope.model.hakukohde.hakukohdeKoulutusOids, function(hakukohdeKoulutusOid) {
-            if (hakukohdeKoulutusOid === koulutusOid) {
-                var index = $scope.model.hakukohde.hakukohdeKoulutusOids.indexOf(hakukohdeKoulutusOid);
-                $scope.model.hakukohde.hakukohdeKoulutusOids.splice(index, 1);
-            }
-        });
-    };
-    var filterKoulutuksesToBeRemoved = function(newKoulutusOidArray) {
-        var koulutuksesToRemove = [];
-        angular.forEach($scope.model.koulutukses, function(koulutus) {
-            var koulutusFound = false;
-            angular.forEach(newKoulutusOidArray, function(newKoulutusOid) {
-                if (koulutus.oid === newKoulutusOid) {
-                    koulutusFound = true;
-                }
-            });
-            if (!koulutusFound) {
-                koulutuksesToRemove.push(koulutus.oid);
-            }
-        });
-        return koulutuksesToRemove;
-    };
-    /*
-       *
-       * ------------> Function to get koodisto koodis and call
-       * resultHandler to process those results
-       *
-       */
-    var getKoodisWithKoodisto = function(koodistoUri, resultHandlerFunction) {
-        var koodistoPromise = Koodisto.getAllKoodisWithKoodiUri(koodistoUri, $scope.model.userLang);
-        koodistoPromise.then(function(koodis) {
-            resultHandlerFunction(koodis);
-        });
-    };
     /*
        *
        * --------> Function to get specific koodi information and call
