@@ -40,10 +40,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class MassCommitProcess {
@@ -327,6 +324,8 @@ public class MassCommitProcess {
                 komoto.setUlkoinenTunniste(processId);
                 komoto.setViimIndeksointiPvm(indexFutureDate);
 
+                handleImage(komoto);
+
                 Set<Date> koulutuksenAlkamisPvms = komoto.getKoulutuksenAlkamisPvms();
                 komoto.setAlkamisVuosi(komoto.getAlkamisVuosi() + 1);
 
@@ -345,6 +344,22 @@ public class MassCommitProcess {
             }
         }
         indexKomotoIds.addAll(batchOfIndexIds);
+    }
+
+    private void handleImage(KoulutusmoduuliToteutus komoto) {
+        if (!komoto.getKuvat().isEmpty()) {
+            // At least at the moment there's only one image,
+            // even though there's a map for images
+            Map.Entry<String, BinaryData> kuva = komoto.getKuvat().entrySet().iterator().next();
+            Map<String, BinaryData> kuvatCopy = new HashMap<String, BinaryData>();
+
+            BinaryData bin = new BinaryData();
+            bin.setData(kuva.getValue().getData());
+            bin.setFilename(kuva.getValue().getFilename());
+            bin.setMimeType(kuva.getValue().getMimeType());
+            komoto.setKuvat(kuvatCopy);
+            komoto.setKuvaByUri(kuva.getKey(), bin);
+        }
     }
 
     private void insertHakukohdes(Set<String> oldOids, String processId, String targetHakuOid) {
