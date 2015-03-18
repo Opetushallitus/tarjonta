@@ -89,6 +89,23 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
         }
         return koodiValid;
     };
+
+    /**
+     * Palauta vain uusin versio jokaisesta koodista ja filtteröi
+     * pois vanhentuneet koodit
+     * @param {Array} koodis
+     * @returns {Array}
+     */
+    function rejectOldKoodis(koodis) {
+        var map = {};
+        _.each(koodis, function(koodi) {
+            var sameKoodi = map[koodi.koodiUri];
+            if (!sameKoodi || sameKoodi.versio < koodi.versio) {
+                map[koodi.koodiUri] = koodi;
+            }
+        });
+        return _.chain(map).toArray().filter(checkKoodiValidity).value();
+    }
     return {
         /*
          * Utility for checking active Koodisto codes.
@@ -216,13 +233,12 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                 }).query({
                 koodiUri: koodiUriParam
             }, function(koodis) {
-                    angular.forEach(koodis, function(koodi) {
-                        if (checkKoodiValidity(koodi, locale)) {
-                            returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
-                        }
-                    });
-                    returnYlapuoliKoodis.resolve(returnKoodis);
+                koodis = rejectOldKoodis(koodis);
+                angular.forEach(koodis, function(koodi) {
+                    returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
                 });
+                returnYlapuoliKoodis.resolve(returnKoodis);
+            });
             return returnYlapuoliKoodis.promise;
         },
         getAlapuolisetKoodit: function(koodiUriParam, locale) {
@@ -237,13 +253,12 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                 }).query({
                 koodiUri: koodiUriParam
             }, function(koodis) {
-                    angular.forEach(koodis, function(koodi) {
-                        if (checkKoodiValidity(koodi, locale)) {
-                            returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
-                        }
-                    });
-                    returnYlapuoliKoodis.resolve(returnKoodis);
+                koodis = rejectOldKoodis(koodis);
+                angular.forEach(koodis, function(koodi) {
+                    returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
                 });
+                returnYlapuoliKoodis.resolve(returnKoodis);
+            });
             return returnYlapuoliKoodis.promise;
         },
         /**
@@ -272,6 +287,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                     },
                     cache: true
                 }).get().$promise.then(function(koodis) {
+                    koodis = rejectOldKoodis(koodis);
                     vu.convertToResultMap(result, vu.filterKoodisByKoodistoUri(koodis, tyyppi), locale);
                 });
                 promises.push(promise);
@@ -309,6 +325,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                     },
                     cache: true
                 }).get().$promise.then(function(koodis) {
+                    koodis = rejectOldKoodis(koodis);
                     vu.convertToResultMap(result, vu.filterKoodisByKoodistoUri(koodis, tyyppi), locale);
                 });
                 promises.push(promise);
@@ -340,15 +357,14 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                     }).query({
                     koodistoUri: koodistoUriParam
                 }, function(koodis) {
+                    koodis = rejectOldKoodis(koodis);
                     angular.forEach(koodis, function(koodi) {
-                        if (checkKoodiValidity(koodi, locale)) {
-                            if (includePassive) {
+                        if (includePassive) {
+                            returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+                        }
+                        else {
+                            if (koodi.tila !== passiivinenTila) {
                                 returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
-                            }
-                            else {
-                                if (koodi.tila !== passiivinenTila) {
-                                    returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
-                                }
                             }
                         }
                     });
