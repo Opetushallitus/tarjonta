@@ -225,13 +225,9 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
                 foldClose(childEms[i], false);
             }
         }
-        function onToggleFold(row, ev) {
-            console.log('ResultsTreeTable.onToggleFold()', [
-                row,
-                ev
-            ]);
+        function onToggleFold(row, ev, $row) {
             //var tbody = $(ev.currentTarget.parentElement.parentElement.parentElement);
-            var rowBody = $(ev.currentTarget.parentElement.parentElement);
+            var rowBody = $row || $(ev.currentTarget.parentElement.parentElement);
             //rowBody.toggleClass("folded");
             if (!rowBody.data('expanded')) {
                 var childEms = [];
@@ -408,6 +404,11 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             getTableEm().toggleClass('loading', true);
             getTableEm().html(renderTableHeaderHtml());
             appendRows(0, $scope.model, $scope.serial, null, [], 0, null);
+
+            // Unfold results if only one group
+            if ($scope.model.length === 1) {
+                onToggleFold($scope.model[0], null, $scope.model[0].$checkbox.parents('tr:first'));
+            }
         }
         function appendRows(index, model, serial, dst, ems, indent, parent) {
             //console.log("ResultsTreeTable.appendRows()",[index, model, serial, dst, ems, indent, parent]);

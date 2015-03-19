@@ -31,8 +31,8 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         collapse: {
             perusTiedot: false,
             kuvailevatTiedot: false,
-            sisaltyvatOpintokokonaisuudet: true,
-            hakukohteet: true,
+            sisaltyvatOpintokokonaisuudet: false,
+            hakukohteet: false,
             model: true
         },
         tutkintoohjelma: {},

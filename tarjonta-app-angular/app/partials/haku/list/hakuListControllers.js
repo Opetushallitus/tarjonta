@@ -250,11 +250,7 @@ var app = angular.module('app.haku.list.ctrl', [
             HakuV1Service.search(params).then(function(haut) {
                 // TODO järjestys backendiin?
                 haut.sort(function(a, b) {
-                    var ret = a.tila.localeCompare(b.tila);
-                    if (ret === 0) {
-                        ret = a.nimi.localeCompare(b.nimi);
-                    }
-                    return ret;
+                    return a.nimi.localeCompare(b.nimi);
                 });
                 angular.forEach(haut, function(haku) {
                     if (haku.koulutuksenAlkamisVuosi === 0) {

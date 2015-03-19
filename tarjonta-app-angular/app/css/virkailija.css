@@ -302,3 +302,11 @@ hr {
 .table td a {
     display:inline-block;
 }
+
+/* Hakutulosten rivitys, jos tuloksen otsikko ei mahdu yhdelle riville:
+   alempien rivien indentointi samaksi kuin ensimmäisen rivin indentointi */
+#searchResults td .options + a {
+    vertical-align: top;
+    display: inline-block;
+    max-width: 83%;
+}
