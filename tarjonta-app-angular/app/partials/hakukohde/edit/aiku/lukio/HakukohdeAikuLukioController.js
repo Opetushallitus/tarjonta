@@ -3,26 +3,12 @@ app.controller('HakukohdeAikuLukioEditController', function($scope, $q, $log, Lo
                                                             Koodisto, Hakukohde, AuthService, HakuService, Config,
                                                             $location, $timeout, TarjontaService, Kuvaus,
                                                             CommonUtilService) {
-    var filterHakus = function(hakus) {
-        var targetUri = 'haku.kohdejoukko.aiku.uri';
-
-        if ($scope.model.hakukohde.toteutusTyyppi === 'AIKUISTEN_PERUSOPETUS') {
-            targetUri = 'haku.kohdejoukko.aikuistenPerusopetus.uri';
-        }
-        else if ($scope.model.hakukohde.toteutusTyyppi === 'EB_RP_ISH') {
-            targetUri = 'haku.kohdejoukko.ebRpIsh.uri';
-        }
-
-        return $scope.filterHakusWithOrgs(
-            $scope.filterHakuWithKohdejoukko(hakus, targetUri)
-        );
-    };
     var init = function() {
         $scope.model.userLang = AuthService.getLanguage();
         if ($scope.model.userLang === undefined) {
             $scope.model.userLang = 'FI';
         }
-        $scope.loadKoulutukses(filterHakus);
+        $scope.loadKoulutukses();
         $scope.haeTarjoajaOppilaitosTyypit();
         $scope.model.continueToReviewEnabled = $scope.checkJatkaBtn($scope.model.hakukohde);
         $scope.checkIsCopy();

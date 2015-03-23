@@ -66,84 +66,6 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             ($scope.koulutusKausiUri.indexOf('kausi_k') !== -1 &&
             $scope.model.koulutusVuosi === 2015);
     };
-    var filterHakuWithAikaAndKohdejoukko = function(hakus) {
-        var filteredHakus = [];
-        angular.forEach(hakus, function(haku) {
-            var kohdeJoukkoUriNoVersion = $scope.splitUri(haku.kohdejoukkoUri);
-            if (kohdeJoukkoUriNoVersion == window.CONFIG.app['haku.kohdejoukko.kk.uri']) {
-                if (haku.koulutuksenAlkamiskausiUri && haku.koulutuksenAlkamisVuosi) {
-                    //OVT-6800 --> Rajataan koulutuksen alkamiskaudella ja vuodella
-                    if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri
-                        && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
-                        filteredHakus.push(haku);
-                    }
-                }
-                else {
-                    filteredHakus.push(haku);
-                }
-            }
-        });
-        return filteredHakus;
-    };
-    var filterHakusForAmmatillinenAndLukio = function(hakus) {
-        return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_11#1');
-    };
-    var filterHakusForAmmatillinenValmistavaAndLisaopetus = function(hakus) {
-        return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_17#1');
-    };
-    var filterHakusForValmentavaJaKuntouttavaOpetus = function(hakus) {
-        if (hakukohdeBeforeSyksy2015()) {
-            return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_16#1');
-        } else {
-            return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_20#1');
-        }
-    };
-    var filterHakusForVapaanSivistystyonKoulutus = function(hakus) {
-        return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_18#1');
-    };
-    var filterHakusForAmmatillinenPeruskoulutusErityisopetuksena = function(hakus) {
-        if (hakukohdeBeforeSyksy2015()) {
-            return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_15#1');
-        } else {
-            return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_20#1');
-        }
-    };
-    var filterHakusForKorkeakoulu = function(hakus) {
-        var filtered = filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_12#1');
-        return _.filter(filtered, function(haku) {
-            return $scope.model.koulutusmoduuliTyyppi === haku.koulutusmoduuliTyyppi;
-        });
-    };
-    var hakuajanLoppuPvmInFuture = function(hakuaika) {
-        return hakuaika.loppuPvm > new Date().getTime();
-    };
-    var filterHakusByKohdejoukkoAndOrgs = function(hakus, haunKohdejoukko) {
-        hakus = $scope.filterHakusWithOrgs(hakus);
-        var filteredHakus = [];
-        angular.forEach(hakus, function(haku) {
-            if (haku.kohdejoukkoUri === haunKohdejoukko) {
-                if (haku.hakutapaUri.indexOf(HAKUTAPA.JATKUVA_HAKU) !== -1) {
-                    var hakuaika = _.first(haku.hakuaikas);
-                    if (hakuaika.loppuPvm !== undefined) {
-                        if (hakuajanLoppuPvmInFuture(hakuaika)) {
-                            filteredHakus.push(haku);
-                        }
-                    }
-                    else {
-                        filteredHakus.push(haku);
-                    }
-                }
-                else if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri
-                    && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
-                    filteredHakus.push(haku);
-                }
-            }
-        });
-        return filteredHakus;
-    };
-    var filterHakus = function(hakus) {
-        return filterHakuWithAikaAndKohdejoukko($scope.filterHakusWithOrgs(hakus));
-    };
     //Placeholder for multiselect remove when refactored
     $scope.model.temp = {};
     $scope.model.ryhmaChange = function() {
@@ -157,31 +79,6 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             });
         }
     };
-    var getHakusFilterFunctionBasedOnToteutusTyyppi = function(toteutusTyyppi) {
-        if (toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO' || toteutusTyyppi === 'LUKIOKOULUTUS') {
-            return filterHakusForAmmatillinenAndLukio;
-        }
-        else if (_.contains(['PERUSOPETUKSEN_LISAOPETUS',
-                'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS',
-                'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
-                'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
-                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA'], toteutusTyyppi)) {
-            return filterHakusForAmmatillinenValmistavaAndLisaopetus;
-        }
-        else if (_.contains(['VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
-                             'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'], toteutusTyyppi)) {
-            return filterHakusForValmentavaJaKuntouttavaOpetus;
-        }
-        else if (toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS') {
-            return filterHakusForVapaanSivistystyonKoulutus;
-        }
-        else if (toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA') {
-            return filterHakusForAmmatillinenPeruskoulutusErityisopetuksena;
-        } else if (toteutusTyyppi === 'KORKEAKOULUTUS') {
-            return filterHakusForKorkeakoulu;
-        }
-        return filterHakus;
-    };
     var init = function() {
         $log.info('init()');
         $scope.model.userLang = AuthService.getLanguage();
@@ -193,7 +90,7 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             $scope.checkPermissions($scope.model.hakukohde.oid);
         }
         $scope.loadHakukelpoisuusVaatimukset();
-        $scope.loadKoulutukses(getHakusFilterFunctionBasedOnToteutusTyyppi($scope.model.hakukohde.toteutusTyyppi));
+        $scope.loadKoulutukses();
         $scope.canSaveParam($scope.model.hakukohde.hakuOid);
         $scope.haeTarjoajaOppilaitosTyypit();
         $scope.model.continueToReviewEnabled = $scope.checkJatkaBtn($scope.model.hakukohde);

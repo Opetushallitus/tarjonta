@@ -51,25 +51,18 @@ app.controller('HakukohdeAikuNayttoEditController', function($scope, $q, $log, L
             $scope.osaamisalat = context.arvot;
         });
     };
-    // TODO: Add naytto specific haku filtering logic
-    var filterHakus = function(hakus) {
-        return $scope.filterHakusWithOrgs($scope.filterHakuWithKohdejoukko(
-            $scope.filterPoistettuHaku(hakus),
-            'haku.kohdejoukko.aiku.uri'
-        ));
-    };
     /**
-               *
-               * Controller initialization function which is called when controller
-               * loads
-               *
-               */
+       *
+       * Controller initialization function which is called when controller
+       * loads
+       *
+       */
     var init = function() {
         $scope.model.userLang = AuthService.getLanguage();
         if ($scope.model.userLang === undefined) {
             $scope.model.userLang = 'FI';
         }
-        $scope.loadKoulutukses(filterHakus);
+        $scope.loadKoulutukses();
         $scope.haeTarjoajaOppilaitosTyypit();
         $scope.model.continueToReviewEnabled = $scope.checkJatkaBtn($scope.model.hakukohde);
         $scope.checkIsCopy();

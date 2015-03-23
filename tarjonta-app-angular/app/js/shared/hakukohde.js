@@ -338,6 +338,11 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
                     deferred.resolve(options);
                 });
             return deferred.promise;
+        },
+        getHaunKohdejoukko: function(toteutustyyppi) {
+            toteutustyyppi = toteutustyyppi || this.toteutustyyppi;
+            var koulutustyyppiUri = KoulutusConverterFactory.STRUCTURE[toteutustyyppi].koulutustyyppiKoodiUri;
+            return Koodisto.getYlapuolisetKoodiUrit([koulutustyyppiUri], 'haunkohdejoukko', 'fi');
         }
     };
 
