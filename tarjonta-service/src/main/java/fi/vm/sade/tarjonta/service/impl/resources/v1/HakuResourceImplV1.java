@@ -335,6 +335,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         LOG.info("RETURN RESULT: " + result);
 
+        hakuCache.invalidate(FIND_ALL_CACHE_KEY);
+
         return result;
     }
 
@@ -373,6 +375,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             result.addError(ErrorV1RDTO.createValidationError(null, "haku.delete.error.notFound"));
         }
+
+        hakuCache.invalidate(FIND_ALL_CACHE_KEY);
 
         return result;
     }
@@ -447,6 +451,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             r.addError(ErrorV1RDTO.createValidationError(null, iae.getMessage()));
             return r;
         }
+
+        hakuCache.invalidate(FIND_ALL_CACHE_KEY);
 
         return new ResultV1RDTO<Tilamuutokset>(tm);
     }
