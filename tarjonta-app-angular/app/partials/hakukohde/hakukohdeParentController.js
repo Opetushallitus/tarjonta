@@ -39,6 +39,7 @@ app.controller('HakukohdeParentController', [
             'KORKEAKOULUTUS': korkeakoulutusHakukohdePartialUri,
             KORKEAKOULUOPINTO: korkeakouluOpintoHakukohdePartialUri,
             'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA': aikuLukioHakukohdePartialUri,
+            EB_RP_ISH: aikuLukioHakukohdePartialUri,
             'AMMATILLINEN_PERUSKOULUTUS': aikuNayttoHakukohdePartialUri,
             'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA': aikuNayttoHakukohdePartialUri,
             'ERIKOISAMMATTITUTKINTO': aikuNayttoHakukohdePartialUri,

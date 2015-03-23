@@ -9,6 +9,9 @@ app.controller('HakukohdeAikuLukioEditController', function($scope, $q, $log, Lo
         if ($scope.model.hakukohde.toteutusTyyppi === 'AIKUISTEN_PERUSOPETUS') {
             targetUri = 'haku.kohdejoukko.aikuistenPerusopetus.uri';
         }
+        else if ($scope.model.hakukohde.toteutusTyyppi === 'EB_RP_ISH') {
+            targetUri = 'haku.kohdejoukko.ebRpIsh.uri';
+        }
 
         return $scope.filterHakusWithOrgs(
             $scope.filterHakuWithKohdejoukko(hakus, targetUri)
@@ -31,6 +34,10 @@ app.controller('HakukohdeAikuLukioEditController', function($scope, $q, $log, Lo
             $scope.model.hakukohde.kaytetaanJarjestelmanValintaPalvelua = true;
         }
         $scope.enableOrDisableTabs();
+
+        TarjontaService.getKoulutusPromise($scope.model.hakukohde.hakukohdeKoulutusOids[0]).then(function(response) {
+            $scope.model.koulutusohjelmaKoodiUri = response.result.koulutusohjelma.uri;
+        });
     };
     init();
     $scope.model.canSaveAsLuonnos = function() {

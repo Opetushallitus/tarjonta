@@ -270,6 +270,7 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
         }
         else if ([
                 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA',
+                'EB_RP_ISH',
                 'LUKIOKOULUTUS',
                 'AMMATILLINEN_PERUSTUTKINTO',
                 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA',

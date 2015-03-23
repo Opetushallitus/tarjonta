@@ -39,6 +39,7 @@ window.CONFIG.app = {
     'haku.kohdejoukko.kk.uri' : 'haunkohdejoukko_12',
     'haku.kohdejoukko.aiku.uri' : 'haunkohdejoukko_10',
     'haku.kohdejoukko.aikuistenPerusopetus.uri': 'haunkohdejoukko_19',
+    'haku.kohdejoukko.ebRpIsh.uri': 'haunkohdejoukko_21',
     'haku.hakutapa.erillishaku.uri' : 'hakutapa_02',
     'haku.hakutapa.jatkuvahaku.uri' : 'hakutapa_03',
     'root.organisaatio.oid':'1.2.246.562.10.00000000001',

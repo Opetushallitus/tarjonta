@@ -142,6 +142,7 @@ public class EntityConverterToKomoRDTO {
             switch (toteutustyyppiEnum) {
                 case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
                 case LUKIOKOULUTUS:
+                case EB_RP_ISH:
                     dto.setOhjelmaUri(dto.getLukiolinjaUri());
                     break;
                 case ERIKOISAMMATTITUTKINTO:
