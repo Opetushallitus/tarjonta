@@ -342,7 +342,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
                     'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
                     'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'
                 ], $scope.model.koulutus.toteutustyyppi)) {
-            $window.location.href = window.CONFIG.env['web.url.oppija.preview'].replace('korkeakoulu', 'valma') +
+            $window.location.href = window.CONFIG.env['web.url.oppija.preview'].replace('korkeakoulu', 'koulutus') +
                 $scope.model.koulutus.oid + '?lang=' + $scope.model.koodistoLocale;
         }
     };
