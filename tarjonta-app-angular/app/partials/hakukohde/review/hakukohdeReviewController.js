@@ -216,6 +216,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     var loadHakukelpoisuusVaatimukses = function() {
         var koodistot = {
             LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA: 'hakukelpoisuusvaatimusta',
+            EB_RP_ISH: 'hakukelpoisuusvaatimusta',
             KORKEAKOULUTUS: 'pohjakoulutusvaatimuskorkeakoulut',
             LUKIOKOULUTUS: 'hakukelpoisuusvaatimusta',
             AMMATILLINEN_PERUSTUTKINTO: 'hakukelpoisuusvaatimusta'
