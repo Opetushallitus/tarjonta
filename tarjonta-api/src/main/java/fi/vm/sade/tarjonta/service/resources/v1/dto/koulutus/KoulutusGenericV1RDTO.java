@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author mlyly
  */
-public abstract class KoulutusGenericV1RDTO extends KoulutusV1RDTO {
+public class KoulutusGenericV1RDTO extends KoulutusV1RDTO {
 
     @ApiModelProperty(value = "Pohjakoulutusvaatimus-koodi", required = true)
     private KoodiV1RDTO pohjakoulutusvaatimus;
