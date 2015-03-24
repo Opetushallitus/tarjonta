@@ -19,6 +19,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
@@ -1483,6 +1484,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         copy.setKomotoOid(null);
         copy.setTila(TarjontaTila.LUONNOS);
         copy.setOrganisaatio(new OrganisaatioV1RDTO(orgOid, null, null));
+        copy.setOpetusTarjoajat(Sets.newHashSet(orgOid));
 
         return copy;
     }
