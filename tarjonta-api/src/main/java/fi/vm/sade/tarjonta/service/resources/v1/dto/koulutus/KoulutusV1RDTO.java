@@ -14,10 +14,16 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+
 import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeId;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -25,15 +31,11 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
-import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
-import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-
-import java.util.*;
-
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 /**
  *
@@ -66,7 +68,7 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
 
     @ApiModelProperty(value = "Koulutuksen toteutuksen tarkasti yksiloiva enumeraatio", required = true)
     @JsonTypeId
-    private final ToteutustyyppiEnum toteutustyyppi;
+    private ToteutustyyppiEnum toteutustyyppi;
 
     @ApiModelProperty(value = "Koulutusmoduulin karkeasti yksilöivä enumeraatio", required = true)
     private ModuulityyppiEnum moduulityyppi;
@@ -147,8 +149,12 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     private Set<String> children;
 
     public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
-        this.toteutustyyppi = toteutustyyppi;
+        this.setToteutustyyppi(toteutustyyppi);
         this.moduulityyppi = moduulityyppi;
+    }
+
+    // Default constructor for JSON deserializing
+    public KoulutusV1RDTO() {
     }
 
     public String getKomoOid() {
@@ -478,6 +484,13 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     }
 
     /**
+     * @param toteutustyyppi the toteutustyyppi to set
+     */
+    public void setToteutustyyppi(ToteutustyyppiEnum toteutustyyppi) {
+        this.toteutustyyppi = toteutustyyppi;
+    }
+    
+    /**
      * @return the moduulityyppi
      */
     public ModuulityyppiEnum getModuulityyppi() {
@@ -571,5 +584,4 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     public Set<String> getChildren() {
         return children;
     }
-
 }

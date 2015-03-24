@@ -35,8 +35,13 @@ public class KoulutusGenericV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan")
     private String linkkiOpetussuunnitelmaan;
 
-    protected KoulutusGenericV1RDTO(ToteutustyyppiEnum toteutustyyppiEnum, ModuulityyppiEnum moduulityyppiEnum) {
+    public KoulutusGenericV1RDTO(ToteutustyyppiEnum toteutustyyppiEnum, ModuulityyppiEnum moduulityyppiEnum) {
         super(toteutustyyppiEnum, moduulityyppiEnum);
+    }
+
+    // Default constructor for JSON deserializing
+    public KoulutusGenericV1RDTO() {
+        super();
     }
 
     /**

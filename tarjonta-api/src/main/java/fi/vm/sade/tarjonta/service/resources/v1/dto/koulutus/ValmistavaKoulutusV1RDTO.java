@@ -14,11 +14,12 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import java.util.Map;
+
 import com.wordnik.swagger.annotations.ApiModelProperty;
+
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-
-import java.util.Map;
 
 /**
  *
@@ -41,8 +42,13 @@ public class ValmistavaKoulutusV1RDTO extends KoulutusGenericV1RDTO {
     @ApiModelProperty(value = "Koulutusohjelman nimi kannassa", required = false)
     private Map<String, String> koulutusohjelmanNimiKannassa;
 
-    protected ValmistavaKoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
+    public ValmistavaKoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         super(toteutustyyppi, moduulityyppi);
+    }
+
+    // Default constructor for JSON deserializing
+    public ValmistavaKoulutusV1RDTO() {
+        super();
     }
 
     /**
