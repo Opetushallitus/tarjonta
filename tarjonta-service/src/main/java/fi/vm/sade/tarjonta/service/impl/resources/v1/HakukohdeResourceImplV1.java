@@ -512,6 +512,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             case ERIKOISAMMATTITUTKINTO:
             case AMMATTITUTKINTO:
             case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
+            case EB_RP_ISH:
             case AIKUISTEN_PERUSOPETUS:
                 validationMessageses.addAll(hakukohdeValidator
                         .validateAikuLukioHakukohde(hakukohdeV1RDTO));

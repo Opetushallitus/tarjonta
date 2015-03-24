@@ -182,6 +182,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             case LUKIOKOULUTUS:
                 result.setResult(converterToRDTO.convert(KoulutusLukioV1RDTO.class, komoto, restParam));
                 break;
+            case EB_RP_ISH:
+                result.setResult(converterToRDTO.convert(KoulutusEbRpIshV1RDTO.class, komoto, restParam));
+                break;
             case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
                 result.setResult(converterToRDTO.convert(KoulutusLukioAikuistenOppimaaraV1RDTO.class, komoto, restParam));
                 break;
@@ -899,6 +902,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         break;
                     case LUKIOKOULUTUS:
                     case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
+                    case EB_RP_ISH:
                         dto = KoulutusmoduuliLukioRelationV1RDTO.class.newInstance();
                         break;
                     default:
@@ -1300,6 +1304,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         case LUKIOKOULUTUS:
                             persisted = insertKoulutusGeneric((KoulutusLukioV1RDTO) koulutusDtoForCopy(KoulutusLukioV1RDTO.class, komoto, orgOid));
                             break;
+                        case EB_RP_ISH:
+                            persisted = insertKoulutusGeneric((KoulutusEbRpIshV1RDTO) koulutusDtoForCopy(KoulutusEbRpIshV1RDTO.class, komoto, orgOid));
+                            break;
                         case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
                             persisted = insertKoulutusGeneric((KoulutusLukioAikuistenOppimaaraV1RDTO) koulutusDtoForCopy(KoulutusLukioAikuistenOppimaaraV1RDTO.class, komoto, orgOid));
                             break;
@@ -1338,6 +1345,14 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                             break;
                         case AIKUISTEN_PERUSOPETUS:
                             persisted = insertKoulutusGeneric((KoulutusAikuistenPerusopetusV1RDTO) koulutusDtoForCopy(KoulutusAikuistenPerusopetusV1RDTO.class, komoto, orgOid));
+                            break;
+                        case AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA:
+                            persisted = insertKoulutusGeneric((KoulutusAmmatilliseenPeruskoulutukseenValmentavaV1RDTO)
+                                    koulutusDtoForCopy(KoulutusAmmatilliseenPeruskoulutukseenValmentavaV1RDTO.class, komoto, orgOid));
+                            break;
+                        case AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER:
+                            persisted = insertKoulutusGeneric((KoulutusAmmatilliseenPeruskoulutukseenValmentavaERV1RDTO)
+                                    koulutusDtoForCopy(KoulutusAmmatilliseenPeruskoulutukseenValmentavaERV1RDTO.class, komoto, orgOid));
                             break;
                         default:
                             throw new RuntimeException("Not implemented type : " + getType(komoto));

@@ -282,6 +282,7 @@ angular.module('Validator', [])
         function validate(model, haku) {
             var hakukohde = model.hakukohde;
             if (_.contains(['LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA',
+                            'EB_RP_ISH',
                             'AIKUISTEN_PERUSOPETUS',
                             'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA',
                             'AMMATILLINEN_PERUSKOULUTUS',

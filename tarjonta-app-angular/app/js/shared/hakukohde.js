@@ -302,6 +302,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER',
                 'LUKIOKOULUTUS',
                 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA',
+                'EB_RP_ISH',
                 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
                 'PERUSOPETUKSEN_LISAOPETUS',
                 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
@@ -337,6 +338,11 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
                     deferred.resolve(options);
                 });
             return deferred.promise;
+        },
+        getHaunKohdejoukko: function(toteutustyyppi) {
+            toteutustyyppi = toteutustyyppi || this.toteutustyyppi;
+            var koulutustyyppiUri = KoulutusConverterFactory.STRUCTURE[toteutustyyppi].koulutustyyppiKoodiUri;
+            return Koodisto.getYlapuolisetKoodiUrit([koulutustyyppiUri], 'haunkohdejoukko', 'fi');
         }
     };
 

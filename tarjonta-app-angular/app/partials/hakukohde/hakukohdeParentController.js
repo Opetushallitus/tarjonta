@@ -24,10 +24,11 @@ app.controller('HakukohdeParentController', [
     'dialogService',
     'HakukohdeService',
     'ValidatorService',
+    'HAKUTAPA',
     function($scope, $log, $routeParams, $route, $q, $modal, $location, Hakukohde,
                  Koodisto, AuthService, HakuService, LocalisationService, OrganisaatioService,
                  SharedStateService, TarjontaService, Kuvaus, CommonUtilService, PermissionService,
-                 dialogService, HakukohdeService, ValidatorService) {
+                 dialogService, HakukohdeService, ValidatorService, HAKUTAPA) {
 
         var korkeakoulutusHakukohdePartialUri = 'partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html';
         var korkeakouluOpintoHakukohdePartialUri = 'partials/hakukohde/edit/korkeakouluopinto/' +
@@ -39,6 +40,7 @@ app.controller('HakukohdeParentController', [
             'KORKEAKOULUTUS': korkeakoulutusHakukohdePartialUri,
             KORKEAKOULUOPINTO: korkeakouluOpintoHakukohdePartialUri,
             'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA': aikuLukioHakukohdePartialUri,
+            EB_RP_ISH: aikuLukioHakukohdePartialUri,
             'AMMATILLINEN_PERUSKOULUTUS': aikuNayttoHakukohdePartialUri,
             'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA': aikuNayttoHakukohdePartialUri,
             'ERIKOISAMMATTITUTKINTO': aikuNayttoHakukohdePartialUri,
@@ -322,7 +324,7 @@ app.controller('HakukohdeParentController', [
                 getOppilaitosTyyppis(data.organisaatiot);
             });
         };
-        $scope.loadKoulutukses = function(hakuFilterFunction) {
+        $scope.loadKoulutukses = function() {
             var koulutusSet = new buckets.Set();
             var spec = {
                 koulutusOid: $scope.model.hakukohde.hakukohdeKoulutusOids
@@ -343,7 +345,7 @@ app.controller('HakukohdeParentController', [
                     });
                     $scope.model.koulutusnimet = koulutusSet.toArray();
                     $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
-                    $scope.getTarjoajaParentPathsAndHakus($scope.model.hakukohde.tarjoajaOids, hakuFilterFunction);
+                    $scope.getTarjoajaParentPathsAndHakus($scope.model.hakukohde.tarjoajaOids);
 
                     OrganisaatioService.getPopulatedOrganizations($scope.model.hakukohde.tarjoajaOids)
                     .then(function(orgs) {
@@ -516,8 +518,11 @@ app.controller('HakukohdeParentController', [
         var getHakuaikaForToisenAsteenKoulutus = function(haku) {
             return haku.hakuaikas[0];
         };
-        $scope.retrieveHakus = function(filterHakuFunction) {
-            HakuService.getAllHakus().then(function(hakuDatas) {
+        $scope.retrieveHakus = function() {
+            var promises = [HakuService.getAllHakus(), $scope.config.getHaunKohdejoukko()];
+            $q.all(promises).then(function(resolved) {
+                var hakuDatas = resolved[0];
+                var haunKohdejoukkoUris = resolved[1].uris;
                 $scope.model.hakus = [];
                 angular.forEach(hakuDatas, function(haku) {
                     var userLang = AuthService.getLanguage();
@@ -532,18 +537,13 @@ app.controller('HakukohdeParentController', [
                 // Get selected haku if one is defined that must be shown
                 // even if the filtering does not show it
                 if ($scope.model.hakukohde.hakuOid) {
-                    selectedHaku = _.find(hakuDatas, function(m) {
-                        return m.oid === $scope.model.hakukohde.hakuOid;
-                    });
+                    selectedHaku = _.findWhere(hakuDatas, {oid: $scope.model.hakukohde.hakuOid});
                 }
-                var filteredHakus = filterHakuWithParams(filterHakuFunction(hakuDatas));
-                if (selectedHaku) {
-                    var inFilteres = _.find(filteredHakus, function(m) {
-                        return m.oid === selectedHaku.oid;
-                    });
-                    if (!inFilteres) {
-                        filteredHakus.push(selectedHaku);
-                    }
+                var filteredHakus = filterHakuWithParams(
+                    $scope.filterHakusByKohdejoukkoAndOrgs(hakuDatas, haunKohdejoukkoUris)
+                );
+                if (selectedHaku && !_.findWhere(filteredHakus, {oid: selectedHaku.oid})) {
+                    filteredHakus.push(selectedHaku);
                 }
                 $scope.model.hakus = filteredHakus;
                 if ($scope.model.hakukohde.hakuOid !== undefined && $scope.model.hakuChanged) {
@@ -573,16 +573,16 @@ app.controller('HakukohdeParentController', [
             return doesMatch;
         };
         /**
-             * Suorita model.hakuChanged() jos haku-valinta muuttuu tai kun model.hakus
-             * on asetettu (tämä ei ole saatavilla heti, tästä syystä watchi)
-             */
+         * Suorita model.hakuChanged() jos haku-valinta muuttuu tai kun model.hakus
+         * on asetettu (tämä ei ole saatavilla heti, tästä syystä watchi)
+         */
         $scope.$watch(function() {
             return $scope.model.hakus.length && $scope.model.hakukohde.hakuOid;
         }, function(oid) {
-                if (oid) {
-                    $scope.model.hakuChanged();
-                }
-            });
+            if (oid) {
+                $scope.model.hakuChanged();
+            }
+        });
         $scope.resolveLocalizedValue = function(key) {
             var userKieliUri = LocalisationService.getKieliUri();
             return key[userKieliUri] || key.kieli_fi || key.kieli_sv || key.kieli_en || '[Ei nime\xE4]';
@@ -611,36 +611,6 @@ app.controller('HakukohdeParentController', [
                 $scope.updateKaytaHaunPaattymisenAikaa($scope.model.useHaunPaattymisaikaForLiitteidenToimitusPvm);
             }
         };
-        $scope.filterHakuWithKohdejoukko = function(hakus, kohdejoukkoUriNimi) {
-            var filteredHakus = [];
-            angular.forEach(hakus, function(haku) {
-                // rajaus kk-hakukohteisiin; ks. OVT-6452
-                // TODO selvitä uri valitun koulutuksen perusteella
-                var kohdeJoukkoUriNoVersion = $scope.splitUri(haku.kohdejoukkoUri);
-                if (kohdeJoukkoUriNoVersion === window.CONFIG.app[kohdejoukkoUriNimi]) {
-                    if (haku.koulutuksenAlkamiskausiUri && haku.koulutuksenAlkamisVuosi) {
-                        if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri
-                            && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
-                            filteredHakus.push(haku);
-                        }
-                    } // Esim. jatkuvalla haulla ei ole koulutuksen alkamiskautta/vuotta
-                    else {
-                        filteredHakus.push(haku);
-                    }
-                }
-            });
-            return filteredHakus;
-        };
-        $scope.filterPoistettuHaku = function(hakusParam) {
-            var POISTETTU_TILA = 'POISTETTU';
-            var filteredHakus = [];
-            angular.forEach(hakusParam, function(haku) {
-                if (haku.tila !== POISTETTU_TILA) {
-                    filteredHakus.push(haku);
-                }
-            });
-            return filteredHakus;
-        };
         $scope.filterHakusWithOrgs = function(hakus) {
             var filteredHakuArray = [];
             angular.forEach(hakus, function(haku) {
@@ -656,7 +626,24 @@ app.controller('HakukohdeParentController', [
             });
             return filteredHakuArray;
         };
-        $scope.getTarjoajaParentPathsAndHakus = function(tarjoajaOids, hakufilterFunction) {
+        $scope.filterHakusByKohdejoukkoAndOrgs = function(hakus, haunKohdejoukot) {
+            hakus = $scope.filterHakusWithOrgs(hakus);
+            return _.filter(hakus, function(haku) {
+                if (_.contains(haunKohdejoukot, window.oph.removeKoodiVersion(haku.kohdejoukkoUri))) {
+                    if (haku.hakutapaUri.indexOf(HAKUTAPA.JATKUVA_HAKU) !== -1) {
+                        var maxLoppuPvm = _.chain(haku.hakuaikas).pluck('loppuPvm').max().value();
+                        if (_.isNaN(maxLoppuPvm) || maxLoppuPvm > new Date().getTime()) {
+                            return true;
+                        }
+                    }
+                    else if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri
+                        && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
+                        return true;
+                    }
+                }
+            });
+        };
+        $scope.getTarjoajaParentPathsAndHakus = function(tarjoajaOids) {
             var orgPromises = [];
             angular.forEach(tarjoajaOids, function(tarjoajaOid) {
                 var orgPromise = CommonUtilService.haeOrganisaationTiedot(tarjoajaOid);
@@ -672,7 +659,7 @@ app.controller('HakukohdeParentController', [
                         });
                     }
                 });
-                $scope.retrieveHakus(hakufilterFunction);
+                $scope.retrieveHakus();
             });
         };
         $scope.tryGetParentsApplicationOffice = function(currentOrg) {

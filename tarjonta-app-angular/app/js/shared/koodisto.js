@@ -518,7 +518,6 @@ app.factory('KoodistoURI', function($log, Config) {
         HAKUTYYPPI_LISAHAKU: getConfigWithDefault('koodisto-uris.lisahaku', ''),
         HAKUTAPA_YHTEISHAKU: getConfigWithDefault('koodisto-uris.yhteishaku', ''),
         HAKUTAPA_JATKUVAHAKU: getConfigWithDefault('koodisto.hakutapa.jatkuvaHaku.uri', ''),
-        HAUNKOHDEJOUKKO_KK: getConfigWithDefault('haku.kohdejoukko.kk.uri', ''),
         KOODI_LANG_FI_URI: getConfigWithDefault('koodisto.language.fi.uri', 'kieli_fi'),
         KOODI_LANG_EN_URI: getConfigWithDefault('koodisto.language.en.uri', 'kieli_en'),
         KOODI_LANG_SV_URI: getConfigWithDefault('koodisto.language.sv.uri', 'kieli_sv'),

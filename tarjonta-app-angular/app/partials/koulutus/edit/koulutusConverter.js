@@ -1091,6 +1091,16 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 }
             })
         }),
+
+        EB_RP_ISH: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE, {
+            koulutustyyppiKoodiUri: 'koulutustyyppi_20',
+            STR: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE.STR, {
+                toteutustyyppi: {
+                    'default': 'EB_RP_ISH'
+                }
+            })
+        }),
+
         /*******************************************/
         /* LUKIOKOULUTUS INITIALIZATION PARAMETERS */
         /*******************************************/
