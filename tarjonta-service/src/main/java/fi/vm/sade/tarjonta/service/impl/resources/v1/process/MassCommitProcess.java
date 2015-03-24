@@ -428,10 +428,20 @@ public class MassCommitProcess {
                 //XXX korjaa tama tekemalla kunnon testidata
                 if (meta != null && meta.getKomotoOids() != null && !meta.getKomotoOids().isEmpty()) {
                     List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(Lists.<String>newArrayList(meta.getKomotoOids()));
+
+                    Map<String, KoulutusmoduuliToteutusTarjoajatiedot>
+                            tarjoajatiedotMap = new HashMap<String, KoulutusmoduuliToteutusTarjoajatiedot>();
+
                     for (KoulutusmoduuliToteutus kt : komotos) {
                         hk.addKoulutusmoduuliToteutus(kt);
                         kt.addHakukohde(hk);
+
+                        KoulutusmoduuliToteutusTarjoajatiedot tarjoajatiedot = new KoulutusmoduuliToteutusTarjoajatiedot();
+                        tarjoajatiedot.setTarjoajaOids(kt.getTarjoajaOids());
+                        tarjoajatiedotMap.put(kt.getOid(), tarjoajatiedot);
                     }
+
+                    hk.setKoulutusmoduuliToteutusTarjoajatiedot(tarjoajatiedotMap);
                 }
 
                 if (hk.getHakuaikaAlkuPvm() != null) {
