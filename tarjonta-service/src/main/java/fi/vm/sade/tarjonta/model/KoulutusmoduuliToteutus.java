@@ -106,7 +106,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * amount of the charge. The actual content of this field is yet to be
      * defined.
      */
-    private String maksullisuus;
+    private Boolean maksullisuus;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "koulutus_hakukohde", joinColumns
             = @JoinColumn(name = "koulutus_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME), inverseJoinColumns
@@ -185,6 +185,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     @Column(name = "hinta")
     private BigDecimal hinta;
+
+    @Column(name = "hinta_string")
+    private String hintaString;
 
     @Column(name = "jarjesteja")
     private String jarjesteja;
@@ -408,7 +411,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @return the maksullisuus
      */
-    public String getMaksullisuus() {
+    public Boolean getMaksullisuus() {
         return maksullisuus;
     }
 
@@ -418,8 +421,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      *
      * @param maksullisuus the maksullisuus to set
      */
-    public void setMaksullisuus(String maksullisuus) {
-        this.maksullisuus = StringUtils.isEmpty(maksullisuus) ? null : maksullisuus;
+    public void setMaksullisuus(Boolean maksullisuus) {
+        if (maksullisuus == null) {
+            maksullisuus = false;
+        }
+        this.maksullisuus = maksullisuus;
     }
 
     /**
@@ -835,6 +841,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      */
     public void setHinta(BigDecimal hinta) {
         this.hinta = hinta;
+    }
+
+    public String getHintaString() {
+        return hintaString;
+    }
+
+    public void setHintaString(String hintaString) {
+        this.hintaString = hintaString;
     }
 
     public String getAlkamiskausiUri() {

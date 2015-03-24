@@ -953,6 +953,12 @@ app.controller('BaseEditController', [
         $scope.getMonikielinenNimi = function(field) {
             return field.kieli_fi || field.kieli_sv || field.kieli_en;
         };
+        $scope.$watch('model.opintojenMaksullisuus', function(valNew) {
+            if (!valNew) {
+                //clear price data field
+                $scope.model.hintaString = '';
+            }
+        });
 
         return $scope;
     }

@@ -15,10 +15,6 @@ public abstract class TutkintoonJohtamatonKoulutusV1RDTO extends KoulutusV1RDTO 
     
     @ApiModelProperty(value = "Koulutuksen pohjakoulutusvaatimukset (sisältää koodisto koodi uri:a)", required = true)
     private KoodiUrisV1RDTO pohjakoulutusvaatimukset;
-    @ApiModelProperty(value = "Valitaan opintojen maksullisuuden (false=koulutus ei vaadi maksua)")
-    private Boolean opintojenMaksullisuus;
-    @ApiModelProperty(value = "Koulutuksen hinta, on pakollinen jos koulutus on merkitty maksulliseksi")
-    private Double hinta;
     @ApiModelProperty(value = "Koulutuksen aiheet (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO aihees;
     @ApiModelProperty(value = "Koulutuksen loppumispvm")
@@ -50,34 +46,6 @@ public abstract class TutkintoonJohtamatonKoulutusV1RDTO extends KoulutusV1RDTO 
 
     public void setAihees(KoodiUrisV1RDTO aihees) {
         this.aihees = aihees;
-    }
-    
-    /**
-     * @return the hinta
-     */
-    public Double getHinta() {
-        return hinta;
-    }
-
-    /**
-     * @param hinta the hinta to set
-     */
-    public void setHinta(Double hinta) {
-        this.hinta = hinta;
-    }
-    
-    /**
-     * @return the opintojenMaksullisuus
-     */
-    public Boolean getOpintojenMaksullisuus() {
-        return opintojenMaksullisuus;
-    }
-
-    /**
-     * @param opintojenMaksullisuus the opintojenMaksullisuus to set
-     */
-    public void setOpintojenMaksullisuus(Boolean opintojenMaksullisuus) {
-        this.opintojenMaksullisuus = opintojenMaksullisuus;
     }
     
     /**

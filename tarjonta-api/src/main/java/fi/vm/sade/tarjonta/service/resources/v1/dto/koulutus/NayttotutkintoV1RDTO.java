@@ -36,12 +36,6 @@ public abstract class NayttotutkintoV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
     private KoodiV1RDTO koulutuslaji;
 
-    @ApiModelProperty(value = "Koulutuksen hinta, on pakollinen jos koulutus on merkitty maksulliseksi", required = false)
-    private Double hinta;
-
-    @ApiModelProperty(value = "Valitaan opintojen maksullisuuden (false=koulutus ei vaadi maksua)")
-    private Boolean opintojenMaksullisuus;
-
     @ApiModelProperty(value = "Tarjoaja tai organisaation johon koulutus on liitetty", required = true)
     private OrganisaatioV1RDTO jarjestavaOrganisaatio;
 
@@ -53,20 +47,6 @@ public abstract class NayttotutkintoV1RDTO extends KoulutusV1RDTO {
 
     protected NayttotutkintoV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         super(toteutustyyppi, moduulityyppi);
-    }
-
-    /**
-     * @return the hinta
-     */
-    public Double getHinta() {
-        return hinta;
-    }
-
-    /**
-     * @param hinta the hinta to set
-     */
-    public void setHinta(Double hinta) {
-        this.hinta = hinta;
     }
 
     /**
@@ -95,20 +75,6 @@ public abstract class NayttotutkintoV1RDTO extends KoulutusV1RDTO {
      */
     public void setJarjestavaOrganisaatio(OrganisaatioV1RDTO jarjestavaOrganisaatio) {
         this.jarjestavaOrganisaatio = jarjestavaOrganisaatio;
-    }
-
-    /**
-     * @return the opintojenMaksullisuus
-     */
-    public Boolean getOpintojenMaksullisuus() {
-        return opintojenMaksullisuus;
-    }
-
-    /**
-     * @param opintojenMaksullisuus the opintojenMaksullisuus to set
-     */
-    public void setOpintojenMaksullisuus(Boolean opintojenMaksullisuus) {
-        this.opintojenMaksullisuus = opintojenMaksullisuus;
     }
 
     /**

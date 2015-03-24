@@ -236,7 +236,9 @@
     <th></th>
     <td>
         <span tt="koulutus.edit.maksullisuus.hinta">Hinta</span>
-        <input ng-required="model.opintojenMaksullisuus" name="hinta" ng-disabled="!model.opintojenMaksullisuus" class="thin" type="text" data-ng-model="model.hinta" ng-change="onMaksullisuusChanged(model)"  />
+        <input ng-required="model.opintojenMaksullisuus" name="hinta"
+               ng-disabled="!model.opintojenMaksullisuus" class="thin" type="text"
+               ng-model="model.hintaString" maxlength="25" />
         <span tt="koulutus.edit.maksullisuus.euroa_lukuvuodessa">euroa lukuvuodessa</span>
     </td>
     <td>
@@ -260,7 +262,10 @@
     <th></th>
     <td>
         <span tt="koulutus.edit.maksullisuus.hinta">Hinta</span>
-        <input ng-required="model.valmistavaKoulutus.opintojenMaksullisuus" name="vk_hinta" ng-disabled="!model.valmistavaKoulutus.opintojenMaksullisuus" class="thin" type="text" data-ng-model="model.valmistavaKoulutus.hinta" ng-change="onMaksullisuusChanged(model.valmistavaKoulutus)"  />
+        <input ng-required="model.valmistavaKoulutus.opintojenMaksullisuus"
+               name="vk_hinta" ng-disabled="!model.valmistavaKoulutus.opintojenMaksullisuus"
+               class="thin" type="text"
+               ng-model="model.valmistavaKoulutus.hintaString" maxlength="25" />
         <span tt="koulutus.edit.maksullisuus.euroa_lukuvuodessa">euroa lukuvuodessa</span>
     </td>
     <td>

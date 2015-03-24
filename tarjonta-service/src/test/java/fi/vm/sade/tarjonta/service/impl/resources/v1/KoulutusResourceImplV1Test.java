@@ -91,7 +91,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         dto.setTila(TarjontaTila.JULKAISTU);
         dto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO);
         dto.setTunniste(TUNNISTE);
-        dto.setHinta(1.11);
+        dto.setHintaString("1.11");
         dto.setOpintojenMaksullisuus(Boolean.TRUE);
         dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
         dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
@@ -219,7 +219,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         assertEquals(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO, result.getKoulutusmoduuliTyyppi());
         assertEquals(KoulutusasteTyyppi.KORKEAKOULUTUS, result.getKoulutusasteTyyppi());
         assertEquals(TUNNISTE, result.getTunniste());
-        assertEquals(new Double(1.11), result.getHinta());
+        assertEquals("1.11", result.getHintaString());
         assertEquals(Boolean.TRUE, result.getOpintojenMaksullisuus());
         assertEquals((DateUtils.truncate(DATE.toDate(), Calendar.DATE)), result.getKoulutuksenAlkamisPvms().iterator().next());
         assertEqualDtoKoodi(KAUSI_KOODI_URI, result.getKoulutuksenAlkamiskausi(), true);
@@ -266,7 +266,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         dto.setTila(TarjontaTila.JULKAISTU);
         dto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.OPINTOKOKONAISUUS);
         dto.setTunniste(TUNNISTE);
-        dto.setHinta(1.11);
+        dto.setHintaString("1.11");
         dto.setOpintojenMaksullisuus(Boolean.TRUE);
         HashSet<Date> alkamisPvms = new HashSet<Date>();
         alkamisPvms.add(DATE.toDate());
@@ -367,7 +367,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         assertEquals(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.OPINTOKOKONAISUUS, result.getKoulutusmoduuliTyyppi());
         assertEquals(KoulutusasteTyyppi.KORKEAKOULUTUS, result.getKoulutusasteTyyppi());
         assertEquals(TUNNISTE, result.getTunniste());
-        assertEquals(new Double(1.11), result.getHinta());
+        assertEquals("1.11", result.getHintaString());
         assertEquals(Boolean.TRUE, result.getOpintojenMaksullisuus());
         assertEquals((DateUtils.truncate(DATE.toDate(), Calendar.DATE)), result.getKoulutuksenAlkamisPvms().iterator().next());
         assertEquals(VUOSI, result.getKoulutuksenAlkamisvuosi());

@@ -29,24 +29,6 @@ app.controller('EditKorkeakouluOpintoController', function EditKorkeakouluOpinto
         }
     };
 
-    $scope.onMaksullisuusChanged = function() {
-        if (!$scope.model.hinta) {
-            return;
-        }
-        var p = $scope.model.hinta.indexOf(',');
-        while (p != -1) {
-            $scope.model.hinta = $scope.model.hinta.substring(0, p) + '.' + $scope.model.hinta.substring(p + 1);
-            p = $scope.model.hinta.indexOf(',', p);
-        }
-    };
-
-    $scope.$watch('model.opintojenMaksullisuus', function(valNew, valOld) {
-        if (!valNew && valOld) {
-            //clear price data field
-            $scope.model.hinta = '';
-        }
-    });
-
     $scope.init({
         childScope: $scope
     }, function() {

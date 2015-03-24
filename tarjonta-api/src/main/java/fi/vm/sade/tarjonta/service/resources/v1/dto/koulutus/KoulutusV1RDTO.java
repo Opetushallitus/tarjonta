@@ -148,6 +148,15 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     @ApiModelProperty(value = "Koulutuksen lapset")
     private Set<String> children;
 
+    @ApiModelProperty(value = "Koulutuksen hinta (korvaa vanhan Double-tyyppisen hinnan, koska pitää tukea myös muita kun numeroita)")
+    private String hintaString;
+
+    @ApiModelProperty(value = "Koulutuksen hinta, on pakollinen jos koulutus on merkitty maksulliseksi", required = false)
+    private Double hinta;
+
+    @ApiModelProperty(value = "Valitaan opintojen maksullisuuden (false=koulutus ei vaadi maksua)")
+    private Boolean opintojenMaksullisuus;
+
     public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         this.setToteutustyyppi(toteutustyyppi);
         this.moduulityyppi = moduulityyppi;
@@ -155,6 +164,30 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
 
     // Default constructor for JSON deserializing
     public KoulutusV1RDTO() {
+    }
+
+    public void setHintaString(String hintaString) {
+        this.hintaString = hintaString;
+    }
+
+    public String getHintaString() {
+        return hintaString;
+    }
+
+    public Double getHinta() {
+        return hinta;
+    }
+
+    public void setHinta(Double hinta) {
+        this.hinta = hinta;
+    }
+
+    public Boolean getOpintojenMaksullisuus() {
+        return opintojenMaksullisuus;
+    }
+
+    public void setOpintojenMaksullisuus(Boolean opintojenMaksullisuus) {
+        this.opintojenMaksullisuus = opintojenMaksullisuus;
     }
 
     public String getKomoOid() {
@@ -489,7 +522,7 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     public void setToteutustyyppi(ToteutustyyppiEnum toteutustyyppi) {
         this.toteutustyyppi = toteutustyyppi;
     }
-    
+
     /**
      * @return the moduulityyppi
      */

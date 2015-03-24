@@ -40,11 +40,6 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Koulutuksen pohjakoulutusvaatimukset (sisältää koodisto koodi uri:a)", required = true)
     private KoodiUrisV1RDTO pohjakoulutusvaatimukset;
 
-    @ApiModelProperty(value = "Valitaan opintojen maksullisuuden (false=koulutus ei vaadi maksua)")
-    private Boolean opintojenMaksullisuus;
-    @ApiModelProperty(value = "Koulutuksen hinta, on pakollinen jos koulutus on merkitty maksulliseksi")
-    private Double hinta;
-
     @ApiModelProperty(value = "OPH tutkintonimike-koodit (korkeakoulutuksella eri koodistot kuin ammatillisella- ja lukio-koulutuksella)", required = true)
     private KoodiUrisV1RDTO tutkintonimikes;
 
@@ -77,20 +72,6 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     }
 
     /**
-     * @return the opintojenMaksullisuus
-     */
-    public Boolean getOpintojenMaksullisuus() {
-        return opintojenMaksullisuus;
-    }
-
-    /**
-     * @param opintojenMaksullisuus the opintojenMaksullisuus to set
-     */
-    public void setOpintojenMaksullisuus(Boolean opintojenMaksullisuus) {
-        this.opintojenMaksullisuus = opintojenMaksullisuus;
-    }
-
-    /**
      * @return the pohjakoulutusvaatimukset
      */
     public KoodiUrisV1RDTO getPohjakoulutusvaatimukset() {
@@ -106,20 +87,6 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
      */
     public void setPohjakoulutusvaatimukset(KoodiUrisV1RDTO pohjakoulutusvaatimukset) {
         this.pohjakoulutusvaatimukset = pohjakoulutusvaatimukset;
-    }
-
-    /**
-     * @return the hinta
-     */
-    public Double getHinta() {
-        return hinta;
-    }
-
-    /**
-     * @param hinta the hinta to set
-     */
-    public void setHinta(Double hinta) {
-        this.hinta = hinta;
     }
 
     public String getParentKomoOid() {

@@ -39,16 +39,6 @@ app.controller('EditNayttotutkintoController', function($routeParams, $scope, $l
         $scope.saveApimodelByStatus(apiModel, tila, $scope.koulutusForm, $scope.CONFIG.TYYPPI,
             $scope.callbackAfterSave);
     };
-    $scope.onMaksullisuusChanged = function(model) {
-        if (!model.hinta) {
-            return;
-        }
-        var p = model.hinta.indexOf(',');
-        while (p != -1) {
-            model.hinta = model.hinta.substring(0, p) + '.' + model.hinta.substring(p + 1);
-            p = model.hinta.indexOf(',', p);
-        }
-    };
     $scope.getValmistavaKuvausApiModelLanguageUri = function(textEnum, kieliUri) {
         if (!kieliUri) {
             return {};
@@ -82,17 +72,10 @@ app.controller('EditNayttotutkintoController', function($routeParams, $scope, $l
             $scope.model.jarjestavaOrganisaatio = organisaatio;
         }, function() {});
     };
-    $scope.$watch('model.opintojenMaksullisuus', function(valNew, valOld) {
-        if (!valNew && valOld) {
+    $scope.$watch('model.valmistavaKoulutus.opintojenMaksullisuus', function(valNew) {
+        if (!valNew && $scope.model.valmistavaKoulutus) {
             //clear price data field
-            $scope.model.hinta = '';
-        }
-    });
-    $scope.$watch('model.valmistavaKoulutus.opintojenMaksullisuus', function(valNew, valOld) {
-        if (!valNew && valOld && angular.isDefined($scope.model.valmistavaKoulutus) &&
-            $scope.model.valmistavaKoulutus !== null) {
-            //clear price data field
-            $scope.model.valmistavaKoulutus.hinta = '';
+            $scope.model.valmistavaKoulutus.hintaString = '';
         }
     });
     $scope.initValmistavaKoulutus = function(apimodel, uiModel, vkUiModel) {

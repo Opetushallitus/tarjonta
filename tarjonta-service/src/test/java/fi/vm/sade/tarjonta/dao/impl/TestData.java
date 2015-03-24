@@ -203,7 +203,7 @@ public class TestData {
         assertNotNull("alkamisvuosi", k.getAlkamisVuosi());
         assertEquals(YEAR, k.getAlkamisVuosi().intValue());
         assertEquals(KAUSI, k.getAlkamiskausiUri());
-        assertEquals("TRUE", k.getMaksullisuus());
+        assertEquals(true, k.getMaksullisuus());
         assertEquals(1, k.getOpetuskielis().size());
         assertEquals(1, k.getOpetusmuotos().size());
         assertEquals(1, k.getKoulutuslajis().size());
@@ -332,7 +332,7 @@ public class TestData {
         t.setKoulutuksenAlkamisPvm(KOULUTUS_START_DATE);
         t.setAlkamisVuosi(YEAR);
         t.setAlkamiskausiUri(KAUSI);
-        t.setMaksullisuus("TRUE");
+        t.setMaksullisuus(true);
         t.addOpetuskieli(new KoodistoUri("kieli_uri"));
         t.addOpetusmuoto(new KoodistoUri("opetusmuoto_uri"));
         t.addKoulutuslaji("koulutuslaji_uri");

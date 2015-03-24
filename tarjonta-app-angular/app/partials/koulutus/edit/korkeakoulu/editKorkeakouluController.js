@@ -89,25 +89,6 @@ app.controller('EditKorkeakouluController', [
                 };
             }, function() {});
         };
-        /*
-                 * WATCHES
-                 */
-        $scope.onMaksullisuusChanged = function() {
-            if (!$scope.model.hinta) {
-                return;
-            }
-            var p = $scope.model.hinta.indexOf(',');
-            while (p != -1) {
-                $scope.model.hinta = $scope.model.hinta.substring(0, p) + '.' + $scope.model.hinta.substring(p + 1);
-                p = $scope.model.hinta.indexOf(',', p);
-            }
-        };
-        $scope.$watch('model.opintojenMaksullisuus', function(valNew, valOld) {
-            if (!valNew && valOld) {
-                //clear price data field
-                $scope.model.hinta = '';
-            }
-        });
         $scope.isKandiUri = function() {
             var kandiObj = $scope.model.kandidaatinKoulutuskoodi;
             return angular.isDefined(kandiObj) && kandiObj !== null && angular.isDefined(kandiObj.uri) &&

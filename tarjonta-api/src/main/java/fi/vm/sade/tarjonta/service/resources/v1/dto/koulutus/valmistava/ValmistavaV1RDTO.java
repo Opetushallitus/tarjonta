@@ -41,6 +41,9 @@ public class ValmistavaV1RDTO implements Serializable {
     @ApiModelProperty(value = "Koulutuksen suunntellun keston tyyppi (koodisto koodi uri)", required = true)
     private KoodiV1RDTO suunniteltuKestoTyyppi;
 
+    @ApiModelProperty(value = "Koulutuksen hinta (korvaa vanhan Double-tyyppisen hinnan, koska pitää tukea myös muita kun numeroita)")
+    private String hintaString;
+
     @ApiModelProperty(value = "Koulutuksen hinta, on pakollinen jos koulutus on merkitty maksulliseksi", required = false)
     private Double hinta;
 
@@ -61,6 +64,14 @@ public class ValmistavaV1RDTO implements Serializable {
 
     public ValmistavaV1RDTO() {
 
+    }
+
+    public void setHintaString(String hintaString) {
+        this.hintaString = hintaString;
+    }
+
+    public String getHintaString() {
+        return hintaString;
     }
 
     /*

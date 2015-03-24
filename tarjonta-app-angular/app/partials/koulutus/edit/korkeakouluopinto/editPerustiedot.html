@@ -160,7 +160,9 @@
             <th></th>
             <td>
                 <span tt="koulutus.edit.maksullisuus.hinta">Hinta</span>
-                <input  ng-required="model.opintojenMaksullisuus" name="hinta" ng-disabled="!model.opintojenMaksullisuus" class="thin" type="text" data-ng-model="model.hinta" ng-change="onMaksullisuusChanged()"  />
+                <input ng-required="model.opintojenMaksullisuus" name="hinta"
+                       ng-disabled="!model.opintojenMaksullisuus" class="thin" type="text"
+                       ng-model="model.hintaString" maxlength="25" />
                 <span tt="koulutus.edit.maksullisuus.euroa_lukuvuodessa">euroa lukuvuodessa</span>
             </td>
             <td>
