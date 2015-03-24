@@ -101,12 +101,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @CollectionTable(name = TABLE_NAME + "_opetuspaikka", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> opetusPaikkas = new HashSet<KoodistoUri>();
-    /**
-     * If non-null, this "koulutus" comes with a charge. This field defines the
-     * amount of the charge. The actual content of this field is yet to be
-     * defined.
-     */
-    private Boolean maksullisuus;
+    private Boolean maksullisuus = false;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "koulutus_hakukohde", joinColumns
             = @JoinColumn(name = "koulutus_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME), inverseJoinColumns
