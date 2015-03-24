@@ -24,7 +24,7 @@ import java.util.Map;
  *
  * @author alexGofore
  */
-public abstract class ValmistavaKoulutusV1RDTO extends KoulutusGenericV1RDTO {
+public class ValmistavaKoulutusV1RDTO extends KoulutusGenericV1RDTO {
 
     /**
      * Valmistavilla koulutuksilla ei (aina?) ole koodistosta tulevaa
