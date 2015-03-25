@@ -1014,6 +1014,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /* KORKEAKOULUOPINTO INITIALIZATION PARAMETERS */
         /***********************************************/
         KORKEAKOULUOPINTO: {
+            koulutustyyppiKoodiUri: 'koulutustyyppi_3',
             KUVAUS_ORDER: [
                 {type: 'SISALTO', isKomo: false, length: 2000},
                 {type: 'TAVOITTEET', isKomo: true, length: 2000},
