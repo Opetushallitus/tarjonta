@@ -630,6 +630,10 @@ app.controller('HakukohdeParentController', [
             hakus = $scope.filterHakusWithOrgs(hakus);
             return _.filter(hakus, function(haku) {
                 if (_.contains(haunKohdejoukot, window.oph.removeKoodiVersion(haku.kohdejoukkoUri))) {
+                    if (haku.koulutusmoduuliTyyppi
+                        && haku.koulutusmoduuliTyyppi !== $scope.model.koulutusmoduuliTyyppi) {
+                        return;
+                    }
                     if (haku.hakutapaUri.indexOf(HAKUTAPA.JATKUVA_HAKU) !== -1) {
                         var maxLoppuPvm = _.chain(haku.hakuaikas).pluck('loppuPvm').max().value();
                         if (_.isNaN(maxLoppuPvm) || maxLoppuPvm > new Date().getTime()) {
