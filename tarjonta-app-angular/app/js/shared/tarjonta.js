@@ -752,29 +752,24 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     };
     // LOAD PARAMETERS FROM OHJAUSPARAMETRIT
     dataFactory.reloadParameters();
-    dataFactory.getParameter = function(target, name, type, defaultValue) {
-        var result;
+    dataFactory.getParameter = function(target, name, defaultValue, errorValue) {
         var cache = dataFactory.ohjausparametritCache;
-        if (angular.isDefined(cache[target])) {
-            result = cache[target][name];
+        // If ohjausparametrit failed loading for some reason
+        if (Object.keys(cache).length === 0) {
+            return errorValue;
         }
-        // Conversion to date
-        if ('DATE' == type && angular.isDefined(result)) {
-            result = new Date(result);
+        if (cache[target] && cache[target][name]) {
+            return cache[target][name];
         }
-        if (false && !angular.isDefined(result)) {
-            result = defaultValue;
-        }
-        // $log.debug("getParameter()", target, name, result, cache[target]);
-        return result;
+        return defaultValue;
     };
     dataFactory.parameterCanEditHakukohde = function(hakuOid) {
         if (AuthService.isUserOph()) {
             return true;
         }
         var now = new Date().getTime();
-        var ph_hklpt = dataFactory.getParameter(hakuOid, 'PH_HKLPT', 'LONG') || now;
-        var ph_hkmt = dataFactory.getParameter(hakuOid, 'PH_HKMT', 'LONG') || now;
+        var ph_hklpt = dataFactory.getParameter(hakuOid, 'PH_HKLPT', now, 0);
+        var ph_hkmt = dataFactory.getParameter(hakuOid, 'PH_HKMT', now, 0);
         if (ph_hklpt < now || ph_hkmt < now) {
             return false;
         }
@@ -785,11 +780,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             return true;
         }
         var now = new Date().getTime();
-        var ph_hkmt = dataFactory.getParameter(hakuOid, 'PH_HKMT', 'LONG', now);
-        if (ph_hkmt) {
-            var result = now <= ph_hkmt;
-            $log.debug('parameterCanEditHakukohdeLimited: ', hakuOid, ph_hkmt, result);
-            return result;
+        var ph_hkmt = dataFactory.getParameter(hakuOid, 'PH_HKMT', now, 0);
+        if (ph_hkmt < now) {
+            return false;
         }
         else {
             return true;
