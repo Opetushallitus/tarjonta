@@ -328,7 +328,8 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         }
         else if (_.contains([
                     'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
-                    'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'
+                    'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER',
+                    'PERUSOPETUKSEN_LISAOPETUS'
                 ], $scope.model.koulutus.toteutustyyppi)) {
             $window.location.href = window.CONFIG.env['web.url.oppija.preview'].replace('korkeakoulu', 'koulutus') +
                 $scope.model.koulutus.oid + '?lang=' + $scope.model.koodistoLocale;
