@@ -558,7 +558,7 @@ public class ConverterV1 {
         hakukohdeRDTO.setPeruutusEhdotKuvaukset(convertMonikielinenTekstiToMapWithoutVersions(hakukohde.getPeruutusEhdotKuvaus()));
 
         convertTarjoatiedotToDTO(hakukohde, hakukohdeRDTO);
-        convertHakukohteenNimetToDTO(hakukohde, hakukohdeRDTO);
+        convertHakukohteenNimetToDTO(hakukohde, hakukohdeRDTO, null);
         convertOpetuskieletToDTO(hakukohde, hakukohdeRDTO);
         convertHakukelpoisuusVaatimuksetToDTO(hakukohde, hakukohdeRDTO);
         convertSoraAndValintaperustekuvauksetToDTO(hakukohde, hakukohdeRDTO);
@@ -596,11 +596,23 @@ public class ConverterV1 {
         hakukohdeRDTO.setKoulutusmoduuliTyyppi(Iterables.getFirst(koulutusmoduulityypit, null));
     }
 
-    private void convertHakukohteenNimetToDTO(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
+    private void convertHakukohteenNimetToDTO(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO,
+                                              HakukohdeValintaperusteetV1RDTO valintaperusteetV1RDTO) {
         if (hakukohde.getHakukohdeMonikielinenNimi() != null) {
-            hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToMap(hakukohde.getHakukohdeMonikielinenNimi(), false));
+            Map <String, String> nimet = convertMonikielinenTekstiToMap(hakukohde.getHakukohdeMonikielinenNimi(), false);
+            if (hakukohdeRDTO != null) {
+                hakukohdeRDTO.setHakukohteenNimet(nimet);
+            }
+            else {
+                valintaperusteetV1RDTO.setHakukohdeNimi(nimet);
+            }
         } else if (hakukohde.getHakukohdeNimi() != null) {
-            populateHakukohteenNimetFromHakukohdeNimi(hakukohde, hakukohdeRDTO);
+            if (hakukohdeRDTO != null) {
+                hakukohdeRDTO.setHakukohteenNimet(getHakukohteenNimet(hakukohde));
+            }
+            else {
+                valintaperusteetV1RDTO.setHakukohdeNimi(getHakukohteenNimet(hakukohde));
+            }
         }
     }
 
@@ -700,7 +712,7 @@ public class ConverterV1 {
         hakukohdeRDTO.setYhteystiedot(yhteystietoDTOs);
     }
 
-    private void populateHakukohteenNimetFromHakukohdeNimi(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
+    private Map<String, String> getHakukohteenNimet(Hakukohde hakukohde) {
         if (!hakukohde.getKoulutusmoduuliToteutuses().isEmpty()) {
             KoulutusmoduuliToteutus komoto = hakukohde.getKoulutusmoduuliToteutuses().iterator().next();
 
@@ -729,8 +741,9 @@ public class ConverterV1 {
                 }
             }
 
-            hakukohdeRDTO.setHakukohteenNimet(hakukohteenNimet);
+            return hakukohteenNimet;
         }
+        return null;
     }
 
     private void convertSoraAndValintaperustekuvauksetToDTO(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
@@ -1030,14 +1043,10 @@ public class ConverterV1 {
         }
 
         BigDecimal nolla = new BigDecimal("0.0");
-        Map<String, String> nimiMap = new HashMap<String, String>();
 
-        if (hakukohde.getHakukohdeMonikielinenNimi() != null) {
-            t.setHakukohdeNimi(convertMonikielinenTekstiToMap(hakukohde.getHakukohdeMonikielinenNimi(), false));
-        } else if (hakukohde.getHakukohdeKoodistoNimi() != null) {
-            nimiMap.put("kieli_fi", hakukohde.getHakukohdeKoodistoNimi());
-            t.setHakukohdeNimi(nimiMap);
-        } else {
+        convertHakukohteenNimetToDTO(hakukohde, null, t);
+        if (t.getHakukohdeNimi() == null) {
+            Map<String, String> nimiMap = new HashMap<String, String>();
             nimiMap.put("kieli_fi", "Hakukohteella ei ole nimeä");
             t.setHakukohdeNimi(nimiMap);
         }
