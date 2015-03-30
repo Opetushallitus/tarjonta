@@ -135,12 +135,34 @@ public class KoulutusSearchService extends SearchService {
         addFilterForOpetuskielet(kysely, q);
         addFilterForKoulutusmoduuliTyyppi(kysely.getKoulutusmoduuliTyyppi(), q);
         addFilterForHakukohderyhma(kysely, q);
+        addFilterForKoodis(kysely, q);
 
         // Älä palauta valmistavia koulutuksia. Nämä on aina "liitetty" johonkin toiseen koulutukseen, eikä niitä
         // listata hakutuloksissa siitä syystä
         excludeValmistavatKoulutukset(q);
 
         return q;
+    }
+
+    private void addFilterForKoodis(KoulutuksetKysely kysely, SolrQuery q) {
+        addWildCardFilter(q, KOULUTUSKOODI_URI, kysely.getKoulutuskoodis());
+        addWildCardFilter(q, OPINTOALA_URI, kysely.getOpintoalakoodis());
+        addWildCardFilter(q, KOULUTUSALA_URI, kysely.getKoulutusalakoodis());
+    }
+
+    private void addWildCardFilter(SolrQuery q, String field, List<String> values) {
+        if (!values.isEmpty()) {
+            List<String> wildCardValues = new ArrayList<String>();
+            for (String val : values) {
+                wildCardValues.add(val + '*');
+            }
+
+            q.addFilterQuery(
+                String.format(matchFull(), field, Joiner.on(" ").join(
+                    wildCardValues
+                ))
+            );
+        }
     }
 
     private void addFilterForHakukohderyhma(KoulutuksetKysely kysely, SolrQuery q) {

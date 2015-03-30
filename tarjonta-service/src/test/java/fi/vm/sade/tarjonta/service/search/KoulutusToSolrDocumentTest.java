@@ -27,6 +27,7 @@ import java.util.*;
 
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -384,6 +385,14 @@ public class KoulutusToSolrDocumentTest {
     }
 
     @Test
+    public void thatKoulutusKoodisAreConverted() {
+        SolrInputDocument doc = convert();
+
+        assertSame("opintoala_1", doc.getFieldValue(OPINTOALA_URI));
+        assertSame("koulutusala_1", doc.getFieldValue(KOULUTUSALA_URI));
+    }
+
+    @Test
     public void thatTeksihakuIsConverted() {
         when(koodiService.searchKoodis(createKoodistoCriteriaMatcher("lukio"))).thenReturn(koodistoHelper.getKoodiTypes("lukio"));
         when(koodiService.searchKoodis(createKoodistoCriteriaMatcher("kausi_k"))).thenReturn(koodistoHelper.getKoodiTypes("kevat"));
@@ -465,6 +474,8 @@ public class KoulutusToSolrDocumentTest {
         koulutusmoduuliToteutus.addKoulutuslaji("koulutuslaji_n");
         koulutusmoduuliToteutus.setAlkamiskausiUri("kausi_k#1");
         koulutusmoduuliToteutus.setAlkamisVuosi(2015);
+        koulutusmoduuliToteutus.setOpintoalaUri("opintoala_1");
+        koulutusmoduuliToteutus.setKoulutusalaUri("koulutusala_1");
 
         KoodistoUri opetusKieliFi = new KoodistoUri("kieli_fi");
         KoodistoUri opetusKieliSv = new KoodistoUri("kieli_sv");

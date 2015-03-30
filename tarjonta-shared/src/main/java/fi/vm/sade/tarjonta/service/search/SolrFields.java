@@ -76,6 +76,9 @@ public class SolrFields {
         protected static final String OPPILAITOSTYYPPI_URIS = "oppilaitostyyppiuri_ss";
         protected static final String KUNTA_URIS = "kuntauri_ss";
         protected static final String OPETUSKIELI_URIS = "opetuskieliuri_ss";
+
+        protected static final String OPINTOALA_URI = "opintoalauri_ss";
+        protected static final String KOULUTUSALA_URI = "koulutusalauri_ss";
     }
 
     /**

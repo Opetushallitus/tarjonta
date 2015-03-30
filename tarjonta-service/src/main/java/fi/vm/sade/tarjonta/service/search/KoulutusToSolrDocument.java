@@ -98,6 +98,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         addKoulutusmoduuliTyyppi(komotoDoc, koulutusmoduuliToteutus);
         addDataFromHakukohde(komotoDoc, koulutusmoduuliToteutus);
         addTekstihaku(komotoDoc);
+        addKoulutusKoodis(komotoDoc, koulutusmoduuliToteutus);
 
         if (koulutusmoduuliToteutus.getToteutustyyppi().equals(ToteutustyyppiEnum.KORKEAKOULUOPINTO)
                 && !koulutusmoduuliToteutus.getJarjestajaOids().isEmpty()) {
@@ -441,6 +442,21 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
             metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
             add(doc, KOULUTUSKOODI_EN, metadata.getNimi());
             add(doc, KOULUTUSKOODI_URI, koulutusUri);
+        }
+    }
+
+    public static void addKoulutusKoodis(SolrInputDocument doc, KoulutusmoduuliToteutus komoto) {
+        String opintoalaUri = komoto.getOpintoalaUri() != null ?
+                komoto.getOpintoalaUri() :
+                komoto.getKoulutusmoduuli().getOpintoalaUri();
+        String koulutusalaUri = komoto.getKoulutusalaUri() != null ?
+                komoto.getKoulutusalaUri() :
+                komoto.getKoulutusmoduuli().getKoulutusalaUri();
+        if (opintoalaUri != null) {
+            doc.addField(OPINTOALA_URI, opintoalaUri);
+        }
+        if (koulutusalaUri != null) {
+            doc.addField(KOULUTUSALA_URI, koulutusalaUri);
         }
     }
 

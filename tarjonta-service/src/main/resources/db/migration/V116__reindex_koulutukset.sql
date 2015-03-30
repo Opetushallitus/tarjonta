@@ -1,0 +1,1 @@
+UPDATE koulutusmoduuli_toteutus set viimindeksointipvm = null;
