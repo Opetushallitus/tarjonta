@@ -223,13 +223,14 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
                 $scope.model = null;
             }
             else {
-                nd = new Date();
+                nd = new Date(2015, 1, 1); // 2015-02-01
                 // HUOM! asetettava järjestyksessä vuosi-kuukausi-päivä
                 nd.setFullYear(dy);
                 nd.setMonth(dm);
                 nd.setDate(dd);
                 nd.setHours(th);
                 nd.setMinutes(tm);
+                nd.setSeconds(0);
                 //console.log("ISN dd="+dd+", dm="+dm+", dy="+dy+", th="+th+", tm="+tm, nd);
                 if (dd != nd.getDate()) {
                     $scope.date = '';
