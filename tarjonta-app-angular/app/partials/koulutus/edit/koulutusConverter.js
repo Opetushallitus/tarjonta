@@ -1458,7 +1458,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 review: 'GENERIC'
             },
             reviewFields: [
+                'TAVOITTEET',
                 'SISALTO',
+                'KOULUTUKSEN_RAKENNE',
+                'JATKOOPINTO_MAHDOLLISUUDET',
                 'KOHDERYHMA',
                 'OPPILAITOSKOHTAISET_OPPIAINEET_JA_KURSSIT',
                 'KANSAINVALISTYMINEN',

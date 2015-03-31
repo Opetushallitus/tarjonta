@@ -215,7 +215,8 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             perusDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
             perusDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
 
-            mergeParentAndChildDataToRDTO(dto, komo, komo, komoto, param);
+            final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
+            mergeParentAndChildDataToRDTO(dto, parentKomo, komo, komoto, param);
         }
 
         else if (dto instanceof KoulutusAmmatillinenPerustutkintoV1RDTO) {
