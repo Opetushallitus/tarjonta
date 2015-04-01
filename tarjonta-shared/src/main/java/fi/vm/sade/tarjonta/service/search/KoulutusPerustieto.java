@@ -10,6 +10,7 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 public class KoulutusPerustieto implements Serializable {
 
@@ -35,6 +36,15 @@ public class KoulutusPerustieto implements Serializable {
     private Date koulutuksenAlkamisPvmMax;
     private ArrayList<String> tarjoajat;
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
+    private List<String> opetuskielet;
+
+    public List<String> getOpetuskielet() {
+        return opetuskielet;
+    }
+
+    public void setOpetuskielet(List<String> opetuskielet) {
+        this.opetuskielet = opetuskielet;
+    }
 
     /**
      * oikeasti tämä on koulutusohjelman nimi

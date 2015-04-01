@@ -30,14 +30,11 @@
                 <tr>
                     <th tt="hakukohde.review.perustiedot.nimi"/>
                     <td colspan="2">
-                        <div ng-show="!showNimiUri && model.hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
+                        <div ng-show="!model.hakukohde.hakukohteenNimiUri">
                             <mk-text model="model.hakukohde.hakukohteenNimet" display="rows"/>
                         </div>
-                        <div ng-show="showNimiUri && model.hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
-                            <div koodi uri="model.hakukohde.hakukohteenNimiUri"></div>
-                        </div>
-                        <div ng-show="model.hakukohde.toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
-                            {{ model.hakukohde.hakukohteenNimiUri }}
+                        <div ng-show="model.hakukohde.hakukohteenNimiUri">
+                            {{ getHakukohteenNimi() }}
                         </div>
                     </td>
                 </tr>

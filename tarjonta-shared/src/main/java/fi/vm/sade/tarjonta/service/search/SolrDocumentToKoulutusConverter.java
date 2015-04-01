@@ -45,6 +45,7 @@ public class SolrDocumentToKoulutusConverter {
         perustieto.setKoulutusmoduuliToteutus("" + koulutusDoc.getFieldValue(OID));
         perustieto.setKoulutusasteTyyppi(createKoulutustyyppi(koulutusDoc));
         perustieto.setKoulutustyyppi("" + koulutusDoc.getFieldValue(KOULUTUSTYYPPI_URI));
+        perustieto.setOpetuskielet((ArrayList<String>) koulutusDoc.getFieldValue(OPETUSKIELI_URIS));
         if (koulutusDoc.getFieldValue(TOTEUTUSTYYPPI_ENUM) != null) {
             perustieto.setToteutustyyppi(ToteutustyyppiEnum.valueOf("" + koulutusDoc.getFieldValue(TOTEUTUSTYYPPI_ENUM)));
         }

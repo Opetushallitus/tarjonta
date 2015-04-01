@@ -49,6 +49,8 @@ public class SolrDocumentToHakukohdeConverter {
 
         hakukohde.setKoulutuksenAlkamiskausi(IndexDataUtils.createKoodistoKoodi(KAUSI_URI, KAUSI_FI, KAUSI_SV, KAUSI_EN, hakukohdeDoc));
 
+        hakukohde.setOpetuskielet((ArrayList<String>) hakukohdeDoc.getFieldValue(OPETUSKIELI_URIS));
+
         if (hakukohdeDoc.getFieldValue(VUOSI_KOODI) != null) {
             hakukohde.setKoulutuksenAlkamisvuosi(Integer.parseInt((String) hakukohdeDoc.getFieldValue(VUOSI_KOODI)));
         }

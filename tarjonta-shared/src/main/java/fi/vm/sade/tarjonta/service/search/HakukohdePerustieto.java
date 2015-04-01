@@ -31,6 +31,15 @@ public class HakukohdePerustieto implements Serializable {
     private Map<String, String> aloituspaikatKuvaukset = new HashMap<String, String>();
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
     private List<SolrRyhmaliitos> ryhmaliitokset = new ArrayList<SolrRyhmaliitos>();
+    private List<String> opetuskielet;
+
+    public List<String> getOpetuskielet() {
+        return opetuskielet;
+    }
+
+    public void setOpetuskielet(List<String> opetuskielet) {
+        this.opetuskielet = opetuskielet;
+    }
 
     public KoulutusasteTyyppi getKoulutusastetyyppi() {
         return koulutusastetyyppi;

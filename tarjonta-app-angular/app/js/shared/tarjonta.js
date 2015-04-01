@@ -8,23 +8,15 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     $log = $log.getInstance('TarjontaService');
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + 'hakukohde/search');
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/search');
-    function localize(txt) {
+
+    function localize(txt, opetuskielet) {
         if (txt === undefined || txt === null) {
             return txt;
         }
         var userLocale = LocalisationService.getLocale();
-        if (txt[userLocale]) {
-            return txt[userLocale];
-        }
-        else if (txt.fi) {
-            return txt.fi;
-        }
-        else if (txt.sv) {
-            return txt.sv;
-        }
-        else if (txt.en) {
-            return txt.en;
-        }
+        var preferredLang = _.findWhere(opetuskielet, 'kieli_' + userLocale) || _.first(opetuskielet);
+        preferredLang = (preferredLang || '').replace('kieli_', '');
+        return txt[preferredLang] || txt[userLocale] || txt.fi || txt.sv || txt.en;
     }
     function compareByName(a, b) {
         var an = a.nimi;
@@ -139,7 +131,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                         r.nimi = t.oid;
                     }
                     else {
-                        r.nimi = localize(r.nimi);
+                        r.nimi = localize(r.nimi, r.opetuskielet);
                     }
                     r.koulutuslaji = localize(r.koulutuslaji);
                     r.hakutapa = localize(r.hakutapa);
@@ -188,7 +180,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 for (var j in t.tulokset) {
                     var r = t.tulokset[j];
                     if (t.nimi) {
-                        r.nimi = localize(r.nimi);
+                        r.nimi = localize(r.nimi, r.opetuskielet);
                         if (!_.contains(['LUKIOKOULUTUS',
                                          'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA',
                                          'EB_RP_ISH',
@@ -197,7 +189,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                                          'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER',
                                          'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS'], r.toteutustyyppiEnum)
                             && r.pohjakoulutusvaatimus) {
-                            r.nimi += ', ' + localize(r.pohjakoulutusvaatimus);
+                            r.nimi += ', ' + localize(r.pohjakoulutusvaatimus, r.opetuskielet);
                         }
                     }
                     else {
@@ -245,18 +237,6 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         });
         return ret.promise;
     };
-    function cleanAndLocalizeArray(arr) {
-        var ret = [];
-        for (var i in arr) {
-            if (arr[i].oid) {
-                ret[i] = {
-                    oid: arr[i].oid,
-                    nimi: localize(arr[i].nimi)
-                };
-            }
-        }
-        return ret;
-    }
     function flattenSearchResults(results) {
         return _.chain(results).map(function(resultsForTarjoaja) {
             return _.map(resultsForTarjoaja.tulokset, function(row) {

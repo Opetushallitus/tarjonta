@@ -5,7 +5,7 @@
     <h3 ng-if="showKoulutuskoodiTitle()">{{ getKoulutuskoodiNimi() }}</h3>
 
     <tabset>
-        <tab data-ng-repeat="lang in model.languages" heading="{{lang.name}}">
+        <tab data-ng-repeat="lang in model.languages" heading="{{lang.name}}" active="lang.active">
             <div data-ng-include="'partials/koulutus/review/GENERIC_reviewLanguage.html'"></div>
         </tab>
     </tabset>

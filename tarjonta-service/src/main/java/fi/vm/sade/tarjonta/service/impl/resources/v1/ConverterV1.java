@@ -1719,6 +1719,7 @@ public class ConverterV1 {
         dto.setKoulutusasteTyyppi(hakukohdePerustieto.getKoulutusastetyyppi());
         dto.setKoulutusmoduuliTyyppi(hakukohdePerustieto.getKoulutusmoduuliTyyppi());
         dto.setRyhmaliitokset(getRyhmaliitokset(hakukohdePerustieto));
+        dto.setOpetuskielet(hakukohdePerustieto.getOpetuskielet());
         return dto;
     }
 
@@ -1805,6 +1806,7 @@ public class ConverterV1 {
 
         ret.setTarjoajat(ht.getTarjoajat());
         ret.setKoulutusmoduuliTyyppi(ht.getKoulutusmoduuliTyyppi());
+        ret.setOpetuskielet(ht.getOpetuskielet());
         return ret;
     }
 

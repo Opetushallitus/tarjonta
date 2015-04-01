@@ -3,6 +3,7 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
@@ -31,8 +32,16 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
     private Date koulutuksenAlkamisPvmMax = null;
     private ArrayList<String> tarjoajat;
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
-
     private String komoOid;
+    private List<String> opetuskielet;
+
+    public List<String> getOpetuskielet() {
+        return opetuskielet;
+    }
+
+    public void setOpetuskielet(List<String> opetuskielet) {
+        this.opetuskielet = opetuskielet;
+    }
 
     public String getKomoOid() {
         return komoOid;
