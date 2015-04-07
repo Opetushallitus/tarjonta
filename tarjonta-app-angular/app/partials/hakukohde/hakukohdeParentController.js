@@ -524,13 +524,13 @@ app.controller('HakukohdeParentController', [
                 var hakuDatas = resolved[0];
                 var haunKohdejoukkoUris = resolved[1].uris;
                 $scope.model.hakus = [];
+                var userLang = AuthService.getLanguage();
+                var hakuLang = userLang !== undefined ? userLang : $scope.model.defaultLang;
                 angular.forEach(hakuDatas, function(haku) {
-                    var userLang = AuthService.getLanguage();
-                    var hakuLang = userLang !== undefined ? userLang : $scope.model.defaultLang;
-                    for (var kieliUri in haku.nimi) {
-                        if (kieliUri.indexOf(hakuLang) != -1) {
-                            haku.lokalisoituNimi = haku.nimi[kieliUri];
-                        }
+                    haku.lokalisoituNimi = haku.nimi['kieli_' + hakuLang];
+                    // Jos ei löydy kälin kielellä => näytä jollain kielellä
+                    if (!haku.lokalisoituNimi) {
+                        haku.lokalisoituNimi = _.chain(haku.nimi).compact().first().value();
                     }
                 });
                 var selectedHaku;
