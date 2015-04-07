@@ -1492,6 +1492,22 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         copy.setOrganisaatio(new OrganisaatioV1RDTO(orgOid, null, null));
         copy.setOpetusTarjoajat(Sets.newHashSet(orgOid));
 
+        /**
+         * Valmentava ja kuntouttava muuttui TELMA-koulutukseksi. Kopioinnin yhteydessä:
+         * - poista käsin syötettävä linja
+         * - poista koulutusohjelma
+         * - aseta komoksi ylätason komo (koska ei ole enää koulutuoshjelma-komoa)
+         */
+        if (komoto.getToteutustyyppi().equals(ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS)) {
+            ValmistavaKoulutusV1RDTO valmDto = (ValmistavaKoulutusV1RDTO) copy;
+            valmDto.setKoulutusohjelmanNimiKannassa(null);
+            valmDto.setKoulutusohjelma(null);
+            Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komoto.getKoulutusmoduuli());
+            if (parentKomo != null) {
+                valmDto.setKomoOid(parentKomo.getOid());
+            }
+        }
+
         return copy;
     }
 
