@@ -1,6 +1,10 @@
 angular.module('loading', ['localisation']).factory('loadingService', function() {
+    function getRequest(config) {
+        return config.method + ': ' + config.url;
+    }
     var service = {
         requestCount: 0,
+        requests: {},
         operationCount: 0,
         errors: 0,
         modal: false,
@@ -29,13 +33,16 @@ angular.module('loading', ['localisation']).factory('loadingService', function()
             //console.log("LOADING afterOperation", service);
             service.operationCount--;
         },
-        beforeRequest: function() {
+        beforeRequest: function(config) {
             //console.log("LOADING beforeRequest", service);
             service.modal = true;
             service.startTimeout();
             service.requestCount++;
+            if (!service.requests[getRequest(config)]) {
+                service.requests[getRequest(config)] = new Date();
+            }
         },
-        afterRequest: function(success, req) {
+        afterRequest: function(success, response) {
             //console.log("LOADING afterRequest "+success, service);
             if (success) {
                 service.requestCount--;
@@ -43,6 +50,7 @@ angular.module('loading', ['localisation']).factory('loadingService', function()
             else {
                 service.errors++;
             }
+            delete service.requests[getRequest(response.config)];
             service.clearTimeout();
         },
         commit: function() {
@@ -68,6 +76,7 @@ angular.module('loading', ['localisation']).factory('loadingService', function()
             service.timeout = window.setTimeout(function() {
                 service.timeoutMinor = true;
                 service.scope.$apply();
+                service.logSlowRequests();
                 service.timeout = window.setTimeout(function() {
                     service.timeoutMajor = true;
                     service.scope.$apply();
@@ -90,13 +99,24 @@ angular.module('loading', ['localisation']).factory('loadingService', function()
          */
         setSpinnerEnabled: function(enabled) {
             service.isEnabled = enabled;
+        },
+        logSlowRequests: function() {
+            _.each(service.requests, function(startTime, request) {
+                var duration = new Date() - startTime;
+                request = encodeURIComponent(request);
+                $('<img />')
+                    .attr('src', '/tarjonta-app/img/tracking.png?request=' + request + '&duration=' + duration)
+                    .appendTo('body');
+            });
         }
     };
     return service;
 }).factory('onStartInterceptor', function(loadingService) {
-    return function(data, headersGetter) {
-        loadingService.beforeRequest();
-        return data;
+    return {
+        request: function(config) {
+            loadingService.beforeRequest(config);
+            return config;
+        }
     };
 }).factory('onCompleteInterceptor', function(loadingService, $q) {
     return function(promise) {
@@ -121,8 +141,7 @@ angular.module('loading', ['localisation']).factory('loadingService', function()
     };
 }).config(function($httpProvider) {
     $httpProvider.responseInterceptors.push('onCompleteInterceptor');
-}).run(function($http, onStartInterceptor) {
-    $http.defaults.transformRequest.push(onStartInterceptor);
+    $httpProvider.interceptors.push('onStartInterceptor');
 }).controller('LoadingCtrl', function($scope, $rootElement, $modal, loadingService) {
     var ctrl = $scope;
     loadingService.scope = ctrl;
@@ -147,21 +166,21 @@ angular.module('loading', ['localisation']).factory('loadingService', function()
     $scope.$watch(function() {
         return loadingService.isLoading();
     }, function(value) {
-            $scope.loading = value;
-            if (value) {
-                $rootElement.addClass('spinner');
-            }
-            else {
-                $rootElement.removeClass('spinner');
-            }
-        });
+        $scope.loading = value;
+        if (value) {
+            $rootElement.addClass('spinner');
+        }
+        else {
+            $rootElement.removeClass('spinner');
+        }
+    });
     $scope.$watch(function() {
         return loadingService.errors;
     }, function(value, oldv) {
-            if (value > 0 && oldv === 0) {
-                showErrorDialog();
-            }
-        });
+        if (value > 0 && oldv === 0) {
+            showErrorDialog();
+        }
+    });
     $scope.isModal = function() {
         return loadingService.isModal();
     };
