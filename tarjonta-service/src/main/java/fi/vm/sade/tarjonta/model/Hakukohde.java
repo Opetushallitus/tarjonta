@@ -680,6 +680,9 @@ public class Hakukohde extends TarjontaBaseEntity {
         filter(getHakukelpoisuusVaatimusKuvaus());
         filter(getValintaperusteKuvaus());
         filter(getSoraKuvaus());
+        filter(getLisatiedot());
+        filter(getHakuMenettelyKuvaus());
+        filter(getPeruutusEhdotKuvaus());
     }
 
     public String getUlkoinenTunniste() {

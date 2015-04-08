@@ -207,7 +207,7 @@ app.directive('richTextarea', function(LocalisationService, $log, $sce) {
                     var e = $(em);
                     // säilytä h/v align jos td tai th, poista muut
                     if (em.localName != 'th' && em.localName != 'td') {
-                        eattr('style', null);
+                        e.attr('style', null);
                         return;
                     }
                     var halign = e.css('text-align');
