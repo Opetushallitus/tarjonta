@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.service.tasks;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +27,9 @@ import fi.vm.sade.tarjonta.service.search.IndexerResource;
 public class IndexSyncronizer {
 
     final Logger logger = LoggerFactory.getLogger(IndexSyncronizer.class);
+
+    @Autowired
+    private IndexSyncronizerUtils indexSyncronizerUtils;
 
     @Autowired
     private IndexerDAO indexerDao;
@@ -56,6 +60,16 @@ public class IndexSyncronizer {
             Date now = new Date();
             indexerResource.indexKoulutukset(Lists.newArrayList(id));
             indexerDao.updateKoulutusIndexed(id, now);
+        }
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 4 * * * ?")
+    public void updateOrganizationChanges() {
+        logger.debug("Starting organization change reindex");
+        List<String> organizationOids = indexSyncronizerUtils.getChangedOrganizationOids();
+        if (!organizationOids.isEmpty()) {
+            indexerDao.reindexOrganizationChanges(organizationOids);
         }
     }
 

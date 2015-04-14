@@ -21,8 +21,8 @@ import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.Predicate;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QHakukohde;
+import fi.vm.sade.tarjonta.model.QKoulutusOwner;
 import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
 import org.springframework.stereotype.Repository;
@@ -80,6 +80,32 @@ public class IndexerDaoImpl implements IndexerDAO {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         JPAUpdateClause u = new JPAUpdateClause(entityManager, komoto);
         u.where(komoto.id.eq(id)).set(komoto.viimIndeksointiPvm, time).execute();
+    }
+
+    @Override
+    public void reindexOrganizationChanges(List<String> organizationOids) {
+        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        final QHakukohde hakukohde = QHakukohde.hakukohde;
+        final QKoulutusOwner owner = QKoulutusOwner.koulutusOwner;
+
+        List<Long> koulutusIds = q(komoto).leftJoin(komoto.owners, owner).where(
+                bb(owner.ownerOid.in(organizationOids).or(komoto.tarjoaja.in(organizationOids))))
+                .distinct().list(komoto.id);
+
+        if (koulutusIds.isEmpty()) return;
+
+        new JPAUpdateClause(entityManager, komoto)
+                .where(komoto.id.in(koulutusIds))
+                .setNull(komoto.viimIndeksointiPvm).execute();
+
+        List<Long> hakukohdeIds = q(hakukohde).join(hakukohde.koulutusmoduuliToteutuses, komoto)
+                                    .where(komoto.id.in(koulutusIds)).distinct().list(hakukohde.id);
+
+        if (hakukohdeIds.isEmpty()) return;
+
+        new JPAUpdateClause(entityManager, hakukohde)
+                .where(hakukohde.id.in(hakukohdeIds))
+                .setNull(hakukohde.viimIndeksointiPvm).execute();
     }
 
     private BooleanBuilder bb(Predicate initial) {

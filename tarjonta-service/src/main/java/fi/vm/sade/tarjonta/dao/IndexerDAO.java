@@ -32,4 +32,6 @@ public interface IndexerDAO {
 
     void updateKoulutusIndexed(Long id, Date time);
 
+    void reindexOrganizationChanges(List<String> organizationOids);
+
 }
