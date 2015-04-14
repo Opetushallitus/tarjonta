@@ -162,6 +162,51 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
             });
         $log.info('HakuReviewController.init()... done.');
     };
+    $scope.downloadHakukohteetExcel = function() {
+        var wb = {
+            SheetNames: [],
+            Sheets: {}
+        };
+        var ws = {
+            A1: {t: 's', v: 'OID'},
+            B1: {t: 's', v: 'Organisaatio'},
+            C1: {t: 's', v: 'Hakukohteen nimi'},
+            D1: {t: 's', v: 'Kausi'},
+            E1: {t: 's', v: 'Vuosi'},
+            F1: {t: 's', v: 'Tila'},
+            G1: {t: 's', v: 'Hakutapa'},
+            H1: {t: 's', v: 'Aloituspaikat'},
+            I1: {t: 's', v: 'Toteutustyyppi'},
+            J1: {t: 's', v: 'Opetuskielet'}
+        };
+        var sheetName = 'Hakukohteet';
+        _.each($scope.model.hakukohteet, function(hakukohde, i) {
+            var rowNumber = i + 2;
+            var row = {
+                A: hakukohde.oid,
+                B: hakukohde.organisaatioNimi,
+                C: hakukohde.nimi,
+                D: hakukohde.kausi.fi,
+                E: hakukohde.vuosi,
+                F: hakukohde.tilaNimi,
+                G: hakukohde.hakutapa,
+                H: $scope.getAloituspaikat(hakukohde),
+                I: hakukohde.toteutustyyppiEnum,
+                J: (hakukohde.opetuskielet || []).join(', ')
+            };
+            _.each(row, function(val, key) {
+                ws[key + rowNumber] = {
+                    t: parseInt(val) == val ? 'n' : 's',
+                    v: val
+                };
+            });
+            ws['!ref'] = 'A1:J' + rowNumber;
+        });
+        wb.SheetNames.push(sheetName);
+        wb.Sheets[sheetName] = ws;
+        var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:false, type: 'binary'});
+        saveAs(new Blob([s2ab(wbout)], {type:'application/octet-stream'}), 'hakukohteet.xlsx');
+    };
     $scope.init();
     $scope.parametrit = {};
     ParameterService.haeParametritUUSI(hakuOid).then(function(parameters) {
@@ -173,3 +218,13 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
         return aloituspaikat[lang] || aloituspaikat[Object.keys(aloituspaikat)[0]] || hakukohde.aloituspaikat;
     };
 });
+
+// From http://sheetjs.com/demos/Export2Excel.js
+function s2ab(s) {
+    var buf = new ArrayBuffer(s.length);
+    var view = new Uint8Array(buf);
+    for (var i = 0; i != s.length; ++i) {
+        view[i] = s.charCodeAt(i) & 0xFF;
+    }
+    return buf;
+}

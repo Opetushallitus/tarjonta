@@ -28,5 +28,9 @@
     "q": "^1.1.1",
     "request": "2.34.0",
     "run-sequence": "^1.0.2"
+  },
+  "dependencies": {
+    "filesaver.js": "~0.1.1",
+    "xlsx": "~0.8.0"
   }
 }

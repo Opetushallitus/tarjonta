@@ -32,6 +32,15 @@ public class HakukohdePerustieto implements Serializable {
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
     private List<SolrRyhmaliitos> ryhmaliitokset = new ArrayList<SolrRyhmaliitos>();
     private List<String> opetuskielet;
+    private String toteutustyyppi;
+
+    public String getToteutustyyppi() {
+        return toteutustyyppi;
+    }
+
+    public void setToteutustyyppi(String toteutustyyppi) {
+        this.toteutustyyppi = toteutustyyppi;
+    }
 
     public List<String> getOpetuskielet() {
         return opetuskielet;

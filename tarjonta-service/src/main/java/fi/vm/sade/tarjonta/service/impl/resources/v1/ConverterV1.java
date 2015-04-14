@@ -1720,6 +1720,7 @@ public class ConverterV1 {
         dto.setKoulutusmoduuliTyyppi(hakukohdePerustieto.getKoulutusmoduuliTyyppi());
         dto.setRyhmaliitokset(getRyhmaliitokset(hakukohdePerustieto));
         dto.setOpetuskielet(hakukohdePerustieto.getOpetuskielet());
+        dto.setToteutustyyppiEnum(ToteutustyyppiEnum.fromString(hakukohdePerustieto.getToteutustyyppi()));
         return dto;
     }
 
