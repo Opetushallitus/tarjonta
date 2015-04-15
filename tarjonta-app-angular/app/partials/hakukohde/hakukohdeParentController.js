@@ -635,8 +635,9 @@ app.controller('HakukohdeParentController', [
                         return;
                     }
                     if (haku.hakutapaUri.indexOf(HAKUTAPA.JATKUVA_HAKU) !== -1) {
-                        var maxLoppuPvm = _.chain(haku.hakuaikas).pluck('loppuPvm').max().value();
-                        if (_.isNaN(maxLoppuPvm) || maxLoppuPvm > new Date().getTime()) {
+                        var loppuPvms = _.pluck(haku.hakuaikas, 'loppuPvm');
+                        var hasEmptyLoppuPvms = _.compact(loppuPvms).length < loppuPvms.length;
+                        if (hasEmptyLoppuPvms || _.max(loppuPvms) > new Date().getTime()) {
                             return true;
                         }
                     }
