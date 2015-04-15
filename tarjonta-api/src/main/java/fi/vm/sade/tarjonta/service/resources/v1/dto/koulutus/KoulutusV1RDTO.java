@@ -157,6 +157,9 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     @ApiModelProperty(value = "Valitaan opintojen maksullisuuden (false=koulutus ei vaadi maksua)")
     private Boolean opintojenMaksullisuus;
 
+    @ApiModelProperty(value = "Onko koulutus avoimen yliopiston/ammattikorkeakoulun koulutus")
+    private Boolean isAvoimenYliopistonKoulutus;
+
     public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         this.setToteutustyyppi(toteutustyyppi);
         this.moduulityyppi = moduulityyppi;
@@ -264,6 +267,14 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      */
     public void setOrganisaatio(OrganisaatioV1RDTO organisaatio) {
         this.organisaatio = organisaatio;
+    }
+
+    public Boolean getIsAvoimenYliopistonKoulutus() {
+        return isAvoimenYliopistonKoulutus;
+    }
+
+    public void setIsAvoimenYliopistonKoulutus(Boolean isAvoimenYliopistonKoulutus) {
+        this.isAvoimenYliopistonKoulutus = isAvoimenYliopistonKoulutus;
     }
 
     @Override

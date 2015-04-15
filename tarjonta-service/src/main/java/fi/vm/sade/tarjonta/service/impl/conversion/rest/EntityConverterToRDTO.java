@@ -112,6 +112,8 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             dto.setChildren(children);
         }
 
+        dto.setIsAvoimenYliopistonKoulutus(komoto.getIsAvoimenYliopistonKoulutus());
+
         //KOMO
         if (dto instanceof KoulutusKorkeakouluV1RDTO) {
             /**

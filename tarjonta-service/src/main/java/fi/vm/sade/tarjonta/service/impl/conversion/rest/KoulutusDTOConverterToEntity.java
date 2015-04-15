@@ -219,6 +219,8 @@ public class KoulutusDTOConverterToEntity {
          */
         updateTutkintoonjohtamatonKomotoData(komoto, dto, userOid);
 
+        komoto.setIsAvoimenYliopistonKoulutus(dto.getIsAvoimenYliopistonKoulutus());
+
         return komoto;
     }
 

@@ -167,6 +167,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "tarjoaja")
     private String tarjoaja;
 
+    @Column(name = "avoimen_yliopiston_koulutus")
+    private Boolean isAvoimenYliopistonKoulutus;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "koulutusmoduuli_toteutus_id", nullable = false)
     private Set<KoulutusOwner> owners = new HashSet<KoulutusOwner>();
@@ -565,6 +568,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
                 kv.setKielet(new ArrayList<String>());
             }
         }
+    }
+
+    public Boolean getIsAvoimenYliopistonKoulutus() {
+        return isAvoimenYliopistonKoulutus;
+    }
+
+    public void setIsAvoimenYliopistonKoulutus(Boolean isAvoimenYliopistonKoulutus) {
+        this.isAvoimenYliopistonKoulutus = isAvoimenYliopistonKoulutus;
     }
 
     /**

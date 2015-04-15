@@ -182,6 +182,16 @@
         </td>
     </tr>
 
+    <tr>
+        <th tt="koulutus.review.perustiedot.isAvoimenYliopistonKoulutus">
+            Avoimen ammattikorkeakoulun/yliopiston koulutus
+        </th>
+        <td colspan="2">
+            <span ng-show="model.koulutus.isAvoimenYliopistonKoulutus" tt="yes">kyllä</span>
+            <span ng-show="!model.koulutus.isAvoimenYliopistonKoulutus" tt="no">ei</span>
+        </td>
+    </tr>
+
     <!-- YHTEYSHENKILÖT -->
     <tr class="collapse" ng-class="model.collapse.yhteysHenkilot ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.yhteysHenkilot.otsikko" ng-click="model.collapse.yhteysHenkilot = !model.collapse.yhteysHenkilot">Yhteyshenkilöt</th>
