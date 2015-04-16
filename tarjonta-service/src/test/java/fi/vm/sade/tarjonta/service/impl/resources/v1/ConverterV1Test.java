@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
@@ -22,6 +23,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.*;
@@ -182,18 +184,44 @@ public class ConverterV1Test {
     @Test
     public void thatHakukohdeWithKoulutusmoduuliTarjontatiedotAreConvertedToDTO() {
         Hakukohde hakukohde = getHakukohde();
+
+        Koulutusmoduuli komo = new Koulutusmoduuli();
+        komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
+        komoto.setKoulutusmoduuli(komo);
+        komoto.setOid("1.2.3");
+
+        KoulutusmoduuliToteutus komotoPoistettu = new KoulutusmoduuliToteutus();
+        komotoPoistettu.setTila(TarjontaTila.POISTETTU);
+        komotoPoistettu.setKoulutusmoduuli(komo);
+        komotoPoistettu.setOid("5.5.5.5.5");
+
+        KoulutusmoduuliToteutus komotoPeruttu = new KoulutusmoduuliToteutus();
+        komotoPeruttu.setTila(TarjontaTila.PERUTTU);
+        komotoPeruttu.setKoulutusmoduuli(komo);
+        komotoPeruttu.setOid("5.5.5.5.5.8");
+
+        hakukohde.setKoulutusmoduuliToteutuses(Sets.newHashSet(komoto, komotoPoistettu, komotoPeruttu));
+
         KoulutusmoduuliToteutusTarjoajatiedot tarjoajatiedot = new KoulutusmoduuliToteutusTarjoajatiedot();
         tarjoajatiedot.getTarjoajaOids().add("4.5.6");
-        hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot().put("1.2.3", tarjoajatiedot);
+        hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot().put(komoto.getOid(), tarjoajatiedot);
 
         HakukohdeV1RDTO hakukohdeDTO = converter.toHakukohdeRDTO(hakukohde);
 
         Map<String, KoulutusmoduuliTarjoajatiedotV1RDTO> tarjoajatiedotMap = hakukohdeDTO.getKoulutusmoduuliToteutusTarjoajatiedot();
 
+        assertEquals(hakukohde.getKoulutusmoduuliToteutuses().size(), 2);
+        Set<String> assertKomotoOids = new HashSet<String>();
+        for (KoulutusmoduuliToteutus tmpKomoto : hakukohde.getKoulutusmoduuliToteutuses()) {
+            assertKomotoOids.add(tmpKomoto.getOid());
+        }
+        assertTrue(assertKomotoOids.contains(komoto.getOid()));
+        assertTrue(assertKomotoOids.contains(komotoPeruttu.getOid()));
         assertTrue(tarjoajatiedotMap.size() == 1);
-        assertTrue(tarjoajatiedotMap.containsKey("1.2.3"));
-        assertTrue(tarjoajatiedotMap.get("1.2.3").getTarjoajaOids().size() == 1);
-        assertEquals("4.5.6", tarjoajatiedotMap.get("1.2.3").getTarjoajaOids().iterator().next());
+        assertTrue(tarjoajatiedotMap.containsKey(komoto.getOid()));
+        assertTrue(tarjoajatiedotMap.get(komoto.getOid()).getTarjoajaOids().size() == 1);
+        assertEquals("4.5.6", tarjoajatiedotMap.get(komoto.getOid()).getTarjoajaOids().iterator().next());
     }
 
     @Test

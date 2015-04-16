@@ -222,7 +222,13 @@ public class Hakukohde extends TarjontaBaseEntity {
      * @return the koulutuses
      */
     public Set<KoulutusmoduuliToteutus> getKoulutusmoduuliToteutuses() {
-        return Collections.unmodifiableSet(koulutusmoduuliToteutuses);
+        Set<KoulutusmoduuliToteutus> filteredKomotos = new HashSet<KoulutusmoduuliToteutus>();
+        for (KoulutusmoduuliToteutus komoto : koulutusmoduuliToteutuses) {
+            if (!komoto.getTila().equals(TarjontaTila.POISTETTU)) {
+                filteredKomotos.add(komoto);
+            }
+        }
+        return Collections.unmodifiableSet(filteredKomotos);
     }
 
     /**

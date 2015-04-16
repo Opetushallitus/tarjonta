@@ -821,8 +821,19 @@ public class ConverterV1 {
                 hakukohdeRDTO.getKoulutusmoduuliToteutusTarjoajatiedot().put(oid, koulutusmoduuliTarjoajatiedotV1RDTO);
             }
         } else {
+            Set<String> komotoOids = new HashSet<String>();
+            for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
+                komotoOids.add(komoto.getOid());
+            }
             for (Map.Entry<String, KoulutusmoduuliToteutusTarjoajatiedot> entry : hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot().entrySet()) {
                 String oid = entry.getKey();
+
+                // Komoto voi olla poistettu jolloin sitä ei palauteta
+                // (komotoOids sisältää kaikki komotot jotka eivät ole poistettu)
+                if (!komotoOids.contains(oid)) {
+                    continue;
+                }
+
                 KoulutusmoduuliToteutusTarjoajatiedot tarjoajatiedot = entry.getValue();
 
                 KoulutusmoduuliTarjoajatiedotV1RDTO koulutusmoduuliTarjoajatiedotV1RDTO = new KoulutusmoduuliTarjoajatiedotV1RDTO();
