@@ -53,6 +53,9 @@ public class SolrDocumentToHakukohdeConverter {
 
         hakukohde.setToteutustyyppi((String) hakukohdeDoc.getFieldValue(TOTEUTUSTYYPPI_ENUM));
 
+        hakukohde.setHakuaikaString((String) hakukohdeDoc.getFieldValue(HAKUAIKA_STRING));
+        hakukohde.setHakuaikaRyhma((String) hakukohdeDoc.getFieldValue(HAKUAIKA_RYHMA));
+
         if (hakukohdeDoc.getFieldValue(VUOSI_KOODI) != null) {
             hakukohde.setKoulutuksenAlkamisvuosi(Integer.parseInt((String) hakukohdeDoc.getFieldValue(VUOSI_KOODI)));
         }

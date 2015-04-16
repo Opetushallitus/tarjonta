@@ -1732,6 +1732,8 @@ public class ConverterV1 {
         dto.setRyhmaliitokset(getRyhmaliitokset(hakukohdePerustieto));
         dto.setOpetuskielet(hakukohdePerustieto.getOpetuskielet());
         dto.setToteutustyyppiEnum(ToteutustyyppiEnum.fromString(hakukohdePerustieto.getToteutustyyppi()));
+        dto.setHakuaikaString(hakukohdePerustieto.getHakuaikaString());
+        dto.setHakuaikaRyhma(hakukohdePerustieto.getHakuaikaRyhma());
         return dto;
     }
 

@@ -33,6 +33,8 @@ public class HakukohdePerustieto implements Serializable {
     private List<SolrRyhmaliitos> ryhmaliitokset = new ArrayList<SolrRyhmaliitos>();
     private List<String> opetuskielet;
     private String toteutustyyppi;
+    private String hakuaikaString;
+    private String hakuaikaRyhma;
 
     public String getToteutustyyppi() {
         return toteutustyyppi;
@@ -257,4 +259,21 @@ public class HakukohdePerustieto implements Serializable {
     public void addRyhmaliitos(SolrRyhmaliitos ryhmaliitos) {
         getRyhmaliitokset().add(ryhmaliitos);
     }
+
+    public String getHakuaikaRyhma() {
+        return hakuaikaRyhma;
+    }
+
+    public void setHakuaikaRyhma(String hakuaikaRyhma) {
+        this.hakuaikaRyhma = hakuaikaRyhma;
+    }
+
+    public String getHakuaikaString() {
+        return hakuaikaString;
+    }
+
+    public void setHakuaikaString(String hakuaikaString) {
+        this.hakuaikaString = hakuaikaString;
+    }
+
 }

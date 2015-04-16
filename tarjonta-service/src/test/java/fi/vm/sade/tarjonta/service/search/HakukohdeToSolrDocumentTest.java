@@ -288,6 +288,14 @@ public class HakukohdeToSolrDocumentTest {
     }
 
     @Test
+    public void thatHakuaikasAreConverted() {
+        SolrInputDocument doc = convert();
+
+        assertEquals(doc.getFieldValue(HAKUAIKA_STRING), "2015-02-02 14:02 - 2015-02-02 14:02");
+        assertEquals(doc.getFieldValue(HAKUAIKA_RYHMA), "Testihakuaika (2015-02-02 14:02 - 2015-02-02 14:02)");
+    }
+
+    @Test
     public void thatRyhmaliitoksetAreConverted() {
         SolrInputDocument doc = convert();
 
@@ -374,6 +382,18 @@ public class HakukohdeToSolrDocumentTest {
         secondHakuaika.setAlkamisPvm(new DateTime().withYear(2014).withMonthOfYear(4).toDate());
         secondHakuaika.setPaattymisPvm(new DateTime().withYear(2014).withMonthOfYear(6).toDate());
         haku.addHakuaika(secondHakuaika);
+
+        DateTime date = new DateTime(2015, 2, 2, 14, 2);
+        hakukohde.setHakuaikaAlkuPvm(date.toDate());
+        hakukohde.setHakuaikaLoppuPvm(date.toDate());
+
+        MonikielinenTeksti hakuaikaNimi = new MonikielinenTeksti();
+        hakuaikaNimi.addTekstiKaannos("kieli_fi", "Testihakuaika");
+        Hakuaika hakuaika = new Hakuaika();
+        hakuaika.setAlkamisPvm(date.toDate());
+        hakuaika.setPaattymisPvm(date.toDate());
+        hakuaika.setNimi(hakuaikaNimi);
+        hakukohde.setHakuaika(hakuaika);
 
         hakukohde.setHaku(haku);
 

@@ -194,4 +194,17 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
         return tekstit;
     }
 
+    public String getFirstNonEmptyKaannos() {
+        // Prefer finnish
+        if (tekstis.get("kieli_fi") != null && !tekstis.get("kieli_fi").getArvo().isEmpty()) {
+            return tekstis.get("kieli_fi").getArvo();
+        }
+        for (TekstiKaannos tmpKaannos : getTekstiKaannos()) {
+            if (!tmpKaannos.getArvo().isEmpty()) {
+                return tmpKaannos.getArvo();
+            }
+        }
+        return null;
+    }
+
 }

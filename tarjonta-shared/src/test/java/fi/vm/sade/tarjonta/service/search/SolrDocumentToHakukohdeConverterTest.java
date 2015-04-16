@@ -27,6 +27,8 @@ public class SolrDocumentToHakukohdeConverterTest {
 
     @Test
     public void thatSolrDocumentIsConvertedToHakukohde() {
+        final String HAKUAIKA_TEST_STRING = "Testi hakuaika 1";
+
         SolrDocumentList solrDocumentList = new SolrDocumentList();
         SolrDocument solrDocument = mock(SolrDocument.class);
         solrDocumentList.add(solrDocument);
@@ -45,6 +47,7 @@ public class SolrDocumentToHakukohdeConverterTest {
         when(solrDocument.getFieldValue(KOULUTUSMODUULITYYPPI_ENUM)).thenReturn(KoulutusmoduuliTyyppi.TUTKINTO);
         when(solrDocument.getFieldValues(RYHMA_OIDS)).thenReturn(getRyhmaOids());
         when(solrDocument.getFieldValues(RYHMA_PRIORITEETIT)).thenReturn(getPrioriteetit());
+        when(solrDocument.getFieldValue(HAKUAIKA_STRING)).thenReturn(HAKUAIKA_TEST_STRING);
 
         HakukohteetVastaus hakukohteetVastaus = converter.convertSolrToHakukohteetVastaus(solrDocumentList, new HashMap<String, OrganisaatioPerustieto>(), "1.2.3");
 
@@ -62,6 +65,7 @@ public class SolrDocumentToHakukohdeConverterTest {
         assertEquals(new Integer(0), ryhmaliitokset.get(0).getPrioriteetti());
         assertEquals("4.5.6", ryhmaliitokset.get(1).getRyhmaOid());
         assertNull(ryhmaliitokset.get(1).getPrioriteetti());
+        assertEquals(hakukohteetVastaus.getHakukohteet().iterator().next().getHakuaikaString(), HAKUAIKA_TEST_STRING);
     }
 
     private List<Object> getPrioriteetit() {

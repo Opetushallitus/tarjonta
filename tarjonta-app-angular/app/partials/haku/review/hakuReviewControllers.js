@@ -18,7 +18,7 @@ var app = angular.module('app.haku.review.ctrl', [
 ]);
 app.controller('HakuReviewController', function($scope, $route, $log, $routeParams, ParameterService, $location,
                 HakuV1Service, TarjontaService, dialogService, LocalisationService, $q, PermissionService,
-                OrganisaatioService, $modal, AuthService) {
+                OrganisaatioService, $modal, AuthService, KoulutusConverterFactory, Koodisto) {
     $log = $log.getInstance('HakuReviewController');
     $scope.isMutable = false;
     $scope.isRemovable = false;
@@ -163,49 +163,68 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
         $log.info('HakuReviewController.init()... done.');
     };
     $scope.downloadHakukohteetExcel = function() {
-        var wb = {
-            SheetNames: [],
-            Sheets: {}
-        };
-        var ws = {
-            A1: {t: 's', v: 'OID'},
-            B1: {t: 's', v: 'Organisaatio'},
-            C1: {t: 's', v: 'Hakukohteen nimi'},
-            D1: {t: 's', v: 'Kausi'},
-            E1: {t: 's', v: 'Vuosi'},
-            F1: {t: 's', v: 'Tila'},
-            G1: {t: 's', v: 'Hakutapa'},
-            H1: {t: 's', v: 'Aloituspaikat'},
-            I1: {t: 's', v: 'Toteutustyyppi'},
-            J1: {t: 's', v: 'Opetuskielet'}
-        };
-        var sheetName = 'Hakukohteet';
-        _.each($scope.model.hakukohteet, function(hakukohde, i) {
-            var rowNumber = i + 2;
-            var row = {
-                A: hakukohde.oid,
-                B: hakukohde.organisaatioNimi,
-                C: hakukohde.nimi,
-                D: hakukohde.kausi.fi,
-                E: hakukohde.vuosi,
-                F: hakukohde.tilaNimi,
-                G: hakukohde.hakutapa,
-                H: $scope.getAloituspaikat(hakukohde),
-                I: hakukohde.toteutustyyppiEnum,
-                J: (hakukohde.opetuskielet || []).join(', ')
-            };
-            _.each(row, function(val, key) {
-                ws[key + rowNumber] = {
-                    t: parseInt(val) == val ? 'n' : 's',
-                    v: val
+        Koodisto.getAllKoodisWithKoodiUri('koulutustyyppi', AuthService.getLanguage().toLowerCase())
+            .then(function(data) {
+                function getKoulutustyyppi(toteutustyyppi) {
+                    if (KoulutusConverterFactory.STRUCTURE[toteutustyyppi]) {
+                        var uri = KoulutusConverterFactory.STRUCTURE[toteutustyyppi].koulutustyyppiKoodiUri;
+                        if (koodis[uri]) {
+                            return koodis[uri].koodiNimi;
+                        }
+                    }
+                    // Fallback
+                    return toteutustyyppi;
+                }
+
+                var koodis = _.indexBy(data, 'koodiUri');
+                var wb = {
+                    SheetNames: [],
+                    Sheets: {}
                 };
+                var ws = {
+                    A1: {t: 's', v: 'Hakukohteen OID'},
+                    B1: {t: 's', v: 'Organisaatio'},
+                    C1: {t: 's', v: 'Hakukohteen nimi'},
+                    D1: {t: 's', v: 'Hakuaikaryhmä'},
+                    E1: {t: 's', v: 'Hakuaika'},
+                    F1: {t: 's', v: 'Kausi'},
+                    G1: {t: 's', v: 'Vuosi'},
+                    H1: {t: 's', v: 'Tila'},
+                    I1: {t: 's', v: 'Hakutapa'},
+                    J1: {t: 's', v: 'Aloituspaikat'},
+                    K1: {t: 's', v: 'Toteutustyyppi'},
+                    L1: {t: 's', v: 'Opetuskielet'}
+                };
+                var sheetName = 'Hakukohteet';
+                _.each($scope.model.hakukohteet, function(hakukohde, i) {
+                    var rowNumber = i + 2;
+                    var row = {
+                        A: hakukohde.oid,
+                        B: hakukohde.organisaatioNimi,
+                        C: hakukohde.nimi,
+                        D: hakukohde.hakuaikaRyhma,
+                        E: hakukohde.hakuaikaString,
+                        F: hakukohde.kausi.fi,
+                        G: hakukohde.vuosi,
+                        H: hakukohde.tilaNimi,
+                        I: hakukohde.hakutapa,
+                        J: $scope.getAloituspaikat(hakukohde),
+                        K: getKoulutustyyppi(hakukohde.toteutustyyppiEnum),
+                        L: (hakukohde.opetuskielet || []).join(', ')
+                    };
+                    _.each(row, function(val, key) {
+                        ws[key + rowNumber] = {
+                            t: parseInt(val) == val ? 'n' : 's',
+                            v: val
+                        };
+                    });
+                    ws['!ref'] = 'A1:L' + rowNumber;
+                });
+                wb.SheetNames.push(sheetName);
+                wb.Sheets[sheetName] = ws;
+                var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:false, type: 'binary'});
+                saveAs(new Blob([s2ab(wbout)], {type:'application/octet-stream'}), 'hakukohteet.xlsx');
             });
-            ws['!ref'] = 'A1:J' + rowNumber;
-        });
-        wb.SheetNames.push(sheetName);
-        wb.Sheets[sheetName] = ws;
-        var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:false, type: 'binary'});
-        saveAs(new Blob([s2ab(wbout)], {type:'application/octet-stream'}), 'hakukohteet.xlsx');
     };
     $scope.init();
     $scope.parametrit = {};

@@ -12,6 +12,8 @@ public class HakukohdeHakutulosV1RDTO extends KoulutusHakutulosV1RDTO {
 
     private Map<String, String> hakutapa;
     private Map<String, String> aloituspaikatKuvaukset = new HashMap<String, String>();
+    private String hakuaikaString;
+    private String hakuaikaRyhma;
     private Integer aloituspaikat;
     private String hakuOid;
     private List<RyhmaliitosV1RDTO> ryhmaliitokset = new ArrayList<RyhmaliitosV1RDTO>();
@@ -54,5 +56,21 @@ public class HakukohdeHakutulosV1RDTO extends KoulutusHakutulosV1RDTO {
 
     public void setRyhmaliitokset(List<RyhmaliitosV1RDTO> ryhmaliitokset) {
         this.ryhmaliitokset = ryhmaliitokset;
+    }
+
+    public String getHakuaikaRyhma() {
+        return hakuaikaRyhma;
+    }
+
+    public void setHakuaikaRyhma(String hakuaikaRyhma) {
+        this.hakuaikaRyhma = hakuaikaRyhma;
+    }
+
+    public String getHakuaikaString() {
+        return hakuaikaString;
+    }
+
+    public void setHakuaikaString(String hakuaikaString) {
+        this.hakuaikaString = hakuaikaString;
     }
 }
