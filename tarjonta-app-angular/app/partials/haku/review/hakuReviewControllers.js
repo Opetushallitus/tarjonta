@@ -186,13 +186,13 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
                     B1: {t: 's', v: 'Organisaatio'},
                     C1: {t: 's', v: 'Hakukohteen nimi'},
                     D1: {t: 's', v: 'Hakuaikaryhmä'},
-                    E1: {t: 's', v: 'Hakuaika'},
+                    E1: {t: 's', v: 'Hakukohteen hakuaika'},
                     F1: {t: 's', v: 'Kausi'},
                     G1: {t: 's', v: 'Vuosi'},
                     H1: {t: 's', v: 'Tila'},
                     I1: {t: 's', v: 'Hakutapa'},
                     J1: {t: 's', v: 'Aloituspaikat'},
-                    K1: {t: 's', v: 'Toteutustyyppi'},
+                    K1: {t: 's', v: 'Koulutustyyppi'},
                     L1: {t: 's', v: 'Opetuskielet'}
                 };
                 var sheetName = 'Hakukohteet';

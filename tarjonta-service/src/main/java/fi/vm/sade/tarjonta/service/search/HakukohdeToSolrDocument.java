@@ -48,6 +48,8 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
+    private final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
     @Autowired
     private OrganisaatioSearchService organisaatioSearchService;
 
@@ -108,26 +110,49 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     }
 
     private void addHakuaika(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         if (hakukohde.getHakuaikaAlkuPvm() != null && hakukohde.getHakuaikaLoppuPvm() != null) {
-            String hakukaika = format.format(hakukohde.getHakuaikaAlkuPvm());
-            hakukaika += " - " + format.format(hakukohde.getHakuaikaLoppuPvm());
+            String hakukaika = DATE_FORMAT.format(hakukohde.getHakuaikaAlkuPvm());
+            hakukaika += " - " + DATE_FORMAT.format(hakukohde.getHakuaikaLoppuPvm());
             add(hakukohdeDoc, HAKUAIKA_STRING, hakukaika);
         }
-        if (hakukohde.getHakuaika() != null && hakukohde.getHakuaika().getAlkamisPvm() != null) {
-            String hakuaikaRyhma = "";
-            if (hakukohde.getHakuaika().getNimi() != null) {
-                hakuaikaRyhma = hakukohde.getHakuaika().getNimi().getFirstNonEmptyKaannos() + " ";
+
+        Hakuaika hakuaika = hakukohde.getHakuaika();
+
+        // Jos ei löytynyt hakuaikaa -> ota haun ensimmäinen hakuaika
+        if (hakuaika == null) {
+            Set<Hakuaika> hakuaikas = hakukohde.getHaku().getHakuaikas();
+            if (hakuaikas != null && !hakuaikas.isEmpty()) {
+                hakuaika = hakuaikas.iterator().next();
             }
-            hakuaikaRyhma += "(" + format.format(hakukohde.getHakuaika().getAlkamisPvm()) + " - ";
-            if (hakukohde.getHakuaika().getPaattymisPvm() != null) {
-                hakuaikaRyhma += format.format(hakukohde.getHakuaika().getPaattymisPvm()) + ")";
-            }
-            else {
-                hakuaikaRyhma += ")";
-            }
-            add(hakukohdeDoc, HAKUAIKA_RYHMA, hakuaikaRyhma);
         }
+
+        if (hakuaika != null) {
+            add(hakukohdeDoc, HAKUAIKA_RYHMA, getHakuaikaRyhmaString(hakuaika));
+        }
+    }
+
+    private String getHakuaikaRyhmaString(Hakuaika hakuaika) {
+        String hakuaikaRyhma = "";
+
+        if (hakuaika.getNimi() != null && hakuaika.getNimi().getFirstNonEmptyKaannos() != null) {
+            hakuaikaRyhma = hakuaika.getNimi().getFirstNonEmptyKaannos() + " ";
+        }
+
+        if (hakuaika.getAlkamisPvm() != null) {
+            hakuaikaRyhma += "(" + DATE_FORMAT.format(hakuaika.getAlkamisPvm()) + " - ";
+        }
+        else {
+            hakuaikaRyhma += "( - ";
+        }
+
+        if (hakuaika.getPaattymisPvm() != null) {
+            hakuaikaRyhma += DATE_FORMAT.format(hakuaika.getPaattymisPvm()) + ")";
+        }
+        else {
+            hakuaikaRyhma += ")";
+        }
+
+        return hakuaikaRyhma;
     }
 
     private void addRyhmaliitokset(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {

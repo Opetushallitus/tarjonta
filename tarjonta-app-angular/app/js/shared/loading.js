@@ -82,6 +82,7 @@ angular.module('loading', ['localisation']).factory('loadingService', function()
                     service.scope.$apply();
                 }, service.timeoutShort);
             }, service.timeoutLong);
+            service.slowRequestTimeout = window.setTimeout(service.logSlowRequests, 10000);
         },
         /**
          * Kutsutaan error-callbackissa; estää teknisen virheen dialogin näytön.
