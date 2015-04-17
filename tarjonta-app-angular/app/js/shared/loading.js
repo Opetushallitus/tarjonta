@@ -63,6 +63,7 @@ angular.module('loading', ['localisation']).factory('loadingService', function()
             //console.log("LOADING clearTimeout", service);
             if (service.requestCount === 0 && service.timeout !== null) {
                 window.clearTimeout(service.timeout);
+                window.clearTimeout(service.slowRequestTimeout);
                 service.timeout = null;
                 service.timeoutMinor = false;
                 service.timeoutMajor = false;
