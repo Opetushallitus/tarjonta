@@ -310,3 +310,7 @@ hr {
     display: inline-block;
     max-width: 83%;
 }
+
+.tarjontaForm label {
+    font-size:1em;
+}
