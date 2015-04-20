@@ -589,7 +589,7 @@ app.controller('HakukohdeParentController', [
         };
         $scope.model.hakuChanged = function() {
             if ($scope.model.hakukohde.hakuOid !== undefined) {
-                $scope.model.hakuaikas = [];
+                $scope.model.hakuaikas.splice(0, $scope.model.hakuaikas.length);
                 var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
                 if (haku.hakuaikas.length > 1) {
                     angular.forEach(haku.hakuaikas, function(hakuaika) {

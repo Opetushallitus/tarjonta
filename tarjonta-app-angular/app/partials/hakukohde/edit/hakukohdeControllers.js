@@ -61,11 +61,6 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             $scope.model.selectedKieliUris.push(lisatieto.uri);
         });
     }
-    var hakukohdeBeforeSyksy2015 = function() {
-        return $scope.model.koulutusVuosi < 2015 ||
-            ($scope.koulutusKausiUri.indexOf('kausi_k') !== -1 &&
-            $scope.model.koulutusVuosi === 2015);
-    };
     //Placeholder for multiselect remove when refactored
     $scope.model.temp = {};
     $scope.model.ryhmaChange = function() {
@@ -241,38 +236,6 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             if (hakuPaattymisAika !== undefined) {
                 $scope.model.hakukohde.liitteidenToimitusPvm = hakuPaattymisAika;
             }
-        }
-    };
-    /*
-
-          ------> Haku combobox listener -> listens to selected haku to check whether it contains inner application periods
-
-       */
-    var resolveLocalizedValue = function(key) {
-        var userKieliUri = LocalisationService.getKieliUri();
-        return key[userKieliUri] || key.kieli_fi || key.kieli_sv || key.kieli_en || '[Ei nime\xE4]';
-    };
-    $scope.model.hakuChanged = function() {
-        if ($scope.model.hakukohde.hakuOid !== undefined) {
-            $scope.model.hakuaikas.splice(0, $scope.model.hakuaikas.length);
-            var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
-            if (haku.hakuaikas.length > 1) {
-                angular.forEach(haku.hakuaikas, function(hakuaika) {
-                    var formattedStartDate = $scope.createFormattedDateString(hakuaika.alkuPvm);
-                    var formattedEndDate = $scope.createFormattedDateString(hakuaika.loppuPvm);
-                    hakuaika.formattedNimi = resolveLocalizedValue(hakuaika.nimet) + ', '
-                                                + formattedStartDate + ' - ' + formattedEndDate;
-                    $scope.model.hakuaikas.push(hakuaika);
-                });
-                $scope.model.showHakuaikas = true;
-            }
-            else {
-                var hakuaika = _.first(haku.hakuaikas);
-                $scope.model.hakuaikas.push(hakuaika);
-                $scope.model.hakukohde.hakuaikaId = hakuaika.hakuaikaId;
-                $scope.model.showHakuaikas = false;
-            }
-            $scope.handleConfigurableHakuaika();
         }
     };
     $scope.model.saveValmis = function() {
