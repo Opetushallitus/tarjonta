@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.mysema.query.BooleanBuilder;
 import com.mysema.query.Tuple;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPAUpdateClause;
@@ -386,6 +387,25 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         List<Object[]> tmp = findScalars(whereExpr, count, startIndex, projectionExpr);
 
         return convertToSingleStringList(tmp);
+    }
+
+    @Override
+    public List<String> findHakukohteetWithYlioppilastutkintoAntaaHakukelpoisuuden(Long hakuId, Boolean hakuValue) {
+        QHakukohde hakukohde = QHakukohde.hakukohde;
+
+        BooleanBuilder where = new BooleanBuilder(hakukohde.haku.id.eq(hakuId));
+
+        if (!hakuValue) {
+            where.and(hakukohde.ylioppilastutkintoAntaaHakukelpoisuuden.eq(true));
+        }
+        else {
+            where.and(new BooleanBuilder(hakukohde.ylioppilastutkintoAntaaHakukelpoisuuden.eq(true))
+                    .or(hakukohde.ylioppilastutkintoAntaaHakukelpoisuuden.isNull()));
+        }
+
+        where.and(hakukohde.tila.notIn(poistettuTila));
+
+        return from(hakukohde).where(where).list(hakukohde.oid);
     }
 
     /**

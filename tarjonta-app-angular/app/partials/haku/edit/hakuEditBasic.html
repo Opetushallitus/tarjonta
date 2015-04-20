@@ -152,6 +152,19 @@
         <td colspan="2" class="help" data-tt="haku.edit.hakuaika.help"></td>
     </tr>
 
+    <!-- Jos korkeakoulutus -->
+    <tr ng-if="model.hakux.result.kohdejoukkoUri.indexOf('haunkohdejoukko_12#') !== -1">
+        <th data-tt="haku.edit.ylioppilastutkinnonHakukelpoisuus">Ylioppilastutkinnon hakukelpoisuus</th>
+        <td>
+            <input type="checkbox" ng-model="model.hakux.result.ylioppilastutkintoAntaaHakukelpoisuuden" id="yoAntaaHakukelpoisuuden">
+            <label tt="haku.edit.ylioppilastutkintoAntaaHakukelpoisuudenAutomaattisesti"
+                   for="yoAntaaHakukelpoisuuden">Ylioppilastutkinto antaa hakukelpoisuuden automaattisesti
+            </label>
+        </td>
+        <td>
+        </td>
+    </tr>
+
     <!-- Sijoittelu -->
 
     <tr>

@@ -90,6 +90,9 @@ public class Haku extends TarjontaBaseEntity {
     @Column(name = "hakutapa")
     private String hakutapaUri;
 
+    @Column(name = "ylioppilastutkinto_antaa_hakukelpoisuuden")
+    private Boolean ylioppilastutkintoAntaaHakukelpoisuuden;
+
     @Column(name = "sijoittelu")
     private boolean sijoittelu;
 
@@ -504,5 +507,13 @@ public class Haku extends TarjontaBaseEntity {
 
     public boolean isJatkuva() {
         return StringUtils.contains(getHakutapaUri(), "hakutapa_03");
+    }
+
+    public Boolean getYlioppilastutkintoAntaaHakukelpoisuuden() {
+        return ylioppilastutkintoAntaaHakukelpoisuuden;
+    }
+
+    public void setYlioppilastutkintoAntaaHakukelpoisuuden(Boolean ylioppilastutkintoAntaaHakukelpoisuuden) {
+        this.ylioppilastutkintoAntaaHakukelpoisuuden = ylioppilastutkintoAntaaHakukelpoisuuden;
     }
 }

@@ -158,6 +158,17 @@ public class HakukohdeDAOImplTest extends TestData {
         }
     }
 
+    @Test
+    public void testFindYlioppilastutkintoAntaaHakukelpoisuuden() {
+        // Kun haun asetus = false, mutta yhdellä hakukohteella = true
+        List<String> hakukohdeOids = instance.findHakukohteetWithYlioppilastutkintoAntaaHakukelpoisuuden(haku1.getId(), false);
+        assertEquals(hakukohdeOids.size(), 1);
+        assertEquals(hakukohdeOids.iterator().next(), HAKUKOHDE_OID1);
+
+        // Kun haun asetus = true, mutta yhdellä hakukohteella = false
+        hakukohdeOids = instance.findHakukohteetWithYlioppilastutkintoAntaaHakukelpoisuuden(haku1.getId(), true);
+        assertEquals(hakukohdeOids.size(), 2);
+    }
     
     @Test
     public void testXSSFiltering(){

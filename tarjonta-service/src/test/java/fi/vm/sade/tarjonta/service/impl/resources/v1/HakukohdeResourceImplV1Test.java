@@ -406,4 +406,13 @@ public class HakukohdeResourceImplV1Test extends Assert {
 
         hakukohdeResource.deleteHakukohde(hk1r.getResult().getOid());
     }
+
+    @Test
+    public void testYlioppilastutkinnonHakukelpoisuus() {
+        final HakukohdeV1RDTO hk1 = createTestHakukukohde1();
+        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.createHakukohde(hk1);
+        assertEquals(true, false);
+        System.out.println(result);
+    }
+
 }

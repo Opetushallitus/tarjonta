@@ -609,6 +609,12 @@ app.controller('HakukohdeParentController', [
                 }
                 $scope.handleConfigurableHakuaika();
                 $scope.updateKaytaHaunPaattymisenAikaa($scope.model.useHaunPaattymisaikaForLiitteidenToimitusPvm);
+
+                // Kun luodaan uutta ja virkailija ei ole koskenut arvoon => ota arvo haulta
+                if (!$scope.model.hakukohde.oid && !$scope.model.yoHakukelpoisuusDirty) {
+                    $scope.model.hakukohde.ylioppilastutkintoAntaaHakukelpoisuuden =
+                        haku.ylioppilastutkintoAntaaHakukelpoisuuden;
+                }
             }
         };
         $scope.filterHakusWithOrgs = function(hakus) {

@@ -145,11 +145,13 @@ public class TestData {
         aloituspaikatKuvaus.addTekstiKaannos("kieli_en", "Max 10");
 
         kohde1.setAloituspaikatKuvaus(aloituspaikatKuvaus);
+        kohde1.setYlioppilastutkintoAntaaHakukelpoisuuden(true);
 
         kohde1.setHakukohdeKoodistoNimi(HUMAN_READABLE_NAME_1);
         kohde1.setHakukohdeNimi(KOODISTO_URI_1);
 
         kohde2 = createHakukohde(HAKUKOHDE_OID2);//one exam
+        kohde2.setYlioppilastutkintoAntaaHakukelpoisuuden(false);
 
         kohde3 = createHakukohde(HAKUKOHDE_OID3);//no exams
 

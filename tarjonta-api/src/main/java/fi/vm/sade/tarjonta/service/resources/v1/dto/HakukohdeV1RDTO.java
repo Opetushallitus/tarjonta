@@ -73,6 +73,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private Map<String, String> peruutusEhdotKuvaukset;
     private List<RyhmaliitosV1RDTO> ryhmaliitokset = new ArrayList<RyhmaliitosV1RDTO>();
     private String[] organisaatioRyhmaOids;
+    private Boolean ylioppilastutkintoAntaaHakukelpoisuuden;
 
     public String getHakukohteenNimi() {
         return hakukohteenNimi;
@@ -531,5 +532,13 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setRyhmaliitokset(ArrayList<RyhmaliitosV1RDTO> ryhmaliitokset) {
         this.ryhmaliitokset = ryhmaliitokset;
+    }
+
+    public Boolean getYlioppilastutkintoAntaaHakukelpoisuuden() {
+        return ylioppilastutkintoAntaaHakukelpoisuuden;
+    }
+
+    public void setYlioppilastutkintoAntaaHakukelpoisuuden(Boolean ylioppilastutkintoAntaaHakukelpoisuuden) {
+        this.ylioppilastutkintoAntaaHakukelpoisuuden = ylioppilastutkintoAntaaHakukelpoisuuden;
     }
 }

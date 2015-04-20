@@ -146,4 +146,7 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
     List<String> findAllOids();
 
     void setViimIndeksointiPvmToNull(Long hakukohdeId);
+
+    List<String> findHakukohteetWithYlioppilastutkintoAntaaHakukelpoisuuden(Long hakuId, Boolean hakuValue);
+
 }

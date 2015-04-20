@@ -159,11 +159,17 @@ public class ConverterV1 {
                 List<String> tmp = hakukohdeDao.findByHakuOid(hakuDTO.getOid(), null, 0, 0, null, null);
                 hakuDTO.setHakukohdeOids(tmp);
             }
+            hakuDTO.setHakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden(
+                    hakukohdeDao.findHakukohteetWithYlioppilastutkintoAntaaHakukelpoisuuden(
+                            haku.getId(), haku.getYlioppilastutkintoAntaaHakukelpoisuuden()
+                    )
+            );
         }
 
         hakuDTO.setOrganisaatioOids(haku.getOrganisationOids());
         hakuDTO.setTarjoajaOids(haku.getTarjoajaOids());
 
+        hakuDTO.setYlioppilastutkintoAntaaHakukelpoisuuden(haku.getYlioppilastutkintoAntaaHakukelpoisuuden());
         hakuDTO.setUsePriority(haku.isUsePriority());
         hakuDTO.setSijoittelu(haku.isSijoittelu());
         hakuDTO.setJarjestelmanHakulomake(haku.isJarjestelmanHakulomake());
@@ -263,6 +269,7 @@ public class ConverterV1 {
         haku.setOrganisationOids(hakuV1RDTO.getOrganisaatioOids());
         haku.setTarjoajaOids(hakuV1RDTO.getTarjoajaOids());
 
+        haku.setYlioppilastutkintoAntaaHakukelpoisuuden(hakuV1RDTO.getYlioppilastutkintoAntaaHakukelpoisuuden());
         haku.setUsePriority(hakuV1RDTO.isUsePriority());
         haku.setSijoittelu(hakuV1RDTO.isSijoittelu());
         haku.setJarjestelmanHakulomake(hakuV1RDTO.isJarjestelmanHakulomake());
@@ -527,6 +534,18 @@ public class ConverterV1 {
 
         if (hakukohde.getYlinValintaPistemaara() != null) {
             hakukohdeRDTO.setYlinValintapistemaara(hakukohde.getYlinValintaPistemaara());
+        }
+
+        // Jos ei asetettu erikseen hakukohteelle -> ota haulta
+        if (hakukohde.getYlioppilastutkintoAntaaHakukelpoisuuden() == null) {
+            hakukohdeRDTO.setYlioppilastutkintoAntaaHakukelpoisuuden(
+                    hakukohde.getHaku().getYlioppilastutkintoAntaaHakukelpoisuuden()
+            );
+        }
+        else {
+            hakukohdeRDTO.setYlioppilastutkintoAntaaHakukelpoisuuden(
+                    hakukohde.getYlioppilastutkintoAntaaHakukelpoisuuden()
+            );
         }
 
         hakukohdeRDTO.setHakukohteenNimiUri(hakukohde.getHakukohdeNimi());

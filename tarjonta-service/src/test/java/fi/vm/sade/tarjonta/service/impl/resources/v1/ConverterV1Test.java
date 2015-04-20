@@ -1,9 +1,11 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
@@ -17,6 +19,7 @@ import org.hamcrest.Description;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -46,6 +49,9 @@ public class ConverterV1Test {
 
     @Mock
     private HakuDAO hakuDAO;
+
+    @Mock
+    private HakukohdeDAO hakukohdeDAO;
 
     @InjectMocks
     private ConverterV1 converter;
@@ -431,6 +437,57 @@ public class ConverterV1Test {
         assertTrue(hakukohdeDTO.getRyhmaliitokset().size() == 2);
         assertThat(Arrays.asList(hakukohdeDTO.getOrganisaatioRyhmaOids()), hasItem("1.2.3"));
         assertThat(Arrays.asList(hakukohdeDTO.getOrganisaatioRyhmaOids()), hasItem("4.5.6"));
+    }
+
+    @Test
+    public void thatYlioppilastutkintoAntaaHakukelpoisuudenIsConverted() {
+        Hakukohde hakukohde = getHakukohde();
+        Haku haku = hakukohde.getHaku();
+
+        // Kun hakukohteelle ei ole asetettu valintaa (haun valinta = true)
+        haku.setYlioppilastutkintoAntaaHakukelpoisuuden(true);
+        HakukohdeV1RDTO dto = converter.toHakukohdeRDTO(hakukohde);
+        assertEquals(dto.getYlioppilastutkintoAntaaHakukelpoisuuden().booleanValue(), true);
+
+        // Kun hakukohteelle ei ole asetettu valintaa (haun valinta = false)
+        haku.setYlioppilastutkintoAntaaHakukelpoisuuden(false);
+        dto = converter.toHakukohdeRDTO(hakukohde);
+        assertEquals(dto.getYlioppilastutkintoAntaaHakukelpoisuuden().booleanValue(), false);
+
+        // Kun hakukohteen valinta = true (haun valinta = true)
+        haku.setYlioppilastutkintoAntaaHakukelpoisuuden(true);
+        hakukohde.setYlioppilastutkintoAntaaHakukelpoisuuden(true);
+        dto = converter.toHakukohdeRDTO(hakukohde);
+        assertEquals(dto.getYlioppilastutkintoAntaaHakukelpoisuuden().booleanValue(), true);
+
+        // Kun hakukohteen valinta = false (haun valinta = true)
+        haku.setYlioppilastutkintoAntaaHakukelpoisuuden(true);
+        hakukohde.setYlioppilastutkintoAntaaHakukelpoisuuden(false);
+        dto = converter.toHakukohdeRDTO(hakukohde);
+        assertEquals(dto.getYlioppilastutkintoAntaaHakukelpoisuuden().booleanValue(), false);
+
+        // Kun hakukohteen valinta = true (haun valinta = false)
+        haku.setYlioppilastutkintoAntaaHakukelpoisuuden(false);
+        hakukohde.setYlioppilastutkintoAntaaHakukelpoisuuden(true);
+        dto = converter.toHakukohdeRDTO(hakukohde);
+        assertEquals(dto.getYlioppilastutkintoAntaaHakukelpoisuuden().booleanValue(), true);
+
+        // Kun hakukohteen valinta = false (haun valinta = false)
+        haku.setYlioppilastutkintoAntaaHakukelpoisuuden(false);
+        hakukohde.setYlioppilastutkintoAntaaHakukelpoisuuden(false);
+        dto = converter.toHakukohdeRDTO(hakukohde);
+        assertEquals(dto.getYlioppilastutkintoAntaaHakukelpoisuuden().booleanValue(), false);
+    }
+
+    @Test
+    public void thatHaunYlioppilastutkintoHakukelpoisuusOidsAreConverted() {
+        Haku haku = new Haku();
+        when(hakukohdeDAO.findHakukohteetWithYlioppilastutkintoAntaaHakukelpoisuuden(Matchers.anyLong(), Matchers.anyBoolean()))
+                .thenReturn(Lists.newArrayList("1.2.3", "4.5.6"));
+        haku.setTila(TarjontaTila.JULKAISTU);
+        haku.setHakukausiVuosi(2000);
+        HakuV1RDTO dto = converter.fromHakuToHakuRDTO(haku, true);
+        assertEquals(dto.getHakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden().size(), 2);
     }
 
     private BaseMatcher<RyhmaliitosV1RDTO> getRyhmaliitosElementMatcher(final String ryhmaOid,

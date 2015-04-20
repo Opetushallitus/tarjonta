@@ -111,6 +111,15 @@
                     </td>
                 </tr>
 
+                <tr ng-if="isKK">
+                    <th tt="haku.review.ylioppilastutkintoAntaaHakukelpoisuudenAutomaattisesti">
+                        Ylioppilastutkinto antaa hakukelpoisuuden automaattisesti
+                    </th>
+                    <td colspan="2">
+                        {{ model.hakukohde.ylioppilastutkintoAntaaHakukelpoisuuden ? t("yes") : t("no") }}
+                    </td>
+                </tr>
+
                 <tr ng-show="CONFIGURATION.YHTEYSTIEDOT.showYhteystiedot[model.hakukohde.toteutusTyyppi] && model.hakukohde.yhteystiedot.length > 0">
                     <th tt="hakukohde.review.perustiedot.yhteystiedot">Yhteystiedot</th>
                     <td colspan="2">

@@ -174,6 +174,9 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Column(name = "soraKuvausTunniste")
     private Long soraKuvausTunniste;
 
+    @Column(name = "ylioppilastutkinto_antaa_hakukelpoisuuden")
+    private Boolean ylioppilastutkintoAntaaHakukelpoisuuden;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_sora_kielet", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
@@ -762,5 +765,13 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void removeRyhmaliitos(Ryhmaliitos ryhmaliitos) {
         getRyhmaliitokset().remove(ryhmaliitos);
+    }
+
+    public Boolean getYlioppilastutkintoAntaaHakukelpoisuuden() {
+        return ylioppilastutkintoAntaaHakukelpoisuuden;
+    }
+
+    public void setYlioppilastutkintoAntaaHakukelpoisuuden(Boolean ylioppilastutkintoAntaaHakukelpoisuuden) {
+        this.ylioppilastutkintoAntaaHakukelpoisuuden = ylioppilastutkintoAntaaHakukelpoisuuden;
     }
 }

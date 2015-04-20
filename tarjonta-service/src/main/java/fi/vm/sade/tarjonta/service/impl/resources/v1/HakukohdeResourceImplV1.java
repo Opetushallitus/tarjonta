@@ -595,6 +595,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         Haku haku = hakuDAO.findByOid(hakukohdeRDTO.getHakuOid());
         hakukohde.setHaku(haku);
+        setYlioppilastutkintoAntaaHakukelpoisuuden(hakukohde, hakukohdeRDTO, haku);
         if (hakukohdeRDTO.getHakuaikaId() != null) {
             hakukohde.setHakuaika(getHakuAikaForHakukohde(hakukohdeRDTO, haku));
         }
@@ -686,6 +687,19 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         return hakukohdeOwner;
     }
 
+    private void setYlioppilastutkintoAntaaHakukelpoisuuden(Hakukohde hakukohde, HakukohdeV1RDTO dto, Haku haku) {
+        if (dto.getYlioppilastutkintoAntaaHakukelpoisuuden() == null) {
+            return;
+        }
+
+        // Tallenna valinta hakukohteelle AINOASTAAN jos valinta on eri kuin haun valinta
+        // tai jos hakukohteelle on aiemmin tallennettu ylikirjoitettu arvo
+        if (dto.getYlioppilastutkintoAntaaHakukelpoisuuden() != haku.getYlioppilastutkintoAntaaHakukelpoisuuden()
+                || hakukohde.getYlioppilastutkintoAntaaHakukelpoisuuden() != null) {
+            hakukohde.setYlioppilastutkintoAntaaHakukelpoisuuden(dto.getYlioppilastutkintoAntaaHakukelpoisuuden());
+        }
+    }
+
     @Override
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(String hakukohdeOid, HakukohdeV1RDTO hakukohdeRDTO) {
@@ -712,6 +726,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             Hakukohde hakukohdeTemp = hakukohdeDAO.findHakukohdeByOid(hakukohdeRDTO.getOid());
 
             hakukohde.setId(hakukohdeTemp.getId());
+            hakukohde.setYlioppilastutkintoAntaaHakukelpoisuuden(hakukohdeTemp.getYlioppilastutkintoAntaaHakukelpoisuuden());
             hakukohde.setVersion(hakukohdeTemp.getVersion());
             handleRyhmaliitokset(hakukohde, hakukohdeTemp, hakukohdeRDTO);
 
@@ -729,6 +744,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             Haku haku = hakuDAO.findByOid(hakuOid);
 
             hakukohde.setHaku(haku);
+
+            setYlioppilastutkintoAntaaHakukelpoisuuden(hakukohde, hakukohdeRDTO, haku);
 
             if (hakukohdeRDTO.getHakuaikaId() != null) {
                 hakukohde.setHakuaika(getHakuAikaForHakukohde(hakukohdeRDTO,

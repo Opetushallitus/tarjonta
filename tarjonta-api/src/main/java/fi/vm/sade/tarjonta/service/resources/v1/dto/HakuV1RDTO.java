@@ -56,6 +56,12 @@ public class HakuV1RDTO extends BaseV1RDTO {
     @ApiModelProperty(value = "Haun tila (LUONNOS, JULKAISTU, VALMIS, ...)", required = true)
     private String tila;
 
+    @ApiModelProperty(value = "Ylioppilastutkinto antaa hakukelpoisuuden", required = false)
+    private Boolean ylioppilastutkintoAntaaHakukelpoisuuden;
+
+    @ApiModelProperty(value = "Lista hakukohteista joilla ylioppilastutkinto antaa hakukelpoisuuden")
+    private List<String> hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden;
+
     @ApiModelProperty(value = "Käytetäänkö järjestelmän sijoittelupalvelua", required = true)
     private boolean sijoittelu;
 
@@ -309,5 +315,21 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     public void setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi koulutusmoduuliTyyppi) {
         this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
+    }
+
+    public Boolean getYlioppilastutkintoAntaaHakukelpoisuuden() {
+        return ylioppilastutkintoAntaaHakukelpoisuuden;
+    }
+
+    public void setYlioppilastutkintoAntaaHakukelpoisuuden(Boolean ylioppilastutkintoAntaaHakukelpoisuuden) {
+        this.ylioppilastutkintoAntaaHakukelpoisuuden = ylioppilastutkintoAntaaHakukelpoisuuden;
+    }
+
+    public List<String> getHakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden() {
+        return hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden;
+    }
+
+    public void setHakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden(List<String> hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden) {
+        this.hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden = hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden;
     }
 }
