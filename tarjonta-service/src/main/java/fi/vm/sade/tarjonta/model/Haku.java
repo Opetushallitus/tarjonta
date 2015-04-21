@@ -91,7 +91,7 @@ public class Haku extends TarjontaBaseEntity {
     private String hakutapaUri;
 
     @Column(name = "ylioppilastutkinto_antaa_hakukelpoisuuden")
-    private Boolean ylioppilastutkintoAntaaHakukelpoisuuden;
+    private Boolean ylioppilastutkintoAntaaHakukelpoisuuden = false;
 
     @Column(name = "sijoittelu")
     private boolean sijoittelu;

@@ -168,7 +168,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     private String tarjoaja;
 
     @Column(name = "avoimen_yliopiston_koulutus")
-    private Boolean isAvoimenYliopistonKoulutus;
+    private Boolean isAvoimenYliopistonKoulutus = false;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "koulutusmoduuli_toteutus_id", nullable = false)

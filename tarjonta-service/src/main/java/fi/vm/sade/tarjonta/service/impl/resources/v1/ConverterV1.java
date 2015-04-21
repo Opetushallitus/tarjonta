@@ -269,7 +269,9 @@ public class ConverterV1 {
         haku.setOrganisationOids(hakuV1RDTO.getOrganisaatioOids());
         haku.setTarjoajaOids(hakuV1RDTO.getTarjoajaOids());
 
-        haku.setYlioppilastutkintoAntaaHakukelpoisuuden(hakuV1RDTO.getYlioppilastutkintoAntaaHakukelpoisuuden());
+        if (hakuV1RDTO.getYlioppilastutkintoAntaaHakukelpoisuuden() != null) {
+            haku.setYlioppilastutkintoAntaaHakukelpoisuuden(hakuV1RDTO.getYlioppilastutkintoAntaaHakukelpoisuuden());
+        }
         haku.setUsePriority(hakuV1RDTO.isUsePriority());
         haku.setSijoittelu(hakuV1RDTO.isSijoittelu());
         haku.setJarjestelmanHakulomake(hakuV1RDTO.isJarjestelmanHakulomake());
