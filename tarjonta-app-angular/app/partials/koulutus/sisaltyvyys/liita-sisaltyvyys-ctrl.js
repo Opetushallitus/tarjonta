@@ -190,7 +190,6 @@ app.controller('LiitaSisaltyvyysCtrl', [
             },
             spec: {
                 //search parameter object
-                oid: AuthService.getOrganisations(),
                 terms: '',
                 //search words
                 year: targetKomo.vuosi,
@@ -277,6 +276,17 @@ app.controller('LiitaSisaltyvyysCtrl', [
              * Search komos.
              */
         $scope.searchKomos = function() {
+            if (!$scope.model.spec.terms) {
+                $scope.model.spec.oid = _.without($scope.model.spec.oid, config.env['root.organisaatio.oid']);
+            }
+            else {
+                $scope.model.spec.oid = AuthService.getOrganisations();
+            }
+            if (_.isEmpty($scope.model.spec.oid)) {
+                // Käytä oletuksena koulutuksen organisaatiota
+                $scope.model.spec.oid = [organisaatio.oid];
+            }
+
             TarjontaService.haeKoulutukset($scope.model.spec).then(function(result) {
                 $scope.model.hakutulos = [];
                 $scope.model.searchKomoOids = [];
