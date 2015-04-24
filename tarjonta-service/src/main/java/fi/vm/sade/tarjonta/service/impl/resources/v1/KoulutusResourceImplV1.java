@@ -19,7 +19,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
@@ -80,7 +79,10 @@ import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.validateMimeType;
@@ -129,6 +131,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     @Autowired
     private ConverterV1 converterV1;
+
+    @Autowired
+    private KoulutusUtilService koulutusUtilService;
 
     @Autowired
     private PermissionChecker permissionChecker;
@@ -400,7 +405,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 fullKomotoWithKomo = updateKoulutusKorkeakoulu(komoto, dto);
             } else {
                 //create korkeakoulu koulutus
-                fullKomotoWithKomo = insertKoulutusKorkeakoulu(dto, false);
+                fullKomotoWithKomo = insertKoulutusKorkeakoulu(dto);
             }
 
             indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
@@ -592,11 +597,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), false);
     }
 
-    private KoulutusmoduuliToteutus insertKoulutusKorkeakoulu(final KoulutusKorkeakouluV1RDTO dto, final boolean addKomotoToKomo) {
+    private KoulutusmoduuliToteutus insertKoulutusKorkeakoulu(final KoulutusKorkeakouluV1RDTO dto) {
         Preconditions.checkNotNull(dto.getKomotoOid() != null, "External KOMOTO OID not allowed. OID : %s.", dto.getKomotoOid());
         Preconditions.checkNotNull(dto.getKomoOid() != null, "External KOMO OID not allowed. OID : %s.", dto.getKomoOid());
 
-        final KoulutusmoduuliToteutus newKomoto = convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), addKomotoToKomo);
+        final KoulutusmoduuliToteutus newKomoto = convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), null);
         Preconditions.checkNotNull(newKomoto, "KOMOTO conversion to database object failed : object : %s.", ReflectionToStringBuilder.toString(dto));
         Preconditions.checkNotNull(newKomoto.getKoulutusmoduuli(), "KOMO conversion to database object failed : object :  %s.", ReflectionToStringBuilder.toString(dto));
 
@@ -696,7 +701,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         if (!validUser) {
             permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
         }
-        return convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), false);
+        return convertToEntity.convert(dto, contextDataService.getCurrentUserOid());
     }
 
     private KoulutusmoduuliToteutus updateGeneric(KoulutusmoduuliToteutus komoto, final KoulutusGenericV1RDTO dto) {
@@ -1304,9 +1309,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
                     switch (getType(komoto)) {
                         case KORKEAKOULUTUS:
-                            //TODO : in a distant future, copy also komo
-                            //currenlty this will only add new 'sister' komoto, and create a link to previously created komo.
-                            persisted = insertKoulutusKorkeakoulu((KoulutusKorkeakouluV1RDTO) koulutusDtoForCopy(KoulutusKorkeakouluV1RDTO.class, komoto, orgOid), true);
+                            persisted = koulutusUtilService.copyKorkeakoulutus(komoto, orgOid, null, true);
                             break;
                         case LUKIOKOULUTUS:
                             persisted = insertKoulutusGeneric((KoulutusLukioV1RDTO) koulutusDtoForCopy(KoulutusLukioV1RDTO.class, komoto, orgOid));
@@ -1483,32 +1486,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     private KoulutusV1RDTO koulutusDtoForCopy(Class clazz, KoulutusmoduuliToteutus komoto, String orgOid) {
-        //convert entity to dto
-        KoulutusV1RDTO copy = converterToRDTO.convert(clazz, komoto, RestParam.showImageAndNoMeta());
-        //keep the komo oid, we do need it to search correct komo for the komoto
-        copy.setOid(null);
-        copy.setKomotoOid(null);
-        copy.setTila(TarjontaTila.LUONNOS);
-        copy.setOrganisaatio(new OrganisaatioV1RDTO(orgOid, null, null));
-        copy.setOpetusTarjoajat(Sets.newHashSet(orgOid));
-
-        /**
-         * Valmentava ja kuntouttava muuttui TELMA-koulutukseksi. Kopioinnin yhteydessä:
-         * - poista käsin syötettävä linja
-         * - poista koulutusohjelma
-         * - aseta komoksi ylätason komo (koska ei ole enää koulutuoshjelma-komoa)
-         */
-        if (komoto.getToteutustyyppi().equals(ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS)) {
-            ValmistavaKoulutusV1RDTO valmDto = (ValmistavaKoulutusV1RDTO) copy;
-            valmDto.setKoulutusohjelmanNimiKannassa(null);
-            valmDto.setKoulutusohjelma(null);
-            Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komoto.getKoulutusmoduuli());
-            if (parentKomo != null) {
-                valmDto.setKomoOid(parentKomo.getOid());
-            }
-        }
-
-        return copy;
+        return koulutusUtilService.koulutusDtoForCopy(clazz, komoto, orgOid);
     }
 
     public boolean existsDuplicateKoulutus(KoulutusGenericV1RDTO dto) {

@@ -301,7 +301,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
          * INSERT KORKEAKOULU TO DB
          */
         //a quick test data insert, no unnecessary DTO conversions.
-        KoulutusmoduuliToteutus kt = Whitebox.<KoulutusmoduuliToteutus>invokeMethod(instance, "insertKoulutusKorkeakoulu", dto, false);
+        KoulutusmoduuliToteutus kt = Whitebox.<KoulutusmoduuliToteutus>invokeMethod(instance, "insertKoulutusKorkeakoulu", dto);
         assertNotNull(kt);
         assertNotNull(kt.getOid());
         assertEquals(TUNNISTE, kt.getUlkoinenTunniste());

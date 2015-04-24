@@ -18,16 +18,16 @@ package fi.vm.sade.tarjonta.model;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Ordering;
 import fi.vm.sade.generic.model.BaseEntity;
-import fi.vm.sade.tarjonta.publication.model.RestParam;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
+import fi.vm.sade.tarjonta.service.impl.AutowireHelper;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -43,6 +43,10 @@ import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 @JsonIgnoreProperties({"koulutusmoduuli", "hakukohdes", "id", "version", "koulutuslajis"})
 @Table(name = KoulutusmoduuliToteutus.TABLE_NAME)
 public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
+
+    @Autowired
+    @Transient
+    KoulutusmoduuliDAO koulutusmoduuliDAO;
 
     public static final String TABLE_NAME = "koulutusmoduuli_toteutus";
     private static final long serialVersionUID = -1278564574746813425L;
@@ -296,6 +300,10 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
                     + this.koulutusmoduuli + " to " + moduuli);
         }
         this.koulutusmoduuli = moduuli;
+    }
+
+    public final void overrideKoulutusmoduuli(Koulutusmoduuli komo) {
+        this.koulutusmoduuli = komo;
     }
 
     public Koulutusmoduuli getKoulutusmoduuli() {
@@ -998,11 +1006,38 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * AntiSamy Filtteröidään (vain) kentät joissa tiedetään olevan HTML:ää.
      * Muut kentät esityskerroksen vastuulla!
      */
-    @PrePersist
-    @PreUpdate
     public void filterHTMLFields() {
         for (MonikielinenTeksti teksti : tekstit.values()) {
             filter(teksti);
+        }
+    }
+
+    @PrePersist
+    public void beforeKomotoInsert() {
+        filterHTMLFields();
+        fixTelmaKoulutus();
+    }
+
+    @PreUpdate
+    public void beforeKomotoUpdate() {
+        filterHTMLFields();
+    }
+
+    /**
+     * Valmentava ja kuntouttava muuttui TELMA-koulutukseksi. Kopioinnin yhteydessä:
+     * - poista käsin syötettävä linja
+     * - poista koulutusohjelma
+     * - aseta komoksi ylätason komo (koska ei ole enää koulutuoshjelma-komoa)
+     */
+    private void fixTelmaKoulutus() {
+        if (ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS.equals(this.toteutustyyppi)) {
+            AutowireHelper.autowire(this, this.koulutusmoduuliDAO);
+            this.setNimi(null);
+            this.setKoulutusohjelmaUri(null);
+            Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(this.getKoulutusmoduuli());
+            if (parentKomo != null) {
+                this.overrideKoulutusmoduuli(parentKomo);
+            }
         }
     }
 

@@ -73,26 +73,18 @@ public class KoulutusDTOConverterToEntity {
     /*
      * KORKEAKOULU RDTO CONVERSION TO ENTITY
      */
-    public KoulutusmoduuliToteutus convert(final KoulutusKorkeakouluV1RDTO dto, final String userOid, final boolean addNewKomotoToKomo) {
+    public KoulutusmoduuliToteutus convert(final KoulutusKorkeakouluV1RDTO dto, final String userOid) {
+        return convert(dto, userOid, null);
+    }
+
+    public KoulutusmoduuliToteutus convert(final KoulutusKorkeakouluV1RDTO dto, final String userOid, String newKomotoOid) {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         if (dto == null) {
             return komoto;
         }
 
         Koulutusmoduuli komo = null;
-        if (addNewKomotoToKomo) {
-            //use previously created komo, and do change or update data in the komo
-            Preconditions.checkNotNull(dto.getKomoOid(), "KOMO OID cannot be null.");
-            komo = koulutusmoduuliDAO.findByOid(dto.getKomoOid());
-            Preconditions.checkNotNull(komo, "KOMO not found by OID '%s'!", dto.getKomoOid());
-            try {
-                komoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
-            } catch (OIDCreationException ex) {
-                //XXX Should signal error!
-                LOG.error("OIDService failed!", ex);
-            }
-            komoto.setKoulutusmoduuli(komo);
-        } else if (dto.getOid() != null) {
+        if (dto.getOid() != null) {
             //search by komoto oid, and update both komo & komoto
             komoto = koulutusmoduuliToteutusDAO.findByOid(dto.getOid());
             Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'!", dto.getOid());
@@ -103,19 +95,17 @@ public class KoulutusDTOConverterToEntity {
             komoto.setKoulutusmoduuli(komo);
             try {
                 komo.setOid(oidService.get(TarjontaOidType.KOMO));
-                komoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
+                if (newKomotoOid == null) {
+                    newKomotoOid = oidService.get(TarjontaOidType.KOMOTO);
+                }
+                komoto.setOid(newKomotoOid);
             } catch (OIDCreationException ex) {
                 //XXX Should signal error!
                 LOG.error("OIDService failed!", ex);
             }
         }
 
-        if (!addNewKomotoToKomo) {
-            /*
-             * Only when user create new komo + komoto.
-             */
-            korkeakouluKomoDataUpdate(komo, dto);
-        }
+        korkeakouluKomoDataUpdate(komo, dto);
 
         /*
          * KOMOTO custom data conversion

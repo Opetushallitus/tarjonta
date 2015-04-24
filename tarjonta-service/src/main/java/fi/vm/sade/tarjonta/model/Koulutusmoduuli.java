@@ -110,6 +110,9 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     @Column(name = "moduulityyppi")
     private KoulutusmoduuliTyyppi moduuliTyyppi;
 
+    @Column(name = "koulutuksen_tunniste_oid")
+    private String koulutuksenTunnisteOid;
+
     /*
      * Tutke 2 muutoksen myötä ammatillisen tutkinnon rakenne voi olla kahta eri tyyppiä
      * 1. Tutkinto -> tutkinto-ohjelma -> koulutusmoduulitoteutus
@@ -397,12 +400,23 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      * AntiSamy Filtteröidään (vain) kentät joissa tiedetään olevan HTML:ää.
      * Muut kentät esityskerroksen vastuulla!
      */
-    @PrePersist
-    @PreUpdate
     public void filterHTMLFields() {
         for (MonikielinenTeksti teksti : tekstit.values()) {
             filter(teksti);
         }
+    }
+
+    @PrePersist
+    public void beforeKomoInsert() {
+        if (this.getKoulutuksenTunnisteOid() == null) {
+            this.setKoulutuksenTunnisteOid(this.getOid());
+        }
+        filterHTMLFields();
+    }
+
+    @PreUpdate
+    public void beforeKomoUpdate() {
+        filterHTMLFields();
     }
 
     public boolean isPseudo() {
@@ -411,5 +425,13 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     public void setPseudo(boolean isPseudo) {
         this.isPseudo = isPseudo;
+    }
+
+    public String getKoulutuksenTunnisteOid() {
+        return koulutuksenTunnisteOid;
+    }
+
+    public void setKoulutuksenTunnisteOid(String koulutuksenTunnisteOid) {
+        this.koulutuksenTunnisteOid = koulutuksenTunnisteOid;
     }
 }

@@ -49,6 +49,9 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Opintojen rakenteen kuvat eroteltuna kooditon kieli uri:lla.", required = false)
     private Map<String, KuvaV1RDTO> opintojenRakenneKuvas;
 
+    @ApiModelProperty(value = "tunniste, joka yksilöi KK-koulutuksen (aiemmin tähän käytettiin komonOidia, katso KJOH-973)")
+    private String koulutuksenTunnisteOid;
+
     /**
      * @return the tutkintonimike
      */
@@ -135,5 +138,13 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
      */
     public void setOpintojenRakenneKuvas(Map<String, KuvaV1RDTO> opintojenRakenneKuvas) {
         this.opintojenRakenneKuvas = opintojenRakenneKuvas;
+    }
+
+    public String getKoulutuksenTunnisteOid() {
+        return koulutuksenTunnisteOid;
+    }
+
+    public void setKoulutuksenTunnisteOid(String koulutuksenTunnisteOid) {
+        this.koulutuksenTunnisteOid = koulutuksenTunnisteOid;
     }
 }

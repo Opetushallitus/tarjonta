@@ -143,7 +143,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         EasyMock.replay(koulutusmoduuliDAOMock);
         EasyMock.replay(oidServiceMock);
 
-        final KoulutusmoduuliToteutus result = instance.convert(dto, "user_oid", false);
+        final KoulutusmoduuliToteutus result = instance.convert(dto, "user_oid");
         EasyMock.verify(commonConverterMock);
 
         assertKorkeakouluKomoto(result, Type.KOMOTO);

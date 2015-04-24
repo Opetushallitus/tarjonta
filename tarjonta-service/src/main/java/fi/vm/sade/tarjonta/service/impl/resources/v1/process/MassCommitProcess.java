@@ -24,10 +24,12 @@ import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
 import fi.vm.sade.tarjonta.service.copy.MetaObject;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusUtilService;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +67,9 @@ public class MassCommitProcess {
 
     @Autowired
     private IndexerResource indexerResource;
+
+    @Autowired
+    private KoulutusUtilService koulutusUtilService;
 
     @Autowired
     private HakuDAO hakuDAO;
@@ -316,15 +321,21 @@ public class MassCommitProcess {
                 Pair<Object, MetaObject> find = massakopiointi.find(processId, oldKomoOid, KoulutusmoduuliToteutus.class);
                 KoulutusmoduuliToteutus komoto = (KoulutusmoduuliToteutus) find.getFirst();
                 final MetaObject meta = find.getSecond();
+                komoto.setKoulutusmoduuli(koulutusmoduuliDAO.findByOid(meta.getOriginalKomoOid()));
 
                 LOG.debug("convert json to entity by oid : {}, new oid : {}", oldKomoOid, meta.getNewKomotoOid());
-                komoto.setOid(meta.getNewKomotoOid());
+
+                if (ToteutustyyppiEnum.KORKEAKOULUTUS.equals(komoto.getToteutustyyppi())) {
+                    komoto = koulutusUtilService.copyKorkeakoulutus(komoto, komoto.getTarjoaja(), meta.getNewKomotoOid(), false);
+                }
+                else {
+                    komoto.setOid(meta.getNewKomotoOid());
+                    komoto = koulutusmoduuliToteutusDAO.insert(komoto);
+                }
+
                 komoto.setTila(TarjontaTila.KOPIOITU);
-                komoto.setKoulutusmoduuli(koulutusmoduuliDAO.findByOid(meta.getOriginalKomoOid()));
                 komoto.setUlkoinenTunniste(processId);
                 komoto.setViimIndeksointiPvm(indexFutureDate);
-
-                handleImage(komoto);
 
                 Set<Date> koulutuksenAlkamisPvms = komoto.getKoulutuksenAlkamisPvms();
                 komoto.setAlkamisVuosi(komoto.getAlkamisVuosi() + 1);
@@ -336,30 +347,14 @@ public class MassCommitProcess {
                     }
                     komoto.setKoulutuksenAlkamisPvms(plusYears);
                 }
-                KoulutusmoduuliToteutus insert = koulutusmoduuliToteutusDAO.insert(komoto);
+
                 massakopiointi.updateTila(processId, oldKomoOid, Massakopiointi.KopioinninTila.COPIED, processing);
-                batchOfIndexIds.add(insert.getId());
+                batchOfIndexIds.add(komoto.getId());
             } catch (Exception e) {
                 LOG.error("Insert failed, batch rollback, oids : " + oldOids.toArray(), e);
             }
         }
         indexKomotoIds.addAll(batchOfIndexIds);
-    }
-
-    private void handleImage(KoulutusmoduuliToteutus komoto) {
-        if (!komoto.getKuvat().isEmpty()) {
-            // At least at the moment there's only one image,
-            // even though there's a map for images
-            Map.Entry<String, BinaryData> kuva = komoto.getKuvat().entrySet().iterator().next();
-            Map<String, BinaryData> kuvatCopy = new HashMap<String, BinaryData>();
-
-            BinaryData bin = new BinaryData();
-            bin.setData(kuva.getValue().getData());
-            bin.setFilename(kuva.getValue().getFilename());
-            bin.setMimeType(kuva.getValue().getMimeType());
-            komoto.setKuvat(kuvatCopy);
-            komoto.setKuvaByUri(kuva.getKey(), bin);
-        }
     }
 
     private void insertHakukohdes(Set<String> oldOids, String processId, String targetHakuOid) {
