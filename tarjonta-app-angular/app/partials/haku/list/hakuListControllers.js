@@ -51,11 +51,12 @@ var app = angular.module('app.haku.list.ctrl', [
             }
         }
         function hakutyyppiToString(hakutyyppiUri) {
-            return _.find($scope.hakutyypit, function(element) {
+            var tyyppi = _.find($scope.hakutyypit, function(element) {
                 if (element.key === hakutyyppiUri.split('#')[0]) {
                     return element;
                 }
-            }).label;
+            });
+            return tyyppi && tyyppi.label;
         }
         $scope.hakuGetContent = function(row, col) {
             switch (col) {
