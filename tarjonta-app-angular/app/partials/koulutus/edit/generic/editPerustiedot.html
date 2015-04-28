@@ -31,7 +31,7 @@
                 <span ng-if="model.oid !== Undefined">{{model.koulutusohjelma.nimi}}</span>
             </div>
             <input ng-if="model.koulutusohjelmanNimiKannassa" required class="input-xxlarge" name="koulutusohjelma"
-                   ng-model="model.koulutusohjelmanNimiKannassa['kieli_' + koodistoLocale + '#1']" type="text" />
+                   ng-model="model.koulutusohjelmanNimiKannassa[linjaKieli]" type="text" />
         </td>
         <td>
             <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.koulutusohjelma.$error.required"

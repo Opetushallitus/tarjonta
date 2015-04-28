@@ -420,17 +420,15 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
             };
         });
     }
-    function removeVersion(uri) {
-        if (uri.indexOf('#') != -1) {
-            uri = uri.substring(0, uri.indexOf('#'));
-        }
-        return uri;
-    }
     // Ylikirjoita koodistosta tuleva koulutusohjelman nimi paikallisella arvolla (jos olemassa)
     if ($scope.model.koulutus.koulutusohjelmanNimiKannassa) {
+        var nimiKannassa = {};
+        _.each($scope.model.koulutus.koulutusohjelmanNimiKannassa, function(val, key) {
+            nimiKannassa[oph.removeKoodiVersion(key)] = val;
+        });
         try {
-            angular.forEach($scope.model.koulutus.koulutusohjelmanNimiKannassa, function(value, key) {
-                $scope.model.koulutus.koulutusohjelma.meta[removeVersion(key)].nimi = value;
+            _.each($scope.model.koulutus.koulutusohjelma.meta, function(val, lang) {
+                $scope.model.koulutus.koulutusohjelma.meta[lang].nimi = nimiKannassa[lang] || _.values(nimiKannassa)[0];
             });
         } catch (err) {
             console.error('Koulutusohjelman nimen ylikirjoitus fail', err);

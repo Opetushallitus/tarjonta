@@ -600,6 +600,7 @@ app.controller('BaseEditController', [
             $scope.koulutusStructure = koulutusStructure;
             if (koulutusStructure.params && koulutusStructure.params.onlyOneOpetuskieli) {
                 $scope.$watch('uiModel.opetuskielis.uris.length', function(count) {
+                    $scope.updateLinja();
                     if (count <= 1) {
                         return;
                     }
@@ -959,6 +960,23 @@ app.controller('BaseEditController', [
                 $scope.model.hintaString = '';
             }
         });
+        $scope.updateLinja = function() {
+            if (!$scope.model.koulutusohjelmanNimiKannassa) {
+                return;
+            }
+            $scope.linjaKieli = 'kieli_fi';
+            if ($scope.uiModel.opetuskielis && _.size($scope.uiModel.opetuskielis.uris) > 0) {
+                $scope.linjaKieli = $scope.uiModel.opetuskielis.uris[0];
+            }
+            var currentVal = _.find($scope.model.koulutusohjelmanNimiKannassa, function(val, key) {
+                return key.indexOf($scope.linjaKieli) !== -1;
+            });
+            if (!currentVal) {
+                currentVal = _.values($scope.model.koulutusohjelmanNimiKannassa)[0];
+            }
+            $scope.model.koulutusohjelmanNimiKannassa = {};
+            $scope.model.koulutusohjelmanNimiKannassa[$scope.linjaKieli] = currentVal;
+        };
 
         return $scope;
     }
