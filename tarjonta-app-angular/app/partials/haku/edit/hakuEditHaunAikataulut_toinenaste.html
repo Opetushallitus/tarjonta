@@ -135,6 +135,19 @@
         </tr>
 
         <tr>
+            <th tt='haku.edit.aikataulu.PH_HPVOA'>Hakijakohtainen paikan vastaanottoaika</th>
+            <td>
+                <input type="number" name="PH_PH_HPVOA" class="input-small" ng-model="model.parameter.PH_HPVOA.value" />
+                <span tt="haku.edit.aikataulu.PH_HPVOA.help">vuorokautta valinnan tulosten ilmoittamisesta</span>
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_HPVOA" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
             <th tt='haku.edit.aikataulu.PH_JKLIP'>Jälkiohjauskirjeen aineiston lähettäminen iPostiin</th>
             <td>
                 <t-date-time type="long" timestamp="true" name="PH_JKLIP" scope-model="model.parameter.PH_JKLIP.date"></t-date-time>

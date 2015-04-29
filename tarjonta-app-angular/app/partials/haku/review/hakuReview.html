@@ -257,6 +257,16 @@
             </tr>
 
             <tr>
+                <th tt="haku.edit.aikataulu.PH_HPVOA">Hakijakohtainen paikan vastaanottoaika</th>
+                <td colspan="2">
+                    {{parameter.PH_HPVOA.value}}
+                    <span ng-if="parameter.PH_HPVOA.value" tt="haku.edit.aikataulu.PH_HPVOA.help">
+                        vuorokautta valinnan tulosten ilmoittamisesta
+                    </span>
+                </td>
+            </tr>
+
+            <tr>
                 <th tt="haku.review.parametrit.PH_JKLIP.label">Jälkiohjauskirjeen aineiston lähettäminen iPostiin</th>
                 <td colspan="2">
                 	<t-show-date value="parametrit.PH_JKLIP.date" timestamp></t-show-date>
