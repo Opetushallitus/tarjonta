@@ -74,10 +74,10 @@ public class KoulutusDTOConverterToEntity {
      * KORKEAKOULU RDTO CONVERSION TO ENTITY
      */
     public KoulutusmoduuliToteutus convert(final KoulutusKorkeakouluV1RDTO dto, final String userOid) {
-        return convert(dto, userOid, null);
+        return convert(dto, userOid, null, null);
     }
 
-    public KoulutusmoduuliToteutus convert(final KoulutusKorkeakouluV1RDTO dto, final String userOid, String newKomotoOid) {
+    public KoulutusmoduuliToteutus convert(final KoulutusKorkeakouluV1RDTO dto, final String userOid, String newKomotoOid, String newKomoOid) {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         if (dto == null) {
             return komoto;
@@ -94,7 +94,11 @@ public class KoulutusDTOConverterToEntity {
             komo = new Koulutusmoduuli();
             komoto.setKoulutusmoduuli(komo);
             try {
-                komo.setOid(oidService.get(TarjontaOidType.KOMO));
+                if (newKomoOid == null) {
+                    newKomoOid = oidService.get(TarjontaOidType.KOMO);
+                }
+                komo.setOid(newKomoOid);
+
                 if (newKomotoOid == null) {
                     newKomotoOid = oidService.get(TarjontaOidType.KOMOTO);
                 }

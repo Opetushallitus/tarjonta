@@ -60,7 +60,7 @@ public class Massakopiointi extends BaseEntity {
 
     @Lob
     @Type(type = "org.hibernate.type.TextType")
-    @Column(name = "json", length = 100000, nullable = false)
+    @Column(name = "json", length = 100000)
     private String json;
 
     @Lob
@@ -272,7 +272,7 @@ public class Massakopiointi extends BaseEntity {
 
     public enum Tyyppi {
 
-        HAKUKOHDE_ENTITY, KOMOTO_ENTITY
+        HAKUKOHDE_ENTITY, KOMOTO_ENTITY, KOMO_ENTITY;
     };
 
 }

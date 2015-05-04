@@ -59,33 +59,20 @@ public class KoulutusUtilService {
     }
 
     public KoulutusmoduuliToteutus copyKorkeakoulutus(KoulutusmoduuliToteutus originalKomoto, String orgOid,
-                                                      String newKomotoOid, Boolean checkPermission) {
+                                                      String newKomotoOid, String newKomoOid, Boolean checkPermission) {
         if (checkPermission) {
             permissionChecker.checkCreateKoulutus(orgOid);
         }
 
-        Koulutusmoduuli originalKomo = originalKomoto.getKoulutusmoduuli();
-
         KoulutusKorkeakouluV1RDTO dto = (KoulutusKorkeakouluV1RDTO) koulutusDtoForCopy(KoulutusKorkeakouluV1RDTO.class, originalKomoto, orgOid);
 
-        KoulutusmoduuliToteutus newKomoto = convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), newKomotoOid);
+        KoulutusmoduuliToteutus newKomoto = convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), newKomotoOid, newKomoOid);
         Preconditions.checkNotNull(newKomoto, "KOMOTO conversion to database object failed : object : %s.", ReflectionToStringBuilder.toString(dto));
         Preconditions.checkNotNull(newKomoto.getKoulutusmoduuli(), "KOMO conversion to database object failed : object :  %s.", ReflectionToStringBuilder.toString(dto));
 
         Koulutusmoduuli newKomo = newKomoto.getKoulutusmoduuli();
-        newKomo.setKoulutuksenTunnisteOid(originalKomo.getKoulutuksenTunnisteOid());
+        newKomo.setKoulutuksenTunnisteOid(originalKomoto.getKoulutusmoduuli().getOid());
         koulutusmoduuliDAO.insert(newKomo);
-
-        // Kopioi koulutuksen sisältyvyydet
-        for (KoulutusSisaltyvyys sisaltyvyys : originalKomo.getSisaltyvyysList()) {
-            KoulutusSisaltyvyys copy = new KoulutusSisaltyvyys();
-            copy.setYlamoduuli(newKomo);
-            for (Koulutusmoduuli alamoduuli : sisaltyvyys.getAlamoduuliList()) {
-                copy.addAlamoduuli(alamoduuli);
-            }
-            copy.setValintaTyyppi(KoulutusSisaltyvyys.ValintaTyyppi.ALL_OFF);
-            koulutusSisaltyvyysDAO.insert(copy);
-        }
 
         return koulutusmoduuliToteutusDAO.insert(newKomoto);
     }

@@ -601,7 +601,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         Preconditions.checkNotNull(dto.getKomotoOid() != null, "External KOMOTO OID not allowed. OID : %s.", dto.getKomotoOid());
         Preconditions.checkNotNull(dto.getKomoOid() != null, "External KOMO OID not allowed. OID : %s.", dto.getKomoOid());
 
-        final KoulutusmoduuliToteutus newKomoto = convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), null);
+        final KoulutusmoduuliToteutus newKomoto = convertToEntity.convert(dto, contextDataService.getCurrentUserOid());
         Preconditions.checkNotNull(newKomoto, "KOMOTO conversion to database object failed : object : %s.", ReflectionToStringBuilder.toString(dto));
         Preconditions.checkNotNull(newKomoto.getKoulutusmoduuli(), "KOMO conversion to database object failed : object :  %s.", ReflectionToStringBuilder.toString(dto));
 
@@ -1309,7 +1309,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
                     switch (getType(komoto)) {
                         case KORKEAKOULUTUS:
-                            persisted = koulutusUtilService.copyKorkeakoulutus(komoto, orgOid, null, true);
+                            persisted = koulutusUtilService.copyKorkeakoulutus(komoto, orgOid, null, null, true);
                             break;
                         case LUKIOKOULUTUS:
                             persisted = insertKoulutusGeneric((KoulutusLukioV1RDTO) koulutusDtoForCopy(KoulutusLukioV1RDTO.class, komoto, orgOid));

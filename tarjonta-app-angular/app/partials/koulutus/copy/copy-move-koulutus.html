@@ -20,6 +20,13 @@
                     <label><input type="radio" ng-model="model.mode" value="MOVE"><span tt="koulutus.copy.siirra">Siirrä</span></label><br/>
                 </td>
             </tr>
+            <tr ng-if="model.mode == 'COPY'">
+                <td colspan="2">
+                    <div class="alert alert-info" tt="koulutus.copy.sisaltyvyyksiaEiKopioida">
+                        <strong>Huom!</strong> Koulutuksen liitoksia ei kopioida (koskee korkeakoulutuksia)
+                    </div>
+                </td>
+            </tr>
         </table>
         <table width="100%">
             <tr>

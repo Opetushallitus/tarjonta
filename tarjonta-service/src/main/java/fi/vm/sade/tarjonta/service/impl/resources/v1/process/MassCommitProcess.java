@@ -69,6 +69,9 @@ public class MassCommitProcess {
     private IndexerResource indexerResource;
 
     @Autowired
+    private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
+
+    @Autowired
     private KoulutusUtilService koulutusUtilService;
 
     @Autowired
@@ -113,6 +116,7 @@ public class MassCommitProcess {
 
         try {
             List<String> oldKomotoOids = getOldKomotoOids(processId);
+            List<String> oldKomoOids = getOldKomoOids(processId);
             List<String> oldHakukohdeOids = getOldHakukohdeOids(processId);
 
             countTotalKomoto = oldKomotoOids.size();
@@ -120,6 +124,7 @@ public class MassCommitProcess {
 
             insertHaku(fromHakuOid);
             handleKomotos(processId, oldKomotoOids);
+            handleSisaltyvyydet(processId, oldKomoOids);
             handleHakukohdes(processId, oldHakukohdeOids);
 
             removeBatch(processId, fromHakuOid);
@@ -133,6 +138,36 @@ public class MassCommitProcess {
             getState().getParameters().put("result", ex.getMessage());
         } finally {
             completed = true;
+        }
+    }
+
+    @Transactional(readOnly = false)
+    private void handleSisaltyvyydet(String processId, List<String> oldKomoOids) {
+        for (String komoParts : oldKomoOids) {
+            String[] oids = komoParts.split("_");
+            String oldKomoOid = oids[0];
+            Massakopiointi row = massakopiointi.find(processId, komoParts);
+            Koulutusmoduuli newKomo = koulutusmoduuliDAO.findByOid(row.getNewOid());
+
+            final KoulutusSisaltyvyys copy = new KoulutusSisaltyvyys();
+            copy.setYlamoduuli(newKomo);
+            copy.setValintaTyyppi(KoulutusSisaltyvyys.ValintaTyyppi.ALL_OFF);
+
+            for (String childKomoOid : koulutusSisaltyvyysDAO.getChildren(oldKomoOid)) {
+                Massakopiointi sisaltyvyysRow = massakopiointi.findFirstKomo(processId, childKomoOid);
+                if (sisaltyvyysRow != null) {
+                    copy.addAlamoduuli(koulutusmoduuliDAO.findByOid(sisaltyvyysRow.getNewOid()));
+                }
+            }
+
+            if (!copy.getAlamoduuliList().isEmpty()) {
+                executeInTransaction(new Runnable() {
+                    @Override
+                    public void run() {
+                        koulutusSisaltyvyysDAO.insert(copy);
+                    }
+                });
+            }
         }
     }
 
@@ -201,6 +236,14 @@ public class MassCommitProcess {
         return massakopiointi.searchOids(
                 new MassakopiointiDAO.SearchCriteria(null, null, null,
                         Massakopiointi.Tyyppi.KOMOTO_ENTITY,
+                        processId,
+                        Massakopiointi.KopioinninTila.READY_FOR_COPY));
+    }
+
+    private List<String> getOldKomoOids(String processId) {
+        return massakopiointi.searchOids(
+                new MassakopiointiDAO.SearchCriteria(null, null, null,
+                        Massakopiointi.Tyyppi.KOMO_ENTITY,
                         processId,
                         Massakopiointi.KopioinninTila.READY_FOR_COPY));
     }
@@ -315,18 +358,20 @@ public class MassCommitProcess {
         LOG.info("insert koulutus batch size of : {}/{}", oldOids.size(), countKomoto);
 
         Set<Long> batchOfIndexIds = Sets.<Long>newHashSet();
-        for (final String oldKomoOid : oldOids) {
+        for (final String oldKomotoOid : oldOids) {
             try {
-                massakopiointi.updateTila(processId, oldKomoOid, Massakopiointi.KopioinninTila.PROSESSING, processing);
-                Pair<Object, MetaObject> find = massakopiointi.find(processId, oldKomoOid, KoulutusmoduuliToteutus.class);
+                massakopiointi.updateTila(processId, oldKomotoOid, Massakopiointi.KopioinninTila.PROSESSING, processing);
+                Pair<Object, MetaObject> find = massakopiointi.find(processId, oldKomotoOid, KoulutusmoduuliToteutus.class);
                 KoulutusmoduuliToteutus komoto = (KoulutusmoduuliToteutus) find.getFirst();
                 final MetaObject meta = find.getSecond();
                 komoto.setKoulutusmoduuli(koulutusmoduuliDAO.findByOid(meta.getOriginalKomoOid()));
 
-                LOG.debug("convert json to entity by oid : {}, new oid : {}", oldKomoOid, meta.getNewKomotoOid());
+                LOG.debug("convert json to entity by oid : {}, new oid : {}", oldKomotoOid, meta.getNewKomotoOid());
 
                 if (ToteutustyyppiEnum.KORKEAKOULUTUS.equals(komoto.getToteutustyyppi())) {
-                    komoto = koulutusUtilService.copyKorkeakoulutus(komoto, komoto.getTarjoaja(), meta.getNewKomotoOid(), false);
+                    komoto = koulutusUtilService.copyKorkeakoulutus(
+                            komoto, komoto.getTarjoaja(), meta.getNewKomotoOid(), meta.getNewKomoOid(), false
+                    );
                 }
                 else {
                     komoto.setOid(meta.getNewKomotoOid());
@@ -348,7 +393,7 @@ public class MassCommitProcess {
                     komoto.setKoulutuksenAlkamisPvms(plusYears);
                 }
 
-                massakopiointi.updateTila(processId, oldKomoOid, Massakopiointi.KopioinninTila.COPIED, processing);
+                massakopiointi.updateTila(processId, oldKomotoOid, Massakopiointi.KopioinninTila.COPIED, processing);
                 batchOfIndexIds.add(komoto.getId());
             } catch (Exception e) {
                 LOG.error("Insert failed, batch rollback, oids : " + oldOids.toArray(), e);

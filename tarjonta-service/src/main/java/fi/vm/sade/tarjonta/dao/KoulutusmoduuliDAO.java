@@ -44,6 +44,8 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
      */
     public List<Koulutusmoduuli> find(String tila, int startIndex, int pageSize);
 
+    List<Koulutusmoduuli> findByKoulutuksenTunnisteOid(String tunnisteOid);
+
     /*
      * Returns all koulutusmoduulitoteutukses for given hakukohde
      *

@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.MassakopiointiDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
@@ -31,6 +32,8 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.List;
 import java.util.Set;
+
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,10 +189,29 @@ public class MassPepareProcess {
                     metaObject.setOriginalHakuOid(fromOid);
                     metaObject.setOriginalKomoOid(komoto.getKoulutusmoduuli().getOid());
                     metaObject.setOriginalKomotoOid(komoto.getOid());
+
+                    String newKomoOid;
                     try {
                         metaObject.setNewKomotoOid(oidService.get(TarjontaOidType.KOMOTO));
+                        newKomoOid = oidService.get(TarjontaOidType.KOMO);
+                        metaObject.setNewKomoOid(newKomoOid);
                     } catch (OIDCreationException ex) {
                         LOG.error("OID Service failed", fromOid);
+                        continue;
+                    }
+
+                    // KOMON tiedot
+                    if (ToteutustyyppiEnum.KORKEAKOULUTUS.equals(komoto.getToteutustyyppi())) {
+                        massakopiointiDAO.saveEntityAsJson(
+                                fromOid,
+                                komoto.getKoulutusmoduuli().getOid() + "_" + komoto.getOid(),
+                                newKomoOid,
+                                state.getId(),
+                                Massakopiointi.Tyyppi.KOMO_ENTITY,
+                                Koulutusmoduuli.class,
+                                null,
+                                null
+                        );
                     }
 
                     massakopiointiDAO.saveEntityAsJson(

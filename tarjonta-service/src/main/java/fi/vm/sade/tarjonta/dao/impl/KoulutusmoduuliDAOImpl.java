@@ -82,6 +82,12 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         return findBy(Koulutusmoduuli.TILA_COLUMN_NAME, tila, startIndex, pageSize);
     }
 
+    @Override
+    public List<Koulutusmoduuli> findByKoulutuksenTunnisteOid(String tunnisteOid) {
+        QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
+        return from(moduuli).where(moduuli.koulutuksenTunnisteOid.eq(tunnisteOid)).list(moduuli);
+    }
+
     public List<KoulutusmoduuliToteutus> findKomotoByHakukohde(Hakukohde hakukohde) {
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;

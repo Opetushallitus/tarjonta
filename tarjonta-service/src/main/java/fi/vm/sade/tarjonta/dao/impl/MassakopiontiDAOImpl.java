@@ -121,6 +121,15 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
     }
 
     @Override
+    public Massakopiointi findFirstKomo(String processId, String komoOid) {
+        QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
+
+        return from(kopiointi).where(kopiointi.processId.eq(processId)
+                .and(kopiointi.oldOid.startsWith(komoOid + "_")))
+                .orderBy(kopiointi.id.asc()).singleResult(kopiointi);
+    }
+
+    @Override
     public String findNewOid(final String processId, final String oldOid) {
         Preconditions.checkNotNull(processId, "Process ID cannot be null.");
         Preconditions.checkNotNull(oldOid, "Generic OID cannot be null.");
@@ -177,9 +186,13 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
         Preconditions.checkNotNull(newOid, "New OID cannot be null.");
         Preconditions.checkNotNull(type, "Tyyppi enum cannot be null.");
         Preconditions.checkNotNull(clazz, "Class instance cannot be null.");
-        Preconditions.checkNotNull(entityToJson, "Entity instance cannot be null.");
 
-        Massakopiointi m = new Massakopiointi(hakuOid, oldOid, newOid, processId, type, convertToJson(entityToJson), meta);
+        String entityAsJson = null;
+        if (entityToJson != null) {
+            entityAsJson = convertToJson(entityToJson);
+        }
+
+        Massakopiointi m = new Massakopiointi(hakuOid, oldOid, newOid, processId, type, entityAsJson, meta);
         m.setKopioinninTila(Massakopiointi.KopioinninTila.READY_FOR_COPY);
         insert(m);
     }

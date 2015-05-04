@@ -96,6 +96,12 @@ public class KoulutusResourceImplV1CopyTest extends SecurityAwareTestBase {
 
         Mockito.doReturn(organisaatioDTO).when(organisaatioService).findByOid(Matchers.anyString());
 
+        stubKorkeakoulutusConvertKoodis(koodiService);
+
+        super.before();
+    }
+
+    public static void stubKorkeakoulutusConvertKoodis(KoodiService koodiService) {
         stubKoodi(koodiService, "Oppilaitos", "FI");
         stubKoodi(koodiService, "koulutusaste-uri", "FI");
         stubKoodi(koodiService, "koulutustyyppi_3", "FI");
@@ -115,8 +121,6 @@ public class KoulutusResourceImplV1CopyTest extends SecurityAwareTestBase {
         koodiType.setKoodisto(koodistoType);
         Mockito.stub(koodiService.listKoodiByRelation(Matchers.any(KoodiUriAndVersioType.class), Matchers.anyBoolean(), Matchers.any(SuhteenTyyppiType.class)))
                 .toReturn(Lists.newArrayList(koodiType));
-
-        super.before();
     }
 
     public static void stubKoodi(KoodiService koodiService, String uri, String arvo) {
@@ -127,30 +131,38 @@ public class KoulutusResourceImplV1CopyTest extends SecurityAwareTestBase {
                 .toReturn(vastaus);
     }
 
+    public static Koulutusmoduuli getKorkeakoulutusKomo(TarjontaFixtures fixtures) {
+        Koulutusmoduuli komo = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
+        komo.setKoulutusasteUri("koulutusaste");
+        komo.setTila(TarjontaTila.LUONNOS);
+        komo.setKoulutusalaUri("koulutusala");
+        komo.setKoulutusUri("koulutus");
+        komo.setOpintoalaUri("opintoala");
+        komo.setTutkintonimikeUri("tutkintonimike");
+        return komo;
+    }
+
+    public static KoulutusmoduuliToteutus getKorkeakoulutusKomoto(TarjontaFixtures fixtures, Koulutusmoduuli komo) {
+        KoulutusmoduuliToteutus komoto = fixtures.createTutkintoOhjelmaToteutus("1.2.3");
+        komoto.setTarjoaja("TEST_TARJOAJA");
+        komoto.setKoulutusmoduuli(komo);
+        komoto.setToteutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS);
+        KoodistoUri opetuskieli = new KoodistoUri("opetuskieli");
+        komoto.setOpetuskieli(Sets.newHashSet(opetuskieli));
+        return komoto;
+    }
+
     @Test
     public void thatKorkeakoulutusIsCopied() {
-        Koulutusmoduuli originalKomo = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
-        originalKomo.setKoulutusasteUri("koulutusaste");
-        originalKomo.setTila(TarjontaTila.LUONNOS);
-        originalKomo.setKoulutusalaUri("koulutusala");
-        originalKomo.setKoulutusUri("koulutus");
-        originalKomo.setOpintoalaUri("opintoala");
-        originalKomo.setTutkintonimikeUri("tutkintonimike");
-        originalKomo = koulutusmoduuliDAO.insert(originalKomo);
-        KoulutusmoduuliToteutus originalKomoto = fixtures.createTutkintoOhjelmaToteutus("1.2.3");
-        originalKomoto.setTarjoaja("TEST_TARJOAJA");
-        originalKomoto.setKoulutusmoduuli(originalKomo);
-        originalKomoto.setToteutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS);
-        KoodistoUri opetuskieli = new KoodistoUri("opetuskieli");
-        originalKomoto.setOpetuskieli(Sets.newHashSet(opetuskieli));
-        originalKomoto = koulutusmoduuliToteutusDAO.insert(originalKomoto);
+        Koulutusmoduuli originalKomo = koulutusmoduuliDAO.insert(getKorkeakoulutusKomo(fixtures));
+        KoulutusmoduuliToteutus originalKomoto = koulutusmoduuliToteutusDAO.insert(getKorkeakoulutusKomoto(fixtures, originalKomo));
 
         List<Koulutusmoduuli> komos = koulutusmoduuliDAO.findAllKomos();
         List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findAll();
         int komoCountBeforeCopy = komos.size();
         int komotoCountBeforeCopy = komotos.size();
 
-        KoulutusmoduuliToteutus newKomoto = koulutusUtilService.copyKorkeakoulutus(originalKomoto, originalKomoto.getTarjoaja(), null, false);
+        KoulutusmoduuliToteutus newKomoto = koulutusUtilService.copyKorkeakoulutus(originalKomoto, originalKomoto.getTarjoaja(), null, null, false);
 
         komos = koulutusmoduuliDAO.findAllKomos();
         komotos = koulutusmoduuliToteutusDAO.findAll();
