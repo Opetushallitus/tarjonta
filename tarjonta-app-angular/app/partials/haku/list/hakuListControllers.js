@@ -40,11 +40,8 @@ var app = angular.module('app.haku.list.ctrl', [
         };
         function kausiVuosiToString(kausi, vuosi) {
             if (kausi) {
-                var kausiNimi = _.find($scope.kausi, function(element) {
-                    if (element.key === kausi.split('#')[0]) {
-                        return element;
-                    }
-                }).label;
+                var kausiNimi = _.findWhere($scope.kausi, {key: oph.removeKoodiVersion(kausi)});
+                kausiNimi = kausiNimi && kausiNimi.label;
                 return kausiNimi + ' ' + vuosi;
             } else {
                 return vuosi;
