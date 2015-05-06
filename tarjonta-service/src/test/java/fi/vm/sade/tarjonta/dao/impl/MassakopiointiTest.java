@@ -248,7 +248,7 @@ public class MassakopiointiTest extends TestData {
         final String fromNimi = from.getNimi().getKaannoksetAsList().get(0).getArvo();
         assertNotSame(toNimi, fromNimi);
 
-        assertEquals(3, h.getHakukohdes().size());
+        assertEquals(1, h.getHakukohdes().size());
 
         for (Hakukohde hk : h.getHakukohdes()) {
             compareHakukohde(hk, hakukohdes.get(hk.getHakukohdeNimi()));

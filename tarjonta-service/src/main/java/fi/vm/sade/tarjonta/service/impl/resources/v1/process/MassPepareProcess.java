@@ -50,6 +50,7 @@ public class MassPepareProcess {
     private static final Logger LOG = LoggerFactory.getLogger(MassPepareProcess.class);
     private static final int BATCH_SIZE = 100;
     private static final TarjontaTila[] COPY_TILAS = {TarjontaTila.JULKAISTU};
+    private static final List<TarjontaTila> COPY_TILAS_AS_LIST = Lists.newArrayList(COPY_TILAS);
 
     private ProcessV1RDTO state;
     private long startTs = 0L;
@@ -183,7 +184,9 @@ public class MassPepareProcess {
 
                     MetaObject metaObject = new MetaObject();
                     for (Hakukohde hk : komoto.getHakukohdes()) {
-                        metaObject.addHakukohdeOid(hk.getOid());
+                        if (COPY_TILAS_AS_LIST.contains(hk.getTila())) {
+                            metaObject.addHakukohdeOid(hk.getOid());
+                        }
                     }
 
                     metaObject.setOriginalHakuOid(fromOid);
@@ -242,7 +245,14 @@ public class MassPepareProcess {
                     MetaObject metaObject = new MetaObject();
                     for (KoulutusmoduuliToteutus kt : hakukohde.getKoulutusmoduuliToteutuses()) {
                         //add only the new oid to set of komotos
-                        metaObject.addKomotoOid(massakopiointiDAO.findNewOid(processId, kt.getOid()));
+                        if (COPY_TILAS_AS_LIST.contains(kt.getTila())) {
+                            metaObject.addKomotoOid(massakopiointiDAO.findNewOid(processId, kt.getOid()));
+                        }
+                    }
+
+                    // Skip hakukohde if it has no koulutus
+                    if (metaObject.hasNoKomotos()) {
+                        continue;
                     }
 
                     try {

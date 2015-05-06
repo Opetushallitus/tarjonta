@@ -168,6 +168,11 @@ public class MassCopyTest {
         // This should not be copied (and neither it's komo or sisaltyvyys information)
         KoulutusmoduuliToteutus komotoThatIsNotInHaku = getKomoto(komo3, "komoto-5");
 
+        KoulutusmoduuliToteutus komotoThatIsNotPublished = getKomoto(komo3, "komoto-6");
+        komotoThatIsNotPublished.setTila(TarjontaTila.LUONNOS);
+
+        KoulutusmoduuliToteutus komotoThatHasNoPublishedHakukohde = getKomoto(komo3, "komoto-7");
+
         Hakukohde hakukohde = fixtures.createHakukohde();
         hakukohde.setTila(TarjontaTila.JULKAISTU);
         hakukohde.setOid("hakukohde-1");
@@ -178,10 +183,26 @@ public class MassCopyTest {
         hakukohde.setHaku(haku);
         hakukohdeDAO.insert(hakukohde);
 
+        Hakukohde hakukohde2 = fixtures.createHakukohde();
+        hakukohde2.setTila(TarjontaTila.JULKAISTU);
+        hakukohde2.setOid("hakukohde-2");
+        hakukohde2.addKoulutusmoduuliToteutus(komotoThatIsNotPublished);
+        hakukohde2.setHaku(haku);
+        hakukohdeDAO.insert(hakukohde2);
+
+        Hakukohde hakukohde3 = fixtures.createHakukohde();
+        hakukohde3.setTila(TarjontaTila.LUONNOS); // this should not be copied
+        hakukohde3.setOid("hakukohde-3");
+        hakukohde3.addKoulutusmoduuliToteutus(komotoThatHasNoPublishedHakukohde);
+        hakukohde3.setHaku(haku);
+        hakukohdeDAO.insert(hakukohde3);
+
         komoto.addHakukohde(hakukohde);
         komoto2.addHakukohde(hakukohde);
         komoto3.addHakukohde(hakukohde);
         komoto4.addHakukohde(hakukohde);
+        komotoThatIsNotPublished.addHakukohde(hakukohde2);
+        komotoThatHasNoPublishedHakukohde.addHakukohde(hakukohde3);
     }
 
     public String copyHaku(String hakuOid) {

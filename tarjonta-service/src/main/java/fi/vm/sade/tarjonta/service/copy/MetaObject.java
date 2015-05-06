@@ -93,6 +93,10 @@ public class MetaObject implements Serializable {
         this.komotoOids = komotoOids;
     }
 
+    public Boolean hasNoKomotos() {
+        return getKomotoOids() == null || getKomotoOids().isEmpty();
+    }
+
     /**
      * @return the newKomotoOid
      */
