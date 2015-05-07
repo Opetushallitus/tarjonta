@@ -412,6 +412,7 @@ public class MassCommitProcess {
 
         for (String oldHakukohdeOid : oldOids) {
             try {
+                Hakukohde originalHakukohde = hakukohdeDAO.findHakukohdeByOid(oldHakukohdeOid);
                 massakopiointi.updateTila(processId, oldHakukohdeOid, Massakopiointi.KopioinninTila.PROSESSING, processing);
                 Pair<Object, MetaObject> pair = massakopiointi.find(processId, oldHakukohdeOid, Hakukohde.class);
                 Hakukohde hk = (Hakukohde) pair.getFirst();
@@ -491,6 +492,15 @@ public class MassCommitProcess {
                 if (hk.getHakuaikaLoppuPvm() != null) {
                     hk.setHakuaikaLoppuPvm(dateToNextYear(hk.getHakuaikaLoppuPvm()));
                 }
+
+                for (Ryhmaliitos liitos : originalHakukohde.getRyhmaliitokset()) {
+                    Ryhmaliitos liitosCopy = new Ryhmaliitos();
+                    liitosCopy.setHakukohde(hk);
+                    liitosCopy.setPrioriteetti(liitos.getPrioriteetti());
+                    liitosCopy.setRyhmaOid(liitos.getRyhmaOid());
+                    hk.addRyhmaliitos(liitosCopy);
+                }
+
                 Hakukohde insert = hakukohdeDAO.insert(hk);
                 batchOfIndexIds.add(insert.getId());
                 massakopiointi.updateTila(processId, oldHakukohdeOid, Massakopiointi.KopioinninTila.COPIED, processing);

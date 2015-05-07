@@ -183,6 +183,8 @@ public class MassCopyTest {
         hakukohde.setHaku(haku);
         hakukohdeDAO.insert(hakukohde);
 
+        addRyhmaliitos(hakukohde, "testiryhma");
+
         Hakukohde hakukohde2 = fixtures.createHakukohde();
         hakukohde2.setTila(TarjontaTila.JULKAISTU);
         hakukohde2.setOid("hakukohde-2");
@@ -203,6 +205,13 @@ public class MassCopyTest {
         komoto4.addHakukohde(hakukohde);
         komotoThatIsNotPublished.addHakukohde(hakukohde2);
         komotoThatHasNoPublishedHakukohde.addHakukohde(hakukohde3);
+    }
+
+    public void addRyhmaliitos(Hakukohde hakukohde, String ryhmaOid) {
+        Ryhmaliitos ryhmaliitos = new Ryhmaliitos();
+        ryhmaliitos.setHakukohde(hakukohde);
+        ryhmaliitos.setRyhmaOid(ryhmaOid);
+        hakukohde.addRyhmaliitos(ryhmaliitos);
     }
 
     public String copyHaku(String hakuOid) {
@@ -264,6 +273,16 @@ public class MassCopyTest {
         assertEquals(processId, newKomoto.getUlkoinenTunniste());
 
         assertEquals(1, newKomoto.getHakukohdes().size());
+
+        Hakukohde originalHakukohde = hakukohdeDAO.findHakukohdeByOid("hakukohde-1");
+        Ryhmaliitos originalLiitos = originalHakukohde.getRyhmaliitokset().iterator().next();
+        assertEquals(originalHakukohde, originalLiitos.getHakukohde());
+        assertEquals("testiryhma", originalLiitos.getRyhmaOid());
+
+        Hakukohde newHakukohde = newKomoto.getHakukohdes().iterator().next();
+        Ryhmaliitos newRyhmaliitos = newHakukohde.getRyhmaliitokset().iterator().next();
+        assertEquals(newHakukohde, newRyhmaliitos.getHakukohde());
+        assertEquals("testiryhma", newRyhmaliitos.getRyhmaOid());
 
         assertEquals("new-haku-oid-1", newKomoto.getHakukohdes().iterator().next().getHaku().getOid());
     }
