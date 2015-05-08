@@ -107,6 +107,9 @@ public class HakuV1RDTO extends BaseV1RDTO {
     @ApiModelProperty(value = "Haun koulutusmoduulin tyyppi")
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
 
+    @ApiModelProperty(value = "Mihin asti haku näytetään opintopolussa", required = false)
+    private Date opintopolunNayttaminenLoppuu;
+
     public void addKoodiMeta(KoodiV1RDTO koodi) {
         if (koodi == null) {
             return;
@@ -331,5 +334,13 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     public void setHakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden(List<String> hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden) {
         this.hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden = hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden;
+    }
+
+    public Date getOpintopolunNayttaminenLoppuu() {
+        return opintopolunNayttaminenLoppuu;
+    }
+
+    public void setOpintopolunNayttaminenLoppuu(Date opintopolunNayttaminenLoppuu) {
+        this.opintopolunNayttaminenLoppuu = opintopolunNayttaminenLoppuu;
     }
 }

@@ -1,6 +1,27 @@
 
 <div>
     <!-- Common parameters for all hakutyyppi's -->
+    <h3 tt="haku.edit.aikataulu.haunNakyminenOpintopolussa">Koulutusten ja hakukohteiden näkyminen opintopolussa</h3>
+
+    <table class="tarjontaForm">
+        <tr>
+            <th tt="haku.edit.aikataulu.viimeinenOpintopolunNayttamisenPvm">
+                Viimeinen päivämäärä, jolloin koulutukset ja hakukohteet näytetään opintopolussa
+            </th>
+            <td>
+                <t-date-time type="long" timestamp="false" scope-model="model.hakux.result.opintopolunNayttaminenLoppuu"></t-date-time>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <th></th>
+            <td colspan="2" class="help" tt="haku.edit.aikataulu.opintopolunNayttaminen.help">
+                Oletusarvoisesti koulutukset ja hakukohteet poistuvat opintopolusta
+                <strong>10 kk</strong> haun päättymisen jälkeen
+            </td>
+        </tr>
+    </table>
+
     <h3 tt='haku.edit.aikataulu.julkaisuJaHakuaika'>Tarjonnan julkaisu ja hakuaika</h3>
 
     <table class="tarjontaForm">

@@ -159,6 +159,19 @@
         <tbody ng-show="!model.collapse.haunAikataulut">
 
             <tr>
+                <th tt="haku.review.haunNakyminenOpintopolussa">Viimeinen pvm, jolloin koulutukset ja hakukohteet näytetään opintopolussa</th>
+                <td colspan="2" ng-if="model.hakux.result.opintopolunNayttaminenLoppuu">
+                	<t-show-date value="model.hakux.result.opintopolunNayttaminenLoppuu" />
+                </td>
+                <td colspan="2" ng-if="!model.hakux.result.opintopolunNayttaminenLoppuu"
+                    tt="haku.edit.aikataulu.opintopolunNayttaminen.help">
+                    Oletusarvoisesti koulutukset ja hakukohteet poistuvat opintopolusta
+                    <strong>10 kk</strong> haun päättymisen jälkeen
+                </td>
+            </tr>
+
+
+            <tr>
                 <th tt="haku.review.parametrit.PH_TJT.label">Tarjonnan julkaisun takaraja</th>
                 <td colspan="2">
                 	<t-show-date value="parametrit.PH_TJT.date" timestamp/>

@@ -173,6 +173,7 @@ public class ConverterV1 {
         hakuDTO.setUsePriority(haku.isUsePriority());
         hakuDTO.setSijoittelu(haku.isSijoittelu());
         hakuDTO.setJarjestelmanHakulomake(haku.isJarjestelmanHakulomake());
+        hakuDTO.setOpintopolunNayttaminenLoppuu(haku.getOpintopolunNayttaminenLoppuu());
 
         for (Haku sisaltyvaHaku : haku.getSisaltyvatHaut()) {
             hakuDTO.getSisaltyvatHaut().add(sisaltyvaHaku.getOid());
@@ -275,6 +276,7 @@ public class ConverterV1 {
         haku.setUsePriority(hakuV1RDTO.isUsePriority());
         haku.setSijoittelu(hakuV1RDTO.isSijoittelu());
         haku.setJarjestelmanHakulomake(hakuV1RDTO.isJarjestelmanHakulomake());
+        haku.setOpintopolunNayttaminenLoppuu(hakuV1RDTO.getOpintopolunNayttaminenLoppuu());
 
         if (hakuV1RDTO.getKoulutusmoduuliTyyppi() != null) {
             haku.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.valueOf(hakuV1RDTO.getKoulutusmoduuliTyyppi().value()));

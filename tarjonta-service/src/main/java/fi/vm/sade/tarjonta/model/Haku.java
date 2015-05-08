@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.model;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -117,6 +118,10 @@ public class Haku extends TarjontaBaseEntity {
     @Column(name = "viimPaivitysPvm")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdateDate = new Date();
+
+    @Column(name = "opintopolun_nayttaminen_loppuu")
+    @Type(type = "date")
+    private Date opintopolunNayttaminenLoppuu;
 
     @Column(name = "viimPaivittajaOid")
     private String lastUpdatedByOid;
@@ -515,5 +520,13 @@ public class Haku extends TarjontaBaseEntity {
 
     public void setYlioppilastutkintoAntaaHakukelpoisuuden(Boolean ylioppilastutkintoAntaaHakukelpoisuuden) {
         this.ylioppilastutkintoAntaaHakukelpoisuuden = ylioppilastutkintoAntaaHakukelpoisuuden;
+    }
+
+    public Date getOpintopolunNayttaminenLoppuu() {
+        return opintopolunNayttaminenLoppuu;
+    }
+
+    public void setOpintopolunNayttaminenLoppuu(Date opintopolunNayttaminenLoppuu) {
+        this.opintopolunNayttaminenLoppuu = opintopolunNayttaminenLoppuu;
     }
 }
