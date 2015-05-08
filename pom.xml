@@ -5,7 +5,7 @@
 
     <groupId>fi.vm.sade.tarjonta</groupId>
     <artifactId>tarjonta</artifactId>
-    <version>2015-17-SNAPSHOT</version>
+    <version>2015-18-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Tarjonta :: Parent</name>
 
