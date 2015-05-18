@@ -1024,24 +1024,93 @@ app.controller('HakukohdeParentController', [
         };
         var addOrganisaationYhteystiedot = function(organisaatioData) {
             $scope.model.organisaationYhteystiedot = [];
+
+            function convertForeignAddress(addressText) {
+                addressText = addressText || '';
+                var rows = addressText.split('\n');
+                var postiParts = (rows[1] || '').split(' ');
+                var postinumero = (postiParts[0] || '').replace(/[^0-9]/g, '');
+                var postitoimipaikka = postiParts[1] || '';
+                return {
+                    osoiterivi1: rows[0],
+                    postinumero: 'posti_' + postinumero,
+                    postitoimipaikka: postitoimipaikka
+                };
+            }
+
             if (organisaatioData.metadata && organisaatioData.metadata.yhteystiedot) {
+                var kayntiYhteystietos = {};
+
                 angular.forEach(organisaatioData.metadata.yhteystiedot, function(yhteystieto) {
-                    if (yhteystieto.osoiteTyyppi && yhteystieto.osoiteTyyppi === 'posti') {
-                        var kieliUri = yhteystieto.kieli.split('#')[0];
-                        var newYhteystieto = {
-                            kieliUri: kieliUri,
-                            osoite: yhteystieto.osoite,
-                            postinumeroUri: yhteystieto.postinumeroUri,
+                    var kieliUri = oph.removeKoodiVersion(yhteystieto.kieli);
+                    var newYhteystieto;
+                    if (_.contains(['posti'], yhteystieto.osoiteTyyppi)) {
+                        newYhteystieto = {
+                            lang: kieliUri,
+                            osoiterivi1: yhteystieto.osoite,
+                            postinumero: yhteystieto.postinumeroUri,
                             postitoimipaikka: yhteystieto.postitoimipaikka
                         };
                         $scope.model.organisaationYhteystiedot.push(newYhteystieto);
                     }
+                    else if (_.contains(['ulkomainen_posti'], yhteystieto.osoiteTyyppi)) {
+                        newYhteystieto = convertForeignAddress(yhteystieto.osoite);
+                        newYhteystieto.lang = kieliUri;
+                        $scope.model.organisaationYhteystiedot.push(newYhteystieto);
+                    }
+                    else if (_.contains(['kaynti'], yhteystieto.osoiteTyyppi)
+                                && !kayntiYhteystietos[kieliUri]) {
+                        kayntiYhteystietos[kieliUri] = {
+                            osoiterivi1: yhteystieto.osoite,
+                            postinumero: yhteystieto.postinumeroUri,
+                            postitoimipaikka: yhteystieto.postitoimipaikka
+                        };
+                    }
+                    else if (_.contains(['ulkomainen_kaynti'], yhteystieto.osoiteTyyppi)
+                        && !kayntiYhteystietos[kieliUri]) {
+                        kayntiYhteystietos[kieliUri] = convertForeignAddress(yhteystieto.osoite);
+                    }
                 });
+
+                var additionalFields = {
+                    numero: 'puhelinnumero',
+                    email: 'sahkopostiosoite',
+                    www: 'wwwOsoite'
+                };
+
+                _.each(organisaatioData.metadata.yhteystiedot, function(tiedot) {
+                    _.each(additionalFields, function(mappedKey, originalKey) {
+                        if (tiedot[originalKey]) {
+                            var postiYhteystieto = _.findWhere($scope.model.organisaationYhteystiedot, {
+                                lang: oph.removeKoodiVersion(tiedot.kieli)
+                            });
+                            if (postiYhteystieto) {
+                                postiYhteystieto[mappedKey] = tiedot[originalKey];
+                            }
+                        }
+                    });
+                });
+
+                _.each(kayntiYhteystietos, function(kayntiYhteystieto, lang)  {
+                    var postiYhteystieto = _.findWhere($scope.model.organisaationYhteystiedot, {lang: lang});
+                    if (postiYhteystieto) {
+                        postiYhteystieto.kayntiosoite = kayntiYhteystieto;
+                    }
+                });
+
+                _.each(organisaatioData.metadata.hakutoimistonNimi, function(nimi, kieliUri) {
+                    var lang = oph.removeKoodiVersion(kieliUri);
+                    var postiYhteystieto = _.findWhere($scope.model.organisaationYhteystiedot, {lang: lang});
+                    if (postiYhteystieto) {
+                        postiYhteystieto.hakutoimistonNimi = nimi;
+                    }
+                });
+
             }
         };
         var getOrganisaatioOsoiteByKieliUri = function(kieliUri) {
-            return _.find($scope.model.organisaationYhteystiedot, function(organisaationYhteystieto) {
-                return organisaationYhteystieto.kieliUri === kieliUri;
+            return _.findWhere($scope.model.organisaationYhteystiedot, {
+                lang: kieliUri
             });
         };
         var getHakukohteenYhteystietoByKieliUri = function(kieliUri) {
@@ -1051,33 +1120,17 @@ app.controller('HakukohdeParentController', [
         };
         $scope.resetYhteystiedonOrganisaatioOsoite = function(yhteystieto) {
             var organisaatioOsoite = getOrganisaatioOsoiteByKieliUri(yhteystieto.lang);
-            yhteystieto.osoiterivi1 = organisaatioOsoite.osoite;
-            yhteystieto.postinumero = organisaatioOsoite.postinumeroUri;
-            yhteystieto.postitoimipaikka = organisaatioOsoite.postitoimipaikka;
-            yhteystieto.kaytaOrganisaatioOsoitetta = true;
-        };
-        $scope.yhteystietoKaytossaChanged = function(yhteystieto) {
-            if (!yhteystieto.kaytossa && !yhteystieto.kaytaOrganisaatioOsoitetta) {
-                yhteystieto.osoiterivi1 = '';
-                yhteystieto.postinumero = '';
-                yhteystieto.postinumeroArvo = '';
-                yhteystieto.postitoimipaikka = '';
-            }
+            _.extend(yhteystieto, organisaatioOsoite, {
+                kaytaOrganisaatioOsoitetta: true
+            });
         };
         var populateHakukohteenYhteystiedot = function() {
             _.each($scope.model.hakukohde.yhteystiedot, function(yhteystieto) {
                 var organisaatioOsoite = getOrganisaatioOsoiteByKieliUri(yhteystieto.lang);
                 yhteystieto.langTitle = getLangTitle(yhteystieto.lang);
                 yhteystieto.koodiUri = yhteystieto.lang;
-                yhteystieto.kaytossa = true;
                 yhteystieto.organisaatioOsoiteOlemassa = organisaatioOsoite !== undefined;
-                if (organisaatioOsoite) {
-                    yhteystieto.kaytaOrganisaatioOsoitetta = organisaatioOsoite.osoite === yhteystieto.osoiterivi1
-                        && organisaatioOsoite.postinumeroUri === yhteystieto.postinumero;
-                }
-                else {
-                    yhteystieto.kaytaOrganisaatioOsoitetta = false;
-                }
+                yhteystieto.kaytaOrganisaatioOsoitetta = false;
             });
             _.each($scope.model.opetusKielet, function(opetuskieli) {
                 var newYhteystieto;
@@ -1085,17 +1138,12 @@ app.controller('HakukohdeParentController', [
                 if (!existingYhteystieto) {
                     var opetuskielenOrganisaationYhteystiedot = getOrganisaatioOsoiteByKieliUri(opetuskieli.koodiUri);
                     if (opetuskielenOrganisaationYhteystiedot) {
-                        newYhteystieto = {
-                            lang: opetuskieli.koodiUri,
-                            langTitle: opetuskieli.koodiNimi,
+                        newYhteystieto = _.extend({}, opetuskielenOrganisaationYhteystiedot, {
                             koodiUri: opetuskieli.koodiUri,
-                            osoiterivi1: opetuskielenOrganisaationYhteystiedot.osoite,
-                            postinumero: opetuskielenOrganisaationYhteystiedot.postinumeroUri,
-                            postitoimipaikka: opetuskielenOrganisaationYhteystiedot.postitoimipaikka,
-                            kaytossa: false,
+                            langTitle: opetuskieli.koodiNimi,
                             organisaatioOsoiteOlemassa: true,
                             kaytaOrganisaatioOsoitetta: true
-                        };
+                        });
                         $scope.model.hakukohde.yhteystiedot.push(newYhteystieto);
                     }
                     else {
@@ -1103,10 +1151,6 @@ app.controller('HakukohdeParentController', [
                             lang: opetuskieli.koodiUri,
                             langTitle: opetuskieli.koodiNimi,
                             koodiUri: opetuskieli.koodiUri,
-                            osoiterivi1: '',
-                            postinumero: '',
-                            postitoimipaikka: '',
-                            kaytossa: false,
                             organisaatioOsoiteOlemassa: false,
                             kaytaOrganisaatioOsoitetta: false
                         };

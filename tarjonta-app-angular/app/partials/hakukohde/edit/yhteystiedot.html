@@ -1,0 +1,22 @@
+<th tt="kk.hakukohde.yhteystiedot.label">Yhteystiedot</th>
+<td colspan="2">
+    <tabset>
+        <tab ng-repeat="yhteystieto in model.hakukohde.yhteystiedot" heading="{{yhteystieto.langTitle}}">
+            <label><input type="radio" ng-model="yhteystieto.kaytaOrganisaatioOsoitetta" ng-value="true" ng-disabled="!yhteystieto.organisaatioOsoiteOlemassa" ng-click="resetYhteystiedonOrganisaatioOsoite(yhteystieto)" />
+                <span class="{{!yhteystieto.organisaatioOsoiteOlemassa ? 'disabled' : ''}}" tt="kk.hakukohde.yhteystiedot.kaytetaanOrganisaationOsoitetta">Käytetään organisaation osoitetta</span>
+            </label><br />
+
+            <label>
+                <input type="radio" ng-model="yhteystieto.kaytaOrganisaatioOsoitetta" ng-value="false" />
+                <span tt="kk.hakukohde.yhteystiedot.kaytetaanMuutaOsoitetta">Käytetään muuta osoitetta</span><br/>
+            </label>
+
+            <div class="inset yhteystiedot">
+                <osoite-field extended-osoite="true" show-error="model.showError"
+                              model="yhteystieto" name="yhteystiedot"
+                              ng-disabled="yhteystieto.kaytaOrganisaatioOsoitetta">
+                </osoite-field>
+            </div>
+        </tab>
+    </tabset>
+</td>

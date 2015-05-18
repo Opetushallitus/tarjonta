@@ -729,6 +729,12 @@ public class ConverterV1 {
                     yhteystietoDTO.setPostinumeroArvo(postinumeroKoodi.getKoodiArvo());
                 }
             }
+            if (yhteystietoDTO.getKayntiosoite() != null && yhteystietoDTO.getKayntiosoite().getPostinumero() != null) {
+                KoodiType postinumeroKoodi = tarjontaKoodistoHelper.getKoodiByUri(yhteystietoDTO.getKayntiosoite().getPostinumero());
+                if (postinumeroKoodi != null) {
+                    yhteystietoDTO.getKayntiosoite().setPostinumeroArvo(postinumeroKoodi.getKoodiArvo());
+                }
+            }
             yhteystietoDTOs.add(yhteystietoDTO);
         }
 

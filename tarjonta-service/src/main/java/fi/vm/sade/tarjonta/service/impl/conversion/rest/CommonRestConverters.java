@@ -58,6 +58,17 @@ public class CommonRestConverters {
             yh.setOsoiterivi2(yhteystiedotV1RDTO.getOsoiterivi2());
             yh.setPostinumero(yhteystiedotV1RDTO.getPostinumero());
             yh.setPostitoimipaikka(yhteystiedotV1RDTO.getPostitoimipaikka());
+            yh.setHakutoimistonNimi(yhteystiedotV1RDTO.getHakutoimistonNimi());
+            yh.setPuhelinnumero(yhteystiedotV1RDTO.getPuhelinnumero());
+            yh.setSahkopostiosoite(yhteystiedotV1RDTO.getSahkopostiosoite());
+            yh.setWwwOsoite(yhteystiedotV1RDTO.getWwwOsoite());
+
+            YhteystiedotV1RDTO kayntisoiteV1RDTO = yhteystiedotV1RDTO.getKayntiosoite();
+            if (kayntisoiteV1RDTO != null) {
+                yh.setKayntiosoiteOsoiterivi1(kayntisoiteV1RDTO.getOsoiterivi1());
+                yh.setKayntiosoitePostinumero(kayntisoiteV1RDTO.getPostinumero());
+                yh.setKayntiosoitePostitoimipaikka(kayntisoiteV1RDTO.getPostitoimipaikka());
+            }
 
             return yh;
         } else {

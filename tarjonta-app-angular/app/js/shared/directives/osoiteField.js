@@ -8,10 +8,19 @@ app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
         $scope.tt = {
             osoite: LocalisationService.t('osoitefield.osoiterivi'),
             postinumero: LocalisationService.t('osoitefield.postinumero'),
-            postitoimipaikka: LocalisationService.t('osoitefield.postitoimipaikka')
+            postitoimipaikka: LocalisationService.t('osoitefield.postitoimipaikka'),
+            hakutoimistonNimi: LocalisationService.t('osoitefield.hakutoimistonNimi'),
+            puhelinnumero: LocalisationService.t('osoitefield.puhelinnumero'),
+            sahkopostiosoite: LocalisationService.t('osoitefield.sahkopostiosoite'),
+            wwwOsoite: LocalisationService.t('osoitefield.wwwOsoite'),
+            postiosoite: LocalisationService.t('osoitefield.postiosoite'),
+            kayntiosoite: LocalisationService.t('osoitefield.kayntiosoite')
         };
-        $scope.postinumeroArvo = '';
         $scope.postinumerot = [];
+        Koodisto.getAllKoodisWithKoodiUri('posti', LocalisationService.getLocale()).then(function(ret) {
+            $scope.postinumerot = ret;
+            initPostinumerot();
+        });
         if (!$scope.model) {
             $scope.model = {
                 osoiterivi1: '',
@@ -19,42 +28,43 @@ app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
                 postitoimipaikka: ''
             };
         }
-        function findPostinumeroWithUri(koodi) {
-            for (var i in $scope.postinumerot) {
-                if ($scope.postinumerot[i].koodiUri == koodi) {
-                    return $scope.postinumerot[i];
-                }
+
+        function initPostinumerot() {
+            $scope.updatePostinumero($scope.model);
+            if ($scope.model.kayntiosoite) {
+                $scope.updatePostinumero($scope.model.kayntiosoite);
             }
-            return null;
         }
-        $scope.updatePostinumero = function() {
-            if ($scope.postinumeroArvo && $scope.postinumeroArvo.trim().length > 0) {
-                for (var i in $scope.postinumerot) {
-                    if ($scope.postinumerot[i].koodiArvo == $scope.postinumeroArvo) {
-                        $scope.model.postinumero = $scope.postinumerot[i].koodiUri;
-                        break;
-                    }
-                }
+
+        $scope.$watch('model.postinumero', initPostinumerot);
+        $scope.$watch('model.kayntiosoite.postinumero', initPostinumerot);
+
+        $scope.updatePostinumero = function(model) {
+            var koodi;
+            var uiValue = model.postinumeroUi;
+            if (uiValue) {
+                koodi = _.findWhere($scope.postinumerot, {koodiArvo: uiValue});
             }
-            if ($scope.model && $scope.model.postinumero) {
-                var pn = findPostinumeroWithUri($scope.model.postinumero);
-                $scope.postinumeroArvo = pn && pn.koodiArvo;
-                $scope.model.postitoimipaikka = pn && pn.koodiNimi;
+            else {
+                koodi = _.findWhere($scope.postinumerot, {koodiUri: model.postinumero});
+            }
+            if (koodi) {
+                model.postitoimipaikka = koodi.koodiNimi;
+                model.postitoimipaikkaUi = koodi.koodiNimi;
+                model.postinumeroUi = koodi.koodiArvo;
+                model.postinumero = koodi.koodiUri;
             }
         };
-        $scope.$watch('model', function(nv, ov) {
-            $scope.postinumeroArvo = null;
-            $scope.updatePostinumero();
-        }, true);
-        Koodisto.getAllKoodisWithKoodiUri('posti', LocalisationService.getLocale()).then(function(ret) {
-            $scope.postinumerot = ret;
-            $scope.updatePostinumero();
-        });
     }
     return {
         restrict: 'E',
         replace: true,
-        templateUrl: 'js/shared/directives/osoiteField.html',
+        templateUrl: function(elem, attr) {
+            if (attr.extendedOsoite === 'true') {
+                return 'js/shared/directives/osoiteFieldExtended.html';
+            }
+            return 'js/shared/directives/osoiteField.html';
+        },
         controller: controller,
         require: '^?form',
         link: function(scope, element, attrs, controller) {

@@ -1,0 +1,93 @@
+<div class="tarjontaOsoiteField">
+
+    <div class="form-group">
+        <label for="hakutoimistonNimi">{{tt.hakutoimistonNimi}}</label>
+        <input id="hakutoimistonNimi" placeholder="{{tt.hakutoimistonNimi}}" ng-model="model.hakutoimistonNimi"
+            ng-disabled="isDisabled()"
+            ng-required="isRequired()"
+            type="text"
+            ng-change="onChange()" />
+    </div>
+
+    <fieldset>
+        <legend>{{tt.kayntiosoite}}</legend>
+
+        <input type="text" class="osoite"
+               ng-disabled="isDisabled()"
+               ng-required="isRequired()"
+               placeholder="{{tt.osoite}}"
+               data-ng-model="model.kayntiosoite.osoiterivi1"
+               ng-change="onChange()"
+            />
+        <br/>
+
+        <input type="text" class="postinumero"
+               placeholder="{{tt.postinumero}}"
+               ng-model="model.kayntiosoite.postinumeroUi"
+               ng-disabled="isDisabled()"
+               ng-required="isRequired()"
+               typeahead="koodi.koodiArvo for koodi in postinumerot | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'"
+               typeahead-on-select="updatePostinumero(model.kayntiosoite)"
+            />
+
+        <input type="text" class="postitoimipaikka" disabled
+               placeholder="{{tt.postitoimipaikka}}"
+               ng-model="model.kayntiosoite.postitoimipaikkaUi"
+            />
+    </fieldset>
+
+    <fieldset>
+        <legend>{{tt.postiosoite}}</legend>
+
+        <input type="text" class="osoite"
+               ng-disabled="isDisabled()"
+               ng-required="isRequired()"
+               placeholder="{{tt.osoite}}"
+               data-ng-model="model.osoiterivi1"
+               ng-change="onChange()"
+            />
+        <br/>
+
+        <input type="text" class="postinumero"
+               placeholder="{{tt.postinumero}}"
+               ng-model="model.postinumeroUi"
+               ng-disabled="isDisabled()"
+               ng-required="isRequired()"
+               typeahead="koodi.koodiArvo for koodi in postinumerot | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'"
+               typeahead-on-select="updatePostinumero(model)"
+            />
+
+        <input type="text" class="postitoimipaikka" disabled
+               placeholder="{{tt.postitoimipaikka}}"
+               ng-model="model.postitoimipaikkaUi"
+            />
+    </fieldset>
+
+    <div class="form-group">
+        <label for="puhelinnumero">{{tt.puhelinnumero}}</label>
+        <input id="puhelinnumero" placeholder="{{tt.puhelinnumero}}" ng-model="model.puhelinnumero"
+               ng-disabled="isDisabled()"
+               ng-required="isRequired()"
+               ng-change="onChange()"
+               type="text" />
+    </div>
+
+    <div class="form-group">
+        <label for="sahkopostiosoite">{{tt.sahkopostiosoite}}</label>
+        <input id="sahkopostiosoite" placeholder="{{tt.sahkopostiosoite}}" ng-model="model.sahkopostiosoite"
+               ng-disabled="isDisabled()"
+               ng-required="isRequired()"
+               ng-change="onChange()"
+               type="text" />
+    </div>
+
+    <div class="form-group">
+        <label for="wwwOsoite">{{tt.wwwOsoite}}</label>
+        <input id="wwwOsoite" placeholder="{{tt.wwwOsoite}}" ng-model="model.wwwOsoite"
+               ng-disabled="isDisabled()"
+               ng-required="isRequired()"
+               ng-change="onChange()"
+               type="text" />
+    </div>
+
+</div>

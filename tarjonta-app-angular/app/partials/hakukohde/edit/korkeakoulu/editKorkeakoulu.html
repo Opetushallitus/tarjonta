@@ -156,31 +156,7 @@
                         </td>
                     </tr>
 
-                    <tr class="hakukohdeYhteystiedot">
-                        <th tt="kk.hakukohde.yhteystiedot.label">Yhteystiedot</th>
-                        <td>
-                            <tabset>
-                                <tab ng-repeat="yhteystieto in model.hakukohde.yhteystiedot" heading="{{yhteystieto.langTitle}}">
-
-                                    <label><input type="checkbox" ng-model="yhteystieto.kaytossa" ng-change="yhteystietoKaytossaChanged(yhteystieto)" />
-                                        <span tt="kk.hakukohde.yhteystiedot.kaytossa">Osoite käytössä</span>
-                                    </label><br />
-
-                                    <label><input type="radio" ng-model="yhteystieto.kaytaOrganisaatioOsoitetta" ng-value="true" ng-disabled="!yhteystieto.organisaatioOsoiteOlemassa || !yhteystieto.kaytossa" ng-click="resetYhteystiedonOrganisaatioOsoite(yhteystieto)" />
-                                        <span class="{{!yhteystieto.organisaatioOsoiteOlemassa || !yhteystieto.kaytossa ? 'disabled' : ''}}" tt="kk.hakukohde.yhteystiedot.kaytetaanOrganisaationOsoitetta">Käytetään organisaation osoitetta</span>
-                                    </label><br />
-
-                                    <label>
-                                        <input type="radio" ng-model="yhteystieto.kaytaOrganisaatioOsoitetta" ng-value="false" ng-disabled="!yhteystieto.kaytossa" />
-                                        <span class="{{!yhteystieto.kaytossa ? 'disabled' : ''}}" tt="kk.hakukohde.yhteystiedot.kaytetaanMuutaOsoitetta">Käytetään muuta osoitetta</span><br/>
-                                    </label>
-
-                                    <div class="inset">
-                                        <osoite-field model="yhteystieto" ng-disabled="yhteystieto.kaytaOrganisaatioOsoitetta || !yhteystieto.kaytossa"></osoite-field>
-                                    </div>
-                                </tab>
-                            </tabset>
-                        </td>
+                    <tr class="hakukohdeYhteystiedot" ng-include="'partials/hakukohde/edit/yhteystiedot.html'">
                     </tr>
 
                     <!-- ryhma -->

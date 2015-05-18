@@ -208,11 +208,7 @@ angular.module('Organisaatio', [
                         defer.resolve();
                     }
                     else {
-                        that.nimi(oid).then(function(nimi) {
-                            var org = {
-                                oid: oid,
-                                nimi: nimi
-                            };
+                        that.byOid(oid).then(function(org) {
                             that.oidToOrgMap[oid] = org;
                             organizations.push(org);
                             defer.resolve();

@@ -12,6 +12,11 @@ public class YhteystiedotV1RDTO extends BaseRDTO {
     private String postinumero;
     private String postinumeroArvo;
     private String postitoimipaikka;
+    private String puhelinnumero;
+    private String sahkopostiosoite;
+    private String hakutoimistonNimi;
+    private String wwwOsoite;
+    private YhteystiedotV1RDTO kayntiosoite;
 
     public String getLang() {
         return lang;
@@ -60,4 +65,46 @@ public class YhteystiedotV1RDTO extends BaseRDTO {
     public void setPostinumeroArvo(String postinumeroArvo) {
         this.postinumeroArvo = postinumeroArvo;
     }
+
+    public YhteystiedotV1RDTO getKayntiosoite() {
+        return kayntiosoite;
+    }
+
+    public void setKayntiosoite(YhteystiedotV1RDTO kayntiosoite) {
+        this.kayntiosoite = kayntiosoite;
+    }
+
+
+    public String getPuhelinnumero() {
+        return puhelinnumero;
+    }
+
+    public void setPuhelinnumero(String puhelinnumero) {
+        this.puhelinnumero = puhelinnumero;
+    }
+
+    public String getSahkopostiosoite() {
+        return sahkopostiosoite;
+    }
+
+    public void setSahkopostiosoite(String sahkopostiosoite) {
+        this.sahkopostiosoite = sahkopostiosoite;
+    }
+
+    public String getHakutoimistonNimi() {
+        return hakutoimistonNimi;
+    }
+
+    public void setHakutoimistonNimi(String hakutoimistonNimi) {
+        this.hakutoimistonNimi = hakutoimistonNimi;
+    }
+
+    public String getWwwOsoite() {
+        return wwwOsoite;
+    }
+
+    public void setWwwOsoite(String wwwOsoite) {
+        this.wwwOsoite = wwwOsoite;
+    }
+
 }

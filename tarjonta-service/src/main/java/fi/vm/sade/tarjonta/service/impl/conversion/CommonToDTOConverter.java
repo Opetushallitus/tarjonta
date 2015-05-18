@@ -132,7 +132,18 @@ public class CommonToDTOConverter {
             yhteystiedotDTO.setOsoiterivi2(yhteystiedot.getOsoiterivi2());
             yhteystiedotDTO.setPostinumero(yhteystiedot.getPostinumero());
             yhteystiedotDTO.setPostitoimipaikka(yhteystiedot.getPostitoimipaikka());
-            
+            yhteystiedotDTO.setHakutoimistonNimi(yhteystiedot.getHakutoimistonNimi());
+            yhteystiedotDTO.setPuhelinnumero(yhteystiedot.getPuhelinnumero());
+            yhteystiedotDTO.setSahkopostiosoite(yhteystiedot.getSahkopostiosoite());
+            yhteystiedotDTO.setWwwOsoite(yhteystiedot.getWwwOsoite());
+
+            YhteystiedotV1RDTO kayntiosoiteDto = new YhteystiedotV1RDTO();
+            kayntiosoiteDto.setOsoiterivi1(yhteystiedot.getKayntiosoiteOsoiterivi1());
+            kayntiosoiteDto.setPostinumero(yhteystiedot.getKayntiosoitePostinumero());
+            kayntiosoiteDto.setPostitoimipaikka(yhteystiedot.getKayntiosoitePostitoimipaikka());
+
+            yhteystiedotDTO.setKayntiosoite(kayntiosoiteDto);
+
             return yhteystiedotDTO;
         }
         else {

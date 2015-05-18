@@ -11,10 +11,10 @@
 
 	<input type="text" class="postinumero"
 	   placeholder="{{tt.postinumero}}"
-       ng-model="postinumeroArvo"
+       ng-model="model.postinumeroUi"
        ng-disabled="isDisabled()"
        ng-required="isRequired()"
-	   typeahead-on-select="updatePostinumero()"
+       typeahead-on-select="updatePostinumero(model)"
 	   typeahead="koodi.koodiArvo for koodi in postinumerot | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'"
        ng-change="onChange()"
 	   />
@@ -23,19 +23,5 @@
        placeholder="{{tt.postitoimipaikka}}"
        ng-model="model.postitoimipaikka"
        />
-
-<!-- 
-	<input type="text" class="postitoimipaikka"
-	   placeholder="{{tt.postitoimipaikka}}"
-	   ng-model="model.postitoimipaikka"
-       ng-disabled="isDisabled()"
-       ng-required="isRequired()"
-       typeahead-editable="false"
-       typeahead-on-select="updatePostitoimipaikka()"
-       typeahead="koodi.koodiVihje for koodi in postinumerot | filter:{koodiVihje:$viewValue} | limitTo:8 |  orderBy:'koodiVihje'"
-	   />
-
-    <pre>{{ model | json }}</pre>
- -->
 
 </div>

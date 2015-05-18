@@ -39,6 +39,27 @@ public class Yhteystiedot extends TarjontaBaseEntity {
     @Column(name = "postitoimipaikka")
     private String postitoimipaikka;
 
+    @Column(name = "hakutoimiston_nimi")
+    private String hakutoimistonNimi;
+
+    @Column(name = "kayntiosoite_osoiterivi1")
+    private String kayntiosoiteOsoiterivi1;
+
+    @Column(name = "kayntiosoite_postinumero")
+    private String kayntiosoitePostinumero;
+
+    @Column(name = "kayntiosoite_postitoimipaikka")
+    private String kayntiosoitePostitoimipaikka;
+
+    @Column(name = "puhelinnumero")
+    private String puhelinnumero;
+
+    @Column(name = "sahkopostiosoite")
+    private String sahkopostiosoite;
+
+    @Column(name = "www_osoite")
+    private String wwwOsoite;
+
     public Hakukohde getHakukohde() {
         return hakukohde;
     }
@@ -86,4 +107,61 @@ public class Yhteystiedot extends TarjontaBaseEntity {
     public String getPostitoimipaikka() {
         return postitoimipaikka;
     }
+
+    public String getHakutoimistonNimi() {
+        return hakutoimistonNimi;
+    }
+
+    public void setHakutoimistonNimi(String hakutoimistonNimi) {
+        this.hakutoimistonNimi = hakutoimistonNimi;
+    }
+
+    public String getKayntiosoiteOsoiterivi1() {
+        return kayntiosoiteOsoiterivi1;
+    }
+
+    public void setKayntiosoiteOsoiterivi1(String kayntiosoiteOsoiterivi1) {
+        this.kayntiosoiteOsoiterivi1 = kayntiosoiteOsoiterivi1;
+    }
+
+    public String getKayntiosoitePostinumero() {
+        return kayntiosoitePostinumero;
+    }
+
+    public void setKayntiosoitePostinumero(String kayntiosoitePostinumero) {
+        this.kayntiosoitePostinumero = kayntiosoitePostinumero;
+    }
+
+    public String getKayntiosoitePostitoimipaikka() {
+        return kayntiosoitePostitoimipaikka;
+    }
+
+    public void setKayntiosoitePostitoimipaikka(String kayntiosoitePostitoimipaikka) {
+        this.kayntiosoitePostitoimipaikka = kayntiosoitePostitoimipaikka;
+    }
+
+    public String getPuhelinnumero() {
+        return puhelinnumero;
+    }
+
+    public void setPuhelinnumero(String puhelinnumero) {
+        this.puhelinnumero = puhelinnumero;
+    }
+
+    public String getSahkopostiosoite() {
+        return sahkopostiosoite;
+    }
+
+    public void setSahkopostiosoite(String sahkopostiosoite) {
+        this.sahkopostiosoite = sahkopostiosoite;
+    }
+
+    public String getWwwOsoite() {
+        return wwwOsoite;
+    }
+
+    public void setWwwOsoite(String wwwOsoite) {
+        this.wwwOsoite = wwwOsoite;
+    }
+
 }
