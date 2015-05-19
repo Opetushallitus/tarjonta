@@ -71,7 +71,7 @@ public class KoulutusUtilService {
         Preconditions.checkNotNull(newKomoto.getKoulutusmoduuli(), "KOMO conversion to database object failed : object :  %s.", ReflectionToStringBuilder.toString(dto));
 
         Koulutusmoduuli newKomo = newKomoto.getKoulutusmoduuli();
-        newKomo.setKoulutuksenTunnisteOid(originalKomoto.getKoulutusmoduuli().getOid());
+        newKomo.setKoulutuksenTunnisteOid(originalKomoto.getKoulutusmoduuli().getKoulutuksenTunnisteOid());
         koulutusmoduuliDAO.insert(newKomo);
 
         return koulutusmoduuliToteutusDAO.insert(newKomoto);
