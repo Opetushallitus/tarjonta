@@ -22,6 +22,10 @@ import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
@@ -44,6 +48,9 @@ import java.util.Date;
 public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Long> implements MassakopiointiDAO {
 
     private static final Logger LOG = LoggerFactory.getLogger(MassakopiontiDAOImpl.class);
+
+    @Autowired
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
     private String convertToJson(final Object obj) {
         Preconditions.checkNotNull(obj, "Instance of object cannot be null.");
@@ -102,12 +109,20 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
     @Override
     public Pair<Object, MetaObject> find(final String processId, final String oldOid, Class clazz) {
         Preconditions.checkNotNull(clazz, "Class instance cannot be null.");
+        Massakopiointi result;
 
-        Massakopiointi result = find(processId, oldOid);
+        if (processId == null) {
+            result = findByOldOid(oldOid);
+        }
+        else {
+            result = find(processId, oldOid);
+        }
+
         if (result == null) {
             LOG.info("No item found by oid '{}' class : json : '{}'", oldOid, clazz);
             return null;
         }
+
         return convertToEntity(result.getJson(), clazz, result.getMeta());
     }
 
@@ -135,7 +150,36 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
         Preconditions.checkNotNull(oldOid, "Generic OID cannot be null.");
 
         QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
-        return from(kopiointi).where(kopiointi.processId.eq(processId).and(kopiointi.oldOid.eq(oldOid))).uniqueResult(kopiointi.newOid);
+        String newOidFromSameProcessCopy = from(kopiointi)
+                                            .where(kopiointi.processId.eq(processId)
+                                                    .and(kopiointi.oldOid.eq(oldOid)))
+                                            .uniqueResult(kopiointi.newOid);
+
+        if (newOidFromSameProcessCopy != null) {
+            return newOidFromSameProcessCopy;
+        }
+
+        // Komotot kopioidaan vain yhden kerran: tarkistetaan, onko komoto jo aiemmin
+        // kopioitu jonkun toisen haun kopioinnin yhteydessä
+        Massakopiointi prevMassCopyRow = findByOldOid(oldOid);
+        if (prevMassCopyRow == null) {
+            return null;
+        }
+
+        KoulutusmoduuliToteutus previouslyCopiedKomoto = koulutusmoduuliToteutusDAO.findByOid(prevMassCopyRow.getNewOid());
+        if (previouslyCopiedKomoto == null || TarjontaTila.POISTETTU.equals(previouslyCopiedKomoto.getTila())) {
+            return null;
+        }
+
+        return previouslyCopiedKomoto.getOid();
+    }
+
+    public Massakopiointi findByOldOid(String oldOid) {
+        QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
+        return from(kopiointi)
+                .where(kopiointi.oldOid.eq(oldOid))
+                .orderBy(kopiointi.id.asc())
+                .singleResult(kopiointi);
     }
 
     @Override
