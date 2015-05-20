@@ -1136,8 +1136,10 @@ app.controller('HakukohdeParentController', [
         };
         $scope.resetYhteystiedonOrganisaatioOsoite = function(yhteystieto) {
             var organisaatioOsoite = getOrganisaatioOsoiteByKieliUri(yhteystieto.lang);
-            _.extend(yhteystieto, organisaatioOsoite, {
-                kaytaOrganisaatioOsoitetta: true
+            _.extend(yhteystieto, angular.copy(organisaatioOsoite), {
+                kaytaOrganisaatioOsoitetta: true,
+                initPostinumerot: _.uniqueId(),
+                postinumeroUi: null
             });
         };
         var populateHakukohteenYhteystiedot = function() {
@@ -1154,7 +1156,7 @@ app.controller('HakukohdeParentController', [
                 if (!existingYhteystieto) {
                     var opetuskielenOrganisaationYhteystiedot = getOrganisaatioOsoiteByKieliUri(opetuskieli.koodiUri);
                     if (opetuskielenOrganisaationYhteystiedot) {
-                        newYhteystieto = _.extend({}, opetuskielenOrganisaationYhteystiedot, {
+                        newYhteystieto = _.extend(angular.copy(opetuskielenOrganisaationYhteystiedot), {
                             koodiUri: opetuskieli.koodiUri,
                             langTitle: opetuskieli.koodiNimi,
                             organisaatioOsoiteOlemassa: true,

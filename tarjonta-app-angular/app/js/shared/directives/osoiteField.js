@@ -38,6 +38,7 @@ app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
 
         $scope.$watch('model.postinumero', initPostinumerot);
         $scope.$watch('model.kayntiosoite.postinumero', initPostinumerot);
+        $scope.$watch('model.initPostinumerot', initPostinumerot);
 
         $scope.updatePostinumero = function(model) {
             var koodi;
