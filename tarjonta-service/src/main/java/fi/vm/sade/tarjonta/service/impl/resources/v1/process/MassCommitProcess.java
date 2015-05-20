@@ -475,7 +475,14 @@ public class MassCommitProcess {
 
                     for (KoulutusmoduuliToteutus kt : komotos) {
                         hk.addKoulutusmoduuliToteutus(kt);
-                        kt.addHakukohde(hk);
+
+                        // Need to manually update all hakukohdes for komoto, otherwise
+                        // Hibernate only storede the last added hakukohde (why?)
+                        Set<Hakukohde> allHakukohdes = Sets.newHashSet(kt.getHakukohdes());
+                        allHakukohdes.add(hk);
+                        for (Hakukohde hakukohde : allHakukohdes) {
+                            kt.addHakukohde(hakukohde);
+                        }
 
                         KoulutusmoduuliToteutusTarjoajatiedot tarjoajatiedot = new KoulutusmoduuliToteutusTarjoajatiedot();
                         tarjoajatiedot.setTarjoajaOids(kt.getTarjoajaOids());

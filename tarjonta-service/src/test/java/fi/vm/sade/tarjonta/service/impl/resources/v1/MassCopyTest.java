@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
@@ -163,6 +164,7 @@ public class MassCopyTest {
         hakukohde.setTila(TarjontaTila.JULKAISTU);
         hakukohde.setOid(oid + "-" + haku.getOid());
         hakukohde.setHaku(haku);
+        haku.addHakukohde(hakukohde);
 
         return hakukohdeDAO.insert(hakukohde);
     }
@@ -172,6 +174,11 @@ public class MassCopyTest {
                 ylamoduuli, alamoduuli, KoulutusSisaltyvyys.ValintaTyyppi.ALL_OFF
         );
         koulutusSisaltyvyysDAO.insert(sisaltyvyys);
+    }
+
+    private void connectHakukohdeWithKomoto(Hakukohde hakukohde, KoulutusmoduuliToteutus komoto) {
+        hakukohde.addKoulutusmoduuliToteutus(komoto);
+        komoto.addHakukohde(hakukohde);
     }
     
     public Haku createKorkeakoulutusHaku(String hakuOid) {
@@ -202,27 +209,22 @@ public class MassCopyTest {
 
         KoulutusmoduuliToteutus komotoThatHasNoPublishedHakukohde = getKomoto(komo3, "komoto-7");
 
-        Hakukohde hakukohde = getHakukohde("hakukohde-1", haku);
-        hakukohde.addKoulutusmoduuliToteutus(komoto);
-        hakukohde.addKoulutusmoduuliToteutus(komoto2);
-        hakukohde.addKoulutusmoduuliToteutus(komoto3);
-        hakukohde.addKoulutusmoduuliToteutus(komoto4);
+        Hakukohde hakukohdeThatShouldBeCopied = getHakukohde("hakukohde-1", haku);
+        connectHakukohdeWithKomoto(hakukohdeThatShouldBeCopied, komoto);
+        connectHakukohdeWithKomoto(hakukohdeThatShouldBeCopied, komoto2);
+        connectHakukohdeWithKomoto(hakukohdeThatShouldBeCopied, komoto3);
+        connectHakukohdeWithKomoto(hakukohdeThatShouldBeCopied, komoto4);
+        addRyhmaliitos(hakukohdeThatShouldBeCopied, "testiryhma");
 
-        addRyhmaliitos(hakukohde, "testiryhma");
+        Hakukohde anotherHakukohdeThatShouldBeCopied = getHakukohde("another-hakukohde-that-should-be-copied", haku);
+        connectHakukohdeWithKomoto(anotherHakukohdeThatShouldBeCopied, komoto);
 
         Hakukohde hakukohde2 = getHakukohde("hakukohde-2", haku);
-        hakukohde2.addKoulutusmoduuliToteutus(komotoThatIsNotPublished);
+        connectHakukohdeWithKomoto(hakukohde2, komotoThatIsNotPublished);
 
         Hakukohde hakukohde3 = getHakukohde("hakukohde-3", haku);
         hakukohde3.setTila(TarjontaTila.LUONNOS); // this should not be copied
-        hakukohde3.addKoulutusmoduuliToteutus(komotoThatHasNoPublishedHakukohde);
-
-        komoto.addHakukohde(hakukohde);
-        komoto2.addHakukohde(hakukohde);
-        komoto3.addHakukohde(hakukohde);
-        komoto4.addHakukohde(hakukohde);
-        komotoThatIsNotPublished.addHakukohde(hakukohde2);
-        komotoThatHasNoPublishedHakukohde.addHakukohde(hakukohde3);
+        connectHakukohdeWithKomoto(hakukohde3, komotoThatHasNoPublishedHakukohde);
 
         return haku;
     }
@@ -259,8 +261,7 @@ public class MassCopyTest {
         Koulutusmoduuli komo = getKomo("komo-1");
         KoulutusmoduuliToteutus komotoOnlyInHaku2 = getKomoto(komo, "komoto-only-in-haku2");
         Hakukohde hakukohdeInHaku2 = hakukohdeDAO.findHakukohdeByOid("hakukohde-1-haku-2");
-        hakukohdeInHaku2.addKoulutusmoduuliToteutus(komotoOnlyInHaku2);
-        komotoOnlyInHaku2.addHakukohde(hakukohdeInHaku2);
+        connectHakukohdeWithKomoto(hakukohdeInHaku2, komotoOnlyInHaku2);
         
         int komoCountBeforeCopy = koulutusmoduuliDAO.findAllKomos().size();
         int komotoCountBeforeCopy = koulutusmoduuliToteutusDAO.findAll().size();
@@ -279,7 +280,7 @@ public class MassCopyTest {
         assertEquals(komoCountBeforeCopy + 5, komoCountAfterCopy);
         assertEquals(komotoCountBeforeCopy + 5, komotoCountAfterCopy);
 
-        assertEquals(hakukohdeCountBeforeCopy + 2, hakukohdeCountAfterCopy);
+        assertEquals(hakukohdeCountBeforeCopy + 4, hakukohdeCountAfterCopy);
         assertEquals(hakuCountBeforeCopy + 2, hakuCountAfterCopy);
 
         Iterator<Koulutusmoduuli> tmpKomos = koulutusmoduuliDAO.findByKoulutuksenTunnisteOid("komo-2").iterator();
@@ -302,36 +303,35 @@ public class MassCopyTest {
         KoulutusmoduuliToteutus newKomoto = newKomo2.getKoulutusmoduuliToteutusList().iterator().next();
         assertEquals(processId, newKomoto.getUlkoinenTunniste());
 
-        assertEquals(2, newKomoto.getHakukohdes().size());
+        Set<String> newHakukohdeOids = new HashSet<String>();
+        for (Hakukohde hakukohde : newKomoto.getHakukohdes()) {
+            newHakukohdeOids.add(hakukohde.getOid());
+        }
+        assertEquals(2, newHakukohdeOids.size());
 
-        List<Hakukohde> newHakukohdes = new ArrayList(newKomoto.getHakukohdes());
+        Haku newHaku1 = hakuDAO.findByOid("new-haku-oid-1");
+        Haku newHaku2 = hakuDAO.findByOid("new-haku-oid-1");
 
-        Collections.sort(newHakukohdes, new Comparator<Hakukohde>() {
-            @Override
-            public int compare(Hakukohde hakukohde1, Hakukohde hakukohde2) {
-                if (hakukohde1.getId() < hakukohde2.getId()) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            }
-        });
-
-        Hakukohde newHakukohdeFromHaku1 = newHakukohdes.get(0);
-        assertEquals("new-hakukohde-oid-1", newHakukohdeFromHaku1.getOid());
+        Hakukohde newHakukohdeFromHaku1 = newHaku1.getHakukohdes().iterator().next();
         assertEquals("new-haku-oid-1", newHakukohdeFromHaku1.getHaku().getOid());
 
-        Hakukohde newHakukohdeFromHaku2 = newHakukohdes.get(1);
-        assertEquals("new-hakukohde-oid-2", newHakukohdeFromHaku2.getOid());
-        assertEquals("new-haku-oid-2", newHakukohdeFromHaku2.getHaku().getOid());
+        Hakukohde newHakukohdeFromHaku2 = newHaku1.getHakukohdes().iterator().next();
+        assertEquals("new-haku-oid-1", newHakukohdeFromHaku2.getHaku().getOid());
 
         Hakukohde originalHakukohdeHaku1 = hakukohdeDAO.findHakukohdeByOid("hakukohde-1-haku-1");
         Ryhmaliitos originalLiitos = originalHakukohdeHaku1.getRyhmaliitokset().iterator().next();
         assertEquals(originalHakukohdeHaku1, originalLiitos.getHakukohde());
         assertEquals("testiryhma", originalLiitos.getRyhmaOid());
 
-        Ryhmaliitos newRyhmaliitos = newHakukohdeFromHaku1.getRyhmaliitokset().iterator().next();
-        assertEquals(newHakukohdeFromHaku1, newRyhmaliitos.getHakukohde());
+        Ryhmaliitos newRyhmaliitos = null;
+        for (Hakukohde hakukohde : haku1.getHakukohdes()) {
+            if (hakukohde.getRyhmaliitokset() != null && !hakukohde.getRyhmaliitokset().isEmpty()) {
+                newRyhmaliitos = hakukohde.getRyhmaliitokset().iterator().next();
+                assertEquals(hakukohde, newRyhmaliitos.getHakukohde());
+                break;
+            }
+        }
+        assertNotNull(newRyhmaliitos);
         assertEquals("testiryhma", newRyhmaliitos.getRyhmaOid());
     }
 }
