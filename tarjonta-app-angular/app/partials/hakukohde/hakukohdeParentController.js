@@ -1073,22 +1073,38 @@ app.controller('HakukohdeParentController', [
                 });
 
                 var additionalFields = {
-                    numero: 'puhelinnumero',
-                    email: 'sahkopostiosoite',
-                    www: 'wwwOsoite'
+                    puhelinnumero: {
+                        find: function(yhteystieto) {
+                            return yhteystieto.tyyppi === 'puhelin';
+                        },
+                        key: 'numero'
+                    },
+                    sahkopostiosoite: {
+                        find: function(yhteystieto) {
+                            return yhteystieto.email;
+                        },
+                        key: 'email'
+                    },
+                    wwwOsoite: {
+                        find: function(yhteystieto) {
+                            return yhteystieto.www;
+                        },
+                        key: 'www'
+                    }
                 };
 
-                _.each(organisaatioData.metadata.yhteystiedot, function(tiedot) {
-                    _.each(additionalFields, function(mappedKey, originalKey) {
-                        if (tiedot[originalKey]) {
-                            var postiYhteystieto = _.findWhere($scope.model.organisaationYhteystiedot, {
-                                lang: oph.removeKoodiVersion(tiedot.kieli)
-                            });
-                            if (postiYhteystieto) {
-                                postiYhteystieto[mappedKey] = tiedot[originalKey];
-                            }
-                        }
+                _.each(additionalFields, function(mappedField, key) {
+                    var yhteystieto = _.find(organisaatioData.metadata.yhteystiedot, function(yhteystieto) {
+                        return mappedField.find(yhteystieto);
                     });
+                    if (yhteystieto) {
+                        var postiYhteystieto = _.findWhere($scope.model.organisaationYhteystiedot, {
+                            lang: oph.removeKoodiVersion(yhteystieto.kieli)
+                        });
+                        if (postiYhteystieto) {
+                            postiYhteystieto[key] = yhteystieto[mappedField.key];
+                        }
+                    }
                 });
 
                 _.each(kayntiYhteystietos, function(kayntiYhteystieto, lang)  {
