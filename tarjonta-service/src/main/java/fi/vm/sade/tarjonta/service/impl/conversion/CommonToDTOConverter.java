@@ -136,11 +136,14 @@ public class CommonToDTOConverter {
             yhteystiedotDTO.setPuhelinnumero(yhteystiedot.getPuhelinnumero());
             yhteystiedotDTO.setSahkopostiosoite(yhteystiedot.getSahkopostiosoite());
             yhteystiedotDTO.setWwwOsoite(yhteystiedot.getWwwOsoite());
+            yhteystiedotDTO.setKansainvalinenOsoite(yhteystiedot.getKansainvalinenOsoite());
+            yhteystiedotDTO.setOsoitemuoto(yhteystiedot.getOsoitemuoto());
 
             YhteystiedotV1RDTO kayntiosoiteDto = new YhteystiedotV1RDTO();
             kayntiosoiteDto.setOsoiterivi1(yhteystiedot.getKayntiosoiteOsoiterivi1());
             kayntiosoiteDto.setPostinumero(yhteystiedot.getKayntiosoitePostinumero());
             kayntiosoiteDto.setPostitoimipaikka(yhteystiedot.getKayntiosoitePostitoimipaikka());
+            kayntiosoiteDto.setKansainvalinenOsoite(yhteystiedot.getKansainvalinenKayntiOsoite());
 
             yhteystiedotDTO.setKayntiosoite(kayntiosoiteDto);
 

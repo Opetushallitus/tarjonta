@@ -1,66 +1,88 @@
 <div class="tarjontaOsoiteField">
 
     <div class="form-group">
+        <label for="osoitemuoto" tt="osoitefield.osoitemuoto">Osoitemuoto</label>
+        <select id="osoitemuoto" class="form-control" ng-model="model.osoitemuoto"
+                ng-options="obj.key as obj.label for obj in osoitemuodot"></select>
+    </div>
+
+    <div class="form-group">
         <label for="hakutoimistonNimi">{{tt.hakutoimistonNimi}}</label>
         <input id="hakutoimistonNimi" placeholder="{{tt.hakutoimistonNimi}}" ng-model="model.hakutoimistonNimi"
             ng-disabled="isDisabled()"
-            ng-required="isRequired()"
             type="text"
             ng-change="onChange()" />
+        <p ng-show="!isDisabled() && !model.hakutoimistonNimi" class="error" tt="form.pakollinenKentta">Pakollinen kenttä</p>
     </div>
 
     <fieldset>
         <legend>{{tt.kayntiosoite}}</legend>
 
-        <input type="text" class="osoite"
-               ng-disabled="isDisabled()"
-               ng-required="isRequired()"
-               placeholder="{{tt.osoite}}"
-               data-ng-model="model.kayntiosoite.osoiterivi1"
-               ng-change="onChange()"
-            />
-        <br/>
+        <div ng-if="model.osoitemuoto !== 'KANSAINVALINEN'">
+            <input type="text" class="osoite"
+                   ng-disabled="isDisabled()"
+                   ng-required="isRequired()"
+                   placeholder="{{tt.osoite}}"
+                   data-ng-model="model.kayntiosoite.osoiterivi1"
+                   ng-change="onChange()"
+                />
+            <br/>
 
-        <input type="text" class="postinumero"
-               placeholder="{{tt.postinumero}}"
-               ng-model="model.kayntiosoite.postinumeroUi"
-               ng-disabled="isDisabled()"
-               ng-required="isRequired()"
-               typeahead="koodi.koodiArvo for koodi in postinumerot | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'"
-               typeahead-on-select="updatePostinumero(model.kayntiosoite)"
-            />
+            <input type="text" class="postinumero"
+                   placeholder="{{tt.postinumero}}"
+                   ng-model="model.kayntiosoite.postinumeroUi"
+                   ng-disabled="isDisabled()"
+                   ng-required="isRequired()"
+                   typeahead="koodi.koodiArvo for koodi in postinumerot | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'"
+                   typeahead-on-select="updatePostinumero(model.kayntiosoite)"
+                />
 
-        <input type="text" class="postitoimipaikka" disabled
-               placeholder="{{tt.postitoimipaikka}}"
-               ng-model="model.kayntiosoite.postitoimipaikkaUi"
-            />
+            <input type="text" class="postitoimipaikka" disabled
+                   placeholder="{{tt.postitoimipaikka}}"
+                   ng-model="model.kayntiosoite.postitoimipaikkaUi"
+                />
+        </div>
+
+        <div ng-if="model.osoitemuoto === 'KANSAINVALINEN'">
+            <textarea class="osoite form-control"
+                      ng-disabled="isDisabled()"
+                      ng-model="model.kayntiosoite.kansainvalinenOsoite"></textarea>
+        </div>
     </fieldset>
 
     <fieldset>
         <legend>{{tt.postiosoite}}</legend>
 
-        <input type="text" class="osoite"
-               ng-disabled="isDisabled()"
-               ng-required="isRequired()"
-               placeholder="{{tt.osoite}}"
-               data-ng-model="model.osoiterivi1"
-               ng-change="onChange()"
-            />
-        <br/>
+        <div ng-if="model.osoitemuoto !== 'KANSAINVALINEN'">
+            <input type="text" class="osoite"
+                   ng-disabled="isDisabled()"
+                   ng-required="isRequired()"
+                   placeholder="{{tt.osoite}}"
+                   data-ng-model="model.osoiterivi1"
+                   ng-change="onChange()"
+                />
+            <br/>
 
-        <input type="text" class="postinumero"
-               placeholder="{{tt.postinumero}}"
-               ng-model="model.postinumeroUi"
-               ng-disabled="isDisabled()"
-               ng-required="isRequired()"
-               typeahead="koodi.koodiArvo for koodi in postinumerot | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'"
-               typeahead-on-select="updatePostinumero(model)"
-            />
+            <input type="text" class="postinumero"
+                   placeholder="{{tt.postinumero}}"
+                   ng-model="model.postinumeroUi"
+                   ng-disabled="isDisabled()"
+                   ng-required="isRequired()"
+                   typeahead="koodi.koodiArvo for koodi in postinumerot | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'"
+                   typeahead-on-select="updatePostinumero(model)"
+                />
 
-        <input type="text" class="postitoimipaikka" disabled
-               placeholder="{{tt.postitoimipaikka}}"
-               ng-model="model.postitoimipaikkaUi"
-            />
+            <input type="text" class="postitoimipaikka" disabled
+                   placeholder="{{tt.postitoimipaikka}}"
+                   ng-model="model.postitoimipaikkaUi"
+                />
+        </div>
+
+        <div ng-if="model.osoitemuoto === 'KANSAINVALINEN'">
+            <textarea class="osoite form-control"
+                      ng-disabled="isDisabled()"
+                      ng-model="model.kansainvalinenOsoite"></textarea>
+        </div>
     </fieldset>
 
     <div class="form-group">

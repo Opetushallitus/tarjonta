@@ -1,11 +1,12 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import fi.vm.sade.tarjonta.service.resources.dto.BaseRDTO;
+import fi.vm.sade.tarjonta.shared.types.Osoitemuoto;
 
 public class YhteystiedotV1RDTO extends BaseRDTO {
 
     private static final long serialVersionUID = 2716121730126623555L;
-    
+
     private String lang;
     private String osoiterivi1;
     private String osoiterivi2;
@@ -16,7 +17,9 @@ public class YhteystiedotV1RDTO extends BaseRDTO {
     private String sahkopostiosoite;
     private String hakutoimistonNimi;
     private String wwwOsoite;
+    private String kansainvalinenOsoite;
     private YhteystiedotV1RDTO kayntiosoite;
+    private Osoitemuoto osoitemuoto;
 
     public String getLang() {
         return lang;
@@ -105,6 +108,22 @@ public class YhteystiedotV1RDTO extends BaseRDTO {
 
     public void setWwwOsoite(String wwwOsoite) {
         this.wwwOsoite = wwwOsoite;
+    }
+
+    public String getKansainvalinenOsoite() {
+        return kansainvalinenOsoite;
+    }
+
+    public void setKansainvalinenOsoite(String kansainvalinenOsoite) {
+        this.kansainvalinenOsoite = kansainvalinenOsoite;
+    }
+
+    public Osoitemuoto getOsoitemuoto() {
+        return osoitemuoto;
+    }
+
+    public void setOsoitemuoto(Osoitemuoto osoitemuoto) {
+        this.osoitemuoto = osoitemuoto;
     }
 
 }

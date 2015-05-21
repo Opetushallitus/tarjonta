@@ -123,16 +123,57 @@
                 <tr ng-show="CONFIGURATION.YHTEYSTIEDOT.showYhteystiedot[model.hakukohde.toteutusTyyppi] && model.hakukohde.yhteystiedot.length > 0">
                     <th tt="hakukohde.review.perustiedot.yhteystiedot">Yhteystiedot</th>
                     <td colspan="2">
-                        <div class="mkText">
-                            <ul class="mkTextRows">
-                                <li ng-repeat="yhteystieto in model.hakukohde.yhteystiedot">
-                                    {{ yhteystieto.osoiterivi1 }},
-                                    {{ yhteystieto.postinumeroArvo }},
-                                    {{ yhteystieto.postitoimipaikka }}
-                                    <span class="lang">({{ yhteystieto.langArvo }})</span>
-                                </li>
-                            </ul>
-                        </div>
+                        <tabset class="hakukohteenYhteystiedot">
+                            <tab ng-repeat="yhteystieto in model.hakukohde.yhteystiedot"
+                                 heading="{{yhteystieto.langArvo}}">
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th tt="osoitefield.hakutoimistonNimi">Hakijapalveluiden nimi</th>
+                                        <td>{{yhteystieto.hakutoimistonNimi}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th tt="osoitefield.kayntiosoite">Käyntiosoite</th>
+                                        <td ng-if="yhteystieto.osoitemuoto === 'KANSAINVALINEN'">
+                                            <pre ng-if="yhteystieto.kayntiosoite.kansainvalinenOsoite">{{yhteystieto.kayntiosoite.kansainvalinenOsoite}}</pre>
+                                        </td>
+                                        <td ng-if="yhteystieto.osoitemuoto !== 'KANSAINVALINEN'">
+                                            {{ yhteystieto.kayntiosoite.osoiterivi1 }},<br>
+                                            {{ yhteystieto.kayntiosoite.postinumeroArvo }},
+                                            {{ yhteystieto.kayntiosoite.postitoimipaikka }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th tt="osoitefield.postiosoite">Postiosoite</th>
+                                        <td ng-if="yhteystieto.osoitemuoto === 'KANSAINVALINEN'">
+                                            <pre ng-if="yhteystieto.kansainvalinenOsoite">{{yhteystieto.kansainvalinenOsoite}}</pre>
+                                        </td>
+                                        <td ng-if="yhteystieto.osoitemuoto !== 'KANSAINVALINEN'">
+                                            {{ yhteystieto.osoiterivi1 }},<br>
+                                            {{ yhteystieto.postinumeroArvo }},
+                                            {{ yhteystieto.postitoimipaikka }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th tt="osoitefield.puhelinnumero">Puhelinnumero</th>
+                                        <td>{{yhteystieto.puhelinnumero}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th tt="osoitefield.sahkopostiosoite">Sähköpostiosoite</th>
+                                        <td>{{yhteystieto.sahkopostiosoite}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th tt="osoitefield.wwwOsoite">Www-osoite</th>
+                                        <td>
+                                            <a href="{{yhteystieto.wwwOsoite}}" target="_blank">
+                                                {{yhteystieto.wwwOsoite}}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </tab>
+                        </tabset>
                     </td>
                 </tr>
 

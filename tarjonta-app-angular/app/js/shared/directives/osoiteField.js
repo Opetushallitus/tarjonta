@@ -16,17 +16,39 @@ app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
             postiosoite: LocalisationService.t('osoitefield.postiosoite'),
             kayntiosoite: LocalisationService.t('osoitefield.kayntiosoite')
         };
+        var blankValues = {
+            osoiterivi1: '',
+            postinumero: '',
+            postitoimipaikka: ''
+        };
+        $scope.osoitemuodot = [
+            {
+                key: 'KANSAINVALINEN',
+                label: LocalisationService.t('osoitefield.kansainvalinenOsoitemuoto')
+            },
+            {
+                key: 'SUOMALAINEN',
+                label: LocalisationService.t('osoitefield.suomalainenOsoitemuoto')
+            }
+        ];
+        $scope.$watch('model.osoitemuoto', function(osoitemuoto) {
+            if (osoitemuoto === 'SUOMALAINEN') {
+                $scope.model.kansainvalinenOsoite = '';
+                $scope.model.kayntiosoite.kansainvalinenOsoite = '';
+            }
+            else if (osoitemuoto === 'KANSAINVALINEN') {
+                _.extend($scope.model, blankValues);
+                _.extend($scope.model.kayntiosoite, blankValues);
+                initPostinumerot();
+            }
+        });
         $scope.postinumerot = [];
         Koodisto.getAllKoodisWithKoodiUri('posti', LocalisationService.getLocale()).then(function(ret) {
             $scope.postinumerot = ret;
             initPostinumerot();
         });
         if (!$scope.model) {
-            $scope.model = {
-                osoiterivi1: '',
-                postinumero: '',
-                postitoimipaikka: ''
-            };
+            $scope.model = blankValues;
         }
 
         function initPostinumerot() {

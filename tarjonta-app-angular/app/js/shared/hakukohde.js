@@ -268,17 +268,10 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
         }
     }
     function removeNotUsedYhteystiedot(yhteystiedotArray) {
-
-        function isEmpty(yhteystieto) {
-            // Hakutoimiston nimi vaaditaan, muuten yhteystietoa ei tallenneta
-            // (jolloin KI hakee yhteystiedot organisaatiopalvelusta)
-            return _.isEmpty(yhteystieto.hakutoimistonNimi);
-        }
-
         var loopIndex = yhteystiedotArray.length;
         while (loopIndex--) {
             var yhteystieto = yhteystiedotArray[loopIndex];
-            if (yhteystieto.kaytaOrganisaatioOsoitetta || isEmpty(yhteystieto)) {
+            if (yhteystieto.kaytaOrganisaatioOsoitetta) {
                 yhteystiedotArray.splice(loopIndex, 1);
             }
         }

@@ -61,7 +61,7 @@ public class HakukohdeValidator {
         }
 
         for (YhteystiedotV1RDTO yhteystietoDTO : hakukohdeRDTO.getYhteystiedot()) {
-            if (StringUtils.isBlank(yhteystietoDTO.getOsoiterivi1()) || StringUtils.isBlank(yhteystietoDTO.getPostinumero())) {
+            if (StringUtils.isBlank(yhteystietoDTO.getHakutoimistonNimi())) {
                 validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_YHTEYSTIEDOT_DATA_MISSING);
                 break;
             }

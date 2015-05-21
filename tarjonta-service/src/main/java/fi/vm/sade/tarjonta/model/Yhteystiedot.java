@@ -1,12 +1,9 @@
 package fi.vm.sade.tarjonta.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import fi.vm.sade.tarjonta.shared.types.Osoitemuoto;
 import org.codehaus.jackson.annotate.JsonBackReference;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
@@ -59,6 +56,16 @@ public class Yhteystiedot extends TarjontaBaseEntity {
 
     @Column(name = "www_osoite")
     private String wwwOsoite;
+
+    @Column(name = "kansainvalinen_osoite")
+    private String kansainvalinenOsoite;
+
+    @Column(name = "kansainvalinen_kayntiosoite")
+    private String kansainvalinenKayntiOsoite;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "osoitemuoto")
+    private Osoitemuoto osoitemuoto;
 
     public Hakukohde getHakukohde() {
         return hakukohde;
@@ -162,6 +169,30 @@ public class Yhteystiedot extends TarjontaBaseEntity {
 
     public void setWwwOsoite(String wwwOsoite) {
         this.wwwOsoite = wwwOsoite;
+    }
+
+    public String getKansainvalinenKayntiOsoite() {
+        return kansainvalinenKayntiOsoite;
+    }
+
+    public void setKansainvalinenKayntiOsoite(String kansainvalinenKayntiOsoite) {
+        this.kansainvalinenKayntiOsoite = kansainvalinenKayntiOsoite;
+    }
+
+    public String getKansainvalinenOsoite() {
+        return kansainvalinenOsoite;
+    }
+
+    public void setKansainvalinenOsoite(String kansainvalinenOsoite) {
+        this.kansainvalinenOsoite = kansainvalinenOsoite;
+    }
+
+    public Osoitemuoto getOsoitemuoto() {
+        return osoitemuoto;
+    }
+
+    public void setOsoitemuoto(Osoitemuoto osoitemuoto) {
+        this.osoitemuoto = osoitemuoto;
     }
 
 }
