@@ -1022,13 +1022,15 @@ app.controller('HakukohdeParentController', [
             });
             return kieli.koodiNimi;
         };
-        var addOrganisaationYhteystiedot = function(organisaatioData) {
+        var addOrganisaationYhteystiedot = function(organisaatio) {
+            var deferred = $q.defer();
             $scope.model.organisaationYhteystiedot = [];
 
-            if (organisaatioData.metadata && organisaatioData.metadata.yhteystiedot) {
+            OrganisaatioService.getHakijapalveluidenYhteystiedot(organisaatio.oid).then(function(rawYhteystiedot) {
+
                 var kayntiYhteystietos = {};
 
-                angular.forEach(organisaatioData.metadata.yhteystiedot, function(yhteystieto) {
+                _.each(rawYhteystiedot, function(yhteystieto) {
                     var kieliUri = oph.removeKoodiVersion(yhteystieto.kieli);
                     if (_.contains(['posti'], yhteystieto.osoiteTyyppi)) {
                         $scope.model.organisaationYhteystiedot.push({
@@ -1080,12 +1082,18 @@ app.controller('HakukohdeParentController', [
                             return yhteystieto.www;
                         },
                         key: 'www'
+                    },
+                    hakutoimistonNimi: {
+                        find: function(yhteystieto) {
+                            return yhteystieto.hakutoimistonNimi;
+                        },
+                        key: 'hakutoimistonNimi'
                     }
                 };
 
                 _.each($scope.model.organisaationYhteystiedot, function(yhteystieto) {
                     _.each(additionalFields, function(mappedField, key) {
-                        var orgYhteystieto = _.find(organisaatioData.metadata.yhteystiedot, function(orgYhteystieto) {
+                        var orgYhteystieto = _.find(rawYhteystiedot, function(orgYhteystieto) {
                             return mappedField.find(orgYhteystieto) &&
                                 oph.removeKoodiVersion(orgYhteystieto.kieli) === yhteystieto.lang;
                         });
@@ -1102,15 +1110,11 @@ app.controller('HakukohdeParentController', [
                     }
                 });
 
-                _.each(organisaatioData.metadata.hakutoimistonNimi, function(nimi, kieliUri) {
-                    var lang = oph.removeKoodiVersion(kieliUri);
-                    var postiYhteystieto = _.findWhere($scope.model.organisaationYhteystiedot, {lang: lang});
-                    if (postiYhteystieto) {
-                        postiYhteystieto.hakutoimistonNimi = nimi;
-                    }
-                });
+                deferred.resolve();
 
-            }
+            });
+
+            return deferred.promise;
         };
         var getOrganisaatioOsoiteByKieliUri = function(kieliUri) {
             return _.findWhere($scope.model.organisaationYhteystiedot, {
@@ -1168,8 +1172,9 @@ app.controller('HakukohdeParentController', [
             if ($scope.CONFIGURATION.YHTEYSTIEDOT.showYhteystiedot[$scope.model.hakukohde.toteutusTyyppi]) {
                 Koodisto.getAllKoodisWithKoodiUri('kieli', LocalisationService.getLocale()).then(function(ret) {
                     addKielet(ret);
-                    addOrganisaationYhteystiedot(organisaatioData);
-                    populateHakukohteenYhteystiedot();
+                    addOrganisaationYhteystiedot(organisaatioData).then(function() {
+                        populateHakukohteenYhteystiedot();
+                    });
                 });
             }
         };

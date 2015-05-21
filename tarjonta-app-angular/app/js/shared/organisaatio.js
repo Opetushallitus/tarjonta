@@ -132,6 +132,55 @@ angular.module('Organisaatio', [
             });
             return deferred.promise;
         }
+
+        function byOid(oid) {
+            return orgLuku.get({
+                oid: oid
+            }).$promise.then(function(result) {
+                    // Muodosta oidista ja parentOidPathista taulukko
+                    // tätä tietoa käytetään monessa paikassa käyttöoikeuksia varten
+                    var oids = [result.oid];
+                    if (result.parentOidPath) {
+                        oids = _.chain(oids).union(result.parentOidPath.split('|')).compact().value();
+                    }
+                    result.oidAndParentOids = oids;
+                    return localize(result);
+                });
+        }
+
+        /**
+         * Palauta hakijapalveluiden yhteystiedot. Tiedot haetaan yläorganisaatiosta
+         * siinä tapauksessa, että ne puuttuvat organisaatiolta.
+         * @param {string} oid
+         */
+        function getHakijapalveluidenYhteystiedot(oid) {
+            var deferred = $q.defer();
+
+            byOid(oid).then(function(org) {
+                if (org.metadata.yhteystiedot && org.metadata.yhteystiedot.length > 0) {
+                    _.each(org.metadata.hakutoimistonNimi, function(nimi, kieli) {
+                        org.metadata.yhteystiedot.push({
+                            kieli: kieli,
+                            hakutoimistonNimi: nimi
+                        });
+                    });
+                    deferred.resolve(org.metadata.yhteystiedot);
+                }
+                else {
+                    if (!org.parentOid || org.parentOid === Config.env['root.organisaatio.oid']) {
+                        deferred.reject('Yhteystietoja ei löytynyt!');
+                    }
+                    else {
+                        getHakijapalveluidenYhteystiedot(org.parentOid).then(function(yhteystiedot) {
+                            deferred.resolve(yhteystiedot);
+                        });
+                    }
+                }
+            });
+
+            return deferred.promise;
+        }
+
         return {
             haeOppilaitostyypit: haeOppilaitostyypit,
             /**
@@ -164,23 +213,8 @@ angular.module('Organisaatio', [
                     return nimi;
                 });
             },
-            /**
-             * palauttaa promisen organisaatiodataan jossa on lokalisoitu nimi.
-             */
-            byOid: function(oid) {
-                return orgLuku.get({
-                    oid: oid
-                }).$promise.then(function(result) {
-                    // Muodosta oidista ja parentOidPathista taulukko
-                    // tätä tietoa käytetään monessa paikassa käyttöoikeuksia varten
-                    var oids = [result.oid];
-                    if (result.parentOidPath) {
-                        oids = _.chain(oids).union(result.parentOidPath.split('|')).compact().value();
-                    }
-                    result.oidAndParentOids = oids;
-                    return localize(result);
-                });
-            },
+            byOid: byOid,
+            getHakijapalveluidenYhteystiedot: getHakijapalveluidenYhteystiedot,
             /**
              * Palauttaa ECTS yhteyshenkilön organisaatiolle (promise)
              */

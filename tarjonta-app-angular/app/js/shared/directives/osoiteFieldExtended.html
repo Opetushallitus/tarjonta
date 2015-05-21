@@ -3,6 +3,7 @@
     <div class="form-group">
         <label for="osoitemuoto" tt="osoitefield.osoitemuoto">Osoitemuoto</label>
         <select id="osoitemuoto" class="form-control" ng-model="model.osoitemuoto"
+                ng-disabled="isDisabled()"
                 ng-options="obj.key as obj.label for obj in osoitemuodot"></select>
     </div>
 
