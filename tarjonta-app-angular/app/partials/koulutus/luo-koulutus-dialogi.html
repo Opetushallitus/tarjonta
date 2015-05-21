@@ -23,19 +23,18 @@
         <div ng-show="model.koulutustyyppi.koodiUri == 'koulutustyyppi_3' && model.tutkintoonJohtamattomatEnabled">
             <h4><span tt="luoKoulutsDialogi.koulutusmoduulinTyyppi">Koulutuksen tyyppi</span></h4>
             <label for="tyyppiTutkinto">
-                <input id="tyyppiTutkinto" type="radio" ng-model="model.koulutusmoduuliTyyppi" value="TUTKINTO"
-                       tt="tarjonta.tyyppi.TUTKINTO">
-                Tutkinto
+                <input id="tyyppiTutkinto" type="radio" ng-model="model.koulutusmoduuliTyyppi" value="TUTKINTO">
+                <span tt="tarjonta.tyyppi.TUTKINTO">Tutkinto</span>
             </label>
             <label for="tyyppiOpintokokonaisuus">
                 <input id="tyyppiOpintokokonaisuus" type="radio" ng-model="model.koulutusmoduuliTyyppi"
-                       value="OPINTOKOKONAISUUS" tt="tarjonta.tyyppi.OPINTOKOKONAISUUS">
-                Opintokokonaisuus
+                       value="OPINTOKOKONAISUUS">
+                <span tt="tarjonta.tyyppi.OPINTOKOKONAISUUS">Opintokokonaisuus</span>
             </label>
             <label for="tyyppiOpintojakso">
                 <input id="tyyppiOpintojakso" type="radio" ng-model="model.koulutusmoduuliTyyppi"
-                       value="OPINTOJAKSO" tt="tarjonta.tyyppi.OPINTOJAKSO">
-                Opintojakso
+                       value="OPINTOJAKSO">
+                <span tt="tarjonta.tyyppi.OPINTOJAKSO">Opintojakso</span>
             </label>
         </div>
 
@@ -43,7 +42,7 @@
         <label for="showOtherOrganizations" ng-show="model.showOtherOrganizationsCheckbox">
             <input id="showOtherOrganizations" ng-click="toggleOtherOrganizations()"
                    type="checkbox" ng-model="model.showOtherOrganizations" />
-            <span>Näytä myös muut korkeakoulut</span>
+            <span tt="luoKoulutusDialogi.naytaMyosMuutKorkeakoulut">Näytä myös muut korkeakoulut</span>
         </label>
 
 		<table width="100%">

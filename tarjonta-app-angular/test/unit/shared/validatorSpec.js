@@ -15,6 +15,8 @@ describe('Validator', function() {
     beforeEach(function() {
         angular.module('config').value('globalConfig', CONFIG_ENV_MOCK);
         module('KoulutusConverter');
+        module('SharedStateService');
+        module('auth');
         module('Koodisto');
         module('Hakukohde');
         module('Validator');

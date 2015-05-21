@@ -88,10 +88,10 @@ app.controller('SelectTutkintoOhjelmaController', [
             //Muodostetaan nippu promiseja, jolloin voidaan toimia sitten kun kaikki promiset taytetty
             var promises = [];
             angular.forEach(targetFilters, function(value, key) {
-                promises.push(Koodisto.getYlapuolisetKoodit(value, 'FI'));
+                promises.push(Koodisto.getYlapuolisetKoodit(value));
             });
             // KJOH-777 häkki
-            promises.push(Koodisto.getKoodi('koulutus', 'koulutus_511999', 'FI').then(function(koodi) {
+            promises.push(Koodisto.getKoodi('koulutus', 'koulutus_511999').then(function(koodi) {
                 return [koodi];
             }));
             var koulutuskooditHaettu = $q.all(promises);
@@ -120,7 +120,7 @@ app.controller('SelectTutkintoOhjelmaController', [
             }
             else if ($scope.stoModel.koulutusala.length > 0) {
                 //                console.log("Koulutusalauri: " + $scope.stoModel.koulutusala);
-                var hakutulosPromise = Koodisto.getYlapuolisetKoodit($scope.stoModel.koulutusala, 'FI');
+                var hakutulosPromise = Koodisto.getYlapuolisetKoodit($scope.stoModel.koulutusala);
                 hakutulosPromise.then(function(koodisParam) {
                     tempTutkinnot = koodisParam.filter(function(koodi) {
                         return $scope.stoModel.korkeakoulututkinnot[koodi.koodiUri] !== undefined;

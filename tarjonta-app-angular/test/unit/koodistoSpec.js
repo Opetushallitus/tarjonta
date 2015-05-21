@@ -17,6 +17,8 @@ describe('koodistoServiceTest', function() {
     var mockModule = angular.module('test.module', []);
     mockModule.value('globalConfig', CONFIG_ENV_MOCK);
 
+    beforeEach(module('SharedStateService'));
+    beforeEach(module('auth'));
     beforeEach(module('test.module')); //mock module with the mock data
     beforeEach(module('config'));
     beforeEach(module('Logging'));

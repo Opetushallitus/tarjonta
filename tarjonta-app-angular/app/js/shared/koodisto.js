@@ -18,9 +18,14 @@ var app = angular.module('Koodisto', [
     'TarjontaCache',
     'Logging'
 ]);
-app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
+app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, AuthService) {
     $log = $log.getInstance('Koodisto');
     var host = Config.env.tarjontaKoodistoRestUrlPrefix;
+
+    function getLocale(locale) {
+        return locale || AuthService.getLanguage();
+    }
+
     var nimiWithLocale = function(locale, metadata) {
         var metas = _.select(metadata, function(koodiMetaData) {
             locale = locale || 'fi';
@@ -223,6 +228,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
          */
         getYlapuolisetKoodit: function(koodiUriParam, locale) {
             $log.info('getYlapuolisetKoodit called with : ' + koodiUriParam + ' locale : ' + locale);
+            locale = getLocale(locale);
             var returnYlapuoliKoodis = $q.defer();
             var returnKoodis = [];
             var ylapuoliKoodiUri = host + 'relaatio/sisaltyy-ylakoodit/:koodiUri';
@@ -243,6 +249,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
         },
         getAlapuolisetKoodit: function(koodiUriParam, locale) {
             $log.info('getAlapuolisetKoodi called with : ' + koodiUriParam + ' locale : ' + locale);
+            locale = getLocale(locale);
             var returnYlapuoliKoodis = $q.defer();
             var returnKoodis = [];
             var ylapuoliKoodiUri = host + 'relaatio/sisaltyy-alakoodit/:koodiUri';
@@ -269,6 +276,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
          * }
          */
         getAlapuolisetKoodiUrit: function(koodiUriList, tyyppi, locale) {
+            locale = getLocale(locale);
             var deferred = $q.defer();
             var result = {
                 uris: [],
@@ -306,6 +314,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
          */
         getYlapuolisetKoodiUrit: function(koodiUriList, tyyppi, locale) {
             //        $log.info('getYlapuolisetKoodiUrit called with : ' , koodiUriList, tyyppi);
+            locale = getLocale(locale);
             var deferred = $q.defer();
             var result = {
                 uris: [],
@@ -342,6 +351,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
          */
         getAllKoodisWithKoodiUri: function(koodistoUriParam, locale, includePassiivises) {
             $log.info('getAllKoodisWithKoodiUri called with ' + koodistoUriParam + ' ' + locale);
+            locale = getLocale(locale);
             return CacheService.lookup('koodisto/' + koodistoUriParam + '/' + locale, function(returnKoodisPromise) {
                 var includePassive = false;
                 if (includePassiivises !== undefined) {
@@ -380,6 +390,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
          */
         getKoodi: function(koodistoUriParam, koodiUriParam, locale) {
             koodiUriParam = removeVersion(koodiUriParam);
+            locale = getLocale(locale);
             var returnKoodi = $q.defer();
             var koodiUri = host + ':koodistoUri/koodi/:koodiUri';
             //console.log('Calling getKoodistoWithKoodiUri with : ' + koodistoUriParam + '/koodi/'+ koodiUriParam +' ' + locale);
@@ -403,7 +414,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                 ret.resolve(null);
                 return ret.promise;
             }
-            locale = locale || 'fi';
+            locale = getLocale(locale);
             // default locale is finnish
             koodiUri = removeVersion(koodiUri);
             return CacheService.lookup('koodi/' + koodiUri + '/' + locale, function(ret) {

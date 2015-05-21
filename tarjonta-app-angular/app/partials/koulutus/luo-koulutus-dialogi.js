@@ -35,7 +35,7 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
     }
     SharedStateService.state.luoKoulutusaDialogi.koulutustyyppikoodit =
         SharedStateService.state.luoKoulutusaDialogi.koulutustyyppikoodit ||
-        Koodisto.getAllKoodisWithKoodiUri('koulutustyyppi', 'fi').then(function(koodit) {
+        Koodisto.getAllKoodisWithKoodiUri('koulutustyyppi').then(function(koodit) {
         var subpromises = [];
         _.each(koodit, function(koulutustyyppi) {
             SharedStateService.state.luoKoulutusaDialogi[koulutustyyppi] = [];
