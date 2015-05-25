@@ -297,6 +297,9 @@ angular.module('Validator', [])
             hakukohde: {
                 validate: function(model, haku) {
                     return validate(model, haku);
+                },
+                valintakoe: {
+                    isValidAjankohta: isValidAjankohta
                 }
             }
         };

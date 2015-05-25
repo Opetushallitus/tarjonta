@@ -58,7 +58,7 @@
                                     </td>
                                 </tr>
 	                            <tr>
-	                               <td colspan="5" class="vkErrors" ng-show="model.showError && !isValidAjankohta(ajankohta)">
+	                               <td colspan="5" class="vkErrors" ng-show="model.showError && !validator.valintakoe.isValidAjankohta(ajankohta)">
 	                                   <p class="error" tt="tarjonta.hakukohde.valintakoe.errors.ajankohta">Valintakokeen osoite ja ajankohta ovat pakollisia.</p>
 	                               </td>
 	                            </tr>

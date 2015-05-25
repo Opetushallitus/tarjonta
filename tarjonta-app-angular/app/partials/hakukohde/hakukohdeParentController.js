@@ -60,6 +60,7 @@ app.controller('HakukohdeParentController', [
         };
 
         $scope.config = HakukohdeService.config;
+        $scope.validator = ValidatorService.hakukohde;
         $scope.config.setToteutustyyppi($scope.model.hakukohde.toteutusTyyppi);
         $scope.toisenAsteenKoulutus = HakukohdeService.config.isToisenAsteenKoulutus;
 
