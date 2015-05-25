@@ -36,6 +36,7 @@
                    ng-required="isRequired()"
                    typeahead="koodi.koodiArvo for koodi in postinumerot | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'"
                    typeahead-on-select="updatePostinumero(model.kayntiosoite)"
+                   ng-blur="clearPostinumeroIfEmpty(model.kayntiosoite)"
                 />
 
             <input type="text" class="postitoimipaikka" disabled
@@ -71,6 +72,7 @@
                    ng-required="isRequired()"
                    typeahead="koodi.koodiArvo for koodi in postinumerot | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'"
                    typeahead-on-select="updatePostinumero(model)"
+                   ng-blur="clearPostinumeroIfEmpty(model)"
                 />
 
             <input type="text" class="postitoimipaikka" disabled

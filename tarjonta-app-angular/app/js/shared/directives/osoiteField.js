@@ -78,6 +78,16 @@ app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
                 model.postinumero = koodi.koodiUri;
             }
         };
+
+        $scope.clearPostinumeroIfEmpty = function(model) {
+            var uiValue = model.postinumeroUi;
+            if (uiValue.trim() === '') {
+                model.postitoimipaikka = null;
+                model.postitoimipaikkaUi = '';
+                model.postinumero = null;
+                model.postinumeroUi = '';
+            }
+        };
     }
     return {
         restrict: 'E',
