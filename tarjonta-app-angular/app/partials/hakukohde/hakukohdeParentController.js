@@ -1127,32 +1127,37 @@ app.controller('HakukohdeParentController', [
                 return hakukohteenYhteystieto.lang === kieliUri;
             });
         };
-        $scope.resetYhteystiedonOrganisaatioOsoite = function(yhteystieto) {
-            var organisaatioOsoite = getOrganisaatioOsoiteByKieliUri(yhteystieto.lang);
-            _.extend(yhteystieto, angular.copy(organisaatioOsoite), {
-                kaytaOrganisaatioOsoitetta: true,
-                initPostinumerot: _.uniqueId(),
-                postinumeroUi: null
+        $scope.resetYhteystiedotToOrganisaatioData = function() {
+            _.each($scope.model.hakukohde.yhteystiedot, function(yhteystieto) {
+                var organisaatioOsoite = getOrganisaatioOsoiteByKieliUri(yhteystieto.lang);
+                _.extend(yhteystieto, angular.copy(organisaatioOsoite), {
+                    initPostinumerot: _.uniqueId(),
+                    postinumeroUi: null
+                });
             });
         };
         var populateHakukohteenYhteystiedot = function() {
+            $scope.model.yhteystiedotKaytaOrganisaatioOsoitetta = $scope.model.hakukohde.yhteystiedot.length === 0;
+            $scope.model.organisaatioOsoiteOlemassa = false;
+
             _.each($scope.model.hakukohde.yhteystiedot, function(yhteystieto) {
-                var organisaatioOsoite = getOrganisaatioOsoiteByKieliUri(yhteystieto.lang);
                 yhteystieto.langTitle = getLangTitle(yhteystieto.lang);
                 yhteystieto.koodiUri = yhteystieto.lang;
-                yhteystieto.organisaatioOsoiteOlemassa = organisaatioOsoite !== undefined;
-                yhteystieto.kaytaOrganisaatioOsoitetta = false;
             });
+
             _.each($scope.model.opetusKielet, function(opetuskieli) {
+                var opetuskielenOrganisaationYhteystiedot = getOrganisaatioOsoiteByKieliUri(opetuskieli.koodiUri);
+                if (!$scope.model.organisaatioOsoiteOlemassa) {
+                    $scope.model.organisaatioOsoiteOlemassa = opetuskielenOrganisaationYhteystiedot !== undefined;
+                }
+
                 var existingYhteystieto = getHakukohteenYhteystietoByKieliUri(opetuskieli.koodiUri);
+
                 if (!existingYhteystieto) {
-                    var opetuskielenOrganisaationYhteystiedot = getOrganisaatioOsoiteByKieliUri(opetuskieli.koodiUri);
                     if (opetuskielenOrganisaationYhteystiedot) {
                         var newYhteystieto = _.extend(angular.copy(opetuskielenOrganisaationYhteystiedot), {
                             koodiUri: opetuskieli.koodiUri,
-                            langTitle: opetuskieli.koodiNimi,
-                            organisaatioOsoiteOlemassa: true,
-                            kaytaOrganisaatioOsoitetta: true
+                            langTitle: opetuskieli.koodiNimi
                         });
                         $scope.model.hakukohde.yhteystiedot.push(newYhteystieto);
                     }
@@ -1160,13 +1165,12 @@ app.controller('HakukohdeParentController', [
                         $scope.model.hakukohde.yhteystiedot.push({
                             lang: opetuskieli.koodiUri,
                             langTitle: opetuskieli.koodiNimi,
-                            koodiUri: opetuskieli.koodiUri,
-                            organisaatioOsoiteOlemassa: false,
-                            kaytaOrganisaatioOsoitetta: false
+                            koodiUri: opetuskieli.koodiUri
                         });
                     }
                 }
             });
+
             $scope.model.hakukohde.yhteystiedot.sort($scope.sortLanguageTabs);
         };
         var handleHakukohteenYhteystiedot = function(organisaatioData) {
@@ -1209,7 +1213,12 @@ app.controller('HakukohdeParentController', [
                     $scope.model,
                     $scope.getHakuByOid($scope.model.hakukohde.hakuOid));
                 if (errors.length === 0 && $scope.editHakukohdeForm.$valid) {
-                    HakukohdeService.removeNotUsedYhteystiedot($scope.model.hakukohde.yhteystiedot);
+
+                    if ($scope.model.yhteystiedotKaytaOrganisaatioOsoitetta) {
+                        // Tyhjennä taulukko säilyttäen alkuperäinen referenssi
+                        $scope.model.hakukohde.yhteystiedot.splice(0, $scope.model.hakukohde.yhteystiedot.length);
+                    }
+
                     updateTila(tila);
                     $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
                     $scope.removeEmptyKuvaukses();

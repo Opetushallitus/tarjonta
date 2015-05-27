@@ -267,15 +267,6 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
             }
         }
     }
-    function removeNotUsedYhteystiedot(yhteystiedotArray) {
-        var loopIndex = yhteystiedotArray.length;
-        while (loopIndex--) {
-            var yhteystieto = yhteystiedotArray[loopIndex];
-            if (yhteystieto.kaytaOrganisaatioOsoitetta) {
-                yhteystiedotArray.splice(loopIndex, 1);
-            }
-        }
-    }
 
     var hakukohdeConfig = {
         setToteutustyyppi: function(toteutustyyppi) {
@@ -352,7 +343,6 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
         addLiiteIfEmpty: addLiiteIfEmpty,
         addLiite: addLiite,
         removeEmptyLiites: removeEmptyLiites,
-        removeNotUsedYhteystiedot: removeNotUsedYhteystiedot,
         addPainotettavaOppiaine: addPainotettavaOppiaine,
         findHakukohdesByKuvausId: function(kuvausId) {
             return $http.get(Config.env.tarjontaRestUrlPrefix + 'hakukohde/findHakukohdesByKuvausId/' + kuvausId);
