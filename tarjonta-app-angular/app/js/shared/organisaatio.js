@@ -157,6 +157,7 @@ angular.module('Organisaatio', [
             var deferred = $q.defer();
 
             byOid(oid).then(function(org) {
+                org.metadata = org.metadata || {};
                 if (org.metadata.yhteystiedot && org.metadata.yhteystiedot.length > 0) {
                     _.each(org.metadata.hakutoimistonNimi, function(nimi, kieli) {
                         org.metadata.yhteystiedot.push({
@@ -168,7 +169,7 @@ angular.module('Organisaatio', [
                 }
                 else {
                     if (!org.parentOid || org.parentOid === Config.env['root.organisaatio.oid']) {
-                        deferred.reject('Yhteystietoja ei löytynyt!');
+                        deferred.resolve([]);
                     }
                     else {
                         getHakijapalveluidenYhteystiedot(org.parentOid).then(function(yhteystiedot) {
