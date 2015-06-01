@@ -49,8 +49,22 @@
                     <tr>
                         <th tt="kk.hakukohde.ulkoinen.tunniste">Ulkoinen tunniste</th>
                         <td>
-                            <input name="aloituspaikatlkm" maxlength="35" ng-disabled="model.isDeEnabled" class="thin" data-ng-model="model.hakukohde.ulkoinenTunniste"/>
+                            <input maxlength="35" ng-disabled="model.isDeEnabled" class="thin" data-ng-model="model.hakukohde.ulkoinenTunniste"/>
 
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th tt="kk.hakukohde.kela.linjakoodi">Kelan linjakoodi</th>
+                        <td>
+                            <input maxlength="3" class="thin" data-ng-model="model.hakukohde.kelaLinjaKoodi"/>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th tt="kk.hakukohde.kela.linjatarkenne">Linjan tarkenne</th>
+                        <td>
+                            <input maxlength="2" class="thin" data-ng-model="model.hakukohde.kelaLinjaTarkenne"/>
                         </td>
                     </tr>
 

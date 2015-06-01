@@ -74,6 +74,8 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private List<RyhmaliitosV1RDTO> ryhmaliitokset = new ArrayList<RyhmaliitosV1RDTO>();
     private String[] organisaatioRyhmaOids;
     private Boolean ylioppilastutkintoAntaaHakukelpoisuuden;
+    private String kelaLinjaKoodi;
+    private String kelaLinjaTarkenne;
 
     public String getHakukohteenNimi() {
         return hakukohteenNimi;
@@ -541,4 +543,21 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     public void setYlioppilastutkintoAntaaHakukelpoisuuden(Boolean ylioppilastutkintoAntaaHakukelpoisuuden) {
         this.ylioppilastutkintoAntaaHakukelpoisuuden = ylioppilastutkintoAntaaHakukelpoisuuden;
     }
+
+    public String getKelaLinjaTarkenne() {
+        return kelaLinjaTarkenne;
+    }
+
+    public void setKelaLinjaTarkenne(String kelaLinjaTarkenne) {
+        this.kelaLinjaTarkenne = kelaLinjaTarkenne;
+    }
+
+    public String getKelaLinjaKoodi() {
+        return kelaLinjaKoodi;
+    }
+
+    public void setKelaLinjaKoodi(String kelaLinjaKoodi) {
+        this.kelaLinjaKoodi = kelaLinjaKoodi;
+    }
+
 }

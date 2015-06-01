@@ -174,6 +174,11 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Column(name = "soraKuvausTunniste")
     private Long soraKuvausTunniste;
 
+    @Column(name = "kela_linja_koodi")
+    private String kelaLinjaKoodi;
+    @Column(name = "kela_linja_tarkenne")
+    private String kelaLinjaTarkenne;
+
     @Column(name = "ylioppilastutkinto_antaa_hakukelpoisuuden")
     private Boolean ylioppilastutkintoAntaaHakukelpoisuuden;
 
@@ -773,5 +778,21 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void setYlioppilastutkintoAntaaHakukelpoisuuden(Boolean ylioppilastutkintoAntaaHakukelpoisuuden) {
         this.ylioppilastutkintoAntaaHakukelpoisuuden = ylioppilastutkintoAntaaHakukelpoisuuden;
+    }
+
+    public String getKelaLinjaKoodi() {
+        return kelaLinjaKoodi;
+    }
+
+    public void setKelaLinjaKoodi(String kelaLinjaKoodi) {
+        this.kelaLinjaKoodi = kelaLinjaKoodi;
+    }
+
+    public String getKelaLinjaTarkenne() {
+        return kelaLinjaTarkenne;
+    }
+
+    public void setKelaLinjaTarkenne(String kelaLinjaTarkenne) {
+        this.kelaLinjaTarkenne = kelaLinjaTarkenne;
     }
 }

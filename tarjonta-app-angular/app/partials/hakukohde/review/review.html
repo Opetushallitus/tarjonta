@@ -44,6 +44,18 @@
                         {{ model.hakukohde.ulkoinenTunniste}}
                     </td>
                 </tr>
+                <tr ng-if="isKK">
+                    <th tt="kk.hakukohde.kela.linjakoodi">Kelan linjakoodi</th>
+                    <td>
+                        {{model.hakukohde.kelaLinjaKoodi}}
+                    </td>
+                </tr>
+                <tr ng-if="isKK">
+                    <th tt="kk.hakukohde.kela.linjatarkenne">Linjan tarkenne</th>
+                    <td>
+                        {{model.hakukohde.kelaLinjaTarkenne}}
+                    </td>
+                </tr>
                 <tr>
                     <th tt="hakukohde.review.perustiedot.haku"/>
                     <td colspan="2">

@@ -580,6 +580,9 @@ public class ConverterV1 {
         hakukohdeRDTO.setHakuMenettelyKuvaukset(convertMonikielinenTekstiToMapWithoutVersions(hakukohde.getHakuMenettelyKuvaus()));
         hakukohdeRDTO.setPeruutusEhdotKuvaukset(convertMonikielinenTekstiToMapWithoutVersions(hakukohde.getPeruutusEhdotKuvaus()));
 
+        hakukohdeRDTO.setKelaLinjaKoodi(hakukohde.getKelaLinjaKoodi());
+        hakukohdeRDTO.setKelaLinjaTarkenne(hakukohde.getKelaLinjaTarkenne());
+
         convertTarjoatiedotToDTO(hakukohde, hakukohdeRDTO);
         convertHakukohteenNimetToDTO(hakukohde, hakukohdeRDTO, null);
         convertOpetuskieletToDTO(hakukohde, hakukohdeRDTO);
@@ -1051,6 +1054,9 @@ public class ConverterV1 {
         if (hakukohdeRDTO.getPeruutusEhdotKuvaukset() != null) {
             hakukohde.setPeruutusEhdotKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getPeruutusEhdotKuvaukset()));
         }
+
+        hakukohde.setKelaLinjaKoodi(StringUtils.stripToNull(hakukohdeRDTO.getKelaLinjaKoodi()));
+        hakukohde.setKelaLinjaTarkenne(StringUtils.stripToNull(hakukohdeRDTO.getKelaLinjaTarkenne()));
 
         return hakukohde;
     }
