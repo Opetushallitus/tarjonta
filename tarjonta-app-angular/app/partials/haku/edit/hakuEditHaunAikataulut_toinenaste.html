@@ -122,6 +122,21 @@
     <h3 tt='haku.edit.aikataulu.tuloksetJaPaikanVastaanotto'>Tulokset ja paikan vastaanotto</h3>
 
     <table class="tarjontaForm">
+        <tr>
+            <th tt='haku.edit.aikataulu.PH_VTJH'>Valintatulosten julkaiseminen hakijoille</th>
+            <td>
+                <t-date-time type="long" name="PH_VTJH_S" scope-model="model.parameter.PH_VTJH.dateStart"></t-date-time>
+                &rarr;
+                <t-date-time type="long" name="PH_VTJH_E" scope-model="model.parameter.PH_VTJH.dateEnd"></t-date-time>
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_VTJH_S" tt-prefix="haku.edit.aikataulu"></show-errors>
+                    <show-errors form="hakuForm" field="PH_VTJH_E" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
         <tr ng-if="stripVersionFromKoodistoUri(model.hakux.result.kohdejoukkoUri) === 'haunkohdejoukko_11'">
             <th tt='haku.edit.aikataulu.PH_OPVP'>Opiskelijan paikan vastaanotto päättyy</th>
             <td>
