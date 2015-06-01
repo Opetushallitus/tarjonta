@@ -31,6 +31,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.Valmista
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.shared.types.*;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -213,7 +214,7 @@ public class KoulutusDTOConverterToEntity {
          */
         updateTutkintoonjohtamatonKomotoData(komoto, dto, userOid);
 
-        komoto.setIsAvoimenYliopistonKoulutus(dto.getIsAvoimenYliopistonKoulutus());
+        komoto.setIsAvoimenYliopistonKoulutus(BooleanUtils.toBoolean(dto.getIsAvoimenYliopistonKoulutus()));
 
         return komoto;
     }
