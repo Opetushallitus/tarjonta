@@ -1429,6 +1429,17 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
                 final List<Hakukohde> hakukohdes = hakukohdeDAO.findByKoulutusOid(komoto.getOid());
 
+                // Päivitä hakukohteen tarjoajatiedot (jos ne on asetettu)
+                for (Hakukohde hakukohde : hakukohdes) {
+                    Map<String, KoulutusmoduuliToteutusTarjoajatiedot> tarjoajatiedot = hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot();
+
+                    KoulutusmoduuliToteutusTarjoajatiedot tarjoajat = tarjoajatiedot.get(komoto.getOid());
+                    if (tarjoajat != null) {
+                        tarjoajat.removeTarjoaja(prevTarjoaja);
+                        tarjoajat.getTarjoajaOids().add(orgOid);
+                    }
+                }
+
                 //update all hakukohdes
                 indexerResource.indexHakukohteet(Lists.newArrayList(Iterators.transform(hakukohdes.iterator(), new Function<Hakukohde, Long>() {
                     @Override
