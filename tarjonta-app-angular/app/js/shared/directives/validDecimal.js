@@ -42,13 +42,15 @@ app.directive('validDecimal', function() {
             if (!ngModelCtrl) {
                 return;
             }
-            // Näytä tyhjänä, jos rajapinta palauttaa 0
-            scope.$watch(attrs.ngModel, function(nv, ov) {
-                if (nv === 0 && (nv === ov || !ov)) {
-                    ngModelCtrl.$setViewValue('');
-                    ngModelCtrl.$render();
-                }
-            });
+            if (_.has(attrs, 'showZeroAsEmpty')) {
+                // Näytä tyhjänä, jos rajapinta palauttaa 0
+                scope.$watch(attrs.ngModel, function(nv, ov) {
+                    if (nv === 0 && (nv === ov || !ov)) {
+                        ngModelCtrl.$setViewValue('');
+                        ngModelCtrl.$render();
+                    }
+                });
+            }
             ngModelCtrl.$parsers.push(function(val) {
                 if (val.length === 0) {
                     return val;
