@@ -20,12 +20,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.OppiaineDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.ConverterV1;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OppiaineV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
@@ -40,10 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Conversions to entity objects.
@@ -69,6 +69,8 @@ public class KoulutusDTOConverterToEntity {
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
     private IndexerResource indexerResource;
+    @Autowired
+    private OppiaineDAO oppiaineDAO;
 
 
     /*
@@ -354,9 +356,9 @@ public class KoulutusDTOConverterToEntity {
             KoulutusAmmatillinenPerustutkintoV1RDTO amisDto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dto;
             if (amisDto.getTutkintonimikes() != null) {
                 komoto.setTutkintonimikes(commonConverter.convertToUris(
-                    amisDto.getTutkintonimikes(),
-                    null,
-                    FieldNames.TUTKINTONIMIKE
+                        amisDto.getTutkintonimikes(),
+                        null,
+                        FieldNames.TUTKINTONIMIKE
                 ));
             }
         }
@@ -797,6 +799,8 @@ public class KoulutusDTOConverterToEntity {
         commonConverter.handleDates(komoto, dto); //set dates
         komoto.setToteutustyyppi(dto.getToteutustyyppi());
 
+        komoto.setOppiaineet(oppiaineetFromDtoToEntity(dto.getOppiaineet()));
+
         HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet();
         EntityUtils.copyYhteyshenkilos(dto.getYhteyshenkilos(), yhteyshenkilos);
         komoto.setYhteyshenkilos(yhteyshenkilos);
@@ -806,6 +810,29 @@ public class KoulutusDTOConverterToEntity {
         komoto.setMaksullisuus(dto.getOpintojenMaksullisuus());
 
         updateOwners(komoto, dto);
+    }
+
+    private List<Oppiaine> oppiaineetFromDtoToEntity(List<OppiaineV1RDTO> oppiaineetDto) {
+        List<Oppiaine> oppiaineet = new LinkedList<Oppiaine>();
+
+        if (oppiaineetDto != null) {
+            for (OppiaineV1RDTO dto : oppiaineetDto) {
+
+                Oppiaine oppiaine = oppiaineDAO.findOneByOppiaineKieliKoodi(dto.getOppiaine(), dto.getKieliKoodi());
+
+                if (oppiaine == null) {
+                    oppiaine = new Oppiaine();
+                    oppiaine.setOppiaine(dto.getOppiaine());
+                    oppiaine.setKieliKoodi(dto.getKieliKoodi());
+                    oppiaineDAO.insert(oppiaine);
+                }
+
+                oppiaineet.add(oppiaine);
+
+            }
+        }
+
+        return oppiaineet;
     }
 
     private void addOrRemoveImages(final KoulutusKorkeakouluV1RDTO dto, KoulutusmoduuliToteutus komoto, final String userOid) {

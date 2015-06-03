@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.model.RestParam;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OppiaineV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -31,9 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Conversion services for REST service.
@@ -90,6 +89,8 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         dto.setKoulutuksenAlkamiskausi(commonConverter.convertToKoodiDTO(komoto.getAlkamiskausiUri(), NO_OVERRIDE_URI, FieldNames.ALKAMISKAUSI, YES, param));
         dto.setKoulutuksenAlkamisvuosi(komoto.getAlkamisVuosi());
         dto.getKoulutuksenAlkamisPvms().addAll(komoto.getKoulutuksenAlkamisPvms());
+
+        dto.setOppiaineet(oppiaineetFromEntityToDto(komoto.getOppiaineet()));
 
         KuvausV1RDTO<KomotoTeksti> komotoKuvaus = new KuvausV1RDTO<KomotoTeksti>();
         komotoKuvaus.putAll(komotoKuvausConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit(), param.getShowMeta()));
@@ -621,5 +622,18 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         dto.setKuvaus(komotoKuvaus);
 
         return dto;
+    }
+
+    public List<OppiaineV1RDTO> oppiaineetFromEntityToDto(List<Oppiaine> oppiaineet) {
+        List<OppiaineV1RDTO> oppiaineetDto = new LinkedList<OppiaineV1RDTO>();
+
+        for (Oppiaine oppiaine : oppiaineet) {
+            OppiaineV1RDTO dto = new OppiaineV1RDTO();
+            dto.setOppiaine(oppiaine.getOppiaine());
+            dto.setKieliKoodi(oppiaine.getKieliKoodi());
+            oppiaineetDto.add(dto);
+        }
+
+        return oppiaineetDto;
     }
 }

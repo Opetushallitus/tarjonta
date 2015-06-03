@@ -14,7 +14,10 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import fi.vm.sade.tarjonta.dao.OppiaineDAO;
+import fi.vm.sade.tarjonta.model.Oppiaine;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OppiaineV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KorkeakouluOpintoV1RDTO;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
@@ -22,6 +25,7 @@ import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.junit.After;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -34,6 +38,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
 import org.junit.Test;
 import fi.vm.sade.oid.service.ExceptionMessage;
@@ -41,10 +47,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
+import java.util.*;
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -62,6 +65,9 @@ import org.apache.commons.lang.time.DateUtils;
 @ActiveProfiles("embedded-solr")
 @Transactional()
 public class KoulutusResourceImplV1Test extends KoulutusBase {
+
+    @Autowired
+    OppiaineDAO oppiaineDAO;
 
     @Before
     public void setUp() throws OIDCreationException {
@@ -111,6 +117,8 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], PERSON[5], null, HenkiloTyyppi.YHTEYSHENKILO));
         dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
+
+        dto.setOppiaineet(getOppiaineet());
 
         //EXPECT
         expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(3);
@@ -189,6 +197,22 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         verify(organisaatioServiceMock);
     }
 
+    private OppiaineV1RDTO getOppiaine(String oppiaine, String kieliKoodi) {
+        OppiaineV1RDTO oppiaineDto = new OppiaineV1RDTO();
+        oppiaineDto.setOppiaine(oppiaine);
+        oppiaineDto.setKieliKoodi(kieliKoodi);
+        return oppiaineDto;
+    }
+
+    private List<OppiaineV1RDTO> getOppiaineet() {
+        List<OppiaineV1RDTO> oppiaineet = new LinkedList<OppiaineV1RDTO>();
+
+        oppiaineet.add(getOppiaine("biologia", "kieli_fi"));
+        oppiaineet.add(getOppiaine("gymnastik", "kieli_sv"));
+
+        return oppiaineet;
+    }
+
     private void expectHierarchy() {
         expect(koulutusSisaltyvyysDAO.getParents("komo_oid")).andReturn(new ArrayList<String>()).atLeastOnce();
         expect(koulutusSisaltyvyysDAO.getChildren("komo_oid")).andReturn(new ArrayList<String>()).atLeastOnce();
@@ -244,6 +268,21 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         assertEquals(PERSON[5], next.getPuhelin());
         assertEquals(HenkiloTyyppi.YHTEYSHENKILO, next.getHenkiloTyyppi());
         assertEquals(USER_OID, result.getModifiedBy());
+
+        List<OppiaineV1RDTO> oppiaineet = result.getOppiaineet();
+        assertEquals(getOppiaineet().size(), oppiaineet.size());
+
+        int oppiaineMatchCount = 0;
+        for (OppiaineV1RDTO oppiaine : getOppiaineet()) {
+            for (OppiaineV1RDTO savedOppiaine : oppiaineet) {
+                if (oppiaine.getKieliKoodi().equals(savedOppiaine.getKieliKoodi())
+                        && oppiaine.getOppiaine().equals(savedOppiaine.getOppiaine())) {
+                    oppiaineMatchCount ++;
+                    break;
+                }
+            }
+        }
+        assertEquals(getOppiaineet().size(), oppiaineMatchCount);
     }
 
 
@@ -387,6 +426,41 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         assertEquals(PERSON[5], next.getPuhelin());
         assertEquals(HenkiloTyyppi.YHTEYSHENKILO, next.getHenkiloTyyppi());
         assertEquals(USER_OID, result.getModifiedBy());
+    }
+
+    public Oppiaine getOppiaineEntity(String oppiaine, String kieliKoodi) {
+        Oppiaine oppiaineEntity = new Oppiaine();
+        oppiaineEntity.setOppiaine(oppiaine);
+        oppiaineEntity.setKieliKoodi(kieliKoodi);
+        return oppiaineEntity;
+    }
+
+    @Test
+    public void testGetOppiaineet() {
+        OppiaineV1RDTO dto;
+        ResultV1RDTO<List<OppiaineV1RDTO>> v;
+        List<OppiaineV1RDTO> res;
+
+        oppiaineDAO.insert(getOppiaineEntity("matematiikka", "kieli_fi"));
+        oppiaineDAO.insert(getOppiaineEntity("historia", "kieli_fi"));
+        oppiaineDAO.insert(getOppiaineEntity("geologi", "kieli_sv"));
+
+        v = instance.getOppiaineet("mat", "kieli_fi");
+        res = v.getResult();
+        assertEquals(1, res.size());
+        dto = res.iterator().next();
+        assertEquals("matematiikka", dto.getOppiaine());
+        assertEquals("kieli_fi", dto.getKieliKoodi());
+
+        v = instance.getOppiaineet("oria", "kieli_fi");
+        res = v.getResult();
+        assertEquals(1, res.size());
+        dto = res.iterator().next();
+        assertEquals("historia", dto.getOppiaine());
+        assertEquals("kieli_fi", dto.getKieliKoodi());
+
+        v = instance.getOppiaineet("or", "kieli_fi");
+        assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, v.getStatus());
     }
 
 }

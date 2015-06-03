@@ -16,8 +16,10 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OppiaineV1RDTO;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -159,6 +161,9 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
 
     @ApiModelProperty(value = "Onko koulutus avoimen yliopiston/ammattikorkeakoulun koulutus")
     private Boolean isAvoimenYliopistonKoulutus;
+
+    @ApiModelProperty(value = "Oppiaineet")
+    private List<OppiaineV1RDTO> oppiaineet;
 
     public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         this.setToteutustyyppi(toteutustyyppi);
@@ -627,5 +632,13 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
 
     public Set<String> getChildren() {
         return children;
+    }
+
+    public List<OppiaineV1RDTO> getOppiaineet() {
+        return oppiaineet;
+    }
+
+    public void setOppiaineet(List<OppiaineV1RDTO> oppiaineet) {
+        this.oppiaineet = oppiaineet;
     }
 }

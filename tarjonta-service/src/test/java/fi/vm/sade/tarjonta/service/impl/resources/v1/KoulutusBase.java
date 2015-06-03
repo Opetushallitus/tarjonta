@@ -27,10 +27,7 @@ import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.security.SadeUserDetailsWrapper;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.koodisto.OppilaitosKoodiRelations;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
@@ -146,6 +143,9 @@ abstract class KoulutusBase {
     @Autowired
     private KoulutusSisaltyvyysDAO KoulutusSisaltyvyysDAO;
 
+    @Autowired
+    private OppiaineDAO oppiaineDAO;
+
     protected IndexerResource indexerResourceMock;
     protected TarjontaKoodistoHelper tarjontaKoodistoHelperMock;
     protected KoulutusKuvausV1RDTO<KomoTeksti> komoKoulutusConverters;
@@ -205,6 +205,7 @@ abstract class KoulutusBase {
         //no need for replay or verify:
         Whitebox.setInternalState(instance, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
         Whitebox.setInternalState(instance, "koulutusmoduuliDAO", koulutusmoduuliDAO);
+        Whitebox.setInternalState(instance, "oppiaineDAO", oppiaineDAO);
         Whitebox.setInternalState(instance, "publicationDataService", publicationDataService);
 
         Whitebox.setInternalState(converterToRDTO, "commonConverter", commonConverter);
@@ -220,6 +221,7 @@ abstract class KoulutusBase {
         Whitebox.setInternalState(convertToEntity, "komotoKuvausConverters", komotoKoulutusConverters);
         Whitebox.setInternalState(convertToEntity, "commonConverter", commonConverter);
         Whitebox.setInternalState(convertToEntity, "koulutusmoduuliDAO", koulutusmoduuliDAO);
+        Whitebox.setInternalState(convertToEntity, "oppiaineDAO", oppiaineDAO);
         Whitebox.setInternalState(convertToEntity, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
 
         Whitebox.setInternalState(instance, "converterToRDTO", converterToRDTO);

@@ -94,7 +94,8 @@ angular.module('app', [
     'ValidDecimal',
     'ValidPositiveNumber',
     'taiPlaceholder',
-    'Validator'
+    'Validator',
+    'Oppiaineet'
 ]);
 angular.module('app').value('globalConfig', window.CONFIG);
 angular.module('app').factory('errorLogService', function($log, $window, Config) {

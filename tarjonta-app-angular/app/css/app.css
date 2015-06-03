@@ -942,3 +942,11 @@ table tr.aloituspaikatKuvaukset table {
 .tarjontaOsoiteField textarea.osoite {
     height:4em;
 }
+
+.oppiaineet input {
+    background:none !important;
+}
+
+.oppiaineet button {
+    margin-top:-8px;
+}

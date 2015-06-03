@@ -101,6 +101,15 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> opetusAikas = new HashSet<KoodistoUri>();
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ElementCollection(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = TABLE_NAME + "_oppiaineet",
+            joinColumns = @JoinColumn(name = TABLE_NAME + "_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME),
+            inverseJoinColumns = @JoinColumn(name = "oppiaine_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME)
+    )
+    private List<Oppiaine> oppiaineet = new LinkedList<Oppiaine>();
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_opetuspaikka", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
@@ -1272,4 +1281,13 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
         return koodiUri.substring(0, hashPos);
     }
+
+    public List<Oppiaine> getOppiaineet() {
+        return oppiaineet;
+    }
+
+    public void setOppiaineet(List<Oppiaine> oppiaineet) {
+        this.oppiaineet = oppiaineet;
+    }
+
 }

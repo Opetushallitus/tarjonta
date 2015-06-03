@@ -69,6 +69,7 @@ module.exports = [
     'js/shared/directives/exportToParent.js',
     'js/shared/directives/validDecimal.js',
     'js/shared/directives/validPositiveNumber.js',
+    'js/shared/directives/oppiaineet.js',
     'js/shared/filters/orderByNum.js',
     'js/shared/filters/dateFormat.js',
     'js/shared/filters/startsWith.js',

@@ -167,11 +167,7 @@
     </tr>
 
     <!-- oppiaine -->
-    <tr>
-        <th tt="koulutus.review.perustiedot.oppiaine">Oppiaine</th>
-        <td colspan="2">
-            {{ model.koulutus.oppiaine }}
-        </td>
+    <tr ng-include="'partials/koulutus/review/oppiaineet.html'">
     </tr>
 
     <!-- opettaja -->

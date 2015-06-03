@@ -26,10 +26,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.koodisto.KoulutuskoodiRelations;
 import fi.vm.sade.tarjonta.koodisto.OppilaitosKoodiRelations;
 import fi.vm.sade.tarjonta.model.*;
@@ -79,10 +76,7 @@ import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.validateMimeType;
@@ -161,6 +155,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     @Autowired
     private PublicationDataService publicationDataService;
+
+    @Autowired
+    private OppiaineDAO oppiaineDAO;
 
     @Override
     public ResultV1RDTO<KoulutusV1RDTO> findByOid(String komotoOid, Boolean showMeta, Boolean showImg, String userLang) {
@@ -1565,6 +1562,21 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         }
 
         return new ResultV1RDTO<List<KoulutusHakutulosV1RDTO>>(hakutulokset);
+    }
+
+    @Override
+    public ResultV1RDTO<List<OppiaineV1RDTO>> getOppiaineet(String oppiaine, String kieliKoodi) {
+        ResultV1RDTO result = new ResultV1RDTO();
+
+        if (StringUtils.isBlank(oppiaine) || StringUtils.isBlank(kieliKoodi) || oppiaine.length() < 3) {
+            result.setStatus(ResultStatus.VALIDATION);
+        }
+        else {
+            List<Oppiaine> oppiaineet = oppiaineDAO.findByOppiaineKieliKoodi(oppiaine, kieliKoodi);
+            result.setResult(converterToRDTO.oppiaineetFromEntityToDto(oppiaineet));
+        }
+
+        return result;
     }
 
 }

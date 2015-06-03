@@ -20,6 +20,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OppiaineV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusCopyV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusMultiCopyV1RDTO;
@@ -309,5 +310,17 @@ public interface KoulutusV1Resource {
             notes = "Palauttaa ne koulutukset, jotka on järjestetty annetusta koulutuksesta (oid)"
     )
     ResultV1RDTO<List<KoulutusHakutulosV1RDTO>> getJarjestettavatKoulutukset(@PathParam("oid") String oid);
+
+    @GET
+    @Path("/oppiaineet")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Palauttaa hakusanaa vastaavat oppiaineet",
+            notes = "Palauttaa hakusanaa vastaavat oppiaineet"
+    )
+    ResultV1RDTO<List<OppiaineV1RDTO>> getOppiaineet(
+            @QueryParam("oppiaine") String oppiaine,
+            @QueryParam("kieliKoodi") String kieliKoodi
+    );
 
 }

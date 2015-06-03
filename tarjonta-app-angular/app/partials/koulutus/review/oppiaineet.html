@@ -1,0 +1,6 @@
+<th tt="koulutus.review.perustiedot.oppiaineet">Oppiaineet</th>
+<td colspan="2">
+    <span data-ng-repeat="oppiaine in model.koulutus.oppiaineet | filter: {kieliKoodi:lang.koodi_uri} | orderBy: 'oppiaine'">
+        {{ oppiaine.oppiaine }}{{ $last ? '' : ', ' }}
+    </span>
+</td>

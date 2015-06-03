@@ -1,0 +1,29 @@
+<th tt="koulutus.edit.oppiaineet">Oppiaineet</th>
+<td colspan="2">
+    <tabset class="oppiaineet">
+        <tab ng-repeat="lang in userLanguages" heading="{{langs[lang]}}">
+            <div class="combobox multiselect">
+                <div>
+                    <input type="text"
+                           class="typeahead"
+                           placeholder="{{oppiaineCtrl.translate.t('koulutus.edit.lisaaOppiaine')}}"
+                           ng-model="oppiaineCtrl.input[lang]"
+                           typeahead="item as item.oppiaine for item in oppiaineCtrl.getOppiaineet($viewValue, lang)"
+                           typeahead-on-select="oppiaineCtrl.addOppiaine($item, lang)"
+                           ng-enter="oppiaineCtrl.addOppiaine(oppiaineCtrl.input[lang], lang)"
+                           typeahead-editable="true"
+                           typeahead-min-length="3"
+                           typeahead-wait-ms="300" />
+                    <button type="button" ng-click="oppiaineCtrl.addOppiaine(oppiaineCtrl.input[lang], lang)"
+                            class="btn btn-sm" tt="koulutus.edit.oppiaineet.lisaa"></button>
+                </div>
+
+                <ul class="selection">
+                    <li ng-repeat="oppiaine in model.oppiaineet | filter: {kieliKoodi:lang} | orderBy: 'oppiaine'">
+                        <a ng-click="oppiaineCtrl.removeOppiaine(oppiaine)">[x]</a> {{oppiaine.oppiaine}}
+                    </li>
+                </ul>
+            </div>
+        </tab>
+    </tabset>
+</td>
