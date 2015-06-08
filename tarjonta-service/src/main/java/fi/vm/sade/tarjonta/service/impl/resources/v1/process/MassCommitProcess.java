@@ -379,7 +379,7 @@ public class MassCommitProcess {
                 }
 
                 komoto.setTila(TarjontaTila.KOPIOITU);
-                komoto.setUlkoinenTunniste(processId);
+                komoto.setHaunKopioinninTunniste(processId);
                 komoto.setViimIndeksointiPvm(indexFutureDate);
 
                 Set<Date> koulutuksenAlkamisPvms = komoto.getKoulutuksenAlkamisPvms();
@@ -425,7 +425,7 @@ public class MassCommitProcess {
                 LOG.debug("convert json to entity by oid : {}, new oid : {}", oldHakukohdeOid, meta.getNewHakukohdeOid());
                 hk.setOid(meta.getNewHakukohdeOid());
                 hk.setTila(TarjontaTila.KOPIOITU);
-                hk.setUlkoinenTunniste(processId);
+                hk.setHaunKopioinninTunniste(processId);
 
                 /*
                  * HAKUAIKA

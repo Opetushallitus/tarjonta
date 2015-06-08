@@ -195,6 +195,9 @@ public class Hakukohde extends TarjontaBaseEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "hakukohde", orphanRemoval = true)
     private Set<Ryhmaliitos> ryhmaliitokset = new HashSet<Ryhmaliitos>();
 
+    @Column(name = "haun_kopioinnin_tunniste")
+    private String haunKopioinninTunniste;
+
     @PreRemove
     public void detachOnDelete() {
         for (KoulutusmoduuliToteutus komoto : koulutusmoduuliToteutuses) {
@@ -795,4 +798,13 @@ public class Hakukohde extends TarjontaBaseEntity {
     public void setKelaLinjaTarkenne(String kelaLinjaTarkenne) {
         this.kelaLinjaTarkenne = kelaLinjaTarkenne;
     }
+
+    public String getHaunKopioinninTunniste() {
+        return haunKopioinninTunniste;
+    }
+
+    public void setHaunKopioinninTunniste(String haunKopioinninTunniste) {
+        this.haunKopioinninTunniste = haunKopioinninTunniste;
+    }
+
 }

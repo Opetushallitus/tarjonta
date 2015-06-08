@@ -265,6 +265,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "opinnontyyppi_uri")
     private String opinnonTyyppiUri;
 
+    @Column(name = "haun_kopioinnin_tunniste")
+    private String haunKopioinninTunniste;
+
     public String getOpintojenLaajuusArvo() {
         return opintojenLaajuusarvo;
     }
@@ -1288,6 +1291,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public void setOppiaineet(Set<Oppiaine> oppiaineet) {
         this.oppiaineet = oppiaineet;
+    }
+
+    public String getHaunKopioinninTunniste() {
+        return haunKopioinninTunniste;
+    }
+
+    public void setHaunKopioinninTunniste(String haunKopioinninTunniste) {
+        this.haunKopioinninTunniste = haunKopioinninTunniste;
     }
 
 }

@@ -156,6 +156,8 @@ public class MassCopyTest {
         komoto.setOid(oid);
         komoto.setToteutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS);
         komoto.setKoulutusmoduuli(komo);
+        komoto.setUlkoinenTunniste("komoton-ulkoinen-tunniste");
+
         return koulutusmoduuliToteutusDAO.insert(komoto);
     }
 
@@ -164,6 +166,7 @@ public class MassCopyTest {
         hakukohde.setTila(TarjontaTila.JULKAISTU);
         hakukohde.setOid(oid + "-" + haku.getOid());
         hakukohde.setHaku(haku);
+        hakukohde.setUlkoinenTunniste("hakukohteen-ulkoinen-tunniste");
         haku.addHakukohde(hakukohde);
 
         return hakukohdeDAO.insert(hakukohde);
@@ -301,7 +304,8 @@ public class MassCopyTest {
         }
 
         KoulutusmoduuliToteutus newKomoto = newKomo2.getKoulutusmoduuliToteutusList().iterator().next();
-        assertEquals(processId, newKomoto.getUlkoinenTunniste());
+        assertEquals(processId, newKomoto.getHaunKopioinninTunniste());
+        assertEquals("komoton-ulkoinen-tunniste", newKomoto.getUlkoinenTunniste());
 
         Set<String> newHakukohdeOids = new HashSet<String>();
         for (Hakukohde hakukohde : newKomoto.getHakukohdes()) {
@@ -313,10 +317,13 @@ public class MassCopyTest {
         Haku newHaku2 = hakuDAO.findByOid("new-haku-oid-1");
 
         Hakukohde newHakukohdeFromHaku1 = newHaku1.getHakukohdes().iterator().next();
+        assertEquals(processId, newHakukohdeFromHaku1.getHaunKopioinninTunniste());
         assertEquals("new-haku-oid-1", newHakukohdeFromHaku1.getHaku().getOid());
+        assertEquals("hakukohteen-ulkoinen-tunniste", newHakukohdeFromHaku1.getUlkoinenTunniste());
 
         Hakukohde newHakukohdeFromHaku2 = newHaku1.getHakukohdes().iterator().next();
         assertEquals("new-haku-oid-1", newHakukohdeFromHaku2.getHaku().getOid());
+        assertEquals("hakukohteen-ulkoinen-tunniste", newHakukohdeFromHaku2.getUlkoinenTunniste());
 
         Hakukohde originalHakukohdeHaku1 = hakukohdeDAO.findHakukohdeByOid("hakukohde-1-haku-1");
         Ryhmaliitos originalLiitos = originalHakukohdeHaku1.getRyhmaliitokset().iterator().next();
