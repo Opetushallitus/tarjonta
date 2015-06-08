@@ -624,8 +624,8 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         return dto;
     }
 
-    public List<OppiaineV1RDTO> oppiaineetFromEntityToDto(List<Oppiaine> oppiaineet) {
-        List<OppiaineV1RDTO> oppiaineetDto = new LinkedList<OppiaineV1RDTO>();
+    public Set<OppiaineV1RDTO> oppiaineetFromEntityToDto(Set<Oppiaine> oppiaineet) {
+        Set<OppiaineV1RDTO> oppiaineetDto = new HashSet<OppiaineV1RDTO>();
 
         for (Oppiaine oppiaine : oppiaineet) {
             OppiaineV1RDTO dto = new OppiaineV1RDTO();

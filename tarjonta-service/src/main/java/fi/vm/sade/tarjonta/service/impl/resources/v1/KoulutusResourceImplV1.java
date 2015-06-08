@@ -1565,7 +1565,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<List<OppiaineV1RDTO>> getOppiaineet(String oppiaine, String kieliKoodi) {
+    public ResultV1RDTO<Set<OppiaineV1RDTO>> getOppiaineet(String oppiaine, String kieliKoodi) {
         ResultV1RDTO result = new ResultV1RDTO();
 
         if (StringUtils.isBlank(oppiaine) || StringUtils.isBlank(kieliKoodi) || oppiaine.length() < 3) {
@@ -1573,7 +1573,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         }
         else {
             List<Oppiaine> oppiaineet = oppiaineDAO.findByOppiaineKieliKoodi(oppiaine, kieliKoodi);
-            result.setResult(converterToRDTO.oppiaineetFromEntityToDto(oppiaineet));
+            Set<Oppiaine> asSet = new HashSet<Oppiaine>();
+            asSet.addAll(oppiaineet);
+            result.setResult(converterToRDTO.oppiaineetFromEntityToDto(asSet));
         }
 
         return result;

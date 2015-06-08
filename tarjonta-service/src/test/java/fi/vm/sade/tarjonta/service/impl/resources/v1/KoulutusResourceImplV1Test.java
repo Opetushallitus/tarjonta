@@ -15,6 +15,8 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import fi.vm.sade.tarjonta.dao.OppiaineDAO;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Oppiaine;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OppiaineV1RDTO;
@@ -36,9 +38,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -204,8 +204,8 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         return oppiaineDto;
     }
 
-    private List<OppiaineV1RDTO> getOppiaineet() {
-        List<OppiaineV1RDTO> oppiaineet = new LinkedList<OppiaineV1RDTO>();
+    private Set<OppiaineV1RDTO> getOppiaineet() {
+        Set<OppiaineV1RDTO> oppiaineet = new HashSet<OppiaineV1RDTO>();
 
         oppiaineet.add(getOppiaine("biologia", "kieli_fi"));
         oppiaineet.add(getOppiaine("gymnastik", "kieli_sv"));
@@ -269,7 +269,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         assertEquals(HenkiloTyyppi.YHTEYSHENKILO, next.getHenkiloTyyppi());
         assertEquals(USER_OID, result.getModifiedBy());
 
-        List<OppiaineV1RDTO> oppiaineet = result.getOppiaineet();
+        Set<OppiaineV1RDTO> oppiaineet = result.getOppiaineet();
         assertEquals(getOppiaineet().size(), oppiaineet.size());
 
         int oppiaineMatchCount = 0;
@@ -438,8 +438,8 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
     @Test
     public void testGetOppiaineet() {
         OppiaineV1RDTO dto;
-        ResultV1RDTO<List<OppiaineV1RDTO>> v;
-        List<OppiaineV1RDTO> res;
+        ResultV1RDTO<Set<OppiaineV1RDTO>> v;
+        Set<OppiaineV1RDTO> res;
 
         oppiaineDAO.insert(getOppiaineEntity("matematiikka", "kieli_fi"));
         oppiaineDAO.insert(getOppiaineEntity("historia", "kieli_fi"));
@@ -461,6 +461,61 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
 
         v = instance.getOppiaineet("or", "kieli_fi");
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, v.getStatus());
+    }
+
+    public KoulutusmoduuliToteutus getKomoto(String oid) {
+        Koulutusmoduuli komo = fixtures.createTutkintoOhjelma();
+        koulutusmoduuliDAO.insert(komo);
+
+        KoulutusmoduuliToteutus komoto = fixtures.createTutkintoOhjelmaToteutus();
+        komoto.setKoulutusmoduuli(komo);
+        komoto.setOid(oid);
+        komoto.setTila(TarjontaTila.JULKAISTU);
+
+        return komoto;
+    }
+
+    @Test
+    public void thatUnusedOppiaineetAreDeleted() {
+        Oppiaine matematiikka = oppiaineDAO.insert(getOppiaineEntity("matematiikka", "kieli_fi"));
+        Oppiaine historia = oppiaineDAO.insert(getOppiaineEntity("historia", "kieli_fi"));
+        Oppiaine geologi = oppiaineDAO.insert(getOppiaineEntity("geologi", "kieli_sv"));
+
+        Set<Oppiaine> oppiaineet = new HashSet<Oppiaine>();
+        oppiaineet.add(matematiikka);
+        oppiaineet.add(historia);
+
+        KoulutusmoduuliToteutus komoto = getKomoto("koulutus-with-oppiaine");
+        komoto.setOppiaineet(oppiaineet);
+        koulutusmoduuliToteutusDAO.insert(komoto);
+
+        KoulutusmoduuliToteutus deletedKomoto = getKomoto("deleted-koulutus-with-oppiaine");
+        deletedKomoto.setTila(TarjontaTila.POISTETTU);
+        Set<Oppiaine> oppiaineet2 = new HashSet<Oppiaine>();
+        oppiaineet2.add(oppiaineDAO.insert(getOppiaineEntity("history", "kieli_en")));
+        deletedKomoto.setOppiaineet(oppiaineet2);
+        koulutusmoduuliToteutusDAO.insert(deletedKomoto);
+
+        Oppiaine geologiFromDb = oppiaineDAO.findOneByOppiaineKieliKoodi("geologi", "kieli_sv");
+        assertNotNull(geologiFromDb);
+        assertEquals("geologi", geologiFromDb.getOppiaine());
+        assertEquals("kieli_sv", geologiFromDb.getKieliKoodi());
+
+        oppiaineDAO.deleteUnusedOppiaineet();
+
+        geologiFromDb = oppiaineDAO.findOneByOppiaineKieliKoodi("geologi", "kieli_sv");
+        // Should be deleted now
+        assertNull(geologiFromDb);
+
+        Oppiaine historyFromDb = oppiaineDAO.findOneByOppiaineKieliKoodi("history", "kieli_en");
+        // Should be deleted now
+        assertNull(historyFromDb);
+
+        Oppiaine matematiikkaFromDb = oppiaineDAO.findOneByOppiaineKieliKoodi("matematiikka", "kieli_fi");
+        // Should not be deleted, because it's referenced from a koulutus
+        assertNotNull(matematiikkaFromDb);
+        assertEquals("matematiikka", matematiikkaFromDb.getOppiaine());
+        assertEquals("kieli_fi", matematiikkaFromDb.getKieliKoodi());
     }
 
 }

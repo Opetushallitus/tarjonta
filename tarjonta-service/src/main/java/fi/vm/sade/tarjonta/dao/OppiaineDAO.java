@@ -30,4 +30,6 @@ public interface OppiaineDAO extends JpaDAO<Oppiaine, Long> {
 
     List<Oppiaine> findByOppiaineKieliKoodi(String oppiaine, String kieliKoodi);
 
+    void deleteUnusedOppiaineet();
+
 }

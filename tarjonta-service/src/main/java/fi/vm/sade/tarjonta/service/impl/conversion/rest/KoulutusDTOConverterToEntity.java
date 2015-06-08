@@ -812,8 +812,8 @@ public class KoulutusDTOConverterToEntity {
         updateOwners(komoto, dto);
     }
 
-    private List<Oppiaine> oppiaineetFromDtoToEntity(List<OppiaineV1RDTO> oppiaineetDto) {
-        List<Oppiaine> oppiaineet = new LinkedList<Oppiaine>();
+    private Set<Oppiaine> oppiaineetFromDtoToEntity(Set<OppiaineV1RDTO> oppiaineetDto) {
+        Set<Oppiaine> oppiaineet = new HashSet<Oppiaine>();
 
         if (oppiaineetDto != null) {
             for (OppiaineV1RDTO dto : oppiaineetDto) {

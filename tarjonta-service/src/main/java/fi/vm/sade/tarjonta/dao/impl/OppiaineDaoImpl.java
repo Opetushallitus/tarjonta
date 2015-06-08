@@ -15,20 +15,17 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
-import com.mysema.query.types.Predicate;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
-import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.dao.OppiaineDAO;
-import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.Oppiaine;
+import fi.vm.sade.tarjonta.model.QOppiaine;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Date;
+import javax.persistence.Query;
 import java.util.List;
 
 @Repository
@@ -65,6 +62,31 @@ public class OppiaineDaoImpl extends AbstractJpaDAOImpl<Oppiaine, Long> implemen
                                 .and(qOppiaine.kieliKoodi.eq(kieliKoodi))
                 )
                 .list(qOppiaine);
+    }
+
+    public void deleteUnusedOppiaineet() {
+        // Hae poistettavien oppiaineiden id:t
+        List<Long> oppianeIdsToDelete = getEntityManager().createNativeQuery(
+                "SELECT id FROM oppiaineet WHERE id NOT IN (" +
+                        " SELECT DISTINCT oppiaine_id from koulutusmoduuli_toteutus_oppiaineet koulutus_oppiaine" +
+                        " JOIN koulutusmoduuli_toteutus koulutus on koulutus.id = koulutus_oppiaine.koulutusmoduuli_toteutus_id" +
+                        " WHERE koulutus.tila != 'POISTETTU'" +
+                ")"
+        ).getResultList();
+
+        // Poista many-to-many join taulusta
+        Query deleteFromJoinTableQ = getEntityManager().createNativeQuery(
+                "DELETE FROM koulutusmoduuli_toteutus_oppiaineet WHERE oppiaine_id IN (:ids)"
+        );
+        deleteFromJoinTableQ.setParameter("ids", oppianeIdsToDelete);
+        deleteFromJoinTableQ.executeUpdate();
+
+        // Poista oppiaine
+        Query deleteFromOppiaineQ = getEntityManager().createNativeQuery(
+                "DELETE FROM oppiaineet WHERE id IN (:ids)"
+        );
+        deleteFromOppiaineQ.setParameter("ids", oppianeIdsToDelete);
+        deleteFromOppiaineQ.executeUpdate();
     }
 
     protected JPAQuery from(EntityPath<?>... o) {

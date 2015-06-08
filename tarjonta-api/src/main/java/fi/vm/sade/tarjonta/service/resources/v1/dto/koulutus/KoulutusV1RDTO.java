@@ -163,7 +163,7 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     private Boolean isAvoimenYliopistonKoulutus;
 
     @ApiModelProperty(value = "Oppiaineet")
-    private List<OppiaineV1RDTO> oppiaineet;
+    private Set<OppiaineV1RDTO> oppiaineet;
 
     public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         this.setToteutustyyppi(toteutustyyppi);
@@ -634,11 +634,11 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
         return children;
     }
 
-    public List<OppiaineV1RDTO> getOppiaineet() {
+    public Set<OppiaineV1RDTO> getOppiaineet() {
         return oppiaineet;
     }
 
-    public void setOppiaineet(List<OppiaineV1RDTO> oppiaineet) {
+    public void setOppiaineet(Set<OppiaineV1RDTO> oppiaineet) {
         this.oppiaineet = oppiaineet;
     }
 }

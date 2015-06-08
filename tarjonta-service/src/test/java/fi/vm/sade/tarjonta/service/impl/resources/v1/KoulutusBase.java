@@ -138,7 +138,7 @@ abstract class KoulutusBase {
     protected KoulutusmoduuliDAO koulutusmoduuliDAO;
 
     @Autowired
-    private TarjontaFixtures fixtures;
+    public TarjontaFixtures fixtures;
 
     @Autowired
     private KoulutusSisaltyvyysDAO KoulutusSisaltyvyysDAO;

@@ -38,6 +38,7 @@ import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -318,7 +319,7 @@ public interface KoulutusV1Resource {
             value = "Palauttaa hakusanaa vastaavat oppiaineet",
             notes = "Palauttaa hakusanaa vastaavat oppiaineet"
     )
-    ResultV1RDTO<List<OppiaineV1RDTO>> getOppiaineet(
+    ResultV1RDTO<Set<OppiaineV1RDTO>> getOppiaineet(
             @QueryParam("oppiaine") String oppiaine,
             @QueryParam("kieliKoodi") String kieliKoodi
     );
