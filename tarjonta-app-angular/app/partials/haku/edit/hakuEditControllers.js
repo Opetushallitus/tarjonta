@@ -439,9 +439,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         $scope.koulutuksienTyypit.push({key: 'TUTKINTO',
             label: LocalisationService.t('haku.edit.koulutuksenTyyppi.tutkinto')});
         $scope.koulutuksienTyypit.push({key: 'OPINTOKOKONAISUUS',
-            label: LocalisationService.t('haku.edit.koulutuksenTyyppi.opintokokonaisuus')});
-        $scope.koulutuksienTyypit.push({key: 'OPINTOJAKSO',
-            label: LocalisationService.t('haku.edit.koulutuksenTyyppi.opintojakso')});
+            label: LocalisationService.t('haku.edit.koulutuksenTyyppi.opintokokonaisuusOpintojakso')});
     };
     $scope.init = function() {
         var model = {

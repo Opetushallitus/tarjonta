@@ -634,11 +634,20 @@ app.controller('HakukohdeParentController', [
             return filteredHakuArray;
         };
         $scope.filterHakusByKohdejoukkoAndOrgs = function(hakus, haunKohdejoukot) {
+
+            var kohdejoukkoMapping = {
+                TUTKINTO: ['TUTKINTO'],
+                OPINTOKOKONAISUUS: ['OPINTOKOKONAISUUS', 'OPINTOJAKSO']
+            };
+
             hakus = $scope.filterHakusWithOrgs(hakus);
             return _.filter(hakus, function(haku) {
                 if (_.contains(haunKohdejoukot, window.oph.removeKoodiVersion(haku.kohdejoukkoUri))) {
                     if (haku.koulutusmoduuliTyyppi
-                        && haku.koulutusmoduuliTyyppi !== $scope.model.koulutusmoduuliTyyppi) {
+                        && !_.contains(
+                            kohdejoukkoMapping[haku.koulutusmoduuliTyyppi],
+                            $scope.model.koulutusmoduuliTyyppi
+                        )) {
                         return;
                     }
                     if (haku.hakutapaUri.indexOf(HAKUTAPA.JATKUVA_HAKU) !== -1) {
