@@ -206,7 +206,10 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             var kkOppilaitosTyypit = [
                 'oppilaitostyyppi_41',
                 'oppilaitostyyppi_42',
-                'oppilaitostyyppi_43'
+                'oppilaitostyyppi_43',
+                'oppilaitostyyppi_63',
+                'oppilaitostyyppi_64',
+                'oppilaitostyyppi_66'
             ];
             var haunKohdejoukot = [
                 'haunkohdejoukko_10',
