@@ -287,12 +287,6 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
                 'AMMATTITUTKINTO',
                 'AIKUISTEN_PERUSOPETUS'
             ].indexOf(toteutustyyppi) !== -1) {
-            // TODO: voi poistaa kun aikuistenPerusopetus otetaan käyttöön
-            // tällä hetkellä voi käyttää vain rekisterinpitäjän oikeuksilla
-            if (toteutustyyppi === 'AIKUISTEN_PERUSOPETUS' && !AuthService.isUserOph()) {
-                eiToteutettu();
-                return;
-            }
             var promise = Koodisto.getAlapuolisetKoodit($scope.model.koulutustyyppi.koodiUri);
             promise.then(function(koodis) {
                 var koulutuslajiKoodis = _.where(koodis, {koodiKoodisto:CONFIG.env['koodisto-uris.koulutuslaji']});
