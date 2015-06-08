@@ -799,8 +799,6 @@ public class KoulutusDTOConverterToEntity {
         commonConverter.handleDates(komoto, dto); //set dates
         komoto.setToteutustyyppi(dto.getToteutustyyppi());
 
-        komoto.setOppiaineet(oppiaineetFromDtoToEntity(dto.getOppiaineet()));
-
         HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet();
         EntityUtils.copyYhteyshenkilos(dto.getYhteyshenkilos(), yhteyshenkilos);
         komoto.setYhteyshenkilos(yhteyshenkilos);
@@ -810,6 +808,8 @@ public class KoulutusDTOConverterToEntity {
         komoto.setMaksullisuus(dto.getOpintojenMaksullisuus());
 
         updateOwners(komoto, dto);
+
+        komoto.setOppiaineet(oppiaineetFromDtoToEntity(dto.getOppiaineet()));
     }
 
     private Set<Oppiaine> oppiaineetFromDtoToEntity(Set<OppiaineV1RDTO> oppiaineetDto) {
