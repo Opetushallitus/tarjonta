@@ -102,7 +102,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     private Set<KoodistoUri> opetusAikas = new HashSet<KoodistoUri>();
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @ElementCollection(fetch = FetchType.LAZY)
     @JoinTable(
             name = TABLE_NAME + "_oppiaineet",
             joinColumns = @JoinColumn(name = TABLE_NAME + "_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME),

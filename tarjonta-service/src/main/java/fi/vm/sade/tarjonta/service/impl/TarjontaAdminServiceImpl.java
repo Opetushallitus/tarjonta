@@ -30,6 +30,7 @@ import javax.annotation.Nullable;
 import javax.jws.WebParam;
 
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
+
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -89,6 +90,7 @@ import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusHakukohteelleTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusHakukohteelleVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
@@ -457,7 +459,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public void lisaaTaiPoistaKoulutuksiaHakukohteelle(@WebParam(partName = "parameters", name = "lisaaKoulutusHakukohteelle", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LisaaKoulutusHakukohteelleTyyppi parameters) {
+    public LisaaKoulutusHakukohteelleVastausTyyppi lisaaTaiPoistaKoulutuksiaHakukohteelle(@WebParam(partName = "parameters", name = "lisaaKoulutusHakukohteelle", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LisaaKoulutusHakukohteelleTyyppi parameters) {
 
         final Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
 
@@ -515,6 +517,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             }
 
         }
+		return null;
 
     }
 

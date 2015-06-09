@@ -304,7 +304,7 @@
             <wsdl:documentation>
                 Lisaa uusi koulutusmoduuli
             </wsdl:documentation>
-            <wsdl:input message="tns:paivitaKoulutusmoduuli" name="lisaaKoulutusmoduuli">
+            <wsdl:input message="tns:paivitaKoulutusmoduuli" name="paivitaKoulutusmoduuli">
             </wsdl:input>
             <wsdl:output message="tns:paivitaKoulutusmoduuliVastaus" name="paivitaKoulutusmoduuliVastaus">
             </wsdl:output>
@@ -328,7 +328,7 @@
             </wsdl:documentation>
             <wsdl:input message="tns:lisaaKoulutusHakukohteelle" name="lisaaKoulutusHakukohteelle">
             </wsdl:input>
-            <wsdl:output message="lisaaKoulutusHakukohteelleVastaus" name="lisaaKoulutusHakukohteelleVastaus">
+            <wsdl:output message="tns:lisaaKoulutusHakukohteelleVastaus" name="lisaaTaiPoistaKoulutusHakukohteelleVastaus">
             </wsdl:output>
         </wsdl:operation>
 
@@ -419,7 +419,7 @@
                       transport="http://schemas.xmlsoap.org/soap/http"/>
 
         <wsdl:operation name="lisaaHakukohde">
-            <soap:operation soapAction="" type="document"/>
+            <soap:operation soapAction=""/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -429,7 +429,7 @@
         </wsdl:operation>
 
         <wsdl:operation name="paivitaHakukohde">
-            <soap:operation soapAction="" type="document"/>
+            <soap:operation soapAction=""/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -439,7 +439,7 @@
         </wsdl:operation>
 
         <wsdl:operation name="poistaHakukohde">
-            <soap:operation soapAction="" type="document"/>
+            <soap:operation soapAction=""/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -449,7 +449,7 @@
         </wsdl:operation>
 
         <wsdl:operation name="lisaaKoulutusmoduuli">
-            <soap:operation soapAction="" type="document"/>
+            <soap:operation soapAction=""/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -460,7 +460,7 @@
         
         
         <wsdl:operation name="paivitaKoulutusmoduuli">
-            <soap:operation soapAction="" type="document"/>
+            <soap:operation soapAction=""/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -470,7 +470,7 @@
         </wsdl:operation>
 
         <wsdl:operation name="lisaaTaiPoistaKoulutuksiaHakukohteelle">
-            <soap:operation soapAction="" type="document"/>
+            <soap:operation soapAction=""/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -480,7 +480,7 @@
         </wsdl:operation>
 
         <wsdl:operation name="tallennaLiitteitaHakukohteelle">
-            <soap:operation soapAction="" type="document"/>
+            <soap:operation soapAction=""/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -490,7 +490,7 @@
         </wsdl:operation>
 
         <wsdl:operation name="paivitaTilat">
-            <soap:operation soapAction="" type="document"/>
+            <soap:operation soapAction=""/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -500,7 +500,7 @@
         </wsdl:operation>
 
         <wsdl:operation name="testaaTilasiirtyma">
-            <soap:operation soapAction="" type="document"/>
+            <soap:operation soapAction=""/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -510,7 +510,7 @@
         </wsdl:operation>
 
         <wsdl:operation name="haeOid">
-            <soap:operation soapAction="" type="document"/>
+            <soap:operation soapAction=""/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -520,7 +520,7 @@
         </wsdl:operation>
 
         <wsdl:operation name="tallennaValintakokeitaHakukohteelle">
-            <soap:operation soapAction="" type="document"/>
+            <soap:operation soapAction=""/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>

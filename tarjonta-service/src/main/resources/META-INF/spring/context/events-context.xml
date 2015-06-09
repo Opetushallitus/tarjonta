@@ -36,9 +36,7 @@
     </bean>
 
     <bean id="eventsJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-        <property name="connectionFactory">
-            <ref local="eventsJmsFactory"/>
-        </property>
+        <property name="connectionFactory"><ref bean="eventsJmsFactory"/></property>
         <property name="defaultDestination" ref="eventsDestination"/>
     </bean>
 

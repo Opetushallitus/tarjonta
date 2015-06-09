@@ -12,6 +12,7 @@
         <class>fi.vm.sade.oid.model.OID</class>
     	<class>fi.vm.sade.oid.model.NodeClass</class>
     	<class>fi.vm.sade.oid.model.OIDBaseData</class>
+        <class>fi.vm.sade.generic.model.BaseEntity</class>
         
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL82Dialect"/>

@@ -1,17 +1,23 @@
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.generic.model.BaseEntity;
-import javax.persistence.*;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+import fi.vm.sade.generic.model.BaseEntity;
 
 @Entity
 @Table(name = Oppiaine.TABLE_NAME)
 public class Oppiaine extends BaseEntity {
 
-    public static final String TABLE_NAME = "oppiaineet";
+	private static final long serialVersionUID = 1L;
+
+	public static final String TABLE_NAME = "oppiaineet";
 
     @ManyToMany(mappedBy = "oppiaineet", fetch = FetchType.LAZY)
     private Set<KoulutusmoduuliToteutus> komotos = new HashSet<KoulutusmoduuliToteutus>();
