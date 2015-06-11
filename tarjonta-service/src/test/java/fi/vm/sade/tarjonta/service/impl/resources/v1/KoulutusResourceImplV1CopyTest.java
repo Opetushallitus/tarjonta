@@ -20,6 +20,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.search.it.TarjontaSearchServiceTest;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -162,7 +163,7 @@ public class KoulutusResourceImplV1CopyTest extends SecurityAwareTestBase {
         int komoCountBeforeCopy = komos.size();
         int komotoCountBeforeCopy = komotos.size();
 
-        KoulutusmoduuliToteutus newKomoto = koulutusUtilService.copyKorkeakoulutus(originalKomoto, originalKomoto.getTarjoaja(), null, null, false);
+        KoulutusmoduuliToteutus newKomoto = koulutusUtilService.copyKomotoAndKomo(originalKomoto, originalKomoto.getTarjoaja(), null, null, false, KoulutusKorkeakouluV1RDTO.class);
 
         komos = koulutusmoduuliDAO.findAllKomos();
         komotos = koulutusmoduuliToteutusDAO.findAll();

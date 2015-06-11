@@ -80,7 +80,7 @@ public class KoulutusDTOConverterToEntity {
         return convert(dto, userOid, null, null);
     }
 
-    public KoulutusmoduuliToteutus convert(final KoulutusKorkeakouluV1RDTO dto, final String userOid, String newKomotoOid, String newKomoOid) {
+    public KoulutusmoduuliToteutus convert(final KoulutusV1RDTO dto, final String userOid, String newKomotoOid, String newKomoOid) {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         if (dto == null) {
             return komoto;
@@ -112,13 +112,20 @@ public class KoulutusDTOConverterToEntity {
             }
         }
 
-        korkeakouluKomoDataUpdate(komo, dto);
+        if (dto instanceof KoulutusKorkeakouluV1RDTO) {
+            KoulutusKorkeakouluV1RDTO kkDto = (KoulutusKorkeakouluV1RDTO) dto;
 
-        /*
-         * KOMOTO custom data conversion
-         */
-        korkeakouluKomotoDataUpdate(komoto, dto, userOid);
-        addOrRemoveImages(dto, komoto, userOid);
+            korkeakouluKomoDataUpdate(komo, kkDto);
+            korkeakouluKomotoDataUpdate(komoto, kkDto, userOid);
+            addOrRemoveImages(kkDto, komoto, userOid);
+        }
+
+        else if (dto instanceof TutkintoonJohtamatonKoulutusV1RDTO) {
+            TutkintoonJohtamatonKoulutusV1RDTO tjDto = (TutkintoonJohtamatonKoulutusV1RDTO) dto;
+            updateTutkintoonjohtamatonKomoData(komo, tjDto);
+            updateTutkintoonjohtamatonKomotoData(komoto, tjDto, userOid);
+            komoto.setIsAvoimenYliopistonKoulutus(BooleanUtils.toBoolean(dto.getIsAvoimenYliopistonKoulutus()));
+        }
 
         return komoto;
     }
@@ -157,68 +164,6 @@ public class KoulutusDTOConverterToEntity {
         }
 
         LOG.info("updateOwners()... done.");
-    }
-
-    /*
-    * TUTKINTOONJOHTAMATON RDTO CONVERSION TO ENTITY
-    */
-    public KoulutusmoduuliToteutus convert(final TutkintoonJohtamatonKoulutusV1RDTO dto, final String userOid, final boolean addNewKomotoToKomo) {
-        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
-        if (dto == null) {
-            return komoto;
-        }
-
-        Koulutusmoduuli komo = null;
-        if (addNewKomotoToKomo) {
-            //use previously created komo, and do change or update data in the komo
-            Preconditions.checkNotNull(dto.getKomoOid(), "KOMO OID cannot be null.");
-            komo = koulutusmoduuliDAO.findByOid(dto.getKomoOid());
-            Preconditions.checkNotNull(komo, "KOMO not found by OID '%s'!", dto.getKomoOid());
-            try {
-                komoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
-            } catch (OIDCreationException ex) {
-                //XXX Should signal error!
-                LOG.error("OIDService failed!", ex);
-            }
-            komoto.setKoulutusmoduuli(komo);
-        } else if (dto.getOid() != null) {
-            //search by komoto oid, and update both komo & komoto
-            komoto = koulutusmoduuliToteutusDAO.findByOid(dto.getOid());
-            Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'!", dto.getOid());
-            komo = komoto.getKoulutusmoduuli();
-        } else {
-            //insert new komo&komoto data to database.
-            komo = new Koulutusmoduuli();
-            komoto.setKoulutusmoduuli(komo);
-            try {
-                komo.setOid(oidService.get(TarjontaOidType.KOMO));
-                komoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
-            } catch (OIDCreationException ex) {
-                //XXX Should signal error!
-                LOG.error("OIDService failed!", ex);
-            }
-        }
-
-        // Kun koulutusta järjestetään
-        if (dto.getTarjoajanKoulutus() != null) {
-            komoto.setTarjoajanKoulutus(koulutusmoduuliToteutusDAO.findByOid(dto.getTarjoajanKoulutus()));
-        }
-
-        if (!addNewKomotoToKomo) {
-            /*
-             * Only when user create new komo + komoto.
-             */
-            updateTutkintoonjohtamatonKomoData(komo, dto);
-        }
-
-        /*
-         * KOMOTO custom data conversion
-         */
-        updateTutkintoonjohtamatonKomotoData(komoto, dto, userOid);
-
-        komoto.setIsAvoimenYliopistonKoulutus(BooleanUtils.toBoolean(dto.getIsAvoimenYliopistonKoulutus()));
-
-        return komoto;
     }
 
     /*

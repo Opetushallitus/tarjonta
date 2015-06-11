@@ -17,6 +17,7 @@ import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEn
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.TutkintoonJohtamatonKoulutusV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,15 +59,17 @@ public class KoulutusUtilService {
         return copy;
     }
 
-    public KoulutusmoduuliToteutus copyKorkeakoulutus(KoulutusmoduuliToteutus originalKomoto, String orgOid,
-                                                      String newKomotoOid, String newKomoOid, Boolean checkPermission) {
+    public <TYPE extends KoulutusV1RDTO> KoulutusmoduuliToteutus copyKomotoAndKomo(KoulutusmoduuliToteutus originalKomoto, String orgOid,
+                                                                                   String newKomotoOid, String newKomoOid, Boolean checkPermission,
+                                                                                   Class<TYPE> dtoClass) {
         if (checkPermission) {
             permissionChecker.checkCreateKoulutus(orgOid);
         }
 
-        KoulutusKorkeakouluV1RDTO dto = (KoulutusKorkeakouluV1RDTO) koulutusDtoForCopy(KoulutusKorkeakouluV1RDTO.class, originalKomoto, orgOid);
+        TYPE dto = (TYPE) koulutusDtoForCopy(dtoClass, originalKomoto, orgOid);
 
         KoulutusmoduuliToteutus newKomoto = convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), newKomotoOid, newKomoOid);
+
         Preconditions.checkNotNull(newKomoto, "KOMOTO conversion to database object failed : object : %s.", ReflectionToStringBuilder.toString(dto));
         Preconditions.checkNotNull(newKomoto.getKoulutusmoduuli(), "KOMO conversion to database object failed : object :  %s.", ReflectionToStringBuilder.toString(dto));
 

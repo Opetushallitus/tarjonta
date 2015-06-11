@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
 import fi.vm.sade.tarjonta.service.copy.MetaObject;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusUtilService;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -369,8 +370,8 @@ public class MassCommitProcess {
                 LOG.debug("convert json to entity by oid : {}, new oid : {}", oldKomotoOid, meta.getNewKomotoOid());
 
                 if (ToteutustyyppiEnum.KORKEAKOULUTUS.equals(komoto.getToteutustyyppi())) {
-                    komoto = koulutusUtilService.copyKorkeakoulutus(
-                            komoto, komoto.getTarjoaja(), meta.getNewKomotoOid(), meta.getNewKomoOid(), false
+                    komoto = koulutusUtilService.copyKomotoAndKomo(
+                            komoto, komoto.getTarjoaja(), meta.getNewKomotoOid(), meta.getNewKomoOid(), false, KoulutusKorkeakouluV1RDTO.class
                     );
                 }
                 else {

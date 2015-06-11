@@ -580,7 +580,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         Preconditions.checkNotNull(dto.getKomotoOid() != null, "External KOMOTO OID not allowed. OID : %s.", dto.getKomotoOid());
         Preconditions.checkNotNull(dto.getKomoOid() != null, "External KOMO OID not allowed. OID : %s.", dto.getKomoOid());
 
-        final KoulutusmoduuliToteutus newKomoto = convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), addKomotoToKomo);
+        final KoulutusmoduuliToteutus newKomoto = convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), null, null);
         Preconditions.checkNotNull(newKomoto, "KOMOTO conversion to database object failed : object : %s.", ReflectionToStringBuilder.toString(dto));
         Preconditions.checkNotNull(newKomoto.getKoulutusmoduuli(), "KOMO conversion to database object failed : object :  %s.", ReflectionToStringBuilder.toString(dto));
 
@@ -591,7 +591,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     private KoulutusmoduuliToteutus updateTutkintoonjohtamaton(KoulutusmoduuliToteutus komoto, final TutkintoonJohtamatonKoulutusV1RDTO dto) {
         permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
-        return convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), false);
+        return convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), null, null);
     }
 
     private KoulutusmoduuliToteutus insertKoulutusKorkeakoulu(final KoulutusKorkeakouluV1RDTO dto) {
@@ -1306,7 +1306,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
                     switch (getType(komoto)) {
                         case KORKEAKOULUTUS:
-                            persisted = koulutusUtilService.copyKorkeakoulutus(komoto, orgOid, null, null, true);
+                            persisted = koulutusUtilService.copyKomotoAndKomo(komoto, orgOid, null, null, true, KoulutusKorkeakouluV1RDTO.class);
                             break;
                         case LUKIOKOULUTUS:
                             persisted = insertKoulutusGeneric((KoulutusLukioV1RDTO) koulutusDtoForCopy(KoulutusLukioV1RDTO.class, komoto, orgOid));
