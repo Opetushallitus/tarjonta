@@ -20,7 +20,7 @@ var app = angular.module('app.haku.edit.ctrl', []);
 app.controller('HakuEditController', function HakuEditController($q, $route, $scope, $location,
      $log, $modal, LocalisationService, HakuV1, ParameterService, Config, OrganisaatioService,
      AuthService, dialogService, KoodistoURI, PermissionService, HakuV1Service, HAKUTAPA,
-     HAKUTYYPPI) {
+     HAKUTYYPPI, Koodisto) {
 
     $log = $log.getInstance('HakuEditController');
     $log.debug('initializing (scope, route)', $scope, $route);
@@ -201,52 +201,64 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         }
         return result;
     };
-    $scope.filterKohdejoukkos = function() {
-        if (!AuthService.isUserOph()) {
-            var kkOppilaitosTyypit = [
-                'oppilaitostyyppi_41',
-                'oppilaitostyyppi_42',
-                'oppilaitostyyppi_43',
-                'oppilaitostyyppi_63',
-                'oppilaitostyyppi_64',
-                'oppilaitostyyppi_66'
-            ];
-            var haunKohdejoukot = [
-                'haunkohdejoukko_10',
-                'haunkohdejoukko_11',
-                'haunkohdejoukko_13',
-                'haunkohdejoukko_14',
-                'haunkohdejoukko_15',
-                'haunkohdejoukko_16',
-                'haunkohdejoukko_17',
-                'haunkohdejoukko_18'
-            ];
-            var userOrgs = AuthService.getOrganisations();
-            $scope.model.kohdejoukkoFilterUris = [];
-            angular.forEach(userOrgs, function(org) {
-                OrganisaatioService.haeOppilaitostyypit(org).then(function(oppilaitosTyypit) {
-                    angular.forEach(oppilaitosTyypit, function(oppilaitosTyyppi) {
-                        var oppilaitosTyyppiUriWithoutVersion = oppilaitosTyyppi.split('#')[0];
-                        if (_.contains(kkOppilaitosTyypit, oppilaitosTyyppiUriWithoutVersion)) {
-                            AuthService.crudOrg(org).then(function(isCrud) {
-                                if (isCrud && !_.contains($scope.model.kohdejoukkoFilterUris,
-                                        'haunkohdejoukko_12')) {
-                                    $scope.model.kohdejoukkoFilterUris.push('haunkohdejoukko_12');
-                                }
-                            });
-                        }
-                        else {
-                            _.each(haunKohdejoukot, function(kohdejoukko) {
-                                if (!_.contains($scope.model.kohdejoukkoFilterUris, kohdejoukko)) {
-                                    $scope.model.kohdejoukkoFilterUris.push(kohdejoukko);
-                                }
-                            });
-                        }
+
+    function appendKohdejoukkosByOppilaitostyyppi(tyyppi) {
+        var promise;
+
+        if (tyyppi === 'ALL') {
+            promise = Koodisto.getAllKoodisWithKoodiUri('haunkohdejoukko');
+        }
+        else {
+            promise = Koodisto.getYlapuolisetKoodiUrit([tyyppi], 'haunkohdejoukko');
+        }
+
+        promise.then(function(response) {
+            var koodis = response;
+            if (response.hasOwnProperty('map')) {
+                koodis = response.map;
+            }
+            var options = _.map(koodis, function(koodi) {
+                return {
+                    nimi: koodi.koodiNimi,
+                    uri: koodi.koodiUri + '#' + koodi.koodiVersio
+                };
+            });
+            appendKohdejoukkos(options);
+        });
+    }
+
+    function appendKohdejoukkos(koodis) {
+        _.each(koodis, function(koodi) {
+            if (!_.findWhere($scope.model.kohdejoukkoUris, {uri: koodi.uri})) {
+                $scope.model.kohdejoukkoUris.push(koodi);
+            }
+        });
+    }
+
+    $scope.fetchKohdejoukkos = function() {
+        $scope.model.kohdejoukkoUris = [];
+
+        if (AuthService.isUserOph()) {
+            appendKohdejoukkosByOppilaitostyyppi('ALL');
+        }
+        else {
+            _.each(AuthService.getOrganisations(), function(org) {
+
+                AuthService.crudOrg(org).then(function(isCrud) {
+                    if (!isCrud) {
+                        return;
+                    }
+
+                    OrganisaatioService.haeOppilaitostyypit(org).then(function(oppilaitosTyypit) {
+                        _.each(oppilaitosTyypit, function(tyyppi) {
+                            appendKohdejoukkosByOppilaitostyyppi(oph.removeKoodiVersion(tyyppi));
+                        });
                     });
                 });
             });
         }
     };
+
     $scope.isJatkuvaHaku = function() {
         var result = $scope.isHakuJatkuvaHaku($scope.model.hakux.result);
         // $log.info("isJatkuvaHaku()", result);
@@ -476,7 +488,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         }
         $scope.updateSelectedOrganisationsList();
         $scope.updateSelectedTarjoajaOrganisationsList();
-        $scope.filterKohdejoukkos();
+        $scope.fetchKohdejoukkos();
         checkIsOphAdmin();
         if ($scope.shouldSelectParentHaku()) {
             populateParentHakuCandidates();
