@@ -1229,6 +1229,14 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     private String findKoodistoKoodiKoulutusasteUri(KoulutusmoduuliToteutus komoto) {
+        if (ToteutustyyppiEnum.KORKEAKOULUOPINTO.equals(komoto.getToteutustyyppi())) {
+            // Tutkintoon johtamattomalla ei ole relaatiota koulutusasteeseen, mutta
+            // kuitenkin halutaan tarkistaa, että vain korkeakoulut voivat järjestää
+            // näitä koulutuksia. Palauttamalla olla oleva koulutusaste (yliopistot)
+            // rajoitus toimii samoin kuin kk-koulutuksilla
+            return "koulutusasteoph2002_72#1";
+        }
+
         final Koulutusmoduuli childKomo = komoto.getKoulutusmoduuli();
         switch (childKomo.getKoulutustyyppiEnum()) {
             case KORKEAKOULUTUS:
@@ -1307,6 +1315,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     switch (getType(komoto)) {
                         case KORKEAKOULUTUS:
                             persisted = koulutusUtilService.copyKomotoAndKomo(komoto, orgOid, null, null, true, KoulutusKorkeakouluV1RDTO.class);
+                            break;
+                        case KORKEAKOULUOPINTO:
+                            persisted = koulutusUtilService.copyKomotoAndKomo(komoto, orgOid, null, null, true, KorkeakouluOpintoV1RDTO.class);
                             break;
                         case LUKIOKOULUTUS:
                             persisted = insertKoulutusGeneric((KoulutusLukioV1RDTO) koulutusDtoForCopy(KoulutusLukioV1RDTO.class, komoto, orgOid));

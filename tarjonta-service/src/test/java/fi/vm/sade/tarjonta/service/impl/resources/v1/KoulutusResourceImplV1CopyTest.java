@@ -14,12 +14,10 @@ import fi.vm.sade.tarjonta.SecurityAwareTestBase;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.KoodistoUri;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KorkeakouluOpintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.search.it.TarjontaSearchServiceTest;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
@@ -44,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
@@ -81,14 +80,6 @@ public class KoulutusResourceImplV1CopyTest extends SecurityAwareTestBase {
     @Override
     public void before() {
         MockitoAnnotations.initMocks(this);
-
-        try {
-            Mockito.stub(oidService.get(TarjontaOidType.KOMO)).toReturn("new-komo-oid");
-            Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn("new-komoto-oid");
-        } catch (OIDCreationException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
 
         OrganisaatioDTO organisaatioDTO = new OrganisaatioDTO();
         organisaatioDTO.setOid("1.2.3.4");
@@ -155,6 +146,12 @@ public class KoulutusResourceImplV1CopyTest extends SecurityAwareTestBase {
 
     @Test
     public void thatKorkeakoulutusIsCopied() {
+        try {
+            Mockito.stub(oidService.get(TarjontaOidType.KOMO)).toReturn("new-komo-oid");
+            Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn("new-komoto-oid");
+        } catch (OIDCreationException e1) {
+        }
+
         Koulutusmoduuli originalKomo = koulutusmoduuliDAO.insert(getKorkeakoulutusKomo(fixtures));
         KoulutusmoduuliToteutus originalKomoto = koulutusmoduuliToteutusDAO.insert(getKorkeakoulutusKomoto(fixtures, originalKomo));
 
@@ -175,6 +172,70 @@ public class KoulutusResourceImplV1CopyTest extends SecurityAwareTestBase {
         assertEquals("new-komo-oid", newKomoto.getKoulutusmoduuli().getOid());
 
         assertEquals(originalKomo.getKoulutuksenTunnisteOid(), newKomoto.getKoulutusmoduuli().getKoulutuksenTunnisteOid());
+    }
+
+    public static Koulutusmoduuli getKorkeakouluopintoKomo(TarjontaFixtures fixtures) {
+        Koulutusmoduuli komo = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.OPINTOKOKONAISUUS);
+        komo.setKoulutusasteUri("koulutusaste");
+        komo.setTila(TarjontaTila.LUONNOS);
+        komo.setKoulutusalaUri("koulutusala");
+        komo.setKoulutusUri("koulutus");
+        return komo;
+    }
+
+    public static KoulutusmoduuliToteutus getKorkeakouluopintoKomoto(TarjontaFixtures fixtures, Koulutusmoduuli komo) {
+        KoulutusmoduuliToteutus komoto = fixtures.createTutkintoOhjelmaToteutus("1.2.3");
+        komoto.setTarjoaja("TEST_TARJOAJA");
+
+        KoulutusOwner owner = new KoulutusOwner();
+        owner.setOwnerOid("jarjestaja1");
+        owner.setOwnerType(KoulutusOwner.JARJESTAJA);
+        komoto.getOwners().add(owner);
+
+        komoto.setKoulutusmoduuli(komo);
+        komoto.setToteutustyyppi(ToteutustyyppiEnum.KORKEAKOULUOPINTO);
+        KoodistoUri opetuskieli = new KoodistoUri("opetuskieli");
+        komoto.setOpetuskieli(Sets.newHashSet(opetuskieli));
+        return komoto;
+    }
+
+    @Test
+    public void thatKorkeakouluopintoIsCopied() {
+        try {
+            Mockito.stub(oidService.get(TarjontaOidType.KOMO)).toReturn("korkeakouluopinto-komo-oid");
+            Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn("korkeakouluopinto-komoto-oid");
+        } catch (OIDCreationException e1) {
+        }
+
+        Koulutusmoduuli originalKomo = koulutusmoduuliDAO.insert(getKorkeakouluopintoKomo(fixtures));
+        KoulutusmoduuliToteutus originalKomoto = koulutusmoduuliToteutusDAO.insert(getKorkeakouluopintoKomoto(fixtures, originalKomo));
+
+        List<Koulutusmoduuli> komos = koulutusmoduuliDAO.findAllKomos();
+        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findAll();
+        int komoCountBeforeCopy = komos.size();
+        int komotoCountBeforeCopy = komotos.size();
+
+        KoulutusmoduuliToteutus newKomoto = koulutusUtilService.copyKomotoAndKomo(originalKomoto, originalKomoto.getTarjoaja(), null, null, false, KorkeakouluOpintoV1RDTO.class);
+
+        komos = koulutusmoduuliDAO.findAllKomos();
+        komotos = koulutusmoduuliToteutusDAO.findAll();
+
+        assertEquals(komoCountBeforeCopy + 1, komos.size());
+        assertEquals(komotoCountBeforeCopy + 1, komotos.size());
+
+        assertEquals("korkeakouluopinto-komoto-oid", newKomoto.getOid());
+        assertEquals("korkeakouluopinto-komo-oid", newKomoto.getKoulutusmoduuli().getOid());
+
+        assertEquals(originalKomo.getKoulutuksenTunnisteOid(), newKomoto.getKoulutusmoduuli().getKoulutuksenTunnisteOid());
+
+        boolean matchingJarjestajaFound = false;
+        for (KoulutusOwner owner : newKomoto.getOwners()) {
+            if (owner.getOwnerType().equals(KoulutusOwner.JARJESTAJA) && owner.getOwnerOid().equals("jarjestaja1")) {
+                matchingJarjestajaFound = true;
+                break;
+            }
+        }
+        assertTrue(matchingJarjestajaFound);
     }
 
 }

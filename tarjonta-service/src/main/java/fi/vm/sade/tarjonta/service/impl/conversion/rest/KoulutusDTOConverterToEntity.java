@@ -248,7 +248,6 @@ public class KoulutusDTOConverterToEntity {
 
         komoto.setOppiaine(dto.getOppiaine());
         komoto.setOpettaja(dto.getOpettaja());
-        // TODO: alexGofore yhteyshenkilo
     }
 
     /*
