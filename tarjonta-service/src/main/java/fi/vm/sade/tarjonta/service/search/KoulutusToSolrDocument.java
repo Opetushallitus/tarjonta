@@ -231,6 +231,10 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         }
     }
 
+    private void addTarjoajanKoulutus(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
+        add(komotoDoc, KOULUTUKSEN_TARJOAJA_KOMOTO, koulutusmoduuliToteutus.getTarjoajanKoulutus().getOid());
+    }
+
     private void addTyyppiDependentData(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
         if (koulutusmoduuliToteutus.getToteutustyyppi() != null) {
             switch (koulutusmoduuliToteutus.getToteutustyyppi()) {
@@ -251,6 +255,10 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
                     }
 
                     addMonikielinenNimi(komotoDoc, nimi);
+
+                    if (koulutusmoduuliToteutus.getTarjoajanKoulutus() != null) {
+                        addTarjoajanKoulutus(komotoDoc, koulutusmoduuliToteutus);
+                    }
                     break;
 
                 case VAPAAN_SIVISTYSTYON_KOULUTUS:

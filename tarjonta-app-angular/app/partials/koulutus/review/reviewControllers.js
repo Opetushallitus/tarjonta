@@ -497,6 +497,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         return 'data:' + img.mimeType + ';base64,' + img.base64data;
     };
     if ($scope.model.koulutus.tarjoajanKoulutus) {
+        $scope.disableCopy = true;
         TarjontaService.getKoulutus({
             oid: $scope.model.koulutus.tarjoajanKoulutus
         }).$promise.then(function(response) {

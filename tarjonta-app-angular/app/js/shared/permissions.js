@@ -63,10 +63,11 @@ angular.module('TarjontaPermissions', [
         });
         return deferred.promise;
     };
-    var _canEditKoulutus = function(koulutusOid, searchParams) {
+    var _canEditKoulutus = function(koulutusOid, searchParams, extraParams) {
         var defer = $q.defer();
         //hae koulutus
         searchParams = searchParams || {};
+        extraParams = extraParams || {};
         angular.extend(searchParams, {
             koulutusOid: koulutusOid
         });
@@ -81,16 +82,22 @@ angular.module('TarjontaPermissions', [
             //$log.debug("hakutulos:", hakutulos);
             resolveData(defer.promise);
             if (hakutulos.tulokset !== undefined && hakutulos.tulokset.length == 1) {
-                AuthService.updateOrg(hakutulos.tulokset[0].oid).then(function(result) {
-                    //					$log.debug("resolving ", result);
+                var koulutuksetByOrg = hakutulos.tulokset[0];
+                var koulutus = koulutuksetByOrg.tulokset[0];
+
+                // Järjestettyjä koulutuksia ei voi kopioida tai siirtää
+                if (extraParams.moveOrCopy && koulutus.koulutuksenTarjoajaKomoto) {
+                    defer.resolve(false);
+                    return;
+                }
+
+                AuthService.updateOrg(koulutuksetByOrg.oid).then(function(result) {
                     defer.resolve(result);
                 }, function() {
-                        //					$log.debug("resolving false");
-                        defer.resolve(false);
-                    });
+                    defer.resolve(false);
+                });
             }
             else {
-                //				$log.debug("resolving false");
                 defer.resolve(false);
             }
         });
@@ -320,9 +327,15 @@ angular.module('TarjontaPermissions', [
             canMoveOrCopy: function(koulutusOid) {
                 $log.debug('canMoveOrCopy koulutus');
                 var deferred = $q.defer();
-                var promise = _canEditKoulutus(koulutusOid, {
-                    defaultTarjoaja: AuthService.getUserDefaultOid()
-                });
+                var promise = _canEditKoulutus(
+                    koulutusOid,
+                    {
+                        defaultTarjoaja: AuthService.getUserDefaultOid()
+                    },
+                    {
+                        moveOrCopy: true
+                    }
+                );
                 promise.then(function(result) {
                     deferred.resolve(result);
                 });

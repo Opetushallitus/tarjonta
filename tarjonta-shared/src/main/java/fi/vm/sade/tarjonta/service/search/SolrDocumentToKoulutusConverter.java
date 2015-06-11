@@ -55,7 +55,7 @@ public class SolrDocumentToKoulutusConverter {
         copyKoulutusNimi(perustieto, koulutusDoc);
         perustieto.setTila(IndexDataUtils.createTila(koulutusDoc));
         perustieto.setTutkintonimike(IndexDataUtils.createKoodistoKoodi(TUTKINTONIMIKE_URI, TUTKINTONIMIKE_FI, TUTKINTONIMIKE_SV, TUTKINTONIMIKE_EN, koulutusDoc));
-
+        perustieto.setKoulutuksenTarjoajaKomoto((String) koulutusDoc.getFieldValue(KOULUTUKSEN_TARJOAJA_KOMOTO));
         perustieto.setTarjoaja(IndexDataUtils.createTarjoaja(koulutusDoc, orgs, defaultTarjoaja));
 
         // KJOH-778 monta tarjoajaa

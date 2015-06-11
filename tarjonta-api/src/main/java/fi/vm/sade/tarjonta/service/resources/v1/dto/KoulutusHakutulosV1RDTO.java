@@ -34,6 +34,7 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
     private String komoOid;
     private List<String> opetuskielet;
+    private String koulutuksenTarjoajaKomoto;
 
     public List<String> getOpetuskielet() {
         return opetuskielet;
@@ -190,6 +191,14 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
 
     public ToteutustyyppiEnum getToteutustyyppiEnum() {
         return toteutustyyppiEnum;
+    }
+
+    public String getKoulutuksenTarjoajaKomoto() {
+        return koulutuksenTarjoajaKomoto;
+    }
+
+    public void setKoulutuksenTarjoajaKomoto(String koulutuksenTarjoajaKomoto) {
+        this.koulutuksenTarjoajaKomoto = koulutuksenTarjoajaKomoto;
     }
 
 }

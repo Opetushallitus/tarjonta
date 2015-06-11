@@ -1856,6 +1856,7 @@ public class ConverterV1 {
         ret.setTarjoajat(ht.getTarjoajat());
         ret.setKoulutusmoduuliTyyppi(ht.getKoulutusmoduuliTyyppi());
         ret.setOpetuskielet(ht.getOpetuskielet());
+        ret.setKoulutuksenTarjoajaKomoto(ht.getKoulutuksenTarjoajaKomoto());
         return ret;
     }
 

@@ -37,6 +37,7 @@ public class KoulutusPerustieto implements Serializable {
     private ArrayList<String> tarjoajat;
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
     private List<String> opetuskielet;
+    private String koulutuksenTarjoajaKomoto;
 
     public List<String> getOpetuskielet() {
         return opetuskielet;
@@ -231,4 +232,13 @@ public class KoulutusPerustieto implements Serializable {
     public KoulutusmoduuliTyyppi getKoulutusmoduuliTyyppi() {
         return koulutusmoduuliTyyppi;
     }
+
+    public String getKoulutuksenTarjoajaKomoto() {
+        return koulutuksenTarjoajaKomoto;
+    }
+
+    public void setKoulutuksenTarjoajaKomoto(String koulutuksenTarjoajaKomoto) {
+        this.koulutuksenTarjoajaKomoto = koulutuksenTarjoajaKomoto;
+    }
+
 }

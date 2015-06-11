@@ -58,6 +58,7 @@ public class SolrFields {
         protected static final String HAKUTAPA_URIS = "hakutapauri_ss";
         protected static final String HAKUTYYPPI_URIS = "hakutyyppiuri_ss";
         protected static final String KOULUTUSMODUULITYYPPI_ENUM = "koulutusmoduulityyppi_s";
+        protected static final String KOULUTUKSEN_TARJOAJA_KOMOTO = "koulutuksentarjoajakomoto_s";
 
         protected static final String POHJAKOULUTUSVAATIMUS_URI = "pohjakoulutusvaatimusuri_s";
         protected static final String POHJAKOULUTUSVAATIMUS_FI = "pohjakoulutusvaatimusfi_s";

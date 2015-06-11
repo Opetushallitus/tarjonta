@@ -122,7 +122,7 @@ public class KoulutusDTOConverterToEntity {
 
         else if (dto instanceof TutkintoonJohtamatonKoulutusV1RDTO) {
             TutkintoonJohtamatonKoulutusV1RDTO tjDto = (TutkintoonJohtamatonKoulutusV1RDTO) dto;
-            
+
             if (tjDto.getTarjoajanKoulutus() != null) {
                 komoto.setTarjoajanKoulutus(koulutusmoduuliToteutusDAO.findByOid(tjDto.getTarjoajanKoulutus()));
             }
