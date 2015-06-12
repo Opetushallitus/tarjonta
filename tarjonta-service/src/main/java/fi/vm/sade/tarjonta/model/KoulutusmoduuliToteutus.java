@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.AutowireHelper;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.OpintopolkuAlkamiskausi;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.lang.time.DateUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -266,6 +267,10 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     @Column(name = "haun_kopioinnin_tunniste")
     private String haunKopioinninTunniste;
+
+    @Column(name = "opintopolku_alkamiskausi")
+    @Enumerated(EnumType.STRING)
+    private OpintopolkuAlkamiskausi.KaudetEnum opintopolkuAlkamiskausi;
 
     public String getOpintojenLaajuusArvo() {
         return opintojenLaajuusarvo;
@@ -1298,6 +1303,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public void setHaunKopioinninTunniste(String haunKopioinninTunniste) {
         this.haunKopioinninTunniste = haunKopioinninTunniste;
+    }
+
+    public OpintopolkuAlkamiskausi.KaudetEnum getOpintopolkuAlkamiskausi() {
+        return opintopolkuAlkamiskausi;
+    }
+
+    public void setOpintopolkuAlkamiskausi(OpintopolkuAlkamiskausi.KaudetEnum opintopolkuAlkamiskausi) {
+        this.opintopolkuAlkamiskausi = opintopolkuAlkamiskausi;
     }
 
 }

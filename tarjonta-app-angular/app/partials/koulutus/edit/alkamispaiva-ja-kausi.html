@@ -27,6 +27,7 @@
         <span tt="koulutus.alkamispvm.kausi">Alkamiskausi</span> {{ctrl.text.notSelected}}
         <select
             name="{{ctrl.alkamiskausi}}"
+            class="input-medium"
             ng-required="ctrl.kausi"
             ng-model="kausiUri"
             ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in ctrl.koodis | orderByNum:'koodiNimi'"
@@ -34,13 +35,21 @@
                 <option value="" tt="koulutus.edit.alkamispaiva.ei-valittua-kautta"></option>
         </select>
         <span tt="koulutus.alkamispvm.vuosi">Alkamisvuosi</span>
-        <input 
+        <input
+            class="input-small"
             type="number"
-            ng-required="ctrl.kausi"   
+            ng-required="ctrl.kausi"
             ng-model="vuosi"
-            name="{{ctrl.alkamisvuosi}}" 
+            name="{{ctrl.alkamisvuosi}}"
             min="{{minYear}}"
             max="{{maxYear}}"
             ng-disabled="!ctrl.kausi || ctrl.lukittu"/>
+        <div class="opintopolkuKausi" ng-if="showOpintopolkuKesa">
+            <input type="checkbox" ng-model="extraParams.opintopolkuKesaKausi" id="opintopolkuKesa"
+                   ng-disabled="!ctrl.kausi || ctrl.lukittu" ng-true-value="true" ng-false-value="">
+            <label for="opintopolkuKesa" ng-model="opintopolkuKesaKausi" tt="koulutus.naytaAlkamiskausiKesaOpintopolussa">
+                Näytä alkamiskautena "Kesä" opintopolussa
+            </label>
+        </div>
     </div>
 </div>

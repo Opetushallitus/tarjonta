@@ -16,7 +16,7 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OppiaineV1RDTO;
@@ -164,6 +164,12 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
 
     @ApiModelProperty(value = "Oppiaineet")
     private Set<OppiaineV1RDTO> oppiaineet;
+
+    @ApiModelProperty(value = "Opintopolussa näytettävä koulutuksen alkaminen")
+    private Map opintopolkuAlkamiskausi;
+
+    @ApiModelProperty(value = "Map-rakenne ylimääräisille parametreille, joita voi tarvittaessa hyödyntää tallennuksen yhteydessä")
+    private Map<String, String> extraParams;
 
     public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         this.setToteutustyyppi(toteutustyyppi);
@@ -641,4 +647,21 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     public void setOppiaineet(Set<OppiaineV1RDTO> oppiaineet) {
         this.oppiaineet = oppiaineet;
     }
+
+    public Map getOpintopolkuAlkamiskausi() {
+        return opintopolkuAlkamiskausi;
+    }
+
+    public void setOpintopolkuAlkamiskausi(Map opintopolkuAlkamiskausi) {
+        this.opintopolkuAlkamiskausi = opintopolkuAlkamiskausi;
+    }
+
+    public Map<String, String> getExtraParams() {
+        return extraParams;
+    }
+
+    public void setExtraParams(Map<String, String> extraParams) {
+        this.extraParams = extraParams;
+    }
+
 }

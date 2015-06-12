@@ -117,7 +117,9 @@ app.directive('alkamispaivaJaKausi', [
                 kausiUri: '=',
                 fieldNamePrefix: '@',
                 min: '=',
-                max: '='
+                max: '=',
+                extraParams: '=',
+                showOpintopolkuKesa: '@'
             }
         };
     }
