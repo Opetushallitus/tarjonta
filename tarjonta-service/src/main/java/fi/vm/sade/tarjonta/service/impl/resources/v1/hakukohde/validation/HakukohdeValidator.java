@@ -552,7 +552,9 @@ public class HakukohdeValidator {
                 if (kp.getToteutustyyppi() != null && !kp.getToteutustyyppi().equals(o.getToteutustyyppi())) {
                     //toteutustyyppi enum must be same
                     createError(kp.getKomotoOid(), o.getKomotoOid(), mapSelectedKomos, map, HakukohdeValidationMessages.KOMOTO_KOULUTUSTYYPPI_URI);
-                } else if (!kp.getToteutustyyppi().equals(ToteutustyyppiEnum.KORKEAKOULUTUS) && !isEqualKoodistoKoodiUri(kp.getKoulutusKoodi(), o.getKoulutusKoodi())) {
+                } else if (!ToteutustyyppiEnum.KORKEAKOULUTUS.equals(kp.getToteutustyyppi())
+                        && !ToteutustyyppiEnum.KORKEAKOULUOPINTO.equals(kp.getToteutustyyppi())
+                        && !isEqualKoodistoKoodiUri(kp.getKoulutusKoodi(), o.getKoulutusKoodi())) {
                     //koulutus koodi must be same
                     createError(kp.getKomotoOid(), o.getKomotoOid(), mapSelectedKomos, map, HakukohdeValidationMessages.KOMOTO_KOULUTUS_URI);
                 } else if (!kp.getKoulutuksenAlkamisVuosi().equals(o.getKoulutuksenAlkamisVuosi())) {

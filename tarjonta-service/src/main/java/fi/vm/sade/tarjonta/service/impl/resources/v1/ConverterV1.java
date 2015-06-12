@@ -615,7 +615,14 @@ public class ConverterV1 {
         for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
             koulutusmoduulityypit.add(komoto.getKoulutusmoduuli().getModuuliTyyppi().name());
         }
-        if (koulutusmoduulityypit.size() > 1) {
+
+        // Opintokokonaisuus ja opintojakso saa olla samassa hakukohteessaq
+        Set<String> opintojaksoJaKokonaisuus = new HashSet<String>();
+        opintojaksoJaKokonaisuus.add(KoulutusmoduuliTyyppi.OPINTOJAKSO.name());
+        opintojaksoJaKokonaisuus.add(KoulutusmoduuliTyyppi.OPINTOKOKONAISUUS.name());
+
+        if (koulutusmoduulityypit.size() > 1
+                && !CollectionUtils.isEqualCollection(opintojaksoJaKokonaisuus, koulutusmoduulityypit)) {
             throw new IllegalArgumentException(String.format(
                     "Eri tyyppiset koulutukset hakukohteella %s ei tuettu", hakukohde.getOid()));
         }
