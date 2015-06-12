@@ -763,7 +763,6 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
             //vuosi/kausi rajoite
             $scope.model.spec.season = result.tulokset[0].tulokset[0].kausiUri;
             $scope.model.spec.year = result.tulokset[0].tulokset[0].vuosi;
-            var hakukohteenKoulutuskoodi = result.tulokset[0].tulokset[0].koulutuskoodi.split('#')[0].split('_')[1];
             var hakukohteenPohjakoulutusvaatimus = result.tulokset[0].tulokset[0].pohjakoulutusvaatimus;
             TarjontaService.haeKoulutukset($scope.model.spec).then(function(result) {
                 var tarjoajaOids = [];
@@ -806,6 +805,7 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
                         });
                         if (foundKoulutusInHakukohde === undefined) {
                             if (toisenAsteenKoulutus) {
+                                var hakukohteenKoulutuskoodi = result.tulokset[0].tulokset[0].koulutuskoodi.split('#')[0].split('_')[1];
                                 if (koulutus.koulutuskoodi === hakukohteenKoulutuskoodi &&
                                     koulutus.pohjakoulutusvaatimus &&
                                     koulutus.pohjakoulutusvaatimus.fi === hakukohteenPohjakoulutusvaatimus.fi) {
