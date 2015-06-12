@@ -10,7 +10,8 @@ var app = angular.module('app.edit.ctrl.kk', [
     'MonikielinenTextField',
     'ControlsLayout'
 ]);
-app.controller('EditKorkeakouluController', function EditKorkeakouluController($scope, Config, $modal) {
+app.controller('EditKorkeakouluController', function EditKorkeakouluController($scope, Config, $modal, $q,
+                                            AuthService, OrganisaatioService, Koodisto) {
 
     $scope.tutkintoDialogModel = {};
     /**
@@ -30,31 +31,48 @@ app.controller('EditKorkeakouluController', function EditKorkeakouluController($
             $scope.getLisatietoKielet($scope.model, $scope.uiModel, true);
         }
     };
+
     $scope.tutkintoDialogModel.open = function() {
-        var modalInstance = $modal.open({
-            scope: $scope,
-            templateUrl: 'partials/koulutus/edit/korkeakoulu/selectTutkintoOhjelma.html',
-            controller: 'SelectTutkintoOhjelmaController',
-            resolve: {
-                targetFilters: function() {
-                    return [
-                        Config.app['koodisto-uri.tutkintotyyppi.ylempiKorkeakoulututkinto'],
-                        Config.app['koodisto-uri.tutkintotyyppi.alempiKorkeakoulututkinto']
-                    ];
-                }
-            }
+        var orgs = AuthService.getOrganisations();
+
+        var orgPromises = [];
+        _.each(orgs, function(org) {
+
+            var deferred = $q.defer();
+            orgPromises.push(deferred.promise);
+
+            OrganisaatioService.haeOppilaitostyypit(org).then(function(oppilaitostyypit) {
+                Koodisto.getAlapuolisetKoodiUrit(oppilaitostyypit, 'koulutusasteoph2002')
+                    .then(function(koulutusasteKoodit) {
+                        deferred.resolve(koulutusasteKoodit.uris);
+                    });
+            });
         });
-        modalInstance.result.then(function(selectedItem) {
-            if (selectedItem) {
-                $scope.model.koulutuskoodi = {
-                    arvo: selectedItem.koodiArvo,
-                    nimi: selectedItem.koodiNimi,
-                    uri: selectedItem.koodiUri,
-                    versio: selectedItem.koodiVersio
-                };
-            }
+        $q.all(orgPromises).then(function(data) {
+            var uris = _.chain(data).flatten().uniq().value();
+
+            $modal.open({
+                scope: $scope,
+                templateUrl: 'partials/koulutus/edit/korkeakoulu/selectTutkintoOhjelma.html',
+                controller: 'SelectTutkintoOhjelmaController',
+                resolve: {
+                    targetFilters: function() {
+                        return uris;
+                    }
+                }
+            }).result.then(function(selectedItem) {
+                if (selectedItem) {
+                    $scope.model.koulutuskoodi = {
+                        arvo: selectedItem.koodiArvo,
+                        nimi: selectedItem.koodiNimi,
+                        uri: selectedItem.koodiUri,
+                        versio: selectedItem.koodiVersio
+                    };
+                }
+            });
         });
     };
+
     $scope.removeKandidaatinKoulutuskoodi = function(koodi) {
         $scope.model.kandidaatinKoulutuskoodi = {};
     };
