@@ -758,6 +758,15 @@ public class KoulutusDTOConverterToEntity {
         updateOwners(komoto, dto);
 
         komoto.setOppiaineet(oppiaineetFromDtoToEntity(dto.getOppiaineet()));
+
+        if (dto.getExtraParams() != null) {
+            if ("true".equals(dto.getExtraParams().get("opintopolkuKesaKausi"))) {
+                komoto.setOpintopolkuAlkamiskausi(OpintopolkuAlkamiskausi.KaudetEnum.KESA);
+            }
+            else {
+                komoto.setOpintopolkuAlkamiskausi(null);
+            }
+        }
     }
 
     private Set<Oppiaine> oppiaineetFromDtoToEntity(Set<OppiaineV1RDTO> oppiaineetDto) {

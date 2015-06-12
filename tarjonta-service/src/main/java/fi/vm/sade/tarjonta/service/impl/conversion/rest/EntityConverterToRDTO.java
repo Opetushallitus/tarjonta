@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.OpintopolkuAlkamiskausi;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +96,15 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         KuvausV1RDTO<KomotoTeksti> komotoKuvaus = new KuvausV1RDTO<KomotoTeksti>();
         komotoKuvaus.putAll(komotoKuvausConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit(), param.getShowMeta()));
         dto.setKuvausKomoto(komotoKuvaus);
+
+        Map<String, String> extraParams = new HashMap<String, String>();
+        if (komoto.getOpintopolkuAlkamiskausi() != null) {
+            dto.setOpintopolkuAlkamiskausi(
+                OpintopolkuAlkamiskausi.getMapFromEnum(komoto.getOpintopolkuAlkamiskausi())
+            );
+            extraParams.put("opintopolkuKesaKausi", "true");
+        }
+        dto.setExtraParams(extraParams);
 
         if (komoto.getHinta() != null) {
             dto.setHinta(komoto.getHinta().doubleValue());
