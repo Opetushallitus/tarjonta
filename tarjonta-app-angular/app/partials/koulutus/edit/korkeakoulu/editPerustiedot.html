@@ -19,7 +19,12 @@
         <tr class="info">
             <th tt="koulutus.edit.koulutuskoodi">Koulutuskoodi</th>
             <td>{{model.koulutuskoodi.nimi}} <span class="float-right">{{model.koulutuskoodi.arvo}}</span></td>
-            <td><!--a href ng-click="tutkintoDialogModel.open()" tt="koulutus.edit.muokkaaTutkinto"/--></td>
+            <td>
+                <a class="btn" ng-click="tutkintoDialogModel.open()">
+                    <i class="icon-pencil"></i>
+                    <span tt="koulutus.edit.muokkaaTutkinto">Vaihda koulutus</span>
+                </a>
+            </td>
         </tr>
 
         <!-- koulutusohjelma -->

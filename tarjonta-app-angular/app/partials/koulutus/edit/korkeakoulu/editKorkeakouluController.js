@@ -10,8 +10,7 @@ var app = angular.module('app.edit.ctrl.kk', [
     'MonikielinenTextField',
     'ControlsLayout'
 ]);
-app.controller('EditKorkeakouluController', function EditKorkeakouluController($scope, Config,
-            KoulutusConverterFactory, $modal) {
+app.controller('EditKorkeakouluController', function EditKorkeakouluController($scope, Config, $modal) {
 
     $scope.tutkintoDialogModel = {};
     /**
@@ -35,12 +34,24 @@ app.controller('EditKorkeakouluController', function EditKorkeakouluController($
         var modalInstance = $modal.open({
             scope: $scope,
             templateUrl: 'partials/koulutus/edit/korkeakoulu/selectTutkintoOhjelma.html',
-            controller: 'SelectTutkintoOhjelmaController'
+            controller: 'SelectTutkintoOhjelmaController',
+            resolve: {
+                targetFilters: function() {
+                    return [
+                        Config.app['koodisto-uri.tutkintotyyppi.ylempiKorkeakoulututkinto'],
+                        Config.app['koodisto-uri.tutkintotyyppi.alempiKorkeakoulututkinto']
+                    ];
+                }
+            }
         });
         modalInstance.result.then(function(selectedItem) {
-            if (!KoulutusConverterFactory.isNull(selectedItem)) {
-                //$scope.model.koulutuskoodi = selectedItem;
-                $scope.model.koulutuskoodi.koodi.arvo = selectedItem.koodiArvo;
+            if (selectedItem) {
+                $scope.model.koulutuskoodi = {
+                    arvo: selectedItem.koodiArvo,
+                    nimi: selectedItem.koodiNimi,
+                    uri: selectedItem.koodiUri,
+                    versio: selectedItem.koodiVersio
+                };
             }
         });
     };
