@@ -118,7 +118,6 @@ app.controller('HakukohdeParentController', [
             },
             disableConfigurableHakuaika: [
                 'VAPAAN_SIVISTYSTYON_KOULUTUS',
-                'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'
             ]
