@@ -33,20 +33,18 @@ app.controller('EditKorkeakouluController', function EditKorkeakouluController($
     };
 
     $scope.tutkintoDialogModel.open = function() {
-        var orgs = $scope.model.organisaatio.oid;
+        var org = $scope.model.organisaatio.oid;
 
         var orgPromises = [];
-        _.each(orgs, function(org) {
 
-            var deferred = $q.defer();
-            orgPromises.push(deferred.promise);
+        var deferred = $q.defer();
+        orgPromises.push(deferred.promise);
 
-            OrganisaatioService.haeOppilaitostyypit(org).then(function(oppilaitostyypit) {
-                Koodisto.getAlapuolisetKoodiUrit(oppilaitostyypit, 'koulutusasteoph2002')
-                    .then(function(koulutusasteKoodit) {
-                        deferred.resolve(koulutusasteKoodit.uris);
-                    });
-            });
+        OrganisaatioService.haeOppilaitostyypit(org).then(function(oppilaitostyypit) {
+            Koodisto.getAlapuolisetKoodiUrit(oppilaitostyypit, 'koulutusasteoph2002')
+                .then(function(koulutusasteKoodit) {
+                    deferred.resolve(koulutusasteKoodit.uris);
+                });
         });
         $q.all(orgPromises).then(function(data) {
             var uris = _.chain(data).flatten().uniq().value();
