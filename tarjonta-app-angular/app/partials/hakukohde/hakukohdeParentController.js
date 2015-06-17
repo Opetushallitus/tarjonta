@@ -118,8 +118,7 @@ app.controller('HakukohdeParentController', [
             },
             disableConfigurableHakuaika: [
                 'VAPAAN_SIVISTYSTYON_KOULUTUS',
-                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
-                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA'
             ]
         };
         /**
@@ -473,6 +472,15 @@ app.controller('HakukohdeParentController', [
                 return SharedStateService.getFromState('SelectedToteutusTyyppi');
             }
         };
+        
+
+        var YHTEISHAKU = 'hakutapa_01';
+        var ERILLISHAKU = 'hakutapa_02';
+        var JATKUVA_HAKU = 'hakutapa_03';
+
+        var VARSINAINEN_HAKU = 'hakutyyppi_01';
+        var LISAHAKU = 'hakutyyppi_03';
+
         $scope.handleConfigurableHakuaika = function() {
             var hakuaika;
             if ($scope.model.hakukohde.hakuOid) {
@@ -480,8 +488,8 @@ app.controller('HakukohdeParentController', [
                 var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
                 if ($scope.toisenAsteenKoulutus(toteutustyyppi)) {
                     hakuaika = getHakuaikaForToisenAsteenKoulutus(haku);
-                    $scope.model.configurableHakuaika = oph.removeKoodiVersion(haku.hakutyyppiUri) === 'hakutyyppi_03'
-                        || oph.removeKoodiVersion(haku.hakutapaUri) === 'hakutapa_02';
+                    $scope.model.configurableHakuaika = oph.removeKoodiVersion(haku.hakutyyppiUri) === JATKUVA_HAKU
+                        || oph.removeKoodiVersion(haku.hakutapaUri) === ERILLISHAKU;
                     $scope.model.hakukohde.hakuaikaId = hakuaika.hakuaikaId;
                     $scope.model.hakuaikaMin = hakuaika.alkuPvm;
                     $scope.model.hakuaikaMax = hakuaika.loppuPvm;
@@ -490,8 +498,8 @@ app.controller('HakukohdeParentController', [
                     $scope.model.hakuaikaMax = hakuaika.loppuPvm;
                 }
                 else if (toteutustyyppi === 'KORKEAKOULUTUS') {
-                    $scope.model.configurableHakuaika = !(oph.removeKoodiVersion(haku.hakutapaUri) === 'hakutapa_01'
-                        && oph.removeKoodiVersion(haku.hakutyyppiUri) === 'hakutyyppi_01');
+                    $scope.model.configurableHakuaika = !(oph.removeKoodiVersion(haku.hakutapaUri) === YHTEISHAKU
+                        && oph.removeKoodiVersion(haku.hakutyyppiUri) === VARSINAINEN_HAKU);
                     hakuaika = $scope.getSelectedHakuaika();
                     if ($scope.model.hakukohde.hakuaikaId !== hakuaika.hakuaikaId) {
                         $scope.model.hakukohde.hakuaikaId = hakuaika.hakuaikaId;
