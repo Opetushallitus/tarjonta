@@ -33,7 +33,7 @@ app.controller('EditKorkeakouluController', function EditKorkeakouluController($
     };
 
     $scope.tutkintoDialogModel.open = function() {
-        var orgs = AuthService.getOrganisations();
+        var orgs = $scope.model.organisaatio.oid;
 
         var orgPromises = [];
         _.each(orgs, function(org) {
