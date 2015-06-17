@@ -488,9 +488,8 @@ app.controller('HakukohdeParentController', [
                 var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
                 if ($scope.toisenAsteenKoulutus(toteutustyyppi)) {
                     hakuaika = getHakuaikaForToisenAsteenKoulutus(haku);
-                    $scope.model.configurableHakuaika = oph.removeKoodiVersion(haku.hakutyyppiUri) === JATKUVA_HAKU
-                        || oph.removeKoodiVersion(haku.hakutapaUri) === ERILLISHAKU
-                        || oph.removeKoodiVersion(haku.hakutyyppiUri) === LISAHAKU;
+                    $scope.model.configurableHakuaika = oph.removeKoodiVersion(haku.hakutyyppiUri) === LISAHAKU
+                        || oph.removeKoodiVersion(haku.hakutapaUri) === ERILLISHAKU;
                     $scope.model.hakukohde.hakuaikaId = hakuaika.hakuaikaId;
                     $scope.model.hakuaikaMin = hakuaika.alkuPvm;
                     $scope.model.hakuaikaMax = hakuaika.loppuPvm;
