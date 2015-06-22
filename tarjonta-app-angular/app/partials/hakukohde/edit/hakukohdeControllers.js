@@ -81,6 +81,7 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             $scope.model.userLang = 'FI';
         }
         $log.debug('CHECKING PERMISSIONS : ', $scope.model.hakukohde);
+        $scope.checkIsCopy();
         if ($scope.model.hakukohde.oid) {
             $scope.checkPermissions($scope.model.hakukohde.oid);
         }
@@ -89,7 +90,6 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
         $scope.canSaveParam($scope.model.hakukohde.hakuOid);
         $scope.haeTarjoajaOppilaitosTyypit();
         $scope.model.continueToReviewEnabled = $scope.checkJatkaBtn($scope.model.hakukohde);
-        $scope.checkIsCopy();
         if ($scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset === undefined) {
             $scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset = {};
         }

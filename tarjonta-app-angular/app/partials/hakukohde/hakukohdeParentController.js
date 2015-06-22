@@ -300,16 +300,22 @@ app.controller('HakukohdeParentController', [
                 }
             }
         };
-        $scope.checkIsCopy = function(tilaParam) {
+        $scope.checkIsCopy = function(tilaParam, dontResetHaku) {
             // If scope or route has isCopy parameter defined as true remove
             // oid so that new hakukohde will be created
-            if ($route.current.locals && $route.current.locals.isCopy) {
+            if (($route.current.locals && $route.current.locals.isCopy) ||
+                ($scope.isCopy !== undefined && $scope.isCopy)) {
+
                 $scope.model.hakukohde.oid = undefined;
                 $scope.model.hakukohde.tila = tilaParam;
-            }
-            if ($scope.isCopy !== undefined && $scope.isCopy) {
-                $scope.model.hakukohde.oid = undefined;
-                $scope.model.hakukohde.tila = tilaParam;
+
+                // Hakua ei kopioida, se pitää aina valita
+                if (!dontResetHaku) {
+                    $scope.model.hakukohde.hakuOid = undefined;
+                    $scope.model.hakukohde.hakuaikaAlkuPvm = undefined;
+                    $scope.model.hakukohde.hakuaikaId = undefined;
+                    $scope.model.hakukohde.hakuaikaLoppuPvm = undefined;
+                }
             }
             $scope.model.isCopy = true;
         };
@@ -472,7 +478,6 @@ app.controller('HakukohdeParentController', [
                 return SharedStateService.getFromState('SelectedToteutusTyyppi');
             }
         };
-        
 
         var YHTEISHAKU = 'hakutapa_01';
         var ERILLISHAKU = 'hakutapa_02';
@@ -1241,7 +1246,7 @@ app.controller('HakukohdeParentController', [
                     angular.forEach($scope.model.hakukohde.hakukohteenLiitteet, function(liite, index) {
                         liite.jarjestys = index;
                     });
-                    $scope.checkIsCopy($scope.luonnosVal);
+                    $scope.checkIsCopy($scope.luonnosVal, true);
                     if ($scope.model.hakukohde.oid === undefined) {
                         // KJOH-778, pitää tietää mille organisaatiolle ollaan luomassa hakukohdetta
                         var tarjoajatiedot = {};
