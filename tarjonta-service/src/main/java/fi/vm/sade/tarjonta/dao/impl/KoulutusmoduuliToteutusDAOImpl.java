@@ -28,6 +28,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -55,6 +56,31 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         } else {
             throw new IllegalStateException("multiple results for oid: " + oid);
         }
+    }
+
+    @Override
+    public List<KoulutusmoduuliToteutus> findSiblingKomotos(KoulutusmoduuliToteutus komoto) {
+        // Sisarkoulutukset palautetaan vain ammatillisille perustutkinnoille
+        Set<ToteutustyyppiEnum> siblingToteutustyyppis = new HashSet<ToteutustyyppiEnum>();
+
+        siblingToteutustyyppis.add(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO);
+        siblingToteutustyyppis.add(ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA);
+
+        if (!siblingToteutustyyppis.contains(komoto.getToteutustyyppi())) {
+            return null;
+        }
+
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+
+        return from(qKomoto).where(
+                qKomoto.koulutusUri.startsWith(komoto.getKoodiUriWithoutVersion(komoto.getKoulutusUri()) + "#")
+                        .and(qKomoto.tarjoaja.eq(komoto.getTarjoaja()))
+                        .and(qKomoto.alkamiskausiUri.startsWith(komoto.getKoodiUriWithoutVersion(komoto.getAlkamiskausiUri()) + "#"))
+                        .and(qKomoto.alkamisVuosi.eq(komoto.getAlkamisVuosi()))
+                        .and(qKomoto.oid.ne(komoto.getOid()))
+                        .and(qKomoto.pohjakoulutusvaatimusUri.startsWith(komoto.getKoodiUriWithoutVersion(komoto.getPohjakoulutusvaatimusUri()) + "#"))
+                        .and(qKomoto.tila.ne(TarjontaTila.POISTETTU))
+        ).list(qKomoto);
     }
 
     /*

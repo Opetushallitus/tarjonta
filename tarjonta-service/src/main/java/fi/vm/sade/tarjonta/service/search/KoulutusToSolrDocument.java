@@ -25,9 +25,11 @@ import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
@@ -51,6 +53,9 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
 
     @Autowired
     private KoodiService koodiService;
+
+    @Autowired
+    private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
@@ -99,6 +104,8 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         addDataFromHakukohde(komotoDoc, koulutusmoduuliToteutus);
         addTekstihaku(komotoDoc);
         addKoulutusKoodis(komotoDoc, koulutusmoduuliToteutus);
+        addParentKomoOid(komotoDoc, koulutusmoduuliToteutus);
+        addSiblingKomotos(komotoDoc, koulutusmoduuliToteutus);
 
         if (koulutusmoduuliToteutus.getToteutustyyppi().equals(ToteutustyyppiEnum.KORKEAKOULUOPINTO)
                 && !koulutusmoduuliToteutus.getJarjestajaOids().isEmpty()) {
@@ -213,6 +220,24 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
 
     private void addKomoOid(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
         add(komotoDoc, KOULUTUSMODUULI_OID, koulutusmoduuliToteutus.getKoulutusmoduuli().getOid());
+    }
+
+    private void addParentKomoOid(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus komoto) {
+        Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komoto.getKoulutusmoduuli());
+
+        if (parentKomo != null) {
+            add(komotoDoc, PARENT_KOULUTUSMODUULI_OID, parentKomo.getOid());
+        }
+    }
+
+    private void addSiblingKomotos(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus komoto) {
+        List<KoulutusmoduuliToteutus> siblingKomotos = koulutusmoduuliToteutusDAO.findSiblingKomotos(komoto);
+
+        if (siblingKomotos != null) {
+            for (KoulutusmoduuliToteutus siblingKomoto : siblingKomotos) {
+                add(komotoDoc, SIBLING_KOMOTOS, siblingKomoto.getOid());
+            }
+        }
     }
 
     private void addTila(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus koulutusmoduuliToteutus) {

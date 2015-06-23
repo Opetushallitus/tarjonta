@@ -38,6 +38,8 @@ public class KoulutusPerustieto implements Serializable {
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
     private List<String> opetuskielet;
     private String koulutuksenTarjoajaKomoto;
+    private String parentKomo;
+    private List<String> siblingKomotos;
 
     public List<String> getOpetuskielet() {
         return opetuskielet;
@@ -239,6 +241,22 @@ public class KoulutusPerustieto implements Serializable {
 
     public void setKoulutuksenTarjoajaKomoto(String koulutuksenTarjoajaKomoto) {
         this.koulutuksenTarjoajaKomoto = koulutuksenTarjoajaKomoto;
+    }
+
+    public List<String> getSiblingKomotos() {
+        return siblingKomotos;
+    }
+
+    public void setSiblingKomotos(List<String> siblingKomotos) {
+        this.siblingKomotos = siblingKomotos;
+    }
+
+    public String getParentKomo() {
+        return parentKomo;
+    }
+
+    public void setParentKomo(String parentKomo) {
+        this.parentKomo = parentKomo;
     }
 
 }

@@ -1280,6 +1280,10 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     public String getKoodiUriWithoutVersion(String koodiUri) {
+        if (koodiUri == null) {
+            return null;
+        }
+        
         int hashPos = koodiUri.indexOf('#');
 
         if (hashPos == -1) {

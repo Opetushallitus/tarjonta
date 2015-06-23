@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -246,6 +247,19 @@ public class IndexerResource {
                 Long koulutusId = koulutukset.get(j);
                 logger.info(j + ". Fetching koulutus:" + koulutusId);
                 docs.addAll(koulutusConverter.apply(koulutusId));
+
+                // Reindex sibling komotos
+                KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.read(koulutusId);
+                if (komoto != null) {
+                    List<KoulutusmoduuliToteutus> siblings = koulutusmoduuliToteutusDAO.findSiblingKomotos(komoto);
+                    if (siblings != null) {
+                        for (KoulutusmoduuliToteutus sibling : siblings) {
+                            if (!koulutukset.contains(sibling.getId())) {
+                                docs.addAll(koulutusConverter.apply(sibling.getId()));
+                            }
+                        }
+                    }
+                }
             }
             index += batch_size;
             logger.info("indexing:" + docs.size() + " docs");

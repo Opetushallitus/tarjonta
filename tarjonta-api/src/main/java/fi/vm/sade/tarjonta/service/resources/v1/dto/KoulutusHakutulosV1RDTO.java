@@ -35,6 +35,8 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
     private String komoOid;
     private List<String> opetuskielet;
     private String koulutuksenTarjoajaKomoto;
+    private String parentKomoOid;
+    private List<String> siblingKomotos;
 
     public List<String> getOpetuskielet() {
         return opetuskielet;
@@ -199,6 +201,22 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
 
     public void setKoulutuksenTarjoajaKomoto(String koulutuksenTarjoajaKomoto) {
         this.koulutuksenTarjoajaKomoto = koulutuksenTarjoajaKomoto;
+    }
+
+    public List<String> getSiblingKomotos() {
+        return siblingKomotos;
+    }
+
+    public void setSiblingKomotos(List<String> siblingKomotos) {
+        this.siblingKomotos = siblingKomotos;
+    }
+
+    public String getParentKomoOid() {
+        return parentKomoOid;
+    }
+
+    public void setParentKomoOid(String parentKomoOid) {
+        this.parentKomoOid = parentKomoOid;
     }
 
 }

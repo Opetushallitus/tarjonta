@@ -47,6 +47,8 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
      */
     List<KoulutusmoduuliToteutus> findKoulutusModuulisWithHakukohdesByOids(List<String> komotoOids);
 
+    List<KoulutusmoduuliToteutus> findSiblingKomotos(KoulutusmoduuliToteutus komoto);
+
     List<KoulutusmoduuliToteutus> findKoulutusModuuliWithPohjakoulutusAndTarjoaja(String tarjoaja, String pohjakoulutus,
                                                                                   String koulutusluokitus, String koulutusohjelma,
                                                                                   List<String> opetuskielis, List<String> koulutuslajis);

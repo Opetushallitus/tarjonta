@@ -80,6 +80,9 @@ public class SolrFields {
 
         protected static final String OPINTOALA_URI = "opintoalauri_ss";
         protected static final String KOULUTUSALA_URI = "koulutusalauri_ss";
+
+        protected static final String PARENT_KOULUTUSMODUULI_OID = "parentkoulutusmoduuli_s";
+        protected static final String SIBLING_KOMOTOS = "siblingkomotos_ss";
     }
 
     /**

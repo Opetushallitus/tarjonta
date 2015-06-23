@@ -4,6 +4,7 @@ import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
 import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
@@ -35,6 +36,9 @@ import static org.mockito.Mockito.when;
 public class KoulutusToSolrDocumentTest {
 
     private KoodistoHelper koodistoHelper = new KoodistoHelper();
+
+    @Mock
+    private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
     @Mock
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
