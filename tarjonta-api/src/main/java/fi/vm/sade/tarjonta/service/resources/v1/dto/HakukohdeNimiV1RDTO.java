@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 public class HakukohdeNimiV1RDTO implements Serializable {
@@ -33,6 +34,8 @@ public class HakukohdeNimiV1RDTO implements Serializable {
 
     private Map<String, String> hakuKausi;
     private Map<String, String> koulutusKausi;
+
+    private List<String> opetuskielet;
 
     public String getTarjoajaOid() {
         return tarjoajaOid;
@@ -112,6 +115,14 @@ public class HakukohdeNimiV1RDTO implements Serializable {
 
     public void setKoulutusKausi(Map<String, String> koulutusKausi) {
         this.koulutusKausi = koulutusKausi;
+    }
+
+    public List<String> getOpetuskielet() {
+        return opetuskielet;
+    }
+
+    public void setOpetuskielet(List<String> opetuskielet) {
+        this.opetuskielet = opetuskielet;
     }
 
 }
