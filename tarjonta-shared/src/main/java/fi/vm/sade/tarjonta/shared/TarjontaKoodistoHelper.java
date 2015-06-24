@@ -157,6 +157,14 @@ public class TarjontaKoodistoHelper {
         return splitKoodiURIWithVersion(koodiUriWithVersion)[0];
     }
 
+    public static String getKoodiUriWithoutVersion(String koodiUri) {
+        if (koodiUri == null) {
+            return null;
+        }
+
+        return koodiUri.split("#")[0];
+    }
+
     /**
      * Get koodi version from versioned URI. -1 means no version could be
      * extracted.
