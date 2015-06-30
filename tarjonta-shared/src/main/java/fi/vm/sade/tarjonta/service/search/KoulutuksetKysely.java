@@ -26,6 +26,7 @@ public class KoulutuksetKysely implements Serializable {
     private String koulutuksenAlkamiskausi;
     private String koulutusKoodi;
     private String koulutusOid;
+    private boolean showAllKoulutukset = false;
     private List<String> koulutuskoodis = new ArrayList<String>();
     private List<String> opintoalakoodis = new ArrayList<String>();
     private List<String> koulutusalakoodis = new ArrayList<String>();
@@ -298,6 +299,14 @@ public class KoulutuksetKysely implements Serializable {
 
     public List<String> getKoulutusalakoodis() {
         return koulutusalakoodis;
+    }
+
+    public boolean showAllKoulutukset() {
+        return showAllKoulutukset;
+    }
+
+    public void setShowAllKoulutukset(boolean showAllKoulutukset) {
+        this.showAllKoulutukset = showAllKoulutukset;
     }
 
 }

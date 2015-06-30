@@ -114,7 +114,9 @@ public class KoulutusSearchService extends SearchService {
         final List<String> queryParts = Lists.newArrayList();
 
         addFilterForNimi(nimi, q, queryParts);
-        addFilterForTila(koulutuksenTila, q);
+        if (!kysely.showAllKoulutukset()) {
+            addFilterForTila(koulutuksenTila, q);
+        }
         addFilterForKoulutuskoodi(kysely, q);
         addFilterForKoulutuslaji(kysely, q);
         addFilterForKoulutusOid(kysely, q);

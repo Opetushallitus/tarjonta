@@ -1031,6 +1031,10 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         q.getTarjoajaOids().addAll(organisationOids);
         q.getJarjestajaOids().addAll(jarjestajaOids);
         q.getKoulutusOids().addAll(koulutusOids);
+        if ("KAIKKI".equals(komotoTila)) {
+            q.setShowAllKoulutukset(true);
+            komotoTila = null;
+        }
         q.setKoulutuksenTila(komotoTila == null ? null : fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(komotoTila).asDto());
         q.getKoulutusasteTyypit().addAll(koulutusastetyyppi);
         q.getKoulutustyyppi().addAll(koulutustyyppi);
