@@ -55,6 +55,8 @@ public class TarjontaKoodistoHelper {
     private KoodistoService _koodistoService;
     @Autowired
     private KoodiService koodiService;
+    @Autowired
+    private KoodistoProactiveCaching koodistoProactiveCaching;
 
     public TarjontaKoodistoHelper() {
         LOG.info("*** TarjontaKoodistoHelper ***");
@@ -229,6 +231,14 @@ public class TarjontaKoodistoHelper {
 
         if (koodiUriWithPossibleVersionInformation == null) {
             return result;
+        }
+
+        result = koodistoProactiveCaching.getKoodi(koodiUriWithPossibleVersionInformation);
+        if (result != null) {
+            return result;
+        }
+        else {
+            LOG.info("Koodi not in preloaded cache: {}", koodiUriWithPossibleVersionInformation);
         }
 
         try {

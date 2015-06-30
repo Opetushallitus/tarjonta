@@ -1,0 +1,47 @@
+package fi.vm.sade.tarjonta.service.tasks;
+
+import fi.vm.sade.tarjonta.shared.KoodistoProactiveCaching;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+@Service
+@EnableScheduling
+@Profile("default")
+public class PreloadKoodisto {
+
+    @Autowired
+    KoodistoProactiveCaching koodistoProactiveCaching;
+
+    // Kerran vuorokaudessa
+    @Scheduled(fixedDelay=1000 * 60 * 60 * 24)
+    public void loadKoodistot() {
+        koodistoProactiveCaching.clearCache();
+
+        koodistoProactiveCaching.cacheKoodisto("koulutus");
+        koodistoProactiveCaching.cacheKoodisto("koulutus", 1);
+        koodistoProactiveCaching.cacheKoodisto("koulutus", 2);
+        koodistoProactiveCaching.cacheKoodisto("kieli");
+        koodistoProactiveCaching.cacheKoodisto("kausi");
+        koodistoProactiveCaching.cacheKoodisto("tutkintonimikkeet");
+        koodistoProactiveCaching.cacheKoodisto("osaamisala");
+        koodistoProactiveCaching.cacheKoodisto("osaamisala", 1);
+        koodistoProactiveCaching.cacheKoodisto("koulutusohjelmaamm");
+        koodistoProactiveCaching.cacheKoodisto("lukiolinjat");
+        koodistoProactiveCaching.cacheKoodisto("pohjakoulutusvaatimustoinenaste");
+        koodistoProactiveCaching.cacheKoodisto("koulutuslaji");
+        koodistoProactiveCaching.cacheKoodisto("koulutustyyppi");
+        koodistoProactiveCaching.cacheKoodisto("koulutustyyppi", 1);
+        koodistoProactiveCaching.cacheKoodisto("koulutusasteoph2002");
+        koodistoProactiveCaching.cacheKoodisto("koulutusalaoph2002");
+        koodistoProactiveCaching.cacheKoodisto("opintoalaoph2002");
+        koodistoProactiveCaching.cacheKoodisto("opintojenlaajuus");
+        koodistoProactiveCaching.cacheKoodisto("opintojenlaajuusyksikko");
+        koodistoProactiveCaching.cacheKoodisto("eqf");
+        koodistoProactiveCaching.cacheKoodisto("suunniteltukesto");
+        koodistoProactiveCaching.cacheKoodisto("tutkinto");
+    }
+
+}
