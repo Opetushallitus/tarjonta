@@ -290,14 +290,7 @@ public class TarjontaKoodistoHelper {
 
     public KoodiType getKoodi(final String uri, int version) {
         Preconditions.checkNotNull(uri, "koodi URI cannot be null");
-        SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.koodiByUriAndVersion(uri, version);
-
-        List<KoodiType> queryResult = koodiService.searchKoodis(searchCriteria);
-        if (queryResult != null && queryResult.size() == 1) {
-            return queryResult.get(0);
-        } else {
-            return null;
-        }
+        return getKoodiByUri(uri + "#" + version);
     }
 
     /**

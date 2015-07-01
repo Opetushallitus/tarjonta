@@ -26,6 +26,8 @@ public class PreloadKoodisto {
         koodistoProactiveCaching.cacheKoodisto("kieli");
         koodistoProactiveCaching.cacheKoodisto("kausi");
         koodistoProactiveCaching.cacheKoodisto("tutkintonimikkeet");
+        koodistoProactiveCaching.cacheKoodisto("tutkintonimikekk");
+        koodistoProactiveCaching.cacheKoodisto("aiheet");
         koodistoProactiveCaching.cacheKoodisto("osaamisala");
         koodistoProactiveCaching.cacheKoodisto("osaamisala", 1);
         koodistoProactiveCaching.cacheKoodisto("koulutusohjelmaamm");
@@ -42,6 +44,12 @@ public class PreloadKoodisto {
         koodistoProactiveCaching.cacheKoodisto("eqf");
         koodistoProactiveCaching.cacheKoodisto("suunniteltukesto");
         koodistoProactiveCaching.cacheKoodisto("tutkinto");
+        koodistoProactiveCaching.cacheKoodisto("ammattiluokitus");
+        koodistoProactiveCaching.cacheKoodisto("opetusmuoto");
+        koodistoProactiveCaching.cacheKoodisto("opetusmuotokk");
+        koodistoProactiveCaching.cacheKoodisto("opetusaikakk");
+        koodistoProactiveCaching.cacheKoodisto("opetuspaikkakk");
+        koodistoProactiveCaching.cacheKoodisto("lukiodiplomit");
     }
 
 }
