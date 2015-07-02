@@ -11,7 +11,7 @@ public class HakukohdeHakutulosV1RDTO extends KoulutusHakutulosV1RDTO {
     private static final long serialVersionUID = 1L;
 
     private Map<String, String> hakutapa;
-    private Map<String, String> aloituspaikatKuvaukset = new HashMap<String, String>();
+    private Map<String, String> aloituspaikatKuvaukset;
     private String hakuaikaString;
     private String hakuaikaRyhma;
     private Integer aloituspaikat;

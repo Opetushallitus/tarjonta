@@ -130,7 +130,23 @@
                     </tr>
 
                     <!-- aloituspaikat -->
-                    <tr class="aloituspaikatKuvaukset">
+                    <tr class="aloituspaikatKuvaukset" ng-if="!model.hakukohde.aloituspaikatKuvaukset">
+                        <th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat">Hakijoille ilmoitettavat aloituspaikat</th>
+                        <td>
+                            <input name="aloituspaikatlkm" ng-disabled="model.isPartiallyDeEnabled"
+                                   class="thin" type="number" ng-pattern="model.integerval" min="1" max="999"
+                                   ng-model="model.hakukohde.aloituspaikatLkm" />
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && editHakukohdeForm.aloituspaikatlkm.$invalid"
+                               tt="tarjonta.hakukohde.aloituspaikatlkm.validation.failed">Tarkista aloituspaikat</p>
+                        </td>
+                    </tr>
+                    <!-- vuodeksi 2015 muutettiin aloituspaikat monikieliseksi tekstiksi,
+                    mutta vuodesta 2016 eteenpäin halutaan taas käyttää pelkkää numerokenttää. Olemassa olevien
+                    monikielisten aloituspaikkojen muokkaus pitää edelleen toimia normaalisti, siksi alla oleva
+                    tarvitaan ainakin joksikin aikaa eteenpäin -->
+                    <tr class="aloituspaikatKuvaukset" ng-if="model.hakukohde.aloituspaikatKuvaukset">
                         <th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat">Hakijoille ilmoitettavat aloituspaikat</th>
                         <td>
                             <mk-textfield show-user-languages="false" model="model.hakukohde.aloituspaikatKuvaukset"></mk-textfield>

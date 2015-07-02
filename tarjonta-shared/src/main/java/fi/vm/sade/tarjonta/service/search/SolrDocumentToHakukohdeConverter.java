@@ -134,6 +134,7 @@ public class SolrDocumentToHakukohdeConverter {
 
     private void copyAloituspaikatKuvaus(HakukohdePerustieto hakukohde, SolrDocument hakukohdeDoc) {
         if (hakukohdeDoc.getFieldValues(ALOITUSPAIKAT_KUVAUKSET) != null) {
+            hakukohde.setAloituspaikatKuvaukset(new HashMap<String, String>());
             ArrayList<Object> kuvaukset = new ArrayList<Object>(hakukohdeDoc.getFieldValues(ALOITUSPAIKAT_KUVAUKSET));
             ArrayList<Object> kuvauksienKielet = new ArrayList<Object>(hakukohdeDoc.getFieldValues(ALOITUSPAIKAT_KIELET));
             for (int i = 0; i < kuvaukset.size(); i++) {

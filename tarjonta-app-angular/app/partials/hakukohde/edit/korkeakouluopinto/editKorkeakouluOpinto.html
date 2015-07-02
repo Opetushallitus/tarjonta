@@ -103,10 +103,13 @@
                     <tr>
                         <th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat">Hakijoille ilmoitettavat aloituspaikat</th>
                         <td>
-                            <mk-textfield show-user-languages="false" model="model.hakukohde.aloituspaikatKuvaukset"></mk-textfield>
+                            <input name="aloituspaikatlkm" ng-disabled="model.isPartiallyDeEnabled"
+                                   class="thin" type="number" ng-pattern="model.integerval" min="1" max="999"
+                                   ng-model="model.hakukohde.aloituspaikatLkm" />
                         </td>
                         <td>
-                            <p class="error" ng-show="model.showError && model.aloituspaikatKuvauksetFailed" tt="hakukohde.edit.aloituspaikatKuvaukset.too.long">Kuvaus voi olla enintään 20 merkkiä pitkä.</p>
+                            <p class="error" ng-show="model.showError && editHakukohdeForm.aloituspaikatlkm.$invalid"
+                               tt="tarjonta.hakukohde.aloituspaikatlkm.validation.failed">Tarkista aloituspaikat</p>
                         </td>
                     </tr>
 

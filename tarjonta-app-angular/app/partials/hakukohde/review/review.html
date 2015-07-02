@@ -74,14 +74,14 @@
                     </td>
                 </tr>
 
-                <tr ng-show="isKK">
+                <tr ng-if="isKK && model.hakukohde.aloituspaikatKuvaukset">
                     <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
                     <td colspan="2">
                         <mk-text model="model.hakukohde.aloituspaikatKuvaukset" display="rows"/>
                     </td>
                 </tr>
 
-                <tr ng-show="isAiku || config.isToisenAsteenKoulutus()">
+                <tr ng-if="(isKK && !model.hakukohde.aloituspaikatKuvaukset) ||  isAiku || config.isToisenAsteenKoulutus()">
                     <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
                     <td colspan="2">
                         {{ model.hakukohde.aloituspaikatLkm != 0 ? model.hakukohde.aloituspaikatLkm : ''}}

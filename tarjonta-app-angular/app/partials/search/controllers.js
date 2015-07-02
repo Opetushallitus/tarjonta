@@ -177,6 +177,9 @@ angular.module('app.search.controllers', [
             case 'aloituspaikat':
                 if (row.koulutusasteTyyppi === 'KORKEAKOULUTUS') {
                     var locale = LocalisationService.getLocale();
+                    if (!row.aloituspaikatKuvaukset) {
+                        return row.aloituspaikat || '';
+                    }
                     return row.aloituspaikatKuvaukset[locale] || row.aloituspaikatKuvaukset.fi ||
                         row.aloituspaikatKuvaukset.sv || row.aloituspaikatKuvaukset.en ||
                         row.aloituspaikatKuvaukset[Object.keys(row.aloituspaikatKuvaukset)[0]];

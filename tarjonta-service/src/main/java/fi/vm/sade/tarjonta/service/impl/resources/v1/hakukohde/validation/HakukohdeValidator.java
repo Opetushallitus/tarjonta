@@ -154,10 +154,12 @@ public class HakukohdeValidator {
             }
         }
 
-        for (String kuvaus : hakukohdeRDTO.getAloituspaikatKuvaukset().values()) {
-            if (kuvaus.length() > 20) {
-                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_ALOITUSPAIKAT_KUVAUS_TOO_LONG);
-                break;
+        if (hakukohdeRDTO.getAloituspaikatKuvaukset() != null) {
+            for (String kuvaus : hakukohdeRDTO.getAloituspaikatKuvaukset().values()) {
+                if (kuvaus.length() > 20) {
+                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_ALOITUSPAIKAT_KUVAUS_TOO_LONG);
+                    break;
+                }
             }
         }
 

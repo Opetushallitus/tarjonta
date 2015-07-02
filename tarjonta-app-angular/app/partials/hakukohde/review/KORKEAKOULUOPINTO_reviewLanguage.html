@@ -35,7 +35,7 @@
         <tr>
             <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
             <td colspan="2">
-                <mk-text model="model.hakukohde.aloituspaikatKuvaukset" display="rows"/>
+                {{ model.hakukohde.aloituspaikatLkm != 0 ? model.hakukohde.aloituspaikatLkm : ''}}
             </td>
         </tr>
 
