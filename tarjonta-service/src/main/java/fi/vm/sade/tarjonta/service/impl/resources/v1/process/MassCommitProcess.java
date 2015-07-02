@@ -280,14 +280,14 @@ public class MassCommitProcess {
                     if (hakuaika.getAlkamisPvm() != null) {
                         hakuaika.setAlkamisPvm(dateToNextYear(hakuaika.getAlkamisPvm()));
                     }
+                }
 
-                    if (haku.getKoulutuksenAlkamisVuosi() != null) {
-                        haku.setKoulutuksenAlkamisVuosi(haku.getKoulutuksenAlkamisVuosi() + 1);
-                    }
+                if (haku.getKoulutuksenAlkamisVuosi() != null) {
+                    haku.setKoulutuksenAlkamisVuosi(haku.getKoulutuksenAlkamisVuosi() + 1);
+                }
 
-                    if (haku.getHakukausiVuosi() != null) {
-                        haku.setHakukausiVuosi(haku.getHakukausiVuosi() + 1);
-                    }
+                if (haku.getHakukausiVuosi() != null) {
+                    haku.setHakukausiVuosi(haku.getHakukausiVuosi() + 1);
                 }
 
                 targetHakuoid = haku.getOid();
