@@ -117,8 +117,7 @@ app.controller('HakukohdeParentController', [
                 }
             },
             disableConfigurableHakuaika: [
-                'VAPAAN_SIVISTYSTYON_KOULUTUS',
-                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA'
+                'VAPAAN_SIVISTYSTYON_KOULUTUS'
             ]
         };
         /**
