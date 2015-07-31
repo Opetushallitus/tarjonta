@@ -131,9 +131,6 @@ public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements 
     @Column(name = "ulkoinentunniste")
     private String ulkoinenTunniste;
 
-    @Column(name = "kandi_koulutus_uri")
-    private String kandidaatinKoulutusUri;
-
     @PreUpdate
     protected void beforeUpdate() {
         if (!this.skipPreUpdate) {
@@ -449,20 +446,6 @@ public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements 
      */
     public void setUlkoinenTunniste(String ulkoinenTunniste) {
         this.ulkoinenTunniste = ulkoinenTunniste;
-    }
-
-    /**
-     * An optional Koodisto koulutus-koodi uri for kandidate.
-     */
-    public String getKandidaatinKoulutusUri() {
-        return kandidaatinKoulutusUri;
-    }
-
-    /**
-     * An optional Koodisto koulutus-koodi uri for kandidate.
-     */
-    public void setKandidaatinKoulutusUri(String kandidaatinKoulutuskoodi) {
-        this.kandidaatinKoulutusUri = kandidaatinKoulutuskoodi;
     }
 
     /**

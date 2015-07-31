@@ -123,6 +123,10 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             dto.setChildren(children);
         }
 
+        if (!komoto.getSisaltyvatKoulutuskoodit().isEmpty()) {
+            dto.setSisaltyvatKoulutuskoodit(commonConverter.convertToKoodiUrisDTO(komoto.getSisaltyvatKoulutuskoodit(), null, param));
+        }
+
         dto.setIsAvoimenYliopistonKoulutus(komoto.getIsAvoimenYliopistonKoulutus());
 
         //KOMO
@@ -137,17 +141,12 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             final boolean useKomotoName = komoto.getNimi() != null && !komoto.getNimi().getTekstiKaannos().isEmpty(); //OVT-7531
             kkDto.setKoulutusohjelma(commonConverter.koulutusohjelmaUiMetaDTO(useKomotoName ? komoto.getNimi() : komo.getNimi(), FieldNames.KOULUTUSOHJELMA, param));
 
-            if (komo.getKandidaatinKoulutusUri() != null || komoto.getKandidaatinKoulutusUri() != null) {
-                /*
-                 Without the null check response json will look like this:
-                 "kandidaatinKoulutuskoodi" : {
-                 "uri" : "",
-                 "versio" : -1,
-                 "arvo" : "",
-                 "nimi" : ""
-                 }
-                 */
-                kkDto.setKandidaatinKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKandidaatinKoulutusUri(), komoto.getKandidaatinKoulutusUri(), FieldNames.KOULUTUSKOODI_KANDIDAATTI, YES, param));
+            // Taaksepäin yhteensopivuuden takaamiseksi
+            // KI käyttää vielä tätä kenttää, uusi kenttä on dto.getSisaltyvatKoulutuskoodit
+            if (!komoto.getSisaltyvatKoulutuskoodit().isEmpty()) {
+                kkDto.setKandidaatinKoulutuskoodi(commonConverter.convertToKoodiDTO(
+                    komoto.getSisaltyvatKoulutuskoodit().iterator().next().getKoodiUri(), null, FieldNames.KOULUTUSKOODI_KANDIDAATTI, YES, param
+                ));
             }
 
             kkDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(getTutkintonimikes(komoto, komo), FieldNames.TUTKINTONIMIKE, param));

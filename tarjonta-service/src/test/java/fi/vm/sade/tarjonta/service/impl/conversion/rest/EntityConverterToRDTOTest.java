@@ -128,7 +128,6 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect_komo_x(returnKomoto, returnKomoto, FieldNames.EQF, YES);
         expect_komo_x(returnKomoto, returnKomoto, FieldNames.NQF, YES);
         expect_koulutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS, returnKomoto, FieldNames.KOULUTUSTYYPPI, NO);
-        expect_komo_x(returnKomoto, returnKomoto, FieldNames.KOULUTUSKOODI_KANDIDAATTI, YES);
         //  expectNull(returnKomoto, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);  //correct as the tyyppi is only in komoto
 
         EasyMock.replay(komoKuvausConvertersMock);
@@ -167,7 +166,6 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect_null_komo_x(returnKomoto, returnKomoto, FieldNames.EQF, YES);
         expect_null_komo_x(returnKomoto, returnKomoto, FieldNames.NQF, YES);
         expect_koulutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS, returnKomoto, FieldNames.KOULUTUSTYYPPI, NO);
-        expect_null_komo_x(returnKomoto, returnKomoto, FieldNames.KOULUTUSKOODI_KANDIDAATTI, YES);
         //expectNull(returnKomoto, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);  //correct as the tyyppi is only in komoto
 
         EasyMock.replay(komoKuvausConvertersMock);
@@ -206,7 +204,6 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect_komo_x(returnKomo, NO_URI, FieldNames.EQF, YES);
         expect_komo_x(returnKomo, NO_URI, FieldNames.NQF, YES);
         expect_koulutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS, returnKomo, FieldNames.KOULUTUSTYYPPI, NO);
-        expect_komo_x(returnKomo, NO_URI, FieldNames.KOULUTUSKOODI_KANDIDAATTI, YES);
         // expectNull(Type.RETURN_NULL, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);  //correct as the tyyppi is only in komoto
 
         EasyMock.replay(komoKuvausConvertersMock);
@@ -392,7 +389,6 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         assertEquals(testKey(type, FieldNames.TUNNISTE), convert.getTunniste());
         assertEquals(testKey(type, FieldNames.NQF), convert.getNqf().getUri());
         assertEquals(testKey(type, FieldNames.EQF), convert.getEqf().getUri());
-        assertEquals(testKey(type, FieldNames.KOULUTUSKOODI_KANDIDAATTI), convert.getKandidaatinKoulutuskoodi().getUri());
     }
 
     private void assertLukio(final KoulutusLukioV1RDTO convert, final Type type) {

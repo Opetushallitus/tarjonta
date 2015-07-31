@@ -579,7 +579,6 @@ public class KoulutusDTOConverterToEntity {
         //other data
         komo.setOmistajaOrganisaatioOid(organisationOId); //is this correct?
         //Kandidaatti can be null object:
-        komo.setKandidaatinKoulutusUri(commonConverter.convertToUri(dto.getKandidaatinKoulutuskoodi(), FieldNames.KOULUTUSKOODI_KANDIDAATTI, ALLOW_NULL_KOODI_URI));
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.valueOf(dto.getKoulutusmoduuliTyyppi().name()));
         komo.setKoulutustyyppiEnum(ModuulityyppiEnum.KORKEAKOULUTUS);
         komo.setKoulutustyyppiUri(toListUri(dto.getToteutustyyppi()));
@@ -597,7 +596,6 @@ public class KoulutusDTOConverterToEntity {
         convertKomotoCommonData(komoto, dto, userOid);
 
         komoto.setSuunniteltuKesto(commonConverter.convertToUri(dto.getSuunniteltuKestoTyyppi(), FieldNames.SUUNNITELTUKESTO, ALLOW_NULL_KOODI_URI), dto.getSuunniteltuKestoArvo());
-        komoto.setKandidaatinKoulutusUri(commonConverter.convertToUri(dto.getKandidaatinKoulutuskoodi(), FieldNames.KOULUTUSKOODI_KANDIDAATTI, ALLOW_NULL_KOODI_URI));
         komoto.setTutkintonimikes(commonConverter.convertToUris(dto.getTutkintonimikes(), null, FieldNames.TUTKINTONIMIKE));
         komoto.setKkPohjakoulutusvaatimus(commonConverter.convertToUris(dto.getPohjakoulutusvaatimukset(), komoto.getKkPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUS));
         komoto.setAmmattinimikes(commonConverter.convertToUris(dto.getAmmattinimikkeet(), null, FieldNames.AMMATTINIMIKKEET));
@@ -754,6 +752,10 @@ public class KoulutusDTOConverterToEntity {
         komoto.setLastUpdatedByOid(userOid);
         komoto.setHintaString(dto.getHintaString());
         komoto.setMaksullisuus(dto.getOpintojenMaksullisuus());
+
+        if (dto.getSisaltyvatKoulutuskoodit() != null) {
+            komoto.setSisaltyvatKoulutuskoodit(commonConverter.convertToUris(dto.getSisaltyvatKoulutuskoodit(), null, null));
+        }
 
         updateOwners(komoto, dto);
 

@@ -73,6 +73,13 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> koulutuslajis = new HashSet<KoodistoUri>();
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = TABLE_NAME + "_sisaltyvat_koulutuskoodit",
+            joinColumns = @JoinColumn(name = TABLE_NAME + "_id")
+    )
+    private Set<KoodistoUri> sisaltyvatKoulutuskoodit = new HashSet<KoodistoUri>();
+
     @Deprecated
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_teema", joinColumns
@@ -1315,6 +1322,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public void setOpintopolkuAlkamiskausi(OpintopolkuAlkamiskausi.KaudetEnum opintopolkuAlkamiskausi) {
         this.opintopolkuAlkamiskausi = opintopolkuAlkamiskausi;
+    }
+
+    public Set<KoodistoUri> getSisaltyvatKoulutuskoodit() {
+        return sisaltyvatKoulutuskoodit;
+    }
+
+    public void setSisaltyvatKoulutuskoodit(Set<KoodistoUri> sisaltyvatKoulutuskoodit) {
+        this.sisaltyvatKoulutuskoodit = sisaltyvatKoulutuskoodit;
     }
 
 }

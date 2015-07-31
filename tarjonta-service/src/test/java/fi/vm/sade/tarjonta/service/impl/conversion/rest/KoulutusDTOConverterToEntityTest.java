@@ -109,7 +109,6 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         dto.setNqf(toKoodiUri(Type.BOTH, FieldNames.NQF));
         dto.setEqf(toKoodiUri(Type.BOTH, FieldNames.EQF));
         dto.setTunniste(testKey(Type.BOTH, FieldNames.TUNNISTE));
-        dto.setKandidaatinKoulutuskoodi(toKoodiUri(Type.BOTH, FieldNames.KOULUTUSKOODI_KANDIDAATTI));
         dto.setOpintojenMaksullisuus(false);
 
         //expect(koulutusmoduuliDAOMock.findByOid(KOMO_OID)).andReturn(m);
@@ -321,7 +320,6 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         assertEquals(testKey(Type.BOTH, FieldNames.TUNNISTE), komo.getUlkoinenTunniste());
         assertEquals(testKey(type, FieldNames.NQF), komo.getNqfUri());
         assertEquals(testKey(type, FieldNames.EQF), komo.getEqfUri());
-        assertEquals(testKey(type, FieldNames.KOULUTUSKOODI_KANDIDAATTI), komo.getKandidaatinKoulutusUri());
     }
 
     private void kkCommonExpect(Type type) {
@@ -336,7 +334,6 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         expectFieldNullable(FieldNames.NQF, type);
         expectFieldNullable(FieldNames.EQF, type);
         expectFieldNullable(FieldNames.KOULUTUSTYYPPI, type);
-        expectFieldNullable(FieldNames.KOULUTUSKOODI_KANDIDAATTI, type);
         expectFields(FieldNames.TUTKINTONIMIKE, type);
     }
 }

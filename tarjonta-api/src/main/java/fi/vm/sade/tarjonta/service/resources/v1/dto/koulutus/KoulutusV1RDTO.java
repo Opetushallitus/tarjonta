@@ -171,6 +171,9 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     @ApiModelProperty(value = "Map-rakenne ylimääräisille parametreille, joita voi tarvittaessa hyödyntää tallennuksen yhteydessä")
     private Map<String, String> extraParams;
 
+    @ApiModelProperty(value = "Koulutukseen sisältyvät koulutuskoodit", required = false)
+    private KoodiUrisV1RDTO sisaltyvatKoulutuskoodit;
+
     public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         this.setToteutustyyppi(toteutustyyppi);
         this.moduulityyppi = moduulityyppi;
@@ -662,6 +665,14 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
 
     public void setExtraParams(Map<String, String> extraParams) {
         this.extraParams = extraParams;
+    }
+
+    public KoodiUrisV1RDTO getSisaltyvatKoulutuskoodit() {
+        return sisaltyvatKoulutuskoodit;
+    }
+
+    public void setSisaltyvatKoulutuskoodit(KoodiUrisV1RDTO sisaltyvatKoulutuskoodit) {
+        this.sisaltyvatKoulutuskoodit = sisaltyvatKoulutuskoodit;
     }
 
 }

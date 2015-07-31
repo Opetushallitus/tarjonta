@@ -118,16 +118,18 @@
         </tr>
 
          <tr>
-            <th tt="koulutus.edit.koulutuskoodi-kandidaatti">Koulutukseen sisältyy kandidaatin koulutus</th>
+            <th tt="koulutus.edit.sisaltyvatKoulutukset">Koulutukseen sisältyvät koulutukset</th>
             <td>
-                <a href="" ng-if="!isKandiUri()" ng-click="createSelectKoulutuskoodiModalDialog()" tt="koulutus.edit.lisaa">Lisää</a>
-                {{model.kandidaatinKoulutuskoodi.nimi}} {{model.kandidaatinKoulutuskoodi.arvo}} <a href="" ng-if="isKandiUri()" ng-click="removeKandidaatinKoulutuskoodi()" tt="koulutus.edit.poista">Poista</a>
+                <ul>
+                    <li ng-repeat="(uri, koodi) in model.sisaltyvatKoulutuskoodit.meta">
+                        {{koodi.nimi}} {{koodi.arvo}}
+                        <a href="" ng-click="removeSisaltyvaKoulutus(uri)" tt="koulutus.edit.poista">Poista</a>
+                    </li>
+                </ul>
+                <a href="" ng-click="tutkintoDialogModel.open('sisaltyvaKoulutus')" tt="koulutus.edit.lisaa">Lisää</a>
             </td>
             <td></td>
-
-
         </tr>
-
 
         <!-- väli -->
         <tr class="padding"><td colspan="3"><hr/></td></tr>

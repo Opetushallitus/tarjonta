@@ -97,7 +97,6 @@ abstract class KoulutusRestBase {
         m.setNqfUri(testKey(type, FieldNames.NQF));
         m.setEqfUri(testKey(type, FieldNames.EQF));
         m.setKoulutustyyppiUri(testKey(type, FieldNames.KOULUTUSTYYPPI));
-        m.setKandidaatinKoulutusUri(testKey(type, FieldNames.KOULUTUSKOODI_KANDIDAATTI));
     }
 
     protected static void lukioPopulateBaseValues(EntityConverterToRDTOTest.Type type, BaseKoulutusmoduuli m) {

@@ -32,7 +32,9 @@ app.controller('EditKorkeakouluController', function EditKorkeakouluController($
         }
     };
 
-    $scope.tutkintoDialogModel.open = function() {
+    $scope.tutkintoDialogModel.open = function(type) {
+        type = type || 'changeKoulutus';
+
         var org = $scope.model.organisaatio.oid;
 
         var orgPromises = [];
@@ -58,42 +60,43 @@ app.controller('EditKorkeakouluController', function EditKorkeakouluController($
                         return uris;
                     }
                 }
-            }).result.then(function(selectedItem) {
-                if (selectedItem) {
-                    $scope.model.koulutuskoodi = {
-                        arvo: selectedItem.koodiArvo,
-                        nimi: selectedItem.koodiNimi,
-                        uri: selectedItem.koodiUri,
-                        versio: selectedItem.koodiVersio
-                    };
+            }).result.then(function(result) {
+
+                var actions = {
+                    sisaltyvaKoulutus: function() {
+                        $scope.model.sisaltyvatKoulutuskoodit = $scope.model.sisaltyvatKoulutuskoodit || {};
+                        _.defaults($scope.model.sisaltyvatKoulutuskoodit, {
+                            meta: {},
+                            uris: {}
+                        });
+                        $scope.model.sisaltyvatKoulutuskoodit.meta[result.koodiUri] = {
+                            nimi: result.koodiNimi,
+                            arvo: result.koodiArvo
+                        };
+                        $scope.model.sisaltyvatKoulutuskoodit.uris[result.koodiUri] = result.koodiVersio;
+                    },
+                    changeKoulutus: function() {
+                        $scope.model.koulutuskoodi = {
+                            arvo: result.koodiArvo,
+                            nimi: result.koodiNimi,
+                            uri: result.koodiUri,
+                            versio: result.koodiVersio
+                        };
+                    }
+                };
+
+                if (result) {
+                    actions[type]();
                 }
             });
         });
     };
 
-    $scope.removeKandidaatinKoulutuskoodi = function(koodi) {
-        $scope.model.kandidaatinKoulutuskoodi = {};
+    $scope.removeSisaltyvaKoulutus = function(koodi) {
+        delete $scope.model.sisaltyvatKoulutuskoodit.uris[koodi];
+        delete $scope.model.sisaltyvatKoulutuskoodit.meta[koodi];
     };
-    $scope.createSelectKoulutuskoodiModalDialog = function(koodi) {
-        var modalInstance = $modal.open({
-            templateUrl: 'partials/koulutus/edit/korkeakoulu/selectTutkintoOhjelma.html',
-            controller: 'SelectTutkintoOhjelmaController',
-            resolve: {
-                targetFilters: function() {
-                    return [Config.app['koodisto-uri.tutkintotyyppi.alempiKorkeakoulututkinto']];
-                }
-            }
-        });
-        modalInstance.result.then(function(result) {
-            /* close */
-            $scope.model.kandidaatinKoulutuskoodi = {
-                arvo: result.koodiArvo,
-                uri: result.koodiUri,
-                versio: result.koodiVersio,
-                nimi: result.koodiNimi
-            };
-        }, function() {});
-    };
+
     $scope.isKandiUri = function() {
         var kandiObj = $scope.model.kandidaatinKoulutuskoodi;
         return angular.isDefined(kandiObj) && kandiObj !== null && angular.isDefined(kandiObj.uri) &&

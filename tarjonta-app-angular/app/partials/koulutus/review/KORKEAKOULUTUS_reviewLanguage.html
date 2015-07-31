@@ -112,10 +112,13 @@
 
      <!-- kandidaatin koulutuskoodi (optional) -->
     <tr>
-        <th tt="koulutus.review.koulutuskoodi-kandidaatti">Koulutukseen sisältyy kandidaatin koulutus</th>
+        <th tt="koulutus.review.sisaltyvatKoulutukset">Koulutukseen sisältyvät koulutukset</th>
         <td colspan="2">
-            {{model.koulutus.kandidaatinKoulutuskoodi.meta[lang.koodi_uri].nimi}}
-            <i>{{model.koulutus.kandidaatinKoulutuskoodi.arvo}}</i>
+            <ul>
+                <li ng-repeat="(uri, koodi) in model.koulutus.sisaltyvatKoulutuskoodit.meta">
+                    {{koodi.meta[lang.koodi_uri].nimi}} <i>{{koodi.arvo}}</i>
+                </li>
+            </ul>
         </td>
     </tr>
 
