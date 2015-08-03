@@ -25,7 +25,7 @@
                tt="koulutus.edit.koulutuskoodi.required">Koulutus vaaditaan</p>
         </td>
     </tr>
-    <tr class="required" ng-if="uiModel.enableOsaamisala || model.koulutusohjelma.nimi">
+    <tr class="required" ng-if="uiModel.enableOsaamisala || model.koulutusohjelma.uri">
         <th tt="koulutus.edit.osaamisala">Osaamisala</th>
         <td>
             <select required class="span5" name="koulutusohjelma" ng-if="model.oid === Undefined" class="thin" ng-model="model.koulutusohjelma.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.koulutusohjelma | orderBy:'koodiNimi'">
