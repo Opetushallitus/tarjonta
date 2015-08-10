@@ -40,6 +40,7 @@ import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
+import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntity;
@@ -159,6 +160,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     @Autowired
     private OppiaineDAO oppiaineDAO;
 
+    @Autowired
+    private KoulutusPermissionService koulutusPermissionService;
+
     @Override
     public ResultV1RDTO<KoulutusV1RDTO> findByOid(String komotoOid, Boolean showMeta, Boolean showImg, String userLang) {
         Preconditions.checkNotNull(komotoOid, "KOMOTO OID cannot be null.");
@@ -269,6 +273,16 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         if (!validAjankohta(dto)) {
             return ResultV1RDTO.create(ResultStatus.ERROR, null,
                     ErrorV1RDTO.createValidationError("alkamispvm", "koulutus.error.alkamispvm.ajankohtaerikuinhaulla"));
+        }
+
+        try {
+            koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
+        } catch (fi.vm.sade.generic.service.exception.NotAuthorizedException e) {
+            return ResultV1RDTO.create(
+                    ResultStatus.ERROR,
+                    null,
+                    ErrorV1RDTO.createValidationError("koulutusPermission", "koulutusNotAllowedForOrganization")
+            );
         }
 
         if (dto.getClass() == KoulutusKorkeakouluV1RDTO.class) {

@@ -29,16 +29,14 @@ import fi.vm.sade.security.SadeUserDetailsWrapper;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.koodisto.OppilaitosKoodiRelations;
-import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.impl.ContextDataServiceImpl;
+import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntity;
@@ -127,6 +125,7 @@ abstract class KoulutusBase {
     protected KoulutusResourceImplV1 instance;
     protected final DateTime DATE = new DateTime(VUOSI, 1, 1, 1, 1);
     protected OrganisaatioService organisaatioServiceMock;
+    protected KoulutusPermissionService koulutusPermissionServiceMock;
     @Autowired
     protected OidService oidService;
     protected EntityConverterToRDTO converterToRDTO;
@@ -181,6 +180,7 @@ abstract class KoulutusBase {
         commonConverter = new KoulutusCommonConverter();
         //CREATE MOCKS
         organisaatioServiceMock = createMock(OrganisaatioService.class);
+        koulutusPermissionServiceMock = createMock(KoulutusPermissionService.class);
         tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
         indexerResourceMock = createMock(IndexerResource.class);
         permissionChecker = createMock(PermissionChecker.class);
@@ -206,6 +206,7 @@ abstract class KoulutusBase {
         Whitebox.setInternalState(instance, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
         Whitebox.setInternalState(instance, "koulutusmoduuliDAO", koulutusmoduuliDAO);
         Whitebox.setInternalState(instance, "oppiaineDAO", oppiaineDAO);
+        Whitebox.setInternalState(instance, "koulutusPermissionService", koulutusPermissionServiceMock);
         Whitebox.setInternalState(instance, "publicationDataService", publicationDataService);
 
         Whitebox.setInternalState(converterToRDTO, "commonConverter", commonConverter);

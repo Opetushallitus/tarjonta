@@ -22,14 +22,18 @@ public class KoulutusPermissionDAOImpl extends AbstractJpaDAOImpl<KoulutusPermis
     }
 
     @Override
-    public List<KoulutusPermission> find(List<String> orgOids, String koodisto, String koodi_uri, Date alkuPvm, Date loppuPvm) {
+    public List<KoulutusPermission> find(List<String> orgOids, String koodisto, String koodiUri) {
+        return find(orgOids, koodisto, koodiUri, null, null);
+    }
+
+    @Override
+    public List<KoulutusPermission> find(List<String> orgOids, String koodisto, String koodiUri, Date alkuPvm, Date loppuPvm) {
 
         QKoulutusPermission qKoulutusPermission = QKoulutusPermission.koulutusPermission;
 
-
         BooleanExpression where = qKoulutusPermission.orgOid.in(orgOids)
                 .and(qKoulutusPermission.koodisto.eq(koodisto))
-                .and(qKoulutusPermission.koodiUri.eq(koodi_uri));
+                .and(qKoulutusPermission.koodiUri.eq(koodiUri));
 
         if (alkuPvm != null) {
             where.and(

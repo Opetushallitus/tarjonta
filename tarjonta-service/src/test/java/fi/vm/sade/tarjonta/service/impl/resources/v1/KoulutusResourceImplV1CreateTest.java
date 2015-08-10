@@ -6,6 +6,7 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
+import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
@@ -36,6 +37,9 @@ public class KoulutusResourceImplV1CreateTest {
 
     @Mock
     private PublicationDataService publicationDataService;
+
+    @Mock
+    private KoulutusPermissionService koulutusPermissionService;
 
     @InjectMocks
     private KoulutusResourceImplV1 koulutusResourceV1;

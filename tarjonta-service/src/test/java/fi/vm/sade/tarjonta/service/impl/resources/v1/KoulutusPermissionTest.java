@@ -17,13 +17,19 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import fi.vm.sade.generic.service.exception.NotAuthorizedException;
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
+import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.tasks.KoulutusPermissionSynchronizer;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOrgDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.powermock.reflect.Whitebox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -31,8 +37,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -41,14 +50,23 @@ import static org.junit.Assert.assertNull;
 @Transactional
 public class KoulutusPermissionTest {
 
+    static final String ORG_OID = "org1";
+
     @Autowired
     KoulutusPermissionDAO koulutusPermissionDAO;
 
     @Autowired
     KoulutusPermissionSynchronizer koulutusPermissionSynchronizer;
 
+    OrganisaatioService organisaatioServiceMock;
+
+    @Autowired
+    KoulutusPermissionService koulutusPermissionService;
+
     @Before
     public void setUp() {
+        organisaatioServiceMock = createMock(OrganisaatioService.class);
+        Whitebox.setInternalState(koulutusPermissionService, "organisaatioService", organisaatioServiceMock);
         koulutusPermissionDAO.removeAll();
     }
 
@@ -82,7 +100,8 @@ public class KoulutusPermissionTest {
         ObjectMapper objectMapper = new ObjectMapper();
         List<AmkouteOrgDTO> orgs = objectMapper.readValue(
                 new File("src/test/java/fi/vm/sade/tarjonta/service/impl/resources/v1/amkouteTestData.json"),
-                new TypeReference<List<AmkouteOrgDTO>>() {}
+                new TypeReference<List<AmkouteOrgDTO>>() {
+                }
         );
         assertEquals(5, orgs.size());
 
@@ -95,6 +114,126 @@ public class KoulutusPermissionTest {
         // And inserted all permissions from JSON
         List<KoulutusPermission> permissions = koulutusPermissionDAO.getAll();
         assertEquals(78, permissions.size());
+    }
+
+    @Test(expected = NotAuthorizedException.class)
+    public void testThatIsNotAllowedWhenKuntaIsNotPermitted() {
+        expectOrganization();
+        KoulutusV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
+        dto.getOrganisaatio().setOid(ORG_OID);
+        koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
+    }
+
+    @Test(expected = NotAuthorizedException.class)
+    public void testThatIsNotAllowedWhenKoulutusIsNotPermitted() {
+        insertKunta();
+        expectOrganization();
+        KoulutusV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
+        dto.getOrganisaatio().setOid(ORG_OID);
+        dto.setKoulutuskoodi(createCode("koulutus_1"));
+        koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
+    }
+
+    @Test(expected = NotAuthorizedException.class)
+    public void testThatIsNotAllowedWhenLanguageIsNotPermitted() {
+        insertKunta();
+
+        KoulutusPermission kieliFiPermission = new KoulutusPermission(ORG_OID, "kieli", "kieli_fi", null, null);
+        koulutusPermissionDAO.insert(kieliFiPermission);
+        KoulutusPermission kieliSvPermission = new KoulutusPermission(ORG_OID, "kieli", "kieli_sv", null, null);
+        koulutusPermissionDAO.insert(kieliSvPermission);
+        KoulutusPermission permission = new KoulutusPermission(ORG_OID, "koulutus", "koulutus_1", null, null);
+        koulutusPermissionDAO.insert(permission);
+
+        expectOrganization();
+        KoulutusV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
+        dto.getOrganisaatio().setOid(ORG_OID);
+        dto.setKoulutuskoodi(createCode("koulutus_1"));
+        dto.setOpetuskielis(getOpetuskielis(Lists.newArrayList("kieli_fi", "kieli_en")));
+
+        koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
+    }
+
+    @Test(expected = NotAuthorizedException.class)
+    public void testThatIsNotAllowedWhenOsaamisalaIsNotPermitted() {
+        insertKunta();
+
+        KoulutusPermission koulutusPermission = new KoulutusPermission(ORG_OID, "koulutus", "koulutus_1", null, null);
+        koulutusPermissionDAO.insert(koulutusPermission);
+        KoulutusPermission kieliPermission = new KoulutusPermission(ORG_OID, "kieli", "kieli_fi", null, null);
+        koulutusPermissionDAO.insert(kieliPermission);
+
+        expectOrganization();
+        KoulutusV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
+        dto.getOrganisaatio().setOid(ORG_OID);
+        dto.setKoulutuskoodi(createCode("koulutus_1"));
+        dto.setOpetuskielis(getOpetuskielis(Lists.newArrayList("kieli_fi")));
+        dto.setKoulutusohjelma(createOsaamisalaCode("osaamisala_1"));
+
+        koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
+    }
+
+    @Test
+    public void testThatIsAllowedToOrganize() {
+        insertKunta();
+
+        KoulutusPermission koulutusPermission = new KoulutusPermission(ORG_OID, "koulutus", "koulutus_1", null, null);
+        koulutusPermissionDAO.insert(koulutusPermission);
+        KoulutusPermission kieliFiPermission = new KoulutusPermission(ORG_OID, "kieli", "kieli_fi", null, null);
+        koulutusPermissionDAO.insert(kieliFiPermission);
+        KoulutusPermission kieliSvPermission = new KoulutusPermission(ORG_OID, "kieli", "kieli_sv", null, null);
+        koulutusPermissionDAO.insert(kieliSvPermission);
+        KoulutusPermission osaamisalaPermission = new KoulutusPermission(ORG_OID, "osaamisala", "osaamisala_1", null, null);
+        koulutusPermissionDAO.insert(osaamisalaPermission);
+
+        expectOrganization();
+        KoulutusV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
+        dto.getOrganisaatio().setOid(ORG_OID);
+        dto.setKoulutuskoodi(createCode("koulutus_1"));
+        dto.setOpetuskielis(getOpetuskielis(Lists.newArrayList("kieli_fi", "kieli_sv")));
+        dto.setKoulutusohjelma(createOsaamisalaCode("osaamisala_1"));
+
+        koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
+    }
+
+    private KoodiV1RDTO createCode(String uri) {
+        KoodiV1RDTO koodi = new KoodiV1RDTO();
+        koodi.setUri(uri);
+        return koodi;
+    }
+
+    private NimiV1RDTO createOsaamisalaCode(String uri) {
+        NimiV1RDTO code = new NimiV1RDTO();
+        code.setUri(uri);
+        return code;
+    }
+
+    private void expectOrganization() {
+        OrganisaatioDTO orgDto = new OrganisaatioDTO();
+        orgDto.setOid(ORG_OID);
+        orgDto.setParentOidPath("orgRoot|orgChild1|orgChild2|orgChild3");
+        orgDto.setKotipaikka("kunta_1");
+
+        expect(organisaatioServiceMock.findByOid(ORG_OID)).andReturn(orgDto);
+        replay(organisaatioServiceMock);
+    }
+
+    private void insertKunta() {
+        KoulutusPermission permission = new KoulutusPermission(ORG_OID, "kunta", "kunta_1", null, null);
+        koulutusPermissionDAO.insert(permission);
+    }
+
+    private KoodiUrisV1RDTO getOpetuskielis(List<String> opetuskielet) {
+        KoodiUrisV1RDTO uris = new KoodiUrisV1RDTO();
+        Map<String, Integer> map = new HashMap<String, Integer>();
+
+        for (String opetuskieli : opetuskielet) {
+            map.put(opetuskieli, 1);
+        }
+
+        uris.setUris(map);
+
+        return uris;
     }
 
 }
