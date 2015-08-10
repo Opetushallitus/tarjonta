@@ -109,7 +109,7 @@ public class KoulutusPermissionSynchronizer {
                 permissions.add(new KoulutusPermission(
                         org.getOid(),
                         "koulutus",
-                        "koulutus_ " + permissionDto.getTutkinto(),
+                        "koulutus_" + permissionDto.getTutkinto(),
                         permissionDto.getAlkupvm(),
                         permissionDto.getLoppupvm()
                 ));
