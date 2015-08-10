@@ -11,6 +11,7 @@
 
         <class>fi.vm.sade.tarjonta.model.Koulutusmoduuli</class>
         <class>fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus</class>
+        <class>fi.vm.sade.tarjonta.model.KoulutusPermission</class>
         <class>fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutusTarjoajatiedot</class>
         <class>fi.vm.sade.tarjonta.model.KoulutusOwner</class>
         <class>fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys</class>
@@ -47,7 +48,7 @@
 
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
             <property name="hibernate.connection.driver_class" value="org.h2.Driver"/>
-            <property name="hibernate.connection.url" value="jdbc:h2:mem:tarjonta"/>
+            <property name="hibernate.connection.url" value="jdbc:h2:mem:tarjonta;MVCC=TRUE"/>
 
             <!--
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
