@@ -113,7 +113,10 @@ public class KoulutusPermissionTest {
 
         // And inserted all permissions from JSON
         List<KoulutusPermission> permissions = koulutusPermissionDAO.getAll();
-        assertEquals(78, permissions.size());
+        assertEquals(107, permissions.size());
+
+        permissions = koulutusPermissionDAO.find(Lists.newArrayList("1.2.246.562.10.354067406510"), "koulutus", "koulutus_381113", null, null);
+        assertEquals(1, permissions.size());
     }
 
     @Test(expected = NotAuthorizedException.class)

@@ -18,12 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-;
+import java.util.*;
 
 @Service
 public class KoulutusPermissionSynchronizer {
@@ -94,6 +89,8 @@ public class KoulutusPermissionSynchronizer {
             return permissions;
         }
 
+        Map<String, KoulutusPermission> koulutusKoodit = new HashMap<String, KoulutusPermission>();
+
         for (AmkouteKoulutusDTO permissionDto : org.getKoulutukset()) {
             if (permissionDto.getOsaamisala() != null) {
                 permissions.add(new KoulutusPermission(
@@ -105,14 +102,17 @@ public class KoulutusPermissionSynchronizer {
                 ));
             }
 
-            else if (permissionDto.getTutkinto() != null) {
-                permissions.add(new KoulutusPermission(
-                        org.getOid(),
-                        "koulutus",
-                        "koulutus_" + permissionDto.getTutkinto(),
-                        permissionDto.getAlkupvm(),
-                        permissionDto.getLoppupvm()
-                ));
+            if (permissionDto.getTutkinto() != null) {
+                koulutusKoodit.put(
+                        permissionDto.getTutkinto(),
+                        new KoulutusPermission(
+                                org.getOid(),
+                                "koulutus",
+                                "koulutus_" + permissionDto.getTutkinto(),
+                                permissionDto.getAlkupvm(),
+                                permissionDto.getLoppupvm()
+                        )
+                );
             }
         }
 
@@ -138,6 +138,8 @@ public class KoulutusPermissionSynchronizer {
                     permissionDto.getLoppupvm()
             ));
         }
+
+        permissions.addAll(koulutusKoodit.values());
 
         return permissions;
     }
