@@ -157,6 +157,7 @@ abstract class KoulutusBase {
     protected KoulutusSearchService koulutusSearchService;
     protected HakukohdeSearchService hakukohdeSearchService;
     protected OppilaitosKoodiRelations oppilaitosKoodiRelations;
+    @Autowired
     protected HakukohdeDAO hakukohdeDAO;
     protected LinkingV1Resource linkingV1Resource;
     protected PublicationDataService publicationDataService;
@@ -304,7 +305,6 @@ abstract class KoulutusBase {
         koodistoUri = createMock(KoodistoURI.class);
         koulutusSisaltyvyysDAO = createMock(KoulutusSisaltyvyysDAO.class);
         koulutusSearchService = createMock(KoulutusSearchService.class);
-        hakukohdeDAO = createMock(HakukohdeDAO.class);
         oppilaitosKoodiRelations = createMock(OppilaitosKoodiRelations.class);
         linkingV1Resource = createMock(LinkingV1Resource.class);
 

@@ -419,7 +419,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 fullKomotoWithKomo = insertKoulutusKorkeakoulu(dto);
             }
 
-            indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
+            indexKomoto(fullKomotoWithKomo);
             final RestParam param = RestParam.showImageAndShowMeta(contextDataService.getCurrentUserLang());
 
             result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, param));
@@ -463,7 +463,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 fullKomotoWithKomo = insertTutkintoonjohtamaton(dto, false);
             }
 
-            indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
+            indexKomoto(fullKomotoWithKomo);
             final RestParam param = RestParam.showImageAndShowMeta(contextDataService.getCurrentUserLang());
 
             result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, param));
@@ -534,7 +534,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 fullKomotoWithKomo = insertKoulutusGeneric(dto);
             }
 
-            indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
+            indexKomoto(fullKomotoWithKomo);
             final RestParam param = RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang());
 
             result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, param));
@@ -574,9 +574,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
             Preconditions.checkNotNull(fullKomotoWithKomo, "KOMOTO object cannot be null!");
             Preconditions.checkNotNull(fullKomotoWithKomo.getId(), "KOMOTO ID cannot be null!");
-            indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
+            indexKomoto(fullKomotoWithKomo);
             if (fullKomotoWithKomo.getValmistavaKoulutus() != null) {
-                indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getValmistavaKoulutus().getId()));
+                indexKomoto(fullKomotoWithKomo.getValmistavaKoulutus());
             }
 
             final RestParam param = RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang());
@@ -794,9 +794,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         }
 
         if (komoto != null) {
-            List<Long> ids = Lists.<Long>newArrayList();
-            ids.add(komoto.getId());
-            indexerResource.indexKoulutukset(ids);
+            indexKomoto(komoto);
         }
 
         return result;
@@ -1608,6 +1606,18 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         }
 
         return result;
+    }
+
+    private void indexKomoto(KoulutusmoduuliToteutus komoto) {
+        indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
+
+        // Fetch on lazy hakukohteille -> pitää hakea erikseen
+        final List<Hakukohde> hakukohdes = hakukohdeDAO.findByKoulutusOid(komoto.getOid());
+        List<Long> hakukohdeIds = new LinkedList<Long>();
+        for (Hakukohde hakukohde : hakukohdes) {
+            hakukohdeIds.add(hakukohde.getId());
+        }
+        indexerResource.indexHakukohteet(hakukohdeIds);
     }
 
 }

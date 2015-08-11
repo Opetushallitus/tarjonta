@@ -19,6 +19,7 @@ import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
@@ -62,6 +63,7 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
     private EntityConverterToRDTO converterToRDTO;
     private KoulutusDTOConverterToEntity convertToEntity;
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
+    private HakukohdeDAO hakukohdeDAO;
     
     @Before
     public void setUp() throws OIDCreationException {
@@ -75,6 +77,7 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
         organisaatioServiceMock = createMock(OrganisaatioService.class);
         converterToRDTO = createMock(EntityConverterToRDTO.class);
         convertToEntity = createMock(KoulutusDTOConverterToEntity.class);
+        hakukohdeDAO = createMock(HakukohdeDAO.class);
 
         //SET DAO STATES
         initMockInstanceInternalStates();
@@ -83,6 +86,7 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
         Whitebox.setInternalState(instance, "converterToRDTO", converterToRDTO);
         Whitebox.setInternalState(instance, "convertToEntity", convertToEntity);
         Whitebox.setInternalState(instance, "koulutusmoduuliDAO", koulutusmoduuliDAO);
+        Whitebox.setInternalState(instance, "hakukohdeDAO", hakukohdeDAO);
     }
     
     @Test
@@ -170,7 +174,7 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
         KoulutusCopyV1RDTO dto = new KoulutusCopyV1RDTO();
         dto.setOrganisationOids(Lists.newArrayList(ORGANISATION_OID_COPY_OR_MOVE_TO));
         dto.setMode(CopyMode.MOVE);
-        
+
         assertEquals(ORGANISATION_OID, komoto.getTarjoaja());
         expect(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).andReturn(komoto);
         expect(organisaatioServiceMock.findByOid(ORGANISATION_OID_COPY_OR_MOVE_TO)).andReturn(organisaatioDTO);
