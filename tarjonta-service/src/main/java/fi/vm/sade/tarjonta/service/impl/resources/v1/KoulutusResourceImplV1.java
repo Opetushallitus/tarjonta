@@ -275,6 +275,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     ErrorV1RDTO.createValidationError("alkamispvm", "koulutus.error.alkamispvm.ajankohtaerikuinhaulla"));
         }
 
+        /* Disabloi amkoute toistaiseksi master-branchissa
         try {
             koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
         } catch (fi.vm.sade.generic.service.exception.NotAuthorizedException e) {
@@ -284,6 +285,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     ErrorV1RDTO.createValidationError("koulutusPermission", "koulutusNotAllowedForOrganization")
             );
         }
+        */
 
         if (dto.getClass() == KoulutusKorkeakouluV1RDTO.class) {
             //TODO: currently no komo validation, when invalid throws exception
