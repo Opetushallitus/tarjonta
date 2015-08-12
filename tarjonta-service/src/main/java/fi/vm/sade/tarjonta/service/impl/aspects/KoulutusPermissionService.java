@@ -5,15 +5,21 @@ import fi.vm.sade.generic.service.exception.NotAuthorizedException;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
+import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPerustutkintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class KoulutusPermissionService {
@@ -25,6 +31,40 @@ public class KoulutusPermissionService {
 
     @Autowired
     private OrganisaatioService organisaatioService;
+
+    public void checkThatOrganizationIsAllowedToOrganizeEducation(KoulutusmoduuliToteutus komoto) {
+        KoulutusV1RDTO dto;
+
+        switch (komoto.getToteutustyyppi()) {
+            case AMMATILLINEN_PERUSTUTKINTO:
+                dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
+                break;
+            default:
+                return;
+        }
+
+        dto.getOrganisaatio().setOid(komoto.getTarjoaja());
+        dto.setToteutustyyppi(komoto.getToteutustyyppi());
+        dto.setKoulutuskoodi(getKoodi(komoto.getKoulutusUri()));
+
+        NimiV1RDTO osaamisala = new NimiV1RDTO();
+        osaamisala.setUri(komoto.getOsaamisalaUri());
+        dto.setKoulutusohjelma(osaamisala);
+
+        Map<String, Integer> kielet = new HashMap<String, Integer>();
+        for (KoodistoUri uri : komoto.getOpetuskielis()) {
+            kielet.put(uri.getKoodiUri().split("#")[0], 1);
+        }
+        dto.getOpetuskielis().setUris(kielet);
+
+        checkThatOrganizationIsAllowedToOrganizeEducation(dto);
+    }
+
+    private KoodiV1RDTO getKoodi(String uri) {
+        KoodiV1RDTO koodi = new KoodiV1RDTO();
+        koodi.setUri(uri);
+        return koodi;
+    }
 
     public void checkThatOrganizationIsAllowedToOrganizeEducation(KoulutusV1RDTO dto) {
 

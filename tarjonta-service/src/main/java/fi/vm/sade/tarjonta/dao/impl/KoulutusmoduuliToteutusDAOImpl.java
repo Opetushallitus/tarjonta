@@ -177,6 +177,25 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     }
 
     @Override
+    public List<KoulutusmoduuliToteutus> findFutureKoulutukset(
+            List<ToteutustyyppiEnum> toteutustyyppis,
+            int offset,
+            int limit
+    ) {
+        QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+
+        return from(komoto)
+                .where(
+                        komoto.toteutustyyppi.in(toteutustyyppis)
+                        .and(komoto.alkamisVuosi.isNotNull())
+                )
+                .orderBy(komoto.id.asc())
+                .offset(offset)
+                .limit(limit)
+                .list(komoto);
+    }
+
+    @Override
     public KoulutusmoduuliToteutus findKomotoWithYhteyshenkilosByOid(String oid) {
         Query query = getEntityManager().createQuery(""
                 + "SELECT k FROM KoulutusmoduuliToteutus k "

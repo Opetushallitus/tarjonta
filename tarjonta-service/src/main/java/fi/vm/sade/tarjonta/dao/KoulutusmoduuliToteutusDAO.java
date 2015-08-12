@@ -20,6 +20,7 @@ import fi.vm.sade.tarjonta.model.BinaryData;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 import java.util.Collection;
 import java.util.Date;
@@ -38,6 +39,12 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
     KoulutusmoduuliToteutus findKomotoWithYhteyshenkilosByOid(String oid);
 
     List<KoulutusmoduuliToteutus> findKoulutusModuuliToteutusesByOids(List<String> oids);
+
+    List<KoulutusmoduuliToteutus> findFutureKoulutukset(
+            List<ToteutustyyppiEnum> toteutustyyppis,
+            int offset,
+            int limit
+    );
 
     /**
      * Return all koulutumoduulitoteutuses in oid list with Hakukohde depencies
