@@ -185,7 +185,7 @@ public class PermissionChecker {
         }
 
         //tarkista että koulutuksia on
-        Preconditions.checkArgument(komotoOids.size()>0, "hakukohde without komotos");
+        Preconditions.checkArgument(komotoOids.size() > 0, "hakukohde without komotos");
 
         //saako hakuun liittää hakukohteita
         checkPermission(parameterServices.parameterCanAddHakukohdeToHaku(hakuOid));
@@ -236,8 +236,11 @@ public class PermissionChecker {
      * @param hakukohdeOid
      */
     public void checkRemoveHakukohde(String hakukohdeOid) {
-        final Hakukohde hakukohde = hakukohdeDaoImpl.findHakukohdeByOid(hakukohdeOid);
+        if (permissionService.userIsOphCrud()) {
+            return;
+        }
 
+        final Hakukohde hakukohde = hakukohdeDaoImpl.findHakukohdeByOid(hakukohdeOid);
 
         final Set<KoulutusmoduuliToteutus> komot = hakukohde
                 .getKoulutusmoduuliToteutuses();
@@ -304,6 +307,11 @@ public class PermissionChecker {
      * @param koulutusOid
      */
     public void checkRemoveKoulutus(final String koulutusOid) {
+
+        if (permissionService.userIsOphCrud()) {
+            return;
+        }
+
         final KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);
         //käyttöoikeudet
         checkPermission(permissionService

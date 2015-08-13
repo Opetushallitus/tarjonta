@@ -508,7 +508,6 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
         return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
     }
 
-    @Deprecated
     public boolean userIsOphCrud() {
         return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
     }
