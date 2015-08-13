@@ -87,6 +87,16 @@
                         {{ model.hakukohde.aloituspaikatLkm != 0 ? model.hakukohde.aloituspaikatLkm : ''}}
                     </td>
                 </tr>
+
+                <tr ng-if="isKK">
+                    <th tt="hakukohde.review.perustiedot.ensikertalaistenAloituspaikat">
+                        Aloituspaikkoja ensikertalaisille
+                    </th>
+                    <td colspan="2">
+                        {{model.hakukohde.ensikertalaistenAloituspaikat}}
+                    </td>
+                </tr>
+
                 <tr ng-show="config.needsValinnoissaKaytettavatAloituspaikat()">
                     <th tt="hakukohde.review.perustiedot.valintojenAloituspaikat"/>
                     <td colspan="2">
