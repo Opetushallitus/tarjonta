@@ -76,6 +76,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private Boolean ylioppilastutkintoAntaaHakukelpoisuuden;
     private String kelaLinjaKoodi;
     private String kelaLinjaTarkenne;
+    private Integer ensikertalaistenAloituspaikat;
 
     public String getHakukohteenNimi() {
         return hakukohteenNimi;
@@ -558,6 +559,14 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setKelaLinjaKoodi(String kelaLinjaKoodi) {
         this.kelaLinjaKoodi = kelaLinjaKoodi;
+    }
+
+    public Integer getEnsikertalaistenAloituspaikat() {
+        return ensikertalaistenAloituspaikat;
+    }
+
+    public void setEnsikertalaistenAloituspaikat(Integer ensikertalaistenAloituspaikat) {
+        this.ensikertalaistenAloituspaikat = ensikertalaistenAloituspaikat;
     }
 
 }

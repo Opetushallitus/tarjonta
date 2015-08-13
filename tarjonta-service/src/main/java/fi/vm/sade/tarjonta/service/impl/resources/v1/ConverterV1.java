@@ -582,6 +582,7 @@ public class ConverterV1 {
 
         hakukohdeRDTO.setKelaLinjaKoodi(hakukohde.getKelaLinjaKoodi());
         hakukohdeRDTO.setKelaLinjaTarkenne(hakukohde.getKelaLinjaTarkenne());
+        hakukohdeRDTO.setEnsikertalaistenAloituspaikat(hakukohde.getEnsikertalaistenAloituspaikat());
 
         convertTarjoatiedotToDTO(hakukohde, hakukohdeRDTO);
         convertHakukohteenNimetToDTO(hakukohde, hakukohdeRDTO, null);
@@ -1064,6 +1065,7 @@ public class ConverterV1 {
 
         hakukohde.setKelaLinjaKoodi(StringUtils.stripToNull(hakukohdeRDTO.getKelaLinjaKoodi()));
         hakukohde.setKelaLinjaTarkenne(StringUtils.stripToNull(hakukohdeRDTO.getKelaLinjaTarkenne()));
+        hakukohde.setEnsikertalaistenAloituspaikat(hakukohdeRDTO.getEnsikertalaistenAloituspaikat());
 
         return hakukohde;
     }

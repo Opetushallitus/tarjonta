@@ -143,6 +143,7 @@
                                tt="tarjonta.hakukohde.aloituspaikatlkm.validation.failed">Tarkista aloituspaikat</p>
                         </td>
                     </tr>
+
                     <!-- vuodeksi 2015 muutettiin aloituspaikat monikieliseksi tekstiksi,
                     mutta vuodesta 2016 eteenpäin halutaan taas käyttää pelkkää numerokenttää. Olemassa olevien
                     monikielisten aloituspaikkojen muokkaus pitää edelleen toimia normaalisti, siksi alla oleva
@@ -154,6 +155,21 @@
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && model.aloituspaikatKuvauksetFailed" tt="hakukohde.edit.aloituspaikatKuvaukset.too.long">Kuvaus voi olla enintään 20 merkkiä pitkä.</p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th tt="kk.hakukohde.ensikertalaistenAloituspaikat">Aloituspaikkoja ensikertalaisille</th>
+                        <td>
+                            <input name="ensikertalaistenAloituspaikat" ng-disabled="model.isPartiallyDeEnabled"
+                                   class="thin" type="number" ng-pattern="model.integerval" min="0" max="999"
+                                   ng-model="model.hakukohde.ensikertalaistenAloituspaikat" />
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && editHakukohdeForm.ensikertalaistenAloituspaikat.$invalid"
+                               tt="tarjonta.hakukohde.ensikertalaistenAloituspaikat.validation.failed">
+                                Tarkista ensikertalaisten aloituspaikat
+                            </p>
                         </td>
                     </tr>
 

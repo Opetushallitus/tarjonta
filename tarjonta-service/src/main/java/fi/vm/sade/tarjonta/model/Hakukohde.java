@@ -66,6 +66,8 @@ public class Hakukohde extends TarjontaBaseEntity {
     private Integer alinValintaPistemaara;
     @Column(name = "ylin_valinta_pistemaara")
     private Integer ylinValintaPistemaara;
+    @Column(name = "ensikertalaisten_aloituspaikat")
+    private Integer ensikertalaistenAloituspaikat;
     @Column(name = "aloituspaikat_lkm", nullable = false)
     private int aloituspaikatLkm;
     @Column(name = "valintojenAloituspaikatLkm", nullable = false)
@@ -805,6 +807,14 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void setHaunKopioinninTunniste(String haunKopioinninTunniste) {
         this.haunKopioinninTunniste = haunKopioinninTunniste;
+    }
+
+    public Integer getEnsikertalaistenAloituspaikat() {
+        return ensikertalaistenAloituspaikat;
+    }
+
+    public void setEnsikertalaistenAloituspaikat(Integer ensikertalaistenAloituspaikat) {
+        this.ensikertalaistenAloituspaikat = ensikertalaistenAloituspaikat;
     }
 
 }
