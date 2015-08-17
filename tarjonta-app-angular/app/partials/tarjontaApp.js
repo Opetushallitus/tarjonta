@@ -644,9 +644,9 @@ angular.module('app').factory('ajaxInterceptor', function(Config) {
         function convertLiitteetToRestResponse(liitteet) {
             liitteet = removeEmptyLiites(liitteet);
             return _.reduce(liitteet, function(memo, liiteWithLangs) {
-                memo.push.apply(memo, _.filter(liiteWithLangs, function(liite) {
+                memo.push.apply(memo, _.filter(liiteWithLangs, function(liite, kieli) {
                     _.extend(liite, liiteWithLangs.commonFields);
-                    return typeof liite === 'object' && liite.isEmpty !== undefined;
+                    return typeof liite === 'object' && kieli.indexOf('kieli_') !== -1;
                 }));
                 return memo;
             }, []);
@@ -655,7 +655,7 @@ angular.module('app').factory('ajaxInterceptor', function(Config) {
         function removeEmptyLiites(liitteet) {
             _.each(liitteet, function(liiteWithLangs) {
                 _.each(liiteWithLangs, function(liite, lang) {
-                    if (typeof liite !== 'object' || !liite.isEmpty) {
+                    if (typeof liite !== 'object' || lang.indexOf('kieli_') === -1) {
                         return;
                     }
                     if (liite.isEmpty()) {

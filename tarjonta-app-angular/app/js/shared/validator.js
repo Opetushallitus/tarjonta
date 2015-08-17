@@ -90,8 +90,8 @@ angular.module('Validator', [])
         function isValidLiitteet(liitteet) {
             var invalidLiite = _.find(liitteet, function(liiteWithLangs) {
                 var commonFields = liiteWithLangs.commonFields;
-                return _.find(liiteWithLangs, function(liite) {
-                    if (typeof(liite) !== 'object' || !liite.isEmpty || liite.isEmpty()) {
+                return _.find(liiteWithLangs, function(liite, lang) {
+                    if (typeof(liite) !== 'object' || lang.indexOf('kieli_') === -1 || liite.isEmpty()) {
                         return;
                     }
                     if (!notEmpty(liite.liitteenNimi)

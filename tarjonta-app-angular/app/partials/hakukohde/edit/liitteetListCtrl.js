@@ -90,7 +90,7 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
         });
         _.each($scope.model.hakukohde.hakukohteenLiitteet, function(liiteWithLangs) {
             _.each(liiteWithLangs, function(liite, lang) {
-                if (typeof(liite) === 'object' && liite.isEmpty !== undefined) {
+                if (typeof(liite) === 'object' && lang.indexOf('kieli_') !== -1) {
                     selectedLangs.add(lang);
                 }
             });
@@ -132,7 +132,7 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
         var liiteLangs = new buckets.Set();
         _.each($scope.model.hakukohde.hakukohteenLiitteet, function(liiteWithLangs) {
             _.each(liiteWithLangs, function(liite, lang) {
-                if (typeof liite === 'object' && liite.isEmpty !== undefined) {
+                if (typeof liite === 'object' && lang.indexOf('kieli_') !== -1) {
                     liiteLangs.add(lang);
                 }
             });
