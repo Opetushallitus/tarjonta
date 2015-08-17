@@ -143,7 +143,7 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
         // varmista kielien poisto
         _.each(deletedLangs, function(lang) {
             dialogService.showDialog({
-                title: LocalisationService.t('tarjonta.poistovahvistus.hakukohde.liitteet.kielivalilehti'),
+                title: LocalisationService.t('tarjonta.poistovahvistus.hakukohde.liitteet.kielivalilehti.otsikko'),
                 description: LocalisationService.t('tarjonta.poistovahvistus.hakukohde.liitteet.kielivalilehti', [lang])
             }).result.then(function(ret) {
                 if (ret) {
