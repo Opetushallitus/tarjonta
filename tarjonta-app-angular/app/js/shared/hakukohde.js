@@ -218,31 +218,35 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
         return vk;
     }
     /**
-    * Lisää hakukohteeseen liitteen jos siinä ei ole vielä yhtään.
-    */
-    function addLiiteIfEmpty(hakukohde) {
-        if (!hakukohde.hakukohteenLiitteet) {
-            hakukohde.hakukohteenLiitteet = [];
-        }
-        if (hakukohde.hakukohteenLiitteet.length === 0) {
-            var kieli = hakukohde.opetusKielet[0] || 'kieli_fi';
-            addLiite(hakukohde, kieli, {});
-        }
-    }
-    /**
     * Lisää hakukohteeseen liitteen (opetuskieli[0]).
     */
-    function addLiite(hakukohde, kieliUri, liitteidenToimitusosoite) {
-        var liite = newLiite(hakukohde, kieliUri, liitteidenToimitusosoite);
-        hakukohde.hakukohteenLiitteet.push(liite);
-        $rootScope.$broadcast('liiteAdded', liite);
+    function addLiite(hakukohde, kielet, liitteidenToimitusosoitteet, liiteWithLangs) {
+        var liite = liiteWithLangs || {};
+
+        _.each(kielet, function(kieli) {
+            liite[kieli.koodiUri] = liite[kieli.koodiUri] || newLiite(hakukohde, kieli.koodiUri,
+                liitteidenToimitusosoitteet[kieli.koodiUri]);
+
+            liite[kieli.koodiUri].isEmpty = function() {
+                var liite = this;
+                var isEmpty = !liite.liitteenNimi && !liite.liitteenTyyppi && !liite.toimitettavaMennessa;
+                return isEmpty;
+            };
+
+            $rootScope.$broadcast('liiteAdded', liite[kieli.koodiUri]);
+        });
+
+        if (liiteWithLangs === undefined) {
+            hakukohde.hakukohteenLiitteet.push(liite);
+        }
     }
     /**
     * Luo liite objektin
     */
     function newLiite(hakukohde, kieliUri, liitteidenToimitusosoite) {
-        var kuvaukset = {};
-        kuvaukset[kieliUri] = '';
+        var kuvaukset = {
+            kieliUri: ''
+        };
         var addr = liitteidenToimitusosoite;
         return {
             hakukohdeOid: hakukohde.oid,
@@ -257,15 +261,6 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
             kaytetaanHakulomakkeella: hakukohde.toteutusTyyppi === 'KORKEAKOULUTUS' ? false : true,
             isNew: true
         };
-    }
-    function removeEmptyLiites(liitteetArray) {
-        var loopIndex = liitteetArray.length;
-        while (loopIndex--) {
-            var liite = liitteetArray[loopIndex];
-            if (liite.isNew && !liite.liitteenNimi && !liite.liitteenTyyppi && !liite.toimitettavaMennessa) {
-                liitteetArray.splice(loopIndex, 1);
-            }
-        }
     }
 
     var hakukohdeConfig = {
@@ -340,9 +335,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
     return {
         addValintakoeIfEmpty: addValintakoeIfEmpty,
         addValintakoe: addValintakoe,
-        addLiiteIfEmpty: addLiiteIfEmpty,
         addLiite: addLiite,
-        removeEmptyLiites: removeEmptyLiites,
         addPainotettavaOppiaine: addPainotettavaOppiaine,
         findHakukohdesByKuvausId: function(kuvausId) {
             return $http.get(Config.env.tarjontaRestUrlPrefix + 'hakukohde/findHakukohdesByKuvausId/' + kuvausId);

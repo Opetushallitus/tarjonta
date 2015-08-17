@@ -623,4 +623,83 @@ angular.module('app').factory('ajaxInterceptor', function(Config) {
 }).config(function($httpProvider) {
     'use strict';
     $httpProvider.interceptors.push('ajaxInterceptor');
+
+    $httpProvider.interceptors.push(function transformHakukohdeLiitteet() {
+
+        function convertLiitteetFromRestResponse(liitteetResponse) {
+            var tmp = _.groupBy(liitteetResponse, 'jarjestys');
+            var liitteet = [];
+            _.each(tmp, function(liite) {
+                liitteet.push(_.indexBy(liite, 'kieliUri'));
+            });
+            return liitteet;
+        }
+
+        function convertLiitteetToRestResponse(liitteet) {
+            liitteet = removeEmptyLiites(liitteet);
+            return _.reduce(liitteet, function(memo, liiteWithLangs) {
+                memo.push.apply(memo, _.filter(liiteWithLangs, function(liite) {
+                    return typeof liite === 'object';
+                }));
+                return memo;
+            }, []);
+        }
+
+        function removeEmptyLiites(liitteet) {
+            _.each(liitteet, function(liiteWithLangs) {
+                _.each(liiteWithLangs, function(liite, lang) {
+                    if (typeof liite !== 'object') {
+                        return;
+                    }
+                    if (liite.isEmpty()) {
+                        delete liiteWithLangs[lang];
+                    }
+                });
+            });
+
+            var nonEmptyLiitteet = _.filter(liitteet, function(liite) {
+                return _.keys(liite).length > 0;
+            });
+
+            return nonEmptyLiitteet;
+        }
+
+        var activeTabs;
+
+        return {
+            request: function(config) {
+                if (config.url.indexOf('hakukohde') !== -1 && config.data && config.data.hakukohteenLiitteet) {
+                    // Älä muokkaa alkuperäistä objektia -> kopioidaan se
+                    config.data = angular.copy(config.data);
+
+                    activeTabs = {};
+                    _.each(config.data.hakukohteenLiitteet, function(liiteWithLangs, index) {
+                        var activeTab = _.findWhere(liiteWithLangs,  {tabActive: true});
+                        if (activeTab) {
+                            activeTabs[index] = activeTab.kieliUri;
+                        }
+                    });
+                    config.data.hakukohteenLiitteet = convertLiitteetToRestResponse(config.data.hakukohteenLiitteet);
+                }
+                return config;
+            },
+
+            response: function(response) {
+                if (response.config.url.indexOf('hakukohde/') !== -1 && response.data && response.data.result
+                    && response.data.result.hakukohteenLiitteet) {
+
+                    response.data.result.hakukohteenLiitteet = convertLiitteetFromRestResponse(
+                        response.data.result.hakukohteenLiitteet
+                    );
+                    try {
+                        _.each(activeTabs, function(kieliUri, index) {
+                            response.data.result.hakukohteenLiitteet[index][kieliUri].tabActive = true;
+                        });
+                    } catch (e) {}
+                }
+
+                return response;
+            }
+        };
+    });
 });

@@ -1,7 +1,11 @@
 <div class="localizedTabs" data-ng-controller="LiitteetListController">
-    <tabset>
-        <tab ng-repeat="kieli in liitteetModel.opetusKielet" heading="{{kieli.koodiNimi}}" active="liitteetModel.selectedTab[kieli.koodiUri]">
-            <div ng-repeat="liite in getLiitteetByKieli(kieli.koodiUri)" class="{{liite.selected ? 'selected' : ''}}">
+    <tabset ng-repeat="liiteWithKieliVersiot in model.hakukohde.hakukohteenLiitteet">
+
+        <h3><span tt="hakukohde.liite.liiteOtsikko">Liite</span> {{$index + 1}}</h3>
+
+        <tab ng-repeat="kieli in liitteetModel.opetusKielet" heading="{{kieli.koodiNimi}}"
+             ng-init="liite = liiteWithKieliVersiot[kieli.koodiUri] || {}; liite.tabActive = liite.tabActive || $index === 0;"
+             active="liite.tabActive">
 
                 <form>
 
@@ -11,7 +15,10 @@
                         <th ng-if="config.isToisenAsteenKoulutus()" tt="tarjonta.hakukohde.liite.modal.tyyppi"></th>
 	                    <td>
                             <input ng-if="!config.isToisenAsteenKoulutus()" type="text" ng-model="liite.liitteenNimi" ng-change="status.dirtify()" required/>
-                            <select ng-if="config.isToisenAsteenKoulutus()" name="liitteentyyppiselect" required ng-model="liite.liitteenTyyppi" data-ng-options="liitetyyppi.uri as liitetyyppi.nimi for liitetyyppi in liitteetModel.liitetyypit | orderBy: 'nimi'"/>
+                            <select ng-if="config.isToisenAsteenKoulutus()" name="liitteentyyppiselect" required
+                                    ng-model="liite.liitteenTyyppi"
+                                    data-ng-options="liitetyyppi.uri as liitetyyppi.nimi for liitetyyppi in liitteetModel.liitetyypit | orderBy: 'nimi'">
+                            </select>
                         </td>
 	                    <td>
                             <p class="error" ng-show="model.showError && !liite.liitteenNimi && !config.isToisenAsteenKoulutus()" tt="tarjonta.hakukohde.liite.errors.nimi">Liitteen nimi on pakollinen.</p>
@@ -55,10 +62,11 @@
 	                        </div>
                         </td>
                         <td>
-                            <p class="error" ng-show="model.showError && !isValidToimitusOsoite(liite)" tt="tarjonta.hakukohde.liite.errors.toimitusOsoite">Liitteen toimistusosoite on pakollinen mikäli organisaation hakijapalveluiden postiosoitetta ei käytetä tai sitä ei ole määritelty.</p>
+                            <p class="error" ng-show="model.showError && !validator.isValidToimitusOsoite(liite)" tt="tarjonta.hakukohde.liite.errors.toimitusOsoite">Liitteen toimistusosoite on pakollinen mikäli organisaation hakijapalveluiden postiosoitetta ei käytetä tai sitä ei ole määritelty.</p>
                         </td>
-                     </tr>
-                     <tr>
+                    </tr>
+
+                    <tr>
                         <th></th>
                         <td>
 	                        <label><input type="checkbox" ng-model="liite.sahkoinenOsoiteEnabled" ng-change="liitteenSahkoinenOsoiteEnabledChanged(liite)"/><span tt="tarjonta.hakukohde.liite.modal.voidaanToimittaaSahkoisesti"></span></label>
@@ -67,7 +75,7 @@
 	                        </div>
 	                    </td>
 	                    <td>
-                            <p class="error" ng-show="model.showError && !isValidSahkoinenOsoite(liite)" tt="tarjonta.hakukohde.liite.errors.sahkoinenOsoite">Liitteen sähköinen toimitusosoite on pakollinen jos liite on toimitettavissa sähköisesti.</p>
+                            <p class="error" ng-show="model.showError && !validator.isValidSahkoinenOsoite(liite)" tt="tarjonta.hakukohde.liite.errors.sahkoinenOsoite">Liitteen sähköinen toimitusosoite on pakollinen jos liite on toimitettavissa sähköisesti.</p>
 	                    </td>
 	                </tr>
                     <tr ng-if="CONFIGURATION.LIITE.showKaytetaanHakulomakkeella[model.hakukohde.toteutusTyyppi]">
@@ -80,19 +88,10 @@
                 </form>
 
                 <p>
-                    <button ng-click="deleteLiite(liite)" class="btn"><span tt="tarjonta.toiminnot.poista"></span> <span class="icon-remove"></span></button>
+                    <button ng-click="deleteLiite($parent.$index)" class="btn"><span tt="tarjonta.toiminnot.poista"></span> <span class="icon-remove"></span></button>
                 </p>
 
                 <hr/>
-
-            </div>
-
-
-            <p>
-                <button class="btn btn-primary"
-                    ng-click="createLiite(kieli.koodiUri)"><span tt="tarjonta.hakukohde.liite.modal.lisäys"></span> <span class="icon-plus-sign"></span></button>
-            </p>
-
         </tab>
 
         <tab class="addLangTab">
@@ -107,5 +106,10 @@
         </tab>
 
     </tabset>
+
+    <p>
+        <button class="btn btn-primary"
+                ng-click="createLiite()"><span tt="tarjonta.hakukohde.liite.modal.lisäys"></span> <span class="icon-plus-sign"></span></button>
+    </p>
 
 </div>

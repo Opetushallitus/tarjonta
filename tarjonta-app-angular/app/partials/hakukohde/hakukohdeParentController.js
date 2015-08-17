@@ -1228,7 +1228,6 @@ app.controller('HakukohdeParentController', [
             $scope.model.showError = false;
             PermissionService.permissionResource().authorize({}, function() {
                 $scope.emptyErrorMessages();
-                HakukohdeService.removeEmptyLiites($scope.model.hakukohde.hakukohteenLiitteet);
                 var errors = ValidatorService.hakukohde.validate(
                     $scope.model,
                     $scope.getHakuByOid($scope.model.hakukohde.hakuOid));
@@ -1242,8 +1241,10 @@ app.controller('HakukohdeParentController', [
                     updateTila(tila);
                     $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
                     $scope.removeEmptyKuvaukses();
-                    angular.forEach($scope.model.hakukohde.hakukohteenLiitteet, function(liite, index) {
-                        liite.jarjestys = index;
+                    angular.forEach($scope.model.hakukohde.hakukohteenLiitteet, function(liiteWithLangs, index) {
+                        _.each(liiteWithLangs, function(liite) {
+                            liite.jarjestys = index;
+                        });
                     });
                     $scope.checkIsCopy($scope.luonnosVal, true);
                     if ($scope.model.hakukohde.oid === undefined) {
