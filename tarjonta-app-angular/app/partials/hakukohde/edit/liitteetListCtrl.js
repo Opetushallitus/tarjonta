@@ -38,6 +38,9 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
         osoitteetReceived = true;
         _.each($scope.model.hakukohde.hakukohteenLiitteet, function(liiteWithKieliVersiot) {
             _.each(liiteWithKieliVersiot, function(liite, lang) {
+                if (typeof liite !== 'object' || lang === 'commonFields') {
+                    return;
+                }
                 if (!liite.liitteenToimitusOsoite || Object.keys(liite.liitteenToimitusOsoite).length === 0) {
                     liite.liitteenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite[liite.kieliUri]);
                     postProcessLiite(liite);
@@ -87,7 +90,7 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
         });
         _.each($scope.model.hakukohde.hakukohteenLiitteet, function(liiteWithLangs) {
             _.each(liiteWithLangs, function(liite, lang) {
-                if (typeof(liite) === 'object') {
+                if (typeof(liite) === 'object' && liite.isEmpty !== undefined) {
                     selectedLangs.add(lang);
                 }
             });
@@ -129,7 +132,7 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
         var liiteLangs = new buckets.Set();
         _.each($scope.model.hakukohde.hakukohteenLiitteet, function(liiteWithLangs) {
             _.each(liiteWithLangs, function(liite, lang) {
-                if (typeof liite === 'object') {
+                if (typeof liite === 'object' && liite.isEmpty !== undefined) {
                     liiteLangs.add(lang);
                 }
             });

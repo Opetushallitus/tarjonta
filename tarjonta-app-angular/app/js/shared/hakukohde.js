@@ -221,7 +221,12 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
     * Lisää hakukohteeseen liitteen (opetuskieli[0]).
     */
     function addLiite(hakukohde, kielet, liitteidenToimitusosoitteet, liiteWithLangs) {
-        var liite = liiteWithLangs || {};
+        var liite = liiteWithLangs || {
+            isNew: true
+        };
+        _.defaults(liite, {
+            commonFields: {}
+        });
 
         _.each(kielet, function(kieli) {
             liite[kieli.koodiUri] = liite[kieli.koodiUri] || newLiite(hakukohde, kieli.koodiUri,
@@ -229,7 +234,9 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
 
             liite[kieli.koodiUri].isEmpty = function() {
                 var liite = this;
-                var isEmpty = !liite.liitteenNimi && !liite.liitteenTyyppi && !liite.toimitettavaMennessa;
+                var isEmpty = !liite.liitteenNimi && _.find(liite.liitteenKuvaukset, function(kuvaus) {
+                        return !_.isEmpty(kuvaus);
+                    }) === undefined;
                 return isEmpty;
             };
 

@@ -629,8 +629,14 @@ angular.module('app').factory('ajaxInterceptor', function(Config) {
         function convertLiitteetFromRestResponse(liitteetResponse) {
             var tmp = _.groupBy(liitteetResponse, 'jarjestys');
             var liitteet = [];
+            var commonFields = ['liitteenTyyppi', 'toimitettavaMennessa', 'kaytetaanHakulomakkeella'];
             _.each(tmp, function(liite) {
-                liitteet.push(_.indexBy(liite, 'kieliUri'));
+                var liiteWithLangs = _.indexBy(liite, 'kieliUri');
+                liiteWithLangs.commonFields = {};
+                _.each(commonFields, function(key) {
+                    liiteWithLangs.commonFields[key] = liite[0][key];
+                });
+                liitteet.push(liiteWithLangs);
             });
             return liitteet;
         }
@@ -639,7 +645,8 @@ angular.module('app').factory('ajaxInterceptor', function(Config) {
             liitteet = removeEmptyLiites(liitteet);
             return _.reduce(liitteet, function(memo, liiteWithLangs) {
                 memo.push.apply(memo, _.filter(liiteWithLangs, function(liite) {
-                    return typeof liite === 'object';
+                    _.extend(liite, liiteWithLangs.commonFields);
+                    return typeof liite === 'object' && liite.isEmpty !== undefined;
                 }));
                 return memo;
             }, []);
@@ -648,7 +655,7 @@ angular.module('app').factory('ajaxInterceptor', function(Config) {
         function removeEmptyLiites(liitteet) {
             _.each(liitteet, function(liiteWithLangs) {
                 _.each(liiteWithLangs, function(liite, lang) {
-                    if (typeof liite !== 'object') {
+                    if (typeof liite !== 'object' || !liite.isEmpty) {
                         return;
                     }
                     if (liite.isEmpty()) {

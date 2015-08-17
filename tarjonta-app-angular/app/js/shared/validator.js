@@ -89,13 +89,14 @@ angular.module('Validator', [])
 
         function isValidLiitteet(liitteet) {
             var invalidLiite = _.find(liitteet, function(liiteWithLangs) {
+                var commonFields = liiteWithLangs.commonFields;
                 return _.find(liiteWithLangs, function(liite) {
-                    if (typeof(liite) !== 'object' || liite.isEmpty()) {
+                    if (typeof(liite) !== 'object' || !liite.isEmpty || liite.isEmpty()) {
                         return;
                     }
                     if (!notEmpty(liite.liitteenNimi)
-                        && !notEmpty(liite.liitteenTyyppi)
-                        || !notEmpty(liite.toimitettavaMennessa)
+                        && !notEmpty(commonFields.liitteenTyyppi)
+                        || !notEmpty(commonFields.toimitettavaMennessa)
                         || !isValidSahkoinenOsoite(liite)
                         || !isValidToimitusOsoite(liite)) {
                         return true;
