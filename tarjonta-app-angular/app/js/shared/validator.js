@@ -74,29 +74,36 @@ angular.module('Validator', [])
             }
             return true;
         }
+
+        function isValidToimitusOsoite(liite) {
+            var r = !liite.muuOsoiteEnabled || notEmpty([
+                    liite.liitteenToimitusOsoite.osoiterivi1,
+                    liite.liitteenToimitusOsoite.postinumero
+                ]);
+            return r;
+        }
+
+        function isValidSahkoinenOsoite(liite) {
+            return !liite.sahkoinenOsoiteEnabled || notEmpty(liite.sahkoinenToimitusOsoite);
+        }
+
         function isValidLiitteet(liitteet) {
-            var isValidToimitusOsoite = function(liite) {
-                var r = !liite.muuOsoiteEnabled || notEmpty([
-                        liite.liitteenToimitusOsoite.osoiterivi1,
-                        liite.liitteenToimitusOsoite.postinumero
-                    ]);
-                return r;
-            };
-            var isValidSahkoinenOsoite = function(liite) {
-                var r = !liite.sahkoinenOsoiteEnabled || notEmpty(liite.sahkoinenToimitusOsoite);
-                return r;
-            };
-            for (var i in liitteet) {
-                var liite = liitteet[i];
-                if (!notEmpty(liite.liitteenNimi)
-                    && !notEmpty(liite.liitteenTyyppi)
-                    || !notEmpty(liite.toimitettavaMennessa)
-                    || !isValidSahkoinenOsoite(liite)
-                    || !isValidToimitusOsoite(liite)) {
-                    return false;
-                }
-            }
-            return true;
+            var invalidLiite = _.find(liitteet, function(liiteWithLangs) {
+                var commonFields = liiteWithLangs.commonFields;
+                return _.find(liiteWithLangs, function(liite, lang) {
+                    if (typeof(liite) !== 'object' || lang.indexOf('kieli_') === -1 || liite.isEmpty()) {
+                        return;
+                    }
+                    if (!notEmpty(liite.liitteenNimi)
+                        && !notEmpty(commonFields.liitteenTyyppi)
+                        || !notEmpty(commonFields.toimitettavaMennessa)
+                        || !isValidSahkoinenOsoite(liite)
+                        || !isValidToimitusOsoite(liite)) {
+                        return true;
+                    }
+                });
+            });
+            return invalidLiite === undefined;
         }
         function isValidPainotettavatOppiaineet(hakukohde) {
             for (var i in hakukohde.painotettavatOppiaineet) {
@@ -300,7 +307,9 @@ angular.module('Validator', [])
                 },
                 valintakoe: {
                     isValidAjankohta: isValidAjankohta
-                }
+                },
+                isValidToimitusOsoite: isValidToimitusOsoite,
+                isValidSahkoinenOsoite: isValidSahkoinenOsoite
             }
         };
     });

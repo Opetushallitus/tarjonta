@@ -330,31 +330,47 @@
                 <th colspan="2" tt="hakukohde.review.liitteet.otsikko" ng-click="model.collapse.liitteet = !model.collapse.liitteet"></th>
                 <td><button class="btn" ng-disabled="!isPartiallyMutable" ng-click="doEdit($event, 'LIITTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></button></td>
             </tr>
-            <tr ng-show="!model.collapse.liitteet">
+            <tr ng-if="!model.collapse.liitteet">
                 <th></th>
                 <td colspan="2">
-            <mk-tabs model="model.liiteKielet" selection="model.selectedliiteKieli"></mk-tabs>
-            <table class="table" ng-show="model.selectedliiteKieli">
-                <tr>
-                    <th tt="hakukohde.review.liitteet.nimi"/>
-                    <th tt="hakukohde.review.liitteet.kuvaus"/>
-                    <th tt="hakukohde.review.liitteet.toim.mennessa"/>
-                    <th tt="hakukohde.review.liitteet.toim.osoite"/>
-                    <th tt="tarjonta.hakukohde.liitteet.sahkoinenToimitusOsoite"/>
-                    <th ng-if="CONFIGURATION.LIITE.showKaytetaanHakulomakkeella[model.hakukohde.toteutusTyyppi]" tt="hakukohde.review.liitteet.kaytetaanHakulomakkeella"/>
-                </tr>
-                <tr ng-show="!model.collapse.liitteet" data-ng-repeat="liite in getLocalizedLiitteet(model.selectedliiteKieli)">
-                    <td>{{ liite.liitteenNimi}}</td>
-                    <td data-ng-bind-html="getLiitteenKuvaus(liite, model.selectedliiteKieli)"/>
-                    <td>{{ liite.toimitettavaMennessa | date:'dd.MM.yyyy HH:mm ' }}</td>
-                    <td>{{ liite.liitteenToimitusOsoite.osoiterivi1}}, {{ liite.liitteenToimitusOsoite.postinumeroArvo}}, {{ liite.liitteenToimitusOsoite.postitoimipaikka}}</td>
-                    <td>{{ liite.sahkoinenToimitusOsoite }}</td>
-                    <td ng-if="CONFIGURATION.LIITE.showKaytetaanHakulomakkeella[model.hakukohde.toteutusTyyppi]">
-                        {{ liite.kaytetaanHakulomakkeella ? t('yes') : t('no') }}
-                    </td>
-                </tr>
-            </table>
-            </td>
+                    <div ng-repeat="liiteWithLangs in model.hakukohde.hakukohteenLiitteet">
+                        <hr ng-if="$index > 0" />
+                        <h4><span tt="hakukohde.liite.liiteOtsikko">Liite</span> {{$index +1}}</h4>
+                        <table class="tarjontaForm liiteList">
+                            <tr ng-if="liiteWithLangs.commonFields.liitteenTyyppi">
+                                <th tt="tarjonta.hakukohde.liite.modal.tyyppi"/>
+                                <td>{{liiteWithLangs.commonFields.liitteenTyyppiNimi}}</td>
+                            </tr>
+                            <tr>
+                                <th tt="hakukohde.review.liitteet.toim.mennessa"/>
+                                <td>{{ liiteWithLangs.commonFields.toimitettavaMennessa | date:'dd.MM.yyyy HH:mm ' }}</td>
+                            </tr>
+                            <tr ng-if="CONFIGURATION.LIITE.showKaytetaanHakulomakkeella[model.hakukohde.toteutusTyyppi]">
+                                <th tt="hakukohde.review.liitteet.kaytetaanHakulomakkeella"/>
+                                <td>
+                                    {{ liiteWithLangs.commonFields.kaytetaanHakulomakkeella ? t('yes') : t('no') }}
+                                </td>
+                            </tr>
+                        </table>
+                        <mk-tabs model="liiteWithLangs.kielet" selection="liiteWithLangs.selectedKieli"></mk-tabs>
+                        <table class="table"
+                               ng-repeat="liite in liiteWithLangs"
+                               ng-if="liiteWithLangs.selectedKieli && liite.kieliUri == liiteWithLangs.selectedKieli">
+                            <tr>
+                                <th tt="hakukohde.review.liitteet.nimi" ng-if="liite.liitteenNimi"/>
+                                <th tt="hakukohde.review.liitteet.kuvaus"/>
+                                <th tt="hakukohde.review.liitteet.toim.osoite"/>
+                                <th tt="tarjonta.hakukohde.liitteet.sahkoinenToimitusOsoite"/>
+                            </tr>
+                            <tr>
+                                <td ng-if="liite.liitteenNimi">{{ liite.liitteenNimi}}</td>
+                                <td data-ng-bind-html="getLiitteenKuvaus(liite, liiteWithLangs.selectedKieli)"/>
+                                <td>{{ liite.liitteenToimitusOsoite.osoiterivi1}}, {{ liite.liitteenToimitusOsoite.postinumeroArvo}}, {{ liite.liitteenToimitusOsoite.postitoimipaikka}}</td>
+                                <td>{{ liite.sahkoinenToimitusOsoite }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
             </tr>
             <tr class="collapse" ng-class="model.collapse.valintaperusteet ? '' : 'open'">
                 <th colspan="2" tt="hakukohde.review.valintaperusteet.otsikko" ng-click="model.collapse.valintaperusteet = !model.collapse.valintaperusteet"></th>

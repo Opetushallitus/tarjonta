@@ -950,3 +950,14 @@ table tr.aloituspaikatKuvaukset table {
 .oppiaineet button {
     margin-top:-8px;
 }
+
+table.tarjontaForm.liiteList th {
+    text-align:left;
+    min-width:120px;
+    width:15%;
+}
+
+table.tarjontaForm.liiteList th:after {
+    content:"";
+    width:0;
+}
