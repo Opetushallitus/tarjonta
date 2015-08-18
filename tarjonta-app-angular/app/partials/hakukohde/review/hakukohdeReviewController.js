@@ -54,7 +54,9 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         return ret;
     }
     $scope.model.valintakoeKielet = aggregateLangs($scope.model.hakukohde.valintakokeet);
-    $scope.model.liiteKielet = aggregateLangs($scope.model.hakukohde.hakukohteenLiitteet);
+    _.each($scope.model.hakukohde.hakukohteenLiitteet, function(liiteWithLangs) {
+        liiteWithLangs.kielet = _.chain(liiteWithLangs).pluck('kieliUri').compact().value();
+    });
     $scope.model.ryhmat = {};
     $scope.showLiitteidenToimitustiedot = function(toteutusTyyppi) {
         return _.contains([
@@ -254,11 +256,12 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         };
     };
     var loadLiitetiedot = function() {
-        _.each($scope.model.hakukohde.hakukohteenLiitteet, function(liite) {
-            if (liite.liitteenTyyppi !== undefined) {
-                Koodisto.getKoodi('liitetyypitamm', liite.liitteenTyyppi, $scope.model.userLang).then(function(koodi) {
-                    liite.liitteenNimi = koodi.koodiNimi;
-                });
+        _.each($scope.model.hakukohde.hakukohteenLiitteet, function(liiteWithLangs) {
+            if (liiteWithLangs.commonFields.liitteenTyyppi) {
+                Koodisto.getKoodi('liitetyypitamm', liiteWithLangs.commonFields.liitteenTyyppi, $scope.model.userLang)
+                    .then(function(koodi) {
+                        liiteWithLangs.commonFields.liitteenTyyppiNimi = koodi.koodiNimi;
+                    });
             }
         });
     };
@@ -518,15 +521,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
                 });
             }
         });
-    };
-    $scope.getLocalizedLiitteet = function(kieliUri) {
-        var localizedLiitteet = [];
-        angular.forEach($scope.model.hakukohde.hakukohteenLiitteet, function(liite) {
-            if (liite.kieliUri === kieliUri) {
-                localizedLiitteet.push(liite);
-            }
-        });
-        return localizedLiitteet;
     };
     var removeKoulutusRelationsFromHakukohde = function(koulutuksesArray) {
         HakukohdeKoulutukses.removeKoulutuksesFromHakukohde($scope.model.hakukohde.oid, koulutuksesArray);
@@ -805,7 +799,8 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
                         });
                         if (foundKoulutusInHakukohde === undefined) {
                             if (toisenAsteenKoulutus) {
-                                var hakukohteenKoulutuskoodi = result.tulokset[0].tulokset[0].koulutuskoodi.split('#')[0].split('_')[1];
+                                var hakukohteenKoulutuskoodi =
+                                    result.tulokset[0].tulokset[0].koulutuskoodi.split('#')[0].split('_')[1];
                                 if (koulutus.koulutuskoodi === hakukohteenKoulutuskoodi &&
                                     koulutus.pohjakoulutusvaatimus &&
                                     koulutus.pohjakoulutusvaatimus.fi === hakukohteenPohjakoulutusvaatimus.fi) {
