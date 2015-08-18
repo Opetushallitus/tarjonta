@@ -147,22 +147,6 @@ app.service('LocalisationService', function($log, Localisations, Config, AuthSer
     // $log.debug("LocalisationService()");
     // Singleton state, default current locale for the user
     this.locale = AuthService.getLanguage();
-    // We should call "/localisation/authorize" once so that the session gets established to localisation service
-    this.localisationAuthorizeCalled = false;
-    this.callLocalisationAuthorizeIfNecessary = function() {
-        var self = this;
-        if (!this.localisationAuthorizeCalled) {
-            self.localisationAuthorizeCalled = true;
-            Localisations.authorize({
-                id: 'authorize'
-            }, function(result) {
-                    $log.info('  callLocalisationAuthorizeIfNecessary - success!');
-                }, function(err) {
-                    $log.info('  callLocalisationAuthorizeIfNecessary FAILED', err);
-                    self.disableSystemErrorDialog();
-                });
-        }
-    };
     /**
        * Get users locale OR default locale "fi".
        *
@@ -384,7 +368,6 @@ app.service('LocalisationService', function($log, Localisations, Config, AuthSer
     this.updateLookupMap = function() {
         $log.debug('updateLookupMap()');
         // Create session to localisation service (so that we can create missing translations if needed)
-        this.callLocalisationAuthorizeIfNecessary();
         // Create temporary map
         var tmp = {};
         for (var localisationIndex in Config.env['tarjonta.localisations']) {
