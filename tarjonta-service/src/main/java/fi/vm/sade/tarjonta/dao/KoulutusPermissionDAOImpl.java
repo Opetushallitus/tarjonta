@@ -31,9 +31,11 @@ public class KoulutusPermissionDAOImpl extends AbstractJpaDAOImpl<KoulutusPermis
 
         QKoulutusPermission qKoulutusPermission = QKoulutusPermission.koulutusPermission;
 
+        String koodiUriWithotVersion = koodiUri.split("#")[0];
+
         BooleanExpression where = qKoulutusPermission.orgOid.in(orgOids)
                 .and(qKoulutusPermission.koodisto.eq(koodisto))
-                .and(qKoulutusPermission.koodiUri.eq(koodiUri));
+                .and(qKoulutusPermission.koodiUri.eq(koodiUriWithotVersion));
 
         if (alkuPvm != null) {
             where.and(

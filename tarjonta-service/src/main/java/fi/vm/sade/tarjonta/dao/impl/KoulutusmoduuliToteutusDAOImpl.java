@@ -27,6 +27,7 @@ import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.slf4j.Logger;
@@ -184,10 +185,19 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     ) {
         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
 
+        String kausi = IndexDataUtils.parseKausiKoodi(new Date());
+        Integer year = IndexDataUtils.parseYearInt(new Date());
+
         return from(komoto)
                 .where(
                         komoto.toteutustyyppi.in(toteutustyyppis)
-                        .and(komoto.alkamisVuosi.isNotNull())
+                        .and(
+                                komoto.alkamisVuosi.gt(year)
+                                .or(
+                                        komoto.alkamisVuosi.eq(year)
+                                        .and(komoto.alkamiskausiUri.eq(kausi))
+                                )
+                        )
                 )
                 .orderBy(komoto.id.asc())
                 .offset(offset)

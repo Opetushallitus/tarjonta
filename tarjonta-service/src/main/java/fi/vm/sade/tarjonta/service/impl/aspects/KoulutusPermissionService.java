@@ -7,6 +7,7 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPerustutkintoV1RDTO;
@@ -33,6 +34,7 @@ public class KoulutusPermissionService {
     private OrganisaatioService organisaatioService;
 
     public void checkThatOrganizationIsAllowedToOrganizeEducation(KoulutusmoduuliToteutus komoto) {
+        Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
         KoulutusV1RDTO dto;
 
         switch (komoto.getToteutustyyppi()) {
@@ -45,10 +47,10 @@ public class KoulutusPermissionService {
 
         dto.getOrganisaatio().setOid(komoto.getTarjoaja());
         dto.setToteutustyyppi(komoto.getToteutustyyppi());
-        dto.setKoulutuskoodi(getKoodi(komoto.getKoulutusUri()));
+        dto.setKoulutuskoodi(getKoodi(getFromKomotoOrKomo(komoto.getKoulutusUri(), komo.getKoulutusUri())));
 
         NimiV1RDTO osaamisala = new NimiV1RDTO();
-        osaamisala.setUri(komoto.getOsaamisalaUri());
+        osaamisala.setUri(getFromKomotoOrKomo(komoto.getOsaamisalaUri(), komo.getOsaamisalaUri()));
         dto.setKoulutusohjelma(osaamisala);
 
         Map<String, Integer> kielet = new HashMap<String, Integer>();
@@ -58,6 +60,10 @@ public class KoulutusPermissionService {
         dto.getOpetuskielis().setUris(kielet);
 
         checkThatOrganizationIsAllowedToOrganizeEducation(dto);
+    }
+
+    private String getFromKomotoOrKomo(String komotoUri, String komoUri) {
+        return komotoUri != null ? komotoUri : komoUri;
     }
 
     private KoodiV1RDTO getKoodi(String uri) {
