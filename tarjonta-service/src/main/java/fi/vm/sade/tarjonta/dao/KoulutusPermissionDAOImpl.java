@@ -23,11 +23,11 @@ public class KoulutusPermissionDAOImpl extends AbstractJpaDAOImpl<KoulutusPermis
 
     @Override
     public List<KoulutusPermission> find(List<String> orgOids, String koodisto, String koodiUri) {
-        return find(orgOids, koodisto, koodiUri, null, null);
+        return find(orgOids, koodisto, koodiUri, null);
     }
 
     @Override
-    public List<KoulutusPermission> find(List<String> orgOids, String koodisto, String koodiUri, Date alkuPvm, Date loppuPvm) {
+    public List<KoulutusPermission> find(List<String> orgOids, String koodisto, String koodiUri, Date pvm) {
 
         QKoulutusPermission qKoulutusPermission = QKoulutusPermission.koulutusPermission;
 
@@ -37,15 +37,11 @@ public class KoulutusPermissionDAOImpl extends AbstractJpaDAOImpl<KoulutusPermis
                 .and(qKoulutusPermission.koodisto.eq(koodisto))
                 .and(qKoulutusPermission.koodiUri.eq(koodiUriWithotVersion));
 
-        if (alkuPvm != null) {
-            where.and(
-                    qKoulutusPermission.alkuPvm.before(alkuPvm).or(qKoulutusPermission.alkuPvm.isNull())
-            );
-        }
-
-        if (loppuPvm != null) {
-            where.and(
-                    qKoulutusPermission.loppuPvm.after(loppuPvm).or(qKoulutusPermission.loppuPvm.isNull())
+        if (pvm != null) {
+            where = where.and(
+                    qKoulutusPermission.alkuPvm.before(pvm).or(qKoulutusPermission.alkuPvm.isNull())
+            ).and(
+                    qKoulutusPermission.loppuPvm.after(pvm).or(qKoulutusPermission.loppuPvm.isNull())
             );
         }
 

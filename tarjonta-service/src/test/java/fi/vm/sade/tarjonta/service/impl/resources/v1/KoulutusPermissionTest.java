@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import fi.vm.sade.generic.service.exception.NotAuthorizedException;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
@@ -27,6 +28,7 @@ import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.tasks.KoulutusPermissionSynchronizer;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOrgDTO;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,12 +74,18 @@ public class KoulutusPermissionTest {
         koulutusPermissionDAO.removeAll();
     }
 
+    private KoulutusAmmatillinenPerustutkintoV1RDTO getAmisDto() {
+        KoulutusAmmatillinenPerustutkintoV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
+        dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(new Date()));
+        return dto;
+    }
+
     @Test
     public void testThatPermissionsAreFoundInDb() {
         KoulutusPermission permission = new KoulutusPermission("org1", "koulutus", "koulutus_1", null, null);
         koulutusPermissionDAO.insert(permission);
 
-        List<KoulutusPermission> matchingPermissions = koulutusPermissionDAO.find(Lists.newArrayList("org1"), "koulutus", "koulutus_1", null, null);
+        List<KoulutusPermission> matchingPermissions = koulutusPermissionDAO.find(Lists.newArrayList("org1"), "koulutus", "koulutus_1", null);
         assertEquals(1, matchingPermissions.size());
 
         KoulutusPermission firstMatch = matchingPermissions.iterator().next();
@@ -86,7 +95,7 @@ public class KoulutusPermissionTest {
         assertNull(firstMatch.getAlkuPvm());
         assertNull(firstMatch.getLoppuPvm());
 
-        matchingPermissions = koulutusPermissionDAO.find(Lists.newArrayList("org1"), "koulutus", "koulutus_2", null, null);
+        matchingPermissions = koulutusPermissionDAO.find(Lists.newArrayList("org1"), "koulutus", "koulutus_2", null);
         assertEquals(0, matchingPermissions.size());
     }
 
@@ -95,7 +104,7 @@ public class KoulutusPermissionTest {
         // This permission should be removed after update
         KoulutusPermission permission = new KoulutusPermission("org1", "koulutus", "koulutus_1", null, null);
         koulutusPermissionDAO.insert(permission);
-        List<KoulutusPermission> beforeUpdatePermission = koulutusPermissionDAO.find(Lists.newArrayList("org1"), "koulutus", "koulutus_1", null, null);
+        List<KoulutusPermission> beforeUpdatePermission = koulutusPermissionDAO.find(Lists.newArrayList("org1"), "koulutus", "koulutus_1", null);
         assertEquals(1, beforeUpdatePermission.size());
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -109,21 +118,53 @@ public class KoulutusPermissionTest {
         koulutusPermissionSynchronizer.updatePermissionsToDb(orgs);
 
         // Update should have removed old permission
-        List<KoulutusPermission> deletedPermission = koulutusPermissionDAO.find(Lists.newArrayList("org1"), "koulutus", "koulutus_1", null, null);
+        List<KoulutusPermission> deletedPermission = koulutusPermissionDAO.find(Lists.newArrayList("org1"), "koulutus", "koulutus_1", null);
         assertEquals(0, deletedPermission.size());
 
         // And inserted all permissions from JSON
         List<KoulutusPermission> permissions = koulutusPermissionDAO.getAll();
         assertEquals(107, permissions.size());
 
-        permissions = koulutusPermissionDAO.find(Lists.newArrayList("1.2.246.562.10.354067406510"), "koulutus", "koulutus_381113", null, null);
+        permissions = koulutusPermissionDAO.find(Lists.newArrayList("1.2.246.562.10.354067406510"), "koulutus", "koulutus_381113", null);
         assertEquals(1, permissions.size());
+    }
+
+    @Test(expected = KoulutusPermissionException.class)
+    public void testThatIsNotAllowedWhenPermissionIsOutdated() {
+        insertKunta();
+
+        Date d2013Jan = new DateTime().withYear(2013).withMonthOfYear(1).toDate();
+        KoulutusPermission kieliFiPermission = new KoulutusPermission(ORG_OID, "kieli", "kieli_fi", null, d2013Jan);
+        koulutusPermissionDAO.insert(kieliFiPermission);
+
+        expectOrganization();
+        KoulutusV1RDTO dto = getAmisDto();
+        dto.getOrganisaatio().setOid(ORG_OID);
+        dto.setOpetuskielis(getOpetuskielis(Lists.newArrayList("kieli_fi")));
+
+        koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
+    }
+
+    @Test(expected = KoulutusPermissionException.class)
+    public void testThatIsNotAllowedWhenPermissionIsInFuture() {
+        insertKunta();
+
+        Date futureDate = new DateTime().plusYears(1).toDate();
+        KoulutusPermission kieliFiPermission = new KoulutusPermission(ORG_OID, "kieli", "kieli_fi", futureDate, null);
+        koulutusPermissionDAO.insert(kieliFiPermission);
+
+        expectOrganization();
+        KoulutusV1RDTO dto = getAmisDto();
+        dto.getOrganisaatio().setOid(ORG_OID);
+        dto.setOpetuskielis(getOpetuskielis(Lists.newArrayList("kieli_fi")));
+
+        koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
     }
 
     @Test(expected = KoulutusPermissionException.class)
     public void testThatIsNotAllowedWhenKuntaIsNotPermitted() {
         expectOrganization();
-        KoulutusV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
+        KoulutusV1RDTO dto = getAmisDto();
         dto.getOrganisaatio().setOid(ORG_OID);
         koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
     }
@@ -132,7 +173,7 @@ public class KoulutusPermissionTest {
     public void testThatIsNotAllowedWhenKoulutusIsNotPermitted() {
         insertKunta();
         expectOrganization();
-        KoulutusV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
+        KoulutusV1RDTO dto = getAmisDto();
         dto.getOrganisaatio().setOid(ORG_OID);
         dto.setKoulutuskoodi(createCode("koulutus_1"));
         koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
@@ -150,7 +191,7 @@ public class KoulutusPermissionTest {
         koulutusPermissionDAO.insert(permission);
 
         expectOrganization();
-        KoulutusV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
+        KoulutusV1RDTO dto = getAmisDto();
         dto.getOrganisaatio().setOid(ORG_OID);
         dto.setKoulutuskoodi(createCode("koulutus_1"));
         dto.setOpetuskielis(getOpetuskielis(Lists.newArrayList("kieli_fi", "kieli_en")));
@@ -168,7 +209,7 @@ public class KoulutusPermissionTest {
         koulutusPermissionDAO.insert(kieliPermission);
 
         expectOrganization();
-        KoulutusV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
+        KoulutusV1RDTO dto = getAmisDto();
         dto.getOrganisaatio().setOid(ORG_OID);
         dto.setKoulutuskoodi(createCode("koulutus_1"));
         dto.setOpetuskielis(getOpetuskielis(Lists.newArrayList("kieli_fi")));
@@ -191,7 +232,7 @@ public class KoulutusPermissionTest {
         koulutusPermissionDAO.insert(osaamisalaPermission);
 
         expectOrganization();
-        KoulutusV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
+        KoulutusV1RDTO dto = getAmisDto();
         dto.getOrganisaatio().setOid(ORG_OID);
         dto.setKoulutuskoodi(createCode("koulutus_1"));
         dto.setOpetuskielis(getOpetuskielis(Lists.newArrayList("kieli_fi", "kieli_sv")));

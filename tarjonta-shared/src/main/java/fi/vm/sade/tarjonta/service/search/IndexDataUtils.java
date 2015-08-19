@@ -26,6 +26,7 @@ import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,6 +136,16 @@ public class IndexDataUtils {
         Calendar cal = Calendar.getInstance();
         cal.setTime(koulutuksenAlkamisPvm);
         return cal.get(Calendar.YEAR);
+    }
+
+    public static Date getDateFromYearAndKausi(Integer year, String kausi) {
+        Integer month = 1; // kevät by default
+
+        if (SYKSY_URI.split("#")[0].equals(kausi)) {
+            month = 8;
+        }
+
+        return new DateTime().withYear(year).withMonthOfYear(month).withDayOfMonth(1).toDate();
     }
 
     public static String parseYear(Date koulutuksenAlkamisPvm) {

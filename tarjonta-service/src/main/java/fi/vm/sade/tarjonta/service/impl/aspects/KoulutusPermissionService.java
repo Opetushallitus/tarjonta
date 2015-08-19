@@ -1,7 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.aspects;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import fi.vm.sade.generic.service.exception.NotAuthorizedException;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
@@ -13,14 +13,12 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPerustutkintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
+import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class KoulutusPermissionService {
@@ -48,6 +46,9 @@ public class KoulutusPermissionService {
         dto.getOrganisaatio().setOid(komoto.getTarjoaja());
         dto.setToteutustyyppi(komoto.getToteutustyyppi());
         dto.setKoulutuskoodi(getKoodi(getFromKomotoOrKomo(komoto.getKoulutusUri(), komo.getKoulutusUri())));
+        dto.setKoulutuksenAlkamisPvms(komoto.getKoulutuksenAlkamisPvms());
+        dto.setKoulutuksenAlkamiskausi(getKoodi(komoto.getAlkamiskausiUri()));
+        dto.setKoulutuksenAlkamisvuosi(komoto.getAlkamisVuosi());
 
         NimiV1RDTO osaamisala = new NimiV1RDTO();
         osaamisala.setUri(getFromKomotoOrKomo(komoto.getOsaamisalaUri(), komo.getOsaamisalaUri()));
@@ -100,6 +101,15 @@ public class KoulutusPermissionService {
             }
         }
 
+        Set<Date> alkamispvmt = dto.getKoulutuksenAlkamisPvms();
+        if (alkamispvmt.isEmpty()) {
+            alkamispvmt.add(IndexDataUtils.getDateFromYearAndKausi(
+                    dto.getKoulutuksenAlkamisvuosi(), dto.getKoulutuksenAlkamiskausi().getUri()
+            ));
+        }
+
+        Preconditions.checkArgument(!alkamispvmt.isEmpty(), "alkamispvm cannot be empty!");
+
         OrganisaatioDTO org = organisaatioService.findByOid(orgOid);
 
         String kuntaKoodi = org.getKotipaikka();
@@ -114,24 +124,26 @@ public class KoulutusPermissionService {
             }
         }
 
-        if (koulutusKoodi != null) {
-            checkPermissions(orgOids, org, "koulutus", koulutusKoodi);
-        }
+        for (Date pvm : alkamispvmt) {
+            if (koulutusKoodi != null) {
+                checkPermissions(orgOids, org, "koulutus", koulutusKoodi, pvm);
+            }
 
-        if (osaamisalaKoodi != null) {
-            checkPermissions(orgOids, org, "osaamisala", osaamisalaKoodi);
-        }
+            if (osaamisalaKoodi != null) {
+                checkPermissions(orgOids, org, "osaamisala", osaamisalaKoodi, pvm);
+            }
 
-        for (String kieli : opetuskielet) {
-            checkPermissions(orgOids, org, "kieli", kieli);
-        }
+            for (String kieli : opetuskielet) {
+                checkPermissions(orgOids, org, "kieli", kieli, pvm);
+            }
 
-        checkPermissions(orgOids, org, "kunta", kuntaKoodi);
+            checkPermissions(orgOids, org, "kunta", kuntaKoodi, pvm);
+        }
 
     }
 
-    private void checkPermissions(List<String> orgOids, OrganisaatioDTO orgDto, String koodisto, String code) {
-        List<KoulutusPermission> permissions = koulutusPermissionDAO.find(orgOids, koodisto, code);
+    private void checkPermissions(List<String> orgOids, OrganisaatioDTO orgDto, String koodisto, String code, Date pvm) {
+        List<KoulutusPermission> permissions = koulutusPermissionDAO.find(orgOids, koodisto, code, pvm);
         if (permissions.isEmpty()) {
             String organisaationNimi = "-";
             try {
