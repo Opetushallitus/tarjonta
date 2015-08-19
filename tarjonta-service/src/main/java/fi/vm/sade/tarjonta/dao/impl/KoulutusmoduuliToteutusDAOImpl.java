@@ -27,6 +27,7 @@ import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.slf4j.Logger;
@@ -173,6 +174,35 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                 .where(komoto.oid.in(oids))
                 .join(komoto.koulutusmoduuli, komo)
                 .orderBy(komo.koulutusUri.asc())
+                .list(komoto);
+    }
+
+    @Override
+    public List<KoulutusmoduuliToteutus> findFutureKoulutukset(
+            List<ToteutustyyppiEnum> toteutustyyppis,
+            int offset,
+            int limit
+    ) {
+        QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+
+        String kausi = IndexDataUtils.parseKausiKoodi(new Date());
+        Integer year = IndexDataUtils.parseYearInt(new Date());
+
+        return from(komoto)
+                .where(
+                        komoto.toteutustyyppi.in(toteutustyyppis)
+                        .and(
+                                komoto.alkamisVuosi.gt(year)
+                                .or(
+                                        komoto.alkamisVuosi.eq(year)
+                                        .and(komoto.alkamiskausiUri.eq(kausi))
+                                )
+                        )
+                        .and(komoto.tila.notIn(TarjontaTila.POISTETTU, TarjontaTila.PERUTTU))
+                )
+                .orderBy(komoto.id.asc())
+                .offset(offset)
+                .limit(limit)
                 .list(komoto);
     }
 

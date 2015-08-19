@@ -40,6 +40,7 @@ import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
+import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionException;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
@@ -278,7 +279,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         /* Disabloi amkoute toistaiseksi master-branchissa
         try {
             koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
-        } catch (fi.vm.sade.generic.service.exception.NotAuthorizedException e) {
+        } catch (KoulutusPermissionException e) {
             return ResultV1RDTO.create(
                     ResultStatus.ERROR,
                     null,
