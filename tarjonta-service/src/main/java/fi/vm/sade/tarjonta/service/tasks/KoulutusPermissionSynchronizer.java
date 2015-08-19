@@ -50,6 +50,12 @@ public class KoulutusPermissionSynchronizer {
     @Value("${host.virkailija}")
     private String HOST_VIRKAILIJA;
 
+    @Value("${invalid.koulutus.report.recipient}")
+    private String RECIPIENT;
+
+    @Value("${smtp.host}")
+    private String SMTP_HOST;
+
     private static final Map<String, String> opetuskieliKoodiMap;
     private static final int KOMOTO_BATCH_SIZE = 500;
     private static final int VUOROKAUSI_MILLISECONDS = 1000 * 60 * 60 * 24;
@@ -149,12 +155,13 @@ public class KoulutusPermissionSynchronizer {
         }
 
         Properties props = new Properties();
+        props.put("mail.smtp.host", SMTP_HOST);
         Session session = Session.getDefaultInstance(props, null);
 
         try {
             Message msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress("admin@oph.fi", "admin@oph.fi"));
-            msg.addRecipient(Message.RecipientType.TO, new InternetAddress("alexistroberg@gmail.com", "Alexis Troberg"));
+            msg.addRecipient(Message.RecipientType.TO, new InternetAddress(RECIPIENT, RECIPIENT));
             msg.setSubject(subject);
             msg.setText(body);
             Transport.send(msg);
