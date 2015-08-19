@@ -1,11 +1,14 @@
 package fi.vm.sade.tarjonta.dao;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-
+import com.google.common.collect.Lists;
+import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.model.BinaryData;
 import fi.vm.sade.tarjonta.model.KoulutusOwner;
-import org.apache.commons.lang.time.DateUtils;
-import org.joda.time.DateTime;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +16,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.model.BinaryData;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-
-import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  * Tests for KoulutusmoduuliTotetusDAO.
@@ -44,6 +45,71 @@ public class KoulutusmoduuliToteutusDAOTest {
 
     @Autowired
     private TarjontaFixtures fixtures;
+
+    private void insertFutureKomoto(TarjontaTila tila, Integer alkamisvuosi, ToteutustyyppiEnum tyyppi) {
+        Koulutusmoduuli komo = fixtures.createTutkintoOhjelma();
+        komo = this.koulutusmoduuliDAO.insert(komo);
+
+        if (alkamisvuosi == null) {
+            alkamisvuosi = IndexDataUtils.parseYearInt(new Date());
+        }
+
+        if (tyyppi == null) {
+            tyyppi = ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO;
+        }
+
+        KoulutusmoduuliToteutus komoto = fixtures.createTutkintoOhjelmaToteutus();
+        komoto.setTarjoaja("1.2.3");
+        komoto.setToteutustyyppi(tyyppi);
+        komoto.setKoulutusmoduuli(komo);
+        komoto.setTila(tila);
+        komoto.setAlkamisVuosi(alkamisvuosi);
+        komoto.setAlkamiskausiUri("kausi_s#1");
+        this.koulutusmoduuliToteutusDAO.insert(komoto);
+    }
+
+    @Test
+    public void testThatFutureKoulutuksesReturnsOnlyKomotosWithValidTila() {
+        insertFutureKomoto(TarjontaTila.JULKAISTU, null, null);
+        insertFutureKomoto(TarjontaTila.POISTETTU, null, null);
+        insertFutureKomoto(TarjontaTila.LUONNOS, null, null);
+        insertFutureKomoto(TarjontaTila.PERUTTU, null, null);
+        insertFutureKomoto(TarjontaTila.KOPIOITU, null, null);
+
+        List<KoulutusmoduuliToteutus> komotos = this.koulutusmoduuliToteutusDAO.findFutureKoulutukset(
+                Lists.newArrayList(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO), 0, 100
+        );
+
+        assertEquals(3, komotos.size());
+    }
+
+    @Test
+    public void testThatFutureKoulutuksesDoesNotReturnKomotosFromPast() {
+        insertFutureKomoto(TarjontaTila.JULKAISTU, 2010, null);
+        insertFutureKomoto(TarjontaTila.POISTETTU, 2010, null);
+        insertFutureKomoto(TarjontaTila.LUONNOS, 2010, null);
+        insertFutureKomoto(TarjontaTila.PERUTTU, 2010, null);
+        insertFutureKomoto(TarjontaTila.KOPIOITU, 2010, null);
+
+        List<KoulutusmoduuliToteutus> komotos = this.koulutusmoduuliToteutusDAO.findFutureKoulutukset(
+                Lists.newArrayList(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO), 0, 100
+        );
+
+        assertEquals(0, komotos.size());
+    }
+
+    @Test
+    public void testThatFutureKoulutuksesOnlyReturnsSpecifiedToteutustyyppis() {
+        insertFutureKomoto(TarjontaTila.JULKAISTU, null, ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO);
+        insertFutureKomoto(TarjontaTila.JULKAISTU, null, ToteutustyyppiEnum.KORKEAKOULUOPINTO);
+        insertFutureKomoto(TarjontaTila.JULKAISTU, null, ToteutustyyppiEnum.LUKIOKOULUTUS);
+
+        List<KoulutusmoduuliToteutus> komotos = this.koulutusmoduuliToteutusDAO.findFutureKoulutukset(
+                Lists.newArrayList(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO), 0, 100
+        );
+
+        assertEquals(1, komotos.size());
+    }
 
     @Test
     public void testFindKomotosByKomoTarjoajaPohjakoulutus() {

@@ -198,6 +198,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                                         .and(komoto.alkamiskausiUri.eq(kausi))
                                 )
                         )
+                        .and(komoto.tila.notIn(TarjontaTila.POISTETTU, TarjontaTila.PERUTTU))
                 )
                 .orderBy(komoto.id.asc())
                 .offset(offset)

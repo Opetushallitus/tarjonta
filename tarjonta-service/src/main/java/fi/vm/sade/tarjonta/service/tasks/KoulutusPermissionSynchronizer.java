@@ -144,11 +144,11 @@ public class KoulutusPermissionSynchronizer {
         for (Map.Entry<String, List<KoulutusPermissionException>> entry : orgsWithInvalidKomotos.entrySet()) {
             KoulutusPermissionException e = entry.getValue().iterator().next();
 
-            body += e.getOrganisaationNimi() + " (" + e.getOrganisaationOid() + ")\n";
+            body += "\n" + e.getOrganisaationNimi() + " (" + e.getOrganisaationOid() + ")\n";
 
             for (KoulutusPermissionException exception : entry.getValue()) {
                 KoulutusmoduuliToteutus komoto = exception.getKomoto();
-                body += "\t- https://" + HOST_VIRKAILIJA + "/tarjonta-app/#/koulutus/"
+                body += "\thttps://" + HOST_VIRKAILIJA + "/tarjonta-app/#/koulutus/"
                         + komoto.getOid() + " (" + komoto.getTila().toString()
                         + ") (ei oikeutta koodiin \"" + e.getPuuttuvaKoodi() + "\")\n";
             }

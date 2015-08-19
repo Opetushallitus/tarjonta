@@ -135,7 +135,7 @@ public class KoulutusPermissionService {
         if (permissions.isEmpty()) {
             String organisaationNimi = "-";
             try {
-                orgDto.getNimi().getTeksti().iterator().next().getValue();
+                organisaationNimi = orgDto.getNimi().getTeksti().iterator().next().getValue();
             } catch (NullPointerException e) {}
 
             throw new KoulutusPermissionException(
