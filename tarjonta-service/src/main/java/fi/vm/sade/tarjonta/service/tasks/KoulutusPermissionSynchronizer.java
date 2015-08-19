@@ -58,7 +58,6 @@ public class KoulutusPermissionSynchronizer {
 
     private static final Map<String, String> opetuskieliKoodiMap;
     private static final int KOMOTO_BATCH_SIZE = 500;
-    private static final int VUOROKAUSI_MILLISECONDS = 1000 * 60 * 60 * 24;
     static {
         opetuskieliKoodiMap = new HashMap<String, String>();
         opetuskieliKoodiMap.put("1", "kieli_fi");
@@ -69,7 +68,7 @@ public class KoulutusPermissionSynchronizer {
 
     final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(KoulutusPermissionSynchronizer.class);
 
-    @Scheduled(fixedDelay = VUOROKAUSI_MILLISECONDS)
+    @Scheduled(cron = "0 0 3 * * ?")
     @Transactional
     public void runUpdate() throws MalformedURLException {
         LOG.info("KoulutusPermissions start update");
@@ -103,7 +102,7 @@ public class KoulutusPermissionSynchronizer {
     }
 
     @Transactional
-    @Scheduled(fixedDelay = VUOROKAUSI_MILLISECONDS)
+    @Scheduled(cron = "0 0 4 * * ?")
     public void checkExistingKoulutus() {
         LOG.info("Amkoute: check existing koulutus start");
 
@@ -114,7 +113,7 @@ public class KoulutusPermissionSynchronizer {
 
         do {
             komotos = koulutusmoduuliToteutusDAO.findFutureKoulutukset(tyyppis, offset, KOMOTO_BATCH_SIZE);
-            offset += KOMOTO_BATCH_SIZE + 100000;
+            offset += KOMOTO_BATCH_SIZE;
 
             for (KoulutusmoduuliToteutus komoto : komotos) {
                 try {
