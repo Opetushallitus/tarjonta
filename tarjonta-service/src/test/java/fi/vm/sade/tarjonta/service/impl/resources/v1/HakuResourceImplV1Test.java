@@ -14,7 +14,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -93,56 +92,21 @@ public class HakuResourceImplV1Test {
         assertNotNull(result.getStatus());
         assertEquals(ResultV1RDTO.ResultStatus.ERROR, result.getStatus());
 
-        DateTime syksy2015 = new DateTime("2015-08-20");
-        DateTime hakuaikaEndDate = new DateTime("2015-10-20");
-
         hakuDTO = new HakuV1RDTO();
         hakuDTO.setHakukausiUri("kausi_k");
         hakuDTO.setHakutapaUri("hakutapa_01");
-        hakuDTO.setHakukausiVuosi(syksy2015.getYear());
-        hakuDTO.setHakukausiUri("kausi_s#1");
         hakuDTO.setHakutyyppiUri("hakutyyppi_01");
         hakuDTO.setKohdejoukkoUri("haunkohdejoukko_12");
         hakuDTO.setKoulutuksenAlkamiskausiUri("kausi_k");
         hakuDTO.setMaxHakukohdes(42);
         hakuDTO.getNimi().put("kieli_fi", "Nimi suomi");
-        hakuDTO.getHakuaikas().add(createHakuaika(syksy2015.toDate(), hakuaikaEndDate.toDate()));
+        hakuDTO.getHakuaikas().add(createHakuaika(new Date(), new Date()));
 
         result = hakuResource.createHaku(hakuDTO);
 
         assertNotNull(result);
         assertNotNull(result.getStatus());
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
-    }
-
-    @Test
-    public void thatHakuIsNotCreatedWithInvalidHakuaika() {
-        HakuV1RDTO hakuDTO = new HakuV1RDTO();
-        ResultV1RDTO<HakuV1RDTO> result = hakuResource.createHaku(hakuDTO);
-        assertNotNull(result);
-        assertNotNull(result.getStatus());
-        assertEquals(ResultV1RDTO.ResultStatus.ERROR, result.getStatus());
-
-        DateTime syksy2015 = new DateTime("2015-08-20");
-        DateTime hakuaikaEndDate = new DateTime("2015-10-20");
-
-        hakuDTO = new HakuV1RDTO();
-        hakuDTO.setHakukausiUri("kausi_k");
-        hakuDTO.setHakutapaUri("hakutapa_01");
-        hakuDTO.setHakukausiVuosi(2014);
-        hakuDTO.setHakukausiUri("kausi_s#1");
-        hakuDTO.setHakutyyppiUri("hakutyyppi_01");
-        hakuDTO.setKohdejoukkoUri("haunkohdejoukko_12");
-        hakuDTO.setKoulutuksenAlkamiskausiUri("kausi_k");
-        hakuDTO.setMaxHakukohdes(42);
-        hakuDTO.getNimi().put("kieli_fi", "Nimi suomi");
-        hakuDTO.getHakuaikas().add(createHakuaika(syksy2015.toDate(), hakuaikaEndDate.toDate()));
-
-        result = hakuResource.createHaku(hakuDTO);
-
-        assertNotNull(result);
-        assertNotNull(result.getStatus());
-        assertEquals(ResultV1RDTO.ResultStatus.ERROR, result.getStatus());
     }
 
     private HakuaikaV1RDTO createHakuaika(Date start, Date end) {

@@ -40,8 +40,10 @@ import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.ProcessResourceV1;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
-import fi.vm.sade.tarjonta.service.search.*;
-import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
+import fi.vm.sade.tarjonta.service.search.HakukohdeSearchService;
+import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
@@ -535,17 +537,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
                 if (hakuaikaV1RDTO.getAlkuPvm() != null && hakuaikaV1RDTO.getLoppuPvm() != null && hakuaikaV1RDTO.getAlkuPvm().after(hakuaikaV1RDTO.getLoppuPvm())) {
                     result.addError(ErrorV1RDTO.createValidationError("loppuPvm", "haku.validation.hakuaikas.invalidOrder"));
-                }
-
-                String haunAlkamiskausi = TarjontaKoodistoHelper.getKoodiUriWithoutVersion(haku.getHakukausiUri());
-                String hakuajanAlkamiskausi = TarjontaKoodistoHelper.getKoodiUriWithoutVersion(
-                        IndexDataUtils.parseKausiKoodi(hakuaikaV1RDTO.getAlkuPvm())
-                );
-                Integer haunAlkamisvuosi = haku.getHakukausiVuosi();
-                Integer hakuajanAlkamisvuosi = IndexDataUtils.parseYearInt(hakuaikaV1RDTO.getAlkuPvm());
-
-                if (!StringUtils.equals(haunAlkamiskausi, hakuajanAlkamiskausi) || !haunAlkamisvuosi.equals(hakuajanAlkamisvuosi)) {
-                    result.addError(ErrorV1RDTO.createValidationError("alkuPvm", "haku.validation.hakuaikas.invalidAlkamiskausi"));
                 }
             }
         }
