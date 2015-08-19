@@ -119,28 +119,38 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             //älä muuta julkaistun tilaa
             haku.tila = tila;
         }
-        HakuV1.save(haku, function(result) {
-            if ($scope.model.validationmsgs && $scope.model.validationmsgs.length > 0) {
-                $scope.model.validationmsgs.splice(0, $scope.model.validationmsgs.length);
-            }
-            $log.debug('validation messages after splice:', $scope.model.validationmsgs);
-            if (result.status == 'OK') {
-                $scope.model.showError = false;
-                $scope.model.showSuccess = true;
-                form.$dirty = false;
-                form.$pristine = true;
-                $scope.saveParameters(result.result);
-                $scope.model.hakux = result;
-                $location.path('/haku/' + result.result.oid + '/edit');
-            }
-            else {
+        PermissionService.permissionResource().authorize({}, function(authResponse) {
+            if (authResponse.status !== 'OK') {
                 $scope.model.showError = true;
                 $scope.model.showSuccess = false;
-                $scope.model.validationmsgs = result.errors;
+                $scope.model.validationmsgs.push({
+                    errorMessageKey: 'error.auth'
+                });
+                return;
             }
-            $scope.modelInitialState = null;
-        }, function() {
-            $scope.model.showError = true;
+            HakuV1.save(haku, function(result) {
+                if ($scope.model.validationmsgs && $scope.model.validationmsgs.length > 0) {
+                    $scope.model.validationmsgs.splice(0, $scope.model.validationmsgs.length);
+                }
+                $log.debug('validation messages after splice:', $scope.model.validationmsgs);
+                if (result.status == 'OK') {
+                    $scope.model.showError = false;
+                    $scope.model.showSuccess = true;
+                    form.$dirty = false;
+                    form.$pristine = true;
+                    $scope.saveParameters(result.result);
+                    $scope.model.hakux = result;
+                    $location.path('/haku/' + result.result.oid + '/edit');
+                }
+                else {
+                    $scope.model.showError = true;
+                    $scope.model.showSuccess = false;
+                    $scope.model.validationmsgs = result.errors;
+                }
+                $scope.modelInitialState = null;
+            }, function() {
+                $scope.model.showError = true;
+            });
         });
     };
     $scope.goToReview = function(event, hakuForm) {
