@@ -22,6 +22,7 @@ import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
+import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionException;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.tasks.KoulutusPermissionSynchronizer;
@@ -119,7 +120,7 @@ public class KoulutusPermissionTest {
         assertEquals(1, permissions.size());
     }
 
-    @Test(expected = NotAuthorizedException.class)
+    @Test(expected = KoulutusPermissionException.class)
     public void testThatIsNotAllowedWhenKuntaIsNotPermitted() {
         expectOrganization();
         KoulutusV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
@@ -127,7 +128,7 @@ public class KoulutusPermissionTest {
         koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
     }
 
-    @Test(expected = NotAuthorizedException.class)
+    @Test(expected = KoulutusPermissionException.class)
     public void testThatIsNotAllowedWhenKoulutusIsNotPermitted() {
         insertKunta();
         expectOrganization();
@@ -137,7 +138,7 @@ public class KoulutusPermissionTest {
         koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
     }
 
-    @Test(expected = NotAuthorizedException.class)
+    @Test(expected = KoulutusPermissionException.class)
     public void testThatIsNotAllowedWhenLanguageIsNotPermitted() {
         insertKunta();
 
@@ -157,7 +158,7 @@ public class KoulutusPermissionTest {
         koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
     }
 
-    @Test(expected = NotAuthorizedException.class)
+    @Test(expected = KoulutusPermissionException.class)
     public void testThatIsNotAllowedWhenOsaamisalaIsNotPermitted() {
         insertKunta();
 

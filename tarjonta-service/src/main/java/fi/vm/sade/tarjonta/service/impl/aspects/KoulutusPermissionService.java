@@ -115,24 +115,34 @@ public class KoulutusPermissionService {
         }
 
         if (koulutusKoodi != null) {
-            checkPermissions(koulutusPermissionDAO.find(orgOids, "koulutus", koulutusKoodi), koulutusKoodi);
+            checkPermissions(orgOids, org, "koulutus", koulutusKoodi);
         }
 
         if (osaamisalaKoodi != null) {
-            checkPermissions(koulutusPermissionDAO.find(orgOids, "osaamisala", osaamisalaKoodi), osaamisalaKoodi);
+            checkPermissions(orgOids, org, "osaamisala", osaamisalaKoodi);
         }
 
         for (String kieli : opetuskielet) {
-            checkPermissions(koulutusPermissionDAO.find(orgOids, "kieli", kieli), kieli);
+            checkPermissions(orgOids, org, "kieli", kieli);
         }
 
-        checkPermissions(koulutusPermissionDAO.find(orgOids, "kunta", kuntaKoodi), kuntaKoodi);
+        checkPermissions(orgOids, org, "kunta", kuntaKoodi);
 
     }
 
-    private void checkPermissions(List<KoulutusPermission> permissions, String code) {
+    private void checkPermissions(List<String> orgOids, OrganisaatioDTO orgDto, String koodisto, String code) {
+        List<KoulutusPermission> permissions = koulutusPermissionDAO.find(orgOids, koodisto, code);
         if (permissions.isEmpty()) {
-            throw new NotAuthorizedException("Organization not allowed to organize education, permission missing for code: " + code);
+            String organisaationNimi = "-";
+            try {
+                orgDto.getNimi().getTeksti().iterator().next().getValue();
+            } catch (NullPointerException e) {}
+
+            throw new KoulutusPermissionException(
+                    organisaationNimi,
+                    orgDto.getOid(),
+                    code
+            );
         }
     }
 
