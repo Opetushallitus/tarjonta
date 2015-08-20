@@ -46,6 +46,12 @@ public class HakukohdeSearchService extends SearchService {
 
         final SolrQuery q = createHakukohdeQuery(kysely);
 
+        if (kysely.getOffset() != null && kysely.getLimit() != null) {
+            q.setStart(kysely.getOffset());
+            q.setRows(kysely.getLimit());
+            q.addSort(ORG_NIMI_LOWERCASE, SolrQuery.ORDER.asc);
+        }
+
         try {
             QueryResponse hakukohdeResponse = hakukohdeSolr.query(q);
 
@@ -68,6 +74,7 @@ public class HakukohdeSearchService extends SearchService {
                 Map<String, OrganisaatioPerustieto> orgResponse = searchOrgs(orgOids);
                 SolrDocumentToHakukohdeConverter converter = new SolrDocumentToHakukohdeConverter();
                 response = converter.convertSolrToHakukohteetVastaus(hakukohdeResponse.getResults(), orgResponse, defaultTarjoaja);
+                response.setHitCount((int) hakukohdeResponse.getResults().getNumFound());
             } else {
                 response = new HakukohteetVastaus();
             }

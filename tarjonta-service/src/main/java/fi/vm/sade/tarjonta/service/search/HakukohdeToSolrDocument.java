@@ -30,6 +30,7 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import org.apache.commons.lang.StringUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -455,6 +456,16 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
 
         final OrganisaatioPerustieto perus = orgs.get(0);
 
+        // Non-multivalued field -> ensure it's added only once
+        if (hakukohdeDoc.getFieldValue(ORG_NIMI) == null) {
+            String orgNimi = perus.getNimi().get("fi");
+            // Fallback jos ei löydy suomeksi
+            if (StringUtils.isBlank(orgNimi)) {
+                orgNimi = perus.getNimi().values().iterator().next();
+            }
+            add(hakukohdeDoc, ORG_NIMI, orgNimi);
+            add(hakukohdeDoc, ORG_NIMI_LOWERCASE, orgNimi.toLowerCase());
+        }
         add(hakukohdeDoc, ORG_OID, perus.getOid());
         ArrayList<String> oidPath = Lists.newArrayList();
 

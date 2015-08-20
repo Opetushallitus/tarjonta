@@ -331,7 +331,7 @@
 
         <tr class="collapse" ng-class="model.collapse.haunHakukohteet ? '' : 'open'">
             <th colspan="2" ng-click="model.collapse.haunHakukohteet = !model.collapse.haunHakukohteet">
-                <span tt="haku.review.haunHakukohteet.otsikko">Hakukohteet</span> ({{model.hakukohteet.length}})
+                <span tt="haku.review.haunHakukohteet.otsikko">Hakukohteet</span> ({{model.hakukohteetTotalRows}})
             </th>
             <td>
 <!--                 <a class="btn" href data-ng-click="doCreateNewHakukohde($event)">
@@ -340,8 +340,7 @@
  -->            </td>
         </tr>
 
-        <tbody ng-show="!model.collapse.haunHakukohteet">
-
+        <tbody ng-if="!model.collapse.haunHakukohteet">
             <tr>
                 <th></th>
                 <td colspan="2">
@@ -369,6 +368,15 @@
                             <td>{{getAloituspaikat(hakukohde)}}</td>
                         </tr>
                     </table>
+
+                    <div class="pagination" ng-if="model.paginationNeeded">
+                        <pagination total-items="model.hakukohteetTotalRows"
+                                    next-text="&raquo;"
+                                    previous-text="&laquo;"
+                                    items-per-page="model.itemsPerPage"
+                                    ng-model="model.currentPage"
+                                    ng-change="getHakukohteet()"></pagination>
+                    </div>
                 </td>
             </tr>
         </tbody>

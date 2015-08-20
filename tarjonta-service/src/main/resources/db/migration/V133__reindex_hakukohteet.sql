@@ -1,0 +1,1 @@
+update hakukohde set viimindeksointipvm = null;

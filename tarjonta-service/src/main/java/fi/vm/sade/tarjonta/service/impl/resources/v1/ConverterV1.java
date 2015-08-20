@@ -1750,8 +1750,7 @@ public class ConverterV1 {
             rets.getTulokset().add(convert(ht));
         }
 
-        // XX use hitCount when implemented
-        ret.setTuloksia(source.getHakukohteet().size());
+        ret.setTuloksia(source.getHitCount());
 
         return ret;
     }

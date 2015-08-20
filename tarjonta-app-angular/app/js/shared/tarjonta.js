@@ -119,6 +119,11 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             organisaatioRyhmaOid: args.hakukohderyhma,
             koulutusOid: args.koulutusOid
         };
+        _.each(['offset', 'limit'], function(key) {
+            if (angular.isDefined(args[key])) {
+                params[key] = args[key];
+            }
+        });
         return CacheService.lookupResource(searchCacheKey('hakukohde', args), hakukohdeHaku, params, function(result) {
             result = result.result;
             // unwrap v1
