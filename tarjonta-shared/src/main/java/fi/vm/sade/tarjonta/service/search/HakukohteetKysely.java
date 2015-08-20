@@ -32,6 +32,9 @@ public class HakukohteetKysely implements Serializable {
 
     private Integer koulutuksenAlkamisvuosi;
 
+    private Integer offset;
+    private Integer limit;
+
     private List<String> tarjoajaOids = new ArrayList<String>();
     private List<String> koulutusOids = new ArrayList<String>();
     private List<String> opetuskielet = new ArrayList<String>();
@@ -206,4 +209,21 @@ public class HakukohteetKysely implements Serializable {
     public void setKoulutusmoduuliTyyppi(List<KoulutusmoduuliTyyppi> koulutusmoduuliTyyppi) {
         this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
     }
+
+    public Integer getOffset() {
+        return offset;
+    }
+
+    public void setOffset(Integer offset) {
+        this.offset = offset;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+
 }

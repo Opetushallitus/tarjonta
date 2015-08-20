@@ -143,7 +143,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                                                                              String oppilaitostyyppi,
                                                                              String kunta,
                                                                              List<String> opetuskielet,
-                                                                             List<String> koulutusOids) {
+                                                                             List<String> koulutusOids,
+                                                                             Integer offset,
+                                                                             Integer limit) {
 
         organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
         hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas : new ArrayList<String>();
@@ -162,6 +164,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         q.setOpetuskielet(opetuskielet);
         q.setKoulutusmoduuliTyyppi(koulutusmoduulityypit);
         q.getKoulutusOids().addAll(koulutusOids);
+        q.setOffset(offset);
+        q.setLimit(limit);
 
         if (hakukohdeOid != null) {
             q.setHakukohdeOid(hakukohdeOid);

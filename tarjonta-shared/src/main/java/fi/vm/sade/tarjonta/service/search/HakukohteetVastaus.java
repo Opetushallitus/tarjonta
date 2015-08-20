@@ -8,6 +8,8 @@ public class HakukohteetVastaus implements Serializable {
 
     private final static long serialVersionUID = 100L;
 
+    private Integer hitCount;
+
     public List<HakukohdePerustieto> getHakukohteet() {
         return hakukohteet;
     }
@@ -16,10 +18,13 @@ public class HakukohteetVastaus implements Serializable {
         this.hakukohteet = hakukohteet;
     }
 
-    public int getHitCount() {
-        return hakukohteet.size();
+    public Integer getHitCount() {
+        return hitCount;
     }
 
+    public void setHitCount(Integer hitCount) {
+        this.hitCount = hitCount;
+    }
 
     private List<HakukohdePerustieto> hakukohteet = new ArrayList<HakukohdePerustieto>();
 

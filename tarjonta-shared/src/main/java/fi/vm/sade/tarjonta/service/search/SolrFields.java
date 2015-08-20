@@ -95,6 +95,8 @@ public class SolrFields {
         protected static final String OID = "id";
         protected static final String ORG_OID = "orgoid_ss";                                     //needed for permissions
         protected static final String ORG_PATH = "orgpath_ss";                                  //needed search (org restriction)
+        protected static final String ORG_NIMI = "orgnimi_s";
+        protected static final String ORG_NIMI_LOWERCASE = "orgnimi_lowercase_s";
         protected static final String VUOSI_KOODI = "vuosikoodi_s";                             //this is used in search
         protected static final String POHJAKOULUTUSVAATIMUS_URI = "pohjakoulutusvaatimusuri_s";
         protected static final String POHJAKOULUTUSVAATIMUS_FI = "pohjakoulutusvaatimusfi_s";
