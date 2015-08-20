@@ -71,6 +71,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
@@ -163,6 +164,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     @Autowired
     private KoulutusPermissionService koulutusPermissionService;
+
+    @Value("${host.virkailija}")
+    private String HOST_VIRKAILIJA;
 
     @Override
     public ResultV1RDTO<KoulutusV1RDTO> findByOid(String komotoOid, Boolean showMeta, Boolean showImg, String userLang) {
@@ -276,17 +280,17 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     ErrorV1RDTO.createValidationError("alkamispvm", "koulutus.error.alkamispvm.ajankohtaerikuinhaulla"));
         }
 
-        /* Disabloi amkoute toistaiseksi master-branchissa
-        try {
-            koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
-        } catch (KoulutusPermissionException e) {
-            return ResultV1RDTO.create(
-                    ResultStatus.ERROR,
-                    null,
-                    ErrorV1RDTO.createValidationError("koulutusPermission", "koulutusNotAllowedForOrganization")
-            );
+        if (Lists.newArrayList("itest-virkailija.oph.ware.fi", "testi.virkailija.opintopolku.fi").contains(HOST_VIRKAILIJA)) {
+            try {
+                koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
+            } catch (KoulutusPermissionException e) {
+                return ResultV1RDTO.create(
+                        ResultStatus.ERROR,
+                        null,
+                        ErrorV1RDTO.createValidationError("koulutusPermission", "koulutusNotAllowedForOrganization")
+                );
+            }
         }
-        */
 
         if (dto.getClass() == KoulutusKorkeakouluV1RDTO.class) {
             //TODO: currently no komo validation, when invalid throws exception
