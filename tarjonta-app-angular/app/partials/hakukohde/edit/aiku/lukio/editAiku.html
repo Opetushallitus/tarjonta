@@ -34,7 +34,6 @@
                         <td>
                             <koodistocombo
                                 ng-if="model.hakukohde.toteutusTyyppi === 'AIKUISTEN_PERUSOPETUS'"
-                                onchangecallback="fnTemp"
                                 koodistouri="'aikuhakukohteet'"
                                 koodiuri="model.hakukohde.hakukohteenNimiUri"
                                 parentkoodiuri="'koulutus_201101'"
@@ -49,7 +48,6 @@
 
                             <koodistocombo
                                 ng-if="model.hakukohde.toteutusTyyppi === 'EB_RP_ISH'"
-                                onchangecallback="fnTemp"
                                 koodistouri="'hakukohteet'"
                                 koodiuri="model.hakukohde.hakukohteenNimiUri"
                                 parentkoodiuri="model.koulutusohjelmaKoodiUri"
@@ -64,7 +62,6 @@
 
                             <koodistocombo
                                 ng-if="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA'"
-                                onchangecallback="fnTemp"
                                 koodistouri="'hakukohteet'"
                                 koodiuri="model.hakukohde.hakukohteenNimiUri"
                                 parentkoodiuri="'lukiolinjat_0086'"

@@ -1390,8 +1390,6 @@ app.controller('HakukohdeParentController', [
             });
             return orgMatches;
         };
-        $scope.fnTemp = function() {};
-        $scope.temp = null;
 
         $scope.isOpinto = function(hakukohde) {
             var toteutusTyyppi = hakukohde.toteutusTyyppi;

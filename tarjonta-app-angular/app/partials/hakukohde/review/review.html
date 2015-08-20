@@ -68,9 +68,8 @@
                 <tr ng-show="!isAiku && !config.isToisenAsteenKoulutus()">
                     <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimukset"/>
                     <td colspan="2">
-                        <span data-ng-repeat="hakukelpoisuusvaatimus in model.hakukelpoisuusVaatimukses">
-                            {{ hakukelpoisuusvaatimus }}
-                        </span>
+                        <span class="comma"
+                              ng-repeat="hakukelpoisuusvaatimus in model.hakukelpoisuusVaatimukses">{{ hakukelpoisuusvaatimus }}</span>
                     </td>
                 </tr>
 

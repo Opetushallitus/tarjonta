@@ -62,7 +62,6 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
         });
     }
     //Placeholder for multiselect remove when refactored
-    $scope.model.temp = {};
     $scope.model.ryhmaChange = function() {
         $log.info('ryhmaChange()', $scope.model.hakukohde.ryhmatX);
     };
