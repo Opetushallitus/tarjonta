@@ -449,7 +449,7 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
                 return null;
             }
             else {
-                return dst.after(html);
+                return dst.after(html).next();
             }
         }
         function replaceRow(row, dst) {

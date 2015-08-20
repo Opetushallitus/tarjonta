@@ -137,7 +137,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                     r.hakutapa = localize(r.hakutapa);
                     r.tilaNimi = LocalisationService.t('tarjonta.tila.' + r.tila);
                 }
-                t.tulokset.sort(compareByName).reverse(); // Reverse, koska comparyByName palauttaa z -> a
+                t.tulokset.sort(compareByName);
             }
             result.tulokset.sort(compareByName);
             return result;
@@ -200,7 +200,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                     validKoulutukset.push(r);
                 }
                 t.tulokset = validKoulutukset;
-                t.tulokset.sort(compareByName).reverse(); // Reverse, koska comparyByName palauttaa z -> a
+                t.tulokset.sort(compareByName);
             }
             result.tulokset.sort(compareByName);
             return result;
