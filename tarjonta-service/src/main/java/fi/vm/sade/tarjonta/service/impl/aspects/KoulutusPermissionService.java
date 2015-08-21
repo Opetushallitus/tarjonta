@@ -153,6 +153,7 @@ public class KoulutusPermissionService {
             throw new KoulutusPermissionException(
                     organisaationNimi,
                     orgDto.getOid(),
+                    koodisto,
                     code
             );
         }

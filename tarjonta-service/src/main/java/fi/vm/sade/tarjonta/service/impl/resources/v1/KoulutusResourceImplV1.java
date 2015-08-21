@@ -287,7 +287,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 return ResultV1RDTO.create(
                         ResultStatus.ERROR,
                         null,
-                        ErrorV1RDTO.createValidationError("koulutusPermission", "koulutusNotAllowedForOrganization")
+                        ErrorV1RDTO.createValidationError(
+                                "koulutusPermission", "koulutusNotAllowedForOrganization." + e.getKoodisto()
+                        )
                 );
             }
         }

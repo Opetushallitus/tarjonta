@@ -6,12 +6,14 @@ public class KoulutusPermissionException extends RuntimeException {
 
     private String organisaationNimi;
     private String organisaationOid;
+    private String koodisto;
     private String puuttuvaKoodi;
     private KoulutusmoduuliToteutus komoto;
 
-    public KoulutusPermissionException(String organisaationNimi, String organisaationOid, String puuttuuvaKoodi) {
+    public KoulutusPermissionException(String organisaationNimi, String organisaationOid, String koodisto, String puuttuuvaKoodi) {
         this.organisaationNimi = organisaationNimi;
         this.organisaationOid = organisaationOid;
+        this.koodisto = koodisto;
         this.puuttuvaKoodi = puuttuuvaKoodi;
     }
 
@@ -33,6 +35,10 @@ public class KoulutusPermissionException extends RuntimeException {
 
     public void setKomoto(KoulutusmoduuliToteutus komoto) {
         this.komoto = komoto;
+    }
+
+    public String getKoodisto() {
+        return koodisto;
     }
 
 }
