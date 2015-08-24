@@ -141,15 +141,15 @@ public class KoulutusPermissionSynchronizer {
         String body = "Tarjonnasta löytyi seuraavat koulutukset, joilta puuttuu järjestämisoikeus:\n\n";
 
         for (Map.Entry<String, List<KoulutusPermissionException>> entry : orgsWithInvalidKomotos.entrySet()) {
-            KoulutusPermissionException e = entry.getValue().iterator().next();
+            KoulutusPermissionException firstException = entry.getValue().iterator().next();
 
-            body += "\n" + e.getOrganisaationNimi() + " (" + e.getOrganisaationOid() + ")\n";
+            body += "\n" + firstException.getOrganisaationNimi() + " (" + firstException.getOrganisaationOid() + ")\n";
 
             for (KoulutusPermissionException exception : entry.getValue()) {
                 KoulutusmoduuliToteutus komoto = exception.getKomoto();
                 body += "\thttps://" + HOST_VIRKAILIJA + "/tarjonta-app/#/koulutus/"
                         + komoto.getOid() + " (" + komoto.getTila().toString()
-                        + ") (ei oikeutta koodiin \"" + e.getPuuttuvaKoodi() + "\")\n";
+                        + ") (ei oikeutta koodiin \"" + exception.getPuuttuvaKoodi() + "\")\n";
             }
         }
 
