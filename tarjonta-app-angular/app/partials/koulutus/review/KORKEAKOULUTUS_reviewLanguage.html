@@ -211,24 +211,25 @@
     <!-- YHTEYSHENKILÖT -->
     <tr class="collapse" ng-class="model.collapse.yhteysHenkilot ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.yhteysHenkilot.otsikko" ng-click="model.collapse.yhteysHenkilot = !model.collapse.yhteysHenkilot">Yhteyshenkilöt</th>
-        <td><a class="btn" ng-disabled="!isMutable" href data-ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
+        <td><button class="btn" ng-disabled="!isMutable" data-ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></button></td>
     </tr>
-
     <tbody ng-show="!model.collapse.yhteysHenkilot" ng-repeat="yh in model.koulutus.yhteyshenkilos | orderBy:yh.henkiloTyyppi">
-	    <tr>
-	        <th><b>{{t('koulutus.review.yhteyshenkilo.'+yh.henkiloTyyppi)}}</b></th>
-	        <td colspan="2">{{yh.titteli}} {{yh.sukunimi}}, {{yh.etunimet}}</td>
-	    </tr>
-
-	    <tr>
-	        <th tt="koulutus.review.yhteyshenkilo.puhelin">Puhelin</th>
-	        <td colspan="2">{{yh.puhelin}}</td>
-	    </tr>
-
-	    <tr>
-	        <th tt="koulutus.review.yhteyshenkilo.sahkoposti">Sähköposti</th>
-	        <td colspan="2">{{yh.sahkoposti}}</td>
-	    </tr>
+        <tr>
+            <th><b>{{t('koulutus.review.yhteyshenkilo.'+yh.henkiloTyyppi)}}</b></th>
+            <td colspan="2">{{yh.etunimet}} {{yh.sukunimi}}</td>
+        </tr>
+        <tr>
+            <th tt="koulutus.review.yhteyshenkilo.sahkoposti">Sähköposti</th>
+            <td colspan="2">{{yh.sahkoposti}}</td>
+        </tr>
+        <tr>
+            <th tt="koulutus.edit.yhteyshenkilo.title">Tehtävänimike</th>
+            <td colspan="2">{{yh.titteli}}</td>
+        </tr>
+        <tr>
+            <th tt="koulutus.review.yhteyshenkilo.puhelin">Puhelin</th>
+            <td colspan="2">{{yh.puhelin}}</td>
+        </tr>
     </tbody>
 
     <!-- KUVAILEVAT TIEDOT -->

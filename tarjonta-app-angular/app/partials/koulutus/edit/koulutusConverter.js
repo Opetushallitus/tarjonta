@@ -150,18 +150,14 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 henkilo.sukunimi = '';
                 henkilo.etunimet = '';
                 if (henkilo.nimet) {
-                    if (henkilo.nimet.indexOf(' ') == -1) {
+                    var words = henkilo.nimet.split(' ');
+                    if (words.length === 1) {
                         //ei välilyöntiä nimessä
                         henkilo.etunimet = henkilo.nimet;
                     }
                     else {
-                        var arrSeparatedNames = henkilo.nimet.split(' ');
-                        for (var p = 0; p < arrSeparatedNames.length - 1; p++) {
-                            henkilo.etunimet += arrSeparatedNames[p];
-                        }
-                        if (arrSeparatedNames.length > 1) {
-                            henkilo.sukunimi = arrSeparatedNames[arrSeparatedNames.length - 1];
-                        }
+                        henkilo.etunimet = _.initial(words).join(' ');
+                        henkilo.sukunimi = _.last(words);
                     }
                 }
                 delete henkilo.nimet;
