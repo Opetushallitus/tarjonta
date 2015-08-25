@@ -184,17 +184,16 @@ public class KoulutusPermissionSynchronizer {
         }
     }
 
+    public static <T> Collection<T> nullSafe(Collection<T> c) {
+        return (c == null) ? Collections.<T>emptyList() : c;
+    }
+
     public static List<KoulutusPermission> convertFromDto(AmkouteOrgDTO org) {
         List<KoulutusPermission> permissions = new ArrayList<KoulutusPermission>();
 
-        // Tarkista, että organisaatiolla on kaikki tarvittavat tiedot
-        if (org.getKoulutukset() == null || org.getJarjestamiskunnat() == null || org.getOpetuskielet() == null) {
-            return permissions;
-        }
-
         Map<String, KoulutusPermission> koulutusKoodit = new HashMap<String, KoulutusPermission>();
 
-        for (AmkouteKoulutusDTO permissionDto : org.getKoulutukset()) {
+        for (AmkouteKoulutusDTO permissionDto : nullSafe(org.getKoulutukset())) {
             if (permissionDto.getOsaamisala() != null) {
                 permissions.add(new KoulutusPermission(
                         org.getOid(),
@@ -219,7 +218,9 @@ public class KoulutusPermissionSynchronizer {
             }
         }
 
-        for (AmkouteOpetuskieliDTO permissionDto : org.getOpetuskielet()) {
+        permissions.addAll(koulutusKoodit.values());
+
+        for (AmkouteOpetuskieliDTO permissionDto : nullSafe(org.getOpetuskielet())) {
             String kielikoodi = opetuskieliKoodiMap.get(permissionDto.getOppilaitoksenopetuskieli());
             if (kielikoodi != null) {
                 permissions.add(new KoulutusPermission(
@@ -232,7 +233,7 @@ public class KoulutusPermissionSynchronizer {
             }
         }
 
-        for (AmkouteJarjestamiskuntaDTO permissionDto : org.getJarjestamiskunnat()) {
+        for (AmkouteJarjestamiskuntaDTO permissionDto : nullSafe(org.getJarjestamiskunnat())) {
             permissions.add(new KoulutusPermission(
                     org.getOid(),
                     "kunta",
@@ -241,8 +242,6 @@ public class KoulutusPermissionSynchronizer {
                     permissionDto.getLoppupvm()
             ));
         }
-
-        permissions.addAll(koulutusKoodit.values());
 
         return permissions;
     }
