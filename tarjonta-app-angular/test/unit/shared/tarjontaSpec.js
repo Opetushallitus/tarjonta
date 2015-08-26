@@ -67,6 +67,7 @@ describe('Tarjonta', function() {
     var PH_HKMT = 1399973779271;
     var PH_HKLPT = 1399887372781;
 
+    beforeEach(module('app.dialog'));
     beforeEach(module('SharedStateService'));
     beforeEach(module('auth'));
     beforeEach(module('Organisaatio'));

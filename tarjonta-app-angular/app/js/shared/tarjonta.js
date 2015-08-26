@@ -4,7 +4,7 @@ var app = angular.module('Tarjonta', [
     'Logging'
 ]);
 app.factory('TarjontaService', function($resource, $http, Config, LocalisationService, Koodisto,
-                                        CacheService, $q, $log, OrganisaatioService, AuthService) {
+                                        CacheService, $q, $log, OrganisaatioService, AuthService, dialogService) {
     $log = $log.getInstance('TarjontaService');
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + 'hakukohde/search');
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/search');
@@ -236,9 +236,20 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 withCredentials: true
             }
         });
-        tila.update(function(nstate) {
-            $log.debug('resolving:', nstate);
-            ret.resolve(nstate.result);
+        tila.update(function(response) {
+            var error = _.first(response.errors);
+            if (error) {
+                dialogService.showDialog({
+                    ok: LocalisationService.t('ok'),
+                    cancel: null,
+                    title: LocalisationService.t(error.errorMessageKey + '.title'),
+                    description: LocalisationService.t(error.errorMessageKey + '.description')
+                });
+                ret.reject();
+            }
+            else {
+                ret.resolve(response.result);
+            }
         });
         return ret.promise;
     };

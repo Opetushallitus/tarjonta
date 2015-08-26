@@ -1133,6 +1133,18 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     @Transactional(readOnly = false)
     public ResultV1RDTO<Tilamuutokset> updateTila(String oid, TarjontaTila tila) {
+        permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(oid);
+
+        if (Sets.newHashSet(TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU).contains(tila)) {
+            try {
+                permissionChecker.checkPublishOrUnpublishHakukohde(oid);
+            }
+            catch (NotAuthorizedException e) {
+                ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<Tilamuutokset>();
+                r.addError(ErrorV1RDTO.createValidationError(null, e.getMessage()));
+                return r;
+            }
+        }
 
         Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, tila, oid);
         Tilamuutokset tm = null;

@@ -34,6 +34,7 @@ describe('Edit koulutus testeja', function() {
 //    var mockModule = angular.module('test.module', []);
 //    mockModule.value('globalConfig', CONFIG_ENV_MOCK);
 
+    beforeEach(module('app.dialog'));
     beforeEach(module('test.module')); //mock module with the mock data
     beforeEach(module('Organisaatio'));
     beforeEach(module('Tarjonta'));

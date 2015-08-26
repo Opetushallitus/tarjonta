@@ -40,6 +40,7 @@ describe('TarjontaPermissions', function() {
         }
     };
 
+    beforeEach(module('app.dialog'));
     beforeEach(module('Haku'));
     beforeEach(module('auth'));
     beforeEach(module('Organisaatio'));

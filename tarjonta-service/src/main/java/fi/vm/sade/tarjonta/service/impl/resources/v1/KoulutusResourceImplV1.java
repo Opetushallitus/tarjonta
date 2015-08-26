@@ -19,6 +19,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
@@ -992,6 +993,17 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     @Transactional(readOnly = false)
     public ResultV1RDTO<Tilamuutokset> updateTila(String oid, TarjontaTila tila) {
         permissionChecker.checkUpdateKoulutusByKoulutusOid(oid);
+
+        if (Sets.newHashSet(TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU).contains(tila)) {
+            try {
+                permissionChecker.checkPublishOrUnpublishKomoto(oid);
+            }
+            catch (NotAuthorizedException e) {
+                ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<Tilamuutokset>();
+                r.addError(ErrorV1RDTO.createValidationError(null, e.getMessage()));
+                return r;
+            }
+        }
 
         Tila tilamuutos = new Tila(Tyyppi.KOMOTO, tila, oid);
 

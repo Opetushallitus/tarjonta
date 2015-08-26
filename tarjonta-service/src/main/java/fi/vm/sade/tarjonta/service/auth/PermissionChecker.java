@@ -244,7 +244,7 @@ public class PermissionChecker {
 
         final Set<KoulutusmoduuliToteutus> komot = hakukohde
                 .getKoulutusmoduuliToteutuses();
-        Preconditions.checkArgument(komot.size()>0, "Hakukohde cannot exist without koulutus");
+        Preconditions.checkArgument(komot.size() > 0, "Hakukohde cannot exist without koulutus");
         //XXX why are we checking only first org???
         checkPermission(permissionService.userCanDeleteHakukohde(OrganisaatioContext.getContext(komot.iterator().next().getTarjoaja())));
 
@@ -375,6 +375,31 @@ public class PermissionChecker {
     public void checkUpdateKoulutusByKoulutusOid(String oid) {
         final KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(oid);
         checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
+    }
+
+    public void checkPublishOrUnpublishKomoto(String komotoOid) {
+        if (isOphCrud()) {
+            return;
+        }
+        for (Hakukohde h : hakukohdeDaoImpl.findByKoulutusOid(komotoOid)) {
+            Haku haku = h.getHaku();
+            if (!parameterServices.parameterCanRemoveHakukohdeFromHaku(haku.getOid())
+                || !parameterServices.parameterCanAddHakukohdeToHaku(haku.getOid())) {
+                throw new NotAuthorizedException("haun.parametrit.estaa.julkaisun.perumisen");
+            }
+        }
+    }
+
+    public void checkPublishOrUnpublishHakukohde(String hakukohdeOid) {
+        if (isOphCrud()) {
+            return;
+        }
+        Hakukohde hakukohde = hakukohdeDaoImpl.findHakukohdeByOid(hakukohdeOid);
+        Haku haku = hakukohde.getHaku();
+        if (!parameterServices.parameterCanRemoveHakukohdeFromHaku(haku.getOid())
+                || !parameterServices.parameterCanAddHakukohdeToHaku(haku.getOid())) {
+            throw new NotAuthorizedException("haun.parametrit.estaa.julkaisun.perumisen");
+        }
     }
 
     public void checkUpdateValintaperustekuvaus() {
