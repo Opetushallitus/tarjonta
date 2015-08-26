@@ -381,6 +381,7 @@ public class MassCommitProcess {
 
                 komoto.setTila(TarjontaTila.KOPIOITU);
                 komoto.setHaunKopioinninTunniste(processId);
+                komoto.setLastUpdatedByOid("NA");
                 komoto.setViimIndeksointiPvm(indexFutureDate);
 
                 Set<Date> koulutuksenAlkamisPvms = komoto.getKoulutuksenAlkamisPvms();
@@ -509,6 +510,8 @@ public class MassCommitProcess {
                     hk.addRyhmaliitos(liitosCopy);
                 }
 
+                hk.setLastUpdatedByOid("NA");
+                
                 Hakukohde insert = hakukohdeDAO.insert(hk);
                 batchOfIndexIds.add(insert.getId());
                 massakopiointi.updateTila(processId, oldHakukohdeOid, Massakopiointi.KopioinninTila.COPIED, processing);

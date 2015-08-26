@@ -166,7 +166,7 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                     $scope.model.metadata.push(LocalisationService.t('tarjonta.tila.' + dto.tila));
                 }
                 //load user info by oid
-                if (userOid) {
+                if (userOid && userOid !== 'NA') {
                     var promise = YhteyshenkiloService.haeHenkilo(userOid);
                     promise.then(function(response) {
                         var name = '';
