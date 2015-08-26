@@ -167,7 +167,6 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
             updateStateTransferInformation(result, h.getTila());
 
             if (permissionChecker.isOphCrud()) {
-                LOG.debug("Haku permissions? YES SIR!");                
                 result.put(PERMISSION_COPY, true);
                 result.put(PERMISSION_CREATE, true);
                 result.put(PERMISSION_REMOVE, true);
@@ -183,10 +182,8 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
             //
             // Check "real" permissions
             //
-            
-            // TODO how to check if user can create haku? We need target orgs...
-            LOG.warn("  how to check the 'create' permission here? Returing false just to be sure...");
-            result.put(PERMISSION_CREATE, Boolean.FALSE);
+
+            result.put(PERMISSION_CREATE, true);
 
             try {
                 permissionChecker.checkRemoveHakuWithOrgs(h.getTarjoajaOids());
@@ -197,45 +194,10 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
 
             try {
                 permissionChecker.checkHakuUpdateWithOrgs(h.getTarjoajaOids());
-                LOG.info("  (permissions) can edit, check params still");
-                
-                // OK - by permissions we can edit, how about parameters?
-                boolean paramsCanEdit = parameterServices.parameterCanEditHakukohde(key);
-                boolean paramsCanEditLimited = parameterServices.parameterCanEditHakukohdeLimited(key);
-
-                // Parametripalvelu toimii näin:  - (edit / edit limited) - (update/limited)
-                // x - null - null  - true/true -> true / false
-                // null - x - null  - true/true -> true / false
-                // null - null - x  - true/true -> true / false
-
-                // x - 1.1. - null  - true/true -> true / false
-                // 1.1. - x - null  - false/true -> true / true
-                // 1.1. - null - x  - false/true -> true / true
-     
-                // x - null - 1.2.  - true/true --> true / false
-                // null - x - 1.2.  - true/true --> true / false
-                // null - 1.2. - x  - false/false --> false / false
-                
-                // x - 1.1. - 1.2.  - true/true  -> true / false
-                // 1.1. - x - 1.2.  - false/true -> true / true
-                // 1.1. - 1.2. - x  - false/false ->  -> false / false
-                
-                // Halutaan, että jos saa muokata mitään -> update=true
-                // Halutaan, että jos muokkaus on rajattua -> updateLimited = true
-                // --> "update" == edit || limited
-                // --> "updateLimited" == (edit || limited) && !edit
-                
-                boolean canEditAtAll = paramsCanEdit || paramsCanEditLimited;
-                boolean canEditLimited = canEditAtAll && !paramsCanEdit;
-
-                // Now - in UI it's easer to just check if we can modify AT ALL and limit the fields if limited mode is on...
-                result.put(PERMISSION_UPDATE, canEditAtAll);
-                result.put(PERMISSION_UPDATE_LIMITED, canEditLimited);
-                
-                // If can update - can copy?
-                result.put(PERMISSION_COPY, canEditAtAll);                
+                result.put(PERMISSION_UPDATE, true);
+                result.put(PERMISSION_UPDATE_LIMITED, true);
+                result.put(PERMISSION_COPY, true);
             } catch (Exception ex) {
-                LOG.info("  (permissions) cannot edit");
                 result.put(PERMISSION_UPDATE, false);
                 result.put(PERMISSION_UPDATE_LIMITED, false);
                 result.put(PERMISSION_COPY, false);                
