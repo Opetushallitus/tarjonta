@@ -755,64 +755,60 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
             koulutusOid: selectedKoulutukses[0].oid
         }).then(function(result) {
             //vuosi/kausi rajoite
-            $scope.model.spec.season = result.tulokset[0].tulokset[0].kausiUri;
-            $scope.model.spec.year = result.tulokset[0].tulokset[0].vuosi;
-            var hakukohteenPohjakoulutusvaatimus = result.tulokset[0].tulokset[0].pohjakoulutusvaatimus;
+            var koulutus = result.tulokset[0].tulokset[0];
+            $scope.model.spec.season = koulutus.kausiUri;
+            $scope.model.spec.year = koulutus.vuosi;
+            var hakukohteenPohjakoulutusvaatimus = koulutus.pohjakoulutusvaatimus;
+            var hakukohteenKoulutuskoodi = koulutus.koulutuskoodi && koulutus.koulutuskoodi.split('#')[0].split('_')[1];
+
             TarjontaService.haeKoulutukset($scope.model.spec).then(function(result) {
-                var tarjoajaOids = [];
-                _.each(result.tulokset, function(rootTulos) {
-                    _.each(rootTulos.tulokset, function(childTulos) {
-                        if (childTulos.tarjoajat && childTulos.tarjoajat.length > 0) {
-                            _.each(childTulos.tarjoajat, function(tarjoajaOid) {
-                                if (tarjoajaOids.indexOf(tarjoajaOid) === -1) {
-                                    tarjoajaOids.push(tarjoajaOid);
-                                }
-                            });
-                        }
-                    });
-                });
+
+                var koulutukset = _.chain(result.tulokset)
+                                        .pluck('tulokset')
+                                        .flatten()
+                                        .value();
+
+                var tarjoajaOids = _.chain(koulutukset)
+                                        .pluck('tarjoajat')
+                                        .flatten()
+                                        .compact()
+                                        .uniq()
+                                        .value();
+
                 OrganisaatioService.getPopulatedOrganizations(tarjoajaOids).then(function(organizations) {
                     var hakutulos = [];
-                    _.each(result.tulokset, function(rootTulos) {
-                        _.each(rootTulos.tulokset, function(childTulos) {
-                            _.each(childTulos.tarjoajat, function(tarjoaja) {
-                                var koulutuskoodi = '';
-                                if (childTulos.koulutuskoodi) {
-                                    koulutuskoodi = childTulos.koulutuskoodi.split('#')[0].split('_')[1];
-                                }
-                                hakutulos.push({
-                                    koulutuskoodi: koulutuskoodi,
-                                    nimi: childTulos.nimi,
-                                    tarjoaja: _.find(organizations, function(org) {
-                                        return org.oid === tarjoaja;
-                                    }).nimi,
-                                    tarjoajaOid: tarjoaja,
-                                    oid: childTulos.oid,
-                                    pohjakoulutusvaatimus: childTulos.pohjakoulutusvaatimus
-                                });
+
+                    _.each(koulutukset, function(koulutus) {
+                        var koulutuskoodi = '';
+                        if (koulutus.koulutuskoodi) {
+                            koulutuskoodi = koulutus.koulutuskoodi.split('#')[0].split('_')[1];
+                        }
+                        _.each(koulutus.tarjoajat, function(tarjoaja) {
+                            hakutulos.push({
+                                koulutuskoodi: koulutuskoodi,
+                                nimi: koulutus.nimi,
+                                tarjoaja: _.findWhere(organizations, {oid: tarjoaja}).nimi,
+                                tarjoajaOid: tarjoaja,
+                                oid: koulutus.oid,
+                                pohjakoulutusvaatimus: koulutus.pohjakoulutusvaatimus
                             });
                         });
                     });
-                    $scope.model.hakutulos = hakutulos.reduce(function(prev, koulutus) {
-                        var foundKoulutusInHakukohde = _.find(selectedKoulutukses, function(selected) {
-                            return selected.oid === koulutus.oid && selected.tarjoajaOid === koulutus.tarjoajaOid;
+
+                    $scope.model.hakutulos = _.filter(hakutulos, function(koulutus) {
+                        var foundKoulutusInHakukohde = _.findWhere(selectedKoulutukses, {
+                            oid: koulutus.oid,
+                            tarjoajaOid: koulutus.tarjoajaOid
                         });
-                        if (foundKoulutusInHakukohde === undefined) {
+                        if (!foundKoulutusInHakukohde) {
                             if (toisenAsteenKoulutus) {
-                                var hakukohteenKoulutuskoodi =
-                                    result.tulokset[0].tulokset[0].koulutuskoodi.split('#')[0].split('_')[1];
-                                if (koulutus.koulutuskoodi === hakukohteenKoulutuskoodi &&
+                                return koulutus.koulutuskoodi === hakukohteenKoulutuskoodi &&
                                     koulutus.pohjakoulutusvaatimus &&
-                                    koulutus.pohjakoulutusvaatimus.fi === hakukohteenPohjakoulutusvaatimus.fi) {
-                                    prev.push(koulutus);
-                                }
+                                    koulutus.pohjakoulutusvaatimus.fi === hakukohteenPohjakoulutusvaatimus.fi;
                             }
-                            else {
-                                prev.push(koulutus);
-                            }
+                            return true;
                         }
-                        return prev;
-                    }, []);
+                    });
                 });
             });
         });
