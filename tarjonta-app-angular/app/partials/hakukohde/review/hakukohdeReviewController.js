@@ -761,6 +761,10 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
             var hakukohteenPohjakoulutusvaatimus = koulutus.pohjakoulutusvaatimus;
             var hakukohteenKoulutuskoodi = koulutus.koulutuskoodi && koulutus.koulutuskoodi.split('#')[0].split('_')[1];
 
+            if (_.contains(['KORKEAKOULUOPINTO', 'KORKEAKOULUTUS'], koulutus.toteutustyyppiEnum)) {
+                $scope.model.spec.toteutustyyppi = koulutus.toteutustyyppiEnum;
+            }
+
             TarjontaService.haeKoulutukset($scope.model.spec).then(function(result) {
 
                 var koulutukset = _.chain(result.tulokset)

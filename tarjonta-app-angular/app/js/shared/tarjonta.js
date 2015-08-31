@@ -167,7 +167,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             oppilaitostyyppi: args.oppilaitostyyppi ? args.oppilaitostyyppi : null,
             kunta: args.kunta ? args.kunta : null,
             hakukohderyhma: args.hakukohderyhma,
-            hakukohdeOid: args.hakukohdeOid
+            hakukohdeOid: args.hakukohdeOid,
+            toteutustyyppi: args.toteutustyyppi
         };
         if (args.defaultTarjoaja) {
             params.defaultTarjoaja = args.defaultTarjoaja;
