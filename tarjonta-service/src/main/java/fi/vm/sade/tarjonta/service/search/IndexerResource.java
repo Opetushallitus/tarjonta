@@ -88,27 +88,11 @@ public class IndexerResource {
     @GET
     @Path("/hakukohteet")
     @Produces("text/plain")
-    public String rebuildHakukohdeIndex(@QueryParam("clear") final boolean clear) throws SolrServerException, IOException {
-        List<Long> hakukohteet = indexerDao.findAllHakukohdeIds();
-        logger.info("Found {} hakukohdes to index.", hakukohteet.size());
-        if (clear) {
-            clearIndex(hakukohdeSolr);
-        }
-        indexHakukohteet(hakukohteet);
-        return Integer.toString(hakukohteet.size());
-    }
-
-    @GET
-    @Path("/hakukohteet")
-    @Produces("text/plain")
     public String buildHakukohdeIndex(@QueryParam("clear") final boolean clear) throws SolrServerException, IOException {
-        List<Long> hakukohdeIds = indexerDao.findAllHakukohdeIds();
-        logger.info("Found {} hakukohdes to index.", hakukohdeIds.size());
         if (clear) {
             clearIndex(hakukohdeSolr);
         }
-        indexHakukohdeIndexEntities(hakukohdeIds);
-        return Integer.toString(hakukohdeIds.size());
+        return indexerDao.setHakukohdeViimindeksointiPvmToNull().toString();
     }
 
     @Autowired
@@ -284,13 +268,10 @@ public class IndexerResource {
     @Path("/koulutukset")
     @Produces("text/plain")
     public String rebuildKoulutusIndex(@QueryParam("clear") final boolean clear) throws SolrServerException, IOException {
-        List<Long> koulutukset = indexerDao.findAllKoulutusIds();
-        logger.info("Found {} koulutukset to index.", koulutukset.size());
         if (clear) {
             clearIndex(koulutusSolr);
         }
-        indexKoulutukset(koulutukset);
-        return Integer.toString(koulutukset.size());
+        return indexerDao.setKoulutusViimindeksointiPvmToNull().toString();
     }
 
     public void indexMuutokset(Tilamuutokset tm) {

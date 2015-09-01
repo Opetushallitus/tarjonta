@@ -28,6 +28,10 @@ public interface IndexerDAO {
 
     List<Long> findUnindexedKoulutusIds();
 
+    Long setKoulutusViimindeksointiPvmToNull();
+
+    Long setHakukohdeViimindeksointiPvmToNull();
+
     void updateHakukohdeIndexed(Long id, Date time);
 
     void updateKoulutusIndexed(Long id, Date time);

@@ -69,6 +69,20 @@ public class IndexerDaoImpl implements IndexerDAO {
     }
 
     @Override
+    public Long setKoulutusViimindeksointiPvmToNull() {
+        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        JPAUpdateClause u = new JPAUpdateClause(entityManager, komoto);
+        return u.setNull(komoto.viimIndeksointiPvm).execute();
+    }
+
+    @Override
+    public Long setHakukohdeViimindeksointiPvmToNull() {
+        final QHakukohde hakukohde = QHakukohde.hakukohde;
+        JPAUpdateClause u = new JPAUpdateClause(entityManager, hakukohde);
+        return u.setNull(hakukohde.viimIndeksointiPvm).execute();
+    }
+
+    @Override
     public void updateHakukohdeIndexed(Long id, Date time) {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
         JPAUpdateClause u = new JPAUpdateClause(entityManager, hakukohde);
