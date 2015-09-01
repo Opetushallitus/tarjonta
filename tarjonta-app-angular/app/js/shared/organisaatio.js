@@ -3,7 +3,7 @@ angular.module('Organisaatio', [
     'config',
     'Logging'
 ]) // "organisaatioservice"
-    .factory('OrganisaatioService', function($resource, $log, $q, Config, $http) {
+    .factory('OrganisaatioService', function($resource, $log, $q, Config, $http, Koodisto) {
         $log = $log.getInstance('OrganisaatioService');
         var orgHaku = $resource(Config.env['organisaatio.api.rest.url'] + 'organisaatio/hae', null, {
             get: {
@@ -130,6 +130,25 @@ angular.module('Organisaatio', [
                     deferred.resolve(haeOppilaitostyypit(organisaatio.parentOid));
                 }
             });
+            return deferred.promise;
+        }
+
+        function getAllowedKoulutustyypit(orgOids) {
+            var deferred = $q.defer();
+
+            var promises = [];
+            _.each(orgOids, function(orgOid) {
+                promises.push(haeOppilaitostyypit(orgOid));
+            });
+
+            $q.all(promises).then(function(oppilaitostyypit) {
+                oppilaitostyypit = _.chain(oppilaitostyypit).flatten().compact().uniq().value();
+
+                Koodisto.getAlapuolisetKoodiUrit(oppilaitostyypit, 'koulutustyyppi').then(function(response) {
+                    deferred.resolve(_.chain(response.uris).flatten().compact().uniq().value());
+                });
+            });
+
             return deferred.promise;
         }
 
@@ -269,6 +288,7 @@ angular.module('Organisaatio', [
                     return defer.resolve(organizations);
                 });
                 return defer.promise;
-            }
+            },
+            getAllowedKoulutustyypit: getAllowedKoulutustyypit
         };
     });

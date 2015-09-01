@@ -24,11 +24,30 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
     $scope.isRemovable = false;
     var HAKUKOHDE_RESULTS_PER_PAGE = 100;
     var hakuOid = $route.current.params.id;
+    var hakux = $route.current.locals.hakux;
     //haku permissiot
     PermissionService.getPermissions('haku', hakuOid).then(function(permissiot) {
-        $scope.isCopyable = permissiot.haku.copy;
         $scope.isMutable = permissiot.haku.update;
         $scope.isRemovable = permissiot.haku.remove;
+
+        if (hakux.result.koulutusmoduuliTyyppi === 'OPINTOKOKONAISUUS') {
+            $scope.isCopyable = false;
+
+            OrganisaatioService.getAllowedKoulutustyypit(AuthService.getOrganisations()).then(function(koulutustyypit) {
+                $scope.isCopyable = permissiot.haku.copy;
+
+                // Tutkintoon johtamatonta hakua ei saa kopioida
+                // jos ei ole oikeutta luoda tutkintoon johtamatonta koulutusta
+                if (!_.contains(
+                        koulutustyypit, KoulutusConverterFactory.STRUCTURE.KORKEAKOULUOPINTO.koulutustyyppiKoodiUri
+                    )) {
+                    $scope.isCopyable = false;
+                }
+            });
+        }
+        else {
+            $scope.isCopyable = permissiot.haku.copy;
+        }
     });
     $log.info('  init, args =', $scope, $route, $routeParams);
     // hakux : $route.current.locals.hakux, // preloaded, see "hakuApp.js" route resolve for "/haku/:id"
@@ -121,7 +140,7 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
                 model: true
             },
             // Preloaded Haku result
-            hakux: $route.current.locals.hakux,
+            hakux: hakux,
             nimi: HakuV1Service.resolveLocalizedValue($route.current.locals.hakux.result.nimi),
             koodis: {
                 koodiX: '...'
