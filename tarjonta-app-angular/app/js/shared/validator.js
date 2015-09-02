@@ -1,5 +1,5 @@
 angular.module('Validator', [])
-    .factory('ValidatorService', function(HakukohdeService) {
+    .factory('ValidatorService', function(HakukohdeService, HakuService) {
         'use strict';
 
         function isValidUrl(url) {
@@ -115,7 +115,14 @@ angular.module('Validator', [])
             }
             return true;
         }
-        function needsHakukelpoisuus(toteutusTyyppi) {
+        function needsOpintoOikeus(haku) {
+            return HakuService.isSiirtohaku(haku);
+        }
+        function needsHakukelpoisuus(toteutusTyyppi, haku) {
+            if (HakuService.isSiirtohaku(haku)) {
+                return false;
+            }
+
             return !_.contains([
                 'PERUSOPETUKSEN_LISAOPETUS',
                 'LUKIOKOULUTUS',
@@ -201,7 +208,14 @@ angular.module('Validator', [])
         function validateHakukohde(model, haku) {
             var hakukohde = model.hakukohde;
             var errors = [];
-            if (needsHakukelpoisuus(hakukohde.toteutusTyyppi)) {
+            if (needsOpintoOikeus(haku)) {
+                if (!hakukohde.opintoOikeusUris || hakukohde.opintoOikeusUris.length < 1) {
+                    errors.push({
+                        errorMessageKey: 'tarjonta.hakukohde.opintoOikeus.missing'
+                    });
+                }
+            }
+            if (needsHakukelpoisuus(hakukohde.toteutusTyyppi, haku)) {
                 if (hakukohde.hakukelpoisuusvaatimusUris === undefined
                     || hakukohde.hakukelpoisuusvaatimusUris.length < 1) {
                     errors.push({

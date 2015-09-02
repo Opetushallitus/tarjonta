@@ -15,6 +15,8 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -145,6 +147,7 @@ public class ConverterV1 {
         hakuDTO.setHakutyyppiUri(haku.getHakutyyppiUri());
         hakuDTO.setHaunTunniste(haku.getHaunTunniste());
         hakuDTO.setKohdejoukkoUri(haku.getKohdejoukkoUri());
+        hakuDTO.setKohdejoukonTarkenne(haku.getKohdejoukonTarkenne());
         hakuDTO.setTila(haku.getTila().name());
         hakuDTO.setHakukausiVuosi(haku.getHakukausiVuosi());
         hakuDTO.setMaxHakukohdes(haku.getMaxHakukohdes());
@@ -222,6 +225,7 @@ public class ConverterV1 {
         haku.setHakutyyppiUri(hakuV1RDTO.getHakutyyppiUri());
         haku.setHakutapaUri(hakuV1RDTO.getHakutapaUri());
         haku.setKohdejoukkoUri(hakuV1RDTO.getKohdejoukkoUri());
+        haku.setKohdejoukonTarkenne(hakuV1RDTO.getKohdejoukonTarkenne());
 
         haku.setKohdejoukkoUri(hakuV1RDTO.getKohdejoukkoUri());
         if (hakuV1RDTO.getTila() == null) {
@@ -583,6 +587,8 @@ public class ConverterV1 {
         hakukohdeRDTO.setKelaLinjaKoodi(hakukohde.getKelaLinjaKoodi());
         hakukohdeRDTO.setKelaLinjaTarkenne(hakukohde.getKelaLinjaTarkenne());
         hakukohdeRDTO.setEnsikertalaistenAloituspaikat(hakukohde.getEnsikertalaistenAloituspaikat());
+
+        hakukohdeRDTO.setOpintoOikeusUris(Lists.newArrayList(hakukohde.getOpintoOikeudet()));
 
         convertTarjoatiedotToDTO(hakukohde, hakukohdeRDTO);
         convertHakukohteenNimetToDTO(hakukohde, hakukohdeRDTO, null);
@@ -1066,6 +1072,7 @@ public class ConverterV1 {
         hakukohde.setKelaLinjaKoodi(StringUtils.stripToNull(hakukohdeRDTO.getKelaLinjaKoodi()));
         hakukohde.setKelaLinjaTarkenne(StringUtils.stripToNull(hakukohdeRDTO.getKelaLinjaTarkenne()));
         hakukohde.setEnsikertalaistenAloituspaikat(hakukohdeRDTO.getEnsikertalaistenAloituspaikat());
+        hakukohde.setOpintoOikeudet(Sets.newHashSet(hakukohdeRDTO.getOpintoOikeusUris()));
 
         return hakukohde;
     }

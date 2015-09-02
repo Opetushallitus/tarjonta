@@ -894,6 +894,10 @@ app.controller('HakukohdeParentController', [
             });
             return foundHaku;
         };
+        $scope.isSiirtohaku = function() {
+            var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid) || $scope.model.valittuHaku;
+            return HakuService.isSiirtohaku(haku);
+        };
         $scope.toimitusosoiteIsEmpty = function() {
             return _.isEmpty($scope.model.liitteidenToimitusOsoite);
         };

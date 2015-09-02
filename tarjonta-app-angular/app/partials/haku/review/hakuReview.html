@@ -40,6 +40,13 @@
                 </td>
             </tr>
 
+            <tr ng-if="model.hakux.result.kohdejoukkoUri.indexOf('haunkohdejoukko_12#') !== -1">
+                <th tt="haku.review.haunTiedot.kohdejoukonTarkenne">Haun kohdejoukon tarkenne</th>
+                <td colspan="2">
+                    <div data-koodi data-uri="model.hakux.result.kohdejoukonTarkenne"></div>
+                </td>
+            </tr>
+
             <tr>
                 <th tt="haku.review.haunTiedot.hakutapa">Hakutapa</th>
                 <td colspan="2">

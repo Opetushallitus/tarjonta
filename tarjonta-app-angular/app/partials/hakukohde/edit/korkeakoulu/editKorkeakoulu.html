@@ -111,7 +111,7 @@
                     </tr>
 
                     <!-- hakukelpoisuusvaatimukset -->
-                    <tr class="required">
+                    <tr class="required" ng-if="!isSiirtohaku()">
                         <th tt="kk.hakukohde.hakukelpoisuusvaatimukset">Hakukelpoisuusvaatimukset</th>
                         <td>
                             <multi-select
@@ -125,6 +125,18 @@
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && model.hakukelpoisuusValidationErrMsg" tt="tarjonta.hakukohde.hakukelpoisuusvaatimus.missing">Hakukelpoisuusvaatimus puuttuu</p>
+                        </td>
+                    </tr>
+
+                    <tr class="required" ng-if="isSiirtohaku()">
+                        <th tt="kk.hakukohde.opintoOikeudet">Opinto-oikeus</th>
+                        <td>
+                            <multi-select
+                                required
+                                is-disabled="isHkDeEnabled()"
+                                selection="model.hakukohde.opintoOikeusUris"
+                                promise="model.opintoOikeusPromise"
+                                display="dualpane"/>
                         </td>
                     </tr>
 

@@ -62,6 +62,10 @@ app.factory('HakuService', function($http, $q, Config, $log) {
                 $log.debug('ERROR GETTING HAKU WITH OID');
             });
             return hakuPromise.promise;
+        },
+        isSiirtohaku: function(haku) {
+            return haku && haku.kohdejoukonTarkenne &&
+                haku.kohdejoukonTarkenne.indexOf('haunkohdejoukontarkenne_1#') !== -1;
         }
     };
 });

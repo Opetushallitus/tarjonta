@@ -66,6 +66,15 @@
         </td>
     </tr>
 
+    <tr class="required" ng-if="model.hakux.result.kohdejoukkoUri.indexOf('haunkohdejoukko_12#') !== -1">
+        <th data-tt='haku.edit.haunKohdejoukonTarkenne'>Haun kohdejoukon tarkenne</th>
+        <td>
+            <div koodistocombo koodistouri="'haunkohdejoukontarkenne'"
+                 locale="getLocale()" koodiuri="model.hakux.result.kohdejoukonTarkenne"
+                 version="true" name="haunKohdejoukonTarkenne"></div>
+        </td>
+    </tr>
+
     <tr class="required" ng-if="showKoulutusmoduuliTyyppi">
         <th data-tt="haku.edit.koulutuksenTyyppi">Koulutuksen tyyppi</th>
         <td>

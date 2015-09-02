@@ -85,6 +85,10 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             $scope.checkPermissions($scope.model.hakukohde.oid);
         }
         $scope.loadHakukelpoisuusVaatimukset();
+        $scope.model.opintoOikeusPromise = Koodisto.getAllKoodisWithKoodiUri(
+            'opintooikeus',
+            AuthService.getLanguage()
+        );
         $scope.loadKoulutukses();
         $scope.canSaveParam($scope.model.hakukohde.hakuOid);
         $scope.haeTarjoajaOppilaitosTyypit();

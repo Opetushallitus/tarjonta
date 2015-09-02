@@ -84,6 +84,9 @@ public class Haku extends TarjontaBaseEntity {
     @Column(name = "kohdejoukko")
     private String kohdejoukkoUri;
 
+    @Column(name = "kohdejoukon_tarkenne")
+    private String kohdejoukonTarkenne;
+
     /**
      * yhteishaku yms.
      */
@@ -529,4 +532,13 @@ public class Haku extends TarjontaBaseEntity {
     public void setOpintopolunNayttaminenLoppuu(Date opintopolunNayttaminenLoppuu) {
         this.opintopolunNayttaminenLoppuu = opintopolunNayttaminenLoppuu;
     }
+
+    public String getKohdejoukonTarkenne() {
+        return kohdejoukonTarkenne;
+    }
+
+    public void setKohdejoukonTarkenne(String kohdejoukonTarkenne) {
+        this.kohdejoukonTarkenne = kohdejoukonTarkenne;
+    }
+
 }
