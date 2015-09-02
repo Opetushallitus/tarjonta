@@ -167,6 +167,12 @@ public class MassCopyTest {
         hakukohde.setOid(oid + "-" + haku.getOid());
         hakukohde.setHaku(haku);
         hakukohde.setUlkoinenTunniste("hakukohteen-ulkoinen-tunniste");
+
+        hakukohde.setAloituspaikatLkm(5);
+        MonikielinenTeksti alpaTekstit = new MonikielinenTeksti();
+        alpaTekstit.setTekstiKaannos("kieli_fi", "10");
+        hakukohde.setAloituspaikatKuvaus(alpaTekstit);
+
         haku.addHakukohde(hakukohde);
 
         return hakukohdeDAO.insert(hakukohde);
@@ -320,6 +326,7 @@ public class MassCopyTest {
         assertEquals(processId, newHakukohdeFromHaku1.getHaunKopioinninTunniste());
         assertEquals("new-haku-oid-1", newHakukohdeFromHaku1.getHaku().getOid());
         assertEquals("hakukohteen-ulkoinen-tunniste", newHakukohdeFromHaku1.getUlkoinenTunniste());
+        assertEquals(10, newHakukohdeFromHaku1.getAloituspaikatLkm());
 
         Hakukohde newHakukohdeFromHaku2 = newHaku1.getHakukohdes().iterator().next();
         assertEquals("new-haku-oid-1", newHakukohdeFromHaku2.getHaku().getOid());

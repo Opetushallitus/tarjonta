@@ -302,7 +302,7 @@ public class MassakopiointiTest extends TestData {
         LOG.info("comparing hakukohde copy");
         assertEquals(orig.getAlinHyvaksyttavaKeskiarvo(), copy.getAlinHyvaksyttavaKeskiarvo());
         assertEquals(orig.getAlinValintaPistemaara(), copy.getAlinValintaPistemaara());
-        assertEquals(orig.getAloituspaikatLkm(), copy.getAloituspaikatLkm());
+        assertEquals(0, copy.getAloituspaikatLkm());
         assertEquals(orig.getEdellisenVuodenHakijat(), copy.getEdellisenVuodenHakijat());
         if (orig.getHakuaika() != null) {
             assertEquals(dateToNextYear(orig.getHakuaika().getAlkamisPvm()), copy.getHakuaika().getAlkamisPvm());

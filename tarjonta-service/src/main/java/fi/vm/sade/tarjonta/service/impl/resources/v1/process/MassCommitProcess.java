@@ -517,6 +517,20 @@ public class MassCommitProcess {
                 }
 
                 hk.setLastUpdatedByOid("NA");
+
+                // Katso KJOH-1013
+                if (hk.getAloituspaikatKuvaus() != null) {
+                    String tekstiAloituspaikka = hk.getAloituspaikatKuvaus().getFirstNonEmptyKaannos();
+
+                    try {
+                        hk.setAloituspaikatLkm(Integer.parseInt(tekstiAloituspaikka));
+                    }
+                    catch (NumberFormatException e) {
+                        hk.setAloituspaikatLkm(0);
+                    }
+
+                    hk.setAloituspaikatKuvaus(null);
+                }
                 
                 Hakukohde insert = hakukohdeDAO.insert(hk);
                 batchOfIndexIds.add(insert.getId());

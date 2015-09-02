@@ -307,6 +307,7 @@ app.controller('HakukohdeParentController', [
 
                 $scope.model.hakukohde.oid = undefined;
                 $scope.model.hakukohde.tila = tilaParam;
+                $scope.model.hakukohde.aloituspaikatKuvaukset = null;
 
                 // Hakua ei kopioida, se pitää aina valita
                 if (!dontResetHaku) {
