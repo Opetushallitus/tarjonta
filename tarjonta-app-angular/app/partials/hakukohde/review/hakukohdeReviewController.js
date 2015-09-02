@@ -210,6 +210,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
             hakuPromise.then(function(haku) {
                 if (haku && haku.nimi) {
                     $scope.model.hakuNimiInformation = getHakuNimiInformation(haku);
+                    $scope.model.valittuHaku = haku;
                 }
             });
         }

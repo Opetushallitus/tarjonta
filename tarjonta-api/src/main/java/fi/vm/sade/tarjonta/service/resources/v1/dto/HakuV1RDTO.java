@@ -47,6 +47,9 @@ public class HakuV1RDTO extends BaseV1RDTO {
     @ApiModelProperty(value = "Haun kohdejoukko koodisto uri", required = true)
     private String kohdejoukkoUri;
 
+    @ApiModelProperty(value = "Haun kohdejoukon tarkenne", required = false)
+    private String kohdejoukonTarkenne;
+
     @ApiModelProperty(value = "Koulutuksen alkamisvuosi", required = true)
     private int koulutuksenAlkamisVuosi;
 
@@ -342,5 +345,13 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     public void setOpintopolunNayttaminenLoppuu(Date opintopolunNayttaminenLoppuu) {
         this.opintopolunNayttaminenLoppuu = opintopolunNayttaminenLoppuu;
+    }
+
+    public String getKohdejoukonTarkenne() {
+        return kohdejoukonTarkenne;
+    }
+
+    public void setKohdejoukonTarkenne(String kohdejoukonTarkenne) {
+        this.kohdejoukonTarkenne = kohdejoukonTarkenne;
     }
 }

@@ -116,6 +116,10 @@ public class Hakukohde extends TarjontaBaseEntity {
     @CollectionTable(name = TABLE_NAME + "_hakukelpoisuusvaatimus", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<String> hakukelpoisuusVaatimukset = new HashSet<String>();
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_opinto_oikeus", joinColumns = @JoinColumn(name = TABLE_NAME + "_id"))
+    @Column(name = "opinto_oikeus_uri")
+    private Set<String> opintoOikeudet = new HashSet<String>();
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "valintaperustekuvaus_teksti_id")
     private MonikielinenTeksti valintaperusteKuvaus;
@@ -619,6 +623,14 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void setHakukelpoisuusVaatimukset(Set<String> hakukelpoisuusVaatimukset) {
         this.hakukelpoisuusVaatimukset = hakukelpoisuusVaatimukset;
+    }
+
+    public Set<String> getOpintoOikeudet() {
+        return opintoOikeudet;
+    }
+
+    public void setOpintoOikeudet(Set<String> opintoOikeudet) {
+        this.opintoOikeudet = opintoOikeudet;
     }
 
     public boolean isKaytetaanJarjestelmanValintapalvelua() {

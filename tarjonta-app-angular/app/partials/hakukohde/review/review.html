@@ -65,11 +65,18 @@
                         )
                     </td>
                 </tr>
-                <tr ng-show="!isAiku && !config.isToisenAsteenKoulutus()">
+                <tr ng-if="!isAiku && !config.isToisenAsteenKoulutus() && !isSiirtohaku()">
                     <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimukset"/>
                     <td colspan="2">
                         <span class="comma"
                               ng-repeat="hakukelpoisuusvaatimus in model.hakukelpoisuusVaatimukses">{{ hakukelpoisuusvaatimus }}</span>
+                    </td>
+                </tr>
+
+                <tr ng-if="!isAiku && !config.isToisenAsteenKoulutus() && isSiirtohaku()">
+                    <th tt="hakukohde.review.perustiedot.opintoOikeudet">Opinto-oikeus</th>
+                    <td colspan="2">
+                        <span ng-repeat="koodi in model.hakukohde.opintoOikeusUris" class="comma"><koodi uri="koodi" /></span>
                     </td>
                 </tr>
 

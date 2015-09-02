@@ -237,6 +237,7 @@ angular.module('app').config([
                     tarjoajaOids: selectedTarjoajaOids,
                     hakukohteenNimet: {},
                     hakukelpoisuusvaatimusUris: [],
+                    opintoOikeusUris: [],
                     hakukohdeKoulutusOids: selectedKoulutusOids,
                     hakukohteenLiitteet: [],
                     valintakokeet: [],

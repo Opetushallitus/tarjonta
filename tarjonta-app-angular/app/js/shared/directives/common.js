@@ -40,12 +40,12 @@ app.directive('kuvaus', function() {
 * <koodi uri="jokukoodi_22" lang="fi">
 *
 */
-.directive('koodi', function(Koodisto) {
+.directive('koodi', function(Koodisto, AuthService) {
     return {
         restrict: 'EA',
         link: function(scope, element, attrs) {
             var uri = scope.$eval(attrs.uri);
-            var lang = scope.$eval(attrs.lang);
+            var lang = scope.$eval(attrs.lang) || AuthService.getLanguage().toLowerCase();
             Koodisto.searchKoodi(uri, lang).then(function(data) {
                 //console.log(element);
                 element.replaceWith(data);

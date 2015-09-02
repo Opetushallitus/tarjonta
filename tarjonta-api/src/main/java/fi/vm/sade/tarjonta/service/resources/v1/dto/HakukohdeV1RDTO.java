@@ -28,6 +28,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     @ApiModelProperty(value = "Hakukohde's haku's inner application period", required = false)
     private String hakuaikaId;
     private List<String> hakukelpoisuusvaatimusUris;
+    private List<String> opintoOikeusUris;
     @ApiModelProperty(value = "Hakukohde's related koulutus oids", required = true)
     private List<String> hakukohdeKoulutusOids;
     private Date hakuaikaAlkuPvm;
@@ -567,6 +568,17 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setEnsikertalaistenAloituspaikat(Integer ensikertalaistenAloituspaikat) {
         this.ensikertalaistenAloituspaikat = ensikertalaistenAloituspaikat;
+    }
+
+    public List<String> getOpintoOikeusUris() {
+        if (opintoOikeusUris == null) {
+            return new ArrayList<String>();
+        }
+        return opintoOikeusUris;
+    }
+
+    public void setOpintoOikeusUris(List<String> opintoOikeusUris) {
+        this.opintoOikeusUris = opintoOikeusUris;
     }
 
 }
