@@ -18,6 +18,7 @@ describe('Validator', function() {
         module('SharedStateService');
         module('auth');
         module('Koodisto');
+        module('Haku');
         module('Hakukohde');
         module('Validator');
         module('Organisaatio');
