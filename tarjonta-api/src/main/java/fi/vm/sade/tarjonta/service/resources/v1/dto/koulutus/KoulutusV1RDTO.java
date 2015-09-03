@@ -90,6 +90,9 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     @ApiModelProperty(value = "Tutkinto-ohjelman tunniste, oppilaitoksen oma tunniste järjestettävälle koulutukselle", required = true)
     private String tunniste;
 
+    @ApiModelProperty(value = "Hakijalle näytettävä tunniste", required = false)
+    private String hakijalleNaytettavaTunniste;
+
     //OTHER DATA
     @ApiModelProperty(value = "Koulutuksen julkaisun tila", required = true)
     // allowableValues = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU"
@@ -673,6 +676,14 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
 
     public void setSisaltyvatKoulutuskoodit(KoodiUrisV1RDTO sisaltyvatKoulutuskoodit) {
         this.sisaltyvatKoulutuskoodit = sisaltyvatKoulutuskoodit;
+    }
+
+    public String getHakijalleNaytettavaTunniste() {
+        return hakijalleNaytettavaTunniste;
+    }
+
+    public void setHakijalleNaytettavaTunniste(String hakijalleNaytettavaTunniste) {
+        this.hakijalleNaytettavaTunniste = hakijalleNaytettavaTunniste;
     }
 
 }

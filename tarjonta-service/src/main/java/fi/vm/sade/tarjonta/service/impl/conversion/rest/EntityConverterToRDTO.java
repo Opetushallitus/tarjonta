@@ -427,6 +427,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             dto.setAihees(commonConverter.convertToKoodiUrisDTO(komoto.getAihees(), FieldNames.AIHEES, param));
         }
 
+        dto.setHakijalleNaytettavaTunniste(komoto.getHakijalleNaytettavaTunniste());
         dto.setSuunniteltuKestoArvo(komoto.getSuunniteltukestoArvo());
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), dto.getYhteyshenkilos());
         dto.setVersion(komoto.getVersion());

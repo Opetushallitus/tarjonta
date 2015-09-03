@@ -62,12 +62,19 @@
         <!-- tutkinto-ohjelman tunniste -->
         <tr>
             <th tt="koulutus.edit.tunniste">Tunniste</th>
-            <td></pre><input name="tutkintoOhjelmanTunniste" ng-maxlength="35" type="text" data-ng-model="model.tunniste" /></td>
+            <td><input name="tutkintoOhjelmanTunniste" ng-maxlength="35" type="text" data-ng-model="model.tunniste" /></td>
             <td><p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.tutkintoOhjelmanTunniste.$error.maxlength" tt="koulutus.edit.tutkinto-ohjelman-tunniste.length">Tutkinto-ohjelman tunnisteen maksimipituus on 35 merkkiä</p></td>
         </tr>
         <tr>
             <th></th>
             <td colspan="2" class="help" tt="koulutus.edit.opinnon-tunniste.help">Opinnon tunniste HELP</td>
+        </tr>
+
+        <tr>
+            <th tt="koulutus.hakijalleNaytettavaTunniste">Hakijalle näytettävä tunniste</th>
+            <td>
+                <input name="hakijalleNaytettavaTunniste" type="text" ng-model="model.hakijalleNaytettavaTunniste" />
+            </td>
         </tr>
 
         <tr>

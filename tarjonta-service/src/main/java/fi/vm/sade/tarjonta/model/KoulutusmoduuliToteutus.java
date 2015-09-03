@@ -275,6 +275,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "haun_kopioinnin_tunniste")
     private String haunKopioinninTunniste;
 
+    @Column(name = "hakijalle_naytettava_tunniste")
+    private String hakijalleNaytettavaTunniste;
+
     @Column(name = "opintopolku_alkamiskausi")
     @Enumerated(EnumType.STRING)
     private OpintopolkuAlkamiskausi.KaudetEnum opintopolkuAlkamiskausi;
@@ -1330,6 +1333,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public void setSisaltyvatKoulutuskoodit(Set<KoodistoUri> sisaltyvatKoulutuskoodit) {
         this.sisaltyvatKoulutuskoodit = sisaltyvatKoulutuskoodit;
+    }
+
+    public String getHakijalleNaytettavaTunniste() {
+        return hakijalleNaytettavaTunniste;
+    }
+
+    public void setHakijalleNaytettavaTunniste(String hakijalleNaytettavaTunniste) {
+        this.hakijalleNaytettavaTunniste = hakijalleNaytettavaTunniste;
     }
 
 }
