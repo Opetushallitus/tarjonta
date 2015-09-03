@@ -77,4 +77,7 @@ function tarjontaInit() {
             initFail('localisations', xhr, status);
         }
     });
+
+    // Init authentication-service session
+    jQuery.get(window.CONFIG.env['authentication-service.rest.url'] + 'henkilo/henkilotypes');
 }
