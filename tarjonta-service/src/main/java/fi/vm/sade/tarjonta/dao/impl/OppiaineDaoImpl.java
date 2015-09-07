@@ -74,6 +74,10 @@ public class OppiaineDaoImpl extends AbstractJpaDAOImpl<Oppiaine, Long> implemen
                 ")"
         ).getResultList();
 
+        if (oppianeIdsToDelete.isEmpty()) {
+            return;
+        }
+
         // Poista many-to-many join taulusta
         Query deleteFromJoinTableQ = getEntityManager().createNativeQuery(
                 "DELETE FROM koulutusmoduuli_toteutus_oppiaineet WHERE oppiaine_id IN (:ids)"
