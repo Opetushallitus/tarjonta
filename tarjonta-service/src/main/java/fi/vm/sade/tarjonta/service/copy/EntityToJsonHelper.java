@@ -20,6 +20,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonMethod;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,7 @@ public class EntityToJsonHelper {
 
     static {
         mapper = new ObjectMapper();
+        mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.setVisibility(JsonMethod.FIELD, JsonAutoDetect.Visibility.ANY) // auto-detect all member fields
                 .setVisibility(JsonMethod.GETTER, JsonAutoDetect.Visibility.NONE) // but only public getters
                 .setVisibility(JsonMethod.IS_GETTER, JsonAutoDetect.Visibility.NONE); // and none of "is-setters"
