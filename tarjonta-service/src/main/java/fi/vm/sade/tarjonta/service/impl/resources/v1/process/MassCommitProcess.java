@@ -370,6 +370,20 @@ public class MassCommitProcess {
 
                 LOG.debug("convert json to entity by oid : {}, new oid : {}", oldKomotoOid, meta.getNewKomotoOid());
 
+                if (komoto.getValmistavaKoulutus() != null) {
+                    KoulutusmoduuliToteutus valmistava = komoto.getValmistavaKoulutus();
+                    valmistava.setKoulutusmoduuli(komoto.getKoulutusmoduuli());
+                    valmistava.setTila(TarjontaTila.KOPIOITU);
+                    valmistava.setId(null);
+                    valmistava.setHaunKopioinninTunniste(processId);
+                    try {
+                        valmistava.setOid(oidService.get(TarjontaOidType.KOMOTO));
+                    }
+                    catch (OIDCreationException e) {
+                        LOG.error("OID Service failed for valmistava koulutus", meta.getOriginalKomotoOid());
+                    }
+                }
+
                 if (ToteutustyyppiEnum.KORKEAKOULUTUS.equals(komoto.getToteutustyyppi())) {
                     komoto = koulutusUtilService.copyKomotoAndKomo(
                             komoto, komoto.getTarjoaja(), meta.getNewKomotoOid(), meta.getNewKomoOid(), false, KoulutusKorkeakouluV1RDTO.class
