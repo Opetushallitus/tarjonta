@@ -88,13 +88,13 @@ angular.module('search.hakutulokset.rows', [])
             var tila = row.tila;
             var nimi = row.nimi;
             var ret = [];
-            var tt = TarjontaService.getTilat()[tila];
+            var tt = angular.copy(TarjontaService.getTilat()[tila]);
             var actionsByPrefix = {
                 hakukohde: function(row) {
                     tt.removable = tt.removable && canRemoveHakukohde(row);
                     tt.disablePublish = !TarjontaService.parameterCanAddHakukohdeToHaku(row.hakuOid);
                     tt.disableCancel = !TarjontaService.parameterCanRemoveHakukohdeFromHaku(row.hakuOid);
-                    tt.mutable = tt.mutable && TarjontaService.parameterCanEditHakukohde(row.hakuOid);
+                    tt.mutable = tt.mutable && TarjontaService.parameterCanEditHakukohdeLimited(row.hakuOid);
                 },
                 jarjestaKoulutus: function() {
                     tt = {};

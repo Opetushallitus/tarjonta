@@ -1317,8 +1317,8 @@ app.controller('HakukohdeParentController', [
             if (resourcePermissions.hakukohde && resourcePermissions.hakukohde.update
                 && resourcePermissions.hakukohde.updateLimited) {
                 $log.info('TTKPP PARTIAL UPDATE');
-                $scope.model.isDeEnabled = true;
-                $scope.model.isPartiallyDeEnabled = false;
+                $scope.model.isDeEnabled = false;
+                $scope.model.isPartiallyDeEnabled = true;
             }
             else if (resourcePermissions.hakukohde && resourcePermissions.hakukohde.update
                 && !resourcePermissions.hakukohde.updateLimited) {
