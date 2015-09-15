@@ -89,12 +89,8 @@ angular.module('loading', ['localisation']).factory('loadingService', function()
          * Kutsutaan error-callbackissa; estää teknisen virheen dialogin näytön.
          */
         onErrorHandled: function() {
-            if (service.errorHandlingRequested) {
-                service.errorHandlingRequested = false;
-            }
-            else if (service.errorHandlingRequested === null) {
-                throw 'loadingService.onErrorHandled called from outside of error callback';
-            }
+            this.errors --;
+            this.requestCount --;
         },
         /**
          * Disabloi spinneri
