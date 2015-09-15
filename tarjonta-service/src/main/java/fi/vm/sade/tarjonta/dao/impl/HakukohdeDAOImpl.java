@@ -196,6 +196,19 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
+    public List<Hakukohde> findByTarjoajaHakuAndNimiUri(Set<String> tarjoajaOids, String hakuOid, String nimiUri) {
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+
+        return from(qHakukohde)
+                .innerJoin(qHakukohde.koulutusmoduuliToteutuses, qKomoto)
+                .where(qHakukohde.hakukohdeNimi.startsWith(nimiUri.replace("#[^#]+$", "#"))
+                        .and(qHakukohde.tila.notIn(TarjontaTila.POISTETTU, TarjontaTila.PERUTTU))
+                        .and(qKomoto.tarjoaja.in(tarjoajaOids))
+                        .and(qHakukohde.haku.oid.eq(hakuOid))).list(qHakukohde);
+    }
+
+    @Override
     public List<Hakukohde> findByNameTermAndYear(String name, String term, int year, String providerOid) {
 
         QHakukohde qHakukohde = QHakukohde.hakukohde;

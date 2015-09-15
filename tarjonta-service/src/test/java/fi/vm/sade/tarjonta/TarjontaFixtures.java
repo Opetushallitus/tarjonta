@@ -527,11 +527,11 @@ public class TarjontaFixtures {
         ((KoulutusmoduuliDAOImpl) koulutusmoduuliDAO).getEntityManager().clear();
     }
 
-    private String randomOid(String type) {
+    public static String randomOid(String type) {
         return "1.2.3.4." + type + "." + System.currentTimeMillis() + "-" + Math.abs(random.nextInt());
     }
 
-    private String randomUri(String context) {
+    public static String randomUri(String context) {
         return "http://" + context + "/" + System.currentTimeMillis() + "-" + Math.abs(random.nextInt());
     }
 

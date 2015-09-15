@@ -22,10 +22,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * DAO interface to retrieve Application Options (Hakukohde's).
@@ -78,6 +75,8 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
     void updateLiite(HakukohdeLiite hakukohdeLiite, String hakukohdeOid);
 
     Hakukohde findHakukohdeByUlkoinenTunniste(String ulkoinenTunniste, String tarjoajaOid);
+
+    List<Hakukohde> findByTarjoajaHakuAndNimiUri(Set<String> tarjoajaOid, String hakuOid, String nimiUri);
 
     List<Hakukohde> findByNameTermAndYear(String name, String term, int year, String providerOid);
 
