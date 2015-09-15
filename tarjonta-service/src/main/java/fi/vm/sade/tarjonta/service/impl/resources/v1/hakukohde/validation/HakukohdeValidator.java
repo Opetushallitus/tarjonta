@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
@@ -31,6 +32,9 @@ public class HakukohdeValidator {
     private static final int MAX_PRECISION = 2;
 
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+
+    @Autowired
+    private HakukohdeDAO hakukohdeDAO;
 
     @Autowired
     public HakukohdeValidator(KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO) {
@@ -169,19 +173,37 @@ public class HakukohdeValidator {
     private List<HakukohdeValidationMessages> validateDuplicateHakukohteet(HakukohdeV1RDTO hakukohdeRDTO) {
         List<HakukohdeValidationMessages> messages = new ArrayList<HakukohdeValidationMessages>();
 
+        // Only validate when creating new hakukohde (oid doesn't exist yet)
+        if (hakukohdeRDTO.getOid() != null) {
+            return messages;
+        }
+
         if (hakukohdeRDTO.isLukioKoulutus() || hakukohdeRDTO.isAmmatillinenPerustutkinto()) {
             List<String> koulutusOids = hakukohdeRDTO.getHakukohdeKoulutusOids();
             for (String koulutusOid : koulutusOids) {
                 KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
-                if(isDuplicateHakukohde(hakukohdeRDTO, komoto)) {
+                if (isDuplicateHakukohdeForKomoto(hakukohdeRDTO, komoto)) {
                     messages.add(HakukohdeValidationMessages.HAKUKOHDE_DUPLIKAATTI);
                 }
+            }
+            if (isDuplicateHakukohdeForHakuAndTarjoaja(hakukohdeRDTO)) {
+                messages.add(HakukohdeValidationMessages.HAKUKOHDE_DUPLIKAATTI_SAMALLA_NIMELLA);
             }
         }
         return messages;
     }
 
-    private boolean isDuplicateHakukohde(HakukohdeV1RDTO hakukohdeDTO, KoulutusmoduuliToteutus komoto) {
+    private boolean isDuplicateHakukohdeForHakuAndTarjoaja(HakukohdeV1RDTO hakukohde) {
+        for (Hakukohde h : hakukohdeDAO.findByTarjoajaHakuAndNimiUri(hakukohde.getTarjoajaOids(), hakukohde.getHakuOid(), hakukohde.getHakukohteenNimiUri())) {
+            // Self not a duplicate
+            if (!h.getOid().equals(hakukohde.getOid())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isDuplicateHakukohdeForKomoto(HakukohdeV1RDTO hakukohdeDTO, KoulutusmoduuliToteutus komoto) {
         String hakuOid = hakukohdeDTO.getHakuOid();
         String nimiUri = hakukohdeDTO.getHakukohteenNimiUri();
 
@@ -200,7 +222,7 @@ public class HakukohdeValidator {
         return false;
     }
 
-    private boolean includeInDuplicateCheck(TarjontaTila tila) {
+    private static boolean includeInDuplicateCheck(TarjontaTila tila) {
         return !tila.equals(TarjontaTila.POISTETTU) && !tila.equals(TarjontaTila.PERUTTU);
     }
 
