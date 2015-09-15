@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation;
 
 import com.google.common.collect.Lists;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
@@ -18,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -49,6 +51,9 @@ public class HakukohdeValidatorTest {
     @Mock
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
+    @Mock
+    private HakukohdeDAO hakukohdeDAO;
+
     @InjectMocks
     private HakukohdeValidator hakukohdeValidator;
 
@@ -56,6 +61,7 @@ public class HakukohdeValidatorTest {
     public void before() {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         when(koulutusmoduuliToteutusDAO.findByOid("1.2.3.4.5")).thenReturn(komoto);
+        when(hakukohdeDAO.findByTarjoajaHakuAndNimiUri(Matchers.anySet(), Matchers.anyString(), Matchers.anyString())).thenReturn(Lists.<Hakukohde>newArrayList());
     }
 
     @Test

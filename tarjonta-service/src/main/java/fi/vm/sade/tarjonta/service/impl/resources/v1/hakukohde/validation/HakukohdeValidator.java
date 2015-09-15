@@ -31,15 +31,11 @@ public class HakukohdeValidator {
 
     private static final int MAX_PRECISION = 2;
 
+    @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
-
-    @Autowired
-    public HakukohdeValidator(KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO) {
-        this.koulutusmoduuliToteutusDAO = koulutusmoduuliToteutusDAO;
-    }
 
     private List<HakukohdeValidationMessages> validateCommonProperties(HakukohdeV1RDTO hakukohdeRDTO) {
 
