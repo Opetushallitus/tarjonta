@@ -16,7 +16,7 @@ public class KoodistoHelper {
         kt.getMetadata().add(getKoodiMeta(uri, KieliType.FI));
         kt.getMetadata().add(getKoodiMeta(uri, KieliType.SV));
         kt.getMetadata().add(getKoodiMeta(uri, KieliType.EN));
-        return Arrays.asList(new KoodiType[]{kt});
+        return Arrays.asList(kt);
     }
 
     private KoodiMetadataType getKoodiMeta(String arvo, KieliType kieli) {

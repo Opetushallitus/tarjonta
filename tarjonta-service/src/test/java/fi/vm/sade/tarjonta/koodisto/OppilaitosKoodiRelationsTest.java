@@ -235,7 +235,7 @@ public class OppilaitosKoodiRelationsTest {
     }
 
     private List<KoodiType> createKoodis(final String koodiUri) {
-        List<KoodiType> koodis = Lists.<KoodiType> newArrayList();
+        List<KoodiType> koodis = Lists.newArrayList();
         KoodiType koodiType = new KoodiType();
         koodiType.setKoodiUri(koodiUri);
         koodis.add(koodiType);

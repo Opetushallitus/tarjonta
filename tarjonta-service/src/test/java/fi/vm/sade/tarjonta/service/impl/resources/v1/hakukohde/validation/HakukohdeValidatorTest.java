@@ -57,7 +57,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
     public void testIsValidKomotoSelectionSuccess() {
         KoulutuksetVastaus kv = new KoulutuksetVastaus();
 
-        List<KoulutusPerustieto> list = Lists.<KoulutusPerustieto>newArrayList();
+        List<KoulutusPerustieto> list = Lists.newArrayList();
         list.add(perustieto(KOMOTO_OID1, ToteutustyyppiEnum.AMMATTITUTKINTO, KOULUTUS_A, VUOSI_2014, KAUSI_S_VERSIO));
         list.add(perustieto(KOMOTO_OID2, ToteutustyyppiEnum.AMMATTITUTKINTO, KOULUTUS_A_VERSIO, VUOSI_2014, KAUSI_S));
         list.add(perustieto(KOMOTO_OID3, ToteutustyyppiEnum.AMMATTITUTKINTO, KOULUTUS_A, VUOSI_2014, KAUSI_S));
@@ -76,7 +76,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
         /*
          * Korkeakoulutus:
          */
-        list = Lists.<KoulutusPerustieto>newArrayList();
+        list = Lists.newArrayList();
         list.add(perustieto(KOMOTO_OID1, ToteutustyyppiEnum.KORKEAKOULUTUS, KOULUTUS_A, VUOSI_2014, KAUSI_K));
         list.add(perustieto(KOMOTO_OID2, ToteutustyyppiEnum.KORKEAKOULUTUS, KOULUTUS_B, VUOSI_2014, KAUSI_K));
         list.add(perustieto(KOMOTO_OID3, ToteutustyyppiEnum.KORKEAKOULUTUS, KOULUTUS_C_VERSIO, VUOSI_2014, KAUSI_K));
@@ -97,7 +97,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
     public void testIsValidKomotoSelectionFailKoulutus() {
         KoulutuksetVastaus kv = new KoulutuksetVastaus();
 
-        List<KoulutusPerustieto> list = Lists.<KoulutusPerustieto>newArrayList();
+        List<KoulutusPerustieto> list = Lists.newArrayList();
         list.add(perustieto(KOMOTO_OID1, ToteutustyyppiEnum.AMMATTITUTKINTO, KOULUTUS_A, VUOSI_2014, KAUSI_K));
         list.add(perustieto(KOMOTO_OID2, ToteutustyyppiEnum.AMMATTITUTKINTO, KOULUTUS_A, VUOSI_2014, KAUSI_K));
         list.add(perustieto(KOMOTO_OID3, ToteutustyyppiEnum.AMMATTITUTKINTO, KOULUTUS_B_VERSIO, VUOSI_2014, KAUSI_K));
@@ -120,7 +120,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
     public void testIsValidKomotoSelectionFailKoulutustyyppi() {
         KoulutuksetVastaus kv = new KoulutuksetVastaus();
 
-        List<KoulutusPerustieto> list = Lists.<KoulutusPerustieto>newArrayList();
+        List<KoulutusPerustieto> list = Lists.newArrayList();
         list.add(perustieto(KOMOTO_OID1, ToteutustyyppiEnum.ERIKOISAMMATTITUTKINTO, KOULUTUS_A, VUOSI_2014, KAUSI_K));
         list.add(perustieto(KOMOTO_OID2, ToteutustyyppiEnum.AMMATTITUTKINTO, KOULUTUS_A, VUOSI_2014, KAUSI_K));
         list.add(perustieto(KOMOTO_OID3, ToteutustyyppiEnum.AMMATTITUTKINTO, KOULUTUS_A_VERSIO, VUOSI_2014, KAUSI_K));
@@ -143,7 +143,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
     public void testIsValidKomotoSelectionFailKausi() {
         KoulutuksetVastaus kv = new KoulutuksetVastaus();
 
-        List<KoulutusPerustieto> list = Lists.<KoulutusPerustieto>newArrayList();
+        List<KoulutusPerustieto> list = Lists.newArrayList();
         list.add(perustieto(KOMOTO_OID1, ToteutustyyppiEnum.ERIKOISAMMATTITUTKINTO, KOULUTUS_A, VUOSI_2014, KAUSI_K));
         list.add(perustieto(KOMOTO_OID2, ToteutustyyppiEnum.ERIKOISAMMATTITUTKINTO, KOULUTUS_A, VUOSI_2014, KAUSI_K));
         list.add(perustieto(KOMOTO_OID3, ToteutustyyppiEnum.ERIKOISAMMATTITUTKINTO, KOULUTUS_A_VERSIO, VUOSI_2014, KAUSI_S));
@@ -166,7 +166,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
     public void testIsValidKomotoSelectionFailVuosi() {
         KoulutuksetVastaus kv = new KoulutuksetVastaus();
 
-        List<KoulutusPerustieto> list = Lists.<KoulutusPerustieto>newArrayList();
+        List<KoulutusPerustieto> list = Lists.newArrayList();
         list.add(perustieto(KOMOTO_OID1, ToteutustyyppiEnum.KORKEAKOULUTUS, KOULUTUS_A, VUOSI_2014, KAUSI_K));
         list.add(perustieto(KOMOTO_OID2, ToteutustyyppiEnum.KORKEAKOULUTUS, KOULUTUS_A, VUOSI_2015, KAUSI_K));
         list.add(perustieto(KOMOTO_OID3, ToteutustyyppiEnum.KORKEAKOULUTUS, KOULUTUS_A_VERSIO, VUOSI_2015, KAUSI_K));
@@ -190,7 +190,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
     public void testIsValidKomotoSelectionFailTila() {
         KoulutuksetVastaus kv = new KoulutuksetVastaus();
 
-        List<KoulutusPerustieto> list = Lists.<KoulutusPerustieto>newArrayList();
+        List<KoulutusPerustieto> list = Lists.newArrayList();
         list.add(koulutusperustieto(KOMOTO_OID1, ToteutustyyppiEnum.KORKEAKOULUTUS, KOULUTUS_A, VUOSI_2015, KAUSI_K, TarjontaTila.POISTETTU));
         list.add(perustieto(KOMOTO_OID2, ToteutustyyppiEnum.KORKEAKOULUTUS, KOULUTUS_A_VERSIO, VUOSI_2015, KAUSI_K));
         list.add(perustieto(KOMOTO_OID3, ToteutustyyppiEnum.KORKEAKOULUTUS, KOULUTUS_B_VERSIO, VUOSI_2015, KAUSI_K));
@@ -209,7 +209,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
         assertEquals(0, result.get(KOMOTO_OID2).size());
         assertEquals(0, result.get(KOMOTO_OID3).size());
 
-        list = Lists.<KoulutusPerustieto>newArrayList();
+        list = Lists.newArrayList();
         list.add(koulutusperustieto(KOMOTO_OID1, ToteutustyyppiEnum.KORKEAKOULUTUS, KOULUTUS_A, VUOSI_2015, KAUSI_K, TarjontaTila.KOPIOITU));
         list.add(koulutusperustieto(KOMOTO_OID2, ToteutustyyppiEnum.KORKEAKOULUTUS, KOULUTUS_B, VUOSI_2015, KAUSI_K, TarjontaTila.LUONNOS));
         list.add(koulutusperustieto(KOMOTO_OID3, ToteutustyyppiEnum.KORKEAKOULUTUS, KOULUTUS_C_VERSIO, VUOSI_2015, KAUSI_K, TarjontaTila.VALMIS));
@@ -632,7 +632,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
         hakukohdeDTO.setTila("JULKAISTU");
         hakukohdeDTO.setHakuOid("1.2.3");
         hakukohdeDTO.setHakukohteenNimiUri("nimi_uri");
-        hakukohdeDTO.setHakukohdeKoulutusOids(Arrays.asList(new String[]{"1.2.3.4.5"}));
+        hakukohdeDTO.setHakukohdeKoulutusOids(Arrays.asList("1.2.3.4.5"));
         return hakukohdeDTO;
     }
 

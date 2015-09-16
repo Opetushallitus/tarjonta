@@ -61,7 +61,7 @@ public class IndexerResourceTest {
 
         HakukohdeDAOImpl hakukohdeDAO = Mockito.mock(HakukohdeDAOImpl.class);
         Whitebox.setInternalState(hakukohdeToSolr, "hakukohdeDAO", hakukohdeDAO);
-        Mockito.stub(hakukohdeDAO.findBy("id", 1L)).toReturn(Arrays.asList(new Hakukohde[]{getHakukohde()}));
+        Mockito.stub(hakukohdeDAO.findBy("id", 1L)).toReturn(Arrays.asList(getHakukohde()));
     }
 
     private OrganisaatioPerustieto getOrg(String oid) {

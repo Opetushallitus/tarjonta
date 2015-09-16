@@ -28,10 +28,10 @@ public class MonikielinenMetadataDAOTest extends TestUtilityBase {
     public void testMonikielinenMetadata() {
         LOG.info("testMonikielinenMetadata()...");
 
-        createMKMD(AVAIN_0, (String) null, null, 1000);
-        createMKMD(AVAIN_1, (String) null, null, 2000);
-        createMKMD(AVAIN_2, (String) null, null, 4000);
-        createMKMD(AVAIN_3, (String) null, null, 8000);
+        createMKMD(AVAIN_0, null, null, 1000);
+        createMKMD(AVAIN_1, null, null, 2000);
+        createMKMD(AVAIN_2, null, null, 4000);
+        createMKMD(AVAIN_3, null, null, 8000);
 
         Assert.assertTrue("Must have 4 items in db", monikielinenMetadataDAO.findAll().size() == 4);
         printMD(monikielinenMetadataDAO.findAll());
@@ -97,12 +97,12 @@ public class MonikielinenMetadataDAOTest extends TestUtilityBase {
 
         LOG.info("Metadatas: size = {}", mds.size());
         for (MonikielinenMetadata md : mds) {
-            LOG.info("  MD: avain={}, kategoria={}, kieli={}", new Object[]{md.getAvain(), md.getKategoria(), md.getKieli()});
+            LOG.info("  MD: avain={}, kategoria={}, kieli={}", md.getAvain(), md.getKategoria(), md.getKieli());
         }
     }
 
     private MonikielinenMetadata createMKMD(String avain, String kategoria, String kieli, int pituus) {
-        LOG.debug("createMKMD({}, {}, {}, {})...", new Object[]{avain, kategoria, kieli, pituus});
+        LOG.debug("createMKMD({}, {}, {}, {})...", avain, kategoria, kieli, pituus);
 
         String arvo = createRandomData(pituus);
 

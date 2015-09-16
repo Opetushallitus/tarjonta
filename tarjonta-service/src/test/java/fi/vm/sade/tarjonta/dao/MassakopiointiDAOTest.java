@@ -177,10 +177,10 @@ public class MassakopiointiDAOTest extends TestUtilityBase {
         /*
          * findByHakuOidAndOids
          */
-        List<Massakopiointi> findByHakuOidAndOids = instance.findByHakuOidAndOids(HAKU_OID_2, Lists.<String>newArrayList(ANY_UNIQUE_OID_1));
+        List<Massakopiointi> findByHakuOidAndOids = instance.findByHakuOidAndOids(HAKU_OID_2, Lists.newArrayList(ANY_UNIQUE_OID_1));
         assertEquals("findByHakuOidAndOids 1/2", 0, findByHakuOidAndOids.size());
 
-        findByHakuOidAndOids = instance.findByHakuOidAndOids(HAKU_OID_2, Lists.<String>newArrayList(ANY_UNIQUE_OID_3, ANY_UNIQUE_OID_4));
+        findByHakuOidAndOids = instance.findByHakuOidAndOids(HAKU_OID_2, Lists.newArrayList(ANY_UNIQUE_OID_3, ANY_UNIQUE_OID_4));
         assertEquals("findByHakuOidAndOids 2/2", 2, findByHakuOidAndOids.size());
 
         /*

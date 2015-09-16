@@ -42,8 +42,8 @@ import static org.junit.Assert.assertEquals;
 
 public class EntityConverterToRDTOTest extends KoulutusRestBase {
 
-    private static final Set<KoodistoUri> SET_KOMOTO_TUTKINTONIMIKE = Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE)));
-    private static final Set<KoodistoUri> SET_KOMO_TUTKINTONIMIKE = Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE)));
+    private static final Set<KoodistoUri> SET_KOMOTO_TUTKINTONIMIKE = Sets.newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE)));
+    private static final Set<KoodistoUri> SET_KOMO_TUTKINTONIMIKE = Sets.newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE)));
 
     private static final RestParam PARAM = RestParam.byUserRequest(Boolean.FALSE, Boolean.FALSE, "FI");
     private static final Type NO_URI = null;
@@ -94,11 +94,11 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         m.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
         korkeakouluPopulateBaseValues(Type.KOMO, m);
         m.setKoulutustyyppiEnum(ModuulityyppiEnum.KORKEAKOULUTUS);
-        m.setTutkintonimikes(Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE))));
+        m.setTutkintonimikes(Sets.newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE))));
 
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus();
         korkeakouluPopulateBaseValues(Type.KOMOTO, t);
-        t.setTutkintonimikes(Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE))));
+        t.setTutkintonimikes(Sets.newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE))));
         t.setKoulutusmoduuli(m);
         t.setToteutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS);
 
@@ -136,7 +136,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
 
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus();
         korkeakouluPopulateBaseValues(Type.KOMOTO, t);
-        t.setTutkintonimikes(Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE))));
+        t.setTutkintonimikes(Sets.newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE))));
         t.setKoulutusmoduuli(m);
         t.setToteutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS);
  
@@ -172,7 +172,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         m.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
         korkeakouluPopulateBaseValues(Type.KOMO, m);
         m.setKoulutustyyppiEnum(ModuulityyppiEnum.KORKEAKOULUTUS);
-        m.setTutkintonimikes(Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE))));
+        m.setTutkintonimikes(Sets.newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE))));
 
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus();
         t.setKoulutusmoduuli(m);
@@ -213,18 +213,18 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         tukintoParentKomo.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
         lukioPopulateBaseValues(Type.KOMO, tukintoParentKomo);
         tukintoParentKomo.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
-        tukintoParentKomo.setTutkintonimikes(Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE))));
+        tukintoParentKomo.setTutkintonimikes(Sets.newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE))));
 
         Koulutusmoduuli ohjelmaChildKomo = new Koulutusmoduuli();
         lukioPopulateChildKomoBaseValues(ohjelmaChildKomo);
 
         tukintoParentKomo.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
-        tukintoParentKomo.setTutkintonimikes(Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE))));
+        tukintoParentKomo.setTutkintonimikes(Sets.newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE))));
 
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus();
         lukioPopulateBaseValues(Type.KOMOTO, t);
         t.setLukiolinjaUri(testKey(Type.KOMOTO, FieldNames.LUKIOLINJA));
-        t.setTutkintonimikes(Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE))));
+        t.setTutkintonimikes(Sets.newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE))));
         t.setKoulutusmoduuli(ohjelmaChildKomo); //set the child 'koulutusohjelma' komo object here 
         t.setToteutustyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS);
 
@@ -270,13 +270,13 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         tukintoParentKomo.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
         lukioPopulateBaseValues(Type.KOMO, tukintoParentKomo);
         tukintoParentKomo.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
-        tukintoParentKomo.setTutkintonimikes(Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE))));
+        tukintoParentKomo.setTutkintonimikes(Sets.newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE))));
 
         Koulutusmoduuli ohjelmaChildKomo = new Koulutusmoduuli();
         lukioPopulateChildKomoBaseValues(ohjelmaChildKomo);
 
         tukintoParentKomo.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
-        tukintoParentKomo.setTutkintonimikes(Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE))));
+        tukintoParentKomo.setTutkintonimikes(Sets.newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE))));
 
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus();
         t.setKoulutusmoduuli(ohjelmaChildKomo);

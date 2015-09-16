@@ -37,7 +37,7 @@ public class KoulutusToSolrDocumentTest extends TestMockBase {
         koulutusmoduuliToteutus = createKoulutusmoduuliToteutus();
         List<OrganisaatioPerustieto> organisaatioPerustiedot = createOrganisaatioPerustiedot();
 
-        when(koulutusmoduuliToteutusDAO.findBy("id", 1L)).thenReturn(Arrays.asList(new KoulutusmoduuliToteutus[]{koulutusmoduuliToteutus}));
+        when(koulutusmoduuliToteutusDAO.findBy("id", 1L)).thenReturn(Arrays.asList(koulutusmoduuliToteutus));
         when(organisaatioSearchService.findByOidSet(new HashSet<String>(Arrays.asList("1.2.3", "4.5.6")))).thenReturn(organisaatioPerustiedot);
         when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(0))).thenReturn("oppilaitostyyppi_41");
         when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(1))).thenReturn("oppilaitostyyppi_42");
@@ -437,7 +437,7 @@ public class KoulutusToSolrDocumentTest extends TestMockBase {
         secondOrganisaatioPerustieto.setOppilaitostyyppi("oppilaitostyyppi_42");
         secondOrganisaatioPerustieto.setParentOidPath("987/654");
 
-        return Arrays.asList(new OrganisaatioPerustieto[]{firstOrganisaatioPerustieto, secondOrganisaatioPerustieto});
+        return Arrays.asList(firstOrganisaatioPerustieto, secondOrganisaatioPerustieto);
     }
 
     private KoulutusmoduuliToteutus createKoulutusmoduuliToteutus() {

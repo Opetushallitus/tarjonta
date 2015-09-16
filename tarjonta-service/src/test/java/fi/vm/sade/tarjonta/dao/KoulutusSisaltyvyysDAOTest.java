@@ -70,7 +70,7 @@ public class KoulutusSisaltyvyysDAOTest extends TestUtilityBase {
     @Test
     public void testInsert() {
 
-        Koulutusmoduuli loaded = (Koulutusmoduuli) koulutusDAO.read(parent.getId());
+        Koulutusmoduuli loaded = koulutusDAO.read(parent.getId());
         assertEquals(2, loaded.getSisaltyvyysList().size());
 
     }

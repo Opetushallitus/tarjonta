@@ -38,8 +38,8 @@ abstract class KoulutusRestBase {
 
     protected static final Locale FI = new Locale("FI");
     protected static final String NOT_TESTED = "this test will ingnore this data field";
-    protected static final Set<KoodistoUri> SET_KOMOTO_TUTKINTONIMIKE = Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE)));
-    protected static final Set<KoodistoUri> SET_KOMO_TUTKINTONIMIKE = Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE)));
+    protected static final Set<KoodistoUri> SET_KOMOTO_TUTKINTONIMIKE = Sets.newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE)));
+    protected static final Set<KoodistoUri> SET_KOMO_TUTKINTONIMIKE = Sets.newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE)));
 
     protected enum Type {
 

@@ -231,7 +231,7 @@ abstract class KoulutusBase extends TestUtilityBase {
         parent.setNimi(null);
         parent.setTila(TarjontaTila.JULKAISTU);
         parent.setOppilaitostyyppi("|oppilaitostyypp_xxx#1|");
-        Map<KomoTeksti, MonikielinenTeksti> map = Maps.<KomoTeksti, MonikielinenTeksti>newHashMap();
+        Map<KomoTeksti, MonikielinenTeksti> map = Maps.newHashMap();
         addKuvaus(map, KomoTeksti.TAVOITTEET);
         addKuvaus(map, KomoTeksti.KOULUTUKSEN_RAKENNE);
         addKuvaus(map, KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET);
@@ -431,7 +431,7 @@ abstract class KoulutusBase extends TestUtilityBase {
     }
 
     protected List<KoodiType> createKoodiTypeList(final KoodiType type) {
-        List<KoodiType> types = Lists.<KoodiType>newArrayList();
+        List<KoodiType> types = Lists.newArrayList();
         types.add(type);
         return types;
     }

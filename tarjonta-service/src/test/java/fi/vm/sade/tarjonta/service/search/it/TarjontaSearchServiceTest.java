@@ -364,27 +364,27 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         kk.setKoulutuksenAlkamiskausi(new KoodiV1RDTO("uri_kausi", 1, null));
         kk.setSuunniteltuKestoArvo("1");
 
-        Map<String, Integer> tutkintoNimikes = Maps.<String, Integer>newHashMap();
+        Map<String, Integer> tutkintoNimikes = Maps.newHashMap();
         tutkintoNimikes.put("tutkintonimike-uri", 1);
         kk.getTutkintonimikes().setUris(tutkintoNimikes);
 
-        Map<String, Integer> opetuskieli = Maps.<String, Integer>newHashMap();
+        Map<String, Integer> opetuskieli = Maps.newHashMap();
         opetuskieli.put("opetuskieli-uri", 1);
         kk.getOpetuskielis().setUris(opetuskieli);
 
-        Map<String, Integer> opetusaika = Maps.<String, Integer>newHashMap();
+        Map<String, Integer> opetusaika = Maps.newHashMap();
         opetusaika.put("opetusaika-uri", 1);
         kk.getOpetusAikas().setUris(opetusaika);
 
-        Map<String, Integer> opetuspaikka = Maps.<String, Integer>newHashMap();
+        Map<String, Integer> opetuspaikka = Maps.newHashMap();
         opetuspaikka.put("opetuspaikka-uri", 1);
         kk.getOpetusPaikkas().setUris(opetuspaikka);
 
-        Map<String, Integer> opetusmuoto = Maps.<String, Integer>newHashMap();
+        Map<String, Integer> opetusmuoto = Maps.newHashMap();
         opetusmuoto.put("opetusmuoto-uri", 1);
         kk.getOpetusmuodos().setUris(opetusmuoto);
 
-        Map<String, Integer> teema = Maps.<String, Integer>newHashMap();
+        Map<String, Integer> teema = Maps.newHashMap();
         teema.put("teema-uri", 1);
         kk.getAihees().setUris(teema);
 

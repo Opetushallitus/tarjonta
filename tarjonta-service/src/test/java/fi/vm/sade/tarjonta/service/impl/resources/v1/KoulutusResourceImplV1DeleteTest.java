@@ -122,7 +122,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         expect(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).andReturn(Lists.<String>newArrayList());
 
         KoulutuksetVastaus kv = new KoulutuksetVastaus();
-        List<KoulutusPerustieto> perustiedot = Lists.<KoulutusPerustieto>newArrayList();
+        List<KoulutusPerustieto> perustiedot = Lists.newArrayList();
         kv.setKoulutukset(perustiedot);
 
         replayAll();
@@ -185,7 +185,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         /* ---------------- NEXT TEST ----------------
          * ERROR IN PARENT
          */
-        ArrayList<String> parent = Lists.<String>newArrayList();
+        ArrayList<String> parent = Lists.newArrayList();
         parent.add("komo_oid_parent");
 
         expect(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).andReturn(Lists.<String>newArrayList());
@@ -213,7 +213,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         hakukohdeDao.insert(hakukohde);
 
         kv = new KoulutuksetVastaus();
-        perustiedot = Lists.<KoulutusPerustieto>newArrayList();
+        perustiedot = Lists.newArrayList();
         KoulutusPerustieto koulutusPerustieto = new KoulutusPerustieto();
         koulutusPerustieto.setKomotoOid(KOMOTO_OID);
         perustiedot.add(koulutusPerustieto);
@@ -239,7 +239,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
          * SUCCESS IN HAKUKOHDE (1 x hakukohde, 1 x invalid koulutus, 1 x valid koulutus)
          */
         kv = new KoulutuksetVastaus();
-        perustiedot = Lists.<KoulutusPerustieto>newArrayList();
+        perustiedot = Lists.newArrayList();
         koulutusPerustieto = new KoulutusPerustieto();
         koulutusPerustieto.setKomotoOid(KOMOTO_OID);
         koulutusPerustieto.setKomotoOid("komoto_oid_valid");
@@ -280,7 +280,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
          * INSERT KORKEAKOULU TO DB
          */
         //a quick test data insert, no unnecessary DTO conversions.
-        KoulutusmoduuliToteutus kt = Whitebox.<KoulutusmoduuliToteutus>invokeMethod(instance, "insertKoulutusKorkeakoulu", dto);
+        KoulutusmoduuliToteutus kt = Whitebox.invokeMethod(instance, "insertKoulutusKorkeakoulu", dto);
         assertNotNull(kt);
         assertNotNull(kt.getOid());
         assertEquals(TUNNISTE, kt.getUlkoinenTunniste());

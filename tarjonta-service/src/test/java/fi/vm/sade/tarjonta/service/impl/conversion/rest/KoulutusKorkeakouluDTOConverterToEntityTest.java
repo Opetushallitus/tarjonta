@@ -66,7 +66,7 @@ public class KoulutusKorkeakouluDTOConverterToEntityTest {
     public void testHandleDatesOneOrManyDates() {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         KoulutusKorkeakouluV1RDTO dto = new KoulutusKorkeakouluV1RDTO();
-        HashSet<Date> dates = Sets.<Date>newHashSet();
+        HashSet<Date> dates = Sets.newHashSet();
         dates.add(new DateTime(2014, 1, 1, 1, 1).toDate());
         dates.add(new DateTime(2014, 1, 2, 1, 1).toDate());
         dates.add(new DateTime(2014, 2, 1, 1, 1).toDate());
@@ -86,7 +86,7 @@ public class KoulutusKorkeakouluDTOConverterToEntityTest {
         komoto.addKoulutuksenAlkamisPvms(new DateTime(2014, 1, 1, 0, 0).toDate());
 
         KoulutusKorkeakouluV1RDTO dto = new KoulutusKorkeakouluV1RDTO();
-        HashSet<Date> dates = Sets.<Date>newHashSet();
+        HashSet<Date> dates = Sets.newHashSet();
         dates.add(new DateTime(2014, 1, 1, 1, 1).toDate());
         dates.add(new DateTime(2014, 1, 2, 1, 1).toDate());
         dates.add(new DateTime(2014, 2, 1, 1, 1).toDate());

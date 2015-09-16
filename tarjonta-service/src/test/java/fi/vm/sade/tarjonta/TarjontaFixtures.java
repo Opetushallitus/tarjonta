@@ -449,7 +449,7 @@ public class TarjontaFixtures {
         koulutusmoduuliDAO.insert(m1);
         t1.setKoulutusmoduuli(m1);
 
-        return (KoulutusmoduuliToteutus) koulutusmoduuliToteutusDAO.insert(t1);
+        return koulutusmoduuliToteutusDAO.insert(t1);
     }
 
     /**
@@ -485,7 +485,7 @@ public class TarjontaFixtures {
         flush();
         clear();
 
-        return (Koulutusmoduuli) koulutusmoduuliDAO.read(root.getId());
+        return koulutusmoduuliDAO.read(root.getId());
 
     }
 

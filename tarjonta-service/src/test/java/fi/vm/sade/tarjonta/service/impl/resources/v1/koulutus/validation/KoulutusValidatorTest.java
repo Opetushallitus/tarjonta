@@ -216,7 +216,7 @@ public class KoulutusValidatorTest {
         Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO(), dto, missing, invalid, null));
 
         //set empty map (size of zero)
-        Map<String, Integer> uris = Maps.<String, Integer>newHashMap();
+        Map<String, Integer> uris = Maps.newHashMap();
         dto.setUris(uris);
 
         //no limit
@@ -234,28 +234,28 @@ public class KoulutusValidatorTest {
         dto.setUris(uris);
         Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO(), dto, missing, invalid, null));
 
-        uris = Maps.<String, Integer>newHashMap();
+        uris = Maps.newHashMap();
         uris.put("", 0);
         dto.setUris(uris);
         Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO(), dto, missing, invalid, null));
 
-        uris = Maps.<String, Integer>newHashMap();
+        uris = Maps.newHashMap();
         uris.put("", 1);
         dto.setUris(uris);
         Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO(), dto, missing, invalid, null));
 
-        uris = Maps.<String, Integer>newHashMap();
+        uris = Maps.newHashMap();
         uris.put("", 0);
         dto.setUris(uris);
         Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO(), dto, missing, invalid, null));
 
-        uris = Maps.<String, Integer>newHashMap();
+        uris = Maps.newHashMap();
         uris.put("1", 1);
         uris.put("", -1);
         dto.setUris(uris);
         Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO(), dto, missing, invalid, null));
 
-        uris = Maps.<String, Integer>newHashMap();
+        uris = Maps.newHashMap();
         uris.put("1", 1);
         uris.put("2", 2);
         dto.setUris(uris);

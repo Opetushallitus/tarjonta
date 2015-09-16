@@ -368,7 +368,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
 
     private KoodiUrisV1RDTO getTutkintonimikes() {
         KoodiUrisV1RDTO tutkintonimikes = new KoodiUrisV1RDTO();
-        Map<String, Integer> map = Maps.<String, Integer>newHashMap();
+        Map<String, Integer> map = Maps.newHashMap();
         map.put(toKoodiUri(TUTKINTONIMIKE).getUri(), 1);
         tutkintonimikes.setUris(map);
         return tutkintonimikes;
