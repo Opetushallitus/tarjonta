@@ -28,10 +28,7 @@ import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOrgDTO;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.powermock.reflect.Whitebox;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
@@ -45,8 +42,7 @@ import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-@ContextConfiguration(locations = "classpath:spring/test-context.xml")
-@RunWith(SpringJUnit4ClassRunner.class)
+
 @Transactional
 public class KoulutusPermissionTest extends TestUtilityBase {
 

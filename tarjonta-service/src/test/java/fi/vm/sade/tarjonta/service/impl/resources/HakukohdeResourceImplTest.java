@@ -21,13 +21,10 @@ import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeValintaperusteetDTO;
 import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
@@ -39,17 +36,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-@ContextConfiguration(locations = "classpath:spring/test-context.xml")
+
 @TestExecutionListeners(listeners = {
         DependencyInjectionTestExecutionListener.class,
         DirtiesContextTestExecutionListener.class,
         TransactionalTestExecutionListener.class
 })
-@RunWith(SpringJUnit4ClassRunner.class)
 @Transactional()
 public class HakukohdeResourceImplTest extends TestUtilityBase {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResourceImplTest.class);
 
     @Autowired
     private HakukohdeResource hakukohdeResource;
@@ -60,8 +54,6 @@ public class HakukohdeResourceImplTest extends TestUtilityBase {
 
     @Test
     public void testGetHakukohteenValintaperusteet() throws IOException {
-        LOG.info("testGetHakukohteenValintaperusteet()...");
-
         // Create test data
         Haku haku = fixtures.createHaku();
         hakuDao.insert(haku);

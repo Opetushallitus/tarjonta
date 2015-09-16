@@ -19,14 +19,11 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
@@ -40,12 +37,11 @@ import static fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultSt
 import static fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus.OK;
 import static org.junit.Assert.assertEquals;
 
-@ContextConfiguration(locations = "classpath:spring/test-context.xml")
+
 @TestExecutionListeners(listeners = {
     DependencyInjectionTestExecutionListener.class,
     DirtiesContextTestExecutionListener.class,
     TransactionalTestExecutionListener.class})
-@RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("embedded-solr")
 @Transactional()
 public class HakukohdeResourceImplV1Test extends TestUtilityBase {

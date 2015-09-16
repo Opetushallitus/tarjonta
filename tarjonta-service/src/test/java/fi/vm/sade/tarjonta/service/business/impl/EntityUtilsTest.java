@@ -15,55 +15,21 @@
  */
 package fi.vm.sade.tarjonta.service.business.impl;
 
-import com.google.common.base.Preconditions;
-import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTOTest;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
-import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.service.types.*;
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
-/**
- *
- * @author jani
- */
+import static org.junit.Assert.assertEquals;
+
+
 public class EntityUtilsTest {
 
-    public EntityUtilsTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
-    /**
-     * Test of joinListToString method, of class EntityUtils.
-     */
     @Test
     public void testJoinListToString() {
         Collection<String> list = new ArrayList<String>(Arrays.asList("uri1", "uri2", "uri3"));

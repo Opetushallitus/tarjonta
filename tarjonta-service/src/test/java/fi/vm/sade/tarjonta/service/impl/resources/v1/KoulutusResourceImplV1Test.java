@@ -32,11 +32,8 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
@@ -47,17 +44,12 @@ import java.util.*;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author jani
- */
-@ContextConfiguration(locations = "classpath:spring/test-context.xml")
+
 @TestExecutionListeners(listeners = {
     DependencyInjectionTestExecutionListener.class,
     DirtiesContextTestExecutionListener.class,
     TransactionalTestExecutionListener.class
 })
-@RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("embedded-solr")
 @Transactional()
 public class KoulutusResourceImplV1Test extends KoulutusBase {
@@ -65,10 +57,6 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
     @Before
     public void setUp() throws OIDCreationException {
         reload();
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test

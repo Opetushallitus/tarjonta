@@ -21,14 +21,12 @@ import fi.vm.sade.tarjonta.dao.impl.HakuDAOImpl;
 import fi.vm.sade.tarjonta.model.Haku;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
 import static org.junit.Assert.*;
+
 
 /**
  * A separate test for MonikielinenTeksti entity that is used from several other entities.
@@ -36,8 +34,6 @@ import static org.junit.Assert.*;
  *
  * @author Jukka Raanamo
  */
-@ContextConfiguration(locations = "classpath:spring/test-context.xml")
-@RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 public class MonikielinenTekstiTest extends TestUtilityBase {
 

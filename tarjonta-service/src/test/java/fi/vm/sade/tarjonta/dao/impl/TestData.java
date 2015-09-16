@@ -19,23 +19,20 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.joda.time.DateTime;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.EntityManager;
-import org.joda.time.DateTime;
 
-import org.springframework.transaction.annotation.Transactional;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import static org.junit.Assert.*;
 
-/**
- *
- * @author Jani Wilén
- */
-public class TestData extends TestUtilityBase {
+abstract public class TestData extends TestUtilityBase {
 
     public static final int VALINTAKOE_COUNT_FOR_OID1 = 3;
     public static final String KOMOTO_OID_1 = "komoto_oid1";

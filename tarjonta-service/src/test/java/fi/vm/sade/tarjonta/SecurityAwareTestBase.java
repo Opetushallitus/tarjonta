@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * By default executes tests as CRUD_USER, override before to customize
  */
-public class SecurityAwareTestBase extends TestUtilityBase {
+abstract public class SecurityAwareTestBase extends TestUtilityBase {
     
     @Value("${root.organisaatio.oid}")
     protected String ophOid;

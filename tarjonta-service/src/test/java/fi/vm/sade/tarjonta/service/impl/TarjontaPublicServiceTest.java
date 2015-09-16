@@ -21,11 +21,8 @@ import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
@@ -35,16 +32,12 @@ import java.math.BigDecimal;
 
 import static org.junit.Assert.*;
 
-/**
- *
- */
-@ContextConfiguration(locations = "classpath:spring/test-context.xml")
+
 @TestExecutionListeners(listeners = {
     DependencyInjectionTestExecutionListener.class,
     DirtiesContextTestExecutionListener.class,
     TransactionalTestExecutionListener.class
 })
-@RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 @ActiveProfiles("embedded-solr")
 public class TarjontaPublicServiceTest extends TestUtilityBase {

@@ -17,34 +17,24 @@ package fi.vm.sade.tarjonta.dao;
 
 import com.google.common.collect.Lists;
 import com.mysema.commons.lang.Pair;
+import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
 import fi.vm.sade.tarjonta.service.copy.MetaObject;
-import java.util.Date;
-import java.util.List;
 import org.joda.time.DateTime;
 import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- *
- * @author jani
- */
-@ContextConfiguration(locations = "classpath:spring/test-context.xml")
-@RunWith(SpringJUnit4ClassRunner.class)
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.*;
+
+
 @Transactional
-public class MassakopiointiDAOTest {
-
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MassakopiointiDAOTest.class);
+public class MassakopiointiDAOTest extends TestUtilityBase {
 
     private static final Date DATE = (new DateTime(2014, 1, 6, 0, 0, 0, 0)).toDate();
     private static final Date ANOTHER_DATE = (new DateTime(2014, 3, 9, 0, 0, 0, 0)).toDate();

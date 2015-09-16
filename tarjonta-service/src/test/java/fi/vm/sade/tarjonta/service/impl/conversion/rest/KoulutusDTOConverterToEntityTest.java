@@ -51,12 +51,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.isA;
 
-/**
- * SIMPLE DATA MAPPING TEST CLASS: Test REST DTO koodi uri data mapping to
- * entity objects.
- *
- * @author jani
- */
+
 public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
 
     private static final String KOMO_OID = "komo_oid";

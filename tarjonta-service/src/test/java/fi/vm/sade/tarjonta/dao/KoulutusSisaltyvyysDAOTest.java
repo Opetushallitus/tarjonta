@@ -22,18 +22,12 @@ import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- */
-@ContextConfiguration(locations = "classpath:spring/test-context.xml")
-@RunWith(SpringJUnit4ClassRunner.class)
+
 @Transactional
 public class KoulutusSisaltyvyysDAOTest extends TestUtilityBase {
 

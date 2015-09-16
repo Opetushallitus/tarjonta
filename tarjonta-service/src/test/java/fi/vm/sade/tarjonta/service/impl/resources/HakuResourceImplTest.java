@@ -19,12 +19,9 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
@@ -36,18 +33,11 @@ import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
-/**
- *
- * @author mlyly
- */
-@ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
     DependencyInjectionTestExecutionListener.class,
     DirtiesContextTestExecutionListener.class,
     TransactionalTestExecutionListener.class
 })
-@RunWith(SpringJUnit4ClassRunner.class)
-// @ActiveProfiles("embedded-solr")
 @Transactional()
 public class HakuResourceImplTest extends TestUtilityBase {
 

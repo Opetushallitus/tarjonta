@@ -20,22 +20,18 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Iterator;
 
 import static org.junit.Assert.assertEquals;
 
+
 /**
  * Acceptance tests for OVT-1534
  *
  * @see https://liitu.hard.ware.fi/jira/browse/OVT-1534
  */
-@ContextConfiguration(locations = "classpath:spring/test-context.xml")
-@RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 public class OVT1534_KoulutusSisaltyvyysTest extends TestUtilityBase {
     @Test

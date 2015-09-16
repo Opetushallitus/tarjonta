@@ -18,9 +18,6 @@ package fi.vm.sade.tarjonta.model;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- */
 public class HakuTest {
     
  

@@ -1,7 +1,6 @@
 package fi.vm.sade.tarjonta.dao;
 
 import com.google.common.collect.Lists;
-import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.BinaryData;
 import fi.vm.sade.tarjonta.model.KoulutusOwner;
@@ -11,10 +10,6 @@ import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -23,11 +18,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-/**
- * Tests for KoulutusmoduuliTotetusDAO.
- */
-@ContextConfiguration(locations = "classpath:spring/test-context.xml")
-@RunWith(SpringJUnit4ClassRunner.class)
+
 @Transactional
 public class KoulutusmoduuliToteutusDAOTest extends TestUtilityBase {
 

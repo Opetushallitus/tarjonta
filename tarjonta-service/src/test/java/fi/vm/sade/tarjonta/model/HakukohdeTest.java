@@ -17,13 +17,10 @@ package fi.vm.sade.tarjonta.model;
 
 import org.junit.Test;
 
-import javax.validation.constraints.AssertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
-import static org.junit.Assert.*;
 
-/**
- *
- */
 public class HakukohdeTest {
 
     @Test

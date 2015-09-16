@@ -20,37 +20,26 @@ import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.model.RestParam;
-import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiValikoimaV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import org.easymock.EasyMock;
+import org.junit.Before;
+import org.junit.Test;
+import org.powermock.reflect.Whitebox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.easymock.EasyMock;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.mockito.Matchers;
-import org.powermock.reflect.Whitebox;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.anyBoolean;
-import static scala.reflect.runtime.SynchronizedSymbols.SynchronizedMethodSymbol$class.returnType;
 
-/**
- * SIMPLE DATA MAPPING TEST CLASS: Test komo and komoto koodi uri override.
- *
- * @author jani
- */
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.assertEquals;
+
+
 public class EntityConverterToRDTOTest extends KoulutusRestBase {
 
     private static final Set<KoodistoUri> SET_KOMOTO_TUTKINTONIMIKE = Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE)));

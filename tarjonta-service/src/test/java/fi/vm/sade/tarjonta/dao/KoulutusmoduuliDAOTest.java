@@ -27,11 +27,6 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -39,12 +34,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**
- * KoulutusmoduuliDAO and KoulutusmoduuliTotetusDAO were merged hence dao under
- * test is KoulutusDAO. TOOD: merge tests too.
- */
-@ContextConfiguration(locations = "classpath:spring/test-context.xml")
-@RunWith(SpringJUnit4ClassRunner.class)
+
 @Transactional
 public class KoulutusmoduuliDAOTest extends TestUtilityBase {
 

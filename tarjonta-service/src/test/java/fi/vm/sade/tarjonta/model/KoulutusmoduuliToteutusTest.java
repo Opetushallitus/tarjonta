@@ -1,13 +1,13 @@
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
 import java.util.Calendar;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class KoulutusmoduuliToteutusTest {
 

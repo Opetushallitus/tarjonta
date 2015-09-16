@@ -22,7 +22,6 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.validation.constraints.Null;
 import java.util.Date;
 
 import static org.junit.Assert.*;
