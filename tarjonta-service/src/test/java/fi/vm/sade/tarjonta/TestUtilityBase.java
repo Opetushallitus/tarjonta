@@ -10,6 +10,7 @@ import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusUtilService;
@@ -145,4 +146,10 @@ abstract public class TestUtilityBase {
 
     @Autowired
     protected KoulutusBusinessService koulutusBusinessService;
+
+    @Autowired
+    protected PermissionChecker permissionChecker;
+
+    @Autowired
+    protected ParameterServices parameterServices;
 }
