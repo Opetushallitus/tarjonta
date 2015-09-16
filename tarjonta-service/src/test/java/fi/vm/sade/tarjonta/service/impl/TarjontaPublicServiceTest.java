@@ -15,16 +15,13 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
+import fi.vm.sade.tarjonta.TestUtilityBase;
+import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -34,32 +31,9 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.tarjonta.TarjontaDatabasePrinter;
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
-import fi.vm.sade.tarjonta.model.Pisteraja;
-import fi.vm.sade.tarjonta.model.Valintakoe;
-import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjontaTyyppi;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-
 import java.math.BigDecimal;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -73,7 +47,7 @@ import java.math.BigDecimal;
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 @ActiveProfiles("embedded-solr")
-public class TarjontaPublicServiceTest {
+public class TarjontaPublicServiceTest extends TestUtilityBase {
 
     private static final String YHTEISHAKU = "http://hakutapa/yhteishaku";
 
@@ -91,30 +65,6 @@ public class TarjontaPublicServiceTest {
 	private static final String KOULUTUSOHJELMAKOODI1 = "uri:koulutusohjelmakoodi1";
 	private static final String KOULUTUSOHJELMAKOODI2 = "uri:koulutusohjelmakoodi2";
 	private static final String KOULUTUSASTEKOODI = "uri:koulutuasteLukio";
-
-
-    private static final Logger log = LoggerFactory.getLogger(TarjontaPublicServiceTest.class);
-
-    @Autowired
-    private TarjontaPublicService service;
-
-    @Autowired
-    private TarjontaFixtures fixtures;
-
-    @Autowired
-    private TarjontaDatabasePrinter db;
-
-    @Autowired
-    private HakuDAO hakuDAO;
-
-    @Autowired
-    private HakukohdeDAO hakukohdeDAO;
-
-    @Autowired
-    private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
-    @Autowired
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
     @Before
     public void setUp() {

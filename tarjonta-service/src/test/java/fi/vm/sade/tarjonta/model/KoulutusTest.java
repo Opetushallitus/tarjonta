@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.model;
 
 import org.junit.Test;
+import org.springframework.util.Assert;
 
 /**
  * Moved relations to dao from model (since it's not domain after all).

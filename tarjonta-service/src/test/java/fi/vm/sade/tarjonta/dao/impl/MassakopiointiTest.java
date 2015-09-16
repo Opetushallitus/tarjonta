@@ -15,16 +15,22 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.persistence.EntityManager;
-
+import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,31 +47,13 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import javax.persistence.EntityManager;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakuaika;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.HakukohdeLiite;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.Valintakoe;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
-import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
-import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
-import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-
-import org.joda.time.DateTime;
+import static org.junit.Assert.*;
 
 /**
  * @author jani
@@ -85,23 +73,11 @@ public class MassakopiointiTest extends TestData {
 
     @Autowired
     private HakukohdeDAOImpl hakukohdeDAO;
-    @Autowired
-    private HakuDAOImpl hakuDAO;
+
     @Autowired
     private TarjontaFixtures fixtures;
+
     private EntityManager em;
-
-    @Autowired
-    private HakuV1Resource hakuResource;
-
-    @Autowired
-    private MassCopyProcess copyProcess;
-
-    @Autowired
-    private OidService oidService;
-
-    private String foo;
-
     AtomicInteger c = new AtomicInteger(0);
 
     @Before

@@ -18,22 +18,18 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import fi.vm.sade.generic.service.exception.NotAuthorizedException;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
+import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionException;
-import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
-import fi.vm.sade.tarjonta.service.tasks.KoulutusPermissionSynchronizer;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOrgDTO;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.reflect.Whitebox;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,20 +48,11 @@ import static org.junit.Assert.assertNull;
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-public class KoulutusPermissionTest {
+public class KoulutusPermissionTest extends TestUtilityBase {
 
     static final String ORG_OID = "org1";
 
-    @Autowired
-    KoulutusPermissionDAO koulutusPermissionDAO;
-
-    @Autowired
-    KoulutusPermissionSynchronizer koulutusPermissionSynchronizer;
-
     OrganisaatioService organisaatioServiceMock;
-
-    @Autowired
-    KoulutusPermissionService koulutusPermissionService;
 
     @Before
     public void setUp() {

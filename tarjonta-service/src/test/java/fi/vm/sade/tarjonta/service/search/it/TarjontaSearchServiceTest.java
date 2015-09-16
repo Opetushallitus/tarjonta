@@ -91,44 +91,6 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         return perus;
     }
 
-    @Autowired
-    private KoulutusSearchService koulutusSearchService;
-
-    @Autowired
-    private HakukohdeSearchService hakukohdeSearchService;
-
-    @Autowired
-    private OrganisaatioSearchService organisaatioSearchService;
-
-    @Autowired
-    private OrganisaatioService organisaatioService;
-
-    @Autowired
-    private SolrServerFactory solrServerFactory;
-
-    @Autowired
-    private TarjontaAdminService adminService;
-
-    @Autowired
-    private TarjontaPublicService publicService;
-
-    @Autowired
-    private KoodiService koodiService;
-
-    @Autowired
-    private OidService oidService;
-
-    @Autowired
-    private HakukohdeV1Resource hakukohdeResource;
-
-    @Autowired
-    private KoulutusV1Resource koulutusResource;
-
-    @Autowired
-    private KoulutusmoduuliToteutusDAOImpl koulutusmoduuliToteutusDAO;
-
-    @Autowired
-    TarjontaFixtures tarjontaFixtures;
     private Hakukohde hakukohde;
 
     @Before

@@ -14,20 +14,25 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import fi.vm.sade.tarjonta.dao.OppiaineDAO;
+import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Oppiaine;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OppiaineV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KorkeakouluOpintoV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -37,19 +42,10 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
-
-import org.junit.Before;
-import org.junit.Test;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-
 import java.util.*;
 
-import org.apache.commons.lang.time.DateUtils;
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -65,9 +61,6 @@ import org.apache.commons.lang.time.DateUtils;
 @ActiveProfiles("embedded-solr")
 @Transactional()
 public class KoulutusResourceImplV1Test extends KoulutusBase {
-
-    @Autowired
-    OppiaineDAO oppiaineDAO;
 
     @Before
     public void setUp() throws OIDCreationException {

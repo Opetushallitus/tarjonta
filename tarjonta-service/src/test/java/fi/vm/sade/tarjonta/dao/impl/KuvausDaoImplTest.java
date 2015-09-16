@@ -15,14 +15,12 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.KuvausDAO;
+import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausSearchV1RDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -43,13 +41,7 @@ import static junit.framework.Assert.assertTrue;
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-public class KuvausDaoImplTest {
-
-    @Autowired
-    private KuvausDAO kuvausDAO;
-
-    @Autowired
-    private TarjontaFixtures fixtures;
+public class KuvausDaoImplTest extends TestUtilityBase {
 
     @Before
     public void setUp() {

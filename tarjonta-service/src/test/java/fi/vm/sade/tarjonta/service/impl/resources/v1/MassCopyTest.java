@@ -1,12 +1,9 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.*;
+import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCommitProcess;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassPepareProcess;
@@ -33,11 +30,12 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.*;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
@@ -47,35 +45,10 @@ import static org.junit.Assert.assertNotSame;
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-public class MassCopyTest {
-
-    @Autowired
-    private TarjontaFixtures fixtures;
-
-    @Autowired
-    private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
-    @Autowired
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-
-    @Autowired
-    private HakukohdeDAO hakukohdeDAO;
-
-    @Autowired
-    private HakuDAO hakuDAO;
-
+public class MassCopyTest extends TestUtilityBase {
     @Autowired
     @Spy
     private OrganisaatioService organisaatioService;
-
-    @Autowired
-    private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
-
-    @Autowired
-    private KoodiService koodiService;
-
-    @Autowired
-    private OidService oidService;
 
     @Autowired
     @InjectMocks

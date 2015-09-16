@@ -16,27 +16,25 @@
 package fi.vm.sade.tarjonta.publication;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.TestUtilityBase;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
-
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -52,23 +50,13 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
     DirtiesContextTestExecutionListener.class,
     TransactionalTestExecutionListener.class
 })
-public class PublicationDataServiceTest {
-
-    @Autowired
-    private PublicationDataService dataService;
-
-    @Autowired
-    private HakuDAO hakuDAO;
-
-    @Autowired
-    private KoulutusmoduuliDAO koulutusmoduuliDAO;
+public class PublicationDataServiceTest extends TestUtilityBase {
 
     @Before
     public void setUpData() {
 
         TarjontaFixtures fixtures = new TarjontaFixtures();
         Haku haku;
-        Hakukohde hakukohde;
         Koulutusmoduuli komo;
         KoulutusmoduuliToteutus komoto;
 

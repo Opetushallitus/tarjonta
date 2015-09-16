@@ -1,12 +1,12 @@
 package fi.vm.sade.tarjonta;
 
-import java.util.List;
-
+import com.google.common.collect.Lists;
+import fi.vm.sade.security.OidProvider;
+import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,25 +14,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.google.common.collect.Lists;
-
-import fi.vm.sade.security.OidProvider;
-import fi.vm.sade.security.OrganisationHierarchyAuthorizer;
-import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
+import java.util.List;
 
 /**
  * By default executes tests as CRUD_USER, override before to customize
  */
-public class SecurityAwareTestBase {
+public class SecurityAwareTestBase extends TestUtilityBase {
     
     @Value("${root.organisaatio.oid}")
     protected String ophOid;
-    
-    @Autowired
-    protected OrganisationHierarchyAuthorizer authorizer;
-    
-    
-    
+
     private OidProvider oidProvider;
     /**
      * Set permissions for current user, setup Mock oid provider

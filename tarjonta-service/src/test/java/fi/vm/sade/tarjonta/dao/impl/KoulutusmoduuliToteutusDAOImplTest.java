@@ -21,6 +21,7 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -62,11 +63,11 @@ public class KoulutusmoduuliToteutusDAOImplTest extends TestData {
 
     @Autowired
     private HakukohdeDAOImpl instance;
+
     @Autowired
     private TarjontaFixtures fixtures;
+
     private EntityManager em;
-    @Autowired
-    private KoulutusmoduuliToteutusDAOImpl komotoDao;
 
     @Before
     public void setUp() {

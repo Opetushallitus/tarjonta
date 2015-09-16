@@ -15,22 +15,11 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.PersistenceException;
-
+import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -39,9 +28,13 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.impl.HakukohdeDAOImpl;
-import fi.vm.sade.tarjonta.dao.impl.MonikielinenMetatdataDAOImpl;
+import javax.persistence.PersistenceException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.*;
 
 /**
  */
@@ -53,24 +46,9 @@ import fi.vm.sade.tarjonta.dao.impl.MonikielinenMetatdataDAOImpl;
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-public class HakukohdeDAOTest {
-
-    @Autowired
-    private MonikielinenMetadataDAO monikielinenMetadataDAO;
-
-    @Autowired
-    private HakukohdeDAO hakukohdeDAO;
-
-    @Autowired
-    private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
-    @Autowired
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+public class HakukohdeDAOTest extends TestUtilityBase {
 
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
-
-    @Autowired
-    private TarjontaFixtures fixtures;
 
     @Before
     public void setUp() {

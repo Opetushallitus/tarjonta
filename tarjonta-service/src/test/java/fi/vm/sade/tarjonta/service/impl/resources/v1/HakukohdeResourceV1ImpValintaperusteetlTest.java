@@ -15,13 +15,8 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeValintaperusteetDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeValintaperusteetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
@@ -29,7 +24,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -52,21 +46,9 @@ import java.util.Set;
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional()
-public class HakukohdeResourceV1ImpValintaperusteetlTest {
+public class HakukohdeResourceV1ImpValintaperusteetlTest extends TestUtilityBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResourceV1ImpValintaperusteetlTest.class);
-
-    @Autowired
-    private HakukohdeDAO hakukohdeDao;
-
-    @Autowired
-    private HakuDAO hakuDao;
-
-    @Autowired
-    private HakukohdeV1Resource hakukohdeResource;
-
-    @Autowired
-    private TarjontaFixtures fixtures;
 
     public static final String PAASY_JA_SOVELTUVUUSKOE = "valintakokeentyyppi_1";
     public static final String LISANAYTTO = "valintakokeentyyppi_2";

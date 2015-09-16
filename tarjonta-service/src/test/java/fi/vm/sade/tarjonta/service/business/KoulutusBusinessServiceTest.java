@@ -16,13 +16,13 @@
 package fi.vm.sade.tarjonta.service.business;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -41,15 +41,10 @@ import static org.junit.Assert.assertNotNull;
     TransactionalTestExecutionListener.class
 })
 @RunWith(SpringJUnit4ClassRunner.class)
-public class KoulutusBusinessServiceTest {
-
-    @Autowired
-    private KoulutusBusinessService service;
+public class KoulutusBusinessServiceTest extends TestUtilityBase {
 
     private Koulutusmoduuli tutkintoOhjelma;
-
     private KoulutusmoduuliToteutus tutkintoOhjemanToteutus;
-
     private TarjontaFixtures fixtures = new TarjontaFixtures();
 
     @Before
@@ -65,7 +60,7 @@ public class KoulutusBusinessServiceTest {
     @Test
     public void testNewKoulutusmoduuliIsInSuunnitteluState() {
 
-        Koulutusmoduuli k = service.create(tutkintoOhjelma);
+        Koulutusmoduuli k = koulutusBusinessService.create(tutkintoOhjelma);
         assertEquals(TarjontaTila.LUONNOS, k.getTila());
 
     }
@@ -73,7 +68,7 @@ public class KoulutusBusinessServiceTest {
     @Test
     public void testCreateKoulutusmoduuliWithToteutus() {
 
-        KoulutusmoduuliToteutus t = service.create(tutkintoOhjemanToteutus, tutkintoOhjelma);
+        KoulutusmoduuliToteutus t = koulutusBusinessService.create(tutkintoOhjemanToteutus, tutkintoOhjelma);
 
         // check that koulutusmoduuli is assigned
         assertEquals(tutkintoOhjelma, t.getKoulutusmoduuli());
@@ -83,7 +78,7 @@ public class KoulutusBusinessServiceTest {
     @Test
     public void testFindByOid() {
 
-        KoulutusmoduuliToteutus t = service.create(tutkintoOhjemanToteutus, tutkintoOhjelma);
+        KoulutusmoduuliToteutus t = koulutusBusinessService.create(tutkintoOhjemanToteutus, tutkintoOhjelma);
         assertNotNull(t.getOid());
 
     }

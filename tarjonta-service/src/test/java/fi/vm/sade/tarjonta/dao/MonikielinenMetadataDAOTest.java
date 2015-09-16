@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.dao;
 
+import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import org.junit.Assert;
@@ -21,7 +22,7 @@ import java.util.Random;
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-public class MonikielinenMetadataDAOTest {
+public class MonikielinenMetadataDAOTest extends TestUtilityBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(MonikielinenMetadataDAOTest.class);
     public static final String AVAIN_0 = "avain0";
@@ -30,9 +31,6 @@ public class MonikielinenMetadataDAOTest {
     public static final String AVAIN_3 = "avain3";
     public static final String CAT_A = MetaCategory.SORA_KUVAUS.toString();
     public static final String CAT_B = MetaCategory.VALINTAPERUSTEKUVAUS.toString();
-
-    @Autowired
-    private MonikielinenMetadataDAO monikielinenMetadataDAO;
 
     @Test
     public void testMonikielinenMetadata() {

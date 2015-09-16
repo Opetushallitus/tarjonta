@@ -15,27 +15,29 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
-import fi.vm.sade.tarjonta.TarjontaDatabasePrinter;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
-import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-
-import java.util.Date;
-import java.util.List;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * KoulutusmoduuliDAO and KoulutusmoduuliTotetusDAO were merged hence dao under
@@ -44,33 +46,17 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-public class KoulutusmoduuliDAOTest {
-
-    private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliDAOTest.class);
+public class KoulutusmoduuliDAOTest extends TestUtilityBase {
 
     private static final int NUM_TUTKINTO_TOP_LEVEL_MODUULI = 10;
 
     private static final int NUM_TUTKINTO_SECOND_LEVEL_MODUULI = 4;
 
-    @Autowired
-    private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
-    @Autowired
-    private KoulutusSisaltyvyysDAO sisaltyvyysDAO;
-
     private static final String KOULUTUSMODUULI_OID = "http://koulutusmoduuli/123";
 
     private static final String ORGANISAATIO_OID = "http://organisaatio/123";
 
-    private static final String KOULUTUS_KOODI_URI = "http://koulutuskoodi/123";
-
     private Koulutusmoduuli newTutkintoOhjelma;
-
-    @Autowired
-    private TarjontaFixtures fixtures;
-
-    @Autowired
-    private TarjontaDatabasePrinter dbPrinter;
 
     @Before
     public void setUp() {

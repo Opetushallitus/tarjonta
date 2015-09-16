@@ -15,19 +15,19 @@
  */
 package fi.vm.sade.tarjonta.atdd;
 
-import fi.vm.sade.tarjonta.TarjontaDatabasePrinter;
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.model.*;
-import static org.junit.Assert.*;
-
-import java.util.Iterator;
+import fi.vm.sade.tarjonta.TestUtilityBase;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Iterator;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Acceptance tests for OVT-1534
@@ -37,17 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-public class OVT1534_KoulutusSisaltyvyysTest {
-
-    @Autowired
-    private KoulutusmoduuliDAO koulutusDAO;
-
-    @Autowired
-    private TarjontaDatabasePrinter dbPrinter;
-
-    @Autowired
-    private TarjontaFixtures fixtures;
-
+public class OVT1534_KoulutusSisaltyvyysTest extends TestUtilityBase {
     @Test
     public void testKoulutusmoduuliSisaltaaKoulutusmouduleita() {
 

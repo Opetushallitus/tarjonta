@@ -15,12 +15,11 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
+import fi.vm.sade.tarjonta.TestUtilityBase;
+import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeValintaperusteetDTO;
+import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -34,18 +33,11 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
-import fi.vm.sade.tarjonta.model.Pisteraja;
-import fi.vm.sade.tarjonta.model.Valintakoe;
-import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeValintaperusteetDTO;
-import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
@@ -55,21 +47,12 @@ import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional()
-public class HakukohdeResourceImplTest {
+public class HakukohdeResourceImplTest extends TestUtilityBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResourceImplTest.class);
 
     @Autowired
-    private HakukohdeDAO hakukohdeDao;
-
-    @Autowired
-    private HakuDAO hakuDao;
-
-    @Autowired
     private HakukohdeResource hakukohdeResource;
-
-    @Autowired
-    private TarjontaFixtures fixtures;
 
     public static final String PAASY_JA_SOVELTUVUUSKOE = "valintakokeentyyppi_1";
     public static final String LISANAYTTO = "valintakokeentyyppi_2";

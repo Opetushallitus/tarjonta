@@ -60,9 +60,6 @@ public class HakuDAOImplTest extends TestData {
     @Autowired
     private HakuDAOImpl hakuDAO;
 
-    @Autowired
-    private HakukohdeDAOImpl hakukohdeDAO;
-
     private EntityManager em;
 
     public HakuDAOImplTest() {

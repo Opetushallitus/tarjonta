@@ -15,25 +15,23 @@
  */
 package fi.vm.sade.tarjonta.model.util;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker.NodeHandler;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.junit.Assert.assertEquals;
+
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-public class KoulutusmoduuliTreeWalkerTest {
-
-    @Autowired
-    private TarjontaFixtures fixtures;
+public class KoulutusmoduuliTreeWalkerTest extends TestUtilityBase {
 
     @Test
     public void testWalk() {

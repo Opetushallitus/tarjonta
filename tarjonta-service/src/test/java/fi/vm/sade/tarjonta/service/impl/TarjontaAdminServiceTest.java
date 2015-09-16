@@ -15,22 +15,23 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.OptimisticLockException;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import fi.vm.sade.log.client.LoggerHelper;
+import fi.vm.sade.log.client.LoggerMock;
+import fi.vm.sade.log.model.Tapahtuma;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.tarjonta.SecurityAwareTestBase;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
+import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
+import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
+import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +39,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -48,66 +48,11 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import javax.persistence.OptimisticLockException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
-import fi.vm.sade.log.client.LoggerHelper;
-import fi.vm.sade.log.client.LoggerMock;
-import fi.vm.sade.log.model.Tapahtuma;
-import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
-import fi.vm.sade.tarjonta.SecurityAwareTestBase;
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakuaika;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.HakukohdeLiite;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.Osoite;
-import fi.vm.sade.tarjonta.model.Valintakoe;
-import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
-import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.TarjontaAdminService;
-import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
-import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
-import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusHakukohteelleTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.PainotettavaOppiaineTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
-import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
-import fi.vm.sade.tarjonta.service.types.TarkistaKoulutusKopiointiTyyppi;
-import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
-import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
-import fi.vm.sade.tarjonta.shared.ParameterServices;
-import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
-import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -122,28 +67,6 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 @ActiveProfiles("embedded-solr")
 @Transactional()
 public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
-
-    @Autowired
-    private TarjontaAdminService adminService;
-    @Autowired
-    private TarjontaPublicService publicService;
-    @Autowired
-    private OrganisaatioSearchService organisaatioSearchService;
-    @Autowired
-    private TarjontaFixtures fixtures;
-    @Autowired
-    private KoulutusmoduuliDAO koulutusmoduuliDAO;
-    @Autowired
-    private HakukohdeDAO hakukohdeDAO;
-    @Autowired
-    private HakuDAO hakuDAO;
-    @Autowired
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-    @Autowired
-    private OidService oidService;
-    @Autowired
-    private ParameterServices parameterService;
-
     private KoulutuksenKestoTyyppi kesto3Vuotta;
     private static final Logger log = LoggerFactory.getLogger(TarjontaAdminServiceTest.class);
 

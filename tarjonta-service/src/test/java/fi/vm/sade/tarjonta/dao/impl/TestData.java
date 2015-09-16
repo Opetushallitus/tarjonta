@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.dao.impl;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ import static org.junit.Assert.*;
  *
  * @author Jani Wilén
  */
-public class TestData {
+public class TestData extends TestUtilityBase {
 
     public static final int VALINTAKOE_COUNT_FOR_OID1 = 3;
     public static final String KOMOTO_OID_1 = "komoto_oid1";

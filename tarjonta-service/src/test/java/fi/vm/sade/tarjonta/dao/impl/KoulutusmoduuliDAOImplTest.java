@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
@@ -54,7 +54,7 @@ import static org.junit.Assert.*;
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-public class KoulutusmoduuliDAOImplTest {
+public class KoulutusmoduuliDAOImplTest extends TestUtilityBase {
 
     private static final String KOULUTUS_URI = "uri_koulutus#1";
     private static final String LUKIOLINJA_URI = "uri_lukiolinja#5";
@@ -68,12 +68,11 @@ public class KoulutusmoduuliDAOImplTest {
     private static final String SEARCH_BY_URI_A = "uri_170";
     private static final String SEARCH_BY_URI_B = "uri_2";
     private static final String SEARCH_BY_URI_C = "uri_a";
+    private Koulutusmoduuli komo1, komo2, komo3, komo4, komo5, komo6;
+    private EntityManager em;
+
     @Autowired
     private KoulutusmoduuliDAOImpl instance;
-    private Koulutusmoduuli komo1, komo2, komo3, komo4, komo5, komo6;
-    @Autowired
-    private TarjontaFixtures fixtures;
-    private EntityManager em;
 
     @Before
     public void setUp() {

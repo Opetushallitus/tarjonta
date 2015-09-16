@@ -1,11 +1,14 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import java.util.Set;
-
+import fi.vm.sade.tarjonta.TestUtilityBase;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.linking.validation.LinkingValidationMessages;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KomoLink;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -15,15 +18,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.dao.impl.KoulutusSisaltyvyysDAOImpl;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.linking.validation.LinkingValidationMessages;
-import fi.vm.sade.tarjonta.service.resources.v1.LinkingV1Resource;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KomoLink;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
+import java.util.Set;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
@@ -33,20 +28,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("embedded-solr")
 @Transactional()
-public class LinkingResourceImplV1Test {
-
-    @Autowired
-    TarjontaFixtures tarjontaFixtures;
-
-    @Autowired
-    KoulutusmoduuliDAO koulutusmoduuliDAO;
-
-    @Autowired
-    KoulutusSisaltyvyysDAOImpl koulutusSisaltyvyysDao;
-
-    @Autowired
-    LinkingV1Resource linkingResource;
-
+public class LinkingResourceImplV1Test extends TestUtilityBase {
     @Test
     public void testLinkingActions() {
         Koulutusmoduuli parent = tarjontaFixtures.createTutkintoOhjelma();

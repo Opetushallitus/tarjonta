@@ -17,22 +17,20 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import fi.vm.sade.koodisto.service.types.common.KieliType;
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.koodisto.service.types.common.KoodistoItemType;
-import fi.vm.sade.koodisto.service.types.common.TilaType;
+import fi.vm.sade.koodisto.service.types.common.*;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.security.SadeUserDetailsWrapper;
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.*;
+import fi.vm.sade.tarjonta.TestUtilityBase;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.koodisto.OppilaitosKoodiRelations;
-import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.impl.ContextDataServiceImpl;
@@ -57,19 +55,9 @@ import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.createMockBuilder;
-import static org.easymock.EasyMock.expect;
 import org.joda.time.DateTime;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -77,11 +65,21 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 /**
  *
  * @author jani
  */
-abstract class KoulutusBase {
+abstract class KoulutusBase extends TestUtilityBase {
 
     protected static final String USER_OID = "mock_test_user";
     protected static final String KOULUTUSOHJELMA = "koulutusohjelma";
@@ -126,25 +124,9 @@ abstract class KoulutusBase {
     protected final DateTime DATE = new DateTime(VUOSI, 1, 1, 1, 1);
     protected OrganisaatioService organisaatioServiceMock;
     protected KoulutusPermissionService koulutusPermissionServiceMock;
-    @Autowired
-    protected OidService oidService;
     protected EntityConverterToRDTO converterToRDTO;
     protected KoulutusDTOConverterToEntity convertToEntity;
     protected OrganisaatioDTO organisaatioDTO;
-    @Autowired
-    protected KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-    @Autowired
-    protected KoulutusmoduuliDAO koulutusmoduuliDAO;
-
-    @Autowired
-    public TarjontaFixtures fixtures;
-
-    @Autowired
-    private KoulutusSisaltyvyysDAO KoulutusSisaltyvyysDAO;
-
-    @Autowired
-    private OppiaineDAO oppiaineDAO;
-
     protected IndexerResource indexerResourceMock;
     protected TarjontaKoodistoHelper tarjontaKoodistoHelperMock;
     protected KoulutusKuvausV1RDTO<KomoTeksti> komoKoulutusConverters;
@@ -157,8 +139,6 @@ abstract class KoulutusBase {
     protected KoulutusSearchService koulutusSearchService;
     protected HakukohdeSearchService hakukohdeSearchService;
     protected OppilaitosKoodiRelations oppilaitosKoodiRelations;
-    @Autowired
-    protected HakukohdeDAO hakukohdeDAO;
     protected LinkingV1Resource linkingV1Resource;
     protected PublicationDataService publicationDataService;
 

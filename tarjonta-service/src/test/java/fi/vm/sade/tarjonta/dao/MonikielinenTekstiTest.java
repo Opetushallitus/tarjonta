@@ -15,20 +15,20 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
+import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.TestUtilityBase;
+import fi.vm.sade.tarjonta.dao.impl.HakuDAOImpl;
+import fi.vm.sade.tarjonta.model.Haku;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.junit.Assert.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.impl.HakuDAOImpl;
-import fi.vm.sade.tarjonta.model.Haku;
 import javax.persistence.EntityManager;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * A separate test for MonikielinenTeksti entity that is used from several other entities.
@@ -39,15 +39,10 @@ import org.junit.Test;
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-public class MonikielinenTekstiTest {
+public class MonikielinenTekstiTest extends TestUtilityBase {
 
     private TarjontaFixtures fixtures = new TarjontaFixtures();
-
-    @Autowired
-    private HakuDAO hakuDao;
-
     private Haku hakuWithName;
-
     private EntityManager em;
 
     @Before

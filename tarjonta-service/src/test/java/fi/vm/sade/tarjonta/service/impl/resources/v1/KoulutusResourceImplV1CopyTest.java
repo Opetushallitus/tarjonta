@@ -12,11 +12,8 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.tarjonta.SecurityAwareTestBase;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KorkeakouluOpintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.search.it.TarjontaSearchServiceTest;
@@ -53,28 +50,9 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 public class KoulutusResourceImplV1CopyTest extends SecurityAwareTestBase {
-
-    @Autowired
-    private TarjontaFixtures fixtures;
-
-    @Autowired
-    private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
-    @Autowired
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-
-    @Autowired
-    private KoulutusUtilService koulutusUtilService;
-
     @Autowired
     @Spy
     private OrganisaatioService organisaatioService;
-
-    @Autowired
-    private KoodiService koodiService;
-
-    @Autowired
-    private OidService oidService;
 
     @Before
     @Override

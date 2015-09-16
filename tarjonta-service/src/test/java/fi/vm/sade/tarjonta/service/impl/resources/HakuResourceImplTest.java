@@ -14,17 +14,14 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import fi.vm.sade.tarjonta.TestUtilityBase;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -33,12 +30,11 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.service.resources.HakuResource;
-import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -53,18 +49,9 @@ import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 @RunWith(SpringJUnit4ClassRunner.class)
 // @ActiveProfiles("embedded-solr")
 @Transactional()
-public class HakuResourceImplTest {
+public class HakuResourceImplTest extends TestUtilityBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImplTest.class);
-
-    @Autowired
-    private HakuDAO hakuDao;
-
-    @Autowired
-    private HakuResource hakuResource;
-
-    @Autowired
-    private TarjontaFixtures fixtures;
 
     @org.junit.Before
     @org.junit.After

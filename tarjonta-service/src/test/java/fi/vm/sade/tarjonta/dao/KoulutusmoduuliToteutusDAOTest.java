@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.dao;
 
 import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.BinaryData;
 import fi.vm.sade.tarjonta.model.KoulutusOwner;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
@@ -28,7 +29,7 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-public class KoulutusmoduuliToteutusDAOTest {
+public class KoulutusmoduuliToteutusDAOTest extends TestUtilityBase {
 
     private static final String URI_EN = "kieli_en";
     private static final String URI_FI = "kieli_fi";
@@ -36,15 +37,6 @@ public class KoulutusmoduuliToteutusDAOTest {
     private static final String FILENAME2 = "name2";
     private static final String MIME1 = "type1";
     private static final String MIME2 = "type2";
-
-    @Autowired
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-
-    @Autowired
-    private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
-    @Autowired
-    private TarjontaFixtures fixtures;
 
     private void insertFutureKomoto(TarjontaTila tila, Integer alkamisvuosi, ToteutustyyppiEnum tyyppi) {
         Koulutusmoduuli komo = fixtures.createTutkintoOhjelma();

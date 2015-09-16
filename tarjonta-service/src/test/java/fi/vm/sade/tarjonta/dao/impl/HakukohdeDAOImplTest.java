@@ -59,8 +59,10 @@ public class HakukohdeDAOImplTest extends TestData {
 
     @Autowired
     private HakukohdeDAOImpl instance;
+
     @Autowired
     private TarjontaFixtures fixtures;
+
     private EntityManager em;
 
     public HakukohdeDAOImplTest() {
