@@ -103,7 +103,7 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
          * INSERT LUKIO TO DB
          */
         ResultV1RDTO<KoulutusV1RDTO> v = instance.postKoulutus(createDTO());
-        assertEquals("Validation errors", true, v.getErrors() != null ? v.getErrors().isEmpty() : true);
+        assertEquals("Validation errors", true, v.getErrors() == null || v.getErrors().isEmpty());
         
         verify(organisaatioServiceMock);
         verify(tarjontaKoodistoHelperMock);

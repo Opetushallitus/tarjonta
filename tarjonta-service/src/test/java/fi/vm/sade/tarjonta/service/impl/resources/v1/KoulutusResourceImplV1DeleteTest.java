@@ -129,7 +129,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
 
         ResultV1RDTO deleteResult = instance.deleteByOid(persistedKomotoOid);
         assertEquals("validation error", ResultV1RDTO.ResultStatus.OK, deleteResult.getStatus());
-        assertEquals("Validation errors delete koulutus", true, deleteResult.getErrors() != null ? deleteResult.getErrors().isEmpty() : true);
+        assertEquals("Validation errors delete koulutus", true, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
 
         final KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(persistedKomotoOid);
         final Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(persistedKomoOid);
@@ -146,7 +146,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
          */
         deleteResult = instance.deleteByOid(persistedKomotoOid);
         assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
-        assertEquals("Validation", false, deleteResult.getErrors() != null ? deleteResult.getErrors().isEmpty() : true);
+        assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
         assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
         assertEquals("komoto.tila", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
         assertEquals(KoulutusValidationMessages.KOULUTUS_DELETED.lower(), ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorMessageKey());
@@ -175,7 +175,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         replayAll();
         ResultV1RDTO deleteResult = instance.deleteByOid(persistedKomotoOid);
         assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
-        assertEquals("Validation", false, deleteResult.getErrors() != null ? deleteResult.getErrors().isEmpty() : true);
+        assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
         assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
         assertEquals("komo.link.childs", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
 
@@ -195,7 +195,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
 
         deleteResult = instance.deleteByOid(persistedKomotoOid);
         assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
-        assertEquals("Validation", false, deleteResult.getErrors() != null ? deleteResult.getErrors().isEmpty() : true);
+        assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
         assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
         assertEquals("komo.link.parents", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
 
@@ -227,7 +227,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
 
         deleteResult = instance.deleteByOid(persistedKomotoOid);
         assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
-        assertEquals("Validation", false, deleteResult.getErrors() != null ? deleteResult.getErrors().isEmpty() : true);
+        assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
         assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
         //assertEquals("komo.invalid.transition", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
         assertEquals("komoto.hakukohdes", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
@@ -254,7 +254,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         deleteResult = instance.deleteByOid(persistedKomotoOid);
 
         assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
-        assertEquals("Validation", false, deleteResult.getErrors() != null ? deleteResult.getErrors().isEmpty() : true);
+        assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
         verifyAll();
         resetAll();
 

@@ -111,7 +111,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
          */
         replayAll();
         ResultV1RDTO<KoulutusV1RDTO> v = instance.postKoulutus(createDTO());
-        assertEquals("Validation errors", true, v.getErrors() != null ? v.getErrors().isEmpty() : true);
+        assertEquals("Validation errors", true, v.getErrors() == null || v.getErrors().isEmpty());
         verifyAll();
 
         /*
@@ -154,7 +154,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         v = instance.postKoulutus(withoutValmentava);
 
         printResultErrors(v);
-        assertEquals("Validation errors", true, v.getErrors() != null ? v.getErrors().isEmpty() : true);
+        assertEquals("Validation errors", true, v.getErrors() == null || v.getErrors().isEmpty());
 
         KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO withValmentava = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) v.getResult();
         assertNayttoData(withValmentava);

@@ -202,7 +202,7 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
     }
 
     private void validation(ResultV1RDTO dto, ResultV1RDTO.ResultStatus status, String errorField, KoulutusValidationMessages msgEnum) {
-        assertEquals("Validation", false, dto.getErrors() != null ? dto.getErrors().isEmpty() : true);
+        assertEquals("Validation", false, dto.getErrors() == null || dto.getErrors().isEmpty());
         assertEquals("error", 1, dto.getErrors().size());
         assertEquals("No komoto oid", status, dto.getStatus());
         assertEquals(errorField, ((ErrorV1RDTO) dto.getErrors().get(0)).getErrorField());

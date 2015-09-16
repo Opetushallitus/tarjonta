@@ -165,7 +165,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
          * INSERT KORKEAKOULU TO DB
          */
         ResultV1RDTO<KoulutusV1RDTO> v = instance.postKoulutus(dto);
-        assertEquals("Validation errors", true, v.getErrors() != null ? v.getErrors().isEmpty() : true);
+        assertEquals("Validation errors", true, v.getErrors() == null || v.getErrors().isEmpty());
 
         /*
          * LOAD KORKEAKOULU DTO FROM DB
@@ -354,7 +354,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
          * INSERT KORKEAKOULU TO DB
          */
         ResultV1RDTO<KoulutusV1RDTO> v = instance.postKoulutus(dto);
-        assertEquals("Validation errors", true, v.getErrors() != null ? v.getErrors().isEmpty() : true);
+        assertEquals("Validation errors", true, v.getErrors() == null || v.getErrors().isEmpty());
 
         /*
          * LOAD KORKEAKOULU DTO FROM DB
