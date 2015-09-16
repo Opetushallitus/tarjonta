@@ -64,7 +64,6 @@ public class PublicationDataServiceImplTest extends TestUtilityBase {
     private KoulutusmoduuliToteutus komoto1;
     private Haku haku1;
     private Hakukohde hakukohde1;
-    private TarjontaFixtures fixtures;
     @PersistenceContext
     public EntityManager em;
     
@@ -81,7 +80,7 @@ public class PublicationDataServiceImplTest extends TestUtilityBase {
         Whitebox.setInternalState(publicationDataService, "hakukohdeDAO", hakukohdeDao);
         Whitebox.setInternalState(publicationDataService, "komotoDAO", komotoDao);
 
-        fixtures = new TarjontaFixtures();
+        TarjontaFixtures fixtures = new TarjontaFixtures();
         fixtures.recreate();
 
         komo1 = fixtures.createTutkintoOhjelma();

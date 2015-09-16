@@ -61,7 +61,6 @@ abstract public class TestData extends TestUtilityBase {
 
     private static final Date ANOTHER_DATE = (new DateTime(2014, 3, 9, 0, 0, 0, 0)).toDate();
 
-    private TarjontaFixtures fixtures;
     private EntityManager em;
 
     private KoulutusmoduuliToteutus komoto1, komoto2, komoto3, komoto4;
@@ -97,7 +96,7 @@ abstract public class TestData extends TestUtilityBase {
 
     @Transactional
     public void initializeData(EntityManager em, TarjontaFixtures fixtures) {
-        this.fixtures = fixtures;
+        TarjontaFixtures fixtures1 = fixtures;
         this.em = em;
 
         komo = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);

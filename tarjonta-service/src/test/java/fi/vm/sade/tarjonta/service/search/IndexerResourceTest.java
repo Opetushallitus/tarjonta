@@ -33,9 +33,6 @@ public class IndexerResourceTest {
 
     private IndexerResource indexer;
     private SolrServer hakukohteetServer;
-    private KoodiService koodiService;
-    private OrganisaatioSearchService organisaatioSearchService;
-    private OppilaitostyyppiResolver oppilaitostyyppiResolver;
 
     @Before
     public void setup() {
@@ -48,15 +45,15 @@ public class IndexerResourceTest {
         HakukohdeToSolrDocument hakukohdeToSolr = new HakukohdeToSolrDocument();
         ReflectionTestUtils.setField(indexer, "hakukohdeConverter", hakukohdeToSolr);
 
-        organisaatioSearchService = Mockito.mock(OrganisaatioSearchService.class);
+        OrganisaatioSearchService organisaatioSearchService = Mockito.mock(OrganisaatioSearchService.class);
         stub(organisaatioSearchService.findByOidSet(anySet())).toReturn(Lists.newArrayList(getOrg("o-oid-12345")));
         ReflectionTestUtils.setField(hakukohdeToSolr, "organisaatioSearchService", organisaatioSearchService);
 
-        oppilaitostyyppiResolver = Mockito.mock(OppilaitostyyppiResolver.class);
+        OppilaitostyyppiResolver oppilaitostyyppiResolver = Mockito.mock(OppilaitostyyppiResolver.class);
         stub(oppilaitostyyppiResolver.resolve(any(OrganisaatioPerustieto.class))).toReturn("oppilaitostyyppi_41");
         ReflectionTestUtils.setField(hakukohdeToSolr, "oppilaitostyyppiResolver", oppilaitostyyppiResolver);
 
-        koodiService = Mockito.mock(KoodiService.class);
+        KoodiService koodiService = Mockito.mock(KoodiService.class);
         ReflectionTestUtils.setField(hakukohdeToSolr, "koodiService", koodiService);
 
         IndexerDAO indexerDao = Mockito.mock(IndexerDAO.class);

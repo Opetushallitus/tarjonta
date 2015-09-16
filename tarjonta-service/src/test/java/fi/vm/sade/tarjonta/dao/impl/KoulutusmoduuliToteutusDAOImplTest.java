@@ -55,11 +55,9 @@ public class KoulutusmoduuliToteutusDAOImplTest extends TestData {
     @Autowired
     private TarjontaFixtures fixtures;
 
-    private EntityManager em;
-
     @Before
     public void setUp() {
-        em = instance.getEntityManager();
+        EntityManager em = instance.getEntityManager();
         super.initializeData(em, fixtures);
     }
 

@@ -55,8 +55,6 @@ public class HakukohdeDAOImplTest extends TestData {
     @Autowired
     private TarjontaFixtures fixtures;
 
-    private EntityManager em;
-
     public HakukohdeDAOImplTest() {
         super();
     }
@@ -68,7 +66,7 @@ public class HakukohdeDAOImplTest extends TestData {
 
     @Before
     public void setUp() {
-        em = instance.getEntityManager();
+        EntityManager em = instance.getEntityManager();
         super.initializeData(em, fixtures);
     }
 

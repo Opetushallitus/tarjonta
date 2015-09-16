@@ -39,14 +39,12 @@ public class KoulutusSisaltyvyysDAOTest extends TestUtilityBase {
 
     private Koulutusmoduuli child1;
 
-    private Koulutusmoduuli child2;
-
     @Before
     public void setUp() {
 
         parent = fixtures.createTutkintoOhjelma();
         child1 = fixtures.createTutkintoOhjelma();
-        child2 = fixtures.createTutkintoOhjelma();
+        Koulutusmoduuli child2 = fixtures.createTutkintoOhjelma();
 
         koulutusDAO.insert(child1);
         koulutusDAO.insert(child2);

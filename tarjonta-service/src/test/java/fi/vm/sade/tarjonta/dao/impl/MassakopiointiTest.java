@@ -70,12 +70,11 @@ public class MassakopiointiTest extends TestData {
     @Autowired
     private TarjontaFixtures fixtures;
 
-    private EntityManager em;
     AtomicInteger c = new AtomicInteger(0);
 
     @Before
     public void setUp() throws OIDCreationException {
-        em = hakukohdeDAO.getEntityManager();
+        EntityManager em = hakukohdeDAO.getEntityManager();
         super.initializeData(em, fixtures);
         Preconditions.checkNotNull(oidService);
         Mockito.reset(oidService);

@@ -62,10 +62,8 @@ public class KoulutusResourceTest {
             .mock(PublicationDataService.class);
 
     private KoulutusmoduuliToteutus komoto1;
-    private KoulutusmoduuliToteutus komoto2;
     private KoulutusmoduuliToteutus komoto3;
 
-    private Hakukohde hk1;
     private Hakukohde hk2;
     
     private Koulutusmoduuli komo;
@@ -89,7 +87,7 @@ public class KoulutusResourceTest {
         komo.setKoulutustyyppiEnum(ModuulityyppiEnum.KORKEAKOULUTUS);
 
         // stub komotodao, one hakukohde with two koulutuses
-        hk1 = getHakukohde();
+        Hakukohde hk1 = getHakukohde();
 
         komoto1 = new KoulutusmoduuliToteutus();
         komoto1.setAlkamiskausiUri("kausi");
@@ -99,8 +97,8 @@ public class KoulutusResourceTest {
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-1"))
                 .toReturn(komoto1);
         komo.setKoulutustyyppiEnum(ModuulityyppiEnum.KORKEAKOULUTUS);
-        
-        komoto2 = new KoulutusmoduuliToteutus();
+
+        KoulutusmoduuliToteutus komoto2 = new KoulutusmoduuliToteutus();
         komoto2.setAlkamiskausiUri("kausi");
         komoto2.setAlkamisVuosi(2006);
         komoto2.setKoulutusmoduuli(komo);

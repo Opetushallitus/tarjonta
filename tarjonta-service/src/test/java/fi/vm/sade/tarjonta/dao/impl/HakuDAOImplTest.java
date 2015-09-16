@@ -58,13 +58,11 @@ public class HakuDAOImplTest extends TestData {
     @Autowired
     private HakuDAOImpl hakuDAO;
 
-    private EntityManager em;
-
     public HakuDAOImplTest() {
     }
 
     public void setUp() {
-        em = hakuDAO.getEntityManager();
+        EntityManager em = hakuDAO.getEntityManager();
         super.initializeData(em, fixtures);
     }
 

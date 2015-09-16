@@ -60,9 +60,6 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
     private KoulutusmoduuliToteutus komoto;
     private TarjontaFixtures tarjontaFixtures = new TarjontaFixtures();
     private OrganisaatioDTO organisaatioDTO = new OrganisaatioDTO();
-    private EntityConverterToRDTO converterToRDTO;
-    private KoulutusDTOConverterToEntity convertToEntity;
-    private KoulutusmoduuliDAO koulutusmoduuliDAO;
     private HakukohdeDAO hakukohdeDAO;
     
     @Before
@@ -73,10 +70,10 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
         organisaatioDTO.setOid(ORGANISATION_OID);
         
         koulutusmoduuliToteutusDAO = createMock(KoulutusmoduuliToteutusDAO.class);
-        koulutusmoduuliDAO = createMock(KoulutusmoduuliDAO.class);
+        KoulutusmoduuliDAO koulutusmoduuliDAO = createMock(KoulutusmoduuliDAO.class);
         organisaatioServiceMock = createMock(OrganisaatioService.class);
-        converterToRDTO = createMock(EntityConverterToRDTO.class);
-        convertToEntity = createMock(KoulutusDTOConverterToEntity.class);
+        EntityConverterToRDTO converterToRDTO = createMock(EntityConverterToRDTO.class);
+        KoulutusDTOConverterToEntity convertToEntity = createMock(KoulutusDTOConverterToEntity.class);
         hakukohdeDAO = createMock(HakukohdeDAO.class);
 
         //SET DAO STATES

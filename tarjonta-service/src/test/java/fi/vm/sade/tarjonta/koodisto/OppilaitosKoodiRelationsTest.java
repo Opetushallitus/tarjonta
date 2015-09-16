@@ -67,60 +67,51 @@ public class OppilaitosKoodiRelationsTest {
             + KOULUTUSTOIMIJA_OID + "|" + LUKIO_OID + "|"
             + LUKIO_OPETUSPISTE_OID + "|";;
 
-    private TarjontaKoodistoHelper tarjontaKoodistoHelperMock;
-    private OrganisaatioService organisaatioServiceMock;
     private OppilaitosKoodiRelations instance;
-
-    private OrganisaatioDTO OPH;
-    private OrganisaatioDTO AMK;
-    private OrganisaatioDTO LUKIO;
-    private OrganisaatioDTO KOULUTUSTOIMIJA;
-    private OrganisaatioDTO orgOther;
-    private OrganisaatioDTO LUKIO_OPETUSPISTE;
 
     @Before
     public void setUp() {
         KoodistoURI.KOODISTO_KOULUTUSASTE_URI = "koulutusasteoph2002";
 
-        OPH = new OrganisaatioDTO();
+        OrganisaatioDTO OPH = new OrganisaatioDTO();
         OPH.setOid(OPH_OID);
         OPH.setParentOidPath(PATH_OPH);
         OPH.getTyypit().add(OrganisaatioTyyppi.MUU_ORGANISAATIO);
         OPH.setOppilaitosTyyppi("koulutustyyppi_yy");
 
-        KOULUTUSTOIMIJA = new OrganisaatioDTO();
+        OrganisaatioDTO KOULUTUSTOIMIJA = new OrganisaatioDTO();
         KOULUTUSTOIMIJA.setOid(KOULUTUSTOIMIJA_OID);
         KOULUTUSTOIMIJA.setParentOidPath(PATH_KOULUTUSTOIMIJA);
         KOULUTUSTOIMIJA.getTyypit().add(OrganisaatioTyyppi.KOULUTUSTOIMIJA);
         KOULUTUSTOIMIJA.setOppilaitosTyyppi("koulutustyyppi_xx");
 
         // amk
-        AMK = new OrganisaatioDTO();
+        OrganisaatioDTO AMK = new OrganisaatioDTO();
         AMK.setOid(AMK_OID);
         AMK.setParentOidPath(PATH_LUKIO);
         AMK.getTyypit().add(OrganisaatioTyyppi.OPPILAITOS);
         AMK.setOppilaitosTyyppi(OPPILAITOSTYYPPI_AMK);
 
         // lukio
-        LUKIO = new OrganisaatioDTO();
+        OrganisaatioDTO LUKIO = new OrganisaatioDTO();
         LUKIO.setOid(LUKIO_OID);
         LUKIO.setParentOidPath(PATH_AMK);
         LUKIO.getTyypit().add(OrganisaatioTyyppi.OPPILAITOS);
         LUKIO.setOppilaitosTyyppi(OPPILAITOSTYYPPI_LUKIO);
 
         // lukion opetuspiste
-        LUKIO_OPETUSPISTE = new OrganisaatioDTO();
+        OrganisaatioDTO LUKIO_OPETUSPISTE = new OrganisaatioDTO();
         LUKIO_OPETUSPISTE.setOid(LUKIO_OPETUSPISTE_OID);
         LUKIO_OPETUSPISTE.setParentOidPath(PATH_LUKIO_OPETUSPISTE);
         LUKIO_OPETUSPISTE.getTyypit().add(OrganisaatioTyyppi.TOIMIPISTE);
 
-        orgOther = new OrganisaatioDTO();
+        OrganisaatioDTO orgOther = new OrganisaatioDTO();
         orgOther.setOid(OTHER_OID);
         orgOther.setParentOidPath(PATH_INCORRECT);
         orgOther.getTyypit().add(OrganisaatioTyyppi.MUU_ORGANISAATIO);
 
-        organisaatioServiceMock = Mockito.mock(OrganisaatioService.class);
-        tarjontaKoodistoHelperMock = Mockito.mock(TarjontaKoodistoHelper.class);
+        OrganisaatioService organisaatioServiceMock = Mockito.mock(OrganisaatioService.class);
+        TarjontaKoodistoHelper tarjontaKoodistoHelperMock = Mockito.mock(TarjontaKoodistoHelper.class);
 
         instance = new OppilaitosKoodiRelations();
         Whitebox.setInternalState(instance, "organisaatioService",
@@ -166,9 +157,9 @@ public class OppilaitosKoodiRelationsTest {
         });
         
         Mockito.stub(tarjontaKoodistoHelperMock.getKoodistoRelations(
-                        OPPILAITOSTYYPPI_LUKIO,
-                        KoodistoURI.KOODISTO_KOULUTUSASTE_URI,
-                        SuhteenTyyppiType.SISALTYY, false)).toReturn(
+                OPPILAITOSTYYPPI_LUKIO,
+                KoodistoURI.KOODISTO_KOULUTUSASTE_URI,
+                SuhteenTyyppiType.SISALTYY, false)).toReturn(
                 createKoodis(KOULUTUSASTE_LUKIOKOULUTUS));
         
         Mockito.stub(
