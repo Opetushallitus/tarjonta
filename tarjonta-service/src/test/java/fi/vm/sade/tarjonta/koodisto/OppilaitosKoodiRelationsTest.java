@@ -15,12 +15,13 @@
  */
 package fi.vm.sade.tarjonta.koodisto;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
+import com.google.common.collect.Lists;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.*;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -28,19 +29,9 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.reflect.Whitebox;
 
-import com.google.common.collect.Lists;
+import java.util.List;
 
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidListType;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidType;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchOidType;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.shared.KoodistoURI;
-import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import static org.junit.Assert.*;
 
 /**
  * 

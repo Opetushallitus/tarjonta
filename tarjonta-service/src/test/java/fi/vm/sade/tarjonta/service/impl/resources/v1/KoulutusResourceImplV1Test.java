@@ -29,7 +29,6 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.time.DateUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.context.ActiveProfiles;

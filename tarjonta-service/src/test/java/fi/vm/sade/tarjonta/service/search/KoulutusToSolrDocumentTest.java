@@ -27,9 +27,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.*;
 
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertSame;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)

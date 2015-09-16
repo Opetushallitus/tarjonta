@@ -15,13 +15,12 @@
  */
 package fi.vm.sade.tarjonta.service.search.it;
 
+import fi.vm.sade.tarjonta.service.search.SolrServerFactory;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.core.CoreContainer;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-
-import fi.vm.sade.tarjonta.service.search.SolrServerFactory;
 
 
 

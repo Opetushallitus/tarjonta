@@ -7,7 +7,6 @@ import fi.vm.sade.tarjonta.model.Ryhmaliitos;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.RyhmaliitosV1RDTO;
-import junit.framework.Assert;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Test;
@@ -20,7 +19,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 

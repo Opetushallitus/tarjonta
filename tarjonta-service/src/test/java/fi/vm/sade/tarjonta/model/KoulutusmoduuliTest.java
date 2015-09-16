@@ -15,11 +15,13 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import java.util.Date;
-import static org.junit.Assert.*;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.junit.Test;
 
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.Date;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  *

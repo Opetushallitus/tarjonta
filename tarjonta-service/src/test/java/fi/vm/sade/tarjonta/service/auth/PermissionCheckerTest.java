@@ -15,14 +15,12 @@
  */
 package fi.vm.sade.tarjonta.service.auth;
 
+import com.google.common.collect.Lists;
+import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
+import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
-
-import com.google.common.collect.Lists;
-
-import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
-import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 
 public class PermissionCheckerTest {
 

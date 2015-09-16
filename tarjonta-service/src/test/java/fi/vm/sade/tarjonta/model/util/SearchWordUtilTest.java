@@ -18,10 +18,12 @@ package fi.vm.sade.tarjonta.model.util;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi.Nimi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
-import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *

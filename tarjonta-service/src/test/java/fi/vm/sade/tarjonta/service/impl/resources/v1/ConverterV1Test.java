@@ -26,10 +26,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNull;
-import static org.junit.Assert.*;
+import static junit.framework.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;

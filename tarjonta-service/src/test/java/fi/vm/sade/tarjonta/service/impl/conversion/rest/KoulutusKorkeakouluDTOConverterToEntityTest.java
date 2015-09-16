@@ -19,12 +19,14 @@ import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
-import java.util.Date;
-import java.util.HashSet;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import java.util.Date;
+import java.util.HashSet;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *

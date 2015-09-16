@@ -22,11 +22,13 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *

@@ -21,8 +21,6 @@ import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeValintaperusteetDTO;
 import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;

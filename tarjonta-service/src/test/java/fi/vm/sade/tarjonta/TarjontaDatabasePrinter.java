@@ -16,17 +16,18 @@
 package fi.vm.sade.tarjonta;
 
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import java.io.PrintWriter;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.PrintWriter;
+import java.util.List;
 
 /**
  *

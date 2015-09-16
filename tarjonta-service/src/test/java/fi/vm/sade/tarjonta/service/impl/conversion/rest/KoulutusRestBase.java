@@ -21,11 +21,12 @@ import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
+
 import java.util.Locale;
 import java.util.Set;
 

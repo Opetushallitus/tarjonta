@@ -16,22 +16,19 @@
 package fi.vm.sade.tarjonta.publication;
 
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.publication.PublicationCollector.EventHandler;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
-
-import static org.mockito.Mockito.*;
-
-import fi.vm.sade.tarjonta.publication.PublicationCollector.EventHandler;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
-import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  *
