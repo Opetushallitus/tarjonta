@@ -15,25 +15,18 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
-
-import java.util.List;
-import javax.persistence.EntityManager;
-
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -43,6 +36,11 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -56,7 +54,6 @@ import org.springframework.transaction.annotation.Transactional;
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-//@Ignore
 public class KoulutusmoduuliDAOImplTest {
 
     private static final String KOULUTUS_URI = "uri_koulutus#1";
@@ -173,13 +170,6 @@ public class KoulutusmoduuliDAOImplTest {
 
         result = instance.search(criteria);
         assertEquals(2, result.size());
-    }
-
-    @Test
-    @Ignore // failaa bamboossa
-    public void testSearchWithEmptyCriteria() {
-        List result = instance.search(new KoulutusmoduuliDAO.SearchCriteria());
-        assertEquals(3, result.size());
     }
 
     @Test

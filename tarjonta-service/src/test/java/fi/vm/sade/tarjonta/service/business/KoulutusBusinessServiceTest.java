@@ -16,17 +16,11 @@
 package fi.vm.sade.tarjonta.service.business;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-
-import javax.validation.ValidationException;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,9 +30,10 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-/**
- *
- */
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
     DependencyInjectionTestExecutionListener.class,
@@ -75,20 +70,6 @@ public class KoulutusBusinessServiceTest {
 
     }
 
-    /**
-     * Tama testi ei nyt feilaa koska @NotNull constraint:ia ei voi maaritella yhteiselle Koulutusmoduulille - harkitse oman
-     * validator:n tekemista.
-     */
-    @Ignore
-    @Test(expected = ValidationException.class)
-    public void testTutkintoOhjelmaMustHaveKoulutusKoodi() {
-
-        Koulutusmoduuli m = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINNON_OSA);
-        m.setOid("12345");
-        service.create(m);
-
-    }
-
     @Test
     public void testCreateKoulutusmoduuliWithToteutus() {
 
@@ -106,12 +87,5 @@ public class KoulutusBusinessServiceTest {
         assertNotNull(t.getOid());
 
     }
-
-    @Test
-    public void testCopyStructure() {
-//        Koulutusmoduuli original = fixtures.simpleKoulutusTree;
-//        Koulutusmoduuli copy = service.createCopy(original);
-    }
-
 }
 
