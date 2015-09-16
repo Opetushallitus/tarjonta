@@ -1,12 +1,10 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
-import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
@@ -17,10 +15,7 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
@@ -29,17 +24,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class KoulutusResourceImplV1CreateTest {
-
-    @Mock
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-
-    @Mock
-    private PublicationDataService publicationDataService;
-
-    @Mock
-    private KoulutusPermissionService koulutusPermissionService;
+public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
     @InjectMocks
     private KoulutusResourceImplV1 koulutusResourceV1;

@@ -1,32 +1,19 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import fi.vm.sade.tarjonta.dao.KuvausDAO;
+import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
-import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class KuvausResourceImplV1Test {
 
-    @Mock
-    private PermissionChecker permissionChecker;
-
-    @Mock
-    private ConverterV1 converter;
-
-    @Mock
-    private KuvausDAO kuvausDAO;
+public class KuvausResourceImplV1Test extends TestMockBase {
 
     @InjectMocks
     private KuvausResourceImplV1 kuvausResource;

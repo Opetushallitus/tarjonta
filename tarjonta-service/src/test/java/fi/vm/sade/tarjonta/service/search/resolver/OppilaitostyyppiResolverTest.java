@@ -1,12 +1,9 @@
 package fi.vm.sade.tarjonta.service.search.resolver;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
+import fi.vm.sade.tarjonta.TestMockBase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,11 +11,8 @@ import java.util.HashSet;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class OppilaitostyyppiResolverTest {
 
-    @Mock
-    private OrganisaatioSearchService organisaatioSearchService;
+public class OppilaitostyyppiResolverTest extends TestMockBase {
 
     @InjectMocks
     private OppilaitostyyppiResolver oppilaitostyyppiResolver;

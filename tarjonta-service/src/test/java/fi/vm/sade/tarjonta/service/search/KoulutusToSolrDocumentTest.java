@@ -1,15 +1,11 @@
 package fi.vm.sade.tarjonta.service.search;
 
-import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
 import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -18,11 +14,8 @@ import org.apache.solr.common.SolrInputDocument;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.*;
 
@@ -30,30 +23,14 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
 import static junit.framework.Assert.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class KoulutusToSolrDocumentTest {
 
+public class KoulutusToSolrDocumentTest extends TestMockBase {
+
+    private KoulutusmoduuliToteutus koulutusmoduuliToteutus;
     private KoodistoHelper koodistoHelper = new KoodistoHelper();
-
-    @Mock
-    private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
-    @Mock
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-
-    @Mock
-    private OrganisaatioSearchService organisaatioSearchService;
-
-    @Mock
-    private KoodiService koodiService;
-
-    @Mock
-    private OppilaitostyyppiResolver oppilaitostyyppiResolver;
 
     @InjectMocks
     private KoulutusToSolrDocument converter;
-
-    private KoulutusmoduuliToteutus koulutusmoduuliToteutus;
 
     @Before
     public void init() {

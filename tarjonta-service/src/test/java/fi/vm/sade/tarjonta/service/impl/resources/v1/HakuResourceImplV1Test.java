@@ -1,57 +1,27 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
-import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
 import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
-import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.util.KoodistoValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
-import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Date;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class HakuResourceImplV1Test {
+public class HakuResourceImplV1Test extends TestMockBase {
 
     private KoodistoHelper koodistoHelper = new KoodistoHelper();
-
-    @Mock
-    private OidService oidService;
-
-    @Mock
-    private KoodiService koodiService;
-
-    @Mock
-    private KoodistoValidator koodistoValidator;
-
-    @Mock
-    private PermissionChecker permissionChecker;
-
-    @Mock
-    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
-
-    @Mock
-    private ConverterV1 converterV1;
-
-    @Mock
-    private HakuDAO hakuDAO;
 
     @InjectMocks
     private HakuV1Resource hakuResource = new HakuResourceImplV1();

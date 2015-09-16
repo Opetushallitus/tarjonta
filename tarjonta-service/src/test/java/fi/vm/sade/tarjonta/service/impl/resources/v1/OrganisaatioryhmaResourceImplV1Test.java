@@ -1,19 +1,15 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import fi.vm.sade.generic.service.exception.NotAuthorizedException;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Ryhmaliitos;
-import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.RyhmaliitosV1RDTO;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,14 +19,8 @@ import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class OrganisaatioryhmaResourceImplV1Test {
 
-    @Mock
-    private HakukohdeDAO hakukohdeDAO;
-
-    @Mock
-    private PermissionChecker permissionChecker;
+public class OrganisaatioryhmaResourceImplV1Test extends TestMockBase {
 
     @InjectMocks
     private OrganisaatioryhmaResourceImplV1 organisaatioryhmaResource;

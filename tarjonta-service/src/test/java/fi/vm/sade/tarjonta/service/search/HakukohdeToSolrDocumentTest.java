@@ -1,14 +1,11 @@
 package fi.vm.sade.tarjonta.service.search;
 
-import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
 import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -16,11 +13,8 @@ import org.apache.solr.common.SolrInputDocument;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -31,22 +25,10 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class HakukohdeToSolrDocumentTest {
+
+public class HakukohdeToSolrDocumentTest extends TestMockBase {
 
     private KoodistoHelper koodistoHelper = new KoodistoHelper();
-
-    @Mock
-    private OrganisaatioSearchService organisaatioSearchService;
-
-    @Mock
-    private KoodiService koodiService;
-
-    @Mock
-    private HakukohdeDAO hakukohdeDAO;
-
-    @Mock
-    private OppilaitostyyppiResolver oppilaitostyyppiResolver;
 
     @InjectMocks
     private HakukohdeToSolrDocument converter;

@@ -3,25 +3,18 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
-import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -34,23 +27,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ConverterV1Test {
-
-    @Mock
-    TarjontaKoodistoHelper tarjontaKoodistoHelper;
-
-    @Mock
-    private ContextDataService contextDataService;
-
-    @Mock
-    private OrganisaatioService organisaatioService;
-
-    @Mock
-    private HakuDAO hakuDAO;
-
-    @Mock
-    private HakukohdeDAO hakukohdeDAO;
+public class ConverterV1Test extends TestMockBase {
 
     @InjectMocks
     private ConverterV1 converter;

@@ -1,8 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation;
 
 import com.google.common.collect.Lists;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
@@ -17,11 +16,8 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -29,8 +25,7 @@ import java.util.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class HakukohdeValidatorTest {
+public class HakukohdeValidatorTest extends TestMockBase {
 
     private static final int VUOSI_2014 = 2014;
     private static final int VUOSI_2015 = 2015;
@@ -47,12 +42,6 @@ public class HakukohdeValidatorTest {
     private static final String KAUSI_K = "kausi_k";
     private static final String KAUSI_S = "kausi_s";
     private static final String KAUSI_S_VERSIO = "kausi_s#1";
-
-    @Mock
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-
-    @Mock
-    private HakukohdeDAO hakukohdeDAO;
 
     @InjectMocks
     private HakukohdeValidator hakukohdeValidator;
