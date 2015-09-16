@@ -36,10 +36,6 @@ public class KoulutusKorkeakouluDTOConverterToEntityTest {
 
     private final KoulutusCommonConverter instance = new KoulutusCommonConverter();
 
-    @Before
-    public void setUp() {
-    }
-
     @Test(expected = NullPointerException.class)
     public void testHandleDatesNoKausi() {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();

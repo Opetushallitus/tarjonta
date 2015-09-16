@@ -64,10 +64,6 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         createJoinedParentAndChildKomos(KoulutusasteTyyppi.LUKIOKOULUTUS);
     }
     
-    @After
-    public void tearDown() {
-    }
-    
     private void printResultErrors(ResultV1RDTO r) {
         if (r != null && r.getErrors() != null) {
             List<ErrorV1RDTO> errors = r.getErrors();

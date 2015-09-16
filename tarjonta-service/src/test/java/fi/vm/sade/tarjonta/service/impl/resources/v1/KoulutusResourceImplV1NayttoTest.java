@@ -77,10 +77,6 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         jarjestajaDTO.getNimi().getTeksti().add(new MonikielinenTekstiTyyppi.Teksti("jarjestaja", LOCALE_FI));
     }
 
-    @After
-    public void tearDown() {
-    }
-
     private void printResultErrors(ResultV1RDTO r) {
         if (r != null && r.getErrors() != null) {
             List<ErrorV1RDTO> errors = r.getErrors();
