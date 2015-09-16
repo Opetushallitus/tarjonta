@@ -342,13 +342,6 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
                 PARAM)).andReturn(toKoodiUri(returnType, field));
     }
 
-    private void expect_komoto_x(Type returnType, Type x, FieldNames field, KoulutusCommonConverter.Nullable n) {
-        expect(commonConverterMock.convertToKoodiDTO(testKey(Type.KOMOTO, field),
-                x != null ? testKey(x, field) : null,
-                field, n,
-                PARAM)).andReturn(toKoodiUri(returnType, field));
-    }
-
     private void expectNull(Type returnType, FieldNames field, KoulutusCommonConverter.Nullable n) {
         expect(commonConverterMock.convertToKoodiDTO(null, null, field, n, PARAM)).andReturn(toKoodiUri(returnType, field));
     }

@@ -62,22 +62,6 @@ public class KoulutusKorkeakouluDTOConverterToEntityTest {
         instance.handleDates(komoto, dto);
     }
 
-    public void testHandleDatesKausiVuosi() {
-        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
-        KoulutusKorkeakouluV1RDTO dto = new KoulutusKorkeakouluV1RDTO();
-        KoodiUrisV1RDTO koodiUrisV1RDTO = new KoodiUrisV1RDTO();
-        koodiUrisV1RDTO.setUri("kausi_uri");
-        koodiUrisV1RDTO.setVersio(1);
-
-        dto.setKoulutuksenAlkamiskausi(koodiUrisV1RDTO);
-        dto.setKoulutuksenAlkamisvuosi(2014);
-        instance.handleDates(komoto, dto);
-
-        assertEquals("kausi_uri", dto.getKoulutuksenAlkamiskausi());
-        assertEquals(new Integer(2014), dto.getKoulutuksenAlkamisvuosi());
-        assertEquals(0, dto.getKoulutuksenAlkamisPvms().size());
-    }
-
     @Test()
     public void testHandleDatesOneOrManyDates() {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();

@@ -106,16 +106,6 @@ public class KomoValidatorTest extends KoulutusBase {
         assertEquals(KOULUTUSOHJELMA, ((ErrorV1RDTO) result.getErrors().get(0)).getErrorMessageKey());
     }
 
-    private void printResultErrors(ResultV1RDTO r) {
-        if (r != null && r.getErrors() != null) {
-            List<ErrorV1RDTO> errors = r.getErrors();
-
-            for (ErrorV1RDTO e : errors) {
-                System.out.println(e.getErrorMessageKey());
-            }
-        }
-    }
-
     private KomoV1RDTO createDTO(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi tyyppi) {
         KomoV1RDTO dto = new KomoV1RDTO();
         dto.getOrganisaatio().setOid(ORGANISATION_OID);

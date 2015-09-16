@@ -37,24 +37,7 @@ public class SearchWordUtilTest {
     private static final String NIMI_EN_1 = "name1";
     private static final String NIMI_FI_2 = "nimi2";
     private static final String NIMI_EN_2 = "name2";
-    private static final String NIMI3 = "nimi3";
-    private static final String NIMI_TOO_LONG = "123456789012345678901234567890"
-            + "123456789012345678901234567890"
-            + "123456789012345678901234567890"
-            + "123456789012345678901234567890"
-            + "123456789012345678901234567890"
-            + "123456789012345678901234567890"
-            + "123456789012345678901234567890"
-            + "123456789012345678901234567890"
-            + "123456789012345678901234567890"
-            + "123456789012345678901234567890"
-            + "123456789012345678901234567890"
-            + "123456789012345678901234567890"
-            + "123456789012345678901234567890"
-            + "123456789012345678901234567890"
-            + "123456789012345678901234567890";
     private static KoulutusTyyppi tyyppi1;
-    private static KoulutusTyyppi tyyppi2;
 
     @Before
     public void setUp() {

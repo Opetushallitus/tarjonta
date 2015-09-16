@@ -176,8 +176,6 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         solrServer.commit();
     }
 
-    private String hkOid;
-
     void createTestDataInTransaction() {
 
         executeInTransaction(new Runnable() {

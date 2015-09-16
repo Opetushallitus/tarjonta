@@ -268,10 +268,6 @@ public class KoulutusmoduuliDAOTest extends TestUtilityBase {
         assertTrue(res.getLukiolinjaUri().equals(LUKIOLINJA2));
     }
 
-    private void flush() {
-        ((KoulutusmoduuliDAOImpl) koulutusmoduuliDAO).getEntityManager().flush();
-    }
-
     private Koulutusmoduuli read(Long id) {
         return koulutusmoduuliDAO.read(id);
     }

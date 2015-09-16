@@ -87,12 +87,6 @@ abstract public class SecurityAwareTestBase extends TestUtilityBase {
     protected final void setAuthentication(Authentication auth) {
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
-    
-    
-    protected void printCurrentUser(){
-        System.out.println("oph-oid: " + ophOid);
-        System.out.println("current user: " + SecurityContextHolder.getContext().getAuthentication());
-    } 
 
 
 }

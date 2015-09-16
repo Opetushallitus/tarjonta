@@ -53,9 +53,7 @@ import static org.junit.Assert.assertNotNull;
 public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
     
     private static final String ORGANISATION_OID_COPY_OR_MOVE_TO = "organisation_oid_move_to";
-    private static final String SEARCH_KOMO_OID = "search_komo_by_oid_test_init";
-    private static final RestParam PARAM = RestParam.showImageAndNoMeta("FI");
-    
+
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     private KoulutusmoduuliToteutus komoto;
     private TarjontaFixtures tarjontaFixtures = new TarjontaFixtures();

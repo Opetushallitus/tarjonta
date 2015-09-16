@@ -57,10 +57,6 @@ abstract public class TestData extends TestUtilityBase {
     protected Calendar cal2, cal3;
     protected static final Date KOULUTUS_START_DATE = (new DateTime(2013, 1, 1, 0, 0, 0, 0)).toDate();
 
-    private static final Date DATE = (new DateTime(2014, 1, 6, 0, 0, 0, 0)).toDate();
-
-    private static final Date ANOTHER_DATE = (new DateTime(2014, 3, 9, 0, 0, 0, 0)).toDate();
-
     private EntityManager em;
 
     private KoulutusmoduuliToteutus komoto1, komoto2, komoto3, komoto4;

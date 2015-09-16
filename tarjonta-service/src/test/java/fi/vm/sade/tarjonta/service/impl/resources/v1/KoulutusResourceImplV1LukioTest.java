@@ -63,17 +63,7 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         reload();
         createJoinedParentAndChildKomos(KoulutusasteTyyppi.LUKIOKOULUTUS);
     }
-    
-    private void printResultErrors(ResultV1RDTO r) {
-        if (r != null && r.getErrors() != null) {
-            List<ErrorV1RDTO> errors = r.getErrors();
-            
-            for (ErrorV1RDTO e : errors) {
-                System.out.println(e.getErrorMessageKey());
-            }
-        }
-    }
-    
+
     @Test
     public void testCreateAndLoadToteutus() throws ExceptionMessage {
         //EXPECT

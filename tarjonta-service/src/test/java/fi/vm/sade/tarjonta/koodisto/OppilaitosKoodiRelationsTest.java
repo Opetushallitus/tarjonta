@@ -51,7 +51,6 @@ public class OppilaitosKoodiRelationsTest {
     private static final String KOULUTUSASTE_LUKIOKOULUTUS = "koulutusasteoph2002_31";
     private static final String KOULUTUSASTE_YLEMPIAMK = "koulutusasteoph2002_71";
     private static final String KOULUTUSASTE_ALEMPIKK = "koulutusasteoph2002_63";
-    private static final String VAPAAN_SIVISTYSTYON_KOULUTUS = "";
 
     private static final String PATH_LUKIO = "|" + OPH_OID + "|"
             + KOULUTUSTOIMIJA_OID + "|" + LUKIO_OID + "|";
