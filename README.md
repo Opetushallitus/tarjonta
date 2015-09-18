@@ -47,9 +47,21 @@ Ajoympäristöä varten tarvitaan:
   hakuja. Tarjonnan voi pakottaa indeksoimaan kaiken datan PostgreSQL
   kannasta tai vaihtoehtoisesti haluttuja tietoja voi pakottaa indeksoitavaksi
   asettamalla kyseisten rivien indeksointiajankohdan `NULL`:ksi. Tarjonta
-  indeksoi nämä rivit sekuntien viiveellä.
+  tarkistaa uusia indeksoitavia tietoja 10 sekunnin välein.
 
-  Esimerkiksi `UPDATE SET tarjonta.hakukohde.viimindeksointipvm = NULL WHERE oid = '1.2.3...';`
+  - Kaiken indeksointi (clear-parametrin kanssa kannattaa olla varoivainen,
+    koska se tyhjentää koko indeksin ja uudelleenindeksoinnissa voi mennä pari tuntia)
+
+    ```
+    curl http://localhost:8302/tarjonta-service/rest/indexer/koulutukset?clear=true
+    curl http://localhost:8302/tarjonta-service/rest/indexer/hakukohteet?clear=true
+    ```
+
+  - Yksittäisten tietojen indeksointi `hakukohde` tai `koulutusmoduuli_toteututus` tauluista
+
+    ```sql
+    UPDATE SET tarjonta.hakukohde.viimindeksointipvm = NULL WHERE oid = '1.2.3...';
+    ```
 
 
 ### Tomcat
