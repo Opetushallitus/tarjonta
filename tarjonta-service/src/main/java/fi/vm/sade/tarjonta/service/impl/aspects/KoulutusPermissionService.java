@@ -9,10 +9,7 @@ import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPerustutkintoV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +35,18 @@ public class KoulutusPermissionService {
         switch (komoto.getToteutustyyppi()) {
             case AMMATILLINEN_PERUSTUTKINTO:
                 dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
+                break;
+            case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
+                dto = new KoulutusAmmatillinenPeruskoulutusErityisopetuksenaV1RDTO();
+                break;
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS:
+                dto = new KoulutusValmentavaJaKuntouttavaV1RDTO();
+                break;
+            case AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA:
+                dto = new KoulutusAmmatilliseenPeruskoulutukseenValmentavaV1RDTO();
+                break;
+            case AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER:
+                dto = new KoulutusAmmatilliseenPeruskoulutukseenValmentavaERV1RDTO();
                 break;
             default:
                 return;
@@ -73,6 +82,16 @@ public class KoulutusPermissionService {
         return koodi;
     }
 
+    public static List<ToteutustyyppiEnum> getToteustustyyppisToCheckPermissionFor() {
+        return Lists.newArrayList(
+                ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO,
+                ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA,
+                ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA,
+                ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER,
+                ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS
+        );
+    }
+
     public void checkThatOrganizationIsAllowedToOrganizeEducation(KoulutusV1RDTO dto) {
 
         // If saving an existing education -> ignore check
@@ -80,8 +99,7 @@ public class KoulutusPermissionService {
             return;
         }
 
-        // Currently check is only performed on ammatillinen perustutkinto
-        if (!ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO.equals(dto.getToteutustyyppi())) {
+        if (!getToteustustyyppisToCheckPermissionFor().contains(dto.getToteutustyyppi())) {
             return;
         }
 

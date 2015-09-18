@@ -106,7 +106,7 @@ public class KoulutusPermissionSynchronizer {
     public void checkExistingKoulutus() {
         LOG.info("Amkoute: check existing koulutus start");
 
-        List<ToteutustyyppiEnum> tyyppis = Lists.newArrayList(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO);
+        List<ToteutustyyppiEnum> tyyppis = KoulutusPermissionService.getToteustustyyppisToCheckPermissionFor();
         List<KoulutusmoduuliToteutus> komotos;
         Map<String, List<KoulutusPermissionException>> orgsWithInvalidKomotos = new HashMap<String, List<KoulutusPermissionException>>();
         int offset = 0;
