@@ -21,10 +21,7 @@ import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.Predicate;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
-import fi.vm.sade.tarjonta.model.QHakukohde;
-import fi.vm.sade.tarjonta.model.QKoulutusOwner;
-import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
-import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.*;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -73,6 +70,14 @@ public class IndexerDaoImpl implements IndexerDAO {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         JPAUpdateClause u = new JPAUpdateClause(entityManager, komoto);
         return u.setNull(komoto.viimIndeksointiPvm).execute();
+    }
+
+    @Override
+    public Long setHakukohdeViimindeksointiPvmToNull(Haku haku) {
+        final QHakukohde hakukohde = QHakukohde.hakukohde;
+        JPAUpdateClause u = new JPAUpdateClause(entityManager, hakukohde);
+        u.where(hakukohde.haku.id.eq(haku.getId()));
+        return u.setNull(hakukohde.viimIndeksointiPvm).execute();
     }
 
     @Override

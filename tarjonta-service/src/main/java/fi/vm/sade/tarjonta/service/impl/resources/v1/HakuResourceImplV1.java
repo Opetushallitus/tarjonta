@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
@@ -99,6 +100,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Autowired
     private ContextDataService contextDataService;
+
+    @Autowired
+    private IndexerDAO indexerDao;
 
     @Autowired
     private ProcessResourceV1 processResource;
@@ -321,6 +325,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             } else {
                 LOG.info("updateHaku() - update");
                 hakuDAO.update(hakuToUpdate);
+                indexerDao.setHakukohdeViimindeksointiPvmToNull(hakuToUpdate);
             }
 
             LOG.info("updateHaku() - make whopee!");

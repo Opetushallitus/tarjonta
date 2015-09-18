@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
+import fi.vm.sade.tarjonta.model.Haku;
+
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +31,8 @@ public interface IndexerDAO {
     List<Long> findUnindexedKoulutusIds();
 
     Long setKoulutusViimindeksointiPvmToNull();
+
+    Long setHakukohdeViimindeksointiPvmToNull(Haku haku);
 
     Long setHakukohdeViimindeksointiPvmToNull();
 
