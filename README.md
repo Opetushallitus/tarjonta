@@ -80,21 +80,20 @@ Ajoympäristöä varten tarvitaan:
       ```
 
   - Deployment tab
-    - + -> Artifact -> `tarjonta-app:war exploded` ja `tarjonta-service:war
-      exploded`
+    - + -> Artifact -> `tarjonta-app:war exploded` ja `tarjonta-service:war exploded`
     - Deploy at the server startup (**note to set BOTH contexts**)
       - `tarjonta-app:war exploded` Application context: `/tarjonta-app`
       - `tarjonta-service:war exploded` Application context:
         `/tarjonta-service`
-- Muokkaa `<REPO ROOT>/tarjonta/src/main/resources/oph-configuration`
-  hakemistoa
-  - `cd <REPO ROOT>/src/main/resources`
-  -
+- Muokkaa `<REPO ROOT>/tarjonta/src/main/resources/oph-configuration` hakemistoa
+  - Linkitä tarvittavat konfiguraatiotiedostopohjat
+
     ```
+    cd <REPO ROOT>/src/main/resources
     ln -s ../develop/override.properties oph-configuration/override.properties
     ln -s ../develop/security-context-backend.xml oph-configuration/security-context-backend.xml
     ```
 
 - Aja `mvn install` jotta frontend koodit paketoituvat (`tarjonta-app-angular/dist`)
-- Run -> Run ... -> <luotu Tomcat ympäristö>
+- Run -> Run ... -> *luotu Tomcat ympäristö*
   - Selaimen pitäisi avautua automaattisesti tarjonnan etusivulle
