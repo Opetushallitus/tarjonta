@@ -1,6 +1,5 @@
 # Tarjonta
 
-
 ## Paikallinen ajoympäristö
 
 Tarjonta koostuu frontend-paketista `tarjonta-app.war` sekä
@@ -23,25 +22,27 @@ Ajoympäristöä varten tarvitaan:
 - Luo tyhjä kanta
   - `psql -Upostgres -h192.168.59.103`
   - `CREATE DATABASE tarjonta;`
-- Alusta oma palvelin pohjadatallaKopioi pohjatadata omalle palvelimelle
-  [Confluencen ohjeiden mukaan](https://confluence.oph.ware.fi/confluence/display/TD/Tarjontapalvelu#Tarjontapalvelu-Tietokanta)
+- Kopioi pohjatadata omalle palvelimelle [Confluencen ohjeiden mukaan](https://confluence.oph.ware.fi/confluence/display/TD/Tarjontapalvelu#Tarjontapalvelu-Tietokanta)
 
 
 ## Solr-palvelin
 
 - Lataa ja pura Solr haluamaasi paikkaan
+
   ```
-  wget
-  https://archive.apache.org/dist/lucene/solr/4.10.4/solr-4.10.4-src.tgz &&
+  wget https://archive.apache.org/dist/lucene/solr/4.10.4/solr-4.10.4-src.tgz
   tar xzf solr-4.10.4-src.tgz
   ```
+
 - Käynnistä Solr, `solr.data.dir` hakemistoon muodostuu palvelimen tietokannat,
   `solr.solr.home` pitää osoittaa projektista löytyvään hakemistoon.
+
   ```
-  cd solr-4.10.2/example && java
-  -Dsolr.solr.home=../../tarjonta-service/src/main/resources/solr
-  -Dsolr.data.dir=../../core -jar ./start.jar
+  cd solr-4.10.2/example
+  java -Dsolr.solr.home=../../tarjonta-service/src/main/resources/solr \
+    -Dsolr.data.dir=../../core -jar ./start.jar
   ```
+
 - Tyhjään Solr:iin pitää populoida dataa jotta käyttöliittymässä voi tehdä
   hakuja. Tarjonnan voi pakottaa indeksoimaan kaiken datan PostgreSQL
   kannasta tai vaihtoehtoisesti haluttuja tietoja voi pakottaa indeksoitavaksi
@@ -64,7 +65,9 @@ Ajoympäristöä varten tarvitaan:
     - On 'Update' action: Update classes and resources (restart vaaditaan
       uusien luokkien luonnin yhteydessä, joten se on varmatoimisin mutta
       hitaampi)
-    - VM options: ```
+    - VM options:
+
+      ```
       -Duser.home="<REPO ROOT>/tarjonta/src/main/resources"
       -Dpostgresql.maxActive=10
       -Dpostgresql.host=192.168.59.103
@@ -75,6 +78,7 @@ Ajoympäristöä varten tarvitaan:
       -Xmx2048m
       -XX:PermSize=512m
       ```
+
   - Deployment tab
     - + -> Artifact -> `tarjonta-app:war exploded` ja `tarjonta-service:war
       exploded`
@@ -85,10 +89,12 @@ Ajoympäristöä varten tarvitaan:
 - Muokkaa `<REPO ROOT>/tarjonta/src/main/resources/oph-configuration`
   hakemistoa
   - `cd <REPO ROOT>/src/main/resources`
-  - ```
+  -
+    ```
     ln -s ../develop/override.properties oph-configuration/override.properties
     ln -s ../develop/security-context-backend.xml oph-configuration/security-context-backend.xml
     ```
+
 - Aja `mvn install` jotta frontend koodit paketoituvat (`tarjonta-app-angular/dist`)
 - Run -> Run ... -> <luotu Tomcat ympäristö>
   - Selaimen pitäisi avautua automaattisesti tarjonnan etusivulle
