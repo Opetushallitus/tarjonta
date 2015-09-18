@@ -527,7 +527,7 @@ public class KoulutusCommonConverter {
     public void convertToKielivalikoima(KoodiValikoimaV1RDTO tarjotutKielet, KoulutusmoduuliToteutus komoto) {
         if (tarjotutKielet != null && !tarjotutKielet.isEmpty()) {
             for (Entry<String, KoodiUrisV1RDTO> e : tarjotutKielet.entrySet()) {
-                if (e.getValue() != null && e.getValue().getUris() != null && !e.getValue().getUris().isEmpty()) {
+                if (e.getValue() != null && e.getValue().getUris() != null) {
                     List<String> uris = Lists.<String>newArrayList();
                     for (Entry<String, Integer> uriAndVersio : e.getValue().getUris().entrySet()) {
                         uris.add(new StringBuilder(uriAndVersio.getKey()).append('#').append(uriAndVersio.getValue()).toString());
