@@ -76,6 +76,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         return from(qKomoto).where(
                 qKomoto.koulutusUri.startsWith(komoto.getKoodiUriWithoutVersion(komoto.getKoulutusUri()) + "#")
                         .and(qKomoto.tarjoaja.eq(komoto.getTarjoaja()))
+                        .and(qKomoto.toteutustyyppi.eq(komoto.getToteutustyyppi()))
                         .and(qKomoto.alkamiskausiUri.startsWith(komoto.getKoodiUriWithoutVersion(komoto.getAlkamiskausiUri()) + "#"))
                         .and(qKomoto.alkamisVuosi.eq(komoto.getAlkamisVuosi()))
                         .and(qKomoto.oid.ne(komoto.getOid()))
