@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -101,6 +102,14 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
     }
 
     public void setLiitteenKuvaukset(Map<String, String> liitteenKuvaukset) {
+        if (liitteenKuvaukset != null) {
+            Map<String, String> cleanMap = new HashMap<String, String>();
+            for (Map.Entry<String, String> entry : liitteenKuvaukset.entrySet()) {
+                String kieli = entry.getKey().split("#")[0];
+                cleanMap.put(kieli, entry.getValue());
+            }
+            liitteenKuvaukset = cleanMap;
+        }
         this.liitteenKuvaukset = liitteenKuvaukset;
     }
 
