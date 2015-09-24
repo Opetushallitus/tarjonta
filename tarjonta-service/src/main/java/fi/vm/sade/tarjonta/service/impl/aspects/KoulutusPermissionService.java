@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.service.impl.aspects;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
@@ -119,7 +120,7 @@ public class KoulutusPermissionService {
             }
         }
 
-        Set<Date> alkamispvmt = dto.getKoulutuksenAlkamisPvms();
+        Set<Date> alkamispvmt = Sets.newHashSet(dto.getKoulutuksenAlkamisPvms());
         if (alkamispvmt.isEmpty()) {
             alkamispvmt.add(IndexDataUtils.getDateFromYearAndKausi(
                     dto.getKoulutuksenAlkamisvuosi(), dto.getKoulutuksenAlkamiskausi().getUri()
