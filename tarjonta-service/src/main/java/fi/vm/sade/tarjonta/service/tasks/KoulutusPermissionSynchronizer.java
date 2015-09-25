@@ -101,7 +101,7 @@ public class KoulutusPermissionSynchronizer {
         }
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Scheduled(cron = "0 0 4 * * ?")
     public void checkExistingKoulutus() {
         LOG.info("Amkoute: check existing koulutus start");

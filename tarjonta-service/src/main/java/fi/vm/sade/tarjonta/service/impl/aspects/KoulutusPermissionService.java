@@ -56,7 +56,7 @@ public class KoulutusPermissionService {
         dto.getOrganisaatio().setOid(komoto.getTarjoaja());
         dto.setToteutustyyppi(komoto.getToteutustyyppi());
         dto.setKoulutuskoodi(getKoodi(getFromKomotoOrKomo(komoto.getKoulutusUri(), komo.getKoulutusUri())));
-        dto.setKoulutuksenAlkamisPvms(komoto.getKoulutuksenAlkamisPvms());
+        dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(komoto.getKoulutuksenAlkamisPvms()));
         dto.setKoulutuksenAlkamiskausi(getKoodi(komoto.getAlkamiskausiUri()));
         dto.setKoulutuksenAlkamisvuosi(komoto.getAlkamisVuosi());
 

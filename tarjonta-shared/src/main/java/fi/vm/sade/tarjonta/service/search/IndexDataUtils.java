@@ -141,7 +141,7 @@ public class IndexDataUtils {
     public static Date getDateFromYearAndKausi(Integer year, String kausi) {
         Integer month = 1; // kevät by default
 
-        if (SYKSY_URI.split("#")[0].equals(kausi)) {
+        if (kausi != null && SYKSY_URI.split("#")[0].equals(kausi.split("#")[0])) {
             month = 8;
         }
 
