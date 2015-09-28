@@ -21,6 +21,9 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiParam;
+import fi.vm.sade.auditlog.tarjonta.LogMessage;
+import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
+import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
@@ -64,6 +67,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.*;
+import static fi.vm.sade.tarjonta.service.AuditHelper.AUDIT;
+import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
 
 public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
@@ -623,6 +628,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         HakukohdeV1RDTO toHakukohdeRDTO = converterV1.toHakukohdeRDTO(hakukohde);
         updateKoulutusTypesToHakukohdeDto(toHakukohdeRDTO);
         result.setResult(toHakukohdeRDTO);
+
+        AUDIT.log(builder()
+                .setResource(TarjontaResource.HAKUKOHDE)
+                .setResourceOid(hakukohde.getOid())
+                .setOperation(TarjontaOperation.CREATE)
+                .build());
+
         return result;
     }
 
@@ -783,6 +795,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 HakukohdeV1RDTO toHakukohdeRDTO = converterV1.toHakukohdeRDTO(hakukohdeDAO.findHakukohdeByOid(hakukohde.getOid()));
                 updateKoulutusTypesToHakukohdeDto(toHakukohdeRDTO);
                 result.setResult(toHakukohdeRDTO);
+
+                AUDIT.log(builder()
+                        .setResource(TarjontaResource.HAKUKOHDE)
+                        .setResourceOid(hakukohdeOid)
+                        .setOperation(TarjontaOperation.UPDATE)
+                        .build());
+
                 return result;
             } else {
                 return populateValidationErrors(hakukohdeRDTO, Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_TILA_WRONG));
@@ -826,6 +845,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             List<Long> hakukohdeIds = new ArrayList<Long>();
             hakukohdeIds.add(hakukohde.getId());
             indexerResource.indexHakukohteet(hakukohdeIds);
+
+            AUDIT.log(builder()
+                        .setOperation(TarjontaOperation.DELETE)
+                        .setResource(TarjontaResource.HAKUKOHDE)
+                        .setResourceOid(hakukohde.getOid()).build());
+
             ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
             result.setResult(true);
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
@@ -1150,6 +1175,22 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         Tilamuutokset tm = null;
         try {
             tm = publicationDataService.updatePublicationStatus(Lists.newArrayList(tilamuutos));
+
+            LogMessage.LogMessageBuilder builder = builder().setResource(TarjontaResource.HAKUKOHDE).setResourceOid(oid);
+
+            switch (tila) {
+                case PERUTTU:
+                    builder.setOperation(TarjontaOperation.UNPUBLISH);
+                    break;
+                case JULKAISTU:
+                    builder.setOperation(TarjontaOperation.PUBLISH);
+                    break;
+                default:
+                    builder.add("updateTila", tila.name());
+                    break;
+            }
+
+            AUDIT.log(builder.build());
         } catch (IllegalArgumentException iae) {
             ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<Tilamuutokset>();
             r.addError(ErrorV1RDTO.createValidationError(null, iae.getMessage()));
@@ -1218,6 +1259,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             hakukohdeDAO.update(hakukohde);
             LOG.info("indexing hakukohde");
             indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+
+            AUDIT.log(builder()
+                    .setResource(TarjontaResource.HAKUKOHDE)
+                    .setResourceOid(hakukohdeOid)
+                    .setOperation(TarjontaOperation.ADD_KOULUTUS_TO_HAKUKOHDE)
+                    .build());
 
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
@@ -1357,6 +1404,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
             }
 
+            AUDIT.log(builder()
+                        .setResource(TarjontaResource.HAKUKOHDE)
+                        .setResourceOid(hakukohdeOid)
+                        .setOperation(TarjontaOperation.REMOVE_KOULUTUS_FROM_HAKUKOHDE)
+                        .build());
+
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
             resultV1RDTO.setResult(getKomotoOids(koulutukses));
 
@@ -1441,6 +1494,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
             }
             hakukohdeDAO.update(hakukohde);
+
+            AUDIT.log(builder()
+                    .setResource(TarjontaResource.HAKUKOHDE)
+                    .setResourceOid(hakukohde.getOid())
+                    .setOperation(TarjontaOperation.MODIFY_RYHMAT)
+                    .build());
         }
 
         return result;
