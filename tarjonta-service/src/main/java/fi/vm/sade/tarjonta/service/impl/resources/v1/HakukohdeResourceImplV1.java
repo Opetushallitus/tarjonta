@@ -1186,7 +1186,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                     builder.setOperation(TarjontaOperation.PUBLISH);
                     break;
                 default:
-                    builder.add("updateTila", tila.name());
+                    builder.setOperation(TarjontaOperation.CHANGE_STATE);
+                    builder.add("newTila", tila.name());
                     break;
             }
 
