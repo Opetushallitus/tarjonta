@@ -20,6 +20,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import fi.vm.sade.auditlog.tarjonta.LogMessage;
 import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
 import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
 import fi.vm.sade.koodisto.service.GenericFault;
@@ -1062,6 +1063,23 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         Tilamuutokset tm = null;
         try {
             tm = publicationDataService.updatePublicationStatus(Lists.newArrayList(tilamuutos));
+
+            LogMessage.LogMessageBuilder builder = builder().setResource(TarjontaResource.KOULUTUS).setResourceOid(oid);
+
+            switch (tila) {
+                case PERUTTU:
+                    builder.setOperation(TarjontaOperation.UNPUBLISH);
+                    break;
+                case JULKAISTU:
+                    builder.setOperation(TarjontaOperation.PUBLISH);
+                    break;
+                default:
+                    builder.add("updateTila", tila.name());
+                    break;
+            }
+
+            AUDIT.log(builder.build());
+
         } catch (IllegalArgumentException iae) {
             ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<Tilamuutokset>();
             r.addError(ErrorV1RDTO.createValidationError(null, iae.getMessage()));
