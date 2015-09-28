@@ -30,6 +30,7 @@ public class MassCopyProcess implements ProcessDefinition {
     public static final String PREPARE = "PREPARE";
     public static final String DONE = "DONE";
 
+    public static final String USER_OID = "USER_OID";
 
     public static final String COMMIT_COUNT_HAKUKOHDE = "commit_hakukohde_processed";
     public static final String COMMIT_TOTAL_HAKUKOHDE = "commit_hakukohde_total";

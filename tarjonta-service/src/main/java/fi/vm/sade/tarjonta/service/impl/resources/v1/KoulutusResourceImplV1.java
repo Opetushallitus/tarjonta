@@ -20,6 +20,9 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import fi.vm.sade.auditlog.tarjonta.LogMessage;
+import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
+import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
 import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
@@ -83,6 +86,8 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.Map.Entry;
 
+import static fi.vm.sade.tarjonta.service.AuditHelper.AUDIT;
+import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.validateMimeType;
 
 /**
@@ -424,9 +429,21 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 }
 
                 fullKomotoWithKomo = updateKoulutusKorkeakoulu(komoto, dto);
+
+                AUDIT.log(builder()
+                        .setOperation(TarjontaOperation.UPDATE)
+                        .setResource(TarjontaResource.KOULUTUS)
+                        .setResourceOid(fullKomotoWithKomo.getOid())
+                        .build());
             } else {
                 //create korkeakoulu koulutus
                 fullKomotoWithKomo = insertKoulutusKorkeakoulu(dto);
+
+                AUDIT.log(builder()
+                        .setOperation(TarjontaOperation.CREATE)
+                        .setResource(TarjontaResource.KOULUTUS)
+                        .setResourceOid(fullKomotoWithKomo.getOid())
+                        .build());
             }
 
             indexKomoto(fullKomotoWithKomo);
@@ -468,9 +485,21 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 }
 
                 fullKomotoWithKomo = updateTutkintoonjohtamaton(komoto, dto);
+
+                AUDIT.log(builder()
+                        .setOperation(TarjontaOperation.UPDATE)
+                        .setResource(TarjontaResource.KOULUTUS)
+                        .setResourceOid(fullKomotoWithKomo.getOid())
+                        .build());
             } else {
                 //create tutkintoonjohtamaton koulutus
                 fullKomotoWithKomo = insertTutkintoonjohtamaton(dto, false);
+
+                AUDIT.log(builder()
+                        .setOperation(TarjontaOperation.CREATE)
+                        .setResource(TarjontaResource.KOULUTUS)
+                        .setResourceOid(fullKomotoWithKomo.getOid())
+                        .build());
             }
 
             indexKomoto(fullKomotoWithKomo);
@@ -539,9 +568,21 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 }
 
                 fullKomotoWithKomo = updateGeneric(komoto, dto);
+
+                AUDIT.log(builder()
+                        .setOperation(TarjontaOperation.UPDATE)
+                        .setResource(TarjontaResource.KOULUTUS)
+                        .setResourceOid(fullKomotoWithKomo.getOid())
+                        .build());
             } else {
                 //create korkeakoulu koulutus
                 fullKomotoWithKomo = insertKoulutusGeneric(dto);
+
+                AUDIT.log(builder()
+                        .setOperation(TarjontaOperation.CREATE)
+                        .setResource(TarjontaResource.KOULUTUS)
+                        .setResourceOid(fullKomotoWithKomo.getOid())
+                        .build());
             }
 
             indexKomoto(fullKomotoWithKomo);
@@ -578,9 +619,21 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 }
 
                 fullKomotoWithKomo = updateKoulutusNayttotutkintona(komoto, dto);
+
+                AUDIT.log(builder()
+                        .setOperation(TarjontaOperation.UPDATE)
+                        .setResource(TarjontaResource.KOULUTUS)
+                        .setResourceOid(fullKomotoWithKomo.getOid())
+                        .build());
             } else {
                 //create korkeakoulu koulutus
                 fullKomotoWithKomo = insertKoulutusNayttotutkintona(dto);
+
+                AUDIT.log(builder()
+                        .setOperation(TarjontaOperation.CREATE)
+                        .setResource(TarjontaResource.KOULUTUS)
+                        .setResourceOid(fullKomotoWithKomo.getOid())
+                        .build());
             }
             Preconditions.checkNotNull(fullKomotoWithKomo, "KOMOTO object cannot be null!");
             Preconditions.checkNotNull(fullKomotoWithKomo.getId(), "KOMOTO ID cannot be null!");
@@ -782,6 +835,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                             //no komotos found, I quess it's also ok to remove the komo.
                             koulutusmoduuliDAO.safeDelete(komoto.getKoulutusmoduuli().getOid(), userOid);
                         }
+
+                        AUDIT.log(builder()
+                                .setOperation(TarjontaOperation.DELETE)
+                                .setResource(TarjontaResource.KOULUTUS)
+                                .setResourceOid(komotoOid).build());
                     }
                     break;
                 case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
@@ -791,6 +849,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                             koulutusmoduuliToteutusDAO.safeDelete(komoto.getValmistavaKoulutus().getOid(), userOid);
                         }
                         koulutusmoduuliToteutusDAO.safeDelete(komotoOid, userOid);
+
+                        AUDIT.log(builder()
+                                .setOperation(TarjontaOperation.DELETE)
+                                .setResource(TarjontaResource.KOULUTUS)
+                                .setResourceOid(komotoOid).build());
                     }
                     break;
                 default:
@@ -798,6 +861,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     KoulutusValidator.validateKoulutusDelete(komoto, Lists.<KoulutusmoduuliToteutus>newArrayList(), Lists.<String>newArrayList(), Lists.<String>newArrayList(), hkKoulutusMap, result);
                     if (!result.hasErrors()) {
                         koulutusmoduuliToteutusDAO.safeDelete(komotoOid, userOid);
+
+                        AUDIT.log(builder()
+                                .setOperation(TarjontaOperation.DELETE)
+                                .setResource(TarjontaResource.KOULUTUS)
+                                .setResourceOid(komotoOid).build());
                     }
                     break;
             }
@@ -1010,6 +1078,24 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         Tilamuutokset tm = null;
         try {
             tm = publicationDataService.updatePublicationStatus(Lists.newArrayList(tilamuutos));
+
+            LogMessage.LogMessageBuilder builder = builder().setResource(TarjontaResource.KOULUTUS).setResourceOid(oid);
+
+            switch (tila) {
+                case PERUTTU:
+                    builder.setOperation(TarjontaOperation.UNPUBLISH);
+                    break;
+                case JULKAISTU:
+                    builder.setOperation(TarjontaOperation.PUBLISH);
+                    break;
+                default:
+                    builder.setOperation(TarjontaOperation.CHANGE_STATE);
+                    builder.add("newTila", tila.name());
+                    break;
+            }
+
+            AUDIT.log(builder.build());
+
         } catch (IllegalArgumentException iae) {
             ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<Tilamuutokset>();
             r.addError(ErrorV1RDTO.createValidationError(null, iae.getMessage()));
@@ -1417,6 +1503,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         throw new RuntimeException("Copy failed : " + getType(komoto));
                     }
 
+                    AUDIT.log(builder()
+                            .setOperation(TarjontaOperation.COPY)
+                            .setResource(TarjontaResource.KOULUTUS)
+                            .setResourceOid(persisted.getOid())
+                            .add("copySource", komoto.getOid())
+                            .build());
+
                     newKomoChildOids.add(persisted.getKoulutusmoduuli().getOid());
                     newKomotoIds.add(persisted.getId());
                     /*
@@ -1469,6 +1562,14 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 }
 
                 koulutusmoduuliToteutusDAO.update(komoto);
+
+                AUDIT.log(builder()
+                        .setResource(TarjontaResource.KOULUTUS)
+                        .setResourceOid(komoto.getOid())
+                        .setOperation(TarjontaOperation.MOVE)
+                        .add("previousTarjoaja", prevTarjoaja)
+                        .add("newTarjoaja", komoto.getTarjoaja())
+                        .build());
 
                 result.getResult().getTo().add(new KoulutusCopyStatusV1RDTO(komoto.getOid(), orgOid));
                 indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));

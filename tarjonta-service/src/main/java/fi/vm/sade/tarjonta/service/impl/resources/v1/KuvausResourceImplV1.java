@@ -1,6 +1,8 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Preconditions;
+import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
+import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
 import fi.vm.sade.tarjonta.dao.KuvausDAO;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
@@ -27,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import static fi.vm.sade.tarjonta.service.AuditHelper.AUDIT;
+import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
 
 /*
 * @author: Tuomas Katva 16/12/13
@@ -344,6 +348,11 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
                 resultV1RDTO.setResult(kuvaus);
                 resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
+                AUDIT.log(builder()
+                            .setOperation(TarjontaOperation.CREATE)
+                            .setResource(TarjontaResource.VALINTAPERUSTE_SORA_KUVAUS)
+                            .setResourceOid(kuvaus.getKuvauksenTunniste()).build());
+
             } else {
                 LOG.debug("EXISTING KUVAUS FOUND, REPLYING WITH EXCEPTION");
                 resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
@@ -453,6 +462,11 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
             resultV1RDTO.setResult(converter.toKuvausRDTO(oldVps, true));
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
+            AUDIT.log(builder()
+                    .setOperation(TarjontaOperation.UPDATE)
+                    .setResource(TarjontaResource.VALINTAPERUSTE_SORA_KUVAUS)
+                    .setResourceOid(Long.toString(oldVps.getId())).build());
+
         } catch (Exception exp) {
 
             LOG.debug("EXCEPTION UPDATING KUVAUS: " + kuvausRDTO.getOid() + " : ", exp.toString());
@@ -485,6 +499,11 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
             resultV1RDTO.setResult(converter.toKuvausRDTO(valintaperusteSoraKuvaus, true));
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+            AUDIT.log(builder()
+                    .setResource(TarjontaResource.VALINTAPERUSTE_SORA_KUVAUS)
+                    .setResourceOid(tunniste)
+                    .setOperation(TarjontaOperation.DELETE).build());
 
         } catch (Exception exp) {
             LOG.warn("EXCEPTION REMOVING KUVAUS : " + tunniste + " " + exp.toString());
