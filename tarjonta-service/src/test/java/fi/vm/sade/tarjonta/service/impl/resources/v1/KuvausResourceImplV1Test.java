@@ -23,6 +23,12 @@ public class KuvausResourceImplV1Test extends TestMockBase {
         MonikielinenTeksti nimi = new MonikielinenTeksti();
         nimi.addTekstiKaannos("kieli_fi", "Lorem");
         kuvaus.setMonikielinenNimi(nimi);
+        kuvaus.setId(100L);
+        return kuvaus;
+    }
+
+    private KuvausV1RDTO getDummyValintaperustekuvausDto() {
+        KuvausV1RDTO kuvaus = new KuvausV1RDTO();
         return kuvaus;
     }
 
@@ -31,6 +37,7 @@ public class KuvausResourceImplV1Test extends TestMockBase {
         doThrow(new NotAuthorizedException("")).when(permissionChecker).checkCreateValintaPeruste();
         doNothing().when(permissionChecker).checkCreateValintaPerusteKK();
         when(converter.toValintaperusteSoraKuvaus(any(KuvausV1RDTO.class))).thenReturn(getDummyValintaperustekuvaus());
+        when(converter.toKuvausRDTO(any(ValintaperusteSoraKuvaus.class), anyBoolean())).thenReturn(getDummyValintaperustekuvausDto());
 
         KuvausV1RDTO kuvausDTO = getAmmattikorkeakoulukuvausDTO();
         ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO);
@@ -164,6 +171,7 @@ public class KuvausResourceImplV1Test extends TestMockBase {
         doThrow(new NotAuthorizedException("")).when(permissionChecker).checkCreateValintaPerusteKK();
         doNothing().when(permissionChecker).checkCreateValintaPerusteKK();
         when(converter.toValintaperusteSoraKuvaus(any(KuvausV1RDTO.class))).thenReturn(getDummyValintaperustekuvaus());
+        when(converter.toKuvausRDTO(any(ValintaperusteSoraKuvaus.class), anyBoolean())).thenReturn(getDummyValintaperustekuvausDto());
 
         KuvausV1RDTO kuvausDTO = getLukiokuvausDTO();
         ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO);
@@ -175,6 +183,7 @@ public class KuvausResourceImplV1Test extends TestMockBase {
         doThrow(new NotAuthorizedException("")).when(permissionChecker).checkUpdateValintaperustekuvausKK();
         doNothing().when(permissionChecker).checkUpdateValintaperustekuvaus();
         when(converter.toValintaperusteSoraKuvaus(any(KuvausV1RDTO.class))).thenReturn(getDummyValintaperustekuvaus());
+        when(converter.toKuvausRDTO(any(ValintaperusteSoraKuvaus.class), anyBoolean())).thenReturn(getDummyValintaperustekuvausDto());
 
         KuvausV1RDTO kuvausDTO = getLukiokuvausDTO();
         ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO);
