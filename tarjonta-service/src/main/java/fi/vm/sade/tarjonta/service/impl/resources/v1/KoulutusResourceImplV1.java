@@ -835,6 +835,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                             //no komotos found, I quess it's also ok to remove the komo.
                             koulutusmoduuliDAO.safeDelete(komoto.getKoulutusmoduuli().getOid(), userOid);
                         }
+
+                        AUDIT.log(builder()
+                                .setOperation(TarjontaOperation.DELETE)
+                                .setResource(TarjontaResource.KOULUTUS)
+                                .setResourceOid(komotoOid).build());
                     }
                     break;
                 case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
@@ -844,6 +849,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                             koulutusmoduuliToteutusDAO.safeDelete(komoto.getValmistavaKoulutus().getOid(), userOid);
                         }
                         koulutusmoduuliToteutusDAO.safeDelete(komotoOid, userOid);
+
+                        AUDIT.log(builder()
+                                .setOperation(TarjontaOperation.DELETE)
+                                .setResource(TarjontaResource.KOULUTUS)
+                                .setResourceOid(komotoOid).build());
                     }
                     break;
                 default:
@@ -851,6 +861,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     KoulutusValidator.validateKoulutusDelete(komoto, Lists.<KoulutusmoduuliToteutus>newArrayList(), Lists.<String>newArrayList(), Lists.<String>newArrayList(), hkKoulutusMap, result);
                     if (!result.hasErrors()) {
                         koulutusmoduuliToteutusDAO.safeDelete(komotoOid, userOid);
+
+                        AUDIT.log(builder()
+                                .setOperation(TarjontaOperation.DELETE)
+                                .setResource(TarjontaResource.KOULUTUS)
+                                .setResourceOid(komotoOid).build());
                     }
                     break;
             }
