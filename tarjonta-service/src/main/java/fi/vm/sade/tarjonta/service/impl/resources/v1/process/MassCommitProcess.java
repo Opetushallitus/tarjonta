@@ -18,6 +18,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mysema.commons.lang.Pair;
+import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
+import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
@@ -45,6 +47,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static fi.vm.sade.tarjonta.service.AuditHelper.AUDIT;
+import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
 
 @Component
 public class MassCommitProcess {
@@ -302,6 +307,13 @@ public class MassCommitProcess {
                     }
                 }
                 hakuDAO.insert(haku);
+
+                String userOid = state.getParameters().get(MassCopyProcess.USER_OID);
+                AUDIT.log(builder(userOid)
+                            .setOperation(TarjontaOperation.COPY)
+                            .setResource(TarjontaResource.HAKU)
+                            .setResourceOid(haku.getOid())
+                            .add("sourceHaku", oldHakuOid).build());
             }
         });
     }

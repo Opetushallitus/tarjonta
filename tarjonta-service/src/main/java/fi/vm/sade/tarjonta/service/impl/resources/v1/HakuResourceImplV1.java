@@ -21,6 +21,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
+import fi.vm.sade.auditlog.tarjonta.LogMessage;
+import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
+import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
@@ -65,6 +68,10 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
+import static fi.vm.sade.tarjonta.service.AuditHelper.AUDIT;
+import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
+import static fi.vm.sade.tarjonta.service.AuditHelper.getUsernameFromSession;
 
 /**
  * REST API V1 implementation for Haku.
@@ -322,10 +329,20 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             if (isNew) {
                 LOG.info("updateHaku() - insert");
                 hakuDAO.insert(hakuToUpdate);
+
+                AUDIT.log(builder()
+                        .setOperation(TarjontaOperation.CREATE)
+                        .setResource(TarjontaResource.HAKU)
+                        .setResourceOid(hakuToUpdate.getOid()).build());
             } else {
                 LOG.info("updateHaku() - update");
                 hakuDAO.update(hakuToUpdate);
                 indexerDao.setHakukohdeViimindeksointiPvmToNull(hakuToUpdate);
+
+                AUDIT.log(builder()
+                            .setOperation(TarjontaOperation.UPDATE)
+                            .setResource(TarjontaResource.HAKU)
+                            .setResourceOid(hakuToUpdate.getOid()).build());
             }
 
             LOG.info("updateHaku() - make whopee!");
@@ -375,6 +392,11 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             hakuDAO.safeDelete(hakuToRemove.getOid(), "userOid");
             result.setResult(true);
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+            AUDIT.log(builder()
+                    .setResource(TarjontaResource.HAKU)
+                    .setResourceOid(hakuToRemove.getOid())
+                    .setOperation(TarjontaOperation.DELETE).build());
         } else {
             result.setResult(false);
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
@@ -440,6 +462,23 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             if (haku.getTila().acceptsTransitionTo(tila)) {
                 haku.setTila(tila);
                 hakuDAO.update(haku);
+
+                LogMessage.LogMessageBuilder builder = builder().setResource(TarjontaResource.HAKU).setResourceOid(haku.getOid());
+
+                switch (tila) {
+                    case JULKAISTU:
+                        builder.setOperation(TarjontaOperation.PUBLISH);
+                        break;
+                    case PERUTTU:
+                        builder.setOperation(TarjontaOperation.UNPUBLISH);
+                        break;
+                    default:
+                        builder.setOperation(TarjontaOperation.CHANGE_STATE);
+                        builder.add("newTila", tila.name());
+                        break;
+                }
+
+                AUDIT.log(builder.build());
             } else {
                 //siirtymä ei mahdollinen
                 return ResultV1RDTO.create(ResultStatus.ERROR, (Tilamuutokset) null, ErrorV1RDTO.createValidationError("tila", "tila", "transition.not.valid"));
@@ -451,6 +490,25 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         Tilamuutokset tm = null;
         try {
             tm = publication.updatePublicationStatus(Lists.newArrayList(tilamuutos));
+
+            LogMessage.LogMessageBuilder builder = builder().setResource(TarjontaResource.HAKU).setResourceOid(haku.getOid());
+            builder.add("updateStatusForHakukohdeAndKomotosAlso", "true");
+
+            switch (tila) {
+                case JULKAISTU:
+                    builder.setOperation(TarjontaOperation.PUBLISH);
+                    break;
+                case PERUTTU:
+                    builder.setOperation(TarjontaOperation.UNPUBLISH);
+                    break;
+                default:
+                    builder.setOperation(TarjontaOperation.CHANGE_STATE);
+                    builder.add("newTila", tila.name());
+                    break;
+            }
+
+            AUDIT.log(builder.build());
+
         } catch (IllegalArgumentException iae) {
             ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<Tilamuutokset>();
             r.addError(ErrorV1RDTO.createValidationError(null, iae.getMessage()));
@@ -670,6 +728,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         permissionChecker.checkUpdateHaku(h.getTarjoajaOids());
         ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(fromHakuOid, step);
         processV1RDTO.getParameters().put(MassCopyProcess.PROCESS_SKIP_STEP, step);
+        processV1RDTO.getParameters().put(MassCopyProcess.USER_OID, getUsernameFromSession());
 
         ProcessV1RDTO result = processResource.start(processV1RDTO);
         return new ResultV1RDTO<String>(result.getId());

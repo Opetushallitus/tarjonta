@@ -14,7 +14,10 @@ public class AuditHelper {
     public static LogMessage.LogMessageBuilder builder() {
         return LogMessage.builder().id(getUsernameFromSession());
     }
-    private static String getUsernameFromSession() {
+    public static LogMessage.LogMessageBuilder builder(String username) {
+        return LogMessage.builder().id(username);
+    }
+    public static String getUsernameFromSession() {
         SecurityContext context = SecurityContextHolder.getContext();
         if(context != null) {
             Principal p = (Principal) context.getAuthentication();
