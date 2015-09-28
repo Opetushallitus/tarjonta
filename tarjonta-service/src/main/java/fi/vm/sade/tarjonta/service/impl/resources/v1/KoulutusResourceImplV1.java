@@ -1502,6 +1502,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         throw new RuntimeException("Copy failed : " + getType(komoto));
                     }
 
+                    AUDIT.log(builder()
+                            .setOperation(TarjontaOperation.COPY)
+                            .setResource(TarjontaResource.KOULUTUS)
+                            .setResourceOid(persisted.getOid())
+                            .add("copySource", komoto.getOid())
+                            .build());
+
                     newKomoChildOids.add(persisted.getKoulutusmoduuli().getOid());
                     newKomotoIds.add(persisted.getId());
                     /*
@@ -1554,6 +1561,14 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 }
 
                 koulutusmoduuliToteutusDAO.update(komoto);
+
+                AUDIT.log(builder()
+                        .setResource(TarjontaResource.KOULUTUS)
+                        .setResourceOid(komoto.getOid())
+                        .setOperation(TarjontaOperation.MOVE)
+                        .add("previousTarjoaja", prevTarjoaja)
+                        .add("newTarjoaja", komoto.getTarjoaja())
+                        .build());
 
                 result.getResult().getTo().add(new KoulutusCopyStatusV1RDTO(komoto.getOid(), orgOid));
                 indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
