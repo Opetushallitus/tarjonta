@@ -30,6 +30,7 @@ public class PreloadKoodisto {
         koodistoProactiveCaching.cacheKoodisto("aiheet");
         koodistoProactiveCaching.cacheKoodisto("osaamisala");
         koodistoProactiveCaching.cacheKoodisto("osaamisala", 1);
+        koodistoProactiveCaching.cacheKoodisto("osaamisala", 2);
         koodistoProactiveCaching.cacheKoodisto("koulutusohjelmaamm");
         koodistoProactiveCaching.cacheKoodisto("lukiolinjat");
         koodistoProactiveCaching.cacheKoodisto("pohjakoulutusvaatimustoinenaste");
