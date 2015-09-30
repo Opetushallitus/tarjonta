@@ -58,7 +58,7 @@
                             <input type="text" ng-model="liite.liitteenNimi" ng-change="status.dirtify()" required />
                         </td>
 	                    <td>
-                            <p class="error" ng-show="model.showError && !liite.isEmpty() && !liite.liitteenNimi"
+                            <p class="error" ng-show="model.showError && !liite.isEmpty(liiteWithKieliVersiot.commonFields) && !liite.liitteenNimi"
                                tt="tarjonta.hakukohde.liite.errors.nimi">Liitteen nimi on pakollinen.</p>
                         </td>
 	                </tr>
@@ -89,7 +89,7 @@
 	                        </div>
                         </td>
                         <td>
-                            <p class="error" ng-show="model.showError && !liite.isEmpty() && !validator.isValidToimitusOsoite(liite)" tt="tarjonta.hakukohde.liite.errors.toimitusOsoite">Liitteen toimistusosoite on pakollinen mikäli organisaation hakijapalveluiden postiosoitetta ei käytetä tai sitä ei ole määritelty.</p>
+                            <p class="error" ng-show="model.showError && !liite.isEmpty(liiteWithKieliVersiot.commonFields) && !validator.isValidToimitusOsoite(liite)" tt="tarjonta.hakukohde.liite.errors.toimitusOsoite">Liitteen toimistusosoite on pakollinen mikäli organisaation hakijapalveluiden postiosoitetta ei käytetä tai sitä ei ole määritelty.</p>
                         </td>
                     </tr>
 
@@ -102,7 +102,7 @@
 	                        </div>
 	                    </td>
 	                    <td>
-                            <p class="error" ng-show="model.showError && !liite.isEmpty() && !validator.isValidSahkoinenOsoite(liite)"
+                            <p class="error" ng-show="model.showError && !liite.isEmpty(liiteWithKieliVersiot.commonFields) && !validator.isValidSahkoinenOsoite(liite)"
                                tt="tarjonta.hakukohde.liite.errors.sahkoinenOsoite">Liitteen sähköinen toimitusosoite on pakollinen jos liite on toimitettavissa sähköisesti.</p>
 	                    </td>
 	                </tr>

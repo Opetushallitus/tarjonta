@@ -232,9 +232,11 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
             liite[kieli.koodiUri] = liite[kieli.koodiUri] || newLiite(hakukohde, kieli.koodiUri,
                 liitteidenToimitusosoitteet[kieli.koodiUri]);
 
-            liite[kieli.koodiUri].isEmpty = function() {
+            liite[kieli.koodiUri].isEmpty = function(commonFields) {
+                commonFields = commonFields || {};
                 var liite = this;
-                var isEmpty = !liite.liitteenNimi && _.find(liite.liitteenKuvaukset, function(kuvaus) {
+                var isEmpty = !commonFields.liitteenTyyppi && !liite.liitteenNimi &&
+                    _.find(liite.liitteenKuvaukset, function(kuvaus) {
                         return !_.isEmpty(kuvaus);
                     }) === undefined;
                 return isEmpty;

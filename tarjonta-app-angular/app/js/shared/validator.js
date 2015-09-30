@@ -91,7 +91,7 @@ angular.module('Validator', [])
             var invalidLiite = _.find(liitteet, function(liiteWithLangs) {
                 var commonFields = liiteWithLangs.commonFields;
                 return _.find(liiteWithLangs, function(liite, lang) {
-                    if (typeof(liite) !== 'object' || lang.indexOf('kieli_') === -1 || liite.isEmpty()) {
+                    if (typeof(liite) !== 'object' || lang.indexOf('kieli_') === -1 || liite.isEmpty(commonFields)) {
                         return;
                     }
                     if (!notEmpty(liite.liitteenNimi)

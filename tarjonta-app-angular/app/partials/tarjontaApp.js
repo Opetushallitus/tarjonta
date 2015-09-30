@@ -659,7 +659,7 @@ angular.module('app').factory('ajaxInterceptor', function(Config) {
                     if (typeof liite !== 'object' || lang.indexOf('kieli_') === -1) {
                         return;
                     }
-                    if (liite.isEmpty()) {
+                    if (liite.isEmpty(liiteWithLangs.commonFields)) {
                         delete liiteWithLangs[lang];
                     }
                 });
