@@ -109,3 +109,22 @@ Ajoympäristöä varten tarvitaan:
 - Aja `mvn install` jotta frontend koodit paketoituvat (`tarjonta-app-angular/dist`)
 - Run -> Run ... -> *luotu Tomcat ympäristö*
   - Selaimen pitäisi avautua automaattisesti tarjonnan etusivulle
+
+### Ylläpidon toimintoja
+
+#### Uusien koulutusmoduulien luonti (KOMO-import)
+
+Koulutusmoduulit (komo) sisältävät pohjatiedot esim. toisen asteen koulutuksille.
+Kun tulee uusia koulutuksia (esim. uusi lukiolinja tai osaamisala)
+pitää näitä varten luoda uusia koulutusmoduuleja tarjontaan ennen kuin oppilaitokset
+voivat tallentaa kyseisiä koulutuksia.
+
+Komojen luonti tapahtuu osoitteessa */tarjonta-app/#/komo*:
+
+1. Valitse koulutustyypiksi uuden komon koulutustyyppi (esim. lukiolinjan kohdalla "Lukiokoulutus")
+2. Klikkaa "Hae sisäänvietävät moduulit" (tämä operaatio hakee koodistosta valitun koulutustyypin
+"mahdollisia" koulutusmoduuleja ja listaa sitten ne koulutusmoduulit, joita ei vielä löydy tarjonnan tietokannasta)
+3. Siirry välilehdelle "Moduulien sisäänvienti"
+4. Katso läpi lista moduuleista, joita ollaan viemässä tarjontaan
+5. Jos lista näyttää oikealta, klikkaa "Lisää puuttuvat koulutusmoduuli"
+6. Valmista!
