@@ -60,5 +60,10 @@ public class HakukohdeRyhmaV1RDTO implements Serializable {
     public void setToiminto(ActionCode toiminto) {
         this.toiminto = toiminto;
     }
+
+    @Override
+    public String toString() {
+        return "toiminto: " + getToiminto() + ", ryhmaOid: " + getRyhmaOid() + ", hakukohdeOid: " + getHakukohdeOid();
+    }
     
 }

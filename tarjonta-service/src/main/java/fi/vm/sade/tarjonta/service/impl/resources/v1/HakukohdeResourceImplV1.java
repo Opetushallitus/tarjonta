@@ -53,6 +53,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -67,8 +68,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.*;
-import static fi.vm.sade.tarjonta.service.AuditHelper.AUDIT;
-import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
+
+import static fi.vm.sade.tarjonta.service.AuditHelper.*;
 
 public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
@@ -633,6 +634,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 .setResource(TarjontaResource.HAKUKOHDE)
                 .setResourceOid(hakukohde.getOid())
                 .setOperation(TarjontaOperation.CREATE)
+                .setDelta(getHakukohdeDelta(toHakukohdeRDTO, null))
                 .build());
 
         return result;
@@ -777,6 +779,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
             if (publicationDataService.isValidStatusChange(tilamuutos)) {
 
+                HakukohdeV1RDTO originalHakukohde = converterV1.toHakukohdeRDTO(hakukohdeDAO.findHakukohdeByOid(hakukohde.getOid()));
+                updateKoulutusTypesToHakukohdeDto(originalHakukohde);
+
                 hakukohdeDAO.update(hakukohde);
                 LOG.info("Hakukohde.liitteet -> {}", hakukohde.getLiites());
                 LOG.info("Hakukohde.kokeet -> {}", hakukohde.getValintakoes());
@@ -800,6 +805,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                         .setResource(TarjontaResource.HAKUKOHDE)
                         .setResourceOid(hakukohdeOid)
                         .setOperation(TarjontaOperation.UPDATE)
+                        .setDelta(getHakukohdeDelta(toHakukohdeRDTO, originalHakukohde))
                         .build());
 
                 return result;
@@ -1265,6 +1271,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                     .setResource(TarjontaResource.HAKUKOHDE)
                     .setResourceOid(hakukohdeOid)
                     .setOperation(TarjontaOperation.ADD_KOULUTUS_TO_HAKUKOHDE)
+                    .add(
+                            "addedKomotos",
+                            CollectionUtils.collect(liitettavatKomotot, new BeanToPropertyValueTransformer("oid")).toString()
+                    )
                     .build());
 
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
@@ -1406,10 +1416,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             }
 
             AUDIT.log(builder()
-                        .setResource(TarjontaResource.HAKUKOHDE)
-                        .setResourceOid(hakukohdeOid)
-                        .setOperation(TarjontaOperation.REMOVE_KOULUTUS_FROM_HAKUKOHDE)
-                        .build());
+                    .setResource(TarjontaResource.HAKUKOHDE)
+                    .setResourceOid(hakukohdeOid)
+                    .setOperation(TarjontaOperation.REMOVE_KOULUTUS_FROM_HAKUKOHDE)
+                    .add(
+                            "komotosRemoved",
+                            CollectionUtils.collect(komotoToRemove, new BeanToPropertyValueTransformer("oid")).toString())
+                    .build());
 
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
             resultV1RDTO.setResult(getKomotoOids(koulutukses));
@@ -1500,6 +1513,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                     .setResource(TarjontaResource.HAKUKOHDE)
                     .setResourceOid(hakukohde.getOid())
                     .setOperation(TarjontaOperation.MODIFY_RYHMAT)
+                    .add("ryhmaOperation", operation.toString())
                     .build());
         }
 
