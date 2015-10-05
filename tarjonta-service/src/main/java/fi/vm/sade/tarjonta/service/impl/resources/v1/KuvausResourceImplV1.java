@@ -4,10 +4,6 @@ import com.google.common.base.Preconditions;
 import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
 import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
 import fi.vm.sade.tarjonta.dao.KuvausDAO;
-import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.types.EntityPath;
-import com.wordnik.swagger.annotations.ApiParam;
-import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
@@ -21,16 +17,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.ws.rs.PathParam;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import static fi.vm.sade.tarjonta.service.AuditHelper.AUDIT;
-import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
+
+import static fi.vm.sade.tarjonta.service.AuditHelper.*;
 
 /*
 * @author: Tuomas Katva 16/12/13
@@ -349,9 +345,10 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
                 resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
                 AUDIT.log(builder()
-                            .setOperation(TarjontaOperation.CREATE)
-                            .setResource(TarjontaResource.VALINTAPERUSTE_SORA_KUVAUS)
-                            .setResourceOid(kuvaus.getKuvauksenTunniste()).build());
+                        .setOperation(TarjontaOperation.CREATE)
+                        .setResource(TarjontaResource.VALINTAPERUSTE_SORA_KUVAUS)
+                        .setDelta(getKuvausDelta(kuvaus, null))
+                        .setResourceOid(kuvaus.getKuvauksenTunniste()).build());
 
             } else {
                 LOG.debug("EXISTING KUVAUS FOUND, REPLYING WITH EXCEPTION");
@@ -443,6 +440,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
             validateKuvaus(valintaperusteSoraKuvaus);
 
             ValintaperusteSoraKuvaus oldVps = kuvausDAO.read(valintaperusteSoraKuvaus.getId());
+            KuvausV1RDTO originalKuvaus = converter.toKuvausRDTO(oldVps, true);
 
             oldVps.setKausi(valintaperusteSoraKuvaus.getKausi());
             oldVps.setMonikielinenNimi(valintaperusteSoraKuvaus.getMonikielinenNimi());
@@ -459,12 +457,15 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
             LOG.debug("UPDATED KUVAUS : ", kuvausRDTO.getOid());
 
-            resultV1RDTO.setResult(converter.toKuvausRDTO(oldVps, true));
+            KuvausV1RDTO modifiedKuvaus = converter.toKuvausRDTO(oldVps, true);
+
+            resultV1RDTO.setResult(modifiedKuvaus);
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
             AUDIT.log(builder()
                     .setOperation(TarjontaOperation.UPDATE)
                     .setResource(TarjontaResource.VALINTAPERUSTE_SORA_KUVAUS)
+                    .setDelta(getKuvausDelta(modifiedKuvaus, originalKuvaus))
                     .setResourceOid(Long.toString(oldVps.getId())).build());
 
         } catch (Exception exp) {

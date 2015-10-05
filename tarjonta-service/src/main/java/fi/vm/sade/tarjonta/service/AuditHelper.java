@@ -8,6 +8,7 @@ import fi.vm.sade.auditlog.Audit;
 import fi.vm.sade.auditlog.tarjonta.LogMessage;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,6 +48,10 @@ public class AuditHelper {
 
     public static String getHakuDelta(HakuV1RDTO h1, HakuV1RDTO h2) {
         return getDelta(h1, h2);
+    }
+
+    public static String getKuvausDelta(KuvausV1RDTO k1, KuvausV1RDTO k2) {
+        return getDelta(k1, k2);
     }
 
     public static <T> String getDelta(T v1, T v2) {
