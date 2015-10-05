@@ -128,17 +128,18 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
          */
         resetAll();
         expectNayttoKoodis(); /* 3rd round koodisto calls, convert result base komoto to dto */
-
+        expectNayttoKoodis();
         expectValmistavaKoodis(); /* 4rd round koodisto calls, convert result valmentava to dto */
 
         Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn(VALMENTAVA_KOMOTO_OID);
         permissionChecker.checkCreateKoulutus(ORGANISATION_OID);
         permissionChecker.checkUpdateKoulutusByTarjoajaOid(ORGANISATION_OID);
         expect(publicationDataService.isValidStatusChange(isA(fi.vm.sade.tarjonta.publication.Tila.class))).andReturn(true);
-        expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(2);
-        expect(organisaatioServiceMock.findByOid(ORGANISATION_JARJESTAJA_OID)).andReturn(jarjestajaDTO).times(2);
+        expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(3);
+        expect(organisaatioServiceMock.findByOid(ORGANISATION_JARJESTAJA_OID)).andReturn(jarjestajaDTO).times(3);
         //extra koulutusohjelma uri check
         expect(tarjontaKoodistoHelperMock.getKoodi("koulutusohjelma_uri", 1)).andReturn(createKoodiType(KOULUTUSOHJELMA, "x" + KOULUTUSOHJELMA)).times(1);
+        expectHierarchy();
         expectHierarchy();
 
         replayAll();
