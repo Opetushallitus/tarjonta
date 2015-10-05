@@ -127,6 +127,7 @@ public class KoulutusSearchService extends SearchService {
         addFilterForHakutapa(kysely.getHakutapa(), q);
         addFilterForHakutyyppi(kysely, q);
         addFilterForHakukohteet(hakukohdeOids, queryParts, q);
+        addFilterForHaut(kysely.getHakuOids(), queryParts, q);
         addFilterForKoulutustyypit(kysely, q);
         addFilterForKoulutusasteTyypit(kysely, q);
         addFilterForToteutustyypit(kysely, q);
@@ -309,6 +310,13 @@ public class KoulutusSearchService extends SearchService {
         if (oids.size() > 0) {
             addQuery("", queryParts, matchFull(), HAKUKOHDE_OIDS,
                     Joiner.on(" ").join(oids));
+            q.addFilterQuery(Joiner.on(" ").join(queryParts));
+        }
+    }
+
+    private void addFilterForHaut(final List<String> oids, final List<String> queryParts, SolrQuery q) {
+        if (oids.size() > 0) {
+            addQuery("", queryParts, matchFull(), HAKU_OIDS, Joiner.on(" ").join(oids));
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
         }
     }

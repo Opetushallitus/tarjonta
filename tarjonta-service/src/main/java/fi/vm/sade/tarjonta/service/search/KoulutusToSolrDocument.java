@@ -20,6 +20,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -95,6 +96,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         addPohjakoulutusvaatimukset(komotoDoc, koulutusmoduuliToteutus);
         addKoulutuslajit(komotoDoc, koulutusmoduuliToteutus.getKoulutuslajiKoodiUris());
         addHakukohdeOids(komotoDoc, koulutusmoduuliToteutus);
+        addHakuOids(komotoDoc, koulutusmoduuliToteutus);
         addHakukohderyhmat(komotoDoc, koulutusmoduuliToteutus);
         addKoulutusAlkamisPvm(komotoDoc, koulutusmoduuliToteutus);
         addOppilaitostyypit(komotoDoc, organisaatiotiedot);
@@ -437,6 +439,16 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
 
         for (Hakukohde hakukohde : koulutusmoduuliToteutus.getHakukohdes()) {
             add(komotoDoc, HAKUKOHDE_OIDS, hakukohde.getOid());
+        }
+    }
+
+    private void addHakuOids(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus komoto) {
+        Set<String> hakuOids = Sets.newHashSet();
+        for (Hakukohde hakukohde : komoto.getHakukohdes()) {
+            hakuOids.add(hakukohde.getHaku().getOid());
+        }
+        for (String hakuOid : hakuOids) {
+            add(komotoDoc, HAKU_OIDS, hakuOid);
         }
     }
 

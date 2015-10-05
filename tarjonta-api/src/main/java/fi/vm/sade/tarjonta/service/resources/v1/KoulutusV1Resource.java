@@ -278,7 +278,8 @@ public interface KoulutusV1Resource {
             @QueryParam("hakukohdeOid") List<String> hakukohdeOids,
             @QueryParam("koulutuskoodi") List<String> koulutuskoodis,
             @QueryParam("opintoalakoodi") List<String> opintoalakoodis,
-            @QueryParam("koulutusalakoodi") List<String> koulutusalakoodis
+            @QueryParam("koulutusalakoodi") List<String> koulutusalakoodis,
+            @QueryParam("hakuOid") List<String> hakuOids
     );
 
     /**

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
@@ -39,6 +40,7 @@ public class KoulutuksetKysely implements Serializable {
     private List<String> hakukohdeOids = new ArrayList<String>();
     private List<String> koulutustyyppi = new ArrayList<String>();
     private List<String> opetuskielet = new ArrayList<String>();
+    private List<String> hakuOids = new ArrayList<String>();
 
     @Deprecated
     private List<KoulutusasteTyyppi> koulutusasteTyypit = new ArrayList<KoulutusasteTyyppi>(); //use the koulutustyyppi
@@ -307,6 +309,14 @@ public class KoulutuksetKysely implements Serializable {
 
     public void setShowAllKoulutukset(boolean showAllKoulutukset) {
         this.showAllKoulutukset = showAllKoulutukset;
+    }
+
+    public void setHakuOids(List<String> hakuOids) {
+        this.hakuOids = Lists.newArrayList(hakuOids);
+    }
+
+    public List<String> getHakuOids() {
+        return hakuOids;
     }
 
 }
