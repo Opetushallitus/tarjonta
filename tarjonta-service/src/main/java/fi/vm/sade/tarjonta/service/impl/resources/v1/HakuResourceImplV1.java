@@ -69,9 +69,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import static fi.vm.sade.tarjonta.service.AuditHelper.AUDIT;
-import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
-import static fi.vm.sade.tarjonta.service.AuditHelper.getUsernameFromSession;
+import static fi.vm.sade.tarjonta.service.AuditHelper.*;
 
 /**
  * REST API V1 implementation for Haku.
@@ -287,6 +285,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
             Haku hakuToUpdate = null;
 
+            HakuV1RDTO hakuDtoBeforeUpdate = null;
+
             if (isNew) {
                 permissionChecker.checkCreateHakuWithOrgs(hakuDto.getTarjoajaOids());
 
@@ -298,6 +298,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 final String oid = hakuDto.getOid();
 
                 hakuToUpdate = hakuDAO.findByOid(oid);
+
+                hakuDtoBeforeUpdate = converterV1.fromHakuToHakuRDTO(hakuToUpdate, false);
 
                 final TarjontaTila toTila = TarjontaTila.valueOf(hakuDto.getTila());
 
@@ -326,23 +328,31 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
             hakuToUpdate = converterV1.convertHakuV1DRDTOToHaku(hakuDto, hakuToUpdate);
 
+            HakuV1RDTO hakuDtoAfterUpdate;
+
             if (isNew) {
                 LOG.info("updateHaku() - insert");
                 hakuDAO.insert(hakuToUpdate);
 
+                hakuDtoAfterUpdate = converterV1.fromHakuToHakuRDTO(hakuToUpdate, false);
+
                 AUDIT.log(builder()
                         .setOperation(TarjontaOperation.CREATE)
                         .setResource(TarjontaResource.HAKU)
+                        .setDelta(getHakuDelta(hakuDtoAfterUpdate, null))
                         .setResourceOid(hakuToUpdate.getOid()).build());
             } else {
                 LOG.info("updateHaku() - update");
                 hakuDAO.update(hakuToUpdate);
                 indexerDao.setHakukohdeViimindeksointiPvmToNull(hakuToUpdate);
 
+                hakuDtoAfterUpdate = converterV1.fromHakuToHakuRDTO(hakuToUpdate, false);
+
                 AUDIT.log(builder()
-                            .setOperation(TarjontaOperation.UPDATE)
-                            .setResource(TarjontaResource.HAKU)
-                            .setResourceOid(hakuToUpdate.getOid()).build());
+                        .setOperation(TarjontaOperation.UPDATE)
+                        .setResource(TarjontaResource.HAKU)
+                        .setDelta(getHakuDelta(hakuDtoAfterUpdate, hakuDtoBeforeUpdate))
+                        .setResourceOid(hakuToUpdate.getOid()).build());
             }
 
             LOG.info("updateHaku() - make whopee!");
