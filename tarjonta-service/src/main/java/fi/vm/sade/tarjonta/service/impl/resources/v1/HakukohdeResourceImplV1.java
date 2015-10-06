@@ -743,6 +743,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             hakukohde.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
             Hakukohde hakukohdeTemp = hakukohdeDAO.findHakukohdeByOid(hakukohdeRDTO.getOid());
 
+            HakukohdeV1RDTO originalHakukohde = converterV1.toHakukohdeRDTO(hakukohdeTemp);
+            updateKoulutusTypesToHakukohdeDto(originalHakukohde);
+            hakukohdeDAO.detach(hakukohdeTemp);
+
             hakukohde.setId(hakukohdeTemp.getId());
             hakukohde.setYlioppilastutkintoAntaaHakukelpoisuuden(hakukohdeTemp.getYlioppilastutkintoAntaaHakukelpoisuuden());
             hakukohde.setVersion(hakukohdeTemp.getVersion());
@@ -778,9 +782,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, TarjontaTila.valueOf(hakukohdeRDTO.getTila()), hakukohde.getOid());
 
             if (publicationDataService.isValidStatusChange(tilamuutos)) {
-
-                HakukohdeV1RDTO originalHakukohde = converterV1.toHakukohdeRDTO(hakukohdeDAO.findHakukohdeByOid(hakukohde.getOid()));
-                updateKoulutusTypesToHakukohdeDto(originalHakukohde);
 
                 hakukohdeDAO.update(hakukohde);
                 LOG.info("Hakukohde.liitteet -> {}", hakukohde.getLiites());
