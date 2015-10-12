@@ -18,6 +18,7 @@ import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.*;
 
@@ -112,6 +113,9 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     @ApiModelProperty(value = "Mihin asti haku näytetään opintopolussa", required = false)
     private Date opintopolunNayttaminenLoppuu;
+
+    @ApiModelProperty(value = "Maksumuuri käytössä", required = false)
+    private boolean maksumuuriKaytossa = false;
 
     public void addKoodiMeta(KoodiV1RDTO koodi) {
         if (koodi == null) {
@@ -354,4 +358,19 @@ public class HakuV1RDTO extends BaseV1RDTO {
     public void setKohdejoukonTarkenne(String kohdejoukonTarkenne) {
         this.kohdejoukonTarkenne = kohdejoukonTarkenne;
     }
+
+    public boolean isMaksumuuriKaytossa() {
+        return StringUtils.defaultString(getKohdejoukkoUri()).startsWith("haunkohdejoukko_12#")
+                && KoulutusmoduuliTyyppi.TUTKINTO.equals(getKoulutusmoduuliTyyppi())
+                && StringUtils.isEmpty(getKohdejoukonTarkenne())
+                && StringUtils.isNotBlank(getHakulomakeUri())
+                && (
+                    getKoulutuksenAlkamisVuosi() > 2016
+                    || (
+                        getKoulutuksenAlkamisVuosi() == 2016
+                        && StringUtils.defaultString(getKoulutuksenAlkamiskausiUri()).startsWith("kausi_s#")
+                    )
+                );
+    }
+
 }
