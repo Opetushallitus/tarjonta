@@ -466,6 +466,11 @@ app.directive('koodistocomboaiku', function(Koodisto, $log, $q) {
                                     filterHakukohdePerustutkinto(koulutusRelationResult, $scope.koodistouri));
                                 addVersionToKoodis(arr);
                                 $scope.koodis = arr;
+
+                                // Esivalitse uusin versio koodista
+                                if ($scope.koodiuri && arr && arr[0].koodiVersio) {
+                                    $scope.koodiuri = $scope.koodiuri.replace(/#([0-9])+/, '#' + arr[0].koodiVersio);
+                                }
                             });
                         });
                     }
