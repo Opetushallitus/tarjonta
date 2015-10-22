@@ -15,8 +15,10 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.model.RestParam;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
@@ -53,6 +55,8 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKuvausConverters;
     @Autowired
     private KoulutusKuvausV1RDTO<KomotoTeksti> komotoKuvausConverters;
+    @Autowired
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     @Autowired
     private KoulutusCommonConverter commonConverter;
     @Autowired
@@ -196,6 +200,19 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
             if (komoto.getTarjoajanKoulutus() != null) {
                 tjkkDto.setTarjoajanKoulutus(komoto.getTarjoajanKoulutus().getOid());
+            }
+
+            if (tjkkDto.getParents() != null && !tjkkDto.getParents().isEmpty()) {
+                List<String> komotoOids = koulutusmoduuliToteutusDAO.findOidsByKomoOids(tjkkDto.getParents());
+                if (!komotoOids.isEmpty()) {
+                    tjkkDto.setOpintokokonaisuusOid(komotoOids.iterator().next());
+                }
+            }
+            if (tjkkDto.getChildren() != null && !tjkkDto.getChildren().isEmpty()) {
+                List<String> komotoOids = koulutusmoduuliToteutusDAO.findOidsByKomoOids(tjkkDto.getChildren());
+                if (!komotoOids.isEmpty()) {
+                    tjkkDto.setOpintojaksoOids(Sets.newHashSet(komotoOids));
+                }
             }
         }
 

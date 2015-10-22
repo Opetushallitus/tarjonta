@@ -1,13 +1,12 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import com.wordnik.swagger.annotations.ApiModelProperty;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.wordnik.swagger.annotations.ApiModelProperty;
-
-import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
-import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 public abstract class TutkintoonJohtamatonKoulutusV1RDTO extends KoulutusV1RDTO {
 
@@ -31,6 +30,10 @@ public abstract class TutkintoonJohtamatonKoulutusV1RDTO extends KoulutusV1RDTO 
     private String opinnonTyyppiUri;
     @ApiModelProperty(value = "Alkuperäinen koulutus, joka järjestetään")
     private String tarjoajanKoulutus;
+    @ApiModelProperty(value = "Opintokokonaisuus, johon koulutus kuuluu")
+    private String opintokokonaisuusOid;
+    @ApiModelProperty(value = "Opintokokonaisuuteen kuuluvat opintojaksot")
+    private Set<String> opintojaksoOids = new HashSet<String>();
     
     public TutkintoonJohtamatonKoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         super(toteutustyyppi, moduulityyppi);
@@ -130,4 +133,19 @@ public abstract class TutkintoonJohtamatonKoulutusV1RDTO extends KoulutusV1RDTO 
         this.tarjoajanKoulutus = tarjoajanKoulutus;
     }
 
+    public String getOpintokokonaisuusOid() {
+        return opintokokonaisuusOid;
+    }
+
+    public void setOpintokokonaisuusOid(String opintokokonaisuusOid) {
+        this.opintokokonaisuusOid = opintokokonaisuusOid;
+    }
+
+    public Set<String> getOpintojaksoOids() {
+        return opintojaksoOids;
+    }
+
+    public void setOpintojaksoOids(Set<String> opintojaksoOids) {
+        this.opintojaksoOids = opintojaksoOids;
+    }
 }

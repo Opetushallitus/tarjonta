@@ -22,10 +22,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteutus, Long> {
 
@@ -96,6 +93,8 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
      * @return
      */
     List<String> findOidsByKomoOid(String oid, int count, int startIndex);
+
+    List<String> findOidsByKomoOids(Set<String> komoOids);
 
     /**
      * Find an image by KOMOTO OID and language URI.

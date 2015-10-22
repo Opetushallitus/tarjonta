@@ -363,6 +363,15 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     }
 
     @Override
+    public List<String> findOidsByKomoOids(Set<String> komoOids) {
+        QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+
+        return from(komoto).where(
+                komoto.koulutusmoduuli.oid.in(komoOids)
+        ).list(komoto.oid);
+    }
+
+    @Override
     public void update(KoulutusmoduuliToteutus entity) {
         detach(entity); //optimistic locking requires detach + reload so that the entity exists in hibernate session before merging
         Preconditions.checkNotNull(getEntityManager().find(KoulutusmoduuliToteutus.class, entity.getId()));
