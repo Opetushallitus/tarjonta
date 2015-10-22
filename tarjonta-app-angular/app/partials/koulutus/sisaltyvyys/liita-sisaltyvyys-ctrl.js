@@ -152,13 +152,15 @@ app.controller('LiitaSisaltyvyysCtrl', [
     'sisaltyvyysColumnDefs',
     'TreeHandlers',
     'AuthService',
-    '$log', function LiitaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q,
-                  $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, sisaltyvyysColumnDefs, TreeHandlers,
-                  AuthService, $log) {
+    '$log',
+    'SearchParameters', function LiitaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService,
+                  $q, $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, sisaltyvyysColumnDefs, TreeHandlers,
+                  AuthService, $log, SearchParameters) {
         /*
              * Select koulutus data objects.
              */
         $scope.model = {
+            showSeasonAndYearFilter: 'KORKEAKOULUOPINTO' === targetKomo.toteutustyyppi,
             errors: [],
             text: {
                 headLabel: LocalisationService.t('sisaltyvyys.liitoksen-luonti-teksti.' + targetKomo.toteutustyyppi, [
@@ -166,7 +168,8 @@ app.controller('LiitaSisaltyvyysCtrl', [
                     organisaatio.nimi
                 ]),
                 hierarchy: LocalisationService.t('sisaltyvyys.tab.hierarkia'),
-                list: LocalisationService.t('sisaltyvyys.tab.lista')
+                list: LocalisationService.t('sisaltyvyys.tab.lista'),
+                searchTermPlaceholder: LocalisationService.t('hakusana')
             },
             organisaatio: organisaatio,
             treeOids: [],
@@ -193,12 +196,16 @@ app.controller('LiitaSisaltyvyysCtrl', [
                 terms: '',
                 //search words
                 year: targetKomo.vuosi,
-                season: targetKomo.kausi.uri + '#' + targetKomo.kausi.versio,
+                season: targetKomo.kausi.uri,
                 koulutustyyppi: ['koulutustyyppi_3'],
                 type: config.app['tarjonta.koulutuslajiModuulityypit'][targetKomo.koulutusLaji]
             },
             html: 'partials/koulutus/sisaltyvyys/liita-koulutuksia-select.html',
             skipOids: [targetKomo.oid]
+        };
+        $scope.uiModel = {
+            years: SearchParameters.getYears(),
+            seasons: SearchParameters.fetchCodeElementsToObject('kausi')
         };
         $scope.other = {
             tutkintotyypit: [
@@ -271,6 +278,11 @@ app.controller('LiitaSisaltyvyysCtrl', [
         $scope.clearCriteria = function() {
             $scope.model.tutkinto.uri = '';
             $scope.model.tutkinto.hakulause = '';
+
+            if ($scope.model.showSeasonAndYearFilter) {
+                $scope.model.spec.year = null;
+                $scope.model.spec.season = null;
+            }
         };
         /**
              * Search komos.

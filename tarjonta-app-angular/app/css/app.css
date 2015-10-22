@@ -387,6 +387,10 @@ div .modal-body .modal-form input[type=text] {
 	top: 5px;
 }
 
+#select-koulutus table input[type=text] {
+    top:0;
+}
+
 div#select-tutkinto-ohjelma .gridStyle {
 	height:180px;
 }

@@ -8,10 +8,35 @@
         <h4 tt="sisaltyvyys.nayta-tutkintotyyppi"></h4>
         <select required class="wide" name="tutkinnot" ng-model="model.tutkinto.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in model.tutkinto.koodis  | orderByNum:'koodiNimi'"></select>
     </div>
-	
-	<h4 tt="sisaltyvyys.hae-koulutuksia"></h4>
-	<input type="text" data-ng-model="model.spec.terms" />
-	
+
+    <table ng-if="model.showSeasonAndYearFilter">
+        <tr>
+            <td><h4 tt="sisaltyvyys.hae-koulutuksia"></h4></td>
+            <td tt="tarjonta.haku.alkamisKausi"></td>
+            <td tt="tarjonta.haku.alkamisVuosi"></td>
+        </tr>
+        <tr>
+            <td>
+	            <input type="text" ng-enter="searchKomos()" data-ng-model="model.spec.terms" placeholder="{{model.text.searchTermPlaceholder}}" />
+            </td>
+            <td>
+                <select ng-model="model.spec.season" class="input-small" ng-options="season.key as season.label for season in uiModel.seasons | orderBy: 'label'">
+                    <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
+                </select>
+            </td>
+            <td>
+                <select ng-model="model.spec.year" class="input-small" ng-options="year.key as year.label for year in uiModel.years">
+                    <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
+                </select>
+            </td>
+        </tr>
+    </table>
+
+    <div ng-if="!model.showSeasonAndYearFilter" style="display:inline">
+        <h4 tt="sisaltyvyys.hae-koulutuksia"></h4>
+        <input type="text" ng-enter="searchKomos()" data-ng-model="model.spec.terms" placeholder="{{model.text.searchTermPlaceholder}}" />
+    </div>
+
 	<button class="btn btn-warning" ng-click="clearCriteria()" tt="sisaltyvyys.tyhjenna"></button>
 	<button class="btn btn-primary" ng-click="searchKomos()" tt="sisaltyvyys.hae"></button>
 </div>
