@@ -19,7 +19,7 @@ public enum ToteutustyyppiEnum {
     ERIKOISAMMATTITUTKINTO("koulutustyyppi_12"),
     AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA("koulutustyyppi_13"),
     LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA("koulutustyyppi_14"),
-    EB_RP_ISH("koulutustyyppi_20"),
+    EB_RP_ISH("koulutustyyppi_21"),
     ESIOPETUS("koulutustyyppi_15"),
     PERUSOPETUS("koulutustyyppi_16"),
     AIKUISTEN_PERUSOPETUS("koulutustyyppi_17"),

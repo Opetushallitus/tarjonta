@@ -1090,7 +1090,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         }),
 
         EB_RP_ISH: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE, {
-            koulutustyyppiKoodiUri: 'koulutustyyppi_20',
+            koulutustyyppiKoodiUri: 'koulutustyyppi_21',
             STR: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE.STR, {
                 toteutustyyppi: {
                     'default': 'EB_RP_ISH'
