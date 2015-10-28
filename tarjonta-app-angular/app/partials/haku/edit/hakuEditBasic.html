@@ -44,8 +44,11 @@
     <tr class="required" ng-if="!isJatkuvaHaku()">
         <th data-tt='haku.edit.koulutuksenAlkamiskausi'>Koulutuksen alkamiskausi</th>
         <td>
-            <div koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.hakux.result.koulutuksenAlkamiskausiUri" version="true" isrequired="true" name="alkamisKausi"></div>
-            <input type="number" placeholder="vuosi" ng-model="model.hakux.result.koulutuksenAlkamisVuosi" required name="alkamisVuosi">
+            <div ng-disabled="isKoulutuksenAlkamiskausiLocked()" koodistocombo koodistouri="'kausi'" locale="getLocale()"
+                 koodiuri="model.hakux.result.koulutuksenAlkamiskausiUri" version="true" isrequired="true"
+                 name="alkamisKausi"></div>
+            <input ng-disabled="isKoulutuksenAlkamiskausiLocked()" type="number" placeholder="vuosi"
+                   ng-model="model.hakux.result.koulutuksenAlkamisVuosi" required name="alkamisVuosi">
         </td>
         <td>
             <div>

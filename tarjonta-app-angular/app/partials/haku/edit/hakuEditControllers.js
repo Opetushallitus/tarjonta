@@ -20,7 +20,7 @@ var app = angular.module('app.haku.edit.ctrl', []);
 app.controller('HakuEditController', function HakuEditController($q, $route, $scope, $location,
      $log, $modal, LocalisationService, HakuV1, ParameterService, Config, OrganisaatioService,
      AuthService, dialogService, KoodistoURI, PermissionService, HakuV1Service, HAKUTAPA,
-     HAKUTYYPPI, Koodisto) {
+     HAKUTYYPPI, Koodisto, TarjontaService) {
 
     $log = $log.getInstance('HakuEditController');
     $log.debug('initializing (scope, route)', $scope, $route);
@@ -587,6 +587,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
     };
     $scope.init();
     var hakuOid = $route.current.params.id;
+    var hasHakukohdes = false;
     if (!$scope.isNewHaku()) {
         $q.all([
             PermissionService.haku.canEdit(hakuOid),
@@ -602,9 +603,19 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         PermissionService.getPermissions('haku', hakuOid).then(function(permissions) {
             $log.info('got permissions! ', permissions);
         });
+
+        TarjontaService.haeHakukohteet({hakuOid: hakuOid}).then(function(result) {
+            hasHakukohdes = result.tuloksia > 0;
+        });
     }
     else {
         //uusi haku
         $scope.isMutable = true;
     }
+    /**
+     * Koulutuksen alkamiskautta ei saa muuttaa, jos hakuun on jo liitetty hakukohteita
+     */
+    $scope.isKoulutuksenAlkamiskausiLocked = function() {
+        return hasHakukohdes;
+    };
 });
