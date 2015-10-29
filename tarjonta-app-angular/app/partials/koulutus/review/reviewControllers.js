@@ -321,7 +321,8 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
                     'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
                     'AMMATILLINEN_PERUSTUTKINTO',
                     'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA',
-                    'LUKIOKOULUTUS'
+                    'LUKIOKOULUTUS',
+                    'KORKEAKOULUOPINTO'
                 ], $scope.model.koulutus.toteutustyyppi)) {
             $window.location.href = window.CONFIG.env['web.url.oppija.preview'].replace('korkeakoulu', 'koulutus') +
                 $scope.model.koulutus.oid + '?lang=' + $scope.model.koodistoLocale;
