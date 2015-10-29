@@ -616,6 +616,6 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
      * Koulutuksen alkamiskautta ei saa muuttaa, jos hakuun on jo liitetty hakukohteita
      */
     $scope.isKoulutuksenAlkamiskausiLocked = function() {
-        return hasHakukohdes;
+        return hasHakukohdes && !AuthService.isUserOph();
     };
 });
