@@ -183,6 +183,14 @@ app.directive('richTextarea', function(LocalisationService, $log, $sce) {
                         }
                     ]
                 });
+                /* Esim. linkkityökalun kautta tehty linkkimuutos ei päivity modeliin,
+                 * joten tällä varmistetaan, että viimeistään tallennuksen yhteydessä
+                 * wysiwyg-kentän sisältö asetetaan modeliin.
+                 */
+                editor.on('blur', function() {
+                    $scope.model = $scope.editor.getContent();
+                    $scope.$apply();
+                });
             },
             paste_preprocess: function(plugin, args) {
                 console.log('Pasting:', args.content);
