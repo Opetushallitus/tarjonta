@@ -4,6 +4,18 @@
 
     <table class="tarjontaForm">
         <tr>
+            <th tt='haku.edit.aikataulu.PH_VSSAV'>Varasijasäännöt astuvat voimaan</th>
+            <td>
+                <t-date-time type="long" timestamp="true" name="PH_VSSAV" scope-model="model.parameter.PH_VSSAV.date"></t-date-time>
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_VSSAV" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
             <th tt='haku.edit.aikataulu.PH_KKM'>Koekutsujen muodostaminen</th>
             <td>
                 <t-date-time type="long" timestamp="true" name="PH_KKM_S" scope-model="model.parameter.PH_KKM.dateStart"></t-date-time>
