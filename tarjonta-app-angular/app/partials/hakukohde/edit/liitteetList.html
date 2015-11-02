@@ -1,6 +1,6 @@
 <div class="localizedTabs" data-ng-controller="LiitteetListController">
 
-    <div>
+    <div ng-if="model.hakukohde.toteutusTyyppi == 'KORKEAKOULUTUS'">
         <h3 tt="hakukohde.pohjakoulutusliitteet">Pohjakoulutusliitteet</h3>
         <div>
             <multi-select
