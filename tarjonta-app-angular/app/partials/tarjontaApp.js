@@ -246,6 +246,7 @@ angular.module('app').config([
                     soraKuvaukset: {},
                     painotettavatOppiaineet: [],
                     yhteystiedot: [],
+                    pohjakoulutusliitteet: [],
                     isNew: true
                 });
                 var koulutus = SharedStateService.getFromState('firstSelectedKoulutus');
