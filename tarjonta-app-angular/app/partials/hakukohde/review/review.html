@@ -333,6 +333,26 @@
             <tr ng-if="!model.collapse.liitteet">
                 <th></th>
                 <td colspan="2">
+                    <div ng-if="isKK">
+                        <h4 tt="hakukohde.pohjakoulutusliitteet">Pohjakoulutusliitteet</h4>
+                        <div>
+                            <multi-select
+                                required
+                                is-disabled="true"
+                                selection="model.hakukohde.pohjakoulutusliitteet"
+                                koodisto="pohjakoulutuskklomake" />
+                        </div>
+                        <div class="well liite">
+                            <label>
+                                <input type="checkbox" disabled ng-model="model.hakukohde.josYoEiMuitaLiitepyyntoja" />
+                                <span tt="hakukohde.josYoEiMuitaLiitepyyntoja">
+                                    Jos ylioppilastutkinto tai kansainvälinen ylioppilastutkinto, ei muiden tutkintojen liitepyyntöjä.
+                                </span>
+                            </label>
+                        </div>
+                        <hr />
+                    </div>
+
                     <div ng-repeat="liiteWithLangs in model.hakukohde.hakukohteenLiitteet">
                         <hr ng-if="$index > 0" />
                         <h4><span tt="hakukohde.liite.liiteOtsikko">Liite</span> {{$index +1}}</h4>

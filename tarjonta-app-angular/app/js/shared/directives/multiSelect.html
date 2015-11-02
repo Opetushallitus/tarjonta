@@ -46,17 +46,20 @@
                 ng-enter="onPreselection(preselection)"
         		ng-disabled="_isDisabled()">
 	    </select>
-	
+
            <span ng-repeat="k in selection">
                <a href ng-click="toggle(k)">[x]</a> {{names[k]}}
-           </span>    
+           </span>
 	</div>
-	
+
 	<!-- checklist -->
 	<table class="checklist" ng-switch-default>
 		<tr bindonce ng-repeat="r in rows">
 			<td bindonce ng-repeat="e in r">
-				<input type="checkbox" ng-model="e.selected" ng-change="toggle(e.key)" ng-disabled="_isDisabled()"/> <span bo-text="e.value"/>
+                <label>
+                    <input type="checkbox" ng-model="e.selected" ng-change="toggle(e.key)" ng-disabled="_isDisabled()"/>
+                    <span bo-text="e.value"/>
+                </label>
 			</td>
 		</tr>
 	</table>

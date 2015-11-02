@@ -1,4 +1,26 @@
 <div class="localizedTabs" data-ng-controller="LiitteetListController">
+
+    <div>
+        <h3 tt="hakukohde.pohjakoulutusliitteet">Pohjakoulutusliitteet</h3>
+        <div>
+            <multi-select
+                required
+                is-disabled="isHkDeEnabled()"
+                selection="model.hakukohde.pohjakoulutusliitteet"
+                koodisto="pohjakoulutuskklomake" />
+        </div>
+        <div class="well liite">
+            <label>
+                <input type="checkbox" ng-model="model.hakukohde.josYoEiMuitaLiitepyyntoja" />
+                <span tt="hakukohde.josYoEiMuitaLiitepyyntoja">
+                    Jos ylioppilastutkinto tai kansainvälinen ylioppilastutkinto, ei muiden tutkintojen liitepyyntöjä.
+                </span>
+            </label>
+        </div>
+    </div>
+
+    <hr />
+
     <tabset ng-repeat="liiteWithKieliVersiot in model.hakukohde.hakukohteenLiitteet">
 
         <h3><span tt="hakukohde.liite.liiteOtsikko">Liite</span> {{$index + 1}}</h3>
