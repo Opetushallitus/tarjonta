@@ -48,6 +48,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -590,6 +591,9 @@ public class ConverterV1 {
 
         hakukohdeRDTO.setOpintoOikeusUris(Lists.newArrayList(hakukohde.getOpintoOikeudet()));
 
+        hakukohdeRDTO.setPohjakoulutusliitteet(fromKoodistoUriToString(hakukohde.getPohjakoulutusliitteet()));
+        hakukohdeRDTO.setJosYoEiMuitaLiitepyyntoja(BooleanUtils.toBoolean(hakukohde.isJosYoEiMuitaLiitepyyntoja()));
+
         convertTarjoatiedotToDTO(hakukohde, hakukohdeRDTO);
         convertHakukohteenNimetToDTO(hakukohde, hakukohdeRDTO, null);
         convertOpetuskieletToDTO(hakukohde, hakukohdeRDTO);
@@ -1073,8 +1077,32 @@ public class ConverterV1 {
         hakukohde.setKelaLinjaTarkenne(StringUtils.stripToNull(hakukohdeRDTO.getKelaLinjaTarkenne()));
         hakukohde.setEnsikertalaistenAloituspaikat(hakukohdeRDTO.getEnsikertalaistenAloituspaikat());
         hakukohde.setOpintoOikeudet(Sets.newHashSet(hakukohdeRDTO.getOpintoOikeusUris()));
+        hakukohde.setPohjakoulutusliitteet(fromStringToKoodistoUri(hakukohdeRDTO.getPohjakoulutusliitteet()));
+        hakukohde.setJosYoEiMuitaLiitepyyntoja(BooleanUtils.toBoolean(hakukohdeRDTO.isJosYoEiMuitaLiitepyyntoja()));
 
         return hakukohde;
+    }
+
+    private Set<KoodistoUri> fromStringToKoodistoUri(List<String> koodiUris) {
+        Set<KoodistoUri> uris = new HashSet<KoodistoUri>();
+        if (koodiUris == null) {
+            return uris;
+        }
+        for (String koodiUri : koodiUris) {
+            uris.add(new KoodistoUri(koodiUri));
+        }
+        return uris;
+    }
+
+    private List<String> fromKoodistoUriToString(Set<KoodistoUri> koodiUris) {
+        List<String> uris = new ArrayList<String>();
+        if (koodiUris == null) {
+            return uris;
+        }
+        for (KoodistoUri koodiUri : koodiUris) {
+            uris.add(koodiUri.getKoodiUri());
+        }
+        return uris;
     }
 
     public HakukohdeValintaperusteetV1RDTO valintaperusteetFromHakukohde(Hakukohde hakukohde) {

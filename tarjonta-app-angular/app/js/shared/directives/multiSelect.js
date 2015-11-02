@@ -3,7 +3,7 @@ var app = angular.module('MultiSelect', [
     'ngGrid',
     'localisation'
 ]);
-app.directive('multiSelect', function($log, $modal, LocalisationService) {
+app.directive('multiSelect', function($log, $modal, LocalisationService, Koodisto) {
     'use strict';
     // Referenssi lomakkeen scopessa olevaan controlleriin,
     // jotta voidaan asettaa lomakkeen validointi $setValidity-metodilla
@@ -299,6 +299,9 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
                 init(result);
             });
         }
+        else if ($scope.koodisto) {
+            Koodisto.getAllKoodisWithKoodiUri($scope.koodisto).then(init);
+        }
         else {
             init($scope.model);
         }
@@ -335,6 +338,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             // map jossa arvo->nimi TAI array jossa {key: .., value: ..} -olioita,
             // joissa key- ja value viittaavat samannimisten parametrien arvoihin
             promise: '=',
+            koodisto: '@',
             // async TODO yhdistä modeliin
             selection: '=',
             // lista jonne valinnat päivitetään

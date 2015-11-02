@@ -204,6 +204,13 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Column(name = "haun_kopioinnin_tunniste")
     private String haunKopioinninTunniste;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = TABLE_NAME + "_pohjakoulutusliite", joinColumns = @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<KoodistoUri> pohjakoulutusliitteet = new HashSet<KoodistoUri>();
+
+    @Column(name = "jos_yo_ei_muita_liitepyyntoja")
+    private boolean josYoEiMuitaLiitepyyntoja = false;
+
     @PreRemove
     public void detachOnDelete() {
         for (KoulutusmoduuliToteutus komoto : koulutusmoduuliToteutuses) {
@@ -829,4 +836,19 @@ public class Hakukohde extends TarjontaBaseEntity {
         this.ensikertalaistenAloituspaikat = ensikertalaistenAloituspaikat;
     }
 
+    public Set<KoodistoUri> getPohjakoulutusliitteet() {
+        return pohjakoulutusliitteet;
+    }
+
+    public void setPohjakoulutusliitteet(Set<KoodistoUri> pohjakoulutusliitteet) {
+        this.pohjakoulutusliitteet = pohjakoulutusliitteet;
+    }
+
+    public boolean isJosYoEiMuitaLiitepyyntoja() {
+        return josYoEiMuitaLiitepyyntoja;
+    }
+
+    public void setJosYoEiMuitaLiitepyyntoja(boolean josYoEiMuitaLiitepyyntoja) {
+        this.josYoEiMuitaLiitepyyntoja = josYoEiMuitaLiitepyyntoja;
+    }
 }

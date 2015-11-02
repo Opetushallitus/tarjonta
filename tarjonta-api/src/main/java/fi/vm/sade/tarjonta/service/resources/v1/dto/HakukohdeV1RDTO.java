@@ -78,6 +78,10 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private String kelaLinjaKoodi;
     private String kelaLinjaTarkenne;
     private Integer ensikertalaistenAloituspaikat;
+    @ApiModelProperty(value = "Liitepyyntöjen pohjakoulutusvaatimukset")
+    private List<String> pohjakoulutusliitteet = new ArrayList<String>();
+    @ApiModelProperty(value = "Jos ylioppilastutkinto tai kansainvälinen ylioppilastutkinto, ei muiden tutkintojen liitepyyntöjä.")
+    private boolean josYoEiMuitaLiitepyyntoja = false;
 
     public String getHakukohteenNimi() {
         return hakukohteenNimi;
@@ -581,4 +585,19 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.opintoOikeusUris = opintoOikeusUris;
     }
 
+    public List<String> getPohjakoulutusliitteet() {
+        return pohjakoulutusliitteet;
+    }
+
+    public void setPohjakoulutusliitteet(List<String> pohjakoulutusliitteet) {
+        this.pohjakoulutusliitteet = pohjakoulutusliitteet;
+    }
+
+    public boolean isJosYoEiMuitaLiitepyyntoja() {
+        return josYoEiMuitaLiitepyyntoja;
+    }
+
+    public void setJosYoEiMuitaLiitepyyntoja(boolean josYoEiMuitaLiitepyyntoja) {
+        this.josYoEiMuitaLiitepyyntoja = josYoEiMuitaLiitepyyntoja;
+    }
 }
