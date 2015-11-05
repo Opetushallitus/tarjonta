@@ -35,6 +35,7 @@ public class HakukohdePerustieto implements Serializable {
     private String toteutustyyppi;
     private String hakuaikaString;
     private String hakuaikaRyhma;
+    private Integer ensikertalaistenAloituspaikat;
 
     public String getToteutustyyppi() {
         return toteutustyyppi;
@@ -276,4 +277,11 @@ public class HakukohdePerustieto implements Serializable {
         this.hakuaikaString = hakuaikaString;
     }
 
+    public Integer getEnsikertalaistenAloituspaikat() {
+        return ensikertalaistenAloituspaikat;
+    }
+
+    public void setEnsikertalaistenAloituspaikat(Integer ensikertalaistenAloituspaikat) {
+        this.ensikertalaistenAloituspaikat = ensikertalaistenAloituspaikat;
+    }
 }

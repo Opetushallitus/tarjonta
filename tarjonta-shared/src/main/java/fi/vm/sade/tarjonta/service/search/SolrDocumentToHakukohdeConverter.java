@@ -62,6 +62,9 @@ public class SolrDocumentToHakukohdeConverter {
 
         copyHakukohdeNimi(hakukohde, hakukohdeDoc);
         copyAloituspaikatKuvaus(hakukohde, hakukohdeDoc);
+        if (hakukohdeDoc.getFieldValue(ENSIKERTALAISTEN_ALOITUSPAIKAT) != null) {
+            hakukohde.setEnsikertalaistenAloituspaikat(Integer.parseInt((String) hakukohdeDoc.getFieldValue(ENSIKERTALAISTEN_ALOITUSPAIKAT)));
+        }
         copyRyhmaliitokset(hakukohde, hakukohdeDoc);
 
         hakukohde.setPohjakoulutusvaatimus(IndexDataUtils.createKoodistoKoodi(POHJAKOULUTUSVAATIMUS_URI, POHJAKOULUTUSVAATIMUS_FI, POHJAKOULUTUSVAATIMUS_SV, POHJAKOULUTUSVAATIMUS_EN, hakukohdeDoc));

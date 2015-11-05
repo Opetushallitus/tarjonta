@@ -1784,6 +1784,7 @@ public class ConverterV1 {
         dto.setToteutustyyppiEnum(ToteutustyyppiEnum.fromString(hakukohdePerustieto.getToteutustyyppi()));
         dto.setHakuaikaString(hakukohdePerustieto.getHakuaikaString());
         dto.setHakuaikaRyhma(hakukohdePerustieto.getHakuaikaRyhma());
+        dto.setEnsikertalaistenAloituspaikat(hakukohdePerustieto.getEnsikertalaistenAloituspaikat());
         return dto;
     }
 
