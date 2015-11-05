@@ -208,8 +208,9 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
                         H1: {t: 's', v: 'Tila'},
                         I1: {t: 's', v: 'Hakutapa'},
                         J1: {t: 's', v: 'Aloituspaikat'},
-                        K1: {t: 's', v: 'Koulutustyyppi'},
-                        L1: {t: 's', v: 'Opetuskielet'}
+                        K1: {t: 's', v: 'Ensikertalaisten aloituspaikat'},
+                        L1: {t: 's', v: 'Koulutustyyppi'},
+                        M1: {t: 's', v: 'Opetuskielet'}
                     };
                     var sheetName = 'Hakukohteet';
 
@@ -226,8 +227,9 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
                             H: hakukohde.tilaNimi,
                             I: hakukohde.hakutapa,
                             J: $scope.getAloituspaikat(hakukohde),
-                            K: getKoulutustyyppi(hakukohde.toteutustyyppiEnum),
-                            L: (hakukohde.opetuskielet || []).join(', ')
+                            K: hakukohde.ensikertalaistenAloituspaikat,
+                            L: getKoulutustyyppi(hakukohde.toteutustyyppiEnum),
+                            M: (hakukohde.opetuskielet || []).join(', ')
                         };
                         _.each(row, function(val, key) {
                             ws[key + rowNumber] = {
@@ -235,7 +237,7 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
                                 v: val
                             };
                         });
-                        ws['!ref'] = 'A1:L' + rowNumber;
+                        ws['!ref'] = 'A1:M' + rowNumber;
                     });
                     wb.SheetNames.push(sheetName);
                     wb.Sheets[sheetName] = ws;
