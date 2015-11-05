@@ -307,6 +307,12 @@
                 </td>
             </tr>
 
+            <tr ng-if="model.hakux.result.kohdejoukkoUri.indexOf('haunkohdejoukko_12#') !== -1">
+                <th tt="haku.review.parametrit.PH_AHP.label">Automaattinen hakukelpoisuus päättyy</th>
+                <td colspan="2">
+                    <t-show-date value="parametrit.PH_AHP.date" timestamp></t-show-date>
+                </td>
+            </tr>
         </tbody>
 
 
