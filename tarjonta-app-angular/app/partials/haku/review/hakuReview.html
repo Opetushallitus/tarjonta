@@ -260,6 +260,13 @@
                 </td>
             </tr>
 
+            <tr ng-if="model.hakux.result.kohdejoukkoUri.indexOf('haunkohdejoukko_12#') === -1">
+                <th tt="haku.review.parametrit.PH_VEH.label">Valintaesityksen hyväksyminen</th>
+                <td colspan="2">
+                    <t-show-date value="parametrit.PH_VEH.date" timestamp></t-show-date>
+                </td>
+            </tr>
+
             <tr>
                 <th tt="haku.review.parametrit.PH_SSAVTM.label">Sijoittelun suorittaminen aina valintatietojen muuttuessa</th>
                 <td colspan="2">
