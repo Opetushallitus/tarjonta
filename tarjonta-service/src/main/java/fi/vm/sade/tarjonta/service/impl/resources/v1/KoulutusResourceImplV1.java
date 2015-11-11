@@ -1602,6 +1602,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     komoto.getOwners().add(owner);
                 }
 
+                komoto.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
                 koulutusmoduuliToteutusDAO.update(komoto);
 
                 AUDIT.log(builder()
