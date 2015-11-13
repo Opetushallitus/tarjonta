@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,7 +134,7 @@ public class KoulutusValidator {
             if(invalidNimi) {
                 result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_NIMI_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_NIMI_MISSING.lower()));
             }
-        } else {
+        } else if (!ToteutustyyppiEnum.EB_RP_ISH.equals(dto.getToteutustyyppi())) {
             validateKoodi(result, dto.getOpintojenLaajuusarvo(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_INVALID);
         }
 
@@ -228,7 +229,9 @@ public class KoulutusValidator {
 
         validateKoodi(result, dto.getKoulutusala(), KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_INVALID);
         validateKoodi(result, dto.getKoulutuskoodi(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_INVALID);
-        validateKoodi(result, dto.getOpintojenLaajuusyksikko(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_INVALID);
+        if (!ToteutustyyppiEnum.EB_RP_ISH.equals(dto.getToteutustyyppi())) {
+            validateKoodi(result, dto.getOpintojenLaajuusyksikko(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_INVALID);
+        }
         validateKoodi(result, dto.getKoulutuslaji(), KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_INVALID);
         validateKoodi(result, dto.getPohjakoulutusvaatimus(), KoulutusValidationMessages.KOULUTUS_POHJAKOULUTUSVAATIMUS_MISSING, KoulutusValidationMessages.KOULUTUS_POHJAKOULUTUSVAATIMUS_INVALID);
 

@@ -29,6 +29,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.Valmista
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.OpintopolkuAlkamiskausi;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -549,8 +550,15 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             dto.setOpintoala(commonConverter.convertToKoodiDTO(komo.getOpintoalaUri(), komoto.getOpintoalaUri(), FieldNames.OPINTOALA, NO, restParam));
         }
 
-        dto.setOpintojenLaajuusarvo(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusarvoUri(), komoto.getOpintojenLaajuusarvoUri(), FieldNames.OPINTOJEN_LAAJUUSARVO, YES, restParam));
-        dto.setOpintojenLaajuusyksikko(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusyksikkoUri(), komoto.getOpintojenLaajuusyksikkoUri(), FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, YES, restParam));
+        if (ToteutustyyppiEnum.EB_RP_ISH.equals(komoto.getToteutustyyppi())) {
+            dto.setOpintojenLaajuusarvo(commonConverter.convertToKoodiDTO(komoto.getOpintojenLaajuusarvoUri(), null, FieldNames.OPINTOJEN_LAAJUUSARVO, YES, restParam));
+            dto.setOpintojenLaajuusyksikko(commonConverter.convertToKoodiDTO(komoto.getOpintojenLaajuusyksikkoUri(), null, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, YES, restParam));
+        }
+        else {
+            dto.setOpintojenLaajuusarvo(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusarvoUri(), komoto.getOpintojenLaajuusarvoUri(), FieldNames.OPINTOJEN_LAAJUUSARVO, YES, restParam));
+            dto.setOpintojenLaajuusyksikko(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusyksikkoUri(), komoto.getOpintojenLaajuusyksikkoUri(), FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, YES, restParam));
+        }
+
         dto.setTunniste(komoto.getUlkoinenTunniste() != null ? komoto.getUlkoinenTunniste() : komo.getUlkoinenTunniste());
 
         KuvausV1RDTO<KomoTeksti> komoKuvaus = new KuvausV1RDTO<KomoTeksti>();
