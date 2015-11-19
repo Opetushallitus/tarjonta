@@ -313,17 +313,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
                 .replace('korkeakoulu', 'aikuistenperusopetus') +
                 $scope.model.koulutus.oid + '?lang=' + $scope.model.koodistoLocale;
         }
-        else if (_.contains([
-                    'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
-                    'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER',
-                    'PERUSOPETUKSEN_LISAOPETUS',
-                    'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
-                    'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
-                    'AMMATILLINEN_PERUSTUTKINTO',
-                    'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA',
-                    'LUKIOKOULUTUS',
-                    'KORKEAKOULUOPINTO'
-                ], $scope.model.koulutus.toteutustyyppi)) {
+        else {
             $window.location.href = window.CONFIG.env['web.url.oppija.preview'].replace('korkeakoulu', 'koulutus') +
                 $scope.model.koulutus.oid + '?lang=' + $scope.model.koodistoLocale;
         }
