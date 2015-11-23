@@ -363,7 +363,6 @@ public class HakuV1RDTO extends BaseV1RDTO {
         return StringUtils.defaultString(getKohdejoukkoUri()).startsWith("haunkohdejoukko_12#")
                 && KoulutusmoduuliTyyppi.TUTKINTO.equals(getKoulutusmoduuliTyyppi())
                 && StringUtils.isEmpty(getKohdejoukonTarkenne())
-                && StringUtils.isNotBlank(getHakulomakeUri())
                 && (
                     getKoulutuksenAlkamisVuosi() > 2016
                     || (
