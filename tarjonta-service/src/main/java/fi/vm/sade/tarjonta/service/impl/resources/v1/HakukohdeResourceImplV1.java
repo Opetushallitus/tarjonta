@@ -621,8 +621,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 return arg0.getId();
             }
         })));
-        publicationDataService.sendEvent(hakukohde.getTila(), hakukohde.getOid(),
-                PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
 
         ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
         result.setStatus(ResultV1RDTO.ResultStatus.OK);
@@ -793,7 +791,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                         return arg0.getId();
                     }
                 })));
-                publicationDataService.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
 
                 ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
                 result.setStatus(ResultV1RDTO.ResultStatus.OK);
