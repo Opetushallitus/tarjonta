@@ -126,7 +126,7 @@ app.controller('ExtendKoulutusController',
 
             // Looppaa kaikki organisaatiot ja hyväksy vain ne, joiden
             // oid tai parentOidPath sisältää oman organisaation
-            _.each(ownOrganizations, function(orgOid) {
+            _.each(orgOids, function(orgOid) {
                 var deferred = $q.defer();
                 promises.push(deferred.promise);
 
@@ -137,10 +137,10 @@ app.controller('ExtendKoulutusController',
                 }
                 else {
                     OrganisaatioService.byOid(orgOid).then(function(org) {
-                        if (_.intersection(orgOids, org.oidAndParentOids).length > 0) {
+                        if (_.intersection(ownOrganizations, org.oidAndParentOids).length > 0) {
                             filteredOrganizations.push(orgOid);
-                            deferred.resolve();
                         }
+                        deferred.resolve();
                     });
                 }
             });
