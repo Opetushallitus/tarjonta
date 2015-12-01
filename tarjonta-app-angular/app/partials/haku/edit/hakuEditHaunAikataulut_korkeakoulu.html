@@ -27,6 +27,18 @@
         </tr>
 
         <tr>
+            <th tt='haku.edit.aikataulu.PH_VSTP'>Varasijatäyttö päättyy</th>
+            <td>
+                <t-date-time type="long" timestamp="true" name="PH_VSTP" scope-model="model.parameter.PH_VSTP.date"></t-date-time>
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_VSTP" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
             <th tt='haku.edit.aikataulu.PH_SS'>Sijoittelun suorittaminen</th>
             <td>
                 <t-date-time type="long" name="PH_SS_S" scope-model="model.parameter.PH_SS.dateStart"></t-date-time>
