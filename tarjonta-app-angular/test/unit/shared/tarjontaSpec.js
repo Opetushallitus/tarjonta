@@ -123,7 +123,7 @@ describe('Tarjonta', function() {
         Date = __origDate;
     }
 
-    describe('TarjontaService', function($injector) {
+    describe('TarjontaService', function() {
 
         it('should declare resourcelink service with known api', inject(function($httpBackend, TarjontaService) {
             var resourceLink = TarjontaService.resourceLink;

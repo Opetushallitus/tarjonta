@@ -175,7 +175,7 @@ describe('TarjontaPermissions', function() {
 
     };
 
-    describe('Permission service shold answer ', function($injector) {
+    describe('Permission service shold answer ', function() {
 
     	/** executes test, called by test() */
     	var doTest = function(promise, $httpBackend) {
