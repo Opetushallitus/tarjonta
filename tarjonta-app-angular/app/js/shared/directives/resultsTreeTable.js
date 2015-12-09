@@ -81,11 +81,19 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
                 return null;
             }
         }
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
         function getContent(row, col) {
             //console.log("DELEGATE getContent", $scope.getContent);
             var ret = $scope.getContent() && $scope.getContent()(row, col);
             try {
-                return ret === null || ret === undefined ? '' : ret;
+                return ret === null || ret === undefined ? '' : escapeHtml(ret);
             }
             catch (err) {
                 console.log(err);
