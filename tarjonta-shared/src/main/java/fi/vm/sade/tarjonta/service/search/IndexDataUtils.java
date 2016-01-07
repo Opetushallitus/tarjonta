@@ -48,8 +48,8 @@ public class IndexDataUtils {
     private static final String KEVAT = "kevat";
     private static final String SYKSY = "syksy";
 
-    private static final String KEVAT_URI = "kausi_k#1";
-    private static final String SYKSY_URI = "kausi_s#1";
+    public static final String KEVAT_URI = "kausi_k#1";
+    public static final String SYKSY_URI = "kausi_s#1";
 
     /**
      * Extract components from the versioned koodi uri.

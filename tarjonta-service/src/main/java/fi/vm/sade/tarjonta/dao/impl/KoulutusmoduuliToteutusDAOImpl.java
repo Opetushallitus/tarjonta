@@ -196,7 +196,10 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                                 komoto.alkamisVuosi.gt(year)
                                 .or(
                                         komoto.alkamisVuosi.eq(year)
-                                        .and(komoto.alkamiskausiUri.eq(kausi))
+                                        .and(
+                                                komoto.alkamiskausiUri.eq(kausi)
+                                                .or(komoto.alkamiskausiUri.eq(IndexDataUtils.SYKSY_URI))
+                                        )
                                 )
                         )
                         .and(komoto.tila.notIn(TarjontaTila.POISTETTU, TarjontaTila.PERUTTU))
