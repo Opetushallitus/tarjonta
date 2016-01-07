@@ -98,6 +98,17 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
             controller: 'HakuCopyController'
         });
     };
+    $scope.generateLomake = function() {
+        $modal.open({
+            templateUrl: 'partials/haku/generateLomake.html',
+            controller: 'GenerateLomakeController',
+            resolve: {
+                hakuOid: function() {
+                    return $scope.model.hakux.result.oid;
+                }
+            }
+        });
+    };
     function flattenHakukohteet(tulokset) {
         return _.reduce(tulokset, function(memo, orgGroup) {
             _.each(orgGroup.tulokset, function(hakukohde) {

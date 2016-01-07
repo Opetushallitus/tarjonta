@@ -118,6 +118,7 @@ module.exports = [
     'partials/valintaperustekuvaus/remove/poista-ctrl.js',
     'partials/koulutus/copy/copy-move-koulutus.js',
     'partials/koulutus/copy/extend-koulutus.js',
+    'partials/haku/generateLomake.js',
     'partials/haku/hakuControllers.js',
     'partials/haku/list/hakuListControllers.js',
     'partials/haku/list/hakuSearchParameters.js',

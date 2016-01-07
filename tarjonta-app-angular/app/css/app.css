@@ -969,3 +969,12 @@ table.tarjontaForm.liiteList th:after {
 table.checklist span, .liite.well label span {
     vertical-align: middle;
 }
+
+#generatelLomakeModal div.loading {
+    padding: 1em;
+}
+
+#generatelLomakeModal img.loading {
+    float: left;
+    margin: -.5em 1em 0 0;
+}
