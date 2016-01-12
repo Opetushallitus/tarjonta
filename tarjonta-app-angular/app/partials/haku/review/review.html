@@ -10,7 +10,8 @@
             <controls-button icon="arrow-left" tt-key="haku.review.takaisin" action="goBack($event)">Takaisin</controls-button>
             <controls-button disabled="!isRemovable" tt-key="haku.review.poista" action="doDelete($event)">Poista</controls-button>
             <controls-button disabled="!isCopyable" tt-key="haku.review.kopioi" action="doCopy()">Kopioi uudelle kaudelle</controls-button>
-            <controls-button disabled="!isMutable" tt-key="haku.review.generoiLomake" action="generateLomake()">Generoi haun lomake</controls-button>
+            <controls-button ng-if="model.hakux.result.jarjestelmanHakulomake" disabled="!isMutable"
+                             tt-key="haku.review.generoiLomake" action="generateLomake()">Generoi haun lomake</controls-button>
             <controls-notify type="message" tt-expr="'haku.review.murupolku'" tt-params="[model.nimi]"></controls-notify>
 
         </controls-model>
