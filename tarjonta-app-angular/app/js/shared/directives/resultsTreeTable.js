@@ -82,7 +82,7 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             }
         }
         function escapeHtml(unsafe) {
-            return unsafe
+            return ('' + unsafe)
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
