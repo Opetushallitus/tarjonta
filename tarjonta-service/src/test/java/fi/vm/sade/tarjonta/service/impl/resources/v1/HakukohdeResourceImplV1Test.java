@@ -66,7 +66,9 @@ public class HakukohdeResourceImplV1Test extends TestUtilityBase {
 
     @After
     public void after() {
-        Whitebox.setInternalState(permissionChecker, "permissionService", originalPermissionService);
+        if(originalPermissionService != null) {
+            Whitebox.setInternalState(permissionChecker, "permissionService", originalPermissionService);
+        }
     }
 
     @Test
