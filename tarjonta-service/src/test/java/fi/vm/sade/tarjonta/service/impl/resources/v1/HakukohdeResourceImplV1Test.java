@@ -17,7 +17,9 @@ import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -47,9 +49,11 @@ import static org.junit.Assert.assertEquals;
 public class HakukohdeResourceImplV1Test extends TestUtilityBase {
 
     private TarjontaPermissionServiceImpl permissionService = Mockito.mock(TarjontaPermissionServiceImpl.class);
+    private TarjontaPermissionServiceImpl originalPermissionService;
 
     @Before
     public void setup() throws Exception {
+        originalPermissionService = Whitebox.getInternalState(permissionChecker, "permissionService");
         Whitebox.setInternalState(permissionChecker, "permissionService", permissionService);
         Mockito.stub(oidService.get(TarjontaOidType.HAKUKOHDE)).toReturn("1.2.3.4.5");
         stubKoodi("kieli_fi", "suomi");
@@ -58,6 +62,11 @@ public class HakukohdeResourceImplV1Test extends TestUtilityBase {
         Mockito.stub(permissionService.userCanUpdateHakukohde(Mockito.any(OrganisaatioContext.class))).toReturn(true);
         Mockito.stub(permissionService.userCanCreateHakukohde(Mockito.any(OrganisaatioContext.class))).toReturn(true);
         Mockito.stub(permissionService.userCanDeleteHakukohde(Mockito.any(OrganisaatioContext.class))).toReturn(true);
+    }
+
+    @After
+    public void after() {
+        Whitebox.setInternalState(permissionChecker, "permissionService", originalPermissionService);
     }
 
     @Test
