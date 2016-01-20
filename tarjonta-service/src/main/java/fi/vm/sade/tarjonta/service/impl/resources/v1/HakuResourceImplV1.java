@@ -399,7 +399,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             }
 
             final String userOid = contextDataService.getCurrentUserOid();
-            hakuDAO.safeDelete(hakuToRemove.getOid(), "userOid");
+            hakuDAO.safeDelete(hakuToRemove.getOid(), userOid);
             result.setResult(true);
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
 
