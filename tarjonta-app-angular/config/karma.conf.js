@@ -19,6 +19,7 @@ module.exports = function(config) {
             'partials/tarjontaApp.js',
             'partials/hakukohde/hakukohdeRoutingController.js',
             'partials/hakukohde/edit/hakukohdeControllers.js',
+            'partials/haku/hakuControllers.js',
             'partials/**/*.js',
             'partials/ie9.js',
             '../test/unit/**/*.js',
