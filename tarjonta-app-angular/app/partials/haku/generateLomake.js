@@ -1,4 +1,4 @@
-var app = angular.module('app.koulutus.extend.ctrl', []);
+var app = angular.module('app.haku.ctrl');
 
 app.controller('GenerateLomakeController', function($modalInstance, hakuOid, $http, $scope, $injector) {
     'use strict';
