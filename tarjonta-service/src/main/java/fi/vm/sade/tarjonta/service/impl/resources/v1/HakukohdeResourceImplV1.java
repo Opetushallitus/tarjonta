@@ -752,12 +752,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
             hakukohde.setKoulutusmoduuliToteutusTarjoajatiedot(hakukohdeTemp.getKoulutusmoduuliToteutusTarjoajatiedot());
 
-            // Just in case remove kuvaukses if tunniste is defined
-            if (hakukohde.getValintaPerusteKuvausTunniste() != null) {
+            // If hakukohde uses a common description -> don't save an individual description for this hakukohde
+            if (hakukohde.getValintaPerusteKuvausTunniste() != null || hakukohde.getValintaperustekuvausKoodiUri() != null) {
                 hakukohde.setValintaperusteKuvaus(null);
             }
-
-            if (hakukohde.getSoraKuvausTunniste() != null) {
+            if (hakukohde.getSoraKuvausTunniste() != null || hakukohde.getSoraKuvausKoodiUri() != null) {
                 hakukohde.setSoraKuvaus(null);
             }
 
