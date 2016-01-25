@@ -97,6 +97,7 @@ Ajoympäristöä varten tarvitaan:
       - `tarjonta-app:war exploded` Application context: `/tarjonta-app`
       - `tarjonta-service:war exploded` Application context:
         `/tarjonta-service`
+      - lisää External source `<REPO ROOT>/tarjonta/tarjonta-app-angular/dist` Application context: `/dist`
 - Muokkaa `<REPO ROOT>/tarjonta/src/main/resources/oph-configuration` hakemistoa
   - Linkitä tarvittavat konfiguraatiotiedostopohjat
 
@@ -109,6 +110,7 @@ Ajoympäristöä varten tarvitaan:
 - Aja `mvn install` jotta frontend koodit paketoituvat (`tarjonta-app-angular/dist`)
 - Run -> Run ... -> *luotu Tomcat ympäristö*
   - Selaimen pitäisi avautua automaattisesti tarjonnan etusivulle
+- Front-kehityksessä voit käyttää selaimessa /dist polkua. Staattinen sovellus buildataan komennolla `(cd tarjonta-app-angular && gulp build:dev)`
 
 ### Ylläpidon toimintoja
 

@@ -7,6 +7,7 @@ module.exports = [
     'lib/angular/angular-route.js',
     'lib/angular/angular-sanitize.js',
     'lib/angular/angular-animate.js',
+    'lib/angular/angular-cookies.js',
     'lib/ngGrid/ng-grid-2.0.7.debug.js',
     'lib/moment-with-langs.min.js',
     'lib/bootstrap-datetimepicker.min.js',

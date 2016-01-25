@@ -47,6 +47,7 @@ angular.module('app', [
     'ngResource',
     'ngSanitize',
     'ngAnimate',
+    'ngCookies',
     'ui.bootstrap',
     'pasvaz.bindonce',
     'loading',
@@ -607,13 +608,16 @@ angular.module('app').config(function($logProvider) {
     $logProvider.debugEnabled(true);
 });
 
-angular.module('app').factory('ajaxInterceptor', function(Config) {
+angular.module('app').factory('ajaxInterceptor', function(Config, $cookies) {
     'use strict';
     var callerid = Config.env['callerid.tarjonta.tarjonta-app.frontend'];
     return {
         request: function(config) {
             if (callerid) {
                 config.headers['Caller-Id'] = callerid;
+            }
+            if($cookies['CSRF']) {
+                config.headers['X-CSRF'] = $cookies['CSRF'];
             }
             // Fix IE caching AJAX-requests to tarjonta-service.
             if (config.method === 'GET' && config.url.indexOf('/tarjonta-service/') !== -1) {

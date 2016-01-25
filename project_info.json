@@ -1,0 +1,4 @@
+{
+  "name": "tarjonta",
+  "2h": ["oph-configuration + erilliset postgres-käynnistysasetukset, js-riipuvuudet git-repossa (siirto packages.json)"]
+}
