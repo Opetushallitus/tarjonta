@@ -341,8 +341,7 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
     $scope.jatkaDisabled = function() {
         var jatkaEnabled = $scope.organisaatioValittu() && $scope.koulutustyyppiValidi() // pohjakoulutus pitää olla valittuna osalle koulutuksista
             && !($scope.showPohjakoulutusvaatimus && !$scope.model.pohjakoulutusvaatimus);
-        if ($scope.model.tutkintoonJohtamattomatEnabled && $scope.model.koulutustyyppi
-            && $scope.model.koulutustyyppi.koodiUri === 'koulutustyyppi_3') {
+        if ($scope.model.koulutustyyppi && $scope.model.koulutustyyppi.koodiUri === 'koulutustyyppi_3') {
             jatkaEnabled &= ($scope.model.koulutusmoduuliTyyppi !== undefined);
         }
         return !jatkaEnabled;
@@ -400,9 +399,4 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
             $scope.lkorganisaatiot = lkorganisaatiotInit;
         }
     };
-
-    // tällä hetkellä tutkintoon johtamaton on käytössä tuotannossa ainostaan
-    // rekisterinpitäjän tunnuksilla
-    var isTuotanto = Config.env.tarjontaRestUrlPrefix.indexOf('https://virkailija.opintopolku.fi') !== -1;
-    $scope.model.tutkintoonJohtamattomatEnabled = AuthService.isUserOph() || !isTuotanto;
 });
