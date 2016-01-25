@@ -248,7 +248,8 @@ angular.module('app').config([
                     painotettavatOppiaineet: [],
                     yhteystiedot: [],
                     pohjakoulutusliitteet: [],
-                    isNew: true
+                    isNew: true,
+                    overridesHaunHakulomakeUrl: false
                 });
                 var koulutus = SharedStateService.getFromState('firstSelectedKoulutus');
                 SharedStateService.removeState('firstSelectedKoulutus');

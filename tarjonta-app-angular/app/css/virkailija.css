@@ -314,3 +314,12 @@ hr {
 .tarjontaForm label {
     font-size:1em;
 }
+
+.hakulomakeUrl .indent {
+    margin-left:21px;
+}
+
+.hakulomakeUrl p.error {
+    display: inline;
+    margin-left: 1em;
+}
