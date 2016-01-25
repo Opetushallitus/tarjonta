@@ -12,7 +12,7 @@
            name="hakulomakeUrl"
            ng-disabled="!model.hakukohde.overridesHaunHakulomakeUrl"
            ng-model="model.hakukohde.hakulomakeUrl"
-           ng-required="true"
+           ng-required="model.hakukohde.overridesHaunHakulomakeUrl"
            placeholder="{{t('hakukohde.edit.syotaWwwOsoiteTahan')}}" />
     <p class="error" ng-if="model.showError && model.hakukohde.overridesHaunHakulomakeUrl && editHakukohdeForm.hakulomakeUrl.$invalid"
        tt="form.pakollinenKentta">Pakollinen kenttä</p>
