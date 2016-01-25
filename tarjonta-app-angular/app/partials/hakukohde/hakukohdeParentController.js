@@ -604,6 +604,7 @@ app.controller('HakukohdeParentController', [
             if ($scope.model.hakukohde.hakuOid !== undefined) {
                 $scope.model.hakuaikas.splice(0, $scope.model.hakuaikas.length);
                 var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
+                $scope.selectedHaku = haku;
                 if (haku.hakuaikas.length > 1) {
                     angular.forEach(haku.hakuaikas, function(hakuaika) {
                         var formattedStartDate = $scope.createFormattedDateString(hakuaika.alkuPvm);

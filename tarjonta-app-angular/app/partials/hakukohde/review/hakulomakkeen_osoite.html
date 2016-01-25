@@ -1,0 +1,10 @@
+<th tt="hakukohde.review.hakulomakkeenWwwOsoite">Hakulomakkeen www-osoite</th>
+<td colspan="2">
+    <span ng-if="model.hakukohde.overridesHaunHakulomakeUrl">
+        <a href="{{model.hakukohde.hakulomakeUrl}}" target="_blank">{{model.hakukohde.hakulomakeUrl}}</a>
+    </span>
+    <span ng-if="!model.hakukohde.overridesHaunHakulomakeUrl">
+        <span tt="hakukohde.review.kaytaHaunAsetusta">Käytä haun asetusta</span>
+        <a href="{{model.hakukohde.hakulomakeUrl}}" target="_blank">({{model.hakukohde.hakulomakeUrl}})</a>
+    </span>
+</td>

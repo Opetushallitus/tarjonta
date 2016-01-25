@@ -19,7 +19,6 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -37,7 +36,7 @@ import java.util.Date;
 import static fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.ErrorCode.VALIDATION;
 import static fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus.ERROR;
 import static fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus.OK;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 
 @TestExecutionListeners(listeners = {
@@ -83,6 +82,34 @@ public class HakukohdeResourceImplV1Test extends TestUtilityBase {
         ErrorV1RDTO error = result.getErrors().get(0);
         assertEquals(VALIDATION, error.getErrorCode());
         assertEquals("HAKUKOHDE_DUPLIKAATTI", error.getErrorMessageKey());
+    }
+
+    @Test
+    public void testThatHakukohdeInheritsHaunLomakeUrl() {
+        Haku haku = mkRandomHaku();
+        haku.setHakulomakeUrl("http://haunUrl.com");
+        HakukohdeV1RDTO hakukohde = mkHakukohde(canAddHakukohde(haku), mkRandomKomoto());
+
+        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.createHakukohde(hakukohde);
+        assertEquals(OK, result.getStatus());
+        HakukohdeV1RDTO hakukohdeRes = result.getResult();
+        assertEquals("http://haunUrl.com", hakukohdeRes.getHakulomakeUrl());
+        assertFalse(hakukohdeRes.isOverridesHaunHakulomakeUrl());
+    }
+
+    @Test
+    public void testThatHakukohdeOverridesUkoinenLomakeUrl() {
+        Haku haku = mkRandomHaku();
+        haku.setHakulomakeUrl("http://haunUrl.com");
+        HakukohdeV1RDTO hakukohde = mkHakukohde(canAddHakukohde(haku), mkRandomKomoto());
+        hakukohde.setHakulomakeUrl("http://hakukohdekohtainen.com");
+        hakukohde.setOverridesHaunHakulomakeUrl(true);
+
+        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.createHakukohde(hakukohde);
+        assertEquals(OK, result.getStatus());
+        HakukohdeV1RDTO hakukohdeRes = result.getResult();
+        assertEquals("http://hakukohdekohtainen.com", hakukohdeRes.getHakulomakeUrl());
+        assertTrue(hakukohdeRes.isOverridesHaunHakulomakeUrl());
     }
 
     @Test
