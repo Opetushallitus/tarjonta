@@ -82,6 +82,10 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private List<String> pohjakoulutusliitteet = new ArrayList<String>();
     @ApiModelProperty(value = "Jos ylioppilastutkinto tai kansainvälinen ylioppilastutkinto, ei muiden tutkintojen liitepyyntöjä.")
     private boolean josYoEiMuitaLiitepyyntoja = false;
+    @ApiModelProperty(value = "Hakulomakkeen www-osoite")
+    private String hakulomakeUrl;
+    @ApiModelProperty(value = "Onko haulle asetettu hakulomakkeen url ylikirjoitettu hakukohdekohtaisella urlilla")
+    private boolean overridesHaunHakulomakeUrl = false;
 
     public String getHakukohteenNimi() {
         return hakukohteenNimi;
@@ -599,5 +603,21 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setJosYoEiMuitaLiitepyyntoja(boolean josYoEiMuitaLiitepyyntoja) {
         this.josYoEiMuitaLiitepyyntoja = josYoEiMuitaLiitepyyntoja;
+    }
+
+    public String getHakulomakeUrl() {
+        return hakulomakeUrl;
+    }
+
+    public void setHakulomakeUrl(String hakulomakeUrl) {
+        this.hakulomakeUrl = hakulomakeUrl;
+    }
+
+    public boolean isOverridesHaunHakulomakeUrl() {
+        return overridesHaunHakulomakeUrl;
+    }
+
+    public void setOverridesHaunHakulomakeUrl(boolean overridesHaunHakulomakeUrl) {
+        this.overridesHaunHakulomakeUrl = overridesHaunHakulomakeUrl;
     }
 }

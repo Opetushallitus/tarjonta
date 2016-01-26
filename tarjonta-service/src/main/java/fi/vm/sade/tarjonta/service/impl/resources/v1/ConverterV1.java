@@ -593,6 +593,12 @@ public class ConverterV1 {
 
         hakukohdeRDTO.setPohjakoulutusliitteet(fromKoodistoUriToString(hakukohde.getPohjakoulutusliitteet()));
         hakukohdeRDTO.setJosYoEiMuitaLiitepyyntoja(BooleanUtils.toBoolean(hakukohde.isJosYoEiMuitaLiitepyyntoja()));
+        hakukohdeRDTO.setHakulomakeUrl(
+                hakukohde.getHakulomakeUrl() != null
+                        ? hakukohde.getHakulomakeUrl()
+                        : hakukohde.getHaku().getHakulomakeUrl()
+        );
+        hakukohdeRDTO.setOverridesHaunHakulomakeUrl(hakukohde.getHakulomakeUrl() != null);
 
         convertTarjoatiedotToDTO(hakukohde, hakukohdeRDTO);
         convertHakukohteenNimetToDTO(hakukohde, hakukohdeRDTO, null);
@@ -1079,6 +1085,11 @@ public class ConverterV1 {
         hakukohde.setOpintoOikeudet(Sets.newHashSet(hakukohdeRDTO.getOpintoOikeusUris()));
         hakukohde.setPohjakoulutusliitteet(fromStringToKoodistoUri(hakukohdeRDTO.getPohjakoulutusliitteet()));
         hakukohde.setJosYoEiMuitaLiitepyyntoja(BooleanUtils.toBoolean(hakukohdeRDTO.isJosYoEiMuitaLiitepyyntoja()));
+        hakukohde.setHakulomakeUrl(
+                hakukohdeRDTO.isOverridesHaunHakulomakeUrl()
+                    ? hakukohdeRDTO.getHakulomakeUrl()
+                    : null
+        );
 
         return hakukohde;
     }

@@ -211,6 +211,7 @@
                         <a href="{{ model.hakukohde.sahkoinenToimitusOsoite }}" target="_blank">{{ model.hakukohde.sahkoinenToimitusOsoite }}</a>
                     </td>
                 </tr>
+                <tr ng-if="model.valittuHaku.hakulomakeUri" ng-include="'partials/hakukohde/review/hakulomakkeen_osoite.html'"></tr>
                 <tr>
                     <th tt="hakukohde.review.perustiedot.lisatiedot"/>
                     <td colspan="2">

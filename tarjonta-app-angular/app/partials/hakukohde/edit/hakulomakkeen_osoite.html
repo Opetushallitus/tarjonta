@@ -1,0 +1,19 @@
+<th tt="hakukohde.edit.hakulomakkeenWWWOsoite">Hakulomakkeen www-osoite</th>
+<td colspan="2">
+    <label>
+        <input type="radio" ng-model="model.hakukohde.overridesHaunHakulomakeUrl" ng-value="false">
+        <span tt="hakukohde.edit.kaytaHaunAsetusta">Käytä haun asetusta</span> <i>({{selectedHaku.hakulomakeUri}})</i>
+    </label><br>
+    <label>
+        <input type="radio" ng-model="model.hakukohde.overridesHaunHakulomakeUrl" ng-value="true">
+        <span tt="hakukohde.edit.muuWwwOsoite">Muu www-osoite</span>
+    </label><br>
+    <input type="url" class="indent"
+           name="hakulomakeUrl"
+           ng-disabled="!model.hakukohde.overridesHaunHakulomakeUrl"
+           ng-model="model.hakukohde.hakulomakeUrl"
+           ng-required="model.hakukohde.overridesHaunHakulomakeUrl"
+           placeholder="{{t('hakukohde.edit.syotaWwwOsoiteTahan')}}" />
+    <p class="error" ng-if="model.showError && model.hakukohde.overridesHaunHakulomakeUrl && editHakukohdeForm.hakulomakeUrl.$invalid"
+       tt="form.pakollinenKentta">Pakollinen kenttä</p>
+</td>

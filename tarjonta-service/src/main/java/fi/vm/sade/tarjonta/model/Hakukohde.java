@@ -24,8 +24,10 @@ import org.codehaus.jackson.annotate.JsonManagedReference;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.util.*;
 
+import static fi.vm.sade.generic.common.validation.ValidationConstants.WWW_PATTERN;
 import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 
 /**
@@ -153,6 +155,10 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     @Column(name = "ulkoinentunniste")
     private String ulkoinenTunniste;
+
+    @Pattern(regexp = WWW_PATTERN)
+    @Column(name = "hakulomake_url")
+    private String hakulomakeUrl;
 
     @Column(name = "viimIndeksointiPvm")
     @Temporal(TemporalType.TIMESTAMP)
@@ -850,5 +856,13 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void setJosYoEiMuitaLiitepyyntoja(boolean josYoEiMuitaLiitepyyntoja) {
         this.josYoEiMuitaLiitepyyntoja = josYoEiMuitaLiitepyyntoja;
+    }
+
+    public String getHakulomakeUrl() {
+        return hakulomakeUrl;
+    }
+
+    public void setHakulomakeUrl(String hakulomakeUrl) {
+        this.hakulomakeUrl = hakulomakeUrl;
     }
 }
