@@ -56,7 +56,7 @@
             <td colspan="2" data-ng-bind-html="model.hakukohde.peruutusEhdotKuvaukset[lang.koodi_uri]"></td>
         </tr>
 
-        <tr ng-if="model.valittuHaku.hakulomakeUri" ng-include="'partials/hakukohde/review/hakulomakkeen_osoite.html'"></tr>
+        <tr ng-if="showHakulomakeUrl(model.valittuHaku)" ng-include="'partials/hakukohde/review/hakulomakkeen_osoite.html'"></tr>
 
         <tr>
             <th tt="hakukohde.review.perustiedot.lisatietoja.hakemisestaTaiIlmoittautumisesta">Lisätietoja hakemisesta tai ilmoittautumisesta</th>

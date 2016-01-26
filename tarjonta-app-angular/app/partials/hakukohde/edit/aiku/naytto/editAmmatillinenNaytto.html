@@ -88,7 +88,7 @@
                         ng-if="CONFIGURATION.YHTEYSTIEDOT.showYhteystiedot[model.hakukohde.toteutusTyyppi]">
                     </tr>
 
-                    <tr class="hakulomakeUrl" ng-if="selectedHaku.hakulomakeUri" ng-include="'partials/hakukohde/edit/hakulomakkeen_osoite.html'"></tr>
+                    <tr class="hakulomakeUrl" ng-if="showHakulomakeUrl(selectedHaku)" ng-include="'partials/hakukohde/edit/hakulomakkeen_osoite.html'"></tr>
                 </table>
 
                 <h4 tt="kk.hakukohde.lisatietoja.hakemisesta">Lisätietoja hakemisesta</h4>
