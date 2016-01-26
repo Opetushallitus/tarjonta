@@ -600,6 +600,9 @@ app.controller('HakukohdeParentController', [
             var userKieliUri = LocalisationService.getKieliUri();
             return key[userKieliUri] || key.kieli_fi || key.kieli_sv || key.kieli_en || '[Ei nime\xE4]';
         };
+        $scope.showHakulomakeUrl = function(haku) {
+            return haku && haku.hakulomakeUri && !haku.maksumuuriKaytossa;
+        };
         $scope.model.hakuChanged = function() {
             if ($scope.model.hakukohde.hakuOid !== undefined) {
                 $scope.model.hakuaikas.splice(0, $scope.model.hakuaikas.length);
