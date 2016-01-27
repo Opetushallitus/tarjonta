@@ -1,5 +1,5 @@
 {
   "name": "tarjonta",
   "velka": "oph-configuration + erilliset postgres-käynnistysasetukset, js-riipuvuudet git-repossa (siirto packages.json)",
-  "csrf": "tarjonta-angular-app ok, backend tekee vain GET rest-kutsuja"
+  "csrf": "OK: tarjonta-angular-app ok, backend tekee vain GET rest-kutsuja"
 }
