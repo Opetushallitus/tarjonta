@@ -4,6 +4,6 @@
   "csrf": "OK: tarjonta-angular-app ok, backend tekee vain GET rest-kutsuja",
   "projects": [
     {"name": "tarjonta-web", "uses": "tarjonta-rest organisaatio-rest koodisto-rest authentication-service lokalisointi-rest ohjausparametrit" },
-    {"name": "tarjonta-rest", "uses": "organisaatio-soap koodisto-soap tarjonta-solr tarjonta-postgres ohjausparametrit-rest koodisto-rest"}
+    {"name": "tarjonta-rest", "uses": "organisaatio-soap koodisto-soap tarjonta-solr tarjonta-postgres ohjausparametrit koodisto-rest"}
   ]
 }
