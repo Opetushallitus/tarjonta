@@ -1,7 +1,12 @@
 {
   "name": "tarjonta",
-  "velka": "oph-configuration + erilliset postgres-käynnistysasetukset, js-riipuvuudet git-repossa (siirto packages.json)",
+
+  "Makefile": "no",
+
+  "velka": "oph-configuration + erilliset postgres-käynnistysasetukset, js-riipuvuudet git-repossa (packages.json käyttöön)",
+
   "csrf": "OK: tarjonta-angular-app ok, backend tekee vain GET rest-kutsuja",
+
   "projects": [
     {"name": "tarjonta-web", "uses": "tarjonta-rest organisaatio-rest koodisto-rest authentication-service lokalisointi-rest ohjausparametrit" },
     {"name": "tarjonta-rest", "uses": "organisaatio-soap koodisto-soap tarjonta-solr tarjonta-postgres ohjausparametrit koodisto-rest"}
