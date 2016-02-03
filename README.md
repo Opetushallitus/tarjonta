@@ -22,7 +22,7 @@ Ajoympäristöä varten tarvitaan:
 - Luo tyhjä kanta
   - `psql -Upostgres -h192.168.59.103`
   - `CREATE DATABASE tarjonta;`
-- Kopioi pohjatadata omalle palvelimelle [Confluencen ohjeiden mukaan](https://confluence.oph.ware.fi/confluence/display/TD/Tarjontapalvelu#Tarjontapalvelu-Tietokanta)
+- Kopioi pohjatadata omalle palvelimelle [Confluencen ohjeiden mukaan](https://confluence.oph.ware.fi/confluence/display/TEK/Tarjontapalvelu)
 
 
 ## Solr-palvelin
