@@ -302,6 +302,10 @@
                             <directory>../tarjonta-app-angular/dist</directory>
                             <targetPath>/</targetPath>
                         </resource>
+                        <resource>
+                            <directory>../src/main/resources</directory>
+                            <targetPath>WEB-INF/classes</targetPath>
+                        </resource>
                     </webResources>
                 </configuration>
             </plugin>
