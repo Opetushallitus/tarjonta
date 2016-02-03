@@ -18,6 +18,7 @@ import org.mockito.Matchers;
 import java.util.Date;
 
 import static org.junit.Assert.*;
+import static org.junit.internal.matchers.StringContains.containsString;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -82,6 +83,28 @@ public class HakuResourceImplV1Test extends TestMockBase {
         assertNotNull(result);
         assertNotNull(result.getStatus());
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
+    }
+
+    @Test
+    public void thatHakuSingleStudyPlaceIsResolved() {
+        HakuV1RDTO hakuDTO = new HakuV1RDTO();
+
+        hakuDTO.setKohdejoukkoUri("haunkohdejoukko_10#1");
+        assertEquals(false, hakuDTO.getYhdenPaikanSaanto().voimassa);
+        assertEquals("Ei korkeakouluhaku", hakuDTO.getYhdenPaikanSaanto().syy);
+
+        hakuDTO.setKohdejoukkoUri("haunkohdejoukko_12#1");
+        hakuDTO.setKohdejoukonTarkenne("");
+        assertEquals(true, hakuDTO.getYhdenPaikanSaanto().voimassa);
+        assertEquals("Korkeakouluhaku ilman kohdejoukon tarkennetta", hakuDTO.getYhdenPaikanSaanto().syy);
+
+        hakuDTO.setKohdejoukonTarkenne("haunkohdejoukontarkenne_3#1");
+        assertEquals(true, hakuDTO.getYhdenPaikanSaanto().voimassa);
+        assertThat(hakuDTO.getYhdenPaikanSaanto().syy, containsString("Kohdejoukon tarkenne"));
+
+        hakuDTO.setKohdejoukonTarkenne("haunkohdejoukontarkenne_4#1");
+        assertEquals(false, hakuDTO.getYhdenPaikanSaanto().voimassa);
+        assertThat(hakuDTO.getYhdenPaikanSaanto().syy, containsString("Kohdejoukon tarkenne"));
     }
 
     private HakuaikaV1RDTO createHakuaika(Date start, Date end) {
