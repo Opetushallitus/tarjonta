@@ -106,6 +106,8 @@ Ajoympäristöä varten tarvitaan:
     ln -s ../develop/override.properties oph-configuration/override.properties
     ln -s ../develop/security-context-backend.xml oph-configuration/security-context-backend.xml
     ```
+  - Hanki sopiva `common.properties`, esim 
+  `scp luokka:/data00/oph/tarjonta/oph-configuration/common.properties src/main/resources/oph-configuration/`
 
 - Aja `mvn install` jotta frontend koodit paketoituvat (`tarjonta-app-angular/dist`)
 - Run -> Run ... -> *luotu Tomcat ympäristö*
