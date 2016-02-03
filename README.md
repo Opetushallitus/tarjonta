@@ -90,6 +90,8 @@ Ajoympäristöä varten tarvitaan:
       -Xmx2048m
       -XX:PermSize=512m
       ```
+    - Jos haluat nähdä logeja, voit myös lisätä VM-optionilla haluamasilaisen log4j-konfiguraation, esim
+    `-Dlog4j.configuration=file:///work/oph/opintopolku/tarjonta/tarjonta-service/src/main/profile/standalone/log4j.properties`
 
   - Deployment tab
     - + -> Artifact -> `tarjonta-app:war exploded` ja `tarjonta-service:war exploded`
