@@ -360,7 +360,7 @@ public class HakuV1RDTO extends BaseV1RDTO {
     }
 
     public boolean isMaksumuuriKaytossa() {
-        return StringUtils.defaultString(getKohdejoukkoUri()).startsWith("haunkohdejoukko_12#")
+        return isKorkeakouluHaku()
                 && KoulutusmoduuliTyyppi.TUTKINTO.equals(getKoulutusmoduuliTyyppi())
                 && StringUtils.isEmpty(getKohdejoukonTarkenne())
                 && (
@@ -372,4 +372,7 @@ public class HakuV1RDTO extends BaseV1RDTO {
                 );
     }
 
+    private boolean isKorkeakouluHaku() {
+        return StringUtils.defaultString(getKohdejoukkoUri()).startsWith("haunkohdejoukko_12#");
+    }
 }
