@@ -386,9 +386,9 @@ public class HakuV1RDTO extends BaseV1RDTO {
     @ApiModel(value = "Yhden paikan säännön voimassaolotieto haulle")
     public static class YhdenPaikanSaanto {
         @ApiModelProperty(value = "Yhden paikan sääntö voimassa", required = true)
-        public final boolean voimassa;
+        private boolean voimassa;
         @ApiModelProperty(value = "Yhden paikan säännön perustelu", required = true)
-        public final String syy;
+        private String syy;
 
         private static final String JATKOTUTKINTOHAKU_URI = "haunkohdejoukontarkenne_3#";
         private static final List<String> TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO = Collections.singletonList(JATKOTUTKINTOHAKU_URI);
@@ -410,8 +410,27 @@ public class HakuV1RDTO extends BaseV1RDTO {
                 haunKohdeJoukonTarkenne, TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO));
         }
 
+        public YhdenPaikanSaanto() {
+        }
+
         private YhdenPaikanSaanto(boolean voimassa, String syy) {
             this.voimassa = voimassa;
+            this.syy = syy;
+        }
+
+        public boolean isVoimassa() {
+            return voimassa;
+        }
+
+        public void setVoimassa(boolean voimassa) {
+            this.voimassa = voimassa;
+        }
+
+        public String getSyy() {
+            return syy;
+        }
+
+        public void setSyy(String syy) {
             this.syy = syy;
         }
     }

@@ -90,21 +90,21 @@ public class HakuResourceImplV1Test extends TestMockBase {
         HakuV1RDTO hakuDTO = new HakuV1RDTO();
 
         hakuDTO.setKohdejoukkoUri("haunkohdejoukko_10#1");
-        assertEquals(false, hakuDTO.getYhdenPaikanSaanto().voimassa);
-        assertEquals("Ei korkeakouluhaku", hakuDTO.getYhdenPaikanSaanto().syy);
+        assertEquals(false, hakuDTO.getYhdenPaikanSaanto().isVoimassa());
+        assertEquals("Ei korkeakouluhaku", hakuDTO.getYhdenPaikanSaanto().getSyy());
 
         hakuDTO.setKohdejoukkoUri("haunkohdejoukko_12#1");
         hakuDTO.setKohdejoukonTarkenne("");
-        assertEquals(true, hakuDTO.getYhdenPaikanSaanto().voimassa);
-        assertEquals("Korkeakouluhaku ilman kohdejoukon tarkennetta", hakuDTO.getYhdenPaikanSaanto().syy);
+        assertEquals(true, hakuDTO.getYhdenPaikanSaanto().isVoimassa());
+        assertEquals("Korkeakouluhaku ilman kohdejoukon tarkennetta", hakuDTO.getYhdenPaikanSaanto().getSyy());
 
         hakuDTO.setKohdejoukonTarkenne("haunkohdejoukontarkenne_3#1");
-        assertEquals(true, hakuDTO.getYhdenPaikanSaanto().voimassa);
-        assertThat(hakuDTO.getYhdenPaikanSaanto().syy, containsString("Kohdejoukon tarkenne"));
+        assertEquals(true, hakuDTO.getYhdenPaikanSaanto().isVoimassa());
+        assertThat(hakuDTO.getYhdenPaikanSaanto().getSyy(), containsString("Kohdejoukon tarkenne"));
 
         hakuDTO.setKohdejoukonTarkenne("haunkohdejoukontarkenne_4#1");
-        assertEquals(false, hakuDTO.getYhdenPaikanSaanto().voimassa);
-        assertThat(hakuDTO.getYhdenPaikanSaanto().syy, containsString("Kohdejoukon tarkenne"));
+        assertEquals(false, hakuDTO.getYhdenPaikanSaanto().isVoimassa());
+        assertThat(hakuDTO.getYhdenPaikanSaanto().getSyy(), containsString("Kohdejoukon tarkenne"));
     }
 
     private HakuaikaV1RDTO createHakuaika(Date start, Date end) {
