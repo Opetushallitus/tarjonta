@@ -117,6 +117,9 @@ public class HakuV1RDTO extends BaseV1RDTO {
     @ApiModelProperty(value = "Maksumuuri käytössä", required = false)
     private boolean maksumuuriKaytossa = false;
 
+    @ApiModelProperty(value = "Onko yhden paikan sääntö voimassa haulle ja miksi", required = true)
+    private YhdenPaikanSaanto yhdenPaikanSaanto;
+
     public void addKoodiMeta(KoodiV1RDTO koodi) {
         if (koodi == null) {
             return;
@@ -360,7 +363,7 @@ public class HakuV1RDTO extends BaseV1RDTO {
     }
 
     public boolean isMaksumuuriKaytossa() {
-        return StringUtils.defaultString(getKohdejoukkoUri()).startsWith("haunkohdejoukko_12#")
+        return isKorkeakouluHaku()
                 && KoulutusmoduuliTyyppi.TUTKINTO.equals(getKoulutusmoduuliTyyppi())
                 && StringUtils.isEmpty(getKohdejoukonTarkenne())
                 && (
@@ -372,4 +375,44 @@ public class HakuV1RDTO extends BaseV1RDTO {
                 );
     }
 
+    private boolean isKorkeakouluHaku() {
+        return StringUtils.defaultString(getKohdejoukkoUri()).startsWith("haunkohdejoukko_12#");
+    }
+
+    public YhdenPaikanSaanto  getYhdenPaikanSaanto() {
+        return YhdenPaikanSaanto.from(this);
+    }
+
+    @ApiModel(value = "Yhden paikan säännön voimassaolotieto haulle")
+    public static class YhdenPaikanSaanto {
+        @ApiModelProperty(value = "Yhden paikan sääntö voimassa", required = true)
+        public final boolean voimassa;
+        @ApiModelProperty(value = "Yhden paikan säännön perustelu", required = true)
+        public final String syy;
+
+        private static final String JATKOTUTKINTOHAKU_URI = "haunkohdejoukontarkenne_3#";
+        private static final List<String> TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO = Collections.singletonList(JATKOTUTKINTOHAKU_URI);
+
+        public static YhdenPaikanSaanto from(HakuV1RDTO haku) {
+            if (!haku.isKorkeakouluHaku()) {
+                return new YhdenPaikanSaanto(false, "Ei korkeakouluhaku");
+            }
+            String haunKohdeJoukonTarkenne = haku.getKohdejoukonTarkenne();
+            if (StringUtils.isBlank(haunKohdeJoukonTarkenne)) {
+                return new YhdenPaikanSaanto(true, "Korkeakouluhaku ilman kohdejoukon tarkennetta");
+            }
+            for (String tarkenne : TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO) {
+                if (haunKohdeJoukonTarkenne.startsWith(tarkenne)) {
+                    return new YhdenPaikanSaanto(true, String.format("Kohdejoukon tarkenne on '%s'", haunKohdeJoukonTarkenne));
+                }
+            }
+            return new YhdenPaikanSaanto(false, String.format("Kohdejoukon tarkenne on '%s', sääntö on voimassa tarkenteille %s",
+                haunKohdeJoukonTarkenne, TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO));
+        }
+
+        private YhdenPaikanSaanto(boolean voimassa, String syy) {
+            this.voimassa = voimassa;
+            this.syy = syy;
+        }
+    }
 }
