@@ -132,5 +132,6 @@ module.exports = [
     'partials/tarjontaApp.js',
     'partials/common/koulutusHakukohdeListing.js',
     'partials/hakukausi/hakukausi.js',
+    'partials/import/importController.js',
     'partials/init.js'
 ];

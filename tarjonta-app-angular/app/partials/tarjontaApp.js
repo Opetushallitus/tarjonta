@@ -96,7 +96,8 @@ angular.module('app', [
     'ValidPositiveNumber',
     'taiPlaceholder',
     'Validator',
-    'Oppiaineet'
+    'Oppiaineet',
+    'app.import.ctrl'
 ]);
 angular.module('app').value('globalConfig', window.CONFIG);
 angular.module('app').factory('errorLogService', function($log, $window, Config) {
@@ -551,6 +552,9 @@ angular.module('app').config([
         }).when('/komo', {
             action: 'komo',
             controller: 'KomoController'
+        }).when('/import', {
+            controller: 'ImportController',
+            templateUrl: 'partials/import/import.html'
         }).otherwise({
             redirectTo: '/etusivu'
         });
