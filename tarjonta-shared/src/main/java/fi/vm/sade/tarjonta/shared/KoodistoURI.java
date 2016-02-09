@@ -16,10 +16,11 @@
 package fi.vm.sade.tarjonta.shared;
 
 import com.google.common.base.Preconditions;
-import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.regex.Pattern;
 
 /**
  * Common helper access for Koodisto URIs. These should be configured from
@@ -323,7 +324,7 @@ public class KoodistoURI {
         KOODISTO_HAKUTYYPPI_URI = uri;
     }
 
-    @Value("${koodisto-uris.kieli}")
+    @Value("${koodisto-uris.kieli:kieli}")
     public void setKoodistoKieliUri(String uri) {
         KOODISTO_KIELI_URI = uri;
     }

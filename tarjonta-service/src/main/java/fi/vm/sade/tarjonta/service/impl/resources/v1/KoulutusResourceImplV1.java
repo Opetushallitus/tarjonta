@@ -477,8 +477,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     private ResultV1RDTO<KoulutusV1RDTO> postTutkintoonjohtamatonKoulutus(TutkintoonJohtamatonKoulutusV1RDTO dto) {
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
-        // TODO Add validator
-        // KoulutusValidator.validateKoulutusKorkeakoulu(dto, result);
+
+        KoulutusValidator.validateTutkintoonjohtamaton(dto, result);
+
+        if (result.hasErrors()) {
+            result.setStatus(ResultStatus.VALIDATION);
+            return result;
+        }
 
         if (!result.hasErrors() && validateOrganisation(
                 dto.getOrganisaatio(),

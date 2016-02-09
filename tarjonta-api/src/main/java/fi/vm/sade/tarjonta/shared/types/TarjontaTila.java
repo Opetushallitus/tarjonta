@@ -30,7 +30,8 @@ public enum TarjontaTila {
     VALMIS,
     JULKAISTU,
     PERUTTU,
-    KOPIOITU;
+    KOPIOITU,
+    PUUTTEELLINEN;
     
     /**
      * Privaatti jotta ei  mene sekaisin enum-arvojen kanssa
@@ -73,18 +74,16 @@ public enum TarjontaTila {
     	}
     	switch (tt) {
     	case VALMIS:
-    		return this==LUONNOS || this==KOPIOITU ||this==PERUTTU;
+    		return this==LUONNOS || this==KOPIOITU || this==PERUTTU || this==PUUTTEELLINEN;
     	case PERUTTU:
     		return this==JULKAISTU;
     	case JULKAISTU:
     		return this==VALMIS || this==PERUTTU;    	
-                case POISTETTU:
-                                return isRemovable();           
-
-                case LUONNOS:
-                                return this==KOPIOITU;           
-
-                default:
+        case POISTETTU:
+            return isRemovable();
+        case LUONNOS:
+            return this==KOPIOITU || this==PUUTTEELLINEN;
+        default:
     		return false;
     	}
     }
@@ -96,7 +95,7 @@ public enum TarjontaTila {
 
     //muokattu OVT-8135 mukaisesti
     public boolean isRemovable() {
-        return this==LUONNOS || this==KOPIOITU || this==VALMIS;
+        return this==LUONNOS || this==KOPIOITU || this==VALMIS || this==PUUTTEELLINEN;
     }
     
     /**

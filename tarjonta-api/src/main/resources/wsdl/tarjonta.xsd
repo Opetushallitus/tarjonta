@@ -675,7 +675,8 @@
             <xs:enumeration value="VALMIS"/>
             <xs:enumeration value="JULKAISTU"/>
             <xs:enumeration value="PERUTTU"/>
-            <xs:enumeration value="KOPIOITU"/> 
+            <xs:enumeration value="KOPIOITU"/>
+            <xs:enumeration value="PUUTTEELLINEN"/>
         </xs:restriction>
     </xs:simpleType>
 
