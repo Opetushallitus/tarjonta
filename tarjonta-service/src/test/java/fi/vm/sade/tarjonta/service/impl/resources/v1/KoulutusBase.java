@@ -35,10 +35,7 @@ import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.impl.ContextDataServiceImpl;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntity;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.*;
 import fi.vm.sade.tarjonta.service.resources.v1.LinkingV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
@@ -107,7 +104,7 @@ abstract class KoulutusBase extends TestUtilityBase {
     protected static final String MAP_AMMATTINIMIKE = "ammattinimike";
     protected static final String MAP_OPETUSAIKAS = "opetusaikas";
     protected static final String MAP_OPETUSPAIKKAS = "opetuspaikkas";
-    protected static final String EQF = "EQF";
+    protected static final String EQF = "eqf";
     protected static final String NQF = "NQF";
     protected static final String KOMO_PARENT_OID = "komo_parent_oid";
     protected static final String KOMO_CHILD_OID = "komo_child_oid";
@@ -171,7 +168,6 @@ abstract class KoulutusBase extends TestUtilityBase {
         koulutusSearchService = createMock(KoulutusSearchService.class);
         hakukohdeSearchService = createMock(HakukohdeSearchService.class);
         oppilaitosKoodiRelations = createMock(OppilaitosKoodiRelations.class);
-        tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
         publicationDataService = createMock(PublicationDataService.class);
 
         //INIT DATA CONVERTERS
@@ -205,6 +201,7 @@ abstract class KoulutusBase extends TestUtilityBase {
         Whitebox.setInternalState(convertToEntity, "koulutusmoduuliDAO", koulutusmoduuliDAO);
         Whitebox.setInternalState(convertToEntity, "oppiaineDAO", oppiaineDAO);
         Whitebox.setInternalState(convertToEntity, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
+        Whitebox.setInternalState(convertToEntity, "koodiService", KoulutusDTOConverterToEntityTest.mockKoodiService(null));
 
         Whitebox.setInternalState(instance, "converterToRDTO", converterToRDTO);
         Whitebox.setInternalState(instance, "convertToEntity", convertToEntity);
@@ -362,12 +359,6 @@ abstract class KoulutusBase extends TestUtilityBase {
         teksti(dto.getKoulutusohjelma(), KOULUTUSOHJELMA, URI_KIELI_FI);
         dto.getKoulutusohjelma().getTekstis().put(URI_KIELI_FI, toNimiValue("koulutusohjelma", URI_KIELI_FI));
         dto.getOrganisaatio().setOid(ORGANISATION_OID);
-        dto.setKoulutusaste(toKoodiUri(KOULUTUSASTE));
-        dto.setKoulutusala(toKoodiUri(KOULUTUSALA));
-        dto.setOpintoala(toKoodiUri(OPINTOALA));
-        dto.setTutkinto(toKoodiUri(TUTKINTO));
-
-        dto.setEqf(toKoodiUri(EQF));
         dto.setTila(TarjontaTila.JULKAISTU);
         dto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO);
         dto.setTunniste(TUNNISTE);
@@ -376,7 +367,6 @@ abstract class KoulutusBase extends TestUtilityBase {
         dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
         dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
 
-        koodiUrisMap(dto.getTutkintonimikes(), URI_KIELI_FI, MAP_TUTKINTONIMIKE);
         koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, MAP_OPETUSAIKAS);
         koodiUrisMap(dto.getOpetusPaikkas(), URI_KIELI_FI, MAP_OPETUSPAIKKAS);
         koodiUrisMap(dto.getAihees(), URI_KIELI_FI, MAP_OPETUSAIHEES);

@@ -121,6 +121,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         expectMetaUri(OPINTOALA);
         expectMetaMapUris(MAP_TUTKINTONIMIKE);
         expectMetaUri(EQF);
+        expectMetaUri(EQF);
         expectMetaUri(KOULUTUSTYYPPI);
 
         expectMetaMapUris(MAP_OPETUSPAIKKAS);
