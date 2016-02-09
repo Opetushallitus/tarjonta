@@ -22,12 +22,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Map;
@@ -37,15 +32,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-@TestExecutionListeners(listeners = {
-        DependencyInjectionTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class,
-        TransactionalTestExecutionListener.class
-})
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @ActiveProfiles("embedded-solr")
-@Transactional
 public class KoulutusResourceImplV1Test {
 
     @Autowired
@@ -69,7 +58,7 @@ public class KoulutusResourceImplV1Test {
     public void init() throws OIDCreationException {
         when(organisaatioService.findByOid(TARJOAJA1)).thenReturn(
                 new OrganisaatioDTO(){{
-                    setOid(TARJOAJA1);;
+                    setOid(TARJOAJA1);
                 }}
         );
         doNothing().when(permissionChecker).checkCreateKoulutus(TARJOAJA1);
