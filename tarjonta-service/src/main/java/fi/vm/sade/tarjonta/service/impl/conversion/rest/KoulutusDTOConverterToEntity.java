@@ -24,6 +24,7 @@ import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.OppiaineDAO;
@@ -77,6 +78,8 @@ public class KoulutusDTOConverterToEntity {
     private OppiaineDAO oppiaineDAO;
     @Autowired
     private KoodiService koodiService;
+    @Autowired
+    KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
 
     public static final String KOULUTUSALAOPH2002 = "koulutusalaoph2002";
     public static final String KOULUTUSASTEOPH2002 = "koulutusasteoph2002";
@@ -827,6 +830,30 @@ public class KoulutusDTOConverterToEntity {
             else {
                 komoto.setOpintopolkuAlkamiskausi(null);
             }
+        }
+    }
+
+    public void setSisaltyyKoulutuksiin(KoulutusmoduuliToteutus komoto, KoulutusV1RDTO dto) {
+        if (dto.getSisaltyyKoulutuksiin() == null) {
+            return;
+        }
+
+        // Remove previous sisaltyvyydet
+        List<String> parents = koulutusSisaltyvyysDAO.getParents(komoto.getKoulutusmoduuli().getOid());
+        for (String parentKomoOid : parents) {
+            Koulutusmoduuli parent = koulutusmoduuliDAO.findByOid(parentKomoOid);
+            for (KoulutusSisaltyvyys sisaltyvyys : parent.getSisaltyvyysList()) {
+                koulutusSisaltyvyysDAO.remove(sisaltyvyys);
+            }
+        }
+
+        // Insert new sisaltyvyydet
+        for (KoulutusIdentification koulutusId : dto.getSisaltyyKoulutuksiin()) {
+            KoulutusmoduuliToteutus parentKomoto = koulutusmoduuliToteutusDAO.findKomotoByKoulutusId(koulutusId);
+            KoulutusSisaltyvyys sisaltyvyys = new KoulutusSisaltyvyys(
+                    parentKomoto.getKoulutusmoduuli(), komoto.getKoulutusmoduuli(), KoulutusSisaltyvyys.ValintaTyyppi.ALL_OFF
+            );
+            koulutusSisaltyvyysDAO.insert(sisaltyvyys);
         }
     }
 

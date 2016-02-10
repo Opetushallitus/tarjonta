@@ -15,10 +15,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KorkeakouluOpintoV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -161,6 +158,65 @@ public class KoulutusResourceImplV1Test {
         List<ErrorV1RDTO> errors = result.getErrors();
         assertEquals(1, errors.size());
         assertEquals("koulutuksenAlkamisPvms", errors.get(0).getErrorField());
+    }
+
+    @Test
+    public void testCreateOpintojaksoWithValidSisaltyvyys() throws OIDCreationException {
+        final KoulutusV1RDTO parentKoulutus = insertParentKokonaisuus();
+
+        String komoOid = oidServiceMock.getOid();
+        String komotoOid = oidServiceMock.getOid();
+        when(oidService.get(TarjontaOidType.KOMO)).thenReturn(komoOid);
+        when(oidService.get(TarjontaOidType.KOMOTO)).thenReturn(komotoOid);
+
+        KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
+        dto.setTila(TarjontaTila.PUUTTEELLINEN);
+        dto.setTunniste(ULKOINEN_TUNNISTE);
+        dto.setSisaltyyKoulutuksiin(Sets.<KoulutusIdentification>newHashSet(new KoulutusIdentification(){{
+            setOid(parentKoulutus.getOid());
+        }}));
+
+        ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
+        assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
+        assertEquals(komoOid, result.getResult().getKomoOid());
+        assertEquals(komotoOid, result.getResult().getOid());
+        Set<KoulutusIdentification> sisaltyyKoulutuksiin = result.getResult().getSisaltyyKoulutuksiin();
+        assertEquals(1, sisaltyyKoulutuksiin.size());
+        assertEquals(parentKoulutus.getOid(), sisaltyyKoulutuksiin.iterator().next().getOid());
+    }
+
+    @Test
+    public void testCreateOpintojaksoWithInvalidSisaltyvyys() throws OIDCreationException {
+        String komoOid = oidServiceMock.getOid();
+        String komotoOid = oidServiceMock.getOid();
+        when(oidService.get(TarjontaOidType.KOMO)).thenReturn(komoOid);
+        when(oidService.get(TarjontaOidType.KOMOTO)).thenReturn(komotoOid);
+
+        KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
+        dto.setTila(TarjontaTila.PUUTTEELLINEN);
+        dto.setTunniste(ULKOINEN_TUNNISTE);
+        dto.setSisaltyyKoulutuksiin(Sets.<KoulutusIdentification>newHashSet(new KoulutusIdentification(){{
+            setOid("oid.that.does.not.exist");
+        }}));
+
+        ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
+        assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
+        assertEquals(1, result.getErrors().size());
+        assertTrue(containsError(result.getErrors(), SISALTYY_KOULUTUKSIIN));
+    }
+
+    private KoulutusV1RDTO insertParentKokonaisuus() throws OIDCreationException {
+        String komoOid = oidServiceMock.getOid();
+        String komotoOid = oidServiceMock.getOid();
+        when(oidService.get(TarjontaOidType.KOMO)).thenReturn(komoOid);
+        when(oidService.get(TarjontaOidType.KOMOTO)).thenReturn(komotoOid);
+
+        KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
+        dto.setTila(TarjontaTila.PUUTTEELLINEN);
+        dto.setTunniste(ULKOINEN_TUNNISTE);
+
+        ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
+        return result.getResult();
     }
 
     private static KorkeakouluOpintoV1RDTO baseKorkeakouluopinto(KoulutusmoduuliTyyppi tyyppi) {

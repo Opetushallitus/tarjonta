@@ -75,7 +75,12 @@ public class KoulutusSisaltyvyysDAOImpl extends
         final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
         final QKoulutusmoduuli child = QKoulutusmoduuli.koulutusmoduuli;
         final Predicate where = bb(child.oid.eq(childId));
-        return q(koulutusmoduuli).join(koulutusmoduuli.sisaltyvyysList, QKoulutusSisaltyvyys.koulutusSisaltyvyys).leftJoin(koulutusSisaltyvyys.alamoduuliList, child).where(where).list(koulutusSisaltyvyys.ylamoduuli.oid);
+        return q(koulutusmoduuli)
+                .join(koulutusmoduuli.sisaltyvyysList, QKoulutusSisaltyvyys.koulutusSisaltyvyys)
+                .leftJoin(koulutusSisaltyvyys.alamoduuliList, child)
+                .where(where)
+                .distinct()
+                .list(koulutusSisaltyvyys.ylamoduuli.oid);
     }
     
     @Override

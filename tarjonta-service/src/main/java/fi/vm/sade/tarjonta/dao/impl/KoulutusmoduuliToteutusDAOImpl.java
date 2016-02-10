@@ -27,9 +27,11 @@ import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -46,16 +48,45 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
 
     private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliToteutusDAOImpl.class);
 
-    @Override
-    public KoulutusmoduuliToteutus findByOid(String oid) {
-
-        List<KoulutusmoduuliToteutus> list = findBy(KoulutusmoduuliToteutus.OID_COLUMN_NAME, oid);
+    private KoulutusmoduuliToteutus getFirstFromList(List<KoulutusmoduuliToteutus> list) {
         if (list.isEmpty()) {
             return null;
         } else if (list.size() == 1) {
             return list.get(0);
         } else {
-            throw new IllegalStateException("multiple results for oid: " + oid);
+            throw new IllegalStateException("multiple results found!");
+        }
+    }
+
+    @Override
+    public KoulutusmoduuliToteutus findByOid(String oid) {
+        return getFirstFromList(findBy(KoulutusmoduuliToteutus.OID_COLUMN_NAME, oid));
+    }
+
+    @Override
+    public KoulutusmoduuliToteutus findKomotoByKoulutusId(KoulutusIdentification id) {
+        List<KoulutusmoduuliToteutus> list;
+        if (!StringUtils.isBlank(id.getOid())) {
+            list = findBy(BaseKoulutusmoduuli.OID_COLUMN_NAME, id.getOid());
+        } else {
+            list = findBy(BaseKoulutusmoduuli.ULKOINEN_TUNNISTE_COLUMN_NAME, id.getTunniste());
+        }
+        return getFirstFromList(list);
+    }
+
+    @Override
+    public KoulutusmoduuliToteutus findFirstByKomoOid(String komoOid) {
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        QKoulutusmoduuli qKomo = QKoulutusmoduuli.koulutusmoduuli;
+        List<KoulutusmoduuliToteutus> list = from(qKomo, qKomoto)
+                                                .join(qKomoto.koulutusmoduuli, qKomo)
+                                                .where(qKomo.oid.eq(komoOid))
+                                                .distinct()
+                                                .list(qKomoto);
+        if (list.isEmpty()) {
+            return null;
+        } else {
+            return list.get(0);
         }
     }
 

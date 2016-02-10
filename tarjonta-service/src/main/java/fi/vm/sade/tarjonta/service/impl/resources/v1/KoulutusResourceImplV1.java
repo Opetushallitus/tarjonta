@@ -173,6 +173,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     @Value("${host.virkailija}")
     private String HOST_VIRKAILIJA;
 
+    @Autowired
+    private KoulutusValidator koulutusValidator;
+
     @Override
     public ResultV1RDTO<KoulutusV1RDTO> findByOid(String komotoOid, Boolean showMeta, Boolean showImg, String userLang) {
         Preconditions.checkNotNull(komotoOid, "KOMOTO OID cannot be null.");
@@ -477,7 +480,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
 
-        KoulutusValidator.validateTutkintoonjohtamaton(dto, result);
+        koulutusValidator.validateTutkintoonjohtamaton(dto, result);
 
         if (result.hasErrors()) {
             result.setStatus(ResultStatus.VALIDATION);
@@ -700,17 +703,20 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         Preconditions.checkNotNull(dto.getKomotoOid() != null, "External KOMOTO OID not allowed. OID : %s.", dto.getKomotoOid());
         Preconditions.checkNotNull(dto.getKomoOid() != null, "External KOMO OID not allowed. OID : %s.", dto.getKomoOid());
 
-        final KoulutusmoduuliToteutus newKomoto = convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), null, null);
+        KoulutusmoduuliToteutus newKomoto = convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), null, null);
         Preconditions.checkNotNull(newKomoto, "KOMOTO conversion to database object failed : object : %s.", ReflectionToStringBuilder.toString(dto));
         Preconditions.checkNotNull(newKomoto.getKoulutusmoduuli(), "KOMO conversion to database object failed : object :  %s.", ReflectionToStringBuilder.toString(dto));
 
         permissionChecker.checkCreateKoulutus(dto.getOrganisaatio().getOid());
         koulutusmoduuliDAO.insert(newKomoto.getKoulutusmoduuli());
-        return koulutusmoduuliToteutusDAO.insert(newKomoto);
+        newKomoto = koulutusmoduuliToteutusDAO.insert(newKomoto);
+        convertToEntity.setSisaltyyKoulutuksiin(newKomoto, dto);
+        return newKomoto;
     }
 
     private KoulutusmoduuliToteutus updateTutkintoonjohtamaton(KoulutusmoduuliToteutus komoto, final TutkintoonJohtamatonKoulutusV1RDTO dto) {
         permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
+        convertToEntity.setSisaltyyKoulutuksiin(komoto, dto);
         return convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), null, null);
     }
 
