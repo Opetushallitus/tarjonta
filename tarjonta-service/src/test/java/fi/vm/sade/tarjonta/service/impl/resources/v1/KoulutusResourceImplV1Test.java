@@ -3,8 +3,10 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
@@ -35,7 +37,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING;
-import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages.KOULUTUS_TILA_ENUM_MISSING;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.*;
 import static fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.OPINTOKOKONAISUUS;
 import static org.junit.Assert.assertEquals;
@@ -58,55 +59,99 @@ public class KoulutusResourceImplV1Test {
     OidService oidService;
 
     @Autowired
+    OidServiceMock oidServiceMock;
+
+    @Autowired
     KoulutusV1Resource koulutusResourceV1;
 
-    private final static String JARJESTAJA1 = "1.2.3";
     private final static String TARJOAJA1 = "1.2.3";
-    private final static String KOMO_OID1 = "komoOid1";
-    private final static String KOMOTO_OID1 = "komotoOid1";
     private final static String ULKOINEN_TUNNISTE = "ulkoinenTunniste";
 
     @Before
-    public void init() throws OIDCreationException {
+    public void init() {
         when(organisaatioService.findByOid(TARJOAJA1)).thenReturn(
                 new OrganisaatioDTO(){{
                     setOid(TARJOAJA1);
+                    setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti("test", "fi"))));
                 }}
         );
         doNothing().when(permissionChecker).checkCreateKoulutus(TARJOAJA1);
-        when(oidService.get(TarjontaOidType.KOMO)).thenReturn(KOMO_OID1);
-        when(oidService.get(TarjontaOidType.KOMOTO)).thenReturn(KOMOTO_OID1);
     }
 
     @Test
-    public void testCreatePuutteellinenOpintojakso() {
+    public void testCreatePuutteellinenOpintojakso() throws OIDCreationException {
+        String komoOid = oidServiceMock.getOid();
+        String komotoOid = oidServiceMock.getOid();
+        when(oidService.get(TarjontaOidType.KOMO)).thenReturn(komoOid);
+        when(oidService.get(TarjontaOidType.KOMOTO)).thenReturn(komotoOid);
+
         KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
         dto.setTunniste(ULKOINEN_TUNNISTE);
 
         ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
-        assertEquals(KOMO_OID1, result.getResult().getKomoOid());
-        assertEquals(KOMOTO_OID1, result.getResult().getOid());
+        assertEquals(komoOid, result.getResult().getKomoOid());
+        assertEquals(komotoOid, result.getResult().getOid());
     }
 
     @Test
-    public void testCreateOpintojaksoFailsWhenMissingRequiredFields() {
+    public void testCreateLuonnosOpintojakso() throws OIDCreationException {
+        String komoOid = oidServiceMock.getOid();
+        String komotoOid = oidServiceMock.getOid();
+        when(oidService.get(TarjontaOidType.KOMO)).thenReturn(komoOid);
+        when(oidService.get(TarjontaOidType.KOMOTO)).thenReturn(komotoOid);
+
+        KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
+        dto.setAihees(koodiUris(Sets.newHashSet("aihe_1")));
+        dto.setOpintojenLaajuusPistetta("120");
+        dto.setOpetuskielis(koodiUris(Sets.newHashSet("kieli_fi")));
+
+        ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
+        assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
+        assertEquals(komoOid, result.getResult().getKomoOid());
+        assertEquals(komotoOid, result.getResult().getOid());
+    }
+
+    @Test
+    public void testCreateOpintojaksoFailsWhenMissingRequiredFieldsAndTilaPuutteellinen() {
         KorkeakouluOpintoV1RDTO dto = new KorkeakouluOpintoV1RDTO();
+        dto.setTila(TarjontaTila.PUUTTEELLINEN);
 
         ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
-        List<ErrorV1RDTO> errors = result.getErrors();
-        assertEquals(5, errors.size());
-        assertTrue(containsError(errors, KOULUTUS_TILA_ENUM_MISSING.getFieldName()));
+        assertEquals(4, result.getErrors().size());
+        assertAlwaysRequiredFields(result.getErrors());
+    }
+
+    private void assertAlwaysRequiredFields(List<ErrorV1RDTO> errors) {
         assertTrue(containsError(errors, KOULUTUS_TARJOAJA_MISSING.getFieldName()));
         assertTrue(containsError(errors, KOULUTUSOHJELMA));
         assertTrue(containsError(errors, KOULUTUSMODUULITYYPPI));
         assertTrue(containsError(errors, KOULUTUKSEN_ALKAMISPVMS));
     }
 
+    private void assertExtraRequiredFields(List<ErrorV1RDTO> errors) {
+        assertTrue(containsError(errors, OPINTOJEN_LAAJUUS_PISTETTA));
+        assertTrue(containsError(errors, OPETUSKIELIS));
+        assertTrue(containsError(errors, AIHEES));
+    }
+
     @Test
-    public void testCreateOpintojaksoWithInvalidStartingDate() {
+    public void testCreateOpintojaksoFailsWhenMissingRequiredFieldsAndTilaNotPuuttellinen() {
+        KorkeakouluOpintoV1RDTO dto = new KorkeakouluOpintoV1RDTO();
+        dto.setTila(TarjontaTila.LUONNOS);
+
+        ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
+        assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
+        List<ErrorV1RDTO> errors = result.getErrors();
+        assertEquals(7, errors.size());
+        assertAlwaysRequiredFields(errors);
+        assertExtraRequiredFields(errors);
+    }
+
+    @Test
+    public void testCreateOpintojaksoFailsWhenInvalidStartingDate() {
         KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
         dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(new Date(0L)));
         dto.setTila(TarjontaTila.PUUTTEELLINEN);

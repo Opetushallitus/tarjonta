@@ -56,6 +56,9 @@ public class KoulutusValidator {
     public static final String KOULUTUSOHJELMA = "koulutusohjelma";
     public static final String KOULUTUSMODUULITYYPPI = "koulutusmoduuliTyyppi";
     public static final String KOULUTUKSEN_ALKAMISPVMS = "koulutuksenAlkamisPvms";
+    public static final String OPINTOJEN_LAAJUUS_PISTETTA = "opintojenLaajuusPistetta";
+    public static final String OPETUSKIELIS = "opetuskielis";
+    public static final String AIHEES = "aihees";
 
     /**
      * Required data validation for koulutus -type of objects.
@@ -118,6 +121,37 @@ public class KoulutusValidator {
         }
         if (hasInvalidStartingDate(dto)) {
             result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS, KOULUTUKSEN_ALKAMISPVMS + " contains invalid starting dates"));
+        }
+
+        if (!TarjontaTila.PUUTTEELLINEN.equals(dto.getTila())) {
+            validateTutkintoonjohtamatonAllRequiredFields(dto, result);
+        }
+    }
+
+    // Extra validation of fields that are required in order to show the learning opportunity in opintopolku.fi
+    private static void validateTutkintoonjohtamatonAllRequiredFields(TutkintoonJohtamatonKoulutusV1RDTO dto, ResultV1RDTO result) {
+        if (StringUtils.isBlank(dto.getOpintojenLaajuusPistetta())) {
+            result.addError(createValidationError(OPINTOJEN_LAAJUUS_PISTETTA, OPINTOJEN_LAAJUUS_PISTETTA + " is required"));
+        }
+        if (isBlank(dto.getOpetuskielis())) {
+            result.addError(createValidationError(OPETUSKIELIS, OPETUSKIELIS + ".uris cannot be empty!"));
+        }
+        if (isBlank(dto.getAihees())) {
+            result.addError(createValidationError(AIHEES, AIHEES + ".uris cannot be empty!"));
+        }
+    }
+
+    private static boolean isBlank(KoodiUrisV1RDTO koodis) {
+        try {
+            Iterables.find(koodis.getUris().keySet(), new Predicate<String>() {
+                @Override
+                public boolean apply(String input) {
+                    return StringUtils.isNotBlank(input);
+                }
+            });
+            return false;
+        } catch (Exception e) {
+            return true;
         }
     }
 

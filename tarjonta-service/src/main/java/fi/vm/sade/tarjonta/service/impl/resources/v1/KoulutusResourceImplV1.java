@@ -303,7 +303,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             //TODO: currently no komo validation, when invalid throws exception
             return postKorkeakouluKoulutus((KoulutusKorkeakouluV1RDTO) dto);
         } else if (dto instanceof TutkintoonJohtamatonKoulutusV1RDTO) {
-            //TODO: currently no komo validation, when invalid throws exception
             return postTutkintoonjohtamatonKoulutus((TutkintoonJohtamatonKoulutusV1RDTO) dto);
         } else {
             //Cannot be created without module. null komo => validation error
