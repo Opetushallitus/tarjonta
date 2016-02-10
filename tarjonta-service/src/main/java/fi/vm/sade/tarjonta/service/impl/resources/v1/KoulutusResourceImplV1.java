@@ -274,6 +274,10 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     @Override
     public ResultV1RDTO<KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO dto) {
 
+        if (dto == null || dto.getToteutustyyppi() == null) {
+            return ResultV1RDTO.create(ResultStatus.VALIDATION, null, ErrorV1RDTO.createValidationError(KoulutusValidator.TOTEUTUSTYYPPI, KoulutusValidator.TOTEUTUSTYYPPI + " missing"));
+        }
+
         //yleisiä tarkistuksia
         //tarkista tilasiirtymä
         if (dto.getOid() != null) {

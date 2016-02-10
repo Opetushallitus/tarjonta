@@ -64,6 +64,7 @@ public class KoulutusValidator {
     public static final String OPETUSKIELIS = "opetuskielis";
     public static final String AIHEES = "aihees";
     public static final String SISALTYY_KOULUTUKSIIN = "sisaltyyKoulutuksiin";
+    public static final String TOTEUTUSTYYPPI = "toteutustyyppi";
 
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
