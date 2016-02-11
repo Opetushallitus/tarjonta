@@ -186,7 +186,7 @@ public class KoulutusResourceImplV1Test {
     }
 
     @Test
-    public void testCreateOpintojaksoFailsWhenInvalidSisaltyvyys() throws OIDCreationException {
+    public void testCreateOpintojaksoFailsWhenNoPermissionForSisaltyvyys() throws OIDCreationException {
         final KoulutusV1RDTO parentKoulutus = insertParentKokonaisuus();
 
         doThrow(NotAuthorizedException.class)
@@ -212,7 +212,7 @@ public class KoulutusResourceImplV1Test {
     }
 
     @Test
-    public void testCreateOpintojaksoFailsWhenNoPermissionForSisaltyvyys() throws OIDCreationException {
+    public void testCreateOpintojaksoFailsWhenInvalidSisaltyvyys() throws OIDCreationException {
         String komoOid = oidServiceMock.getOid();
         String komotoOid = oidServiceMock.getOid();
         when(oidService.get(TarjontaOidType.KOMO)).thenReturn(komoOid);
