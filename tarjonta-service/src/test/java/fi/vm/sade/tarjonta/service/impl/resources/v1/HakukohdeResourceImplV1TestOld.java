@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
     TransactionalTestExecutionListener.class})
 @ActiveProfiles("embedded-solr")
 @Transactional()
-public class HakukohdeResourceImplV1Test extends TestUtilityBase {
+public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
 
     private TarjontaPermissionServiceImpl permissionService = Mockito.mock(TarjontaPermissionServiceImpl.class);
     private TarjontaPermissionServiceImpl originalPermissionService;
