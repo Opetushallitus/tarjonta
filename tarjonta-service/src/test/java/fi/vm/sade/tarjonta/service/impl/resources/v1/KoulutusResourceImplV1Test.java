@@ -10,6 +10,7 @@ import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
@@ -38,8 +39,7 @@ import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.
 import static fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.OPINTOKOKONAISUUS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
@@ -186,7 +186,33 @@ public class KoulutusResourceImplV1Test {
     }
 
     @Test
-    public void testCreateOpintojaksoWithInvalidSisaltyvyys() throws OIDCreationException {
+    public void testCreateOpintojaksoFailsWhenInvalidSisaltyvyys() throws OIDCreationException {
+        final KoulutusV1RDTO parentKoulutus = insertParentKokonaisuus();
+
+        doThrow(NotAuthorizedException.class)
+                .when(permissionChecker)
+                .checkUpdateKoulutusByTarjoajaOid(parentKoulutus.getOrganisaatio().getOid());
+
+        String komoOid = oidServiceMock.getOid();
+        String komotoOid = oidServiceMock.getOid();
+        when(oidService.get(TarjontaOidType.KOMO)).thenReturn(komoOid);
+        when(oidService.get(TarjontaOidType.KOMOTO)).thenReturn(komotoOid);
+
+        KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
+        dto.setTila(TarjontaTila.PUUTTEELLINEN);
+        dto.setTunniste(ULKOINEN_TUNNISTE);
+        dto.setSisaltyyKoulutuksiin(Sets.<KoulutusIdentification>newHashSet(new KoulutusIdentification(){{
+            setOid(parentKoulutus.getOid());
+        }}));
+
+        ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
+        assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
+        assertEquals(1, result.getErrors().size());
+        assertTrue(containsError(result.getErrors(), SISALTYY_KOULUTUKSIIN));
+    }
+
+    @Test
+    public void testCreateOpintojaksoFailsWhenNoPermissionForSisaltyvyys() throws OIDCreationException {
         String komoOid = oidServiceMock.getOid();
         String komotoOid = oidServiceMock.getOid();
         when(oidService.get(TarjontaOidType.KOMO)).thenReturn(komoOid);

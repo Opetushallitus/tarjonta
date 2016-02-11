@@ -23,6 +23,8 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
+import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
@@ -68,6 +70,9 @@ public class KoulutusValidator {
 
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+
+    @Autowired
+    private PermissionChecker permissionChecker;
 
     /**
      * Required data validation for koulutus -type of objects.
@@ -159,11 +164,17 @@ public class KoulutusValidator {
 
         for (KoulutusIdentification id : dto.getSisaltyyKoulutuksiin()) {
             KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findKomotoByKoulutusId(id);
+            String tunniste = StringUtils.isNotBlank(id.getOid())
+                    ? "oid: " + id.getOid()
+                    : "tunniste:" + id.getTunniste();
             if (komoto == null) {
-                String idMsg = StringUtils.isNotBlank(id.getOid())
-                        ? "oid: " + id.getOid()
-                        : "tunniste:" + id.getTunniste();
-                result.addError(createValidationError(SISALTYY_KOULUTUKSIIN, "koulutus with " + idMsg + " does not exist!"));
+                result.addError(createValidationError(SISALTYY_KOULUTUKSIIN, "koulutus with " + tunniste + " does not exist!"));
+            } else {
+                try {
+                    permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
+                } catch (NotAuthorizedException e) {
+                    result.addError(createValidationError(SISALTYY_KOULUTUKSIIN, "permission denied for koulutus with " + tunniste));
+                }
             }
         }
     }
