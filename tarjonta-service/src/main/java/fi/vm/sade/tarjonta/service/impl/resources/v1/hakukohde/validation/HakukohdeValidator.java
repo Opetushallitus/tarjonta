@@ -9,6 +9,8 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
+import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
@@ -37,12 +39,28 @@ public class HakukohdeValidator {
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
 
-    private List<HakukohdeValidationMessages> validateCommonProperties(HakukohdeV1RDTO hakukohdeRDTO) {
+    @Autowired
+    PermissionChecker permissionChecker;
+
+    public List<HakukohdeValidationMessages> validateCommonProperties(HakukohdeV1RDTO hakukohdeRDTO) {
 
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
 
         if (hakukohdeRDTO.getHakukohdeKoulutusOids() == null || hakukohdeRDTO.getHakukohdeKoulutusOids().size() < 1) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_MISSING);
+        }
+
+        for (String komotoOid : hakukohdeRDTO.getHakukohdeKoulutusOids()) {
+            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
+            if (komoto == null) {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_DOES_NOT_EXIST);
+            } else {
+                try {
+                    permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
+                } catch (NotAuthorizedException e) {
+                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PERMISSION_DENIED_FOR_KOULUTUS);
+                }
+            }
         }
 
         if (hakukohdeRDTO.getHakuOid() == null) {
@@ -78,8 +96,6 @@ public class HakukohdeValidator {
 
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
 
-        validationMessages.addAll(validateCommonProperties(hakukohdeRDTO));
-
         if (hakukohdeRDTO.getHakukohteenNimiUri() == null || hakukohdeRDTO.getHakukohteenNimiUri().trim().length() < 1) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_NIMI_MISSING);
         }
@@ -91,7 +107,6 @@ public class HakukohdeValidator {
 
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
 
-        validationMessages.addAll(validateCommonProperties(hakukohdeRDTO));
         validationMessages.addAll(validateDuplicateHakukohteet(hakukohdeRDTO));
 
         if (Strings.isNullOrEmpty(hakukohdeRDTO.getHakukohteenNimiUri())) {
@@ -141,8 +156,6 @@ public class HakukohdeValidator {
 
     public List<HakukohdeValidationMessages> validateHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
-
-        validationMessages.addAll(validateCommonProperties(hakukohdeRDTO));
 
         if (hakukohdeRDTO.getHakukohteenNimet() == null || hakukohdeRDTO.getHakukohteenNimet().size() < 1) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_NIMI_MISSING);

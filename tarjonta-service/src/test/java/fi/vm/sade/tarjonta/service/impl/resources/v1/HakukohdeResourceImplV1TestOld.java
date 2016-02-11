@@ -188,7 +188,7 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
 
         return new HakukohdeV1RDTO() {{
             setHakukohteenNimiUri("hakukohteet_255#2");
-            setToteutusTyyppi(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO.toString());
+            setToteutusTyyppi(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO);
             setTila(TarjontaTila.LUONNOS.toString());
             setHakukohteenNimet(Collections.singletonMap("kieli_fi", "Hakukohde #1"));
             setTarjoajaOids(Collections.singleton(komoto.getTarjoaja()));

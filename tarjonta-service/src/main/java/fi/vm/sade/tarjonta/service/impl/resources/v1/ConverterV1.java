@@ -959,8 +959,8 @@ public class ConverterV1 {
         hakukohde.setHakuaikaAlkuPvm(hakukohdeRDTO.getHakuaikaAlkuPvm());
         hakukohde.setHakuaikaLoppuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
 
-        if (ToteutustyyppiEnum.KORKEAKOULUTUS.toString().equals(hakukohdeRDTO.getToteutusTyyppi())
-                || ToteutustyyppiEnum.KORKEAKOULUOPINTO.toString().equals(hakukohdeRDTO.getToteutusTyyppi())) {
+        if (ToteutustyyppiEnum.KORKEAKOULUTUS.equals(hakukohdeRDTO.getToteutusTyyppi())
+                || ToteutustyyppiEnum.KORKEAKOULUOPINTO.equals(hakukohdeRDTO.getToteutusTyyppi())) {
             if (hakukohdeRDTO.getHakukohteenNimet() != null && hakukohdeRDTO.getHakukohteenNimet().size() > 0) {
                 hakukohde.setHakukohdeMonikielinenNimi(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakukohteenNimet()));
             }
@@ -990,7 +990,7 @@ public class ConverterV1 {
         hakukohde.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
         hakukohde.setLastUpdateDate(new Date());
 
-        if (KoulutusasteResolver.isToisenAsteenKoulutus(ToteutustyyppiEnum.valueOf(hakukohdeRDTO.getToteutusTyyppi()))) {
+        if (KoulutusasteResolver.isToisenAsteenKoulutus(hakukohdeRDTO.getToteutusTyyppi())) {
             hakukohde.setHakuaikaAlkuPvm(hakukohdeRDTO.getHakuaikaAlkuPvm());
             hakukohde.setHakuaikaLoppuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
         }
@@ -1010,7 +1010,7 @@ public class ConverterV1 {
         hakukohde.setSoraKuvausKoodiUri(hakukohdeRDTO.getSoraKuvausKoodiUri());
         hakukohde.setValintaperustekuvausKoodiUri(hakukohdeRDTO.getValintaperustekuvausKoodiUri());
 
-        if (KoulutusasteResolver.isToisenAsteenKoulutus(ToteutustyyppiEnum.valueOf(hakukohdeRDTO.getToteutusTyyppi()))) {
+        if (KoulutusasteResolver.isToisenAsteenKoulutus(hakukohdeRDTO.getToteutusTyyppi())) {
             hakukohde.setKaytetaanJarjestelmanValintapalvelua(true);
         } else {
             hakukohde.setKaytetaanJarjestelmanValintapalvelua(hakukohdeRDTO.isKaytetaanJarjestelmanValintaPalvelua());

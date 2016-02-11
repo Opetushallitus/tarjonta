@@ -418,7 +418,6 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         osoite.setCreated(new Date());
         osoite.setModified(new Date());
         hakukohde.setLiitteidenToimitusOsoite(osoite);
-        hakukohde.setToteutusTyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS.toString());
         return hakukohde;
     }
 
