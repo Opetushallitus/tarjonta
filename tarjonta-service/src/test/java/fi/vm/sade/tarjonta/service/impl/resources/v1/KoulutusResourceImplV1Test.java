@@ -8,6 +8,7 @@ import com.google.common.collect.Sets;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
@@ -25,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -43,6 +45,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
+@Service("koulutusResourceTest")
 @ActiveProfiles("embedded-solr")
 public class KoulutusResourceImplV1Test {
 
@@ -257,6 +260,21 @@ public class KoulutusResourceImplV1Test {
             setTekstis(ImmutableMap.of("kieli_fi", "Opinnon nimi"));
         }});
         return dto;
+    }
+
+    public KoulutusV1RDTO getLuonnosOpintokokonaisuus() throws OIDCreationException {
+        init();
+        String komoOid = oidServiceMock.getOid();
+        String komotoOid = oidServiceMock.getOid();
+        when(oidService.get(TarjontaOidType.KOMO)).thenReturn(komoOid);
+        when(oidService.get(TarjontaOidType.KOMOTO)).thenReturn(komotoOid);
+
+        KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
+        dto.setAihees(koodiUris(Sets.newHashSet("aihe_1")));
+        dto.setOpintojenLaajuusPistetta("120");
+        dto.setOpetuskielis(koodiUris(Sets.newHashSet("kieli_fi")));
+
+        return koulutusResourceV1.postKoulutus(dto).getResult();
     }
 
     private static boolean containsError(List<ErrorV1RDTO> errors, final String fieldname) {
