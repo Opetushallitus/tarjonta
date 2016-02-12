@@ -56,7 +56,6 @@ import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.LinkingV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.search.*;
@@ -89,9 +88,10 @@ import java.util.Map.Entry;
 import static fi.vm.sade.tarjonta.service.AuditHelper.*;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.TOTEUTUSTYYPPI;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.validateMimeType;
-import static fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.*;
-import static fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.*;
+import static fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.createSystemError;
+import static fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.createValidationError;
 import static fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus.*;
+import static fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.create;
 
 /**
  * @author mlyly
@@ -179,6 +179,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     @Autowired
     private KoulutusValidator koulutusValidator;
+
+    @Autowired
+    private KoulutusImplicitDataPopulator koulutusImplicitDataPopulator;
 
     @Override
     public ResultV1RDTO<KoulutusV1RDTO> findByOid(String komotoOid, Boolean showMeta, Boolean showImg, String userLang) {
@@ -295,6 +298,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             return create(ERROR, null,
                     createValidationError("alkamispvm", "koulutus.error.alkamispvm.ajankohtaerikuinhaulla"));
         }
+
+        dto = koulutusImplicitDataPopulator.populateFields(dto);
 
         if (Lists.newArrayList("itest-virkailija.oph.ware.fi", "testi.virkailija.opintopolku.fi").contains(HOST_VIRKAILIJA)) {
             try {

@@ -16,14 +16,9 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
-import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
@@ -48,7 +43,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Conversions to entity objects.
@@ -81,19 +79,12 @@ public class KoulutusDTOConverterToEntity {
     @Autowired
     KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
 
-    public static final String KOULUTUSALAOPH2002 = "koulutusalaoph2002";
-    public static final String KOULUTUSASTEOPH2002 = "koulutusasteoph2002";
-    public static final String OPINTOALAOPH2002 = "opintoalaoph2002";
-    public static final String EQF = "eqf";
-    public static final String TUTKINTO = "tutkinto";
-    public static final String TUTKINTONIMIKEKK = "tutkintonimikekk";
-
 
     /*
      * KORKEAKOULU RDTO CONVERSION TO ENTITY
      */
     public KoulutusmoduuliToteutus convert(final KoulutusKorkeakouluV1RDTO dto, final String userOid) {
-        return convert(populateFields(dto), userOid, null, null);
+        return convert(dto, userOid, null, null);
     }
 
     public KoulutusmoduuliToteutus convert(final KoulutusV1RDTO dto, final String userOid, String newKomotoOid, String newKomoOid) {
@@ -184,51 +175,6 @@ public class KoulutusDTOConverterToEntity {
         }
 
         LOG.info("updateOwners()... done.");
-    }
-
-    private KoulutusKorkeakouluV1RDTO populateFields(final KoulutusKorkeakouluV1RDTO dto) {
-        List<KoodiType> sisaltaaKoodit = koodiService.listKoodiByRelation(
-                new KoodiUriAndVersioType(){{
-                    this.setKoodiUri(dto.getKoulutuskoodi().getUri());
-                    this.setVersio(dto.getKoulutuskoodi().getVersio());
-                }},
-                false,
-                SuhteenTyyppiType.SISALTYY
-        );
-
-        dto.setKoulutusala(findCode(sisaltaaKoodit, KOULUTUSALAOPH2002));
-        dto.setKoulutusaste(findCode(sisaltaaKoodit, KOULUTUSASTEOPH2002));
-        dto.setOpintoala(findCode(sisaltaaKoodit, OPINTOALAOPH2002));
-        dto.setEqf(findCode(sisaltaaKoodit, EQF));
-        dto.setTutkinto(findCode(sisaltaaKoodit, TUTKINTO));
-        dto.setTutkintonimikes(findCodes(sisaltaaKoodit, TUTKINTONIMIKEKK));
-
-        return dto;
-    }
-
-    private static Predicate matchKoodisto(final String koodisto) {
-        return new Predicate<KoodiType>() {
-            @Override
-            public boolean apply(KoodiType candidate) {
-                return koodisto.equals(candidate.getKoodisto().getKoodistoUri());
-            }
-        };
-    }
-
-    private KoodiV1RDTO findCode(final List<KoodiType> codes, final String koodisto) {
-        KoodiType code = Iterables.find(codes, matchKoodisto(koodisto));
-        return new KoodiV1RDTO(code.getKoodiUri(), code.getVersio(), code.getKoodiArvo());
-    }
-
-    private KoodiUrisV1RDTO findCodes(final List<KoodiType> codes, final String koodisto) {
-        Map<String, Integer> uris = new HashMap<String, Integer>();
-        Iterable<KoodiType> filtered = Iterables.filter(codes, matchKoodisto(koodisto));
-        for (KoodiType koodi : filtered) {
-            uris.put(koodi.getKoodiUri(), koodi.getVersio());
-        }
-        KoodiUrisV1RDTO koodiUris = new KoodiUrisV1RDTO();
-        koodiUris.setUris(uris);
-        return koodiUris;
     }
 
     /*
