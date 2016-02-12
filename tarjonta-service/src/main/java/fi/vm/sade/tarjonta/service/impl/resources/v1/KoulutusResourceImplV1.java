@@ -285,8 +285,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             return create(VALIDATION, null, createValidationError(TOTEUTUSTYYPPI, TOTEUTUSTYYPPI + " missing"));
         }
 
-        //yleisiä tarkistuksia
-        //tarkista tilasiirtymä
+        // tarkista tilasiirtymä
         if (dto.getOid() != null) {
             final Tila tilamuutos = new Tila(Tyyppi.KOMOTO, dto.getTila(), dto.getOid());
             if (!publicationDataService.isValidStatusChange(tilamuutos)) {

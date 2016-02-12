@@ -8,7 +8,6 @@ import com.google.common.collect.Sets;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
@@ -39,8 +38,7 @@ import java.util.Set;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.*;
 import static fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.OPINTOKOKONAISUUS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -65,7 +63,7 @@ public class KoulutusResourceImplV1Test {
     KoulutusV1Resource koulutusResourceV1;
 
     private final static String TARJOAJA1 = "1.2.3";
-    private final static String ULKOINEN_TUNNISTE = "ulkoinenTunniste";
+    private final static String TUNNISTE = "kk virkailijan tunniste, ei uniikki";
 
     @Before
     public void init() {
@@ -87,12 +85,62 @@ public class KoulutusResourceImplV1Test {
 
         KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
-        dto.setTunniste(ULKOINEN_TUNNISTE);
+        dto.setTunniste(TUNNISTE);
 
         ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
         assertEquals(komoOid, result.getResult().getKomoOid());
         assertEquals(komotoOid, result.getResult().getOid());
+    }
+
+    @Test
+    public void testCreateLuonnosOpintojaksoWithUniqueExternalId() throws OIDCreationException {
+        String komoOid = oidServiceMock.getOid();
+        String komotoOid = oidServiceMock.getOid();
+        String uniqueExternalId = "uniqueId1";
+        when(oidService.get(TarjontaOidType.KOMO)).thenReturn(komoOid);
+        when(oidService.get(TarjontaOidType.KOMOTO)).thenReturn(komotoOid);
+
+        KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
+        dto.setUlkoinenTunniste(uniqueExternalId);
+        dto.setAihees(koodiUris(Sets.newHashSet("aihe_1")));
+        dto.setOpintojenLaajuusPistetta("120");
+        dto.setOpetuskielis(koodiUris(Sets.newHashSet("kieli_fi")));
+
+        ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
+        assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
+        assertEquals(komoOid, result.getResult().getKomoOid());
+        assertEquals(komotoOid, result.getResult().getOid());
+        assertEquals(uniqueExternalId, result.getResult().getUlkoinenTunniste());
+    }
+
+    @Test
+    public void testEditLuonnosOpintojaksoUsingUniqueExternalId() throws OIDCreationException {
+        String komoOid = oidServiceMock.getOid();
+        String komotoOid = oidServiceMock.getOid();
+        String uniqueExternalId = "uniqueId2";
+        when(oidService.get(TarjontaOidType.KOMO)).thenReturn(komoOid);
+        when(oidService.get(TarjontaOidType.KOMOTO)).thenReturn(komotoOid);
+
+        KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
+        dto.setUlkoinenTunniste(uniqueExternalId);
+        dto.setAihees(koodiUris(Sets.newHashSet("aihe_1")));
+        dto.setOpintojenLaajuusPistetta("120");
+        dto.setOpetuskielis(koodiUris(Sets.newHashSet("kieli_fi")));
+
+        // Save koulutus for the 1st time
+        koulutusResourceV1.postKoulutus(dto);
+
+        // Now modify it
+        dto.setOpintojenLaajuusPistetta("140");
+        ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
+        assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
+
+        KorkeakouluOpintoV1RDTO resultDto = (KorkeakouluOpintoV1RDTO) result.getResult();
+        assertEquals(komoOid, resultDto.getKomoOid());
+        assertEquals(komotoOid, resultDto.getOid());
+        assertEquals(uniqueExternalId, resultDto.getUlkoinenTunniste());
+        assertEquals("140", resultDto.getOpintojenLaajuusPistetta());
     }
 
     @Test
@@ -165,7 +213,9 @@ public class KoulutusResourceImplV1Test {
 
     @Test
     public void testCreateOpintojaksoWithValidSisaltyvyys() throws OIDCreationException {
-        final KoulutusV1RDTO parentKoulutus = insertParentKokonaisuus();
+        final KoulutusV1RDTO parentKoulutus1 = insertParentKokonaisuus(null);
+        final String ulkoinenTunniste = "ulkoinenTunniste3.4";
+        final KoulutusV1RDTO parentKoulutus2 = insertParentKokonaisuus(ulkoinenTunniste);
 
         String komoOid = oidServiceMock.getOid();
         String komotoOid = oidServiceMock.getOid();
@@ -174,23 +224,35 @@ public class KoulutusResourceImplV1Test {
 
         KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
-        dto.setTunniste(ULKOINEN_TUNNISTE);
-        dto.setSisaltyyKoulutuksiin(Sets.<KoulutusIdentification>newHashSet(new KoulutusIdentification(){{
-            setOid(parentKoulutus.getOid());
-        }}));
+        dto.setTunniste(TUNNISTE);
+        dto.setSisaltyyKoulutuksiin(Sets.newHashSet(
+                new KoulutusIdentification(){{setOid(parentKoulutus1.getOid());}},
+                new KoulutusIdentification(){{setUlkoinenTunniste(parentKoulutus2.getUlkoinenTunniste());}}
+        ));
 
         ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
         assertEquals(komoOid, result.getResult().getKomoOid());
         assertEquals(komotoOid, result.getResult().getOid());
         Set<KoulutusIdentification> sisaltyyKoulutuksiin = result.getResult().getSisaltyyKoulutuksiin();
-        assertEquals(1, sisaltyyKoulutuksiin.size());
-        assertEquals(parentKoulutus.getOid(), sisaltyyKoulutuksiin.iterator().next().getOid());
+        assertEquals(2, sisaltyyKoulutuksiin.size());
+        assertNotNull(Iterables.find(sisaltyyKoulutuksiin, new Predicate<KoulutusIdentification>() {
+            @Override
+            public boolean apply(KoulutusIdentification koulutus) {
+                return koulutus.getOid().equals(parentKoulutus1.getOid());
+            }
+        }));
+        assertNotNull(Iterables.find(sisaltyyKoulutuksiin, new Predicate<KoulutusIdentification>() {
+            @Override
+            public boolean apply(KoulutusIdentification koulutus) {
+                return koulutus.getOid().equals(parentKoulutus2.getOid());
+            }
+        }));
     }
 
     @Test
     public void testCreateOpintojaksoFailsWhenNoPermissionForSisaltyvyys() throws OIDCreationException {
-        final KoulutusV1RDTO parentKoulutus = insertParentKokonaisuus();
+        final KoulutusV1RDTO parentKoulutus = insertParentKokonaisuus(null);
 
         doThrow(NotAuthorizedException.class)
                 .when(permissionChecker)
@@ -203,7 +265,7 @@ public class KoulutusResourceImplV1Test {
 
         KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
-        dto.setTunniste(ULKOINEN_TUNNISTE);
+        dto.setTunniste(TUNNISTE);
         dto.setSisaltyyKoulutuksiin(Sets.<KoulutusIdentification>newHashSet(new KoulutusIdentification(){{
             setOid(parentKoulutus.getOid());
         }}));
@@ -223,7 +285,7 @@ public class KoulutusResourceImplV1Test {
 
         KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
-        dto.setTunniste(ULKOINEN_TUNNISTE);
+        dto.setTunniste(TUNNISTE);
         dto.setSisaltyyKoulutuksiin(Sets.<KoulutusIdentification>newHashSet(new KoulutusIdentification(){{
             setOid("oid.that.does.not.exist");
         }}));
@@ -234,7 +296,7 @@ public class KoulutusResourceImplV1Test {
         assertTrue(containsError(result.getErrors(), SISALTYY_KOULUTUKSIIN));
     }
 
-    private KoulutusV1RDTO insertParentKokonaisuus() throws OIDCreationException {
+    private KoulutusV1RDTO insertParentKokonaisuus(String ulkoinenTunniste) throws OIDCreationException {
         String komoOid = oidServiceMock.getOid();
         String komotoOid = oidServiceMock.getOid();
         when(oidService.get(TarjontaOidType.KOMO)).thenReturn(komoOid);
@@ -242,7 +304,8 @@ public class KoulutusResourceImplV1Test {
 
         KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
-        dto.setTunniste(ULKOINEN_TUNNISTE);
+        dto.setTunniste(TUNNISTE);
+        dto.setUlkoinenTunniste(ulkoinenTunniste);
 
         ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
         return result.getResult();

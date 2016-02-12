@@ -36,6 +36,7 @@ import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.shared.types.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -760,6 +761,10 @@ public class KoulutusDTOConverterToEntity {
         komoto.setHintaString(dto.getHintaString());
         komoto.setMaksullisuus(dto.getOpintojenMaksullisuus());
         komoto.setHakijalleNaytettavaTunniste(dto.getHakijalleNaytettavaTunniste());
+
+        if (!StringUtils.isBlank(dto.getUlkoinenTunniste())) {
+            komoto.setUniqueExternalId(dto.getUlkoinenTunniste());
+        }
 
         if (dto.getSisaltyvatKoulutuskoodit() != null) {
             komoto.setSisaltyvatKoulutuskoodit(commonConverter.convertToUris(dto.getSisaltyvatKoulutuskoodit(), null, null));

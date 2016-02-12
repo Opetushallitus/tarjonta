@@ -29,6 +29,8 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
 
     KoulutusmoduuliToteutus findByOid(String oid);
 
+    KoulutusmoduuliToteutus findByUniqueExternalId(String uniqueExternalId);
+
     KoulutusmoduuliToteutus findKomotoByOid(String oid);
 
     KoulutusmoduuliToteutus findKomotoByKoulutusId(KoulutusIdentification id);

@@ -6,6 +6,8 @@ import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
@@ -24,6 +26,9 @@ public class KoulutusImplicitDataPopulator {
     @Autowired
     KoodiService koodiService;
 
+    @Autowired
+    KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+
     public static final String KOULUTUSALAOPH2002 = "koulutusalaoph2002";
     public static final String KOULUTUSASTEOPH2002 = "koulutusasteoph2002";
     public static final String OPINTOALAOPH2002 = "opintoalaoph2002";
@@ -32,6 +37,13 @@ public class KoulutusImplicitDataPopulator {
     public static final String TUTKINTONIMIKEKK = "tutkintonimikekk";
 
     public KoulutusV1RDTO populateFields(final KoulutusV1RDTO dto) {
+        if (StringUtils.isBlank(dto.getOid()) && !StringUtils.isBlank(dto.getUlkoinenTunniste())) {
+            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByUniqueExternalId(dto.getUlkoinenTunniste());
+            if (komoto != null) {
+                dto.setOid(komoto.getOid());
+            }
+        }
+
         if (dto.getKoulutuskoodi() == null || StringUtils.isBlank(dto.getKoulutuskoodi().getUri())) {
             return dto;
         }
@@ -59,7 +71,10 @@ public class KoulutusImplicitDataPopulator {
     }
 
     private KoodiV1RDTO findCode(final List<KoodiType> codes, final String koodisto) {
-        KoodiType code = Iterables.find(codes, matchKoodisto(koodisto));
+        KoodiType code = (KoodiType) Iterables.find(codes, matchKoodisto(koodisto), null);
+        if (code == null) {
+            return null;
+        }
         return new KoodiV1RDTO(code.getKoodiUri(), code.getVersio(), code.getKoodiArvo());
     }
 
