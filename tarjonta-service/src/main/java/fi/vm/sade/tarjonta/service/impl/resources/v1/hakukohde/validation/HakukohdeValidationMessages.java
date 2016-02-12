@@ -3,6 +3,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation;
 public enum HakukohdeValidationMessages {
 
     HAKUKOHDE_HAKU_MISSING,
+    HAKUKOHDE_INVALID_HAKU_OID,
     HAKUKOHDE_OID_SPECIFIED,
     HAKUKOHDE_NIMI_MISSING,
     HAKUKOHDE_KOULUTUS_MISSING,

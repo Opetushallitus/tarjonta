@@ -5,9 +5,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
@@ -40,31 +43,24 @@ public class HakukohdeValidator {
     private HakukohdeDAO hakukohdeDAO;
 
     @Autowired
+    private HakuDAO hakuDAO;
+
+    @Autowired
     PermissionChecker permissionChecker;
 
     public List<HakukohdeValidationMessages> validateCommonProperties(HakukohdeV1RDTO hakukohdeRDTO) {
 
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
 
-        if (hakukohdeRDTO.getHakukohdeKoulutusOids() == null || hakukohdeRDTO.getHakukohdeKoulutusOids().size() < 1) {
-            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_MISSING);
-        }
+        validationMessages.addAll(checkKoulutukset(hakukohdeRDTO.getHakukohdeKoulutusOids()));
 
-        for (String komotoOid : hakukohdeRDTO.getHakukohdeKoulutusOids()) {
-            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
-            if (komoto == null) {
-                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_DOES_NOT_EXIST);
-            } else {
-                try {
-                    permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
-                } catch (NotAuthorizedException e) {
-                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PERMISSION_DENIED_FOR_KOULUTUS);
-                }
-            }
-        }
-
-        if (hakukohdeRDTO.getHakuOid() == null) {
+        if (StringUtils.isBlank(hakukohdeRDTO.getHakuOid())) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_HAKU_MISSING);
+        } else {
+            Haku haku = hakuDAO.findByOid(hakukohdeRDTO.getHakuOid());
+            if (haku == null || TarjontaTila.POISTETTU.equals(haku.getTila())) {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_INVALID_HAKU_OID);
+            }
         }
 
         if (hakukohdeRDTO.getTila() == null) {
@@ -237,19 +233,31 @@ public class HakukohdeValidator {
 
     /**
      * Tarkista että kaikilla koulutuksilla sama vuosi/kausi ja että niiden tila
-     * ei ole peruttu, poistettu
+     * ei ole poistettu
      *
-     * @param komotot
+     * @param komotoOids
      */
-    public List<HakukohdeValidationMessages> checkKoulutukset(Collection<KoulutusmoduuliToteutus> komotot) {
+    public List<HakukohdeValidationMessages> checkKoulutukset(Collection<String> komotoOids) {
         String kausi = null;
         Integer vuosi = null;
 
-        if (komotot.size() == 0) {
+        if (komotoOids == null || komotoOids.size() == 0) {
             return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_MISSING);
         }
 
-        for (KoulutusmoduuliToteutus komoto : komotot) {
+        for (String komotoOid : komotoOids) {
+            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findKomotoByOid(komotoOid);
+
+            if (komoto == null || TarjontaTila.POISTETTU.equals(komoto.getTila())) {
+                return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_DOES_NOT_EXIST);
+            }
+
+            try {
+                permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
+            } catch (NotAuthorizedException e) {
+                return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_PERMISSION_DENIED_FOR_KOULUTUS);
+            }
+
             if (kausi == null) {
                 kausi = komoto.getAlkamiskausiUri();
                 vuosi = komoto.getAlkamisVuosi();
@@ -258,8 +266,8 @@ public class HakukohdeValidator {
                     return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_VUOSI_KAUSI_INVALID);
                 }
             }
-
         }
+
         return Collections.EMPTY_LIST;
     }
 

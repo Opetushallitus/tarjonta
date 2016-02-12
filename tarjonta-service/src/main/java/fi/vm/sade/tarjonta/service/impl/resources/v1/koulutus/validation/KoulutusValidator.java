@@ -167,7 +167,7 @@ public class KoulutusValidator {
             String tunniste = StringUtils.isNotBlank(id.getOid())
                     ? "oid: " + id.getOid()
                     : "tunniste:" + id.getTunniste();
-            if (komoto == null) {
+            if (komoto == null || TarjontaTila.POISTETTU.equals(komoto.getTila())) {
                 result.addError(createValidationError(SISALTYY_KOULUTUKSIIN, "koulutus with " + tunniste + " does not exist!"));
             } else {
                 try {

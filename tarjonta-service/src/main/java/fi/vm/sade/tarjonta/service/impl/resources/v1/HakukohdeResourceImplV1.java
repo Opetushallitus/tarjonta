@@ -15,7 +15,6 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
@@ -499,11 +498,18 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         return komoto.getToteutustyyppi();
     }
 
-    private List<HakukohdeValidationMessages> validateHakukohde(HakukohdeV1RDTO hakukohdeV1RDTO) {
+    private List<HakukohdeValidationMessages> validateHakukohdeAndPopulateImplicitFields(HakukohdeV1RDTO hakukohdeV1RDTO) {
 
         final List<HakukohdeValidationMessages> validationMessageses = new ArrayList<HakukohdeValidationMessages>();
 
         validationMessageses.addAll(hakukohdeValidator.validateCommonProperties(hakukohdeV1RDTO));
+
+        try {
+            hakukohdeV1RDTO = populateImplicitFields(hakukohdeV1RDTO);
+        } catch (Exception e) {
+            // Hakukohde was missing data required in population -> return validation messages
+            return validationMessageses;
+        }
 
         switch (hakukohdeV1RDTO.getToteutusTyyppi()) {
 
@@ -567,11 +573,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
-        hakukohdeRDTO = populateHakukohde(hakukohdeRDTO);
-        List<HakukohdeValidationMessages> validationMessageses = validateHakukohde(hakukohdeRDTO);
-
-        Set<KoulutusmoduuliToteutus> komotot = Sets.newHashSet(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(hakukohdeRDTO.getHakukohdeKoulutusOids()));
-        validationMessageses.addAll(hakukohdeValidator.checkKoulutukset(komotot));
+        List<HakukohdeValidationMessages> validationMessageses = validateHakukohdeAndPopulateImplicitFields(hakukohdeRDTO);
 
         if (hakukohdeRDTO.getOid() != null) {
             validationMessageses.add(HakukohdeValidationMessages.HAKUKOHDE_OID_SPECIFIED);
@@ -581,6 +583,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             return populateValidationErrors(hakukohdeRDTO, validationMessageses);
         }
 
+        Set<KoulutusmoduuliToteutus> komotot = Sets.newHashSet(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(hakukohdeRDTO.getHakukohdeKoulutusOids()));
         Map<String, KoulutusmoduuliToteutusTarjoajatiedot> tarjoajatiedot = getTarjoajatiedot(hakukohdeRDTO, komotot);
 
         Hakukohde hakukohde = converterV1.toHakukohde(hakukohdeRDTO);
@@ -713,7 +716,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
     }
 
-    private HakukohdeV1RDTO populateHakukohde(HakukohdeV1RDTO dto) {
+    private HakukohdeV1RDTO populateImplicitFields(HakukohdeV1RDTO dto) {
         dto.setToteutusTyyppi(getToteutustyyppi(dto));
         return dto;
     }
@@ -725,16 +728,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         try {
 
             Date today = new Date();
-            //LOG.info("TRY UPDATE HAKUKOHDE {}", hakukohdeOid);
-            String hakuOid = hakukohdeRDTO.getHakuOid();
 
-            hakukohdeRDTO = populateHakukohde(hakukohdeRDTO);
-
-            List<HakukohdeValidationMessages> validationMessagesList = validateHakukohde(hakukohdeRDTO);
-
-            Set<KoulutusmoduuliToteutus> komotot = Sets.newHashSet(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(hakukohdeRDTO.getHakukohdeKoulutusOids()));
-
-            validationMessagesList.addAll(hakukohdeValidator.checkKoulutukset(komotot));
+            List<HakukohdeValidationMessages> validationMessagesList = validateHakukohdeAndPopulateImplicitFields(hakukohdeRDTO);
 
             if (validationMessagesList.size() > 0) {
                 return populateValidationErrors(hakukohdeRDTO, validationMessagesList);
@@ -764,7 +759,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 hakukohde.setSoraKuvaus(null);
             }
 
-            Haku haku = hakuDAO.findByOid(hakuOid);
+            Haku haku = hakuDAO.findByOid(hakukohdeRDTO.getHakuOid());
 
             hakukohde.setHaku(haku);
 
@@ -778,6 +773,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             LOG.info("Hakukohde.liitteet = {}", hakukohde.getLiites());
             LOG.info("Hakukohde.kokeet = {}", hakukohde.getValintakoes());
 
+            Set<KoulutusmoduuliToteutus> komotot = Sets.newHashSet(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(hakukohdeRDTO.getHakukohdeKoulutusOids()));
             setHakukohde(komotot, hakukohde);
 
             Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, TarjontaTila.valueOf(hakukohdeRDTO.getTila()), hakukohde.getOid());
@@ -1115,10 +1111,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             List<HakukohdeValidationMessages> validationMessageses) {
         ResultV1RDTO<T> errorResult = new ResultV1RDTO<T>();
         errorResult.setResult(result);
-        errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
         for (HakukohdeValidationMessages msg : validationMessageses) {
-            errorResult.addError(ErrorV1RDTO.createValidationError(null, msg.name(), null));
+            errorResult.addError(ErrorV1RDTO.createValidationError(msg.name(), msg.name()));
         }
+        errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
         return errorResult;
     }
 
@@ -1239,16 +1235,17 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohde.getOid());
 
-        Set<KoulutusmoduuliToteutus> liitettavatKomotot = Sets.newHashSet(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(getKomotoOids(koulutukses)));
-        Set<KoulutusmoduuliToteutus> kaikkiKoulutukset = Sets.newHashSet(liitettavatKomotot);
-        kaikkiKoulutukset.addAll(hakukohde.getKoulutusmoduuliToteutuses());
+        List<HakukohdeValidationMessages> validationMessages = hakukohdeValidator.checkKoulutukset(getKomotoOids(koulutukses));
 
-        List<HakukohdeValidationMessages> validationMessages = hakukohdeValidator.checkKoulutukset(kaikkiKoulutukset);
         if (validationMessages.size() > 0) {
             return populateValidationErrors(null, validationMessages);
         }
 
-        if (liitettavatKomotot != null && liitettavatKomotot.size() > 0) {
+        Set<KoulutusmoduuliToteutus> liitettavatKomotot = Sets.newHashSet(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(getKomotoOids(koulutukses)));
+        Set<KoulutusmoduuliToteutus> kaikkiKoulutukset = Sets.newHashSet(liitettavatKomotot);
+        kaikkiKoulutukset.addAll(hakukohde.getKoulutusmoduuliToteutuses());
+
+        if (liitettavatKomotot.size() > 0) {
 
             for (KoulutusmoduuliToteutus komoto : liitettavatKomotot) {
 
