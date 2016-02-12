@@ -10,6 +10,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Test;
@@ -148,7 +149,7 @@ public class ConverterV1Test extends TestMockBase {
         HakukohdeV1RDTO hakukohdeDTO = new HakukohdeV1RDTO();
         hakukohdeDTO.setTila("JULKAISTU");
         hakukohdeDTO.setValintakokeet(getValintakokeetDTOs());
-        hakukohdeDTO.setToteutusTyyppi("LUKIOKOULUTUS");
+        hakukohdeDTO.setToteutusTyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS);
         return hakukohdeDTO;
     }
 

@@ -19,9 +19,12 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
+import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
@@ -36,6 +39,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
@@ -45,6 +50,7 @@ import java.util.Set;
 
 import static fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.*;
 
+@Service
 public class KoulutusValidator {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusValidator.class);
@@ -59,6 +65,14 @@ public class KoulutusValidator {
     public static final String OPINTOJEN_LAAJUUS_PISTETTA = "opintojenLaajuusPistetta";
     public static final String OPETUSKIELIS = "opetuskielis";
     public static final String AIHEES = "aihees";
+    public static final String SISALTYY_KOULUTUKSIIN = "sisaltyyKoulutuksiin";
+    public static final String TOTEUTUSTYYPPI = "toteutustyyppi";
+
+    @Autowired
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+
+    @Autowired
+    private PermissionChecker permissionChecker;
 
     /**
      * Required data validation for koulutus -type of objects.
@@ -97,7 +111,7 @@ public class KoulutusValidator {
         return false;
     }
 
-    public static void validateTutkintoonjohtamaton(TutkintoonJohtamatonKoulutusV1RDTO dto, ResultV1RDTO result) {
+    public void validateTutkintoonjohtamaton(TutkintoonJohtamatonKoulutusV1RDTO dto, ResultV1RDTO result) {
         validateBaseKoulutusData(dto, null, result, false);
 
         try {
@@ -126,6 +140,8 @@ public class KoulutusValidator {
         if (!TarjontaTila.PUUTTEELLINEN.equals(dto.getTila())) {
             validateTutkintoonjohtamatonAllRequiredFields(dto, result);
         }
+
+        validateSisaltyyKoulutuksiin(dto, result);
     }
 
     // Extra validation of fields that are required in order to show the learning opportunity in opintopolku.fi
@@ -138,6 +154,28 @@ public class KoulutusValidator {
         }
         if (isBlank(dto.getAihees())) {
             result.addError(createValidationError(AIHEES, AIHEES + ".uris cannot be empty!"));
+        }
+    }
+
+    private void validateSisaltyyKoulutuksiin(KoulutusV1RDTO dto, ResultV1RDTO result) {
+        if (dto.getSisaltyyKoulutuksiin() == null) {
+            return;
+        }
+
+        for (KoulutusIdentification id : dto.getSisaltyyKoulutuksiin()) {
+            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findKomotoByKoulutusId(id);
+            String tunniste = StringUtils.isNotBlank(id.getOid())
+                    ? "oid: " + id.getOid()
+                    : "tunniste:" + id.getTunniste();
+            if (komoto == null) {
+                result.addError(createValidationError(SISALTYY_KOULUTUKSIIN, "koulutus with " + tunniste + " does not exist!"));
+            } else {
+                try {
+                    permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
+                } catch (NotAuthorizedException e) {
+                    result.addError(createValidationError(SISALTYY_KOULUTUKSIIN, "permission denied for koulutus with " + tunniste));
+                }
+            }
         }
     }
 

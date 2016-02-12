@@ -351,7 +351,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
     public void thatDuplicateHakukohdeCheckDoesNotBlockUpdatingHakukohde() {
         HakukohdeV1RDTO hakukohdeDTO = new HakukohdeV1RDTO();
         hakukohdeDTO.setOid("hakukohdeOid");
-        hakukohdeDTO.setToteutusTyyppi("LUKIOKOULUTUS");
+        hakukohdeDTO.setToteutusTyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS);
         hakukohdeDTO.setHakuOid("hakuOid");
         hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi");
         hakukohdeDTO.getHakukohdeKoulutusOids().add("komotoOid");
@@ -381,7 +381,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
     @Test
     public void thatDuplicateHakukohdeCannotBeCreated() {
         HakukohdeV1RDTO hakukohdeDTO = new HakukohdeV1RDTO();
-        hakukohdeDTO.setToteutusTyyppi("LUKIOKOULUTUS");
+        hakukohdeDTO.setToteutusTyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS);
         hakukohdeDTO.setHakuOid("hakuOid");
         hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi");
         hakukohdeDTO.getHakukohdeKoulutusOids().add("komotoOid");
@@ -411,7 +411,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
     @Test
     public void thatDuplicateHakukohdeCanBeCreatedWhenDuplicateIsPoistettu() {
         HakukohdeV1RDTO hakukohdeDTO = new HakukohdeV1RDTO();
-        hakukohdeDTO.setToteutusTyyppi("LUKIOKOULUTUS");
+        hakukohdeDTO.setToteutusTyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS);
         hakukohdeDTO.setHakuOid("hakuOid");
         hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi");
         hakukohdeDTO.getHakukohdeKoulutusOids().add("komotoOid");
@@ -441,7 +441,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
     @Test
     public void thatDuplicateHakukohdeCanBeCreatedWhenDuplicateIsPeruttu() {
         HakukohdeV1RDTO hakukohdeDTO = new HakukohdeV1RDTO();
-        hakukohdeDTO.setToteutusTyyppi("LUKIOKOULUTUS");
+        hakukohdeDTO.setToteutusTyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS);
         hakukohdeDTO.setHakuOid("hakuOid");
         hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi");
         hakukohdeDTO.getHakukohdeKoulutusOids().add("komotoOid");
@@ -628,7 +628,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
     private HakukohdeV1RDTO createhakukohde() {
         HakukohdeV1RDTO hakukohdeDTO = new HakukohdeV1RDTO();
         hakukohdeDTO.setOid("3.2.1");
-        hakukohdeDTO.setToteutusTyyppi("LUKIOKOULUTUS");
+        hakukohdeDTO.setToteutusTyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS);
         hakukohdeDTO.setTila("JULKAISTU");
         hakukohdeDTO.setHakuOid("1.2.3");
         hakukohdeDTO.setHakukohteenNimiUri("nimi_uri");

@@ -48,7 +48,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private Date liitteidenToimitusPvm;
     private String ulkoinenTunniste;
     private String koulutusAsteTyyppi;
-    private String toteutusTyyppi;
+    private ToteutustyyppiEnum toteutusTyyppi;
     private String koulutusmoduuliTyyppi;
     private String koulutuslaji;
     private Map<String, String> lisatiedot;
@@ -458,11 +458,11 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.koulutuslaji = koulutuslaji;
     }
 
-    public String getToteutusTyyppi() {
+    public ToteutustyyppiEnum getToteutusTyyppi() {
         return toteutusTyyppi;
     }
 
-    public void setToteutusTyyppi(String toteutusTyyppi) {
+    public void setToteutusTyyppi(ToteutustyyppiEnum toteutusTyyppi) {
         this.toteutusTyyppi = toteutusTyyppi;
     }
 
@@ -500,12 +500,12 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     @JsonIgnore
     public boolean isLukioKoulutus() {
-        return ToteutustyyppiEnum.LUKIOKOULUTUS.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi()));
+        return ToteutustyyppiEnum.LUKIOKOULUTUS.equals(getToteutusTyyppi());
     }
 
     @JsonIgnore
     public boolean isAmmatillinenPerustutkinto() {
-        return ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi()));
+        return ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO.equals(getToteutusTyyppi());
     }
 
     public String getKoulutusmoduuliTyyppi() {

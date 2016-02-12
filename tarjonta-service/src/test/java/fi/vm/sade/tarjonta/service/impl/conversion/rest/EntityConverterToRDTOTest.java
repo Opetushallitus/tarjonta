@@ -29,6 +29,8 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 
 import java.util.ArrayList;
@@ -86,6 +88,11 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         Whitebox.setInternalState(instanceLukio, "komotoKuvausConverters", komotoKuvausConvertersMock);
         Whitebox.setInternalState(instanceLukio, "koulutusmoduuliDAO", koulutusmoduuliDAOMock);
         Whitebox.setInternalState(instanceLukio, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAOMock);
+
+        KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAOMock = Mockito.mock(KoulutusSisaltyvyysDAO.class);
+        Mockito.when(koulutusSisaltyvyysDAOMock.getParents(Matchers.anyString())).thenReturn(new ArrayList<String>());
+        Whitebox.setInternalState(instanceLukio, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAOMock);
+        Whitebox.setInternalState(instanceKk, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAOMock);
     }
 
     @Test

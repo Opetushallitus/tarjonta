@@ -34,6 +34,8 @@ public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements 
 
     public static final String TILA_COLUMN_NAME = "tila";
 
+    public static final String ULKOINEN_TUNNISTE_COLUMN_NAME = "ulkoinenTunniste";
+
     private static final long serialVersionUID = -8023508784857174305L;
 
     @Transient
@@ -128,7 +130,7 @@ public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements 
     @Column(name = "opintoala_uri")
     private String opintoalaUri;
 
-    @Column(name = "ulkoinentunniste")
+    @Column(name = ULKOINEN_TUNNISTE_COLUMN_NAME)
     private String ulkoinenTunniste;
 
     @PreUpdate

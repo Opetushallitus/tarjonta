@@ -38,6 +38,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.*;
+
 /**
  * Conversion services for REST service.
  *
@@ -133,6 +135,8 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         }
 
         dto.setIsAvoimenYliopistonKoulutus(komoto.getIsAvoimenYliopistonKoulutus());
+
+        setSisaltyyKoulutuksiin(dto, komoto);
 
         //KOMO
         if (dto instanceof KoulutusKorkeakouluV1RDTO) {
@@ -500,6 +504,24 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         return dto;
     }
 
+    private void setSisaltyyKoulutuksiin(KoulutusV1RDTO dto, KoulutusmoduuliToteutus komoto) {
+        Set<ToteutustyyppiEnum> toteutustyyppisWithSisaltyvyys = Sets.newHashSet(KORKEAKOULUOPINTO, KORKEAKOULUTUS);
+        if (!toteutustyyppisWithSisaltyvyys.contains(komoto.getToteutustyyppi())) {
+            return;
+        }
+
+        List<String> parents = koulutusSisaltyvyysDAO.getParents(komoto.getKoulutusmoduuli().getOid());
+        Set<KoulutusIdentification> sisaltyyKoulutuksiin = new HashSet<KoulutusIdentification>();
+        for (final String parentKomoOid : parents) {
+            final KoulutusmoduuliToteutus parentKomoto = koulutusmoduuliToteutusDAO.findFirstByKomoOid(parentKomoOid);
+            sisaltyyKoulutuksiin.add(new KoulutusIdentification(){{
+                setOid(parentKomoto.getOid());
+                setTunniste(parentKomoto.getUlkoinenTunniste());
+            }});
+        }
+        dto.setSisaltyyKoulutuksiin(sisaltyyKoulutuksiin);
+    }
+
     private NimiV1RDTO getKoulutusohjelmaOrOsaamisala(Koulutusmoduuli komo, KoulutusmoduuliToteutus komoto, RestParam param) {
         NimiV1RDTO nimiV1RDTO = null;
 
@@ -550,7 +572,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             dto.setOpintoala(commonConverter.convertToKoodiDTO(komo.getOpintoalaUri(), komoto.getOpintoalaUri(), FieldNames.OPINTOALA, NO, restParam));
         }
 
-        if (ToteutustyyppiEnum.EB_RP_ISH.equals(komoto.getToteutustyyppi())) {
+        if (EB_RP_ISH.equals(komoto.getToteutustyyppi())) {
             dto.setOpintojenLaajuusarvo(commonConverter.convertToKoodiDTO(komoto.getOpintojenLaajuusarvoUri(), null, FieldNames.OPINTOJEN_LAAJUUSARVO, YES, restParam));
             dto.setOpintojenLaajuusyksikko(commonConverter.convertToKoodiDTO(komoto.getOpintojenLaajuusyksikkoUri(), null, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, YES, restParam));
         }

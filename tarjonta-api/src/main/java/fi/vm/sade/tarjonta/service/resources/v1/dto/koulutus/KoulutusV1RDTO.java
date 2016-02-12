@@ -177,6 +177,9 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     @ApiModelProperty(value = "Koulutukseen sisältyvät koulutuskoodit", required = false)
     private KoodiUrisV1RDTO sisaltyvatKoulutuskoodit;
 
+    @ApiModelProperty(value = "Koulutukset, joihin tämä koulutus sisältyy", required = false)
+    private Set<KoulutusIdentification> sisaltyyKoulutuksiin;
+
     public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         this.setToteutustyyppi(toteutustyyppi);
         this.moduulityyppi = moduulityyppi;
@@ -686,4 +689,11 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
         this.hakijalleNaytettavaTunniste = hakijalleNaytettavaTunniste;
     }
 
+    public Set<KoulutusIdentification> getSisaltyyKoulutuksiin() {
+        return sisaltyyKoulutuksiin;
+    }
+
+    public void setSisaltyyKoulutuksiin(Set<KoulutusIdentification> sisaltyyKoulutuksiin) {
+        this.sisaltyyKoulutuksiin = sisaltyyKoulutuksiin;
+    }
 }
