@@ -115,7 +115,7 @@ abstract class KoulutusBase extends TestUtilityBase {
     protected static final String TUNNISTE = "tunniste_txt";
     protected static final String SUUNNITELTU_KESTO_VALUE = "10";
     protected static final String SUUNNITELTU_KESTO_TYYPPI = "suunnteltu_kesto";
-    protected static final String[] PERSON = {"henkilo_oid", "firstanames", "lastname", "Mr.", "oph@oph.fi", "12345678"};
+    protected static final String[] PERSON = {"henkilo_oid", "Etunimi Etunimi Sukunimi Sukunimi", "Mr.", "oph@oph.fi", "12345678"};
 
     protected KoulutusResourceImplV1 instance;
     protected final DateTime DATE = new DateTime(VUOSI, 1, 1, 1, 1);
@@ -380,7 +380,7 @@ abstract class KoulutusBase extends TestUtilityBase {
 
         dto.getYhteyshenkilos().add(
                 new fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2],
-                        PERSON[3], PERSON[4], PERSON[5], null,
+                        PERSON[3], PERSON[4], null,
                         HenkiloTyyppi.YHTEYSHENKILO));
         dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));

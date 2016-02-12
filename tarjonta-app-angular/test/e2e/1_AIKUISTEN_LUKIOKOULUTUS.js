@@ -75,7 +75,7 @@ testKoulutus('Aikuisten lukiokoulutus', 'Kauniaisten lukio', {
             val: 'http://www.linkki-joka-ei-toimi.fi'
         },
         yhteyshenkilö: {
-            el: $('[ng-model="uiModel.contactPerson.nimet"]'),
+            el: $('[ng-model="uiModel.contactPerson.nimi"]'),
             val: 'Matti Meikäläinen',
         },
         sahkoposti: {

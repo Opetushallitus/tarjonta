@@ -136,7 +136,7 @@ describe('MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULU
                 editVal: 'http://www.linkki-joka-ei-toimi.fi'
             },
             yhteyshenkilö: {
-                el: $('[ng-model="uiModel.contactPerson.nimet"]'),
+                el: $('[ng-model="uiModel.contactPerson.nimi"]'),
                 val: 'Eevi Mustonen',
                 editVal: 'EDIT'
             },

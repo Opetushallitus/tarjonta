@@ -111,7 +111,7 @@ describe('AMMATILLINEN_PERUSTUTKINTO', function() {
                 editVal: 'http://www.linkki-joka-ei-toimi.fi'
             },
             yhteyshenkilö: {
-                el: $('[ng-model="uiModel.contactPerson.nimet"]'),
+                el: $('[ng-model="uiModel.contactPerson.nimi"]'),
                 val: 'Anita Nordström',
                 editVal: 'Anita Nordström EDIT'
             },

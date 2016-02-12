@@ -26,35 +26,27 @@ app.controller('EditYhteyshenkiloCtrl', [
                 org: [orgOid]
             }).then(function(yhteyshenkilot) {
                 if (yhteyshenkilot !== undefined) {
-                    for (var i = 0; i < yhteyshenkilot.length; i++) {
-                        yhteyshenkilot[i].nimi = yhteyshenkilot[i].etunimet + ' ' + yhteyshenkilot[i].sukunimi;
-                    }
                     $scope.yhteyshenkilot = yhteyshenkilot;
                 }
             });
-            /*
-                                   * Clearing of the contact person data.
-                                   */
+
+            // Clearing of the contact person data.
             $scope.editYhModel.clearYh = function() {
                 extModel.contactPerson = {
                     henkiloTyyppi: 'YHTEYSHENKILO'
                 };
             };
-            /*
-                                   * Sets the contact person to be the one that the user selected
-                                   * from the autocomplete field.
-                                   */
+
+            // Sets the contact person to be the one that the user selected from the autocomplete field.
             $scope.editYhModel.selectHenkilo = function(selectedUser) {
                 var to = extModel.contactPerson;
                 $scope.setValues(to, selectedUser);
             };
-            /**
-            * kopioi data modeliin
-            */
+
+            // kopioi data modeliin
             $scope.setValues = function(to, selectedUser) {
                 var henkiloOid = selectedUser.oidHenkilo;
                 YhteyshenkiloService.haeHenkilo(henkiloOid).then(function(data) {
-                    // console.log("henkilo data", data);
                     var yhteystiedotRyhma = data.yhteystiedotRyhma;
                     if (yhteystiedotRyhma.length > 0) {
                         for (var r = 0; r < yhteystiedotRyhma.length; r++) {
@@ -70,6 +62,7 @@ app.controller('EditYhteyshenkiloCtrl', [
                         }
                     }
                 });
+
                 // tehtavanimike
                 YhteyshenkiloService.haeOrganisaatiohenkilo(henkiloOid).then(function(data) {
                     for (var i = 0; i < data.length; i++) {
@@ -78,8 +71,15 @@ app.controller('EditYhteyshenkiloCtrl', [
                         }
                     }
                 });
-                to.etunimet = selectedUser.etunimet;
-                to.sukunimi = selectedUser.sukunimi;
+                if (selectedUser.etunimet) {
+                    to.nimi = selectedUser.etunimet;
+                }
+                if (selectedUser.sukunimi) {
+                    if (to.nimi.length > 0) {
+                        to.nimi = to.nimi + " ";
+                    }
+                    to.nimi = to.nimi + selectedUser.sukunimi;
+                }
             };
         };
     }

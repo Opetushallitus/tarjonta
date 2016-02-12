@@ -336,11 +336,10 @@ public final class EntityUtils {
     public static void copyFields(final YhteyshenkiloTyyppi from, Yhteyshenkilo to) {
 
         to.setHenkioOid(from.getHenkiloOid());
-        to.setEtunimis(from.getEtunimet());
-        if (from.getSukunimi() == null) {
-            to.setSukunimi("");
+        if (from.getNimi() == null) {
+            to.setNimi("");
         } else {
-            to.setSukunimi(from.getSukunimi());
+            to.setNimi(from.getNimi());
         }
         to.setPuhelin(from.getPuhelin());
         to.setSahkoposti(from.getSahkoposti());
@@ -351,11 +350,10 @@ public final class EntityUtils {
 
     public static void copyFields(final Yhteyshenkilo from, YhteyshenkiloTyyppi to) {
 
-        to.setEtunimet(from.getEtunimis());
+        to.setNimi(from.getNimi());
         to.setHenkiloOid(from.getHenkioOid());
         to.setPuhelin(from.getPuhelin());
         to.setSahkoposti(from.getSahkoposti());
-        to.setSukunimi(from.getSukunimi());
         to.setTitteli(from.getTitteli());
         to.setHenkiloTyyppi(from.getHenkiloTyyppi());
 

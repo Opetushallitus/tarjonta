@@ -40,10 +40,8 @@ public class Yhteyshenkilo extends TarjontaBaseEntity {
     public static final String TABLE_NAME = "yhteyshenkilo";
     private static final long serialVersionUID = -1434499440678133630L;
     private static final String KIELI_SEPARATOR = ",";
-    @Column(name = "etunimis", nullable = false)
-    private String etunimis;
-    @Column(name = "sukunimi", nullable = false)
-    private String sukunimi;
+    @Column(name = "nimi", nullable = false)
+    private String nimi;
     @Column(name = "sahkoposti")
     private String sahkoposti;
     @Column(name = "puhelin")
@@ -99,14 +97,6 @@ public class Yhteyshenkilo extends TarjontaBaseEntity {
         this.henkioOid = henkioOid;
     }
 
-    public String getEtunimis() {
-        return etunimis;
-    }
-
-    public void setEtunimis(String etunimis) {
-        this.etunimis = etunimis;
-    }
-
     public String getSahkoposti() {
         return sahkoposti;
     }
@@ -115,12 +105,12 @@ public class Yhteyshenkilo extends TarjontaBaseEntity {
         this.sahkoposti = sahkoposti;
     }
 
-    public String getSukunimi() {
-        return sukunimi;
+    public String getNimi() {
+        return nimi;
     }
 
-    public void setSukunimi(String sukunimi) {
-        this.sukunimi = sukunimi;
+    public void setNimi(String nimi) {
+        this.nimi = nimi;
     }
 
     public String getPuhelin() {

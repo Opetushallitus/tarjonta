@@ -11,9 +11,6 @@ app.directive('contactPerson', function(YhteyshenkiloService) {
             org: [$scope.orgOid]
         }).then(function(yhteyshenkilot) {
             if (yhteyshenkilot !== undefined) {
-                for (var i = 0; i < yhteyshenkilot.length; i++) {
-                    yhteyshenkilot[i].nimi = yhteyshenkilot[i].etunimet + ' ' + yhteyshenkilot[i].sukunimi;
-                }
                 $scope.yhteyshenkilot = yhteyshenkilot;
             }
         });
@@ -39,7 +36,6 @@ app.directive('contactPerson', function(YhteyshenkiloService) {
         $scope.setValues = function(to, selectedUser) {
             var henkiloOid = selectedUser.oidHenkilo;
             YhteyshenkiloService.haeHenkilo(henkiloOid).then(function(data) {
-                // console.log("henkilo data", data);
                 var yhteystiedotRyhma = data.yhteystiedotRyhma;
                 if (yhteystiedotRyhma.length > 0) {
                     for (var r = 0; r < yhteystiedotRyhma.length; r++) {
@@ -63,8 +59,7 @@ app.directive('contactPerson', function(YhteyshenkiloService) {
                     }
                 }
             });
-            to.etunimet = selectedUser.etunimet;
-            to.sukunimi = selectedUser.sukunimi;
+            to.nimi = selectedUser.nimi;
         };
     }
     return {

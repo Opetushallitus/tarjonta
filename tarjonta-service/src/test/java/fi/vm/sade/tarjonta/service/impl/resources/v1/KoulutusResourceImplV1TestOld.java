@@ -94,7 +94,7 @@ public class KoulutusResourceImplV1TestOld extends KoulutusBase {
         dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO_TYYPPI));
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
 
-        dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], PERSON[5], null, HenkiloTyyppi.YHTEYSHENKILO));
+        dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], null, HenkiloTyyppi.YHTEYSHENKILO));
         dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
 
@@ -242,11 +242,10 @@ public class KoulutusResourceImplV1TestOld extends KoulutusBase {
         assertEquals(new Integer(1), result.getSuunniteltuKestoTyyppi().getVersio());
         YhteyshenkiloTyyppi next = result.getYhteyshenkilos().iterator().next();
         assertEquals(PERSON[0], next.getHenkiloOid());
-        assertEquals(PERSON[1], next.getEtunimet());
-        assertEquals(PERSON[2], next.getSukunimi());
-        assertEquals(PERSON[3], next.getTitteli());
-        assertEquals(PERSON[4], next.getSahkoposti());
-        assertEquals(PERSON[5], next.getPuhelin());
+        assertEquals(PERSON[1], next.getNimi());
+        assertEquals(PERSON[2], next.getTitteli());
+        assertEquals(PERSON[3], next.getSahkoposti());
+        assertEquals(PERSON[4], next.getPuhelin());
         assertEquals(HenkiloTyyppi.YHTEYSHENKILO, next.getHenkiloTyyppi());
         assertEquals(USER_OID, result.getModifiedBy());
 
@@ -300,7 +299,7 @@ public class KoulutusResourceImplV1TestOld extends KoulutusBase {
         koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, MAP_OPETUMUOTO);
         koodiUrisMap(dto.getPohjakoulutusvaatimukset(), URI_KIELI_FI, MAP_POHJAKOULUTUS);
 
-        dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], PERSON[5], null, HenkiloTyyppi.YHTEYSHENKILO));
+        dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], null, HenkiloTyyppi.YHTEYSHENKILO));
         dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
 
@@ -400,11 +399,10 @@ public class KoulutusResourceImplV1TestOld extends KoulutusBase {
 
         YhteyshenkiloTyyppi next = result.getYhteyshenkilos().iterator().next();
         assertEquals(PERSON[0], next.getHenkiloOid());
-        assertEquals(PERSON[1], next.getEtunimet());
-        assertEquals(PERSON[2], next.getSukunimi());
-        assertEquals(PERSON[3], next.getTitteli());
-        assertEquals(PERSON[4], next.getSahkoposti());
-        assertEquals(PERSON[5], next.getPuhelin());
+        assertEquals(PERSON[1], next.getNimi());
+        assertEquals(PERSON[2], next.getTitteli());
+        assertEquals(PERSON[3], next.getSahkoposti());
+        assertEquals(PERSON[4], next.getPuhelin());
         assertEquals(HenkiloTyyppi.YHTEYSHENKILO, next.getHenkiloTyyppi());
         assertEquals(USER_OID, result.getModifiedBy());
     }

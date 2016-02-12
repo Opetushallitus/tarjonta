@@ -136,7 +136,7 @@ describe('MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
                 editVal: 'http://www.linkki-joka-ei-toimi.fi'
             },
             yhteyshenkilö: {
-                el: $('[ng-model="uiModel.contactPerson.nimet"]'),
+                el: $('[ng-model="uiModel.contactPerson.nimi"]'),
                 val: 'Emma Nylund',
                 editVal: 'EDIT'
             },
