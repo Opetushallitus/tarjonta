@@ -193,7 +193,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         angular.forEach(factory.STRUCTURE[tyyppi].RELATIONS, function(value, key) {
             uiModel[key] = factory.createUiMetaMultiModel();
         });
-        uiModel.showSuccess = false;
+        uiModel.showSuccess = false;
         return uiModel;
     };
     factory.createUiKoodistoSingleModel = function() {
