@@ -5,14 +5,19 @@
 <table class="tarjontaForm">
     <tr><th></th><td></td><td></td></tr>
 
-    <!-- PERUSTIEDOT / TODO collapse -->
-
     <tr class="collapse" ng-class="model.collapse.perusTiedot ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.perustiedot.otsikko" ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot"></th>
         <td><a class="btn" ng-disabled="!isMutable" href data-ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa">Muokkaa</span> <span class="icon-edit"></span></a></td>
     </tr>
 
     <tbody ng-show="!model.collapse.perusTiedot">
+
+    <tr>
+        <th>OID</th>
+        <td colspan="2">
+            {{model.koulutus.oid}}
+        </td>
+    </tr>
 
     <!-- organisaation nimi -->
     <tr>
