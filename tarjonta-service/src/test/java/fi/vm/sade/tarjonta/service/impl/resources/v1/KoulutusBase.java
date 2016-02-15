@@ -53,6 +53,7 @@ import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.joda.time.DateTime;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -71,6 +72,8 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 /**
  *
@@ -161,7 +164,10 @@ abstract class KoulutusBase extends TestUtilityBase {
         koulutusPermissionServiceMock = createMock(KoulutusPermissionService.class);
         tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
         indexerResourceMock = createMock(IndexerResource.class);
-        permissionChecker = createMock(PermissionChecker.class);
+        permissionChecker = Mockito.mock(PermissionChecker.class);
+        doNothing().when(permissionChecker).checkCreateKoulutus(Matchers.anyString());
+        doNothing().when(permissionChecker).checkUpdateKoulutusByTarjoajaOid(Matchers.anyString());
+
         koodistoUri = createMock(KoodistoURI.class);
         contextDataService = new ContextDataServiceImpl();
         koulutusSisaltyvyysDAO = createMock(KoulutusSisaltyvyysDAO.class);
@@ -280,7 +286,9 @@ abstract class KoulutusBase extends TestUtilityBase {
 
         organisaatioServiceMock = createMock(OrganisaatioService.class);
         indexerResourceMock = createMock(IndexerResource.class);
-        permissionChecker = createMock(PermissionChecker.class);
+        permissionChecker = Mockito.mock(PermissionChecker.class);
+        doNothing().when(permissionChecker).checkCreateKoulutus(Matchers.anyString());
+        doNothing().when(permissionChecker).checkUpdateKoulutusByTarjoajaOid(Matchers.anyString());
         koodistoUri = createMock(KoodistoURI.class);
         koulutusSisaltyvyysDAO = createMock(KoulutusSisaltyvyysDAO.class);
         koulutusSearchService = createMock(KoulutusSearchService.class);

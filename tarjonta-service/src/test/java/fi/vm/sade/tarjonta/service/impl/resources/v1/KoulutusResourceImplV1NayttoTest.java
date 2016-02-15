@@ -132,8 +132,6 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         expectValmistavaKoodis(); /* 4rd round koodisto calls, convert result valmentava to dto */
 
         Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn(VALMENTAVA_KOMOTO_OID);
-        permissionChecker.checkCreateKoulutus(ORGANISATION_OID);
-        permissionChecker.checkUpdateKoulutusByTarjoajaOid(ORGANISATION_OID);
         expect(publicationDataService.isValidStatusChange(isA(fi.vm.sade.tarjonta.publication.Tila.class))).andReturn(true);
         expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(3);
         expect(organisaatioServiceMock.findByOid(ORGANISATION_JARJESTAJA_OID)).andReturn(jarjestajaDTO).times(3);
@@ -342,7 +340,6 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
     }
 
     private void replayAll() {
-        replay(permissionChecker);
         replay(organisaatioServiceMock);
         replay(tarjontaKoodistoHelperMock);
         replay(publicationDataService);
@@ -350,7 +347,6 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
     }
 
     private void resetAll() {
-        reset(permissionChecker);
         reset(organisaatioServiceMock);
         reset(tarjontaKoodistoHelperMock);
         reset(publicationDataService);
@@ -358,7 +354,6 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
     }
 
     private void verifyAll() {
-        verify(permissionChecker);
         verify(organisaatioServiceMock);
         verify(tarjontaKoodistoHelperMock);
         verify(publicationDataService);

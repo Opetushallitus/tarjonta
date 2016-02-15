@@ -169,12 +169,11 @@ public class KoulutusResourceImplV1Test {
 
         ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
-        assertEquals(4, result.getErrors().size());
+        assertEquals(3, result.getErrors().size());
         assertAlwaysRequiredFields(result.getErrors());
     }
 
     private void assertAlwaysRequiredFields(List<ErrorV1RDTO> errors) {
-        assertTrue(containsError(errors, KOULUTUS_TARJOAJA_MISSING.getFieldName()));
         assertTrue(containsError(errors, KOULUTUSOHJELMA));
         assertTrue(containsError(errors, KOULUTUSMODUULITYYPPI));
         assertTrue(containsError(errors, KOULUTUKSEN_ALKAMISPVMS));
@@ -279,7 +278,7 @@ public class KoulutusResourceImplV1Test {
         assertTrue(containsError(result.getErrors(), SISALTYY_KOULUTUKSIIN));
     }
 
-    @Test
+    @Test(expected = NotAuthorizedException.class)
     public void testCreateOpintojaksoFailsWhenInvalidSisaltyvyys() throws OIDCreationException {
         String komoOid = oidServiceMock.getOid();
         String komotoOid = oidServiceMock.getOid();
@@ -289,6 +288,7 @@ public class KoulutusResourceImplV1Test {
         KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
         dto.setTunniste(TUNNISTE);
+        dto.setOrganisaatio(new OrganisaatioV1RDTO(TARJOAJA1, "tarjoaja", null));
         dto.setSisaltyyKoulutuksiin(Sets.<KoulutusIdentification>newHashSet(new KoulutusIdentification(){{
             setOid("oid.that.does.not.exist");
         }}));
