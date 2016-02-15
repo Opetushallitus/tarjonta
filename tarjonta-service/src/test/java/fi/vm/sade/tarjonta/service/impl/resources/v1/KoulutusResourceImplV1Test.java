@@ -117,15 +117,15 @@ public class KoulutusResourceImplV1Test {
     public void testCreateOpintojaksoFailsWhenMissingRequiredFieldsAndTilaPuutteellinen() {
         KorkeakouluOpintoV1RDTO dto = new KorkeakouluOpintoV1RDTO();
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
+        dto.setOrganisaatio(new OrganisaatioV1RDTO(TARJOAJA1, "", null));
 
         ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
-        assertEquals(4, result.getErrors().size());
+        assertEquals(3, result.getErrors().size());
         assertAlwaysRequiredFields(result.getErrors());
     }
 
     private void assertAlwaysRequiredFields(List<ErrorV1RDTO> errors) {
-        assertTrue(containsError(errors, KOULUTUS_TARJOAJA_MISSING.getFieldName()));
         assertTrue(containsError(errors, KOULUTUSOHJELMA));
         assertTrue(containsError(errors, KOULUTUSMODUULITYYPPI));
         assertTrue(containsError(errors, KOULUTUKSEN_ALKAMISPVMS));
@@ -141,11 +141,13 @@ public class KoulutusResourceImplV1Test {
     public void testCreateOpintojaksoFailsWhenMissingRequiredFieldsAndTilaNotPuuttellinen() {
         KorkeakouluOpintoV1RDTO dto = new KorkeakouluOpintoV1RDTO();
         dto.setTila(TarjontaTila.LUONNOS);
+        dto.setOrganisaatio(new OrganisaatioV1RDTO(TARJOAJA1, "", null));
+
 
         ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
         List<ErrorV1RDTO> errors = result.getErrors();
-        assertEquals(7, errors.size());
+        assertEquals(6, errors.size());
         assertAlwaysRequiredFields(errors);
         assertExtraRequiredFields(errors);
     }
@@ -188,7 +190,7 @@ public class KoulutusResourceImplV1Test {
         assertEquals(parentKoulutus.getOid(), sisaltyyKoulutuksiin.iterator().next().getOid());
     }
 
-    @Test
+    @Test(expected = NotAuthorizedException.class)
     public void testCreateOpintojaksoFailsWhenNoPermissionForSisaltyvyys() throws OIDCreationException {
         final KoulutusV1RDTO parentKoulutus = insertParentKokonaisuus();
 
@@ -224,6 +226,7 @@ public class KoulutusResourceImplV1Test {
         KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
         dto.setTunniste(ULKOINEN_TUNNISTE);
+
         dto.setSisaltyyKoulutuksiin(Sets.<KoulutusIdentification>newHashSet(new KoulutusIdentification(){{
             setOid("oid.that.does.not.exist");
         }}));

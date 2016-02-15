@@ -277,13 +277,21 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     @Override
     public ResultV1RDTO<KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO dto) {
+        ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
 
         if (dto == null || dto.getToteutustyyppi() == null) {
             return create(VALIDATION, null, createValidationError(TOTEUTUSTYYPPI, TOTEUTUSTYYPPI + " missing"));
         }
 
-        //yleisiä tarkistuksia
-        //tarkista tilasiirtymä
+        if (! validateOrganisation(dto.getOrganisaatio(),
+                result, KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING,
+                KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID)) {
+            return result;
+        }
+
+        permissionChecker.checkCreateKoulutus(dto.getOrganisaatio().getOid());
+        permissionChecker.checkUpdateKoulutusByTarjoajaOid(dto.getOrganisaatio().getOid());
+
         if (dto.getOid() != null) {
             final Tila tilamuutos = new Tila(Tyyppi.KOMOTO, dto.getTila(), dto.getOid());
             if (!publicationDataService.isValidStatusChange(tilamuutos)) {
@@ -296,6 +304,10 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     createValidationError("alkamispvm", "koulutus.error.alkamispvm.ajankohtaerikuinhaulla"));
         }
 
+
+        /** Permission service checks currently fail in 5% of the cases due to data model issues, which is why this is
+         *  not used in production.
+         */
         if (Lists.newArrayList("itest-virkailija.oph.ware.fi", "testi.virkailija.opintopolku.fi").contains(HOST_VIRKAILIJA)) {
             try {
                 koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
@@ -312,9 +324,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         if (dto.getClass() == KoulutusKorkeakouluV1RDTO.class) {
             //TODO: currently no komo validation, when invalid throws exception
-            return postKorkeakouluKoulutus((KoulutusKorkeakouluV1RDTO) dto);
+            return postKorkeakouluKoulutus((KoulutusKorkeakouluV1RDTO) dto, result);
         } else if (dto instanceof TutkintoonJohtamatonKoulutusV1RDTO) {
-            return postTutkintoonjohtamatonKoulutus((TutkintoonJohtamatonKoulutusV1RDTO) dto);
+            return postTutkintoonjohtamatonKoulutus((TutkintoonJohtamatonKoulutusV1RDTO) dto, result);
         } else {
             //Cannot be created without module. null komo => validation error
             Koulutusmoduuli komo = null;
@@ -332,17 +344,17 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
 
             if (dto.getClass() == KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class) {
-                return postNayttotutkintona(dto.getClass(), (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto, komo);
+                return postNayttotutkintona(dto.getClass(), (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto, komo, result);
             } else if (dto.getClass() == AmmattitutkintoV1RDTO.class) {
-                return postNayttotutkintona(dto.getClass(), (AmmattitutkintoV1RDTO) dto, komo);
+                return postNayttotutkintona(dto.getClass(), (AmmattitutkintoV1RDTO) dto, komo, result);
             } else if (dto.getClass() == ErikoisammattitutkintoV1RDTO.class) {
-                return postNayttotutkintona(dto.getClass(), (ErikoisammattitutkintoV1RDTO) dto, komo);
+                return postNayttotutkintona(dto.getClass(), (ErikoisammattitutkintoV1RDTO) dto, komo, result);
             } else if (dto instanceof KoulutusGenericV1RDTO) {
-                return postGenericKoulutus((KoulutusGenericV1RDTO) dto, komo);
+                return postGenericKoulutus((KoulutusGenericV1RDTO) dto, komo, result);
             }
         }
 
-        ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>(null, ERROR);
+        result.setStatus(ERROR);
         result.addError(createSystemError(new IllegalArgumentException(), "type_unknown", dto.getClass() + " not handled"));
 
         return result;
@@ -409,9 +421,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
      * @param dto
      * @return
      */
-    private ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO dto) {
+    private ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO dto, ResultV1RDTO<KoulutusV1RDTO> result) {
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
-        ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
+
         KoulutusValidator.validateKoulutusKorkeakoulu(dto, result);
 
         if (dto.getOpintojenRakenneKuvas() != null && !dto.getOpintojenRakenneKuvas().isEmpty()) {
@@ -424,10 +436,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
         }
 
-        if (!result.hasErrors() && validateOrganisation(
-                dto.getOrganisaatio(),
-                result, KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING,
-                KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID)) {
+        if (!result.hasErrors()) {
 
             final RestParam param = RestParam.showImageAndShowMeta(contextDataService.getCurrentUserLang());
             KoulutusV1RDTO dtoAfterOperation;
@@ -484,9 +493,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
      * @param dto
      * @return
      */
-    private ResultV1RDTO<KoulutusV1RDTO> postTutkintoonjohtamatonKoulutus(TutkintoonJohtamatonKoulutusV1RDTO dto) {
+    private ResultV1RDTO<KoulutusV1RDTO> postTutkintoonjohtamatonKoulutus(TutkintoonJohtamatonKoulutusV1RDTO dto, ResultV1RDTO<KoulutusV1RDTO> result) {
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
-        ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
 
         koulutusValidator.validateTutkintoonjohtamaton(dto, result);
 
@@ -495,10 +503,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             return result;
         }
 
-        if (!result.hasErrors() && validateOrganisation(
-                dto.getOrganisaatio(),
-                result, KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING,
-                KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID)) {
+        if (!result.hasErrors()) {
 
             final RestParam param = RestParam.showImageAndShowMeta(contextDataService.getCurrentUserLang());
             KoulutusV1RDTO dtoAfterOperation;
@@ -506,6 +511,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             if (dto.getOid() != null && dto.getOid().length() > 0) {
                 //update tutkintoonjohtamaton koulutus
                 final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(dto.getOid());
+
+
                 KoulutusValidator.validateKoulutusUpdate(komoto, result);
                 if (result.hasErrors()) {
                     return result;
@@ -574,10 +581,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return false;
     }
 
-    private ResultV1RDTO<KoulutusV1RDTO> postGenericKoulutus(KoulutusGenericV1RDTO dto, Koulutusmoduuli komo) {
+    private ResultV1RDTO<KoulutusV1RDTO> postGenericKoulutus(KoulutusGenericV1RDTO dto, Koulutusmoduuli komo, ResultV1RDTO<KoulutusV1RDTO> result) {
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
 
-        ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
         KoulutusValidator.validateKoulutusGeneric(dto, komo, result);
 
         switch (dto.getToteutustyyppi()) {
@@ -589,10 +595,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 break;
         }
 
-        if (!result.hasErrors() && validateOrganisation(
-                dto.getOrganisaatio(), result,
-                KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING,
-                KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID)) {
+        if (!result.hasErrors()) {
 
             final RestParam param = RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang());
             KoulutusV1RDTO dtoAfterOperation;
@@ -642,10 +645,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return result;
     }
 
-    private ResultV1RDTO<KoulutusV1RDTO> postNayttotutkintona(Class clazz, NayttotutkintoV1RDTO dto, final Koulutusmoduuli komo) {
+    private ResultV1RDTO<KoulutusV1RDTO> postNayttotutkintona(Class clazz, NayttotutkintoV1RDTO dto, final Koulutusmoduuli komo, ResultV1RDTO<KoulutusV1RDTO> result) {
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
 
-        ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
         KoulutusValidator.validateKoulutusNayttotutkinto(dto, komo, result);
 
         if (!result.hasErrors()
@@ -715,7 +717,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         Preconditions.checkNotNull(newKomoto, "KOMOTO conversion to database object failed : object : %s.", ReflectionToStringBuilder.toString(dto));
         Preconditions.checkNotNull(newKomoto.getKoulutusmoduuli(), "KOMO conversion to database object failed : object :  %s.", ReflectionToStringBuilder.toString(dto));
 
-        permissionChecker.checkCreateKoulutus(dto.getOrganisaatio().getOid());
         koulutusmoduuliDAO.insert(newKomoto.getKoulutusmoduuli());
         newKomoto = koulutusmoduuliToteutusDAO.insert(newKomoto);
         convertToEntity.setSisaltyyKoulutuksiin(newKomoto, dto);
@@ -723,7 +724,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     private KoulutusmoduuliToteutus updateTutkintoonjohtamaton(KoulutusmoduuliToteutus komoto, final TutkintoonJohtamatonKoulutusV1RDTO dto) {
-        permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
         convertToEntity.setSisaltyyKoulutuksiin(komoto, dto);
         return convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), null, null);
     }

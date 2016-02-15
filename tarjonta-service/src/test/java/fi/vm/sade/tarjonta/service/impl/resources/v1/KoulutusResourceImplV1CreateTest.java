@@ -1,11 +1,17 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.collect.Lists;
+import com.wordnik.swagger.model.ValidationMessage;
+import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.publication.Tila;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
@@ -14,13 +20,16 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 
@@ -28,6 +37,16 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
     @InjectMocks
     private KoulutusResourceImplV1 koulutusResourceV1;
+
+    @Before
+    public void setUp() {
+        when(organisaatioService.findByOid(anyString())).thenReturn(
+                new OrganisaatioDTO(){{
+                    setOid("1.2.3.4");
+                    setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti("test", "fi"))));
+                }}
+        );
+    }
 
     @Test
     public void thatAjankohtaIsValidWithNewKoulutus() {
@@ -249,6 +268,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
     private KoulutusV1RDTO createExistingKoulutusDTO() {
         KoulutusV1RDTO koulutusDTO = new KoulutusKorkeakouluV1RDTO();
         koulutusDTO.setOid("1.2.3");
+        koulutusDTO.setOrganisaatio(new OrganisaatioV1RDTO("1.2.3.4", "", null));
         koulutusDTO.setTila(TarjontaTila.LUONNOS);
         return koulutusDTO;
     }
