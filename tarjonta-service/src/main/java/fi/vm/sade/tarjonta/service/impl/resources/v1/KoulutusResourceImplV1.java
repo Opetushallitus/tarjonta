@@ -655,9 +655,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         KoulutusValidator.validateKoulutusNayttotutkinto(dto, komo, result);
 
         if (!result.hasErrors()
-                && validateOrganisation(dto.getOrganisaatio(),
-                result, KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING,
-                KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID)
                 && validateOrganisation(dto.getJarjestavaOrganisaatio(),
                 result, KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING,
                 KoulutusValidationMessages.KOULUTUS_JARJESTAJA_INVALID)) {
