@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.*;
 import static fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.OPINTOKOKONAISUUS;
 import static org.junit.Assert.*;
@@ -74,6 +73,7 @@ public class KoulutusResourceImplV1Test {
                 }}
         );
         doNothing().when(permissionChecker).checkCreateKoulutus(TARJOAJA1);
+        doNothing().when(permissionChecker).checkUpdateKoulutusByTarjoajaOid(TARJOAJA1);
     }
 
     @Test
@@ -215,9 +215,9 @@ public class KoulutusResourceImplV1Test {
 
     @Test
     public void testCreateOpintojaksoWithValidSisaltyvyys() throws OIDCreationException {
-        final KoulutusV1RDTO parentKoulutus1 = insertParentKokonaisuus(null);
+        final KoulutusV1RDTO parentKoulutus1 = insertParentKokonaisuus(null, null);
         final String ulkoinenTunniste = "ulkoinenTunniste3.4";
-        final KoulutusV1RDTO parentKoulutus2 = insertParentKokonaisuus(ulkoinenTunniste);
+        final KoulutusV1RDTO parentKoulutus2 = insertParentKokonaisuus(ulkoinenTunniste, null);
 
         String komoOid = oidServiceMock.getOid();
         String komotoOid = oidServiceMock.getOid();
@@ -252,9 +252,16 @@ public class KoulutusResourceImplV1Test {
         }));
     }
 
-    @Test(expected = NotAuthorizedException.class)
+    @Test
     public void testCreateOpintojaksoFailsWhenNoPermissionForSisaltyvyys() throws OIDCreationException {
-        final KoulutusV1RDTO parentKoulutus = insertParentKokonaisuus(null);
+        final String parentKoulutusOrgOid = "someOrgOid";
+        when(organisaatioService.findByOid(parentKoulutusOrgOid)).thenReturn(
+                new OrganisaatioDTO(){{
+                    setOid(parentKoulutusOrgOid);
+                    setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti("test", "fi"))));
+                }}
+        );
+        final KoulutusV1RDTO parentKoulutus = insertParentKokonaisuus(null, parentKoulutusOrgOid);
 
         doThrow(NotAuthorizedException.class)
                 .when(permissionChecker)
@@ -278,7 +285,7 @@ public class KoulutusResourceImplV1Test {
         assertTrue(containsError(result.getErrors(), SISALTYY_KOULUTUKSIIN));
     }
 
-    @Test(expected = NotAuthorizedException.class)
+    @Test
     public void testCreateOpintojaksoFailsWhenInvalidSisaltyvyys() throws OIDCreationException {
         String komoOid = oidServiceMock.getOid();
         String komotoOid = oidServiceMock.getOid();
@@ -299,7 +306,7 @@ public class KoulutusResourceImplV1Test {
         assertTrue(containsError(result.getErrors(), SISALTYY_KOULUTUKSIIN));
     }
 
-    private KoulutusV1RDTO insertParentKokonaisuus(String ulkoinenTunniste) throws OIDCreationException {
+    private KoulutusV1RDTO insertParentKokonaisuus(String ulkoinenTunniste, final String orgOid) throws OIDCreationException {
         String komoOid = oidServiceMock.getOid();
         String komotoOid = oidServiceMock.getOid();
         when(oidService.get(TarjontaOidType.KOMO)).thenReturn(komoOid);
@@ -309,6 +316,11 @@ public class KoulutusResourceImplV1Test {
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
         dto.setTunniste(TUNNISTE);
         dto.setUlkoinenTunniste(ulkoinenTunniste);
+        if (orgOid != null) {
+            dto.setOrganisaatio(new OrganisaatioV1RDTO() {{
+                setOid(orgOid);
+            }});
+        }
 
         ResultV1RDTO<KoulutusV1RDTO> result = koulutusResourceV1.postKoulutus(dto);
         return result.getResult();
