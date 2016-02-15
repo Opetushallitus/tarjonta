@@ -35,11 +35,9 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.lang.time.DateUtils;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -49,9 +47,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.*;
 
 
 @TestExecutionListeners(listeners = {
@@ -66,15 +66,15 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
     private static final String ORGANISATION_JARJESTAJA_OID = "organisaatio_jarjestaja_oid";
     private static final String VALMENTAVA_KOMOTO_OID = "valmentava_komoto_oid";
 
-    private OrganisaatioDTO jarjestajaDTO = new OrganisaatioDTO();
-
     @Before
     public void setUp() throws OIDCreationException {
         reload();
         createJoinedParentAndChildKomos(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        OrganisaatioDTO jarjestajaDTO = new OrganisaatioDTO();
         jarjestajaDTO.setOid(ORGANISATION_JARJESTAJA_OID);
         jarjestajaDTO.setNimi(new MonikielinenTekstiTyyppi());
         jarjestajaDTO.getNimi().getTeksti().add(new MonikielinenTekstiTyyppi.Teksti("jarjestaja", LOCALE_FI));
+        when(organisaatioServiceMock.findByOid(ORGANISATION_JARJESTAJA_OID)).thenReturn(jarjestajaDTO);
     }
 
     private void printResultErrors(ResultV1RDTO r) {
@@ -89,15 +89,10 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
 
     @Test
     public void testCreateAndLoadToteutus() throws ExceptionMessage, OIDCreationException {
-        //EXPECT
-        expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(2);
-        expect(organisaatioServiceMock.findByOid(ORGANISATION_JARJESTAJA_OID)).andReturn(jarjestajaDTO).times(2);
         //the calls of the OidServices must be in correct order!
 
-        permissionChecker.checkCreateKoulutus(ORGANISATION_OID);
-
         //extra koulutusohjelma uri check
-        expect(tarjontaKoodistoHelperMock.getKoodi("koulutusohjelma_uri", 1)).andReturn(createKoodiType(KOULUTUSOHJELMA, "x" + KOULUTUSOHJELMA)).times(1);
+        when(tarjontaKoodistoHelperMock.getKoodi("koulutusohjelma_uri", 1)).thenReturn(createKoodiType(KOULUTUSOHJELMA, "x" + KOULUTUSOHJELMA));
 
         expectNayttoKoodis();  /* 1th round koodisto calls, convert result to dto */
         expectHierarchy();
@@ -105,42 +100,31 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         /*
          * INSERT NAYTTO TO DB
          */
-        replayAll();
         ResultV1RDTO<KoulutusV1RDTO> v = instance.postKoulutus(createDTO());
         assertEquals("Validation errors", true, v.getErrors() == null || v.getErrors().isEmpty());
-        verifyAll();
 
         /*
          * LOAD NAYTTO DTO FROM DB
          */
-        resetAll();
         expectNayttoKoodis(); /* 2th round koodisto calls, convert result to dto */
         expectHierarchy();
-        expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(1);
-        expect(organisaatioServiceMock.findByOid(ORGANISATION_JARJESTAJA_OID)).andReturn(jarjestajaDTO).times(1);
-        replayAll();
         final ResultV1RDTO result = instance.findByOid(KOMOTO_OID, true, false, "FI");
         KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO withoutValmentava = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) result.getResult();
         assertNayttoData(withoutValmentava);
-        verifyAll();
+
         /*
          * LOAD NAYTTO DTO FROM DB
          */
-        resetAll();
         expectNayttoKoodis(); /* 3rd round koodisto calls, convert result base komoto to dto */
         expectNayttoKoodis();
         expectValmistavaKoodis(); /* 4rd round koodisto calls, convert result valmentava to dto */
 
-        Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn(VALMENTAVA_KOMOTO_OID);
-        expect(publicationDataService.isValidStatusChange(isA(fi.vm.sade.tarjonta.publication.Tila.class))).andReturn(true);
-        expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(3);
-        expect(organisaatioServiceMock.findByOid(ORGANISATION_JARJESTAJA_OID)).andReturn(jarjestajaDTO).times(3);
+        stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn(VALMENTAVA_KOMOTO_OID);
+        when(publicationDataService.isValidStatusChange(isA(fi.vm.sade.tarjonta.publication.Tila.class))).thenReturn(true);
         //extra koulutusohjelma uri check
-        expect(tarjontaKoodistoHelperMock.getKoodi("koulutusohjelma_uri", 1)).andReturn(createKoodiType(KOULUTUSOHJELMA, "x" + KOULUTUSOHJELMA)).times(1);
+        when(tarjontaKoodistoHelperMock.getKoodi("koulutusohjelma_uri", 1)).thenReturn(createKoodiType(KOULUTUSOHJELMA, "x" + KOULUTUSOHJELMA));
         expectHierarchy();
         expectHierarchy();
-
-        replayAll();
 
         /*
          * UPDATE NAYTTO AND ADD VALMENTAVA TO DB
@@ -154,14 +138,11 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO withValmentava = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) v.getResult();
         assertNayttoData(withValmentava);
         assertValmentavaData(withValmentava.getValmistavaKoulutus());
-
-        verify(organisaatioServiceMock);
-        verify(tarjontaKoodistoHelperMock);
     }
 
     private void expectHierarchy() {
-        expect(koulutusSisaltyvyysDAO.getParents("komo_child_oid")).andReturn(new ArrayList<String>());
-        expect(koulutusSisaltyvyysDAO.getChildren("komo_child_oid")).andReturn(new ArrayList<String>());
+        when(koulutusSisaltyvyysDAO.getParents("komo_child_oid")).thenReturn(new ArrayList<String>());
+        when(koulutusSisaltyvyysDAO.getChildren("komo_child_oid")).thenReturn(new ArrayList<String>());
     }
 
     private void expectValmistavaKoodis() {
@@ -191,12 +172,9 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         expectMetaUri(TUTKINTONIMIKE);
         // Tutkinonimike kutsutaan useaan kertaan
         KoodiType koodiType = createKoodiType(TUTKINTONIMIKE, "x");
-        expect(tarjontaKoodistoHelperMock.getKoodi(TUTKINTONIMIKE + "_uri", 1))
-            .andReturn(koodiType).times(2);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(koodiType, new Locale(LOCALE_FI)))
-            .andReturn(TUTKINTONIMIKE).times(1);
-        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI))
-            .andReturn(createKoodiType(URI_KIELI_FI, "fi")).times(1);
+        when(tarjontaKoodistoHelperMock.getKoodi(TUTKINTONIMIKE + "_uri", 1)).thenReturn(koodiType);
+        when(tarjontaKoodistoHelperMock.getKoodiNimi(koodiType, new Locale(LOCALE_FI))).thenReturn(TUTKINTONIMIKE);
+        when(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).thenReturn(createKoodiType(URI_KIELI_FI, "fi"));
 
         expectMetaUri(KOULUTUSLAJI);
         expectMetaUri(EQF);
@@ -277,12 +255,12 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
 
     private void expectKausiNaytto() {
         KoodiType kausiKoodiType = createKoodiType(KAUSI_KOODI_URI, "x" + KAUSI_KOODI_URI);
-        expect(tarjontaKoodistoHelperMock.getKoodiByUri(KAUSI_KOODI_URI + "#1")).andReturn(kausiKoodiType).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodi(KAUSI_KOODI_URI + "_uri", 1)).andReturn(kausiKoodiType).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(kausiKoodiType, new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
+        when(tarjontaKoodistoHelperMock.getKoodiByUri(KAUSI_KOODI_URI + "#1")).thenReturn(kausiKoodiType);
+        when(tarjontaKoodistoHelperMock.getKoodi(KAUSI_KOODI_URI + "_uri", 1)).thenReturn(kausiKoodiType);
+        when(tarjontaKoodistoHelperMock.getKoodiNimi(kausiKoodiType, new Locale(LOCALE_FI))).thenReturn(KAUSI_KOODI_URI);
 
         KoodiType koodiLanguageFi = createKoodiType(URI_KIELI_FI, "fi");
-        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).andReturn(koodiLanguageFi).times(1);
+        when(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).thenReturn(koodiLanguageFi);
     }
 
     /*
@@ -337,27 +315,6 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, MAP_OPETUMUOTO);
 
         return dto;
-    }
-
-    private void replayAll() {
-        replay(organisaatioServiceMock);
-        replay(tarjontaKoodistoHelperMock);
-        replay(publicationDataService);
-        replay(koulutusSisaltyvyysDAO);
-    }
-
-    private void resetAll() {
-        reset(organisaatioServiceMock);
-        reset(tarjontaKoodistoHelperMock);
-        reset(publicationDataService);
-        reset(koulutusSisaltyvyysDAO);
-    }
-
-    private void verifyAll() {
-        verify(organisaatioServiceMock);
-        verify(tarjontaKoodistoHelperMock);
-        verify(publicationDataService);
-        verify(koulutusSisaltyvyysDAO);
     }
 
     private KoodiUrisV1RDTO getTutkintonimikes() {

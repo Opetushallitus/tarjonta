@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioAikuistenOppimaaraV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
@@ -29,7 +28,6 @@ import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.lang.time.DateUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.context.ActiveProfiles;
@@ -41,12 +39,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
-import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 
 @TestExecutionListeners(listeners = {
@@ -62,62 +59,18 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
     public void setUp() throws OIDCreationException {
         reload();
         createJoinedParentAndChildKomos(KoulutusasteTyyppi.LUKIOKOULUTUS);
+        expectKoodis();
+        expectHierarchy();
     }
 
     @Test
     public void testCreateAndLoadToteutus() throws ExceptionMessage {
-        //EXPECT
-        expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(2);
-        //the calls of the OidServices must be in correct order!
-
-        permissionChecker.checkCreateKoulutus(ORGANISATION_OID);
-        permissionChecker.checkUpdateKoulutusByTarjoajaOid(ORGANISATION_OID);
-
-        /* 
-         * KOODISTO DATA CALLS IN CORRECT CALL ORDER
-         * 1th round, convert to entity 
-         */
-        expectKoodis();
-
-        expectHierarchy();
-
-        /* REPLAY */
-        replay(organisaatioServiceMock);
-        replay(tarjontaKoodistoHelperMock);
-        replay(koulutusSisaltyvyysDAO);
-        /*
-         * INSERT LUKIO TO DB
-         */
         ResultV1RDTO<KoulutusV1RDTO> v = instance.postKoulutus(createDTO());
         assertEquals("Validation errors", true, v.getErrors() == null || v.getErrors().isEmpty());
-        
-        verify(organisaatioServiceMock);
-        verify(tarjontaKoodistoHelperMock);
-        verify(koulutusSisaltyvyysDAO);
 
-        /*
-         * LOAD LUKIO DTO FROM DB
-         */
-        reset(organisaatioServiceMock);
-        reset(tarjontaKoodistoHelperMock);
-        reset(koulutusSisaltyvyysDAO);
-
-        /* 2nd round, convert to dto */
-        expectKoodis();
-        
-        expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(1);
-        expectHierarchy();
-
-        replay(organisaatioServiceMock);
-        replay(tarjontaKoodistoHelperMock);
-        replay(koulutusSisaltyvyysDAO);
-        
         final ResultV1RDTO result = instance.findByOid(KOMOTO_OID, true, false, "FI");
         KoulutusLukioV1RDTO result1 = (KoulutusLukioV1RDTO) result.getResult();
         assertLoadData(result1);
-        
-        verify(organisaatioServiceMock);
-        verify(tarjontaKoodistoHelperMock);
     }
     
     private void expectKoodis() {
@@ -197,17 +150,17 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
     
     private void expectKausiLukio() {
         KoodiType kausiKoodiType = createKoodiType(KAUSI_KOODI_URI, "x" + KAUSI_KOODI_URI);
-        expect(tarjontaKoodistoHelperMock.getKoodiByUri(KAUSI_KOODI_URI + "#1")).andReturn(kausiKoodiType).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodi(KAUSI_KOODI_URI + "_uri", 1)).andReturn(kausiKoodiType).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(kausiKoodiType, new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
+        when(tarjontaKoodistoHelperMock.getKoodiByUri(KAUSI_KOODI_URI + "#1")).thenReturn(kausiKoodiType);
+        when(tarjontaKoodistoHelperMock.getKoodi(KAUSI_KOODI_URI + "_uri", 1)).thenReturn(kausiKoodiType);
+        when(tarjontaKoodistoHelperMock.getKoodiNimi(kausiKoodiType, new Locale(LOCALE_FI))).thenReturn(KAUSI_KOODI_URI);
         
         KoodiType koodiLanguageFi = createKoodiType(URI_KIELI_FI, "fi");
-        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).andReturn(koodiLanguageFi).times(1);
+        when(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).thenReturn(koodiLanguageFi);
     }
 
     private void expectHierarchy() {
-        expect(koulutusSisaltyvyysDAO.getParents("komo_child_oid")).andReturn(new ArrayList<String>());
-        expect(koulutusSisaltyvyysDAO.getChildren("komo_child_oid")).andReturn(new ArrayList<String>());
+        when(koulutusSisaltyvyysDAO.getParents("komo_child_oid")).thenReturn(new ArrayList<String>());
+        when(koulutusSisaltyvyysDAO.getChildren("komo_child_oid")).thenReturn(new ArrayList<String>());
     }
 
     /*

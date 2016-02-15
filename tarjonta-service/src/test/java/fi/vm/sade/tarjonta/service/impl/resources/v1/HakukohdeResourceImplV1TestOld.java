@@ -34,7 +34,6 @@ import java.util.Collections;
 import java.util.Date;
 
 import static fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.ErrorCode.VALIDATION;
-import static fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus.ERROR;
 import static fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus.OK;
 import static org.junit.Assert.*;
 
@@ -77,7 +76,7 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
         assertEquals(OK, hakukohdeResource.createHakukohde(hakukohde).getStatus());
 
         ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.createHakukohde(hakukohde);
-        assertEquals(ERROR, result.getStatus());
+        assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
 
         ErrorV1RDTO error = result.getErrors().get(0);
         assertEquals(VALIDATION, error.getErrorCode());
@@ -120,7 +119,7 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
 
         ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.createHakukohde(mkHakukohde(haku, mkRandomKomoto()));
 
-        assertEquals(ERROR, result.getStatus());
+        assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
 
         ErrorV1RDTO error = result.getErrors().get(0);
         assertEquals(VALIDATION, error.getErrorCode());

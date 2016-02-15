@@ -69,9 +69,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -144,8 +144,8 @@ abstract class KoulutusBase extends TestUtilityBase {
 
     public void reload() throws OIDCreationException {
 
-        Mockito.stub(oidService.get(TarjontaOidType.KOMO)).toReturn(KOMO_OID);
-        Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn(KOMOTO_OID);
+        stub(oidService.get(TarjontaOidType.KOMO)).toReturn(KOMO_OID);
+        stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn(KOMOTO_OID);
 
         //used in regexp kieli uri validation
         KoodistoURI.KOODISTO_KIELI_URI = "kieli";
@@ -160,21 +160,19 @@ abstract class KoulutusBase extends TestUtilityBase {
         komoKoulutusConverters = new KoulutusKuvausV1RDTO<KomoTeksti>();
         commonConverter = new KoulutusCommonConverter();
         //CREATE MOCKS
-        organisaatioServiceMock = createMock(OrganisaatioService.class);
-        koulutusPermissionServiceMock = createMock(KoulutusPermissionService.class);
-        tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
-        indexerResourceMock = createMock(IndexerResource.class);
-        permissionChecker = Mockito.mock(PermissionChecker.class);
+        koulutusPermissionServiceMock = mock(KoulutusPermissionService.class);
+        tarjontaKoodistoHelperMock = mock(TarjontaKoodistoHelper.class);
+        indexerResourceMock = mock(IndexerResource.class);
+        permissionChecker = mock(PermissionChecker.class);
         doNothing().when(permissionChecker).checkCreateKoulutus(Matchers.anyString());
         doNothing().when(permissionChecker).checkUpdateKoulutusByTarjoajaOid(Matchers.anyString());
 
         koodistoUri = createMock(KoodistoURI.class);
         contextDataService = new ContextDataServiceImpl();
-        koulutusSisaltyvyysDAO = createMock(KoulutusSisaltyvyysDAO.class);
-        koulutusSearchService = createMock(KoulutusSearchService.class);
-        hakukohdeSearchService = createMock(HakukohdeSearchService.class);
-        oppilaitosKoodiRelations = createMock(OppilaitosKoodiRelations.class);
-        publicationDataService = createMock(PublicationDataService.class);
+        koulutusSisaltyvyysDAO = mock(KoulutusSisaltyvyysDAO.class);
+        koulutusSearchService = mock(KoulutusSearchService.class);
+        hakukohdeSearchService = mock(HakukohdeSearchService.class);
+        publicationDataService = mock(PublicationDataService.class);
         KoulutusImplicitDataPopulator dataPopulator = new KoulutusImplicitDataPopulator();
         Whitebox.setInternalState(dataPopulator, "koodiService", KoulutusDTOConverterToEntityTest.mockKoodiService(null));
 
@@ -284,16 +282,18 @@ abstract class KoulutusBase extends TestUtilityBase {
 
         contextDataService = new ContextDataServiceImpl();
 
-        organisaatioServiceMock = createMock(OrganisaatioService.class);
-        indexerResourceMock = createMock(IndexerResource.class);
-        permissionChecker = Mockito.mock(PermissionChecker.class);
+        organisaatioServiceMock = mock(OrganisaatioService.class);
+        when(organisaatioServiceMock.findByOid(ORGANISATION_OID)).thenReturn(organisaatioDTO);
+
+        indexerResourceMock = mock(IndexerResource.class);
+        permissionChecker = mock(PermissionChecker.class);
         doNothing().when(permissionChecker).checkCreateKoulutus(Matchers.anyString());
         doNothing().when(permissionChecker).checkUpdateKoulutusByTarjoajaOid(Matchers.anyString());
-        koodistoUri = createMock(KoodistoURI.class);
-        koulutusSisaltyvyysDAO = createMock(KoulutusSisaltyvyysDAO.class);
-        koulutusSearchService = createMock(KoulutusSearchService.class);
-        oppilaitosKoodiRelations = createMock(OppilaitosKoodiRelations.class);
-        linkingV1Resource = createMock(LinkingV1Resource.class);
+        koodistoUri = mock(KoodistoURI.class);
+        koulutusSisaltyvyysDAO = mock(KoulutusSisaltyvyysDAO.class);
+        koulutusSearchService = mock(KoulutusSearchService.class);
+        oppilaitosKoodiRelations = mock(OppilaitosKoodiRelations.class);
+        linkingV1Resource = mock(LinkingV1Resource.class);
 
         //SET VALUES TO INSTANCES
         Whitebox.setInternalState(instance, "organisaatioService", organisaatioServiceMock);
@@ -489,39 +489,39 @@ abstract class KoulutusBase extends TestUtilityBase {
 
     protected void expectKausi() {
         KoodiType kausiKoodiType = createKoodiType(KAUSI_KOODI_URI, "x" + KAUSI_KOODI_URI);
-        expect(tarjontaKoodistoHelperMock.getKoodiByUri(KAUSI_KOODI_URI + "#1")).andReturn(kausiKoodiType).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodi(KAUSI_KOODI_URI + "_uri", 1)).andReturn(kausiKoodiType).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(kausiKoodiType, new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
+        when(tarjontaKoodistoHelperMock.getKoodiByUri(KAUSI_KOODI_URI + "#1")).thenReturn(kausiKoodiType);
+        when(tarjontaKoodistoHelperMock.getKoodi(KAUSI_KOODI_URI + "_uri", 1)).thenReturn(kausiKoodiType);
+        when(tarjontaKoodistoHelperMock.getKoodiNimi(kausiKoodiType, new Locale(LOCALE_FI))).thenReturn(KAUSI_KOODI_URI);
 
         KoodiType koodiLanguageFi = createKoodiType(URI_KIELI_FI, "fi");
-        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).andReturn(koodiLanguageFi).times(1);
+        when(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).thenReturn(koodiLanguageFi);
 
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(koodiLanguageFi, new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
-        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(URI_KIELI_FI)).andReturn(koodiLanguageFi);
+        when(tarjontaKoodistoHelperMock.getKoodiNimi(koodiLanguageFi, new Locale(LOCALE_FI))).thenReturn(KAUSI_KOODI_URI);
+        when(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(URI_KIELI_FI)).thenReturn(koodiLanguageFi);
 
-        expect(tarjontaKoodistoHelperMock.getKoodi(URI_KIELI_FI + "_uri", 1)).andReturn(koodiLanguageFi).times(2);
-        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).andReturn(koodiLanguageFi).times(1);
+        when(tarjontaKoodistoHelperMock.getKoodi(URI_KIELI_FI + "_uri", 1)).thenReturn(koodiLanguageFi);
+        when(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).thenReturn(koodiLanguageFi);
     }
 
     protected void expectMetaUri(final String field) {
-        expect(tarjontaKoodistoHelperMock.getKoodiByUri(field + "_uri#1")).andReturn(createKoodiType(field, "x" + field)).times(1);
+        when(tarjontaKoodistoHelperMock.getKoodiByUri(field + "_uri#1")).thenReturn(createKoodiType(field, "x" + field));
 
         KoodiType koodiType = createKoodiType(field, "x");
-        expect(tarjontaKoodistoHelperMock.getKoodi(field + "_uri", 1)).andReturn(koodiType).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(koodiType, new Locale(LOCALE_FI))).andReturn(field).times(1);
+        when(tarjontaKoodistoHelperMock.getKoodi(field + "_uri", 1)).thenReturn(koodiType);
+        when(tarjontaKoodistoHelperMock.getKoodiNimi(koodiType, new Locale(LOCALE_FI))).thenReturn(field);
 
         KoodiType koodiLanguageFi = createKoodiType(URI_KIELI_FI, "fi");
-        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).andReturn(koodiLanguageFi).times(1);
+        when(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).thenReturn(koodiLanguageFi);
     }
 
     protected void expectMetaMapUris(final String field) {
         KoodiType koodiType = createKoodiType(field, "x" + field);
-        expect(tarjontaKoodistoHelperMock.getKoodi(field + "_uri", 1)).andReturn(koodiType).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodi(field + "_uri", 1)).andReturn(koodiType).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(koodiType, new Locale(LOCALE_FI))).andReturn(field).times(1);
+        when(tarjontaKoodistoHelperMock.getKoodi(field + "_uri", 1)).thenReturn(koodiType);
+        when(tarjontaKoodistoHelperMock.getKoodi(field + "_uri", 1)).thenReturn(koodiType);
+        when(tarjontaKoodistoHelperMock.getKoodiNimi(koodiType, new Locale(LOCALE_FI))).thenReturn(field);
 
         KoodiType koodiLanguageFi = createKoodiType(URI_KIELI_FI, "fi");
-        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).andReturn(koodiLanguageFi).times(1);
+        when(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).thenReturn(koodiLanguageFi);
     }
 
     protected void assertEqualDtoKoodi(final String field, final KoodiV1RDTO dto) {
