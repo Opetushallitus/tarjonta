@@ -87,6 +87,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         Preconditions.checkNotNull(komo, "Koulutusmoduuli object cannot be null!");
 
         dto.setOid(komoto.getOid());
+        dto.setUlkoinenTunniste(komoto.getUniqueExternalId());
         dto.setKomoOid(komo.getOid());
         dto.setTila(komoto.getTila());
         dto.setModified(komoto.getUpdated());
@@ -516,7 +517,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             final KoulutusmoduuliToteutus parentKomoto = koulutusmoduuliToteutusDAO.findFirstByKomoOid(parentKomoOid);
             sisaltyyKoulutuksiin.add(new KoulutusIdentification(){{
                 setOid(parentKomoto.getOid());
-                setTunniste(parentKomoto.getUlkoinenTunniste());
+                setUlkoinenTunniste(parentKomoto.getUlkoinenTunniste());
             }});
         }
         dto.setSisaltyyKoulutuksiin(sisaltyyKoulutuksiin);

@@ -26,7 +26,6 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
@@ -166,7 +165,7 @@ public class KoulutusValidator {
             KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findKomotoByKoulutusId(id);
             String tunniste = StringUtils.isNotBlank(id.getOid())
                     ? "oid: " + id.getOid()
-                    : "tunniste:" + id.getTunniste();
+                    : "ulkoinenTunniste:" + id.getUlkoinenTunniste();
             if (komoto == null || TarjontaTila.POISTETTU.equals(komoto.getTila())) {
                 result.addError(createValidationError(SISALTYY_KOULUTUKSIIN, "koulutus with " + tunniste + " does not exist!"));
             } else {

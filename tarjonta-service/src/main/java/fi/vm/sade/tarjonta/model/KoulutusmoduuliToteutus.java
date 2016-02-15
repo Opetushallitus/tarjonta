@@ -45,6 +45,8 @@ import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 @Table(name = KoulutusmoduuliToteutus.TABLE_NAME)
 public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
+    public static final String UNIQUE_EXTERNAL_ID_COLUMN_NAME = "uniqueExternalId";
+
     @Autowired
     @Transient
     KoulutusmoduuliDAO koulutusmoduuliDAO;
@@ -55,6 +57,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "toteutustyyppi")
     @Enumerated(EnumType.STRING)
     private ToteutustyyppiEnum toteutustyyppi;
+
+    @Column(name = "unique_external_id", nullable = true, insertable = true, updatable = false, unique = true)
+    private String uniqueExternalId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "koulutusmoduuli_id", nullable = false)
@@ -1343,4 +1348,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         this.hakijalleNaytettavaTunniste = hakijalleNaytettavaTunniste;
     }
 
+    public String getUniqueExternalId() {
+        return uniqueExternalId;
+    }
+
+    public void setUniqueExternalId(String uniqueExternalId) {
+        this.uniqueExternalId = uniqueExternalId;
+    }
 }

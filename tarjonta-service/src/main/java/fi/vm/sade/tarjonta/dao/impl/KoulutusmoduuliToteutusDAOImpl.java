@@ -64,14 +64,17 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     }
 
     @Override
+    public KoulutusmoduuliToteutus findByUniqueExternalId(String uniqueExternalId) {
+        return getFirstFromList(findBy(KoulutusmoduuliToteutus.UNIQUE_EXTERNAL_ID_COLUMN_NAME, uniqueExternalId));
+    }
+
+    @Override
     public KoulutusmoduuliToteutus findKomotoByKoulutusId(KoulutusIdentification id) {
-        List<KoulutusmoduuliToteutus> list;
         if (!StringUtils.isBlank(id.getOid())) {
-            list = findBy(BaseKoulutusmoduuli.OID_COLUMN_NAME, id.getOid());
+            return getFirstFromList(findBy(BaseKoulutusmoduuli.OID_COLUMN_NAME, id.getOid()));
         } else {
-            list = findBy(BaseKoulutusmoduuli.ULKOINEN_TUNNISTE_COLUMN_NAME, id.getTunniste());
+            return findByUniqueExternalId(id.getUlkoinenTunniste());
         }
-        return getFirstFromList(list);
     }
 
     @Override

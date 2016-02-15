@@ -169,6 +169,8 @@ abstract class KoulutusBase extends TestUtilityBase {
         hakukohdeSearchService = createMock(HakukohdeSearchService.class);
         oppilaitosKoodiRelations = createMock(OppilaitosKoodiRelations.class);
         publicationDataService = createMock(PublicationDataService.class);
+        KoulutusImplicitDataPopulator dataPopulator = new KoulutusImplicitDataPopulator();
+        Whitebox.setInternalState(dataPopulator, "koodiService", KoulutusDTOConverterToEntityTest.mockKoodiService(null));
 
         //INIT DATA CONVERTERS
         converterToRDTO = new EntityConverterToRDTO();
@@ -185,6 +187,7 @@ abstract class KoulutusBase extends TestUtilityBase {
         Whitebox.setInternalState(instance, "oppiaineDAO", oppiaineDAO);
         Whitebox.setInternalState(instance, "koulutusPermissionService", koulutusPermissionServiceMock);
         Whitebox.setInternalState(instance, "publicationDataService", publicationDataService);
+        Whitebox.setInternalState(instance, "koulutusImplicitDataPopulator", dataPopulator);
 
         Whitebox.setInternalState(converterToRDTO, "commonConverter", commonConverter);
         Whitebox.setInternalState(commonConverter, "organisaatioService", organisaatioServiceMock);
@@ -201,7 +204,6 @@ abstract class KoulutusBase extends TestUtilityBase {
         Whitebox.setInternalState(convertToEntity, "koulutusmoduuliDAO", koulutusmoduuliDAO);
         Whitebox.setInternalState(convertToEntity, "oppiaineDAO", oppiaineDAO);
         Whitebox.setInternalState(convertToEntity, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
-        Whitebox.setInternalState(convertToEntity, "koodiService", KoulutusDTOConverterToEntityTest.mockKoodiService(null));
 
         Whitebox.setInternalState(instance, "converterToRDTO", converterToRDTO);
         Whitebox.setInternalState(instance, "convertToEntity", convertToEntity);
@@ -384,6 +386,9 @@ abstract class KoulutusBase extends TestUtilityBase {
                         HenkiloTyyppi.YHTEYSHENKILO));
         dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
+        dto.setKoulutusala(toKoodiUri(KOULUTUSALA));
+        dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
+        dto.setOpintoala(toKoodiUri(OPINTOALA));
 
         return dto;
     }

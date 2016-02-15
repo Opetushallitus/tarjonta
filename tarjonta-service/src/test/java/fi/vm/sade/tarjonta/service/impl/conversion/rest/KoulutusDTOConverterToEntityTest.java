@@ -40,7 +40,7 @@ import org.powermock.reflect.Whitebox;
 
 import java.util.*;
 
-import static fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntity.*;
+import static fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusImplicitDataPopulator.*;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 

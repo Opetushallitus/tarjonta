@@ -1,7 +1,6 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.collect.Lists;
-import com.wordnik.swagger.model.ValidationMessage;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.TestMockBase;
@@ -9,7 +8,7 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.publication.Tila;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntityTest;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
@@ -23,13 +22,13 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.powermock.reflect.Whitebox;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 
@@ -46,6 +45,10 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
                     setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti("test", "fi"))));
                 }}
         );
+
+        KoulutusImplicitDataPopulator populator = new KoulutusImplicitDataPopulator();
+        Whitebox.setInternalState(populator, "koodiService", KoulutusDTOConverterToEntityTest.mockKoodiService(null));
+        Whitebox.setInternalState(koulutusResourceV1, "koulutusImplicitDataPopulator", populator);
     }
 
     @Test
@@ -262,6 +265,10 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
     private KoulutusV1RDTO createNewKoulutusDTO() {
         KoulutusV1RDTO koulutusDTO = new KoulutusKorkeakouluV1RDTO();
         koulutusDTO.setTila(TarjontaTila.LUONNOS);
+        koulutusDTO.setKoulutuskoodi(new KoodiV1RDTO(){{
+            setUri("koulutus_1");
+            setVersio(1);
+        }});
         return koulutusDTO;
     }
 
