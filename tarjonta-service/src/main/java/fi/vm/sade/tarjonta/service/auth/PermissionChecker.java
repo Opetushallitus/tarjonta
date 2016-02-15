@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Set;
 
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -282,6 +284,19 @@ public class PermissionChecker {
 
     public void checkRemoveValintaPerusteKK() {
         checkPermission(permissionService.userCanDeleteValintaperusteKK());
+    }
+
+    public void checkUpsertKoulutus(final KoulutusV1RDTO dto) {
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findKomotoByKoulutusId(new KoulutusIdentification(){{
+            setOid(dto.getOid());
+            setUlkoinenTunniste(dto.getUlkoinenTunniste());
+        }});
+
+        if (komoto == null) {
+            checkCreateKoulutus(dto.getOrganisaatio().getOid());
+        } else {
+            checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
+        }
     }
 
     public void checkCreateKoulutus(String tarjoajaOid) {

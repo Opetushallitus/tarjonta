@@ -292,9 +292,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             return result;
         }
 
-        String oid = dto.getOrganisaatio().getOid();
-        permissionChecker.checkCreateKoulutus(oid);
-        permissionChecker.checkUpdateKoulutusByTarjoajaOid(oid);
+        permissionChecker.checkUpsertKoulutus(dto);
 
         if (dto.getOid() != null) {
             final Tila tilamuutos = new Tila(Tyyppi.KOMOTO, dto.getTila(), dto.getOid());

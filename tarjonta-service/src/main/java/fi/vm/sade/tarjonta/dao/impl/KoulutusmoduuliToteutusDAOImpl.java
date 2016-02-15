@@ -72,9 +72,10 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     public KoulutusmoduuliToteutus findKomotoByKoulutusId(KoulutusIdentification id) {
         if (!StringUtils.isBlank(id.getOid())) {
             return getFirstFromList(findBy(BaseKoulutusmoduuli.OID_COLUMN_NAME, id.getOid()));
-        } else {
+        } else if (!StringUtils.isBlank(id.getUlkoinenTunniste())) {
             return findByUniqueExternalId(id.getUlkoinenTunniste());
         }
+        return null;
     }
 
     @Override
