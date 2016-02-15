@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import fi.vm.sade.tarjonta.service.types.*;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Function;
@@ -47,19 +48,7 @@ import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonFromDTOConverter;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
-import fi.vm.sade.tarjonta.service.types.NimettyMonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
-import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.Calendar;
@@ -345,7 +334,11 @@ public final class EntityUtils {
         to.setSahkoposti(from.getSahkoposti());
         to.setMultipleKielisByList(from.getKielet());
         to.setTitteli(from.getTitteli());
-        to.setHenkiloTyyppi(from.getHenkiloTyyppi());
+        to.setHenkiloTyyppi(
+                from.getHenkiloTyyppi() != null
+                    ? from.getHenkiloTyyppi()
+                    : HenkiloTyyppi.YHTEYSHENKILO
+        );
     }
 
     public static void copyFields(final Yhteyshenkilo from, YhteyshenkiloTyyppi to) {
