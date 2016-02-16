@@ -8,6 +8,7 @@ import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
@@ -17,6 +18,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KorkeakouluOpintoV1
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +38,7 @@ import static fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultSt
 import static fi.vm.sade.tarjonta.shared.types.TarjontaTila.LUONNOS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
@@ -52,12 +55,18 @@ public class HakukohdeResourceImplV1Test {
     @Autowired
     HakuDAO hakuDAO;
 
+    @Autowired
+    OidService oidService;
+
+    @Autowired
+    OidServiceMock oidServiceMock;
+
     private static final String HAUN_OID = "hakuOid";
 
     @Test
     public void testCreateOpintokokonaisuusHakukohdeFailsWhenMissingRequiredData() throws OIDCreationException {
         HakukohdeV1RDTO hakukohde = baseHakukohde();
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeV1Resource.createHakukohde(hakukohde);
+        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeV1Resource.postHakukohde(hakukohde);
         assertEquals(VALIDATION, result.getStatus());
         assertEquals(2, result.getErrors().size());
         assertTrue(containsError(result.getErrors(), HAKUKOHDE_KOULUTUS_MISSING));
@@ -66,6 +75,8 @@ public class HakukohdeResourceImplV1Test {
 
     @Test
     public void testCreateOpintokokonaisuusHakukohde() throws OIDCreationException {
+        when(oidService.get(TarjontaOidType.HAKUKOHDE)).thenReturn(oidServiceMock.getOid());
+
         Haku haku = insertHaku();
         KoulutusV1RDTO koulutus = koulutusResourceTest.insertLuonnosOpintokokonaisuus(null);
 
@@ -74,12 +85,40 @@ public class HakukohdeResourceImplV1Test {
         hakukohde.setHakukohteenNimet(ImmutableMap.of("kieli_fi", "hakukohteen nimi"));
         hakukohde.setHakuOid(haku.getOid());
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeV1Resource.createHakukohde(hakukohde);
+        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeV1Resource.postHakukohde(hakukohde);
         assertEquals(OK, result.getStatus());
     }
 
     @Test
+    public void testEditHakukohdeUsingExternalId() throws OIDCreationException {
+        String oid = oidServiceMock.getOid();
+        when(oidService.get(TarjontaOidType.HAKUKOHDE)).thenReturn(oid);
+
+        Haku haku = insertHaku();
+        KoulutusV1RDTO koulutus = koulutusResourceTest.insertLuonnosOpintokokonaisuus(null);
+
+        HakukohdeV1RDTO hakukohde = baseHakukohde();
+        hakukohde.setHakukohdeKoulutusOids(Lists.newArrayList(koulutus.getOid()));
+        hakukohde.setHakukohteenNimet(ImmutableMap.of("kieli_fi", "hakukohteen nimi"));
+        hakukohde.setHakuOid(haku.getOid());
+        hakukohde.setUniqueExternalId("someUniqueExternalId");
+
+        // Create hakukohde
+        hakukohdeV1Resource.postHakukohde(hakukohde);
+
+        // Now modify it
+        hakukohde.setAloituspaikatLkm(10);
+        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeV1Resource.postHakukohde(hakukohde);
+        assertEquals(OK, result.getStatus());
+        assertEquals(oid, result.getResult().getOid());
+        assertEquals(hakukohde.getUniqueExternalId(), result.getResult().getUniqueExternalId());
+        assertEquals(hakukohde.getAloituspaikatLkm(), result.getResult().getAloituspaikatLkm());
+    }
+
+    @Test
     public void testCreateOpintokokonaisuusHakukohdeUsingKoulutusExternalId() throws OIDCreationException {
+        when(oidService.get(TarjontaOidType.HAKUKOHDE)).thenReturn(oidServiceMock.getOid());
+
         Haku haku = insertHaku();
         final KorkeakouluOpintoV1RDTO koulutusDto = new KorkeakouluOpintoV1RDTO();
         koulutusDto.setUniqueExternalId("1.2.3-externalId-42");
@@ -91,7 +130,7 @@ public class HakukohdeResourceImplV1Test {
         hakukohde.setHakukohteenNimet(ImmutableMap.of("kieli_fi", "hakukohteen nimi"));
         hakukohde.setHakuOid(haku.getOid());
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeV1Resource.createHakukohde(hakukohde);
+        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeV1Resource.postHakukohde(hakukohde);
         assertEquals(OK, result.getStatus());
         assertTrue(Iterables.find(result.getResult().getKoulutukset(), new Predicate<KoulutusIdentification>() {
             @Override

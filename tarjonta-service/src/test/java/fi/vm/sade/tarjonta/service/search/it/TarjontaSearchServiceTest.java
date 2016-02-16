@@ -324,7 +324,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
                 KoulutusKorkeakouluV1RDTO kk = getKKKoulutus();
                 ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResource.postKoulutus(kk).getEntity();
                 HakukohdeV1RDTO hakukohde = getKKHakukohde(postKorkeakouluKoulutus.getResult().getOid());
-                ResultV1RDTO<HakukohdeV1RDTO> response = hakukohdeResource.createHakukohde(hakukohde);
+                ResultV1RDTO<HakukohdeV1RDTO> response = hakukohdeResource.postHakukohde(hakukohde);
                 assertEquals("errors in koulutus insert", false, response.hasErrors());
             }
         });

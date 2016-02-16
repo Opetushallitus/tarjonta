@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutusTarjoajatiedot;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.OidServiceMock;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -57,6 +58,9 @@ public class HakuDAOImplTest extends TestData {
 
     @Autowired
     private HakuDAOImpl hakuDAO;
+
+    @Autowired
+    OidServiceMock oidServiceMock;
 
     public HakuDAOImplTest() {
     }
@@ -296,6 +300,7 @@ public class HakuDAOImplTest extends TestData {
         hakuDAO.insert(haku);
 
         Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setOid(oidServiceMock.getOid());
 
         KoulutusmoduuliToteutusTarjoajatiedot tarjoajatiedot = new KoulutusmoduuliToteutusTarjoajatiedot();
         tarjoajatiedot.getTarjoajaOids().add("2.2.2");
@@ -309,6 +314,7 @@ public class HakuDAOImplTest extends TestData {
         hakukohdeDAO.insert(hakukohde);
 
         hakukohde = new Hakukohde();
+        hakukohde.setOid(oidServiceMock.getOid());
 
         tarjoajatiedot = new KoulutusmoduuliToteutusTarjoajatiedot();
         tarjoajatiedot.getTarjoajaOids().add("6.6.6");

@@ -41,8 +41,11 @@ public class Hakukohde extends TarjontaBaseEntity {
     public static final String TABLE_NAME = "hakukohde";
     private static final long serialVersionUID = -3320464257959195992L;
 
-    @Column(name = "oid", unique = true, updatable = false)
+    @Column(name = "oid", unique = true, updatable = false, nullable = false)
     private String oid;
+
+    @Column(name = "unique_external_id", nullable = true, insertable = true, updatable = false, unique = true)
+    private String uniqueExternalId;
 
     @ManyToMany(mappedBy = "hakukohdes", cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
@@ -864,5 +867,13 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void setHakulomakeUrl(String hakulomakeUrl) {
         this.hakulomakeUrl = hakulomakeUrl;
+    }
+
+    public String getUniqueExternalId() {
+        return uniqueExternalId;
+    }
+
+    public void setUniqueExternalId(String uniqueExternalId) {
+        this.uniqueExternalId = uniqueExternalId;
     }
 }

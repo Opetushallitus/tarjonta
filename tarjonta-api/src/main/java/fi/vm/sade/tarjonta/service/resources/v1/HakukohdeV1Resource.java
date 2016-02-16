@@ -92,7 +92,7 @@ public interface HakukohdeV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Luo uuden hakukohteen", notes = "Operaatio luo uuden hakukohteen", response = HakukohdeV1RDTO.class)
-    public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(@ApiParam(value = "Luotava hakukohde", required = true) HakukohdeV1RDTO hakukohde);
+    public ResultV1RDTO<HakukohdeV1RDTO> postHakukohde(@ApiParam(value = "Luotava hakukohde", required = true) HakukohdeV1RDTO hakukohde);
 
     @PUT
     @Path("/{oid}")

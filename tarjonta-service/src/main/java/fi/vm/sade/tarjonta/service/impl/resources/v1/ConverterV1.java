@@ -497,6 +497,8 @@ public class ConverterV1 {
     public HakukohdeV1RDTO toHakukohdeRDTO(Hakukohde hakukohde) {
         HakukohdeV1RDTO hakukohdeRDTO = new HakukohdeV1RDTO();
 
+        hakukohdeRDTO.setUniqueExternalId(hakukohde.getUniqueExternalId());
+
         convertKoulutukset(hakukohde, hakukohdeRDTO);
 
         if (hakukohde.getSoraKuvausTunniste() != null) {
@@ -967,6 +969,10 @@ public class ConverterV1 {
         hakukohde.setAloituspaikatKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getAloituspaikatKuvaukset()));
         hakukohde.setHakuaikaAlkuPvm(hakukohdeRDTO.getHakuaikaAlkuPvm());
         hakukohde.setHakuaikaLoppuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
+
+        if (hakukohdeRDTO.getUniqueExternalId() != null) {
+            hakukohde.setUniqueExternalId(hakukohdeRDTO.getUniqueExternalId());
+        }
 
         if (ToteutustyyppiEnum.KORKEAKOULUTUS.equals(hakukohdeRDTO.getToteutusTyyppi())
                 || ToteutustyyppiEnum.KORKEAKOULUOPINTO.equals(hakukohdeRDTO.getToteutusTyyppi())) {

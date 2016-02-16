@@ -50,6 +50,8 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private String valintaperustekuvausKoodiUri;
     private Date liitteidenToimitusPvm;
     private String ulkoinenTunniste;
+    @ApiModelProperty(value = "Oppilaitoksen globaalisti uniikki tunniste hakukohteelle", required = false)
+    private String uniqueExternalId;
     private String koulutusAsteTyyppi;
     private ToteutustyyppiEnum toteutusTyyppi;
     private String koulutusmoduuliTyyppi;
@@ -630,5 +632,13 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setKoulutukset(Set<KoulutusIdentification> koulutukset) {
         this.koulutukset = koulutukset;
+    }
+
+    public String getUniqueExternalId() {
+        return uniqueExternalId;
+    }
+
+    public void setUniqueExternalId(String uniqueExternalId) {
+        this.uniqueExternalId = uniqueExternalId;
     }
 }

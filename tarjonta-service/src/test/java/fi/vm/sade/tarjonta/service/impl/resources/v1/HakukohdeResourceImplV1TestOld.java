@@ -73,9 +73,9 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
     public void blockDuplicatingHakukohdeThatMatchesHakuAndKomoto() {
         HakukohdeV1RDTO hakukohde = mkHakukohde(canAddHakukohde(mkRandomHaku()), mkRandomKomoto());
 
-        assertEquals(OK, hakukohdeResource.createHakukohde(hakukohde).getStatus());
+        assertEquals(OK, hakukohdeResource.postHakukohde(hakukohde).getStatus());
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.createHakukohde(hakukohde);
+        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.postHakukohde(hakukohde);
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
 
         ErrorV1RDTO error = result.getErrors().get(0);
@@ -89,7 +89,7 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
         haku.setHakulomakeUrl("http://haunUrl.com");
         HakukohdeV1RDTO hakukohde = mkHakukohde(canAddHakukohde(haku), mkRandomKomoto());
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.createHakukohde(hakukohde);
+        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.postHakukohde(hakukohde);
         assertEquals(OK, result.getStatus());
         HakukohdeV1RDTO hakukohdeRes = result.getResult();
         assertEquals("http://haunUrl.com", hakukohdeRes.getHakulomakeUrl());
@@ -104,7 +104,7 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
         hakukohde.setHakulomakeUrl("http://hakukohdekohtainen.com");
         hakukohde.setOverridesHaunHakulomakeUrl(true);
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.createHakukohde(hakukohde);
+        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.postHakukohde(hakukohde);
         assertEquals(OK, result.getStatus());
         HakukohdeV1RDTO hakukohdeRes = result.getResult();
         assertEquals("http://hakukohdekohtainen.com", hakukohdeRes.getHakulomakeUrl());
@@ -115,9 +115,9 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
     public void blockDuplicatingHakukohdeThatMatchesHakuButNotKomoto() {
         Haku haku = canAddHakukohde(mkRandomHaku());
 
-        assertEquals(OK, hakukohdeResource.createHakukohde(mkHakukohde(haku, mkRandomKomoto())).getStatus());
+        assertEquals(OK, hakukohdeResource.postHakukohde(mkHakukohde(haku, mkRandomKomoto())).getStatus());
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.createHakukohde(mkHakukohde(haku, mkRandomKomoto()));
+        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.postHakukohde(mkHakukohde(haku, mkRandomKomoto()));
 
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
 

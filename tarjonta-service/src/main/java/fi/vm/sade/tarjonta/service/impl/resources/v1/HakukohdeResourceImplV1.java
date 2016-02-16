@@ -572,7 +572,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     @Transactional
-    public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
+    public ResultV1RDTO<HakukohdeV1RDTO> postHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
+        Hakukohde existingHakukohde = hakukohdeDAO.findExistingHakukohde(hakukohdeRDTO);
+        if (existingHakukohde != null) {
+            hakukohdeRDTO.setOid(existingHakukohde.getOid());
+            return updateHakukohde(existingHakukohde.getOid(), hakukohdeRDTO);
+        }
+
         List<HakukohdeValidationMessages> validationMessageses = validateHakukohdeAndPopulateImplicitFields(hakukohdeRDTO);
 
         if (hakukohdeRDTO.getOid() != null) {
