@@ -737,8 +737,8 @@ public class KoulutusDTOConverterToEntity {
         komoto.setMaksullisuus(dto.getOpintojenMaksullisuus());
         komoto.setHakijalleNaytettavaTunniste(dto.getHakijalleNaytettavaTunniste());
 
-        if (!StringUtils.isBlank(dto.getUlkoinenTunniste())) {
-            komoto.setUniqueExternalId(dto.getUlkoinenTunniste());
+        if (!StringUtils.isBlank(dto.getUniqueExternalId())) {
+            komoto.setUniqueExternalId(dto.getUniqueExternalId());
         }
 
         if (dto.getSisaltyvatKoulutuskoodit() != null) {

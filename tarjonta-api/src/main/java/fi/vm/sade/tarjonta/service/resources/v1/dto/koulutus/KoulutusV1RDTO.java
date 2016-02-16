@@ -83,7 +83,7 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     private String tunniste;
 
     @ApiModelProperty(value = "Oppilaitoksen globaalisti uniikki tunniste koulutukselle", required = false)
-    private String ulkoinenTunniste;
+    private String uniqueExternalId;
 
     @ApiModelProperty(value = "Hakijalle näytettävä tunniste", required = false)
     private String hakijalleNaytettavaTunniste;
@@ -692,11 +692,11 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
         this.sisaltyyKoulutuksiin = sisaltyyKoulutuksiin;
     }
 
-    public String getUlkoinenTunniste() {
-        return ulkoinenTunniste;
+    public String getUniqueExternalId() {
+        return uniqueExternalId;
     }
 
-    public void setUlkoinenTunniste(String ulkoinenTunniste) {
-        this.ulkoinenTunniste = ulkoinenTunniste;
+    public void setUniqueExternalId(String uniqueExternalId) {
+        this.uniqueExternalId = uniqueExternalId;
     }
 }

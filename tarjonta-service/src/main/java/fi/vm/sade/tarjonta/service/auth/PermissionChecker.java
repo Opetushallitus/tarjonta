@@ -286,7 +286,7 @@ public class PermissionChecker {
 
     public void checkUpsertKoulutus(final KoulutusV1RDTO dto) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findKomotoByKoulutusId(
-                new KoulutusIdentification(dto.getOid(), dto.getUlkoinenTunniste())
+                new KoulutusIdentification(dto.getOid(), dto.getUniqueExternalId())
         );
 
         if (komoto == null) {

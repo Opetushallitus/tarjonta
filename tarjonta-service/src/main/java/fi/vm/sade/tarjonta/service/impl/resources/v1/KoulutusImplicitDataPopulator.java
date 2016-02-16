@@ -37,8 +37,8 @@ public class KoulutusImplicitDataPopulator {
     public static final String TUTKINTONIMIKEKK = "tutkintonimikekk";
 
     public KoulutusV1RDTO populateFields(final KoulutusV1RDTO dto) {
-        if (StringUtils.isBlank(dto.getOid()) && !StringUtils.isBlank(dto.getUlkoinenTunniste())) {
-            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByUniqueExternalId(dto.getUlkoinenTunniste());
+        if (StringUtils.isBlank(dto.getOid()) && !StringUtils.isBlank(dto.getUniqueExternalId())) {
+            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByUniqueExternalId(dto.getUniqueExternalId());
             if (komoto != null) {
                 dto.setOid(komoto.getOid());
             }

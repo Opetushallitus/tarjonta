@@ -82,12 +82,12 @@ public class HakukohdeResourceImplV1Test {
     public void testCreateOpintokokonaisuusHakukohdeUsingKoulutusExternalId() throws OIDCreationException {
         Haku haku = insertHaku();
         final KorkeakouluOpintoV1RDTO koulutusDto = new KorkeakouluOpintoV1RDTO();
-        koulutusDto.setUlkoinenTunniste("1.2.3-externalId-42");
+        koulutusDto.setUniqueExternalId("1.2.3-externalId-42");
 
         koulutusResourceTest.insertLuonnosOpintokokonaisuus(koulutusDto);
 
         HakukohdeV1RDTO hakukohde = baseHakukohde();
-        hakukohde.setKoulutukset(Sets.newHashSet(new KoulutusIdentification(null, koulutusDto.getUlkoinenTunniste())));
+        hakukohde.setKoulutukset(Sets.newHashSet(new KoulutusIdentification(null, koulutusDto.getUniqueExternalId())));
         hakukohde.setHakukohteenNimet(ImmutableMap.of("kieli_fi", "hakukohteen nimi"));
         hakukohde.setHakuOid(haku.getOid());
 
@@ -96,7 +96,7 @@ public class HakukohdeResourceImplV1Test {
         assertTrue(Iterables.find(result.getResult().getKoulutukset(), new Predicate<KoulutusIdentification>() {
             @Override
             public boolean apply(KoulutusIdentification id) {
-                return koulutusDto.getUlkoinenTunniste().equals(id.getUlkoinenTunniste());
+                return koulutusDto.getUniqueExternalId().equals(id.getUlkoinenTunniste());
             }
         }, null) != null);
     }

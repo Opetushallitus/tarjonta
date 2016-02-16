@@ -87,7 +87,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         Preconditions.checkNotNull(komo, "Koulutusmoduuli object cannot be null!");
 
         dto.setOid(komoto.getOid());
-        dto.setUlkoinenTunniste(komoto.getUniqueExternalId());
+        dto.setUniqueExternalId(komoto.getUniqueExternalId());
         dto.setKomoOid(komo.getOid());
         dto.setTila(komoto.getTila());
         dto.setModified(komoto.getUpdated());
