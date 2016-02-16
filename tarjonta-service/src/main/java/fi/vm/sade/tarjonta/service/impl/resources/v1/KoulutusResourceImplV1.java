@@ -316,7 +316,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         dto = koulutusImplicitDataPopulator.populateFields(dto);
 
-
         /** Permission service checks currently fail in 5% of the cases due to data model issues, which is why this is
          *  not used in production.
          */
@@ -332,10 +331,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         }
 
         if (dto.getClass() == KoulutusKorkeakouluV1RDTO.class) {
-            //TODO: currently no komo validation, when invalid throws exception
-            return postKorkeakouluKoulutus((KoulutusKorkeakouluV1RDTO) dto, result);
+            result = postKorkeakouluKoulutus((KoulutusKorkeakouluV1RDTO) dto, result);
         } else if (dto instanceof TutkintoonJohtamatonKoulutusV1RDTO) {
-            return Response.ok(postTutkintoonjohtamatonKoulutus((TutkintoonJohtamatonKoulutusV1RDTO) dto, result)).build();
+            result = postTutkintoonjohtamatonKoulutus((TutkintoonJohtamatonKoulutusV1RDTO) dto, result);
         } else {
             //Cannot be created without module. null komo => validation error
             Koulutusmoduuli komo = null;
@@ -353,20 +351,26 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
 
             if (dto.getClass() == KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class) {
-                return Response.ok(postNayttotutkintona(dto.getClass(), (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto, komo, result)).build();
+                result = postNayttotutkintona(dto.getClass(), (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto, komo, result);
             } else if (dto.getClass() == AmmattitutkintoV1RDTO.class) {
-                return Response.ok(postNayttotutkintona(dto.getClass(), (AmmattitutkintoV1RDTO) dto, komo, result)).build();
+                result = postNayttotutkintona(dto.getClass(), (AmmattitutkintoV1RDTO) dto, komo, result);
             } else if (dto.getClass() == ErikoisammattitutkintoV1RDTO.class) {
-                return Response.ok(postNayttotutkintona(dto.getClass(), (ErikoisammattitutkintoV1RDTO) dto, komo, result)).build();
+                result = postNayttotutkintona(dto.getClass(), (ErikoisammattitutkintoV1RDTO) dto, komo, result);
             } else if (dto instanceof KoulutusGenericV1RDTO) {
-                return Response.ok(postGenericKoulutus((KoulutusGenericV1RDTO) dto, komo, result)).build();
+                result = postGenericKoulutus((KoulutusGenericV1RDTO) dto, komo, result);
+            } else {
+                result.setStatus(ERROR);
+                result.addError(createSystemError(new IllegalArgumentException(), "type_unknown", dto.getClass() + " not handled"));
             }
         }
 
-        result.setStatus(ERROR);
-        result.addError(createSystemError(new IllegalArgumentException(), "type_unknown", dto.getClass() + " not handled"));
-
-        return Response.ok(result).build();
+        if (OK.equals(result.getStatus())) {
+            return Response.ok(result).build();
+        } else if (NOT_FOUND.equals(result.getStatus())) {
+            return Response.status(Response.Status.NOT_FOUND).entity(result).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
+        }
     }
 
     private boolean validAjankohta(KoulutusV1RDTO dto) {
@@ -430,7 +434,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
      * @param dto
      * @return
      */
-    private Response postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO dto, ResultV1RDTO<KoulutusV1RDTO> result) {
+    private ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO dto, ResultV1RDTO<KoulutusV1RDTO> result) {
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
 
         KoulutusValidator.validateKoulutusKorkeakoulu(dto, result);
@@ -455,7 +459,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(dto.getOid());
                 KoulutusValidator.validateKoulutusUpdate(komoto, result);
                 if (result.hasErrors()) {
-                    return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
+                    return result;
                 }
 
                 final KoulutusV1RDTO originalDto = converterToRDTO.convert(dto.getClass(), komoto, param);
@@ -487,11 +491,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             indexKomoto(fullKomotoWithKomo);
 
             result.setResult(dtoAfterOperation);
-            return Response.ok(result).build();
+            return result;
         } else {
             result.setStatus(VALIDATION);
             result.setResult(dto);
-            return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
+            return result;
         }
     }
 
