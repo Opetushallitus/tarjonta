@@ -283,7 +283,10 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
 
         if (dto == null || dto.getToteutustyyppi() == null) {
-            return Response.ok(create(VALIDATION, null, createValidationError(TOTEUTUSTYYPPI, TOTEUTUSTYYPPI + " missing"))).build();
+            return Response
+                        .status(Response.Status.BAD_REQUEST)
+                        .entity(create(VALIDATION, null, createValidationError(TOTEUTUSTYYPPI, TOTEUTUSTYYPPI + " missing")))
+                        .build();
         }
 
         if (! validateOrganisation(dto.getOrganisaatio(),
