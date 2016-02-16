@@ -99,7 +99,7 @@ public interface KoulutusV1Resource {
     public ResultV1RDTO copyOrMoveMultiple(KoulutusMultiCopyV1RDTO koulutusMultiCopy);
 
     @POST
-    @PreAuthorize("isAuthenticated() && hasAnyRole(['ROLE_OFFICER', 'ROLE_ADMIN'])")
+    @PreAuthorize("isAuthenticated()")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
