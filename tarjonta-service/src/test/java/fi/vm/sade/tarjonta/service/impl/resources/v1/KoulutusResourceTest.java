@@ -82,7 +82,7 @@ public class KoulutusResourceTest {
         // Stub koodisto values
         TarjontaSearchServiceTest.stubKoodi(koodiService, "kieli_fi", "FI");
 
-        
+
         komo = new Koulutusmoduuli();
         komo.setKoulutustyyppiEnum(ModuulityyppiEnum.KORKEAKOULUTUS);
 
@@ -105,11 +105,11 @@ public class KoulutusResourceTest {
         komoto2.addHakukohde(hk1);
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-2"))
                 .toReturn(komoto2);
-        
+
         hk1.addKoulutusmoduuliToteutus(komoto1);
         hk1.addKoulutusmoduuliToteutus(komoto2);
 
-        
+
         // another hakukohde with single koulutus
         hk2 = getHakukohde();
 
@@ -121,10 +121,10 @@ public class KoulutusResourceTest {
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-3"))
                 .toReturn(komoto3);
 
-        
+
         hk2.addKoulutusmoduuliToteutus(komoto3);
-        
-        
+
+
         Whitebox.setInternalState(koulutusResource,
                 "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
         Whitebox.setInternalState(koulutusResource, "permissionChecker",
@@ -134,7 +134,7 @@ public class KoulutusResourceTest {
         Whitebox.setInternalState(koulutusResource, "contextDataService",
                 contextDataService);
 
-        
+
         Mockito.stub(hakukohdeDAO.insert(Mockito.any(Hakukohde.class)))
                 .toAnswer(new Answer<Hakukohde>() {
                     // palauta sama olio
@@ -198,7 +198,7 @@ public class KoulutusResourceTest {
         komo.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
         komoto1.setTila(TarjontaTila.POISTETTU);
 
-        
+
         //kaksi koulutusta kiinni hakukohteessa, jälkimmäistä ei voi poistaa
         result = koulutusResource.deleteByOid("komoto-2");
         Assert.assertEquals(ResultV1RDTO.ResultStatus.ERROR, result.getStatus());

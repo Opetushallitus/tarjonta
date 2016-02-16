@@ -55,7 +55,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
     public void thatAjankohtaIsValidWithNewKoulutus() {
         KoulutusV1RDTO koulutusDTO = createNewKoulutusDTO();
 
-        ResultV1RDTO<KoulutusV1RDTO> resultDTO = koulutusResourceV1.postKoulutus(koulutusDTO);
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
 
         assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla"))));
     }
@@ -67,7 +67,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
         KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTO();
 
-        ResultV1RDTO<KoulutusV1RDTO> resultDTO = koulutusResourceV1.postKoulutus(koulutusDTO);
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
 
         assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla"))));
     }
@@ -79,7 +79,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
         KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTO();
 
-        ResultV1RDTO<KoulutusV1RDTO> resultDTO = koulutusResourceV1.postKoulutus(koulutusDTO);
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
 
         assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla"))));
     }
@@ -91,7 +91,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
         KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTOWithValidAjankohta();
 
-        ResultV1RDTO<KoulutusV1RDTO> resultDTO = koulutusResourceV1.postKoulutus(koulutusDTO);
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
 
         assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla"))));
     }
@@ -103,7 +103,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
         KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTOWithInvalidAjankohta();
 
-        ResultV1RDTO<KoulutusV1RDTO> resultDTO = koulutusResourceV1.postKoulutus(koulutusDTO);
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
 
         assertThat(resultDTO.getErrors(), hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla")));
     }
@@ -115,7 +115,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
         KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTOWithOneValidAndOneInvalidAjankohta();
 
-        ResultV1RDTO<KoulutusV1RDTO> resultDTO = koulutusResourceV1.postKoulutus(koulutusDTO);
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
 
         assertThat(resultDTO.getErrors(), hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla")));
     }
@@ -127,7 +127,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
         KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTOWithValidKausiAndYear();
 
-        ResultV1RDTO<KoulutusV1RDTO> resultDTO = koulutusResourceV1.postKoulutus(koulutusDTO);
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
 
         assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla"))));
     }
@@ -139,7 +139,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
         KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTOWithInvalidKausiAndYear();
 
-        ResultV1RDTO<KoulutusV1RDTO> resultDTO = koulutusResourceV1.postKoulutus(koulutusDTO);
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
 
         assertThat(resultDTO.getErrors(), hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla")));
     }
@@ -151,7 +151,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
         KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTOWithValidAjankohta();
 
-        ResultV1RDTO<KoulutusV1RDTO> resultDTO = koulutusResourceV1.postKoulutus(koulutusDTO);
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
 
         assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla"))));
     }

@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.service.resources.v1;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
@@ -54,6 +56,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  *
@@ -96,13 +99,20 @@ public interface KoulutusV1Resource {
     public ResultV1RDTO copyOrMoveMultiple(KoulutusMultiCopyV1RDTO koulutusMultiCopy);
 
     @POST
+    @PreAuthorize("isAuthenticated() && hasAnyRole(['ROLE_OFFICER', 'ROLE_ADMIN'])")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
             value = "Luo uuden koulutuksen",
             notes = "Operaatio luo uuden koulutuksen",
             response = KoulutusV1RDTO.class)
-    public ResultV1RDTO<KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO koulutus);
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Operation successful"),
+            @ApiResponse(code = 400, message = "Invalid request payload"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Permission denied")
+    })
+    public Response postKoulutus(KoulutusV1RDTO koulutus);
 
     @GET
     @Path("/{oid}/tekstis")

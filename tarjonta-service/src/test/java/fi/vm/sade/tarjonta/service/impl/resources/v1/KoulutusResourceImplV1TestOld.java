@@ -42,7 +42,6 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
@@ -161,7 +160,7 @@ public class KoulutusResourceImplV1TestOld extends KoulutusBase {
         /*
          * INSERT KORKEAKOULU TO DB
          */
-        ResultV1RDTO<KoulutusV1RDTO> v = instance.postKoulutus(dto);
+        ResultV1RDTO<KoulutusV1RDTO> v = (ResultV1RDTO<KoulutusV1RDTO>)instance.postKoulutus(dto).getEntity();
         assertEquals("Validation errors", true, v.getErrors() == null || v.getErrors().isEmpty());
 
         /*

@@ -54,7 +54,7 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("embedded-solr")
 @Transactional()
 public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
-    
+
     @Before
     public void setUp() throws OIDCreationException {
         reload();
@@ -65,14 +65,14 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
 
     @Test
     public void testCreateAndLoadToteutus() throws ExceptionMessage {
-        ResultV1RDTO<KoulutusV1RDTO> v = instance.postKoulutus(createDTO());
+        ResultV1RDTO<KoulutusV1RDTO> v = (ResultV1RDTO<KoulutusV1RDTO>)instance.postKoulutus(createDTO()).getEntity();
         assertEquals("Validation errors", true, v.getErrors() == null || v.getErrors().isEmpty());
 
         final ResultV1RDTO result = instance.findByOid(KOMOTO_OID, true, false, "FI");
         KoulutusLukioV1RDTO result1 = (KoulutusLukioV1RDTO) result.getResult();
         assertLoadData(result1);
     }
-    
+
     private void expectKoodis() {
         expectKausiLukio();
         expectMetaUri(KOULUTUSOHJELMA);
@@ -95,21 +95,21 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         expectMetaUri(TUTKINTO);
         expectMetaUri(KOULUTUSTYYPPI);
     }
-    
+
     private void assertLoadData(final KoulutusLukioV1RDTO result) {
         assertNotNull(result);
-        
+
         assertEquals(KOMOTO_OID, result.getOid());
         assertEquals(KOMO_CHILD_OID, result.getKomoOid());
         assertEquals(ORGANISATION_OID, result.getOrganisaatio().getOid());
         assertEquals(ORGANISAATIO_NIMI, result.getOrganisaatio().getNimi());
-        
+
         assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS, result.getKoulutusasteTyyppi());
         assertEquals(ToteutustyyppiEnum.LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA, result.getToteutustyyppi());
         assertEquals(ModuulityyppiEnum.LUKIOKOULUTUS, result.getModuulityyppi());
-        
+
         final String key = URI_KIELI_FI + "_uri";
-        
+
         assertNotNull(null, result.getKoulutusohjelma().getTekstis().isEmpty());
         assertNotNull(KOULUTUSOHJELMA, result.getKoulutusohjelma().getMeta().get(key));
         assertEqualDtoKoodi(KOULUTUSOHJELMA, result.getKoulutusohjelma());
@@ -124,17 +124,17 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         assertEqualDtoKoodi(TUTKINTONIMIKE, result.getTutkintonimike());
         assertEqualDtoKoodi(KOULUTUSLAJI, result.getKoulutuslaji());
         assertEqualDtoKoodi(TUTKINTO, result.getTutkinto());
-        
+
         assertEquals(TarjontaTila.JULKAISTU, result.getTila());
         assertEquals(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, result.getKoulutusmoduuliTyyppi());
         assertEquals(TUNNISTE, result.getTunniste());
         assertEquals((DateUtils.truncate(DATE.toDate(), Calendar.DATE)), result.getKoulutuksenAlkamisPvms().iterator().next());
         assertEqualDtoKoodi(KAUSI_KOODI_URI, result.getKoulutuksenAlkamiskausi(), true);
         assertEquals(VUOSI, result.getKoulutuksenAlkamisvuosi());
-        
+
         assertEqualMetaDto(MAP_OPETUSKIELI, result.getOpetuskielis());
         assertEqualMetaDto(MAP_OPETUMUOTO, result.getOpetusmuodos());
-        
+
         assertEquals(SUUNNITELTU_KESTO_VALUE, result.getSuunniteltuKestoArvo());
         assertEquals(SUUNNITELTU_KESTO_TYYPPI + "_uri", result.getSuunniteltuKestoTyyppi().getUri());
         assertEquals(new Integer(1), result.getSuunniteltuKestoTyyppi().getVersio());
@@ -147,13 +147,12 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         assertEquals(HenkiloTyyppi.YHTEYSHENKILO, next.getHenkiloTyyppi());
         assertEquals(USER_OID, result.getModifiedBy());
     }
-    
+
     private void expectKausiLukio() {
         KoodiType kausiKoodiType = createKoodiType(KAUSI_KOODI_URI, "x" + KAUSI_KOODI_URI);
         when(tarjontaKoodistoHelperMock.getKoodiByUri(KAUSI_KOODI_URI + "#1")).thenReturn(kausiKoodiType);
         when(tarjontaKoodistoHelperMock.getKoodi(KAUSI_KOODI_URI + "_uri", 1)).thenReturn(kausiKoodiType);
         when(tarjontaKoodistoHelperMock.getKoodiNimi(kausiKoodiType, new Locale(LOCALE_FI))).thenReturn(KAUSI_KOODI_URI);
-        
         KoodiType koodiLanguageFi = createKoodiType(URI_KIELI_FI, "fi");
         when(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).thenReturn(koodiLanguageFi);
     }
@@ -169,60 +168,60 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
     private KoulutusLukioV1RDTO createDTO() {
         KoulutusLukioAikuistenOppimaaraV1RDTO dto = new KoulutusLukioAikuistenOppimaaraV1RDTO();
         dto.getOrganisaatio().setOid(ORGANISATION_OID);
-        
+
         dto.setKoulutusaste(toKoodiUri(KOULUTUSASTE));
-        
+
         dto.setKoulutusala(toKoodiUri(KOULUTUSALA));
-        
+
         dto.setOpintoala(toKoodiUri(OPINTOALA));
-        
+
         dto.setTutkinto(toKoodiUri(TUTKINTO));
-        
+
         dto.setEqf(toKoodiUri(EQF));
-        
+
         dto.setNqf(toKoodiUri(NQF));
-        
+
         dto.setTila(TarjontaTila.JULKAISTU);
-        
+
         dto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO);
-        
+
         dto.setTunniste(TUNNISTE);
-        
+
         dto.setKomoOid(KOMO_CHILD_OID);
-        
+
         dto.setPohjakoulutusvaatimus(toKoodiUri(POHJAKOULUTUSVAATIMUS));
-        
+
         dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
-        
+
         dto.setKoulutusohjelma(toNimiKoodiUri(KOULUTUSOHJELMA));
-        
+
         dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
-        
+
         koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, MAP_OPETUSAIKAS);
-        
+
         koodiUrisMap(dto.getOpetusPaikkas(), URI_KIELI_FI, MAP_OPETUSPAIKKAS);
-        
+
         koodiUrisMap(dto.getOpetuskielis(), URI_KIELI_FI, MAP_OPETUSKIELI);
-        
+
         koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, MAP_OPETUMUOTO);
-        
+
         dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO_TYYPPI));
-        
+
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
-        
+
         dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], null, HenkiloTyyppi.YHTEYSHENKILO));
-        
+
         dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
-        
+
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
-        
+
         dto.setKoulutuslaji(toKoodiUri(KOULUTUSLAJI));
-        
+
         dto.setTutkintonimike(toKoodiUri(TUTKINTONIMIKE));
-        
+
         dto.setKoulutustyyppi(toKoodiUri(KOULUTUSTYYPPI));
-        
+
         return dto;
     }
-    
+
 }

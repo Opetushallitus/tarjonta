@@ -77,6 +77,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         when(organisaatioServiceMock.findByOid(ORGANISATION_JARJESTAJA_OID)).thenReturn(jarjestajaDTO);
     }
 
+
     private void printResultErrors(ResultV1RDTO r) {
         if (r != null && r.getErrors() != null) {
             List<ErrorV1RDTO> errors = r.getErrors();
@@ -100,7 +101,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         /*
          * INSERT NAYTTO TO DB
          */
-        ResultV1RDTO<KoulutusV1RDTO> v = instance.postKoulutus(createDTO());
+        ResultV1RDTO<KoulutusV1RDTO> v = (ResultV1RDTO<KoulutusV1RDTO>)instance.postKoulutus(createDTO()).getEntity();
         assertEquals("Validation errors", true, v.getErrors() == null || v.getErrors().isEmpty());
 
         /*
@@ -130,7 +131,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
          * UPDATE NAYTTO AND ADD VALMENTAVA TO DB
          */
         withoutValmentava.setValmistavaKoulutus(createValmentavaDTO());
-        v = instance.postKoulutus(withoutValmentava);
+        v = (ResultV1RDTO<KoulutusV1RDTO>)instance.postKoulutus(withoutValmentava).getEntity();
 
         printResultErrors(v);
         assertEquals("Validation errors", true, v.getErrors() == null || v.getErrors().isEmpty());

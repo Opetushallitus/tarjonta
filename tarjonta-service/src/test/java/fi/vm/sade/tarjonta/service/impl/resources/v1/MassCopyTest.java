@@ -158,7 +158,7 @@ public class MassCopyTest extends TestUtilityBase {
         hakukohde.addKoulutusmoduuliToteutus(komoto);
         komoto.addHakukohde(hakukohde);
     }
-    
+
     public Haku createKorkeakoulutusHaku(String hakuOid) {
         Haku haku = fixtures.createHaku();
         haku.setOid(hakuOid);
@@ -240,7 +240,7 @@ public class MassCopyTest extends TestUtilityBase {
         KoulutusmoduuliToteutus komotoOnlyInHaku2 = getKomoto(komo, "komoto-only-in-haku2");
         Hakukohde hakukohdeInHaku2 = hakukohdeDAO.findHakukohdeByOid("hakukohde-1-haku-2");
         connectHakukohdeWithKomoto(hakukohdeInHaku2, komotoOnlyInHaku2);
-        
+
         int komoCountBeforeCopy = koulutusmoduuliDAO.findAllKomos().size();
         int komotoCountBeforeCopy = koulutusmoduuliToteutusDAO.findAll().size();
         int hakukohdeCountBeforeCopy = hakukohdeDAO.findAll().size();

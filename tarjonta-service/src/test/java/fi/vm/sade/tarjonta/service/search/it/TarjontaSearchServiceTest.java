@@ -298,7 +298,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
             @Override
             public void run() {
                 KoulutusKorkeakouluV1RDTO kkKoulutus = getKKKoulutus();
-                ResultV1RDTO<KoulutusV1RDTO> result = koulutusResource.postKoulutus(kkKoulutus);
+                ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResource.postKoulutus(kkKoulutus).getEntity();
                 assertEquals("errors in koulutus insert", false, result.hasErrors());
             }
         });
@@ -322,7 +322,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
             @Override
             public void run() {
                 KoulutusKorkeakouluV1RDTO kk = getKKKoulutus();
-                ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus = koulutusResource.postKoulutus(kk);
+                ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResource.postKoulutus(kk).getEntity();
                 HakukohdeV1RDTO hakukohde = getKKHakukohde(postKorkeakouluKoulutus.getResult().getOid());
                 ResultV1RDTO<HakukohdeV1RDTO> response = hakukohdeResource.createHakukohde(hakukohde);
                 assertEquals("errors in koulutus insert", false, response.hasErrors());
