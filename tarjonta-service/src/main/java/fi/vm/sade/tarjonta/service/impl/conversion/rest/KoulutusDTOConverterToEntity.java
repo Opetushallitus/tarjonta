@@ -182,7 +182,6 @@ public class KoulutusDTOConverterToEntity {
     * Update tutkintoonjohtamaton komo data.
     */
     private void updateTutkintoonjohtamatonKomoData(Koulutusmoduuli komo, final TutkintoonJohtamatonKoulutusV1RDTO dto) {
-        // TODO Check what needs to be here!
         Preconditions.checkNotNull(dto, "TutkintoonJohtamatonKoulutusV1RDTO object cannot be null.");
         Preconditions.checkNotNull(komo, "KoulutusmoduuliToteutus object cannot be null.");
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
@@ -416,30 +415,6 @@ public class KoulutusDTOConverterToEntity {
             if (aikuPerus.getKielivalikoima() != null) {
                 commonConverter.convertToKielivalikoima(aikuPerus.getKielivalikoima(), komoto);
             }
-        }
-
-        /**
-         * ParentKomotojen käsittely. ParentKomotoista oli jo luovuttu samalla kun Vaadin-toteutuksesta
-         * luovuttiin. Ilmeni kuitenkin, että koulutusinformaation integraation nykyinen toteutus
-         * on riippuvainen parentKomotoista, eikä tätä riippuvuutta saa pienellä vaivalla poistettua.
-         * Siispä parentKomototo pitää vielä säilyttää koulutusinformaatiota varten.
-         */
-        switch (dto.getToteutustyyppi()) {
-            case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
-            case MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
-            case MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
-            case PERUSOPETUKSEN_LISAOPETUS:
-            case VAPAAN_SIVISTYSTYON_KOULUTUS:
-            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS:
-            case LUKIOKOULUTUS:
-                handleParentKomoto(komoto, komo);
-                break;
-
-            case AMMATILLINEN_PERUSTUTKINTO:
-            case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
-                handleParentKomoto(komoto, komo);
-                handleCommonFields(komoto);
-                break;
         }
 
         return komoto;
@@ -879,73 +854,6 @@ public class KoulutusDTOConverterToEntity {
 
     private static String toListUri(ToteutustyyppiEnum e) {
         return EntityUtils.joinListToString(e.uri());
-    }
-
-    /*
-    * Handling the creation or update of the parent komoto (KI still needs parent komoto)
-    */
-    private void handleParentKomoto(KoulutusmoduuliToteutus komoto, Koulutusmoduuli moduuli) {
-        Preconditions.checkNotNull(komoto, "Komoto cannot be null!");
-
-        ToteutustyyppiEnum toteutustyyppi = komoto.getToteutustyyppi();
-
-        Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(moduuli);
-
-        if (parentKomo == null) {
-            return;
-        }
-
-        List<KoulutusmoduuliToteutus> parentKomotos = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(
-            parentKomo,
-            komoto.getTarjoaja(),
-            komoto.getPohjakoulutusvaatimusUri()
-        );
-        KoulutusmoduuliToteutus parentKomoto = (parentKomotos != null && !parentKomotos.isEmpty()) ? parentKomotos.get(0) : null;
-
-        boolean createNew = parentKomoto == null;
-
-        if (createNew) {
-            parentKomoto = new KoulutusmoduuliToteutus();
-            parentKomoto.setTarjoaja(komoto.getTarjoaja());
-            parentKomoto.setTila(komoto.getTila());
-            parentKomoto.setKoulutusmoduuli(parentKomo);
-            try {
-                parentKomoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
-            }
-            catch (OIDCreationException e) {
-                throw new RuntimeException(e);
-            }
-            parentKomoto.setPohjakoulutusvaatimusUri(komoto.getPohjakoulutusvaatimusUri());
-            parentKomo.addKoulutusmoduuliToteutus(parentKomoto);
-            LOG.warn("**** handleParentKomoto - create new parent komoto: pkv = {}", parentKomoto.getPohjakoulutusvaatimusUri());
-        }
-
-        /**
-         * Amm pt. tutkinnot -> koulutusohjelman valinta on yhteinen
-         */
-        switch (toteutustyyppi) {
-            case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
-            case AMMATILLINEN_PERUSTUTKINTO:
-                Map<KomotoTeksti, MonikielinenTeksti> tekstit = komoto.getTekstit();
-                if (tekstit.get(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA) != null) {
-                    parentKomoto.getTekstit().put(
-                        KomotoTeksti.KOULUTUSOHJELMAN_VALINTA,
-                        copyMkTeksti(tekstit.get(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA))
-                    );
-                }
-                break;
-        }
-
-        if (parentKomoto.getToteutustyyppi() == null) {
-            parentKomoto.setToteutustyyppi(toteutustyyppi);
-        }
-
-        if (createNew) {
-            this.koulutusmoduuliToteutusDAO.insert(parentKomoto);
-        }
-        else {
-            this.koulutusmoduuliToteutusDAO.update(parentKomoto);
-        }
     }
 
     /*
