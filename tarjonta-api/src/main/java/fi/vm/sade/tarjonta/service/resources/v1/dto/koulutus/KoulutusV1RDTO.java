@@ -16,7 +16,6 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeId;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -38,7 +37,7 @@ import java.util.Set;
  * @author jwilen
  */
 @ApiModel(value = "Koulutuksien yleiset tiedot sisältävä rajapintaolio")
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "toteutustyyppi")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "toteutustyyppi", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes({
     @Type(value = AmmattitutkintoV1RDTO.class, name = "AMMATTITUTKINTO"),
     @Type(value = ErikoisammattitutkintoV1RDTO.class, name = "ERIKOISAMMATTITUTKINTO"),
@@ -63,7 +62,6 @@ import java.util.Set;
 public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
 
     @ApiModelProperty(value = "Koulutuksen toteutuksen tarkasti yksiloiva enumeraatio", required = true)
-    @JsonTypeId
     private ToteutustyyppiEnum toteutustyyppi;
 
     @ApiModelProperty(value = "Koulutusmoduulin karkeasti yksilöivä enumeraatio", required = true)
