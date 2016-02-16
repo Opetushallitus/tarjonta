@@ -37,6 +37,7 @@ import fi.vm.sade.tarjonta.service.impl.resources.v1.util.ValintaperustekuvausHe
 import fi.vm.sade.tarjonta.service.resources.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.search.*;
@@ -496,10 +497,7 @@ public class ConverterV1 {
     public HakukohdeV1RDTO toHakukohdeRDTO(Hakukohde hakukohde) {
         HakukohdeV1RDTO hakukohdeRDTO = new HakukohdeV1RDTO();
 
-        for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
-            hakukohdeRDTO.getHakukohdeKoulutusOids().add(komoto.getOid());
-            hakukohdeRDTO.getTarjoajaOids().add(komoto.getTarjoaja());
-        }
+        convertKoulutukset(hakukohde, hakukohdeRDTO);
 
         if (hakukohde.getSoraKuvausTunniste() != null) {
             hakukohdeRDTO.setSoraKuvaukset(getKuvauksetWithId(hakukohde.getSoraKuvausTunniste(), hakukohde.getSoraKuvausKielet()));
@@ -615,7 +613,18 @@ public class ConverterV1 {
         convertKoulutusmoduuliTyyppiToDTO(hakukohde, hakukohdeRDTO);
         convertRyhmaliitoksetToDTO(hakukohde, hakukohdeRDTO);
 
+
         return hakukohdeRDTO;
+    }
+
+    private void convertKoulutukset(Hakukohde hakukohde, HakukohdeV1RDTO dto) {
+        Set<KoulutusIdentification> koulutukset = new HashSet<KoulutusIdentification>();
+        for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
+            dto.getHakukohdeKoulutusOids().add(komoto.getOid());
+            dto.getTarjoajaOids().add(komoto.getTarjoaja());
+            koulutukset.add(new KoulutusIdentification(komoto.getOid(), komoto.getUniqueExternalId()));
+        }
+        dto.setKoulutukset(koulutukset);
     }
 
     private void convertRyhmaliitoksetToDTO(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {

@@ -228,8 +228,8 @@ public class KoulutusResourceImplV1Test {
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
         dto.setTunniste(TUNNISTE);
         dto.setSisaltyyKoulutuksiin(Sets.newHashSet(
-                new KoulutusIdentification(){{setOid(parentKoulutus1.getOid());}},
-                new KoulutusIdentification(){{setUlkoinenTunniste(parentKoulutus2.getUlkoinenTunniste());}}
+                new KoulutusIdentification(parentKoulutus1.getOid(), null),
+                new KoulutusIdentification(null, parentKoulutus2.getUlkoinenTunniste())
         ));
 
         ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto).getEntity();
@@ -275,9 +275,7 @@ public class KoulutusResourceImplV1Test {
         KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
         dto.setTunniste(TUNNISTE);
-        dto.setSisaltyyKoulutuksiin(Sets.<KoulutusIdentification>newHashSet(new KoulutusIdentification(){{
-            setOid(parentKoulutus.getOid());
-        }}));
+        dto.setSisaltyyKoulutuksiin(Sets.newHashSet(new KoulutusIdentification(parentKoulutus.getOid(), null)));
 
         ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
@@ -296,9 +294,7 @@ public class KoulutusResourceImplV1Test {
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
         dto.setTunniste(TUNNISTE);
         dto.setOrganisaatio(new OrganisaatioV1RDTO(TARJOAJA1, "tarjoaja", null));
-        dto.setSisaltyyKoulutuksiin(Sets.<KoulutusIdentification>newHashSet(new KoulutusIdentification(){{
-            setOid("oid.that.does.not.exist");
-        }}));
+        dto.setSisaltyyKoulutuksiin(Sets.newHashSet(new KoulutusIdentification("oid.that.does.not.exist", null)));
 
         ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
@@ -327,7 +323,13 @@ public class KoulutusResourceImplV1Test {
     }
 
     private static KorkeakouluOpintoV1RDTO baseKorkeakouluopinto(KoulutusmoduuliTyyppi tyyppi) {
-        KorkeakouluOpintoV1RDTO dto = new KorkeakouluOpintoV1RDTO();
+        return baseKorkeakouluopinto(tyyppi, null);
+    }
+
+    private static KorkeakouluOpintoV1RDTO baseKorkeakouluopinto(KoulutusmoduuliTyyppi tyyppi, KorkeakouluOpintoV1RDTO dto) {
+        if (dto == null) {
+            dto = new KorkeakouluOpintoV1RDTO();
+        }
         dto.setTila(TarjontaTila.LUONNOS);
         dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(new Date()));
         dto.setKoulutusmoduuliTyyppi(tyyppi);
@@ -340,14 +342,14 @@ public class KoulutusResourceImplV1Test {
         return dto;
     }
 
-    public KoulutusV1RDTO getLuonnosOpintokokonaisuus() throws OIDCreationException {
+    public KoulutusV1RDTO insertLuonnosOpintokokonaisuus(KorkeakouluOpintoV1RDTO dto) throws OIDCreationException {
         init();
         String komoOid = oidServiceMock.getOid();
         String komotoOid = oidServiceMock.getOid();
         when(oidService.get(TarjontaOidType.KOMO)).thenReturn(komoOid);
         when(oidService.get(TarjontaOidType.KOMOTO)).thenReturn(komotoOid);
 
-        KorkeakouluOpintoV1RDTO dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS);
+        dto = baseKorkeakouluopinto(OPINTOKOKONAISUUS, dto);
         dto.setAihees(koodiUris(Sets.newHashSet("aihe_1")));
         dto.setOpintojenLaajuusPistetta("120");
         dto.setOpetuskielis(koodiUris(Sets.newHashSet("kieli_fi")));

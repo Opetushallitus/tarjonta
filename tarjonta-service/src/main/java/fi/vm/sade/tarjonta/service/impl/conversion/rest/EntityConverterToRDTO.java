@@ -513,12 +513,9 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
         List<String> parents = koulutusSisaltyvyysDAO.getParents(komoto.getKoulutusmoduuli().getOid());
         Set<KoulutusIdentification> sisaltyyKoulutuksiin = new HashSet<KoulutusIdentification>();
-        for (final String parentKomoOid : parents) {
-            final KoulutusmoduuliToteutus parentKomoto = koulutusmoduuliToteutusDAO.findFirstByKomoOid(parentKomoOid);
-            sisaltyyKoulutuksiin.add(new KoulutusIdentification(){{
-                setOid(parentKomoto.getOid());
-                setUlkoinenTunniste(parentKomoto.getUlkoinenTunniste());
-            }});
+        for (String parentKomoOid : parents) {
+            KoulutusmoduuliToteutus parentKomoto = koulutusmoduuliToteutusDAO.findFirstByKomoOid(parentKomoOid);
+            sisaltyyKoulutuksiin.add(new KoulutusIdentification(parentKomoto.getOid(), parentKomoto.getUniqueExternalId()));
         }
         dto.setSisaltyyKoulutuksiin(sisaltyyKoulutuksiin);
     }

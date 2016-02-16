@@ -10,13 +10,14 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
+import fi.vm.sade.tarjonta.service.business.exception.KoulutusNotFoundException;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
 import fi.vm.sade.tarjonta.service.search.KoodistoKoodi;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
@@ -51,6 +52,15 @@ public class HakukohdeValidator {
     public List<HakukohdeValidationMessages> validateCommonProperties(HakukohdeV1RDTO hakukohdeRDTO) {
 
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
+
+        Set<String> komotoOids = new HashSet<String>();
+        komotoOids.addAll(hakukohdeRDTO.getHakukohdeKoulutusOids());
+        try {
+            komotoOids.addAll(getKomotoOidsFromKoulutusIds(hakukohdeRDTO));
+        } catch (KoulutusNotFoundException e) {
+            return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_DOES_NOT_EXIST);
+        }
+        hakukohdeRDTO.setHakukohdeKoulutusOids(Lists.newArrayList(komotoOids));
 
         validationMessages.addAll(checkKoulutukset(hakukohdeRDTO.getHakukohdeKoulutusOids()));
 
@@ -229,6 +239,21 @@ public class HakukohdeValidator {
 
     private static boolean includeInDuplicateCheck(TarjontaTila tila) {
         return !tila.equals(TarjontaTila.POISTETTU) && !tila.equals(TarjontaTila.PERUTTU);
+    }
+
+    private Collection<String> getKomotoOidsFromKoulutusIds(HakukohdeV1RDTO dto) throws KoulutusNotFoundException {
+        Set<String> komotoOids = new HashSet<String>();
+        if (dto.getKoulutukset() != null) {
+            for (KoulutusIdentification komotoId : dto.getKoulutukset()) {
+                KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findKomotoByKoulutusId(komotoId);
+                if (komoto != null) {
+                    komotoOids.add(komoto.getOid());
+                } else {
+                    throw new KoulutusNotFoundException(komotoId);
+                }
+            }
+        }
+        return komotoOids;
     }
 
     /**

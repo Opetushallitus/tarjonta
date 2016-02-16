@@ -15,28 +15,26 @@
  */
 package fi.vm.sade.tarjonta.service.auth;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
-
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.impl.HakukohdeDAOImpl;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
+import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
 import fi.vm.sade.tarjonta.shared.ParameterServices;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Component
 public class PermissionChecker {
@@ -287,10 +285,9 @@ public class PermissionChecker {
     }
 
     public void checkUpsertKoulutus(final KoulutusV1RDTO dto) {
-        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findKomotoByKoulutusId(new KoulutusIdentification(){{
-            setOid(dto.getOid());
-            setUlkoinenTunniste(dto.getUlkoinenTunniste());
-        }});
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findKomotoByKoulutusId(
+                new KoulutusIdentification(dto.getOid(), dto.getUlkoinenTunniste())
+        );
 
         if (komoto == null) {
             checkCreateKoulutus(dto.getOrganisaatio().getOid());

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 import java.util.*;
@@ -31,6 +32,8 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private List<String> opintoOikeusUris;
     @ApiModelProperty(value = "Hakukohde's related koulutus oids", required = true)
     private List<String> hakukohdeKoulutusOids;
+    @ApiModelProperty(value = "Hakukohde's related koulutukset (same as hakukohdeKoulutusOids but different format)")
+    private Set<KoulutusIdentification> koulutukset;
     private Date hakuaikaAlkuPvm;
     private Date hakuaikaLoppuPvm;
     private double alinHyvaksyttavaKeskiarvo;
@@ -619,5 +622,13 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setOverridesHaunHakulomakeUrl(boolean overridesHaunHakulomakeUrl) {
         this.overridesHaunHakulomakeUrl = overridesHaunHakulomakeUrl;
+    }
+
+    public Set<KoulutusIdentification> getKoulutukset() {
+        return koulutukset;
+    }
+
+    public void setKoulutukset(Set<KoulutusIdentification> koulutukset) {
+        this.koulutukset = koulutukset;
     }
 }
