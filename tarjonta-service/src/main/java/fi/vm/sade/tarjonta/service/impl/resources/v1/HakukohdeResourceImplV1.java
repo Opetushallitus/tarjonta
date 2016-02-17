@@ -65,6 +65,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Nullable;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.*;
 
@@ -572,7 +573,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     @Transactional
-    public ResultV1RDTO<HakukohdeV1RDTO> postHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
+    public Response postHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         Hakukohde existingHakukohde = hakukohdeDAO.findExistingHakukohde(hakukohdeRDTO);
         if (existingHakukohde != null) {
             hakukohdeRDTO.setOid(existingHakukohde.getOid());
@@ -586,7 +587,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
 
         if (validationMessageses.size() > 0) {
-            return populateValidationErrors(hakukohdeRDTO, validationMessageses);
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity(populateValidationErrors(hakukohdeRDTO, validationMessageses))
+                    .build();
         }
 
         Set<KoulutusmoduuliToteutus> komotot = Sets.newHashSet(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(hakukohdeRDTO.getHakukohdeKoulutusOids()));
@@ -641,7 +645,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 .setDelta(getHakukohdeDelta(toHakukohdeRDTO, null))
                 .build());
 
-        return result;
+        return Response.ok(result).build();
     }
 
     private void addRyhmaliitoksetForNewHakukohde(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
@@ -729,7 +733,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     @Transactional
-    public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(String hakukohdeOid, HakukohdeV1RDTO hakukohdeRDTO) {
+    public Response updateHakukohde(String hakukohdeOid, HakukohdeV1RDTO hakukohdeRDTO) {
         permissionChecker.checkUpdateHakukohde(hakukohdeOid, hakukohdeRDTO.getHakuOid(), hakukohdeRDTO.getHakukohdeKoulutusOids());
         try {
 
@@ -738,7 +742,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             List<HakukohdeValidationMessages> validationMessagesList = validateHakukohdeAndPopulateImplicitFields(hakukohdeRDTO);
 
             if (validationMessagesList.size() > 0) {
-                return populateValidationErrors(hakukohdeRDTO, validationMessagesList);
+                return Response
+                        .status(Response.Status.BAD_REQUEST)
+                        .entity(populateValidationErrors(hakukohdeRDTO, validationMessagesList))
+                        .build();
             }
 
             Hakukohde hakukohde = converterV1.toHakukohde(hakukohdeRDTO);
@@ -811,15 +818,18 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                         .setDelta(getHakukohdeDelta(toHakukohdeRDTO, originalHakukohde))
                         .build());
 
-                return result;
+                return Response.ok(result).build();
             } else {
-                return populateValidationErrors(hakukohdeRDTO, Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_TILA_WRONG));
+                return Response
+                        .status(Response.Status.BAD_REQUEST)
+                        .entity(populateValidationErrors(hakukohdeRDTO, Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_TILA_WRONG)))
+                        .build();
             }
         } catch (Exception e) {
             LOG.warn("Exception occured while updating hakukohde " + hakukohdeOid, e);
             ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
             errorResult.addTechnicalError(e);
-            return errorResult;
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorResult).build();
         }
     }
 

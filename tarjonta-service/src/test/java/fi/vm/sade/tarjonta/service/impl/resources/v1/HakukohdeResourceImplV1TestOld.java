@@ -75,7 +75,7 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
 
         assertEquals(OK, hakukohdeResource.postHakukohde(hakukohde).getStatus());
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.postHakukohde(hakukohde);
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(hakukohde).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
 
         ErrorV1RDTO error = result.getErrors().get(0);
@@ -89,7 +89,7 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
         haku.setHakulomakeUrl("http://haunUrl.com");
         HakukohdeV1RDTO hakukohde = mkHakukohde(canAddHakukohde(haku), mkRandomKomoto());
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.postHakukohde(hakukohde);
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(hakukohde).getEntity();
         assertEquals(OK, result.getStatus());
         HakukohdeV1RDTO hakukohdeRes = result.getResult();
         assertEquals("http://haunUrl.com", hakukohdeRes.getHakulomakeUrl());
@@ -104,7 +104,7 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
         hakukohde.setHakulomakeUrl("http://hakukohdekohtainen.com");
         hakukohde.setOverridesHaunHakulomakeUrl(true);
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.postHakukohde(hakukohde);
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(hakukohde).getEntity();
         assertEquals(OK, result.getStatus());
         HakukohdeV1RDTO hakukohdeRes = result.getResult();
         assertEquals("http://hakukohdekohtainen.com", hakukohdeRes.getHakulomakeUrl());
@@ -117,7 +117,7 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
 
         assertEquals(OK, hakukohdeResource.postHakukohde(mkHakukohde(haku, mkRandomKomoto())).getStatus());
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.postHakukohde(mkHakukohde(haku, mkRandomKomoto()));
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(mkHakukohde(haku, mkRandomKomoto())).getEntity();
 
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
 

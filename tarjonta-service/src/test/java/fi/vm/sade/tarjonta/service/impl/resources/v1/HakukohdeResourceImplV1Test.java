@@ -66,7 +66,7 @@ public class HakukohdeResourceImplV1Test {
     @Test
     public void testCreateOpintokokonaisuusHakukohdeFailsWhenMissingRequiredData() throws OIDCreationException {
         HakukohdeV1RDTO hakukohde = baseHakukohde();
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeV1Resource.postHakukohde(hakukohde);
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde).getEntity();
         assertEquals(VALIDATION, result.getStatus());
         assertEquals(2, result.getErrors().size());
         assertTrue(containsError(result.getErrors(), HAKUKOHDE_KOULUTUS_MISSING));
@@ -85,7 +85,7 @@ public class HakukohdeResourceImplV1Test {
         hakukohde.setHakukohteenNimet(ImmutableMap.of("kieli_fi", "hakukohteen nimi"));
         hakukohde.setHakuOid(haku.getOid());
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeV1Resource.postHakukohde(hakukohde);
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde).getEntity();
         assertEquals(OK, result.getStatus());
     }
 
@@ -108,7 +108,7 @@ public class HakukohdeResourceImplV1Test {
 
         // Now modify it
         hakukohde.setAloituspaikatLkm(10);
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeV1Resource.postHakukohde(hakukohde);
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde).getEntity();
         assertEquals(OK, result.getStatus());
         assertEquals(oid, result.getResult().getOid());
         assertEquals(hakukohde.getUniqueExternalId(), result.getResult().getUniqueExternalId());
@@ -130,7 +130,7 @@ public class HakukohdeResourceImplV1Test {
         hakukohde.setHakukohteenNimet(ImmutableMap.of("kieli_fi", "hakukohteen nimi"));
         hakukohde.setHakuOid(haku.getOid());
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeV1Resource.postHakukohde(hakukohde);
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde).getEntity();
         assertEquals(OK, result.getStatus());
         assertTrue(Iterables.find(result.getResult().getKoulutukset(), new Predicate<KoulutusIdentification>() {
             @Override
