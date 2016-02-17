@@ -627,6 +627,7 @@ public class ConverterV1 {
             koulutukset.add(new KoulutusIdentification(komoto.getOid(), komoto.getUniqueExternalId()));
         }
         dto.setKoulutukset(koulutukset);
+        dto.setToteutusTyyppi(hakukohde.getKoulutusmoduuliToteutuses().iterator().next().getToteutustyyppi());
     }
 
     private void convertRyhmaliitoksetToDTO(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
