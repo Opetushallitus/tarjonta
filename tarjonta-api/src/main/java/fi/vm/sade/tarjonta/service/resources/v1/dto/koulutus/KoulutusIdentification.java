@@ -5,6 +5,9 @@ public class KoulutusIdentification {
     private String oid;
     private String ulkoinenTunniste; // oppilaitoksen käyttämä oma ulkoinenTunniste
 
+    public KoulutusIdentification() {
+    }
+
     public KoulutusIdentification(String oid, String ulkoinenTunniste) {
         this.oid = oid;
         this.ulkoinenTunniste = ulkoinenTunniste;
