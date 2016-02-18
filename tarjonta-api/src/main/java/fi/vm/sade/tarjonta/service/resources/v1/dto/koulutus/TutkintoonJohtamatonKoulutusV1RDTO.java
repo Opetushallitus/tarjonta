@@ -11,11 +11,7 @@ import java.util.Set;
 public abstract class TutkintoonJohtamatonKoulutusV1RDTO extends KoulutusV1RDTO {
 
     private static final long serialVersionUID = 1L;
-    
-    @ApiModelProperty(value = "Koulutuksen pohjakoulutusvaatimukset (sisältää koodisto koodi uri:a)", required = true)
-    private KoodiUrisV1RDTO pohjakoulutusvaatimukset;
-    @ApiModelProperty(value = "Koulutuksen aiheet (sisältää koodisto koodi uri:a)")
-    private KoodiUrisV1RDTO aihees;
+
     @ApiModelProperty(value = "Koulutuksen loppumispvm")
     private Date koulutuksenLoppumisPvm;
     @ApiModelProperty(value = "Opintojen laajuus opintopisteissä (vapaa teksti)")
@@ -37,36 +33,6 @@ public abstract class TutkintoonJohtamatonKoulutusV1RDTO extends KoulutusV1RDTO 
     
     public TutkintoonJohtamatonKoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         super(toteutustyyppi, moduulityyppi);
-    }
-    
-    public KoodiUrisV1RDTO getAihees() {
-        if (aihees == null) {
-            aihees = new KoodiUrisV1RDTO();
-        }
-
-        return aihees;
-    }
-
-    public void setAihees(KoodiUrisV1RDTO aihees) {
-        this.aihees = aihees;
-    }
-    
-    /**
-     * @return the pohjakoulutusvaatimukset
-     */
-    public KoodiUrisV1RDTO getPohjakoulutusvaatimukset() {
-        if (pohjakoulutusvaatimukset == null) {
-            pohjakoulutusvaatimukset = new KoodiUrisV1RDTO();
-        }
-
-        return pohjakoulutusvaatimukset;
-    }
-
-    /**
-     * @param pohjakoulutusvaatimukset the pohjakoulutusvaatimukset to set
-     */
-    public void setPohjakoulutusvaatimukset(KoodiUrisV1RDTO pohjakoulutusvaatimukset) {
-        this.pohjakoulutusvaatimukset = pohjakoulutusvaatimukset;
     }
 
     /**

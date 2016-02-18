@@ -225,7 +225,6 @@ public class KoulutusDTOConverterToEntity {
             komoto.setOpintojenLaajuusyksikkoUri("opintojenlaajuusyksikko_2#1");
         }
 
-        komoto.setKkPohjakoulutusvaatimus(commonConverter.convertToUris(dto.getPohjakoulutusvaatimukset(), komoto.getKkPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUS));
         komoto.setNimi(commonConverter.convertToTexts(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA)); //OVT-7531
 
         if (dto.getAihees() != null) {

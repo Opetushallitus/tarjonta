@@ -198,7 +198,6 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             } catch(NumberFormatException nfe) {
                 // Invalid value will not be set
             }
-            tjkkDto.setPohjakoulutusvaatimukset(commonConverter.convertToKoodiUrisDTO(komoto.getKkPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUS, param));
             convertFlatKomoToRDTO(dto, komo, komoto, param);
 
             tjkkDto.setOppiaine(komoto.getOppiaine());
