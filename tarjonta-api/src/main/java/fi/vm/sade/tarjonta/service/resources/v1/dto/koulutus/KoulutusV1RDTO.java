@@ -298,20 +298,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     }
 
     /**
-     * Will be removed in the future, use the moduulityyppi or toteutustyyppi
-     * enum.
-     *
-     * @return the koulutusasteTyyppi
-     */
-    @Deprecated
-    public KoulutusasteTyyppi getKoulutusasteTyyppi() {
-        if (moduulityyppi != null) {
-            return moduulityyppi.getKoulutusasteTyyppi();
-        }
-        return null;
-    }
-
-    /**
      * @return the kuvausKomo
      */
     public KuvausV1RDTO<KomoTeksti> getKuvausKomo() {
