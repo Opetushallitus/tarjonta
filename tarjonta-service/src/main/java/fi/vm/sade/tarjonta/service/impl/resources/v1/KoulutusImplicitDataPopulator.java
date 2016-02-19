@@ -59,6 +59,12 @@ public class KoulutusImplicitDataPopulator {
 
         if (komoto != null) {
             KoulutusV1RDTO originalDto = converterToRDTO.convert(dto.getClass(), komoto, RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang()));
+
+            // Tekstis must be handled separately, because they are in a map-structure
+            // and we must support delta edit of individual map entries
+            dto.setKuvausKomoto(mergeKuvaus(KomotoTeksti.class, dto.getKuvausKomoto(), originalDto.getKuvausKomoto()));
+            dto.setKuvausKomo(mergeKuvaus(KomoTeksti.class, dto.getKuvausKomo(), originalDto.getKuvausKomo()));
+
             beanUtils.copyProperties(originalDto, dto);
             dto = originalDto;
         }
@@ -66,6 +72,17 @@ public class KoulutusImplicitDataPopulator {
         dto = defaultValuesForDto(dto);
 
         return dto;
+    }
+
+    private static <T extends Enum> KuvausV1RDTO<T> mergeKuvaus(Class<T> clazz, KuvausV1RDTO dto, KuvausV1RDTO originalDto) {
+        if (dto == null) {
+            return originalDto;
+        }
+
+        KuvausV1RDTO<T> kuvaus = new KuvausV1RDTO<T>();
+        kuvaus.putAll(originalDto);
+        kuvaus.putAll(dto);
+        return kuvaus;
     }
 
     public KoulutusV1RDTO defaultValuesForDto(KoulutusV1RDTO dto) {

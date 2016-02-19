@@ -3,6 +3,8 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.MapDifference;
+import com.google.common.collect.Maps;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
@@ -13,8 +15,12 @@ import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KorkeakouluOpintoV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import org.apache.commons.collections.map.HashedMap;
 import org.mockito.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +82,15 @@ public class V1TestHelper {
         OPPIAINEET,
         OPETTAJA,
         AVOIMEN_YLIOPISTON_KOULUTUS,
-        YHTEYSHENKILOS;
+        YHTEYSHENKILOS,
+        TEKSTI_TAVOITTEET,
+        TEKSTI_LISATIEDOT,
+        TEKSTI_KOHDERYHMA,
+        TEKSTI_OPETUKSEN_AIKA_JA_PAIKKA,
+        TEKSTI_MAKSULLISUUS,
+        TEKSTI_ARVIOINTIKRITEERIT,
+        TEKSTI_EDELTAVAT_OPINNOT,
+        TEKSTI_SISALTO;
     }
 
     public void init() {
@@ -189,8 +203,22 @@ public class V1TestHelper {
             fieldsThatDiffer.add(KoulutusField.YHTEYSHENKILOS);
         }
 
+        fieldsThatDiffer.addAll(tekstiDiff(KomoTeksti.class, original.getKuvausKomo(), modified.getKuvausKomo()));
+        fieldsThatDiffer.addAll(tekstiDiff(KomotoTeksti.class, original.getKuvausKomoto(), modified.getKuvausKomoto()));
+
         assertEquals(1, fieldsThatDiffer.size());
         assertEquals(fieldThatShouldDiffer, fieldsThatDiffer.get(0));
+    }
+
+    private static <T extends Enum> List<KoulutusField> tekstiDiff(Class<T> clazz, KuvausV1RDTO original, KuvausV1RDTO modified) {
+        List<KoulutusField> fieldsThatDiffer = new ArrayList<KoulutusField>();
+
+        MapDifference<T, NimiV1RDTO> tekstiDiff = Maps.difference(original, modified);
+        for (T differingField : tekstiDiff.entriesDiffering().keySet()) {
+            fieldsThatDiffer.add(KoulutusField.valueOf("TEKSTI_" + differingField.name()));
+        }
+
+        return fieldsThatDiffer;
     }
 
     public static boolean isSameDate(Date a, Date b) {
