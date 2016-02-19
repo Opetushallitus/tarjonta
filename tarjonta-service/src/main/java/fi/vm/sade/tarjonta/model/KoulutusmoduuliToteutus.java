@@ -61,7 +61,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "unique_external_id", nullable = true, insertable = true, updatable = false, unique = true)
     private String uniqueExternalId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "koulutusmoduuli_id", nullable = false)
     private Koulutusmoduuli koulutusmoduuli;
 
@@ -94,17 +94,17 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @CollectionTable(name = TABLE_NAME + "_aihe", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> aihees = new HashSet<KoodistoUri>();
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_avainsana", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> avainsanas = new HashSet<KoodistoUri>();
     //@Size(min = 1) REMOVED RESTRICTION BECAUSE NOT APPLICABLE FOR TUTKINTO KOMOTOS
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_opetuskieli", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> opetuskielis = new HashSet<KoodistoUri>();
     //@Size(min = 1) REMOVED RESTRICTION BECAUSE NOT APPLICABLE FOR TUTKINTO KOMOTOS
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_opetusmuoto", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> opetusmuotos = new HashSet<KoodistoUri>();
@@ -114,7 +114,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> opetusAikas = new HashSet<KoodistoUri>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = TABLE_NAME + "_oppiaineet",
             joinColumns = @JoinColumn(name = TABLE_NAME + "_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME),
@@ -122,19 +122,19 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     )
     private Set<Oppiaine> oppiaineet = new HashSet<Oppiaine>();
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_opetuspaikka", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> opetusPaikkas = new HashSet<KoodistoUri>();
     private Boolean maksullisuus = false;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(name = "koulutus_hakukohde", joinColumns
             = @JoinColumn(name = "koulutus_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME), inverseJoinColumns
             = @JoinColumn(name = "hakukohde_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME))
     private Set<Hakukohde> hakukohdes = new HashSet<Hakukohde>();
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Yhteyshenkilo> yhteyshenkilos = new HashSet<Yhteyshenkilo>();
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_linkki", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<WebLinkki> linkkis = new HashSet<WebLinkki>();
@@ -142,39 +142,39 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     /*
      * Koulutuksen Lisatiedot  (additional information)
      */
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_ammattinimike", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> ammattinimikes = new HashSet<KoodistoUri>();
 
     //Lukiospesifeja kenttia
     @MapKey(name = "key")
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Map<String, Kielivalikoima> tarjotutKielet = new HashMap<String, Kielivalikoima>();
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_lukiodiplomi", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> lukiodiplomit = new HashSet<KoodistoUri>();
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_pohjakoulutusvaatimus", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     @Column(name = "kk_pohjakoulutusvaatimus")
     private Set<KoodistoUri> kkPohjakoulutusvaatimus = new HashSet<KoodistoUri>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinTable(name = TABLE_NAME + "_tekstit", inverseJoinColumns = @JoinColumn(name = "monikielinen_teksti_id"))
     @MapKeyEnumerated(EnumType.STRING)
     @MapKeyColumn(name = "teksti", nullable = false)
     private Map<KomotoTeksti, MonikielinenTeksti> tekstit = new HashMap<KomotoTeksti, MonikielinenTeksti>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinTable(name = TABLE_NAME + "_kuvat", inverseJoinColumns = @JoinColumn(name = "binary_data_id"))
     @MapKeyColumn(name = "kieli_uri", nullable = false)
     private Map<String, BinaryData> kuvat = new HashMap<String, BinaryData>();
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_alkamispvm",
             joinColumns = @JoinColumn(name = TABLE_NAME + "_id"))
     @Column(name = "alkamispvm")
@@ -195,7 +195,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "avoimen_yliopiston_koulutus")
     private Boolean isAvoimenYliopistonKoulutus = false;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "koulutusmoduuli_toteutus_id", nullable = false)
     private Set<KoulutusOwner> owners = new HashSet<KoulutusOwner>();
 
@@ -258,11 +258,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     /**
      * Se koulutus, josta tämä koulutus on järjestetty
      */
-    @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {})
+    @ManyToOne(optional = true, fetch = FetchType.EAGER, cascade = {})
     @JoinColumn(name = "tarjoajan_koulutus_id", nullable = true)
     private KoulutusmoduuliToteutus tarjoajanKoulutus;
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_koulutusryhma",
             joinColumns = @JoinColumn(name = TABLE_NAME + "_id"))
     @Column(name = "koulutusryhma_oid")
