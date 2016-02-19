@@ -14,9 +14,11 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioAikuistenOppimaaraV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
@@ -37,6 +39,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
@@ -104,7 +107,6 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         assertEquals(ORGANISATION_OID, result.getOrganisaatio().getOid());
         assertEquals(ORGANISAATIO_NIMI, result.getOrganisaatio().getNimi());
 
-        assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS, result.getKoulutusasteTyyppi());
         assertEquals(ToteutustyyppiEnum.LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA, result.getToteutustyyppi());
         assertEquals(ModuulityyppiEnum.LUKIOKOULUTUS, result.getModuulityyppi());
 
@@ -167,7 +169,7 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
      */
     private KoulutusLukioV1RDTO createDTO() {
         KoulutusLukioAikuistenOppimaaraV1RDTO dto = new KoulutusLukioAikuistenOppimaaraV1RDTO();
-        dto.getOrganisaatio().setOid(ORGANISATION_OID);
+        dto.setOrganisaatio(new OrganisaatioV1RDTO(ORGANISATION_OID));
 
         dto.setKoulutusaste(toKoodiUri(KOULUTUSASTE));
 
@@ -195,21 +197,21 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
 
         dto.setKoulutusohjelma(toNimiKoodiUri(KOULUTUSOHJELMA));
 
-        dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
+        dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(DATE.toDate()));
 
-        koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, MAP_OPETUSAIKAS);
+        dto.setOpetusAikas(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSAIKAS));
 
-        koodiUrisMap(dto.getOpetusPaikkas(), URI_KIELI_FI, MAP_OPETUSPAIKKAS);
+        dto.setOpetusPaikkas(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSPAIKKAS));
 
-        koodiUrisMap(dto.getOpetuskielis(), URI_KIELI_FI, MAP_OPETUSKIELI);
+        dto.setOpetuskielis(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSKIELI));
 
-        koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, MAP_OPETUMUOTO);
+        dto.setOpetusmuodos(koodiUrisMap(URI_KIELI_FI, MAP_OPETUMUOTO));
 
         dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO_TYYPPI));
 
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
 
-        dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], null, HenkiloTyyppi.YHTEYSHENKILO));
+        dto.setYhteyshenkilos(Sets.newHashSet(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], null, HenkiloTyyppi.YHTEYSHENKILO)));
 
         dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
 

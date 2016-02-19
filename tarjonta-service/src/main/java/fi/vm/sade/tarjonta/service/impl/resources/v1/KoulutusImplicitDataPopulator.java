@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -8,17 +9,22 @@ import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.publication.model.RestParam;
+import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.copy.NullAwareBeanUtilsBean;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
+import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 @Service
 public class KoulutusImplicitDataPopulator {
@@ -36,37 +42,78 @@ public class KoulutusImplicitDataPopulator {
     public static final String TUTKINTO = "tutkinto";
     public static final String TUTKINTONIMIKEKK = "tutkintonimikekk";
 
-    public KoulutusV1RDTO populateFields(final KoulutusV1RDTO dto) {
-        if (StringUtils.isBlank(dto.getOid()) && !StringUtils.isBlank(dto.getUniqueExternalId())) {
-            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByUniqueExternalId(dto.getUniqueExternalId());
-            if (komoto != null) {
-                dto.setOid(komoto.getOid());
-            }
-        }
+    private BeanUtilsBean beanUtils = new NullAwareBeanUtilsBean();
 
-        if (dto.getKoulutuskoodi() == null || StringUtils.isBlank(dto.getKoulutuskoodi().getUri())) {
-            return dto;
-        }
+    @Autowired
+    private EntityConverterToRDTO converterToRDTO;
 
-        List<KoodiType> sisaltaaKoodit = koodiService.listKoodiByRelation(
-                new KoodiUriAndVersioType() {{
-                    this.setKoodiUri(dto.getKoulutuskoodi().getUri());
-                    this.setVersio(dto.getKoulutuskoodi().getVersio());
-                }},
-                false,
-                SuhteenTyyppiType.SISALTYY
+    @Autowired
+    private ContextDataService contextDataService;
+
+    public KoulutusV1RDTO populateFields(KoulutusV1RDTO dto) throws IllegalAccessException, InvocationTargetException {
+        dto = populateFieldsByKoulutuskoodi(dto);
+
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findKomotoByKoulutusId(
+                new KoulutusIdentification(dto.getOid(), dto.getUniqueExternalId())
         );
 
-        dto.setKoulutusala(findCode(sisaltaaKoodit, KOULUTUSALAOPH2002));
-        dto.setKoulutusaste(findCode(sisaltaaKoodit, KOULUTUSASTEOPH2002));
-        dto.setOpintoala(findCode(sisaltaaKoodit, OPINTOALAOPH2002));
-        dto.setEqf(findCode(sisaltaaKoodit, EQF));
-        dto.setTutkinto(findCode(sisaltaaKoodit, TUTKINTO));
-
-        if (dto instanceof KoulutusKorkeakouluV1RDTO){
-            ((KoulutusKorkeakouluV1RDTO) dto).setTutkintonimikes(findCodes(sisaltaaKoodit, TUTKINTONIMIKEKK));
+        if (komoto != null) {
+            KoulutusV1RDTO originalDto = converterToRDTO.convert(dto.getClass(), komoto, RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang()));
+            beanUtils.copyProperties(originalDto, dto);
+            dto = originalDto;
         }
 
+        dto = defaultValuesForDto(dto);
+
+        return dto;
+    }
+
+    public KoulutusV1RDTO defaultValuesForDto(KoulutusV1RDTO dto) {
+        try {
+            KoulutusV1RDTO defaultDto = dto.getClass().newInstance();
+            defaultDto.setOpetusTarjoajat(new HashSet<String>());
+            defaultDto.setOpetusJarjestajat(new HashSet<String>());
+            defaultDto.setYhteyshenkilos(new HashSet<YhteyshenkiloTyyppi>());
+            defaultDto.setOrganisaatio(new OrganisaatioV1RDTO());
+            defaultDto.setKuvausKomo(new KuvausV1RDTO<KomoTeksti>());
+            defaultDto.setKuvausKomoto(new KuvausV1RDTO<KomotoTeksti>());
+            defaultDto.setKoulutusohjelma(new NimiV1RDTO());
+            defaultDto.setKoulutuksenAlkamisPvms(new HashSet<Date>());
+            defaultDto.setOpetuskielis(new KoodiUrisV1RDTO());
+            defaultDto.setOpetusmuodos(new KoodiUrisV1RDTO());
+            defaultDto.setOpetusAikas(new KoodiUrisV1RDTO());
+            defaultDto.setOpetusPaikkas(new KoodiUrisV1RDTO());
+            defaultDto.setAmmattinimikkeet(new KoodiUrisV1RDTO());
+            defaultDto.setAihees(new KoodiUrisV1RDTO());
+
+            beanUtils.copyProperties(defaultDto, dto);
+            return defaultDto;
+        } catch (Throwable t) {
+            throw Throwables.propagate(t);
+        }
+    }
+
+    private KoulutusV1RDTO populateFieldsByKoulutuskoodi(final KoulutusV1RDTO dto) {
+        if (dto.getKoulutuskoodi() != null && !StringUtils.isBlank(dto.getKoulutuskoodi().getUri())) {
+            List<KoodiType> sisaltaaKoodit = koodiService.listKoodiByRelation(
+                    new KoodiUriAndVersioType() {{
+                        this.setKoodiUri(dto.getKoulutuskoodi().getUri());
+                        this.setVersio(dto.getKoulutuskoodi().getVersio());
+                    }},
+                    false,
+                    SuhteenTyyppiType.SISALTYY
+            );
+
+            dto.setKoulutusala(findCode(sisaltaaKoodit, KOULUTUSALAOPH2002));
+            dto.setKoulutusaste(findCode(sisaltaaKoodit, KOULUTUSASTEOPH2002));
+            dto.setOpintoala(findCode(sisaltaaKoodit, OPINTOALAOPH2002));
+            dto.setEqf(findCode(sisaltaaKoodit, EQF));
+            dto.setTutkinto(findCode(sisaltaaKoodit, TUTKINTO));
+
+            if (dto instanceof KoulutusKorkeakouluV1RDTO) {
+                ((KoulutusKorkeakouluV1RDTO) dto).setTutkintonimikes(findCodes(sisaltaaKoodit, TUTKINTONIMIKEKK));
+            }
+        }
         return dto;
     }
 

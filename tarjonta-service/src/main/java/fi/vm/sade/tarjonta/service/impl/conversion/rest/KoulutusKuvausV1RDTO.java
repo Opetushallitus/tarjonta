@@ -78,6 +78,9 @@ public class KoulutusKuvausV1RDTO<TYPE extends Enum> {
     }
 
     public void convertTekstiDTOToMonikielinenTeksti(KuvausV1RDTO tekstiDto, Map<TYPE, MonikielinenTeksti> tekstit) {
+        if (tekstiDto == null) {
+            return;
+        }
         Map<TYPE, NimiV1RDTO> tekstis = tekstiDto;
         for (Map.Entry<TYPE, NimiV1RDTO> e : tekstis.entrySet()) {
             Map<String, String> textMap = e.getValue().getTekstis();

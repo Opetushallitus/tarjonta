@@ -114,7 +114,7 @@ public class KoulutusPermissionService {
             osaamisalaKoodi = dto.getKoulutusohjelma().getUri();
         }
         List<String> opetuskielet = new ArrayList<String>();
-        if (dto.getOpetuskielis().getUris() != null) {
+        if (dto.getOpetuskielis() != null && dto.getOpetuskielis().getUris() != null) {
             for (String kieli : dto.getOpetuskielis().getUrisAsStringList(false)) {
                 opetuskielet.add(kieli);
             }

@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.*;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
@@ -37,6 +38,7 @@ import fi.vm.sade.tarjonta.service.business.impl.ContextDataServiceImpl;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.*;
 import fi.vm.sade.tarjonta.service.resources.v1.LinkingV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
@@ -54,7 +56,6 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.joda.time.DateTime;
 import org.mockito.Matchers;
-import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -63,17 +64,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
 
 /**
  *
@@ -175,9 +171,12 @@ abstract class KoulutusBase extends TestUtilityBase {
         publicationDataService = mock(PublicationDataService.class);
         KoulutusImplicitDataPopulator dataPopulator = new KoulutusImplicitDataPopulator();
         Whitebox.setInternalState(dataPopulator, "koodiService", KoulutusDTOConverterToEntityTest.mockKoodiService(null));
+        Whitebox.setInternalState(dataPopulator, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
+        Whitebox.setInternalState(dataPopulator, "contextDataService", contextDataService);
 
         //INIT DATA CONVERTERS
         converterToRDTO = new EntityConverterToRDTO();
+        Whitebox.setInternalState(dataPopulator, "converterToRDTO", converterToRDTO);
         convertToEntity = new KoulutusDTOConverterToEntity();
         instance = new KoulutusResourceImplV1();
         //SET VALUES TO INSTANCES
@@ -201,6 +200,7 @@ abstract class KoulutusBase extends TestUtilityBase {
         Whitebox.setInternalState(converterToRDTO, "komotoKuvausConverters", komotoKoulutusConverters);
         Whitebox.setInternalState(converterToRDTO, "koulutusmoduuliDAO", koulutusmoduuliDAO);
         Whitebox.setInternalState(converterToRDTO, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAO);
+        Whitebox.setInternalState(converterToRDTO, "dataPopulator", new KoulutusImplicitDataPopulator());
 
         Whitebox.setInternalState(convertToEntity, "komoKuvausConverters", komoKoulutusConverters);
         Whitebox.setInternalState(convertToEntity, "komotoKuvausConverters", komotoKoulutusConverters);
@@ -211,7 +211,6 @@ abstract class KoulutusBase extends TestUtilityBase {
 
         Whitebox.setInternalState(instance, "converterToRDTO", converterToRDTO);
         Whitebox.setInternalState(instance, "convertToEntity", convertToEntity);
-
     }
 
     protected void createJoinedParentAndChildKomos(KoulutusasteTyyppi tyyppi) {
@@ -363,35 +362,35 @@ abstract class KoulutusBase extends TestUtilityBase {
 
     protected KoulutusKorkeakouluV1RDTO getKoulutus() {
         KoulutusKorkeakouluV1RDTO dto = new KoulutusKorkeakouluV1RDTO();
-        /*
-         * KOMO data fields:
-         */
-        teksti(dto.getKoulutusohjelma(), KOULUTUSOHJELMA, URI_KIELI_FI);
+
+        dto.setKoulutusohjelma(teksti(KOULUTUSOHJELMA, URI_KIELI_FI));
         dto.getKoulutusohjelma().getTekstis().put(URI_KIELI_FI, toNimiValue("koulutusohjelma", URI_KIELI_FI));
-        dto.getOrganisaatio().setOid(ORGANISATION_OID);
+        dto.setOrganisaatio(new OrganisaatioV1RDTO(ORGANISATION_OID));
         dto.setTila(TarjontaTila.JULKAISTU);
         dto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO);
         dto.setTunniste(TUNNISTE);
         dto.setHinta(1.11);
         dto.setOpintojenMaksullisuus(Boolean.TRUE);
         dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
-        dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
+        dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(DATE.toDate()));
+        dto.setOpetusTarjoajat(new HashSet<String>());
+        dto.setOpetusJarjestajat(new HashSet<String>());
 
-        koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, MAP_OPETUSAIKAS);
-        koodiUrisMap(dto.getOpetusPaikkas(), URI_KIELI_FI, MAP_OPETUSPAIKKAS);
-        koodiUrisMap(dto.getAihees(), URI_KIELI_FI, MAP_OPETUSAIHEES);
-        koodiUrisMap(dto.getOpetuskielis(), URI_KIELI_FI, MAP_OPETUSKIELI);
-        koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, MAP_OPETUMUOTO);
-        koodiUrisMap(dto.getAmmattinimikkeet(), URI_KIELI_FI, (MAP_AMMATTINIMIKE));
-        koodiUrisMap(dto.getPohjakoulutusvaatimukset(), URI_KIELI_FI, MAP_POHJAKOULUTUS);
+        dto.setOpetusAikas(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSAIKAS));
+        dto.setOpetusPaikkas(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSPAIKKAS));
+        dto.setAihees(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSAIHEES));
+        dto.setOpetuskielis(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSKIELI));
+        dto.setOpetusmuodos(koodiUrisMap(URI_KIELI_FI, MAP_OPETUMUOTO));
+        dto.setAmmattinimikkeet(koodiUrisMap(URI_KIELI_FI, MAP_AMMATTINIMIKE));
+        dto.setPohjakoulutusvaatimukset(koodiUrisMap(URI_KIELI_FI, MAP_POHJAKOULUTUS));
 
         dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO_TYYPPI));
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
 
-        dto.getYhteyshenkilos().add(
+        dto.setYhteyshenkilos(Sets.newHashSet(
                 new fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2],
                         PERSON[3], PERSON[4], null,
-                        HenkiloTyyppi.YHTEYSHENKILO));
+                        HenkiloTyyppi.YHTEYSHENKILO)));
         dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
         dto.setKoulutusala(toKoodiUri(KOULUTUSALA));
@@ -444,7 +443,8 @@ abstract class KoulutusBase extends TestUtilityBase {
         return "koodisto_" + koodistoUri + "_uri";
     }
 
-    protected static NimiV1RDTO teksti(NimiV1RDTO dto, final String nimi, final String kieli) {
+    protected static NimiV1RDTO teksti(final String nimi, final String kieli) {
+        NimiV1RDTO dto = new NimiV1RDTO();
         dto.getTekstis().put(kieli, nimi);
         return dto;
     }
@@ -454,7 +454,9 @@ abstract class KoulutusBase extends TestUtilityBase {
         return dto.getMeta().put(kieli, metaValue);
     }
 
-    protected void koodiUrisMap(final KoodiUrisV1RDTO dto, final String kieliUri, final String fieldName) {
+    protected KoodiUrisV1RDTO koodiUrisMap(final String kieliUri, final String fieldName) {
+        KoodiUrisV1RDTO dto = new KoodiUrisV1RDTO();
+
         meta(dto, kieliUri, toKoodiUri(fieldName));
 
         if (dto.getUris() == null) {
@@ -462,6 +464,8 @@ abstract class KoulutusBase extends TestUtilityBase {
         }
 
         dto.getUris().put(toKoodiUriStr(fieldName), 1);
+
+        return dto;
     }
 
     protected static String toKoodiUriStr(final String type) {

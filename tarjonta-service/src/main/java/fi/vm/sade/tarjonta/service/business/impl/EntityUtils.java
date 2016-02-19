@@ -558,26 +558,18 @@ public final class EntityUtils {
         return copyFieldsToKoulutusmoduuli(tyyppi, new Koulutusmoduuli());
     }
 
-    public static void copyYhteyshenkilos(Collection<Yhteyshenkilo> fromList, Collection<YhteyshenkiloTyyppi> toList) {
-
+    public static Set<YhteyshenkiloTyyppi> copyYhteyshenkilos(Collection<Yhteyshenkilo> fromList) {
+        Set<YhteyshenkiloTyyppi> toList = new HashSet<YhteyshenkiloTyyppi>();
         for (Yhteyshenkilo fromHenkilo : fromList) {
             YhteyshenkiloTyyppi toHenkilo = new YhteyshenkiloTyyppi();
             copyFields(fromHenkilo, toHenkilo);
             toList.add(toHenkilo);
         }
-
-    }
-
-    public static void copyYhteyshenkilos(Collection<Yhteyshenkilo> fromList, Set<YhteyshenkiloTyyppi> toList) {
-
-        for (Yhteyshenkilo fromHenkilo : fromList) {
-            YhteyshenkiloTyyppi toHenkilo = new YhteyshenkiloTyyppi();
-            copyFields(fromHenkilo, toHenkilo);
-            toList.add(toHenkilo);
-        }
+        return toList;
     }
 
     public static void copyYhteyshenkilos(Set<YhteyshenkiloTyyppi> fromList, Collection<Yhteyshenkilo> toList) {
+        if (fromList == null) return;
         if (!fromList.isEmpty()) {
             if (toList == null) {
                 toList = Sets.<Yhteyshenkilo>newHashSet();

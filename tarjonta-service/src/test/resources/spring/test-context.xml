@@ -30,6 +30,7 @@
     <mockito:mock id="oidService" class="fi.vm.sade.tarjonta.service.OidService"/>
     <mockito:mock id="koodistoProactiveCaching" class="fi.vm.sade.tarjonta.shared.KoodistoProactiveCaching"/>
     <mockito:mock id="permissionChecker" class="fi.vm.sade.tarjonta.service.auth.PermissionChecker"/>
+    <mockito:mock id="tarjontaKoodistoHelper" class="fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper"/>
 
     <bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResourceImpl"/>
     <bean id="tarjontaHakukohdeResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakukohdeResourceImpl"/>
@@ -44,6 +45,7 @@
 
     <bean id="massCopyProcess" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess"/>
     <bean id="processTest" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.TestProcess"/>
+    <bean id="helper" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.V1TestHelper"/>
     
     <!--
         Create a dynamic mock class for the jms message sender.

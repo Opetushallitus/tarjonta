@@ -175,7 +175,7 @@ angular.module('app.search.controllers', [
                 var vs = row.vuosi | '';
                 return ks + ' ' + vs;
             case 'aloituspaikat':
-                if (row.koulutusasteTyyppi === 'KORKEAKOULUTUS') {
+                if (row.toteutustyyppiEnum === 'KORKEAKOULUTUS') {
                     var locale = LocalisationService.getLocale();
                     if (!row.aloituspaikatKuvaukset) {
                         return row.aloituspaikat || '';

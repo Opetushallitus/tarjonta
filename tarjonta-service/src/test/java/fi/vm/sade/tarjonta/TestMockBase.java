@@ -10,10 +10,12 @@ import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.ConverterV1;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusImplicitDataPopulator;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.KoodistoValidator;
 import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 

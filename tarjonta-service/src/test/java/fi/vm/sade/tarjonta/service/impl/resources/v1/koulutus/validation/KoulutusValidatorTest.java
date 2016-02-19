@@ -1,7 +1,9 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
@@ -12,6 +14,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -73,15 +76,9 @@ public class KoulutusValidatorTest {
         dto.setSuunniteltuKestoArvo(null);
         dto.setSuunniteltuKestoTyyppi(null);
 
-        Map uris = Maps.<String, Integer>newHashMap();
-        uris.put(null, null);
-        dto.getOpetusmuodos().setUris(uris);
-        dto.getOpetusAikas().setUris(uris);
-        dto.getOpetusPaikkas().setUris(uris);
-        dto.getOpetuskielis().setUris(uris);
-
-        checkMissingErrors(KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, result), 19);
+        checkMissingErrors(KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, result), 18);
     }
+
 
     @Test
     public void testValidationLukioMissing() {
@@ -107,18 +104,11 @@ public class KoulutusValidatorTest {
         dto.setSuunniteltuKestoArvo("");
         dto.setSuunniteltuKestoTyyppi(new KoodiV1RDTO());
 
-        Map uris = Maps.<String, Integer>newHashMap();
-        uris.put(null, null);
-        dto.getOpetusmuodos().setUris(uris);
-        dto.getOpetusAikas().setUris(uris);
-        dto.getOpetusPaikkas().setUris(uris);
-        dto.getOpetuskielis().setUris(uris);
-
         ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
-        checkMissingErrors(v, 18);
+        checkMissingErrors(v, 17);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_TILA_ENUM_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING);
-        assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_INVALID);
+        assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_MISSING);
 
         /* 
          * Next test an empty and an invalid version:
@@ -141,16 +131,9 @@ public class KoulutusValidatorTest {
         dto.setSuunniteltuKestoArvo("");
         dto.setSuunniteltuKestoTyyppi(new KoodiV1RDTO("1", -1, null));
 
-        uris = Maps.<String, Integer>newHashMap();
-        uris.put("", -1);
-        dto.getOpetusmuodos().setUris(uris);
-        dto.getOpetusAikas().setUris(uris);
-        dto.getOpetusPaikkas().setUris(uris);
-        dto.getOpetuskielis().setUris(uris);
-
         v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
-        checkMissingErrors(v, 16);
-        assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_INVALID);
+        checkMissingErrors(v, 15);
+        assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_MISSING);
 
         /* 
          * Validation success
@@ -170,15 +153,17 @@ public class KoulutusValidatorTest {
         dto.setPohjakoulutusvaatimus(new KoodiV1RDTO("1", 1, null));
         dto.setKoulutuksenAlkamiskausi(new KoodiV1RDTO("kausi_s", 1, null)); //must have a real pattern validated koodi uri!!!!
         dto.setKoulutuksenAlkamisvuosi(2000);
+        dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(new Date()));
+
+        KoodiUrisV1RDTO koodiUris = new KoodiUrisV1RDTO();
+        koodiUris.setUris(ImmutableMap.of("koodi_uri", 1));
+        dto.setOpetuskielis(koodiUris);
+        dto.setOpetusAikas(koodiUris);
+        dto.setOpetusPaikkas(koodiUris);
+        dto.setOpetusmuodos(koodiUris);
+
         dto.setSuunniteltuKestoArvo("1");
         dto.setSuunniteltuKestoTyyppi(new KoodiV1RDTO("1", 1, null));
-
-        uris = Maps.<String, Integer>newHashMap();
-        uris.put("1", 1);
-        dto.getOpetusmuodos().setUris(uris);
-        dto.getOpetusAikas().setUris(uris);
-        dto.getOpetusPaikkas().setUris(uris);
-        dto.getOpetuskielis().setUris(uris);
 
         v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
         org.junit.Assert.assertFalse("not success?", v.hasErrors());
@@ -267,13 +252,7 @@ public class KoulutusValidatorTest {
 
     private void checkMissingErrors(ResultV1RDTO<KoulutusV1RDTO> v, int eCount) {
         org.junit.Assert.assertTrue("errors", v.hasErrors());
-//
-//        for (ErrorV1RDTO e : v.getErrors()) {
-//            System.out.println(e.getErrorMessageKey());
-//        }
-//        System.out.println("--------------- : " + eCount);
-        org.junit.Assert.assertEquals("errors count", eCount, v.getErrors().size());
-        //assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_EQF_MISSING);
+        org.junit.Assert.assertEquals("errors count", v.getErrors().size(), eCount);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING);
@@ -282,7 +261,7 @@ public class KoulutusValidatorTest {
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_POHJAKOULUTUSVAATIMUS_MISSING);
-        assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_MISSING);
+        assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_TYPE_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_VALUE_MISSING);
 

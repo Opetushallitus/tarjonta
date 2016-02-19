@@ -582,10 +582,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         List<HakukohdeValidationMessages> validationMessageses = validateHakukohdeAndPopulateImplicitFields(hakukohdeRDTO);
 
-        if (hakukohdeRDTO.getOid() != null) {
-            validationMessageses.add(HakukohdeValidationMessages.HAKUKOHDE_OID_SPECIFIED);
-        }
-
         if (validationMessageses.size() > 0) {
             return Response
                     .status(Response.Status.BAD_REQUEST)

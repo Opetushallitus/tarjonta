@@ -16,6 +16,7 @@ import fi.vm.sade.tarjonta.SecurityAwareTestBase;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntityTest;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusImplicitDataPopulator;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
@@ -23,6 +24,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
@@ -82,6 +84,9 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     }
 
     private Hakukohde hakukohde;
+
+    @Autowired
+    private KoulutusImplicitDataPopulator dataPopulator;
 
     @Before
     @Override
@@ -348,6 +353,9 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     private KoulutusKorkeakouluV1RDTO getKKKoulutus() {
 
         KoulutusKorkeakouluV1RDTO kk = new KoulutusKorkeakouluV1RDTO();
+
+        kk = (KoulutusKorkeakouluV1RDTO) dataPopulator.defaultValuesForDto(kk);
+
         kk.getKoulutusohjelma().getTekstis().put("kieli_fi", "Otsikko suomeksi");
         kk.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
         kk.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.VALMIS);

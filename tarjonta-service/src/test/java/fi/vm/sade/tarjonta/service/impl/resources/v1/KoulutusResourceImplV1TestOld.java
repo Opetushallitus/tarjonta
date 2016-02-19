@@ -14,17 +14,18 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.collect.Sets;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Oppiaine;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OppiaineV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.time.DateUtils;
@@ -66,9 +67,8 @@ public class KoulutusResourceImplV1TestOld extends KoulutusBase {
         /*
          * KOMO data fields:
          */
-        teksti(dto.getKoulutusohjelma(), KOULUTUSOHJELMA, URI_KIELI_FI);
-        dto.getKoulutusohjelma().getTekstis().put(URI_KIELI_FI, toNimiValue("koulutusohjelma", URI_KIELI_FI));
-        dto.getOrganisaatio().setOid(ORGANISATION_OID);
+        dto.setKoulutusohjelma(teksti(KOULUTUSOHJELMA, URI_KIELI_FI));
+        dto.setOrganisaatio(new OrganisaatioV1RDTO(ORGANISATION_OID));
         dto.setKoulutusaste(toKoodiUri(KOULUTUSASTE));
         dto.setKoulutusala(toKoodiUri(KOULUTUSALA));
         dto.setOpintoala(toKoodiUri(OPINTOALA));
@@ -82,20 +82,21 @@ public class KoulutusResourceImplV1TestOld extends KoulutusBase {
         dto.setHintaString("1.11");
         dto.setOpintojenMaksullisuus(Boolean.TRUE);
         dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
-        dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
+        dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(DATE.toDate()));
 
-        koodiUrisMap(dto.getTutkintonimikes(), URI_KIELI_FI, MAP_TUTKINTONIMIKE);
-        koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, MAP_OPETUSAIKAS);
-        koodiUrisMap(dto.getOpetusPaikkas(), URI_KIELI_FI, MAP_OPETUSPAIKKAS);
-        koodiUrisMap(dto.getAihees(), URI_KIELI_FI, MAP_OPETUSAIHEES);
-        koodiUrisMap(dto.getOpetuskielis(), URI_KIELI_FI, MAP_OPETUSKIELI);
-        koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, MAP_OPETUMUOTO);
-        koodiUrisMap(dto.getAmmattinimikkeet(), URI_KIELI_FI, (MAP_AMMATTINIMIKE));
-        koodiUrisMap(dto.getPohjakoulutusvaatimukset(), URI_KIELI_FI, MAP_POHJAKOULUTUS);
+        dto.setTutkintonimikes(koodiUrisMap(URI_KIELI_FI, MAP_TUTKINTONIMIKE));
+        dto.setOpetusAikas(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSAIKAS));
+        dto.setOpetusPaikkas(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSPAIKKAS));
+        dto.setAihees(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSAIHEES));
+        dto.setOpetuskielis(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSKIELI));
+        dto.setOpetusmuodos(koodiUrisMap(URI_KIELI_FI, MAP_OPETUMUOTO));
+        dto.setAmmattinimikkeet(koodiUrisMap(URI_KIELI_FI, MAP_AMMATTINIMIKE));
+        dto.setPohjakoulutusvaatimukset(koodiUrisMap(URI_KIELI_FI, MAP_POHJAKOULUTUS));
 
         dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO_TYYPPI));
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
 
+        dto.setYhteyshenkilos(new HashSet<YhteyshenkiloTyyppi>());
         dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], null, HenkiloTyyppi.YHTEYSHENKILO));
         dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
@@ -199,8 +200,6 @@ public class KoulutusResourceImplV1TestOld extends KoulutusBase {
         assertEquals(ORGANISATION_OID, result.getOrganisaatio().getOid());
         assertEquals(ORGANISAATIO_NIMI, result.getOrganisaatio().getNimi());
 
-        assertEquals(KoulutusasteTyyppi.KORKEAKOULUTUS, result.getKoulutusasteTyyppi());
-
         final String key = URI_KIELI_FI + "_uri";
 
         assertNotNull(KOULUTUSOHJELMA, result.getKoulutusohjelma().getTekstis().get(key));
@@ -215,7 +214,6 @@ public class KoulutusResourceImplV1TestOld extends KoulutusBase {
 
         assertEquals(TarjontaTila.JULKAISTU, result.getTila());
         assertEquals(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO, result.getKoulutusmoduuliTyyppi());
-        assertEquals(KoulutusasteTyyppi.KORKEAKOULUTUS, result.getKoulutusasteTyyppi());
         assertEquals(TUNNISTE, result.getTunniste());
         assertEquals("1.11", result.getHintaString());
         assertEquals(Boolean.TRUE, result.getOpintojenMaksullisuus());

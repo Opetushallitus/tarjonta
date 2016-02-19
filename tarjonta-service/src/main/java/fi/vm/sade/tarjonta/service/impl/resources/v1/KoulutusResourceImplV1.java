@@ -289,10 +289,17 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         .build();
         }
 
+        try {
+            dto = koulutusImplicitDataPopulator.populateFields(dto);
+        } catch (Exception e) {
+            LOG.error("Implicit data population failed", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+
         if (! validateOrganisation(dto.getOrganisaatio(),
                 result, KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING,
                 KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID)) {
-            return Response.status(Response.Status.FORBIDDEN).entity(result).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
         }
 
         permissionChecker.checkUpsertKoulutus(dto);
@@ -313,8 +320,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     .entity(create(ERROR, null, createValidationError("alkamispvm", "koulutus.error.alkamispvm.ajankohtaerikuinhaulla")))
                     .build();
         }
-
-        dto = koulutusImplicitDataPopulator.populateFields(dto);
 
         /** Permission service checks currently fail in 5% of the cases due to data model issues, which is why this is
          *  not used in production.
@@ -403,7 +408,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             return true;
         }
 
-        if (dto.getKoulutuksenAlkamisPvms().size() > 0) {
+        if (dto.getKoulutuksenAlkamisPvms() != null && dto.getKoulutuksenAlkamisPvms().size() > 0) {
             return validAlkamisPvms(dto, targetKausi, targetVuosi);
         } else {
             return validKausiVuosi(dto, targetKausi, targetVuosi);

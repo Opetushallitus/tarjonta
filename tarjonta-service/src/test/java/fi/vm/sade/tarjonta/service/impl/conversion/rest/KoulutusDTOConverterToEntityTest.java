@@ -24,6 +24,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusImplicitDataPopulator;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
@@ -60,6 +61,8 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
     private KoulutusDTOConverterToEntity instance;
 
     private OidService oidServiceMock;
+
+    private KoulutusImplicitDataPopulator dataPopulator = new KoulutusImplicitDataPopulator();
 
     private static KoodiType mockCode(final String codeValue, final String codeKoodistoUri) {
         return new KoodiType(){{
@@ -106,12 +109,12 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         Whitebox.setInternalState(instance, "komotoKuvausConverters", komotoKuvausConvertersMock);
         Whitebox.setInternalState(instance, "koulutusmoduuliDAO", koulutusmoduuliDAOMock);
         Whitebox.setInternalState(instance, "oidService", oidServiceMock);
-        Whitebox.setInternalState(instance, "koodiService", mockKoodiService(null));
     }
 
     @Test
     public void testKorkeakouluCopyCommonUrisToKomoAndKomoto() throws OIDCreationException {
         KoulutusKorkeakouluV1RDTO dto = new KoulutusKorkeakouluV1RDTO();
+        dto = (KoulutusKorkeakouluV1RDTO) dataPopulator.defaultValuesForDto(dto);
         dto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO);
         dto.setOrganisaatio(new OrganisaatioV1RDTO("org_oid", "org_name", null));
         dto.setKomoOid(KOMO_OID);
@@ -178,6 +181,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         m.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
 
         KoulutusLukioV1RDTO dto = new KoulutusLukioV1RDTO();
+        dto = (KoulutusLukioV1RDTO) dataPopulator.defaultValuesForDto(dto);
         dto.setOrganisaatio(new OrganisaatioV1RDTO("org_oid", "org_name", null));
         dto.setKomoOid(KOMO_OID);
         dto.setOpintoala(toKoodiUri(Type.KOMOTO, FieldNames.OPINTOALA));

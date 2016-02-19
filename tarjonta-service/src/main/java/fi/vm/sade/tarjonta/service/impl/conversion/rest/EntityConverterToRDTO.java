@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.model.RestParam;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusImplicitDataPopulator;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OppiaineV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
@@ -66,6 +67,8 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
     KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
+    @Autowired
+    private KoulutusImplicitDataPopulator dataPopulator;
 
     public TYPE convert(Class<TYPE> clazz, final KoulutusmoduuliToteutus komoto, final RestParam param) {
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", komoto);
@@ -87,6 +90,9 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         Preconditions.checkNotNull(komo, "Koulutusmoduuli object cannot be null!");
 
         dto.setOid(komoto.getOid());
+
+        dto = (TYPE) dataPopulator.defaultValuesForDto(dto);
+
         dto.setUniqueExternalId(komoto.getUniqueExternalId());
         dto.setKomoOid(komo.getOid());
         dto.setTila(komoto.getTila());
@@ -97,8 +103,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
         dto.setKoulutuksenAlkamiskausi(commonConverter.convertToKoodiDTO(komoto.getAlkamiskausiUri(), NO_OVERRIDE_URI, FieldNames.ALKAMISKAUSI, YES, param));
         dto.setKoulutuksenAlkamisvuosi(komoto.getAlkamisVuosi());
-        dto.getKoulutuksenAlkamisPvms().addAll(komoto.getKoulutuksenAlkamisPvms());
-
+        dto.setKoulutuksenAlkamisPvms(komoto.getKoulutuksenAlkamisPvms());
         dto.setOppiaineet(oppiaineetFromEntityToDto(komoto.getOppiaineet()));
 
         KuvausV1RDTO<KomotoTeksti> komotoKuvaus = new KuvausV1RDTO<KomotoTeksti>();
@@ -451,7 +456,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
         dto.setHakijalleNaytettavaTunniste(komoto.getHakijalleNaytettavaTunniste());
         dto.setSuunniteltuKestoArvo(komoto.getSuunniteltukestoArvo());
-        EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), dto.getYhteyshenkilos());
+        dto.setYhteyshenkilos(EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos()));
         dto.setVersion(komoto.getVersion());
 
         /**
@@ -668,7 +673,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         }
 
         dto.setSuunniteltuKestoArvo(komoto.getSuunniteltukestoArvo());
-        EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), dto.getYhteyshenkilos());
+        dto.setYhteyshenkilos(EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos()));
         dto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
 
         KuvausV1RDTO<KomotoTeksti> komotoKuvaus = new KuvausV1RDTO<KomotoTeksti>();

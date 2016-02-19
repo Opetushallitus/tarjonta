@@ -23,6 +23,7 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionException;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOrgDTO;
 import org.joda.time.DateTime;
@@ -60,6 +61,7 @@ public class KoulutusPermissionTest extends TestUtilityBase {
     private KoulutusAmmatillinenPerustutkintoV1RDTO getAmisDto() {
         KoulutusAmmatillinenPerustutkintoV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
         dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(new Date()));
+        dto.setOrganisaatio(new OrganisaatioV1RDTO(ORG_OID));
         return dto;
     }
 
@@ -122,7 +124,6 @@ public class KoulutusPermissionTest extends TestUtilityBase {
 
         expectOrganization();
         KoulutusV1RDTO dto = getAmisDto();
-        dto.getOrganisaatio().setOid(ORG_OID);
         dto.setOpetuskielis(getOpetuskielis(Lists.newArrayList("kieli_fi")));
 
         koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
@@ -138,7 +139,6 @@ public class KoulutusPermissionTest extends TestUtilityBase {
 
         expectOrganization();
         KoulutusV1RDTO dto = getAmisDto();
-        dto.getOrganisaatio().setOid(ORG_OID);
         dto.setOpetuskielis(getOpetuskielis(Lists.newArrayList("kieli_fi")));
 
         koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
@@ -148,7 +148,6 @@ public class KoulutusPermissionTest extends TestUtilityBase {
     public void testThatIsNotAllowedWhenKuntaIsNotPermitted() {
         expectOrganization();
         KoulutusV1RDTO dto = getAmisDto();
-        dto.getOrganisaatio().setOid(ORG_OID);
         koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
     }
 
@@ -157,7 +156,6 @@ public class KoulutusPermissionTest extends TestUtilityBase {
         insertKunta();
         expectOrganization();
         KoulutusV1RDTO dto = getAmisDto();
-        dto.getOrganisaatio().setOid(ORG_OID);
         dto.setKoulutuskoodi(createCode("koulutus_1"));
         koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
     }
@@ -175,7 +173,6 @@ public class KoulutusPermissionTest extends TestUtilityBase {
 
         expectOrganization();
         KoulutusV1RDTO dto = getAmisDto();
-        dto.getOrganisaatio().setOid(ORG_OID);
         dto.setKoulutuskoodi(createCode("koulutus_1"));
         dto.setOpetuskielis(getOpetuskielis(Lists.newArrayList("kieli_fi", "kieli_en")));
 
@@ -193,7 +190,6 @@ public class KoulutusPermissionTest extends TestUtilityBase {
 
         expectOrganization();
         KoulutusV1RDTO dto = getAmisDto();
-        dto.getOrganisaatio().setOid(ORG_OID);
         dto.setKoulutuskoodi(createCode("koulutus_1"));
         dto.setOpetuskielis(getOpetuskielis(Lists.newArrayList("kieli_fi")));
         dto.setKoulutusohjelma(createOsaamisalaCode("osaamisala_1"));
@@ -216,7 +212,6 @@ public class KoulutusPermissionTest extends TestUtilityBase {
 
         expectOrganization();
         KoulutusV1RDTO dto = getAmisDto();
-        dto.getOrganisaatio().setOid(ORG_OID);
         dto.setKoulutuskoodi(createCode("koulutus_1"));
         dto.setOpetuskielis(getOpetuskielis(Lists.newArrayList("kieli_fi", "kieli_sv")));
         dto.setKoulutusohjelma(createOsaamisalaCode("osaamisala_1"));

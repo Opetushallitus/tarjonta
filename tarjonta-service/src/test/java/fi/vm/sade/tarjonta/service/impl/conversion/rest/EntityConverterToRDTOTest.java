@@ -20,6 +20,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.model.RestParam;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusImplicitDataPopulator;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -81,6 +82,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         Whitebox.setInternalState(instanceKk, "commonConverter", commonConverterMock);
         Whitebox.setInternalState(instanceKk, "komoKuvausConverters", komoKuvausConvertersMock);
         Whitebox.setInternalState(instanceKk, "komotoKuvausConverters", komotoKuvausConvertersMock);
+        Whitebox.setInternalState(instanceKk, "dataPopulator", new KoulutusImplicitDataPopulator());
 
         koulutusmoduuliDAOMock = createMock(KoulutusmoduuliDAO.class);
         Whitebox.setInternalState(instanceLukio, "commonConverter", commonConverterMock);
@@ -88,6 +90,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         Whitebox.setInternalState(instanceLukio, "komotoKuvausConverters", komotoKuvausConvertersMock);
         Whitebox.setInternalState(instanceLukio, "koulutusmoduuliDAO", koulutusmoduuliDAOMock);
         Whitebox.setInternalState(instanceLukio, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAOMock);
+        Whitebox.setInternalState(instanceLukio, "dataPopulator", new KoulutusImplicitDataPopulator());
 
         KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAOMock = Mockito.mock(KoulutusSisaltyvyysDAO.class);
         Mockito.when(koulutusSisaltyvyysDAOMock.getParents(Matchers.anyString())).thenReturn(new ArrayList<String>());

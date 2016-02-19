@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
@@ -47,8 +48,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -116,7 +115,6 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         /*
          * LOAD NAYTTO DTO FROM DB
          */
-        expectNayttoKoodis(); /* 3rd round koodisto calls, convert result base komoto to dto */
         expectNayttoKoodis();
         expectValmistavaKoodis(); /* 4rd round koodisto calls, convert result valmentava to dto */
 
@@ -124,7 +122,6 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         when(publicationDataService.isValidStatusChange(isA(fi.vm.sade.tarjonta.publication.Tila.class))).thenReturn(true);
         //extra koulutusohjelma uri check
         when(tarjontaKoodistoHelperMock.getKoodi("koulutusohjelma_uri", 1)).thenReturn(createKoodiType(KOULUTUSOHJELMA, "x" + KOULUTUSOHJELMA));
-        expectHierarchy();
         expectHierarchy();
 
         /*
@@ -208,7 +205,6 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         assertEquals(ORGANISAATIO_NIMI, result.getOrganisaatio().getNimi());
         assertEquals(ORGANISATION_JARJESTAJA_OID, result.getJarjestavaOrganisaatio().getOid());
 
-        assertEquals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS, result.getKoulutusasteTyyppi());
         assertEquals(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA, result.getToteutustyyppi());
         assertEquals(ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS, result.getModuulityyppi());
 
@@ -270,7 +266,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
     private KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO createDTO() {
 
         KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO dto = new KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO();
-        dto.getOrganisaatio().setOid(ORGANISATION_OID);
+        dto.setOrganisaatio(new OrganisaatioV1RDTO(ORGANISATION_OID));
         dto.setKoulutusaste(toKoodiUri(KOULUTUSASTE));
         dto.setKoulutusala(toKoodiUri(KOULUTUSALA));
         dto.setOpintoala(toKoodiUri(OPINTOALA));
@@ -283,14 +279,14 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         dto.setKomoOid(KOMO_CHILD_OID);
         dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
         dto.setKoulutusohjelma(toNimiKoodiUri(KOULUTUSOHJELMA));
-        dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
-        koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, MAP_OPETUSAIKAS);
-        koodiUrisMap(dto.getOpetusPaikkas(), URI_KIELI_FI, MAP_OPETUSPAIKKAS);
-        koodiUrisMap(dto.getOpetuskielis(), URI_KIELI_FI, MAP_OPETUSKIELI);
-        koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, MAP_OPETUMUOTO);
+        dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(DATE.toDate()));
+        dto.setOpetusAikas(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSAIKAS));
+        dto.setOpetusPaikkas(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSPAIKKAS));
+        dto.setOpetuskielis(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSKIELI));
+        dto.setOpetusmuodos(koodiUrisMap(URI_KIELI_FI, MAP_OPETUMUOTO));
         dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO_TYYPPI));
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
-        dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], null, HenkiloTyyppi.YHTEYSHENKILO));
+        dto.setYhteyshenkilos(Sets.newHashSet(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], null, HenkiloTyyppi.YHTEYSHENKILO)));
         dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
         dto.setKoulutuslaji(toKoodiUri(KOULUTUSLAJI));
@@ -311,10 +307,9 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
         dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], null, HenkiloTyyppi.YHTEYSHENKILO));
         dto.setLinkkiOpetussuunnitelmaan("www");
-        koodiUrisMap(dto.getOpetusPaikkas(), URI_KIELI_FI, MAP_OPETUSPAIKKAS);
-        koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, MAP_OPETUSAIKAS);
-        koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, MAP_OPETUMUOTO);
-
+        dto.setOpetusAikas(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSAIKAS));
+        dto.setOpetusPaikkas(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSPAIKKAS));
+        dto.setOpetusmuodos(koodiUrisMap(URI_KIELI_FI, MAP_OPETUMUOTO));
         return dto;
     }
 

@@ -131,10 +131,10 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     private KoodiV1RDTO opintojenLaajuusarvo;
 
     @ApiModelProperty(value = "Opintojen järjestäjät", required = false)
-    private HashSet<String> opetusJarjestajat = new HashSet<String>();
+    private HashSet<String> opetusJarjestajat;
 
     @ApiModelProperty(value = "Opintojen tarjoajat", required = false)
-    private HashSet<String> opetusTarjoajat = new HashSet<String>();
+    private HashSet<String> opetusTarjoajat;
 
     @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO ammattinimikkeet;
@@ -253,9 +253,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the yhteyshenkilos
      */
     public Set<YhteyshenkiloTyyppi> getYhteyshenkilos() {
-        if (yhteyshenkilos == null) {
-            yhteyshenkilos = new HashSet<YhteyshenkiloTyyppi>();
-        }
         return yhteyshenkilos;
     }
 
@@ -270,10 +267,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the organisaatio
      */
     public OrganisaatioV1RDTO getOrganisaatio() {
-        if (organisaatio == null) {
-            organisaatio = new OrganisaatioV1RDTO();
-        }
-
         return organisaatio;
     }
 
@@ -301,10 +294,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the kuvausKomo
      */
     public KuvausV1RDTO<KomoTeksti> getKuvausKomo() {
-        if (kuvausKomo == null) {
-            kuvausKomo = new KuvausV1RDTO<KomoTeksti>();
-        }
-
         return kuvausKomo;
     }
 
@@ -319,9 +308,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the kuvausKomoto
      */
     public KuvausV1RDTO<KomotoTeksti> getKuvausKomoto() {
-        if (kuvausKomoto == null) {
-            kuvausKomoto = new KuvausV1RDTO<KomotoTeksti>();
-        }
         return kuvausKomoto;
     }
 
@@ -364,10 +350,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the koulutusohjelma
      */
     public NimiV1RDTO getKoulutusohjelma() {
-        if (koulutusohjelma == null) {
-            koulutusohjelma = new NimiV1RDTO();
-        }
-
         return koulutusohjelma;
     }
 
@@ -396,10 +378,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the koulutuksenAlkamisPvms
      */
     public Set<Date> getKoulutuksenAlkamisPvms() {
-        if (koulutuksenAlkamisPvms == null) {
-            koulutuksenAlkamisPvms = new HashSet<Date>();
-        }
-
         return koulutuksenAlkamisPvms;
     }
 
@@ -442,10 +420,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the opetuskielis
      */
     public KoodiUrisV1RDTO getOpetuskielis() {
-        if (opetuskielis == null) {
-            opetuskielis = new KoodiUrisV1RDTO();
-        }
-
         return opetuskielis;
     }
 
@@ -460,10 +434,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the opetusmuodos
      */
     public KoodiUrisV1RDTO getOpetusmuodos() {
-        if (opetusmuodos == null) {
-            opetusmuodos = new KoodiUrisV1RDTO();
-        }
-
         return opetusmuodos;
     }
 
@@ -475,11 +445,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     }
 
     public KoodiUrisV1RDTO getOpetusAikas() {
-
-        if (opetusAikas == null) {
-            opetusAikas = new KoodiUrisV1RDTO();
-        }
-
         return opetusAikas;
     }
 
@@ -488,10 +453,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     }
 
     public KoodiUrisV1RDTO getOpetusPaikkas() {
-        if (opetusPaikkas == null) {
-            opetusPaikkas = new KoodiUrisV1RDTO();
-        }
-
         return opetusPaikkas;
     }
 
@@ -588,10 +549,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the ammattinimikkeet
      */
     public KoodiUrisV1RDTO getAmmattinimikkeet() {
-        if (ammattinimikkeet == null) {
-            ammattinimikkeet = new KoodiUrisV1RDTO();
-        }
-
         return ammattinimikkeet;
     }
 
@@ -603,10 +560,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     }
 
     public KoodiUrisV1RDTO getAihees() {
-        if (aihees == null) {
-            aihees = new KoodiUrisV1RDTO();
-        }
-
         return aihees;
     }
 

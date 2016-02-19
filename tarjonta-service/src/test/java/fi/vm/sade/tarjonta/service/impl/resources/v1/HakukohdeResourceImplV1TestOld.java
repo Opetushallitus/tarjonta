@@ -12,6 +12,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
@@ -23,6 +24,7 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -49,12 +51,24 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
     private TarjontaPermissionServiceImpl permissionService = Mockito.mock(TarjontaPermissionServiceImpl.class);
     private TarjontaPermissionServiceImpl originalPermissionService;
 
+    @Autowired
+    private TarjontaKoodistoHelper koodistoHelper;
+
     @Before
     public void setup() throws Exception {
         originalPermissionService = Whitebox.getInternalState(permissionChecker, "permissionService");
         Whitebox.setInternalState(permissionChecker, "permissionService", permissionService);
         Mockito.stub(oidService.get(TarjontaOidType.HAKUKOHDE)).toReturn("1.2.3.4.5");
         stubKoodi("kieli_fi", "suomi");
+
+        Mockito.when(koodistoHelper.getKoodiByUri(Matchers.anyString())).thenReturn(
+                new KoodiType(){{
+                    setKoodiArvo("arvo");
+                    setKoodiUri("uri");
+                    setVersio(1);
+                }}
+        );
+        Mockito.when(koodistoHelper.convertKielikoodiToKieliUri(Matchers.anyString())).thenReturn("kieli_fi");
 
         //mock permission service to return true for all requests
         Mockito.stub(permissionService.userCanUpdateHakukohde(Mockito.any(OrganisaatioContext.class))).toReturn(true);
@@ -70,12 +84,13 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
     }
 
     @Test
-    public void blockDuplicatingHakukohdeThatMatchesHakuAndKomoto() {
+    public void testBlockDuplicatingHakukohdeThatMatchesHakuAndKomoto() {
         HakukohdeV1RDTO hakukohde = mkHakukohde(canAddHakukohde(mkRandomHaku()), mkRandomKomoto());
 
-        assertEquals(OK, hakukohdeResource.postHakukohde(hakukohde).getStatus());
+        assertEquals(200, hakukohdeResource.postHakukohde(hakukohde).getStatus());
 
         ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(hakukohde).getEntity();
+
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
 
         ErrorV1RDTO error = result.getErrors().get(0);
@@ -112,10 +127,10 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
     }
 
     @Test
-    public void blockDuplicatingHakukohdeThatMatchesHakuButNotKomoto() {
+    public void testBlockDuplicatingHakukohdeThatMatchesHakuButNotKomoto() {
         Haku haku = canAddHakukohde(mkRandomHaku());
 
-        assertEquals(OK, hakukohdeResource.postHakukohde(mkHakukohde(haku, mkRandomKomoto())).getStatus());
+        assertEquals(200, hakukohdeResource.postHakukohde(mkHakukohde(haku, mkRandomKomoto())).getStatus());
 
         ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(mkHakukohde(haku, mkRandomKomoto())).getEntity();
 

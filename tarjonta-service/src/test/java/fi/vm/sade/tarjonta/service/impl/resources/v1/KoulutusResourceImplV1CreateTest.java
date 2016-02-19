@@ -1,6 +1,8 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import fi.vm.sade.oid.service.types.Exception;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.TestMockBase;
@@ -16,26 +18,35 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.apache.commons.beanutils.BeanUtilsBean;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.powermock.reflect.Whitebox;
+
+import javax.inject.Inject;
+
+import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
     @InjectMocks
     private KoulutusResourceImplV1 koulutusResourceV1;
+
+    @Mock
+    private KoulutusImplicitDataPopulator implicitDataPopulator;
 
     @Before
     public void setUp() {
@@ -48,6 +59,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
         KoulutusImplicitDataPopulator populator = new KoulutusImplicitDataPopulator();
         Whitebox.setInternalState(populator, "koodiService", KoulutusDTOConverterToEntityTest.mockKoodiService(null));
+        Whitebox.setInternalState(populator, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
         Whitebox.setInternalState(koulutusResourceV1, "koulutusImplicitDataPopulator", populator);
     }
 
@@ -183,7 +195,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
         DateTime datetime = new DateTime();
         datetime = datetime.withYear(2015);
         datetime = datetime.withMonthOfYear(8);
-        koulutusDTO.getKoulutuksenAlkamisPvms().add(datetime.toDate());
+        koulutusDTO.setKoulutuksenAlkamisPvms(Sets.newHashSet(datetime.toDate()));
         return koulutusDTO;
     }
 
@@ -193,7 +205,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
         DateTime datetime = new DateTime();
         datetime = datetime.withYear(2015);
         datetime = datetime.withMonthOfYear(8);
-        koulutusDTO.getKoulutuksenAlkamisPvms().add(datetime.toDate());
+        koulutusDTO.setKoulutuksenAlkamisPvms(Sets.newHashSet(datetime.toDate()));
 
         datetime = new DateTime();
         datetime = datetime.withYear(2016);
@@ -208,7 +220,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
         DateTime datetime = new DateTime();
         datetime = datetime.withYear(2015);
         datetime = datetime.withMonthOfYear(1);
-        koulutusDTO.getKoulutuksenAlkamisPvms().add(datetime.toDate());
+        koulutusDTO.setKoulutuksenAlkamisPvms(Sets.newHashSet(datetime.toDate()));
         return koulutusDTO;
     }
 

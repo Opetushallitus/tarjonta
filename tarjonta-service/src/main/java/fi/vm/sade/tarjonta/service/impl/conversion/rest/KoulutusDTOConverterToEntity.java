@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
@@ -76,10 +75,7 @@ public class KoulutusDTOConverterToEntity {
     @Autowired
     private OppiaineDAO oppiaineDAO;
     @Autowired
-    private KoodiService koodiService;
-    @Autowired
     KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
-
 
     /*
      * KORKEAKOULU RDTO CONVERSION TO ENTITY
@@ -174,8 +170,6 @@ public class KoulutusDTOConverterToEntity {
             owner.setOwnerType(KoulutusOwner.TARJOAJA);
             komoto.getOwners().add(owner);
         }
-
-        LOG.info("updateOwners()... done.");
     }
 
     /*
