@@ -10,6 +10,7 @@ import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -53,7 +54,7 @@ public class KoulutusPermissionService {
                 return;
         }
 
-        dto.getOrganisaatio().setOid(komoto.getTarjoaja());
+        dto.setOrganisaatio(new OrganisaatioV1RDTO(komoto.getTarjoaja()));
         dto.setToteutustyyppi(komoto.getToteutustyyppi());
         dto.setKoulutuskoodi(getKoodi(getFromKomotoOrKomo(komoto.getKoulutusUri(), komo.getKoulutusUri())));
         dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(komoto.getKoulutuksenAlkamisPvms()));
