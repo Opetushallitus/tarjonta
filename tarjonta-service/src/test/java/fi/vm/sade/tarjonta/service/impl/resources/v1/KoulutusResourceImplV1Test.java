@@ -1,7 +1,6 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -43,8 +42,6 @@ import static fi.vm.sade.tarjonta.service.impl.resources.v1.V1TestHelper.*;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.*;
 import static fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.OPINTOJAKSO;
 import static fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.OPINTOKOKONAISUUS;
-import static fi.vm.sade.tarjonta.shared.types.KomoTeksti.*;
-import static fi.vm.sade.tarjonta.shared.types.KomotoTeksti.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -445,34 +442,29 @@ public class KoulutusResourceImplV1Test {
         modified = insertKoulutusAndGetDtoResult(modified);
         assertDelta(original, modified, KoulutusField.YHTEYSHENKILOS);
 
-        modifyKuvausKomoTextAndAssertDelta(original, TAVOITTEET);
-        modifyKuvausTextAndAssertDelta(original, LISATIEDOT);
-        modifyKuvausTextAndAssertDelta(original, KOHDERYHMA);
-        modifyKuvausTextAndAssertDelta(original, OPETUKSEN_AIKA_JA_PAIKKA);
-        modifyKuvausTextAndAssertDelta(original, MAKSULLISUUS);
-        modifyKuvausTextAndAssertDelta(original, ARVIOINTIKRITEERIT);
-        modifyKuvausTextAndAssertDelta(original, EDELTAVAT_OPINNOT);
-        modifyKuvausTextAndAssertDelta(original, SISALTO);
+        for (KomoTeksti teksti : KomoTeksti.values()) {
+            modifyKuvausTextAndAssertDelta(original, teksti);
+        }
+
+        for (KomotoTeksti teksti : KomotoTeksti.values()) {
+            modifyKuvausTextAndAssertDelta(original, teksti);
+        }
     }
 
-    private void modifyKuvausKomoTextAndAssertDelta(KorkeakouluOpintoV1RDTO original, final KomoTeksti field) throws OIDCreationException {
+    private <T extends Enum> void modifyKuvausTextAndAssertDelta(KorkeakouluOpintoV1RDTO original, final T field) throws OIDCreationException {
         upsertLuonnosOpintokokonaisuusWithAllFieldsSet(TarjontaTila.VALMIS);
         KorkeakouluOpintoV1RDTO modified = getDeltaDto();
-        modified.setKuvausKomo(new KuvausV1RDTO<KomoTeksti>(){{
-            put(field, new NimiV1RDTO(of("kieli_fi", "modified")));
-        }});
+        if (field instanceof KomoTeksti) {
+            modified.setKuvausKomo(new KuvausV1RDTO<KomoTeksti>() {{
+                put((KomoTeksti) field, new NimiV1RDTO(of("kieli_fi", "modified")));
+            }});
+        } else {
+            modified.setKuvausKomoto(new KuvausV1RDTO<KomotoTeksti>() {{
+                put((KomotoTeksti) field, new NimiV1RDTO(of("kieli_fi", "modified")));
+            }});
+        }
         modified = insertKoulutusAndGetDtoResult(modified);
-        assertDelta(original, modified, KoulutusField.valueOf("TEKSTI_" + field.name()));
-    }
-
-    private void modifyKuvausTextAndAssertDelta(KorkeakouluOpintoV1RDTO original, final KomotoTeksti field) throws OIDCreationException {
-        upsertLuonnosOpintokokonaisuusWithAllFieldsSet(TarjontaTila.VALMIS);
-        KorkeakouluOpintoV1RDTO modified = getDeltaDto();
-        modified.setKuvausKomoto(new KuvausV1RDTO<KomotoTeksti>(){{
-            put(field, new NimiV1RDTO(of("kieli_fi", "modified")));
-        }});
-        modified = insertKoulutusAndGetDtoResult(modified);
-        assertDelta(original, modified, KoulutusField.valueOf("TEKSTI_" + field.name()));
+        assertDelta(original, modified, field);
     }
 
     private KorkeakouluOpintoV1RDTO insertKoulutusAndGetDtoResult(KorkeakouluOpintoV1RDTO dto) {
@@ -579,19 +571,19 @@ public class KoulutusResourceImplV1Test {
                 new YhteyshenkiloTyyppi(null, "nimi", "titteli", "email@email.com", "puhelin",
                         Lists.newArrayList("kieli_fi"), HenkiloTyyppi.YHTEYSHENKILO)
         ));
-        dto.setKuvausKomo(new KuvausV1RDTO<KomoTeksti>(){{
-            put(TAVOITTEET, new NimiV1RDTO(of("kieli_fi", "teksti")));
-        }});
+
+        NimiV1RDTO initialTeksti = new NimiV1RDTO(of("kieli_fi", "teksti", "kieli_sv", "text"));
+
+        KuvausV1RDTO<KomoTeksti> komoTekstit = new KuvausV1RDTO<KomoTeksti>();
+        for (KomoTeksti teksti : KomoTeksti.values()) {
+            komoTekstit.put(teksti, initialTeksti);
+        }
+        dto.setKuvausKomo(komoTekstit);
 
         KuvausV1RDTO<KomotoTeksti> tekstit = new KuvausV1RDTO<KomotoTeksti>();
-        NimiV1RDTO initialTeksti = new NimiV1RDTO(of("kieli_fi", "teksti", "kieli_sv", "text"));
-        tekstit.put(LISATIEDOT, initialTeksti);
-        tekstit.put(KOHDERYHMA, initialTeksti);
-        tekstit.put(OPETUKSEN_AIKA_JA_PAIKKA, initialTeksti);
-        tekstit.put(MAKSULLISUUS, initialTeksti);
-        tekstit.put(ARVIOINTIKRITEERIT, initialTeksti);
-        tekstit.put(EDELTAVAT_OPINNOT, initialTeksti);
-        tekstit.put(SISALTO, initialTeksti);
+        for (KomotoTeksti teksti : KomotoTeksti.values()) {
+            tekstit.put(teksti, initialTeksti);
+        }
         dto.setKuvausKomoto(tekstit);
 
         ResultV1RDTO<KorkeakouluOpintoV1RDTO> result = (ResultV1RDTO<KorkeakouluOpintoV1RDTO>) koulutusResourceV1.postKoulutus(dto).getEntity();

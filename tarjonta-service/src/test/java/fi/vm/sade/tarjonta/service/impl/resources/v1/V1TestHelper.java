@@ -60,7 +60,7 @@ public class V1TestHelper {
     public final static String TARJOAJA2 = "1.2.3.214.3425.23";
     public final static String TUNNISTE = "kk virkailijan tunniste, ei uniikki";
 
-    public static enum KoulutusField {
+    public enum KoulutusField {
         TILA,
         ORGANISAATIO,
         KOULUTUSMODUULITYYPPI,
@@ -82,15 +82,7 @@ public class V1TestHelper {
         OPPIAINEET,
         OPETTAJA,
         AVOIMEN_YLIOPISTON_KOULUTUS,
-        YHTEYSHENKILOS,
-        TEKSTI_TAVOITTEET,
-        TEKSTI_LISATIEDOT,
-        TEKSTI_KOHDERYHMA,
-        TEKSTI_OPETUKSEN_AIKA_JA_PAIKKA,
-        TEKSTI_MAKSULLISUUS,
-        TEKSTI_ARVIOINTIKRITEERIT,
-        TEKSTI_EDELTAVAT_OPINNOT,
-        TEKSTI_SISALTO;
+        YHTEYSHENKILOS;
     }
 
     public void init() {
@@ -131,94 +123,94 @@ public class V1TestHelper {
         );
     }
 
-    public static void assertDelta(KorkeakouluOpintoV1RDTO original, KorkeakouluOpintoV1RDTO modified, KoulutusField fieldThatShouldDiffer) {
-        List<KoulutusField> fieldsThatDiffer = new ArrayList<KoulutusField>();
+    public static <T extends Enum> void assertDelta(KorkeakouluOpintoV1RDTO original, KorkeakouluOpintoV1RDTO modified, T fieldThatShouldDiffer) {
+        List<T> fieldsThatDiffer = new ArrayList<T>();
 
         if (!Objects.equals(original.getTila(), modified.getTila())) {
-            fieldsThatDiffer.add(KoulutusField.TILA);
+            fieldsThatDiffer.add((T) KoulutusField.TILA);
         }
         if (!Objects.equals(original.getOrganisaatio().getOid(), modified.getOrganisaatio().getOid())) {
-            fieldsThatDiffer.add(KoulutusField.ORGANISAATIO);
+            fieldsThatDiffer.add((T) KoulutusField.ORGANISAATIO);
         }
         if (!Objects.equals(original.getKoulutusmoduuliTyyppi(), modified.getKoulutusmoduuliTyyppi())) {
-            fieldsThatDiffer.add(KoulutusField.KOULUTUSMODUULITYYPPI);
+            fieldsThatDiffer.add((T) KoulutusField.KOULUTUSMODUULITYYPPI);
         }
         if (!Objects.equals(original.getOpetusJarjestajat(), modified.getOpetusJarjestajat())) {
-            fieldsThatDiffer.add(KoulutusField.JARJESTAJAT);
+            fieldsThatDiffer.add((T) KoulutusField.JARJESTAJAT);
         }
         if (!Objects.equals(original.getKoulutusohjelma().getTekstis(),
                 modified.getKoulutusohjelma().getTekstis())) {
-            fieldsThatDiffer.add(KoulutusField.KOULUTUSOHJELMA);
+            fieldsThatDiffer.add((T) KoulutusField.KOULUTUSOHJELMA);
         }
         if (!Objects.equals(original.getTunniste(), modified.getTunniste())) {
-            fieldsThatDiffer.add(KoulutusField.TUNNISTE);
+            fieldsThatDiffer.add((T) KoulutusField.TUNNISTE);
         }
         if (!Objects.equals(original.getHakijalleNaytettavaTunniste(), modified.getHakijalleNaytettavaTunniste())) {
-            fieldsThatDiffer.add(KoulutusField.HAKIJAN_TUNNISTE);
+            fieldsThatDiffer.add((T) KoulutusField.HAKIJAN_TUNNISTE);
         }
         if (!Objects.equals(original.getOpinnonTyyppiUri(), modified.getOpinnonTyyppiUri())) {
-            fieldsThatDiffer.add(KoulutusField.OPINNON_TYYPPI);
+            fieldsThatDiffer.add((T) KoulutusField.OPINNON_TYYPPI);
         }
         if (!Objects.equals(original.getOpintojenLaajuusPistetta(), modified.getOpintojenLaajuusPistetta())) {
-            fieldsThatDiffer.add(KoulutusField.LAAJUUSPISTETTA);
+            fieldsThatDiffer.add((T) KoulutusField.LAAJUUSPISTETTA);
         }
         if (datesDiffer(original.getKoulutuksenAlkamisPvms(), modified.getKoulutuksenAlkamisPvms())
                 || datesDiffer(modified.getKoulutuksenAlkamisPvms(), original.getKoulutuksenAlkamisPvms())) {
-            fieldsThatDiffer.add(KoulutusField.ALKAMISPVMS);
+            fieldsThatDiffer.add((T) KoulutusField.ALKAMISPVMS);
         }
         if (!isSameDate(original.getKoulutuksenLoppumisPvm(), modified.getKoulutuksenLoppumisPvm())) {
-            fieldsThatDiffer.add(KoulutusField.LOPPUMISPVM);
+            fieldsThatDiffer.add((T) KoulutusField.LOPPUMISPVM);
         }
         if (!Objects.equals(original.getOpetuskielis().getUris(), modified.getOpetuskielis().getUris())) {
-            fieldsThatDiffer.add(KoulutusField.OPETUSKIELIS);
+            fieldsThatDiffer.add((T) KoulutusField.OPETUSKIELIS);
         }
         if (!Objects.equals(original.getOpintojenMaksullisuus(), modified.getOpintojenMaksullisuus())) {
-            fieldsThatDiffer.add(KoulutusField.OPINTOJEN_MAKSULLISUUS);
+            fieldsThatDiffer.add((T) KoulutusField.OPINTOJEN_MAKSULLISUUS);
         }
         if (!Objects.equals(original.getHintaString(), modified.getHintaString())) {
-            fieldsThatDiffer.add(KoulutusField.HINTA_STRING);
+            fieldsThatDiffer.add((T) KoulutusField.HINTA_STRING);
         }
         if (!Objects.equals(original.getOpetusAikas().getUris(), modified.getOpetusAikas().getUris())) {
-            fieldsThatDiffer.add(KoulutusField.OPETUSAIKAS);
+            fieldsThatDiffer.add((T) KoulutusField.OPETUSAIKAS);
         }
         if (!Objects.equals(original.getOpetusmuodos().getUris(), modified.getOpetusmuodos().getUris())) {
-            fieldsThatDiffer.add(KoulutusField.OPETUSMUODOS);
+            fieldsThatDiffer.add((T) KoulutusField.OPETUSMUODOS);
         }
         if (!Objects.equals(original.getOpetusPaikkas().getUris(), modified.getOpetusPaikkas().getUris())) {
-            fieldsThatDiffer.add(KoulutusField.OPETUSPAIKKAS);
+            fieldsThatDiffer.add((T) KoulutusField.OPETUSPAIKKAS);
         }
         if (!Objects.equals(original.getAihees().getUris(), modified.getAihees().getUris())) {
-            fieldsThatDiffer.add(KoulutusField.AIHEES);
+            fieldsThatDiffer.add((T) KoulutusField.AIHEES);
         }
         if (!Objects.equals(original.getOppiaineet(), modified.getOppiaineet())) {
-            fieldsThatDiffer.add(KoulutusField.OPPIAINEET);
+            fieldsThatDiffer.add((T) KoulutusField.OPPIAINEET);
         }
         if (!Objects.equals(original.getOpettaja(), modified.getOpettaja())) {
-            fieldsThatDiffer.add(KoulutusField.OPETTAJA);
+            fieldsThatDiffer.add((T) KoulutusField.OPETTAJA);
         }
         if (!Objects.equals(original.getIsAvoimenYliopistonKoulutus(), modified.getIsAvoimenYliopistonKoulutus())) {
-            fieldsThatDiffer.add(KoulutusField.AVOIMEN_YLIOPISTON_KOULUTUS);
+            fieldsThatDiffer.add((T) KoulutusField.AVOIMEN_YLIOPISTON_KOULUTUS);
         }
         if (!isSameYhteyshenkilo(original.getYhteyshenkilos(), modified.getYhteyshenkilos())) {
-            fieldsThatDiffer.add(KoulutusField.YHTEYSHENKILOS);
+            fieldsThatDiffer.add((T) KoulutusField.YHTEYSHENKILOS);
         }
 
-        fieldsThatDiffer.addAll(tekstiDiff(KomoTeksti.class, original.getKuvausKomo(), modified.getKuvausKomo()));
-        fieldsThatDiffer.addAll(tekstiDiff(KomotoTeksti.class, original.getKuvausKomoto(), modified.getKuvausKomoto()));
+        fieldsThatDiffer.addAll((List<T>) tekstiDiff(KomoTeksti.class, original.getKuvausKomo(), modified.getKuvausKomo()));
+        fieldsThatDiffer.addAll((List<T>) tekstiDiff(KomotoTeksti.class, original.getKuvausKomoto(), modified.getKuvausKomoto()));
 
         assertEquals(1, fieldsThatDiffer.size());
         assertEquals(fieldThatShouldDiffer, fieldsThatDiffer.get(0));
     }
 
-    private static <T extends Enum> List<KoulutusField> tekstiDiff(Class<T> clazz, KuvausV1RDTO original, KuvausV1RDTO modified) {
-        List<KoulutusField> fieldsThatDiffer = new ArrayList<KoulutusField>();
+    private static <T extends Enum> List<T> tekstiDiff(Class<T> clazz, KuvausV1RDTO original, KuvausV1RDTO modified) {
+        Set<T> fieldsThatDiffer = new HashSet<T>();
 
         MapDifference<T, NimiV1RDTO> tekstiDiff = Maps.difference(original, modified);
-        for (T differingField : tekstiDiff.entriesDiffering().keySet()) {
-            fieldsThatDiffer.add(KoulutusField.valueOf("TEKSTI_" + differingField.name()));
-        }
+        fieldsThatDiffer.addAll(tekstiDiff.entriesDiffering().keySet());
+        fieldsThatDiffer.addAll(tekstiDiff.entriesOnlyOnLeft().keySet());
+        fieldsThatDiffer.addAll(tekstiDiff.entriesOnlyOnRight().keySet());
 
-        return fieldsThatDiffer;
+        return Lists.newArrayList(fieldsThatDiffer);
     }
 
     public static boolean isSameDate(Date a, Date b) {
