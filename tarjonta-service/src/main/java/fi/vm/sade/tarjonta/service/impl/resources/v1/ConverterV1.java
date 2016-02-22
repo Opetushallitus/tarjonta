@@ -627,7 +627,9 @@ public class ConverterV1 {
             koulutukset.add(new KoulutusIdentification(komoto.getOid(), komoto.getUniqueExternalId()));
         }
         dto.setKoulutukset(koulutukset);
-        dto.setToteutusTyyppi(hakukohde.getKoulutusmoduuliToteutuses().iterator().next().getToteutustyyppi());
+        if (hakukohde.getFirstKoulutus() != null) {
+            dto.setToteutusTyyppi(hakukohde.getFirstKoulutus().getToteutustyyppi());
+        }
     }
 
     private void convertRyhmaliitoksetToDTO(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
@@ -782,7 +784,7 @@ public class ConverterV1 {
 
     private Map<String, String> getHakukohteenNimet(Hakukohde hakukohde) {
         if (!hakukohde.getKoulutusmoduuliToteutuses().isEmpty()) {
-            KoulutusmoduuliToteutus komoto = hakukohde.getKoulutusmoduuliToteutuses().iterator().next();
+            KoulutusmoduuliToteutus komoto = hakukohde.getFirstKoulutus();
 
             Map<String, String> hakukohteenNimet = new HashMap<String, String>();
 
