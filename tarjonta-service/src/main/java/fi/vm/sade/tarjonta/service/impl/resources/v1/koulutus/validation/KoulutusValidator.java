@@ -47,7 +47,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import static fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.*;
+import static fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.createValidationError;
 
 @Service
 public class KoulutusValidator {
@@ -113,38 +113,23 @@ public class KoulutusValidator {
     public void validateTutkintoonjohtamaton(TutkintoonJohtamatonKoulutusV1RDTO dto, ResultV1RDTO result) {
         validateBaseKoulutusData(dto, null, result, false);
 
-        try {
-            Iterables.find(dto.getKoulutusohjelma().getTekstis().values(), new Predicate<String>() {
-                @Override
-                public boolean apply(String input) {
-                    return StringUtils.isNotBlank(input);
-                }
-            });
-        } catch (Exception e) {
-            result.addError(createValidationError(KOULUTUSOHJELMA, KOULUTUSOHJELMA + ".tekstis cannot be empty!"));
-        }
+        validateKoulutusohjelma(dto, result);
 
         if (dto.getKoulutusmoduuliTyyppi() == null) {
             result.addError(createValidationError(KOULUTUSMODUULITYYPPI, KOULUTUSMODUULITYYPPI + " missing, should be OPINTOKOKONAISUUS/OPINTOJAKSO"));
         }
 
-        if (hasStartingDateMissing(dto)) {
-            result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS, KOULUTUKSEN_ALKAMISPVMS + " is required" +
-                    " (or alternatively koulutuksenAlkamiskausi and koulutuksenAlkamisvuosi can be provided)"));
-        }
-        if (hasInvalidStartingDate(dto)) {
-            result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS, KOULUTUKSEN_ALKAMISPVMS + " contains invalid starting dates"));
-        }
+        validateAlkamisPvms(result, dto);
 
         if (!TarjontaTila.PUUTTEELLINEN.equals(dto.getTila())) {
-            validateTutkintoonjohtamatonAllRequiredFields(dto, result);
+            validateTutkintoonjohtamatonAdditionalRequiredFields(dto, result);
         }
 
         validateSisaltyyKoulutuksiin(dto, result);
     }
 
     // Extra validation of fields that are required in order to show the learning opportunity in opintopolku.fi
-    private static void validateTutkintoonjohtamatonAllRequiredFields(TutkintoonJohtamatonKoulutusV1RDTO dto, ResultV1RDTO result) {
+    private static void validateTutkintoonjohtamatonAdditionalRequiredFields(TutkintoonJohtamatonKoulutusV1RDTO dto, ResultV1RDTO result) {
         if (StringUtils.isBlank(dto.getOpintojenLaajuusPistetta())) {
             result.addError(createValidationError(OPINTOJEN_LAAJUUS_PISTETTA, OPINTOJEN_LAAJUUS_PISTETTA + " is required"));
         }
@@ -211,22 +196,20 @@ public class KoulutusValidator {
     }
 
     public static ResultV1RDTO validateKoulutusKorkeakoulu(KoulutusKorkeakouluV1RDTO dto, ResultV1RDTO result) {
-        if (validateBaseKoulutusData(dto, null, result, NO_KOMO_VALIDATION)) {
-            //a major validation error, validation must stop now!
-            return result;
-        }
-
-        validateKoodistoRelationsKorkeakoulu(dto, result);
-        validateTunniste(dto, result);
-        validateKoodiUris(result, dto.getOpetusmuodos(), KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_INVALID, DEFAULT_MIN);
-        validateKoodiUris(result, dto.getAihees(), KoulutusValidationMessages.KOULUTUS_TEEMAT_AIHEET_MISSING, KoulutusValidationMessages.KOULUTUS_TEEMAT_AIHEET_INVALID, DEFAULT_MIN);
-        validateKoodiUris(result, dto.getOpetusAikas(), KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_INVALID, DEFAULT_MIN);
-        validateKoodiUris(result, dto.getOpetusPaikkas(), KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_INVALID, DEFAULT_MIN);
-        validateKoodiUris(result, dto.getOpetuskielis(), KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_INVALID, DEFAULT_MIN);
-
-        validateNameKoulutusohjelma(result, dto);
+        validateBaseKoulutusData(dto, null, result, NO_KOMO_VALIDATION);
+        validateKoulutusohjelma(dto, result);
         validateAlkamisPvms(result, dto);
-        validateSuuniteltukesto(result, dto);
+
+        if (!TarjontaTila.PUUTTEELLINEN.equals(dto.getTila())) {
+            validateKoodistoRelationsKorkeakoulu(dto, result);
+            validateTunniste(dto, result);
+            validateKoodiUris(result, dto.getOpetusmuodos(), KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_INVALID, DEFAULT_MIN);
+            validateKoodiUris(result, dto.getAihees(), KoulutusValidationMessages.KOULUTUS_TEEMAT_AIHEET_MISSING, KoulutusValidationMessages.KOULUTUS_TEEMAT_AIHEET_INVALID, DEFAULT_MIN);
+            validateKoodiUris(result, dto.getOpetusAikas(), KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_INVALID, DEFAULT_MIN);
+            validateKoodiUris(result, dto.getOpetusPaikkas(), KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_INVALID, DEFAULT_MIN);
+            validateKoodiUris(result, dto.getOpetuskielis(), KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_INVALID, DEFAULT_MIN);
+            validateSuuniteltukesto(result, dto);
+        }
 
         return result;
     }
@@ -320,11 +303,17 @@ public class KoulutusValidator {
         }
     }
 
-    private static void validateNameKoulutusohjelma(ResultV1RDTO result, KoulutusKorkeakouluV1RDTO dto) {
-        validateTextOneOrMany(result, dto.getKoulutusohjelma(),
-                KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_NAME_MISSING,
-                KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID,
-                KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID_VALUE);
+    private static void validateKoulutusohjelma(KoulutusV1RDTO dto, ResultV1RDTO result) {
+        try {
+            Iterables.find(dto.getKoulutusohjelma().getTekstis().values(), new Predicate<String>() {
+                @Override
+                public boolean apply(String input) {
+                    return StringUtils.isNotBlank(input);
+                }
+            });
+        } catch (Exception e) {
+            result.addError(createValidationError(KOULUTUSOHJELMA, KOULUTUSOHJELMA + ".tekstis cannot be empty!"));
+        }
     }
 
     private static void validateKoodistoRelationsKorkeakoulu(KoulutusKorkeakouluV1RDTO dto, ResultV1RDTO result) {
@@ -475,44 +464,6 @@ public class KoulutusValidator {
         return true;
     }
 
-    /* REQUIRED FIELDS:
-     "meta" : {
-     "kieli_sv" : {
-     "koodi" : {
-     "uri" : "kieli_sv",
-     "versio" : "1",
-     "arvo" : "koulutusohjelma xxx"
-     },
-     }
-     */
-    private static void validateTextOneOrMany(ResultV1RDTO result, NimiV1RDTO dto,
-            KoulutusValidationMessages missing,
-            KoulutusValidationMessages invalid,
-            KoulutusValidationMessages invalidTextValue) {
-        Set<KoulutusValidationMessages> tempError = Sets.<KoulutusValidationMessages>newHashSet();
-
-        if (dto == null || dto.getTekstis().isEmpty()) {
-            //no items
-            result.addError(createValidationError(invalid.getFieldName(), invalid.lower()));
-        } else {
-            for (Entry<String, String> e : dto.getTekstis().entrySet()) {
-                if (notNullStrOrEmpty(e.getValue())) {
-                    //validation was success
-                    //at least one text items was available and correct;
-                    return;
-                } else {
-                    //validation will fail
-                    tempError.add(missing);
-                }
-            }
-
-            //all set items are empty or null values;
-            for (KoulutusValidationMessages e : tempError) {
-                result.addError(createValidationError(e.getFieldName(), e.lower()));
-            }
-        }
-    }
-
     private static void checkKausiVuosi(ResultV1RDTO result, KoodiV1RDTO kausi, Integer year) {
         if (kausi == null || isEmpty(kausi.getUri())) {
             result.addError(createValidationError(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_MISSING.lower()));
@@ -523,25 +474,23 @@ public class KoulutusValidator {
 
         if (year == null) {
             result.addError(createValidationError(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_MISSING.lower()));
-
         } else if (year < 2000) {
             result.addError(createValidationError(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_INVALID.getFieldName(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_INVALID.lower()));
         }
     }
 
     private static void validateAlkamisPvms(ResultV1RDTO result, KoulutusV1RDTO dto) {
-        if (dto.getKoulutuksenAlkamisPvms() == null) {
-            result.addError(createValidationError(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_MISSING.lower()));
-
+        if (hasStartingDateMissing(dto)) {
+            result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS, KOULUTUKSEN_ALKAMISPVMS + " is required" +
+                    " (or alternatively koulutuksenAlkamiskausi and koulutuksenAlkamisvuosi can be provided)"));
         } else if (!dto.getKoulutuksenAlkamisPvms().isEmpty()) {
-
             final Set<Date> koulutuksenAlkamisPvms = dto.getKoulutuksenAlkamisPvms();
             KoulutusValidationMessages validateDates = KoulutusCommonConverter.validateDates(
                     koulutuksenAlkamisPvms.iterator().next(),
                     dto.getKoulutuksenAlkamisPvms());
 
             if (!validateDates.equals(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_SUCCESS)) {
-                result.addError(createValidationError(validateDates.getFieldName(), validateDates.lower()));
+                result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS, KOULUTUKSEN_ALKAMISPVMS + " contains invalid starting dates"));
             }
         } else {
             checkKausiVuosi(result, dto.getKoulutuksenAlkamiskausi(), dto.getKoulutuksenAlkamisvuosi());
