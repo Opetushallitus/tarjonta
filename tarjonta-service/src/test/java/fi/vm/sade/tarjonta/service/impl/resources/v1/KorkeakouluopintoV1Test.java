@@ -48,9 +48,9 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
-@Service("koulutusResourceTest")
+@Service
 @ActiveProfiles("embedded-solr")
-public class KoulutusResourceImplV1Test {
+public class KorkeakouluopintoV1Test {
 
     @Autowired
     OrganisaatioService organisaatioService;

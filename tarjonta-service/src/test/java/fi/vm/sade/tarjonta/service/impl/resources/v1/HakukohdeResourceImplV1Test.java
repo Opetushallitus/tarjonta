@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
 public class HakukohdeResourceImplV1Test {
 
     @Autowired
-    KoulutusResourceImplV1Test koulutusResourceTest;
+    KorkeakouluopintoV1Test koulutusResourceTest;
 
     @Autowired
     HakukohdeV1Resource hakukohdeV1Resource;
