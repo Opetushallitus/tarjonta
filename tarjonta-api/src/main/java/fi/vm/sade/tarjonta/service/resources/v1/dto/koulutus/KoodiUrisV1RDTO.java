@@ -41,6 +41,10 @@ public class KoodiUrisV1RDTO extends KoodiV1RDTO {
     public KoodiUrisV1RDTO() {
     }
 
+    public KoodiUrisV1RDTO(Map<String, Integer> uris) {
+        setUris(uris);
+    }
+
     /**
      * @return the uris
      */

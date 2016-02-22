@@ -69,7 +69,7 @@ public class KoulutusPermissionService {
         for (KoodistoUri uri : komoto.getOpetuskielis()) {
             kielet.put(uri.getKoodiUri().split("#")[0], 1);
         }
-        dto.getOpetuskielis().setUris(kielet);
+        dto.setOpetuskielis(new KoodiUrisV1RDTO(kielet));
 
         checkThatOrganizationIsAllowedToOrganizeEducation(dto);
     }
