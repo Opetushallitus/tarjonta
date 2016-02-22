@@ -15,6 +15,7 @@ import fi.vm.sade.tarjonta.service.copy.NullAwareBeanUtilsBean;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
@@ -86,6 +87,9 @@ public class KoulutusImplicitDataPopulator {
     }
 
     public KoulutusV1RDTO defaultValuesForDto(KoulutusV1RDTO dto) {
+        if (dto instanceof KoulutusKorkeakouluV1RDTO) {
+            dto.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
+        }
         try {
             KoulutusV1RDTO defaultDto = dto.getClass().newInstance();
             defaultDto.setOpetusTarjoajat(new HashSet<String>());
