@@ -496,7 +496,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     private ToteutustyyppiEnum getToteutustyyppi(HakukohdeV1RDTO dto) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(dto.getHakukohdeKoulutusOids().iterator().next());
-        koulutusmoduuliToteutusDAO.detach(komoto);
         return komoto.getToteutustyyppi();
     }
 
