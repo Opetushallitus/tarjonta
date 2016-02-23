@@ -175,6 +175,9 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     @ApiModelProperty(value = "Koulutukset, joihin tämä koulutus sisältyy", required = false)
     private Set<KoulutusIdentification> sisaltyyKoulutuksiin;
 
+    @ApiModelProperty(value = "Koulutuslaji-koodi", required = false)
+    private KoodiV1RDTO koulutuslaji;
+
     public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         this.setToteutustyyppi(toteutustyyppi);
         this.moduulityyppi = moduulityyppi;
@@ -637,5 +640,13 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
 
     public void setUniqueExternalId(String uniqueExternalId) {
         this.uniqueExternalId = uniqueExternalId;
+    }
+
+    public KoodiV1RDTO getKoulutuslaji() {
+        return koulutuslaji;
+    }
+
+    public void setKoulutuslaji(KoodiV1RDTO koulutuslaji) {
+        this.koulutuslaji = koulutuslaji;
     }
 }

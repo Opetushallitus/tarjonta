@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.service.types.common.KoodistoItemType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
@@ -256,6 +257,17 @@ public class V1TestHelper {
         }
         dto.setUris(uris);
         return dto;
+    }
+
+    public static KoodiType mockKoodi(final String mockKoodistoUri) {
+        return new KoodiType(){{
+            setKoodiArvo("code");
+            setVersio(1);
+            setKoodiUri("code_uri");
+            setKoodisto(new KoodistoItemType(){{
+                setKoodistoUri(mockKoodistoUri);
+            }});
+        }};
     }
 
 }

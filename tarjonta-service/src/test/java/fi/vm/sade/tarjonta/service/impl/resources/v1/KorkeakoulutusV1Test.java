@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
-import fi.vm.sade.koodisto.service.types.common.KoodistoItemType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
@@ -32,8 +31,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fi.vm.sade.tarjonta.service.impl.resources.v1.V1TestHelper.TARJOAJA1;
-import static fi.vm.sade.tarjonta.service.impl.resources.v1.V1TestHelper.containsError;
+import static fi.vm.sade.tarjonta.service.impl.resources.v1.V1TestHelper.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -123,17 +121,6 @@ public class KorkeakoulutusV1Test {
         dto.setKoulutuskoodi(new KoodiV1RDTO(KOULUTUSKOODI, 1, ""));
 
         return dto;
-    }
-
-    private static KoodiType mockKoodi(final String mockKoodistoUri) {
-        return new KoodiType(){{
-            setKoodiArvo("code");
-            setVersio(1);
-            setKoodiUri("code_uri");
-            setKoodisto(new KoodistoItemType(){{
-                setKoodistoUri(mockKoodistoUri);
-            }});
-        }};
     }
 
 }

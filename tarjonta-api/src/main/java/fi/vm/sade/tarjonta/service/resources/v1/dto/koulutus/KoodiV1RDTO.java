@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang.StringUtils;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -192,6 +194,10 @@ public class KoodiV1RDTO implements Serializable {
 
     public Map<String, KoodiV1RDTO> getMeta() {
         return meta;
+    }
+
+    public static boolean notEmpty(KoodiV1RDTO dto) {
+        return dto != null && !StringUtils.isBlank(dto.getUri());
     }
 
     @Override

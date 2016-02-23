@@ -29,9 +29,6 @@ public class KoulutusGenericV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Pohjakoulutusvaatimus-koodi", required = true)
     private KoodiV1RDTO pohjakoulutusvaatimus;
 
-    @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
-    private KoodiV1RDTO koulutuslaji;
-
     @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan")
     private String linkkiOpetussuunnitelmaan;
 
@@ -56,20 +53,6 @@ public class KoulutusGenericV1RDTO extends KoulutusV1RDTO {
      */
     public void setPohjakoulutusvaatimus(KoodiV1RDTO pohjakoulutusvaatimus) {
         this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
-    }
-
-    /**
-     * @return the koulutuslaji
-     */
-    public KoodiV1RDTO getKoulutuslaji() {
-        return koulutuslaji;
-    }
-
-    /**
-     * @param koulutuslaji the koulutuslaji to set
-     */
-    public void setKoulutuslaji(KoodiV1RDTO koulutuslaji) {
-        this.koulutuslaji = koulutuslaji;
     }
 
     /**
