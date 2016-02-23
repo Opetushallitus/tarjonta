@@ -1401,6 +1401,7 @@ public class ConverterV1 {
     public HakukohdeLiite toHakukohdeLiite(HakukohdeLiiteV1RDTO hakukohdeLiiteV1RDTO) {
         HakukohdeLiite hakukohdeLiite = new HakukohdeLiite();
         hakukohdeLiite.setId(oidFromString(hakukohdeLiiteV1RDTO.getOid()));
+        hakukohdeLiite.setVersion((long) hakukohdeLiiteV1RDTO.getVersion());
 
         hakukohdeLiite.setKieli(hakukohdeLiiteV1RDTO.getKieliUri());
         hakukohdeLiite.setHakukohdeLiiteNimi(hakukohdeLiiteV1RDTO.getLiitteenNimi());
@@ -1420,6 +1421,7 @@ public class ConverterV1 {
 
         if (hakukohdeLiite.getId() != null) {
             hakukohdeLiiteV1RDTO.setOid(hakukohdeLiite.getId().toString());
+            hakukohdeLiiteV1RDTO.setVersion(hakukohdeLiite.getVersion().intValue());
         }
         if (hakukohdeLiite.getKieli() != null) {
             hakukohdeLiiteV1RDTO.setKieliUri(hakukohdeLiite.getKieli());
