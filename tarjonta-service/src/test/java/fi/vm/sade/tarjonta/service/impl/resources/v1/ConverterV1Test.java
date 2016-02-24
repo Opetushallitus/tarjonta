@@ -148,6 +148,7 @@ public class ConverterV1Test extends TestMockBase {
     private Valintakoe getValintakoe() {
         Valintakoe valintakoe = new Valintakoe();
         valintakoe.setId(12345L);
+        valintakoe.setVersion(0L);
         valintakoe.setAjankohtas(getValintakoeAjankohdat());
         return valintakoe;
     }
