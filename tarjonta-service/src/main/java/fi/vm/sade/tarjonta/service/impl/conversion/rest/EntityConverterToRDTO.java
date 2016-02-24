@@ -32,6 +32,7 @@ import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.OpintopolkuAlkamiskausi;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -363,27 +364,30 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
             ammDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
 
-            if(dto instanceof KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO
-                && !komoto.getTutkintonimikes().isEmpty()) {
-                ((KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto)
-                    .setTutkintonimikes(
-                        commonConverter.convertToKoodiUrisDTO(
-                            getTutkintonimikes(komoto, komo),
+            if (!getTutkintonimikes(komoto, komo).isEmpty()
+                    || !StringUtils.isBlank(komo.getTutkintonimikeUri())
+                    || !StringUtils.isBlank(komoto.getTutkintonimikeUri())) {
+                if (dto instanceof KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO
+                        && !komoto.getTutkintonimikes().isEmpty()) {
+                    ((KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto)
+                            .setTutkintonimikes(
+                                    commonConverter.convertToKoodiUrisDTO(
+                                            getTutkintonimikes(komoto, komo),
+                                            FieldNames.TUTKINTONIMIKE,
+                                            param
+                                    )
+                            );
+                    // Aseta myös yksittäinen "tutkintonimike"-kenttä, jotta vanha rajapinta ei hajoa
+                    ammDto.setTutkintonimike(commonConverter.convertToKoodiDTO(
+                            komo.getTutkintonimikeUri(),
+                            komoto.getTutkintonimikes().iterator().next().getKoodiUri(),
                             FieldNames.TUTKINTONIMIKE,
+                            NO,
                             param
-                        )
-                    );
-                // Aseta myös yksittäinen "tutkintonimike"-kenttä, jotta vanha rajapinta ei hajoa
-                ammDto.setTutkintonimike(commonConverter.convertToKoodiDTO(
-                    komo.getTutkintonimikeUri(),
-                    komoto.getTutkintonimikes().iterator().next().getKoodiUri(),
-                    FieldNames.TUTKINTONIMIKE,
-                    NO,
-                    param
-                ));
-            }
-            else {
-                ammDto.setTutkintonimike(commonConverter.convertToKoodiDTO(komo.getTutkintonimikeUri(), komoto.getTutkintonimikeUri(), FieldNames.TUTKINTONIMIKE, NO, param));
+                    ));
+                } else {
+                    ammDto.setTutkintonimike(commonConverter.convertToKoodiDTO(komo.getTutkintonimikeUri(), komoto.getTutkintonimikeUri(), FieldNames.TUTKINTONIMIKE, NO, param));
+                }
             }
 
             if (komoto.getNimi() != null && komoto.getNimi().getKaannoksetAsList() != null && !komoto.getNimi().getKaannoksetAsList().isEmpty()) {

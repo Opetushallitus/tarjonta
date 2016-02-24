@@ -37,8 +37,11 @@ import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.impl.ContextDataServiceImpl;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.*;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.LinkingV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
@@ -56,6 +59,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.joda.time.DateTime;
 import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -69,6 +73,7 @@ import java.util.*;
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -160,8 +165,8 @@ abstract class KoulutusBase extends TestUtilityBase {
         tarjontaKoodistoHelperMock = mock(TarjontaKoodistoHelper.class);
         indexerResourceMock = mock(IndexerResource.class);
         permissionChecker = mock(PermissionChecker.class);
-        doNothing().when(permissionChecker).checkCreateKoulutus(Matchers.anyString());
-        doNothing().when(permissionChecker).checkUpdateKoulutusByTarjoajaOid(Matchers.anyString());
+        doNothing().when(permissionChecker).checkCreateKoulutus(anyString());
+        doNothing().when(permissionChecker).checkUpdateKoulutusByTarjoajaOid(anyString());
 
         koodistoUri = createMock(KoodistoURI.class);
         contextDataService = new ContextDataServiceImpl();
@@ -286,8 +291,8 @@ abstract class KoulutusBase extends TestUtilityBase {
 
         indexerResourceMock = mock(IndexerResource.class);
         permissionChecker = mock(PermissionChecker.class);
-        doNothing().when(permissionChecker).checkCreateKoulutus(Matchers.anyString());
-        doNothing().when(permissionChecker).checkUpdateKoulutusByTarjoajaOid(Matchers.anyString());
+        doNothing().when(permissionChecker).checkCreateKoulutus(anyString());
+        doNothing().when(permissionChecker).checkUpdateKoulutusByTarjoajaOid(anyString());
         koodistoUri = mock(KoodistoURI.class);
         koulutusSisaltyvyysDAO = mock(KoulutusSisaltyvyysDAO.class);
         koulutusSearchService = mock(KoulutusSearchService.class);
@@ -306,6 +311,12 @@ abstract class KoulutusBase extends TestUtilityBase {
         Whitebox.setInternalState(instance, "oppilaitosKoodiRelations", oppilaitosKoodiRelations);
         Whitebox.setInternalState(instance, "linkingV1Resource", linkingV1Resource);
 
+        KoulutusValidator validatorMock = mock(KoulutusValidator.class);
+        when(validatorMock.validateOrganisation(
+                any(OrganisaatioV1RDTO.class), any(ResultV1RDTO.class), any(KoulutusValidationMessages.class),
+                any(KoulutusValidationMessages.class))
+        ).thenReturn(true);
+        Whitebox.setInternalState(instance, "koulutusValidator", validatorMock);
     }
 
     protected final List<GrantedAuthority> getAuthority(String appPermission, String oid) {

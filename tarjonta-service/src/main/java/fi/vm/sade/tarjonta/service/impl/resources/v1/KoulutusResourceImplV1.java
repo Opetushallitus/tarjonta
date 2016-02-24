@@ -296,7 +296,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
-        if (! validateOrganisation(dto.getOrganisaatio(),
+        if (! koulutusValidator.validateOrganisation(dto.getOrganisaatio(),
                 result, KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING,
                 KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID)) {
             return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
@@ -573,32 +573,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return result;
     }
 
-    /**
-     * Call only after organisation oid validation check.
-     *
-     * @param dto
-     * @param result
-     */
-    private boolean validateOrganisation(OrganisaatioV1RDTO dto, ResultV1RDTO result, final KoulutusValidationMessages kvmMissing, final KoulutusValidationMessages kvmInvalid) {
-        if (dto == null || dto.getOid() == null || dto.getOid().isEmpty()) {
-            result.addError(createValidationError(kvmMissing.getFieldName(), kvmMissing.lower()));
-        } else {
-            try {
-                final OrganisaatioDTO org = organisaatioService.findByOid(dto.getOid());
-                if (org == null || org.getOid() == null || org.getOid().isEmpty()) {
-                    result.addError(createValidationError(kvmInvalid.getFieldName(), kvmInvalid.lower()));
-                } else {
-                    return true;
-                }
-            } catch (Exception e) {
-                LOG.error("Organisation service call failed", e);
-                result.addError(createValidationError(kvmInvalid.getFieldName(), kvmInvalid.lower()));
-            }
-        }
-
-        return false;
-    }
-
     private ResultV1RDTO<KoulutusV1RDTO> postGenericKoulutus(KoulutusGenericV1RDTO dto, Koulutusmoduuli komo, ResultV1RDTO<KoulutusV1RDTO> result) {
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
 
@@ -666,12 +640,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     private ResultV1RDTO<KoulutusV1RDTO> postNayttotutkintona(Class clazz, NayttotutkintoV1RDTO dto, final Koulutusmoduuli komo, ResultV1RDTO<KoulutusV1RDTO> result) {
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
 
-        KoulutusValidator.validateKoulutusNayttotutkinto(dto, komo, result);
+        koulutusValidator.validateKoulutusNayttotutkinto(dto, komo, result);
 
-        if (!result.hasErrors()
-                && validateOrganisation(dto.getJarjestavaOrganisaatio(),
-                result, KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING,
-                KoulutusValidationMessages.KOULUTUS_JARJESTAJA_INVALID)) {
+        if (!result.hasErrors()) {
 
             final RestParam param = RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang());
             KoulutusV1RDTO dtoAfterOperation;

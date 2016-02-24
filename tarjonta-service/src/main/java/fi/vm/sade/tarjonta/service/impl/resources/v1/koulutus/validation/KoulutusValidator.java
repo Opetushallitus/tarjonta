@@ -19,6 +19,8 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
@@ -26,6 +28,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
@@ -72,6 +75,9 @@ public class KoulutusValidator {
 
     @Autowired
     private PermissionChecker permissionChecker;
+
+    @Autowired
+    private OrganisaatioService organisaatioService;
 
     /**
      * Required data validation for koulutus -type of objects.
@@ -263,7 +269,7 @@ public class KoulutusValidator {
         return result;
     }
 
-    public static ResultV1RDTO validateKoulutusNayttotutkinto(NayttotutkintoV1RDTO dto, Koulutusmoduuli komo, ResultV1RDTO result) {
+    public ResultV1RDTO validateKoulutusNayttotutkinto(NayttotutkintoV1RDTO dto, Koulutusmoduuli komo, ResultV1RDTO result) {
         if (validateBaseKoulutusData(dto, komo, result, true)) {
             //a major validation error, validation must stop now!
             return result;
@@ -271,10 +277,19 @@ public class KoulutusValidator {
 
         validateKoulutusWithOrWithoutKoulutusohjelma(dto, komo.getModuuliTyyppi(), result);
 
-        validateKoodiUris(result, dto.getOpetuskielis(), KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_INVALID, DEFAULT_MIN);
+        if (!TarjontaTila.PUUTTEELLINEN.equals(dto.getTila())) {
+            validateKoodiUris(result, dto.getOpetuskielis(), KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_INVALID, DEFAULT_MIN);
 
-        if (dto.getJarjestavaOrganisaatio() == null || dto.getJarjestavaOrganisaatio().getOid() == null || dto.getJarjestavaOrganisaatio().getOid().isEmpty()) {
-            result.addError(createValidationError(KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING.lower()));
+            if (dto.getJarjestavaOrganisaatio() == null || dto.getJarjestavaOrganisaatio().getOid() == null || dto.getJarjestavaOrganisaatio().getOid().isEmpty()) {
+                result.addError(createValidationError(KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING.lower()));
+            } else {
+                validateOrganisation(
+                        dto.getJarjestavaOrganisaatio(),
+                        result,
+                        KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING,
+                        KoulutusValidationMessages.KOULUTUS_JARJESTAJA_INVALID
+                );
+            }
         }
 
         if (dto.getValmistavaKoulutus() != null) {
@@ -292,6 +307,26 @@ public class KoulutusValidator {
         validateAlkamisPvms(result, dto);
 
         return result;
+    }
+
+    public boolean validateOrganisation(OrganisaatioV1RDTO dto, ResultV1RDTO result, final KoulutusValidationMessages kvmMissing, final KoulutusValidationMessages kvmInvalid) {
+        if (dto == null || dto.getOid() == null || dto.getOid().isEmpty()) {
+            result.addError(createValidationError(kvmMissing.getFieldName(), kvmMissing.lower()));
+        } else {
+            try {
+                final OrganisaatioDTO org = organisaatioService.findByOid(dto.getOid());
+                if (org == null || org.getOid() == null || org.getOid().isEmpty()) {
+                    result.addError(createValidationError(kvmInvalid.getFieldName(), kvmInvalid.lower()));
+                } else {
+                    return true;
+                }
+            } catch (Exception e) {
+                LOG.error("Organisation service call failed", e);
+                result.addError(createValidationError(kvmInvalid.getFieldName(), kvmInvalid.lower()));
+            }
+        }
+
+        return false;
     }
 
     /**

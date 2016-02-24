@@ -11,6 +11,8 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntityTest;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
@@ -61,6 +63,13 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
         Whitebox.setInternalState(populator, "koodiService", KoulutusDTOConverterToEntityTest.mockKoodiService(null));
         Whitebox.setInternalState(populator, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
         Whitebox.setInternalState(koulutusResourceV1, "koulutusImplicitDataPopulator", populator);
+
+        KoulutusValidator validatorMock = mock(KoulutusValidator.class);
+        when(validatorMock.validateOrganisation(
+                any(OrganisaatioV1RDTO.class), any(ResultV1RDTO.class), any(KoulutusValidationMessages.class),
+                any(KoulutusValidationMessages.class))
+        ).thenReturn(true);
+        Whitebox.setInternalState(koulutusResourceV1, "koulutusValidator", validatorMock);
     }
 
     @Test
