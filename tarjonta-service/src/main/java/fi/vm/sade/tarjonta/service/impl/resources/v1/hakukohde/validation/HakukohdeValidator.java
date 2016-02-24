@@ -78,7 +78,7 @@ public class HakukohdeValidator {
             return validationMessages;
         }
 
-        TarjontaTila hakukohdeTila = TarjontaTila.valueOf(hakukohdeRDTO.getTila());
+        TarjontaTila hakukohdeTila = hakukohdeRDTO.getTila();
 
         if (hakukohdeRDTO.getOid() == null && hakukohdeTila.equals(TarjontaTila.JULKAISTU) || hakukohdeRDTO.getOid() == null && hakukohdeTila.equals(TarjontaTila.PERUTTU)) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TILA_WRONG);
@@ -222,7 +222,7 @@ public class HakukohdeValidator {
         String hakuOid = hakukohdeDTO.getHakuOid();
         String nimiUri = hakukohdeDTO.getHakukohteenNimiUri();
 
-        if (!includeInDuplicateCheck(TarjontaTila.valueOf(hakukohdeDTO.getTila()))) {
+        if (!includeInDuplicateCheck(hakukohdeDTO.getTila())) {
             return false;
         }
 

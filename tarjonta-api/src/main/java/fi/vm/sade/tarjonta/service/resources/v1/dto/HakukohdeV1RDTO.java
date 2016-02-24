@@ -5,6 +5,7 @@ import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 import java.util.*;
@@ -46,7 +47,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private String sahkoinenToimitusOsoite;
     private String soraKuvausKoodiUri;
     @ApiModelProperty(value = "Hakukohde's state", required = true, allowableValues = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU")
-    private String tila;
+    private TarjontaTila tila;
     private String valintaperustekuvausKoodiUri;
     private Date liitteidenToimitusPvm;
     private String ulkoinenTunniste;
@@ -180,11 +181,11 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.soraKuvausKoodiUri = soraKuvausKoodiUri;
     }
 
-    public String getTila() {
+    public TarjontaTila getTila() {
         return tila;
     }
 
-    public void setTila(String tila) {
+    public void setTila(TarjontaTila tila) {
         this.tila = tila;
     }
 

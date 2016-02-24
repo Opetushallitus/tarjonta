@@ -359,7 +359,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
         hakukohdeDTO.setHakuOid("hakuOid");
         hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi");
         hakukohdeDTO.getHakukohdeKoulutusOids().add("komotoOid");
-        hakukohdeDTO.setTila("VALMIS");
+        hakukohdeDTO.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.VALMIS);
 
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         komoto.setOid("komotoOid");
@@ -390,7 +390,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
         hakukohdeDTO.setHakuOid("hakuOid");
         hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi");
         hakukohdeDTO.getHakukohdeKoulutusOids().add("komotoOid");
-        hakukohdeDTO.setTila("VALMIS");
+        hakukohdeDTO.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.VALMIS);
 
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         komoto.setOid("komotoOid");
@@ -421,7 +421,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
         hakukohdeDTO.setHakuOid("hakuOid");
         hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi");
         hakukohdeDTO.getHakukohdeKoulutusOids().add("komotoOid");
-        hakukohdeDTO.setTila("VALMIS");
+        hakukohdeDTO.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.VALMIS);
 
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         komoto.setOid("komotoOid");
@@ -452,7 +452,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
         hakukohdeDTO.setHakuOid("hakuOid");
         hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi");
         hakukohdeDTO.getHakukohdeKoulutusOids().add("komotoOid");
-        hakukohdeDTO.setTila("VALMIS");
+        hakukohdeDTO.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.VALMIS);
 
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         komoto.setOid("komotoOid");
@@ -637,7 +637,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
         hakukohdeDTO = converterV1.setDefaultValues(hakukohdeDTO);
         hakukohdeDTO.setOid("3.2.1");
         hakukohdeDTO.setToteutusTyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS);
-        hakukohdeDTO.setTila("JULKAISTU");
+        hakukohdeDTO.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU);
         hakukohdeDTO.setHakuOid("1.2.3");
         hakukohdeDTO.setHakukohteenNimiUri("nimi_uri");
         hakukohdeDTO.setHakukohdeKoulutusOids(Arrays.asList("1.2.3.4.5"));

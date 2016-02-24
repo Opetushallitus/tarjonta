@@ -161,7 +161,7 @@ public class ConverterV1Test extends TestMockBase {
     private HakukohdeV1RDTO getHakukohdeDTO() {
         HakukohdeV1RDTO hakukohdeDTO = new HakukohdeV1RDTO();
         hakukohdeDTO = converter.setDefaultValues(hakukohdeDTO);
-        hakukohdeDTO.setTila("JULKAISTU");
+        hakukohdeDTO.setTila(TarjontaTila.JULKAISTU);
         hakukohdeDTO.setValintakokeet(getValintakokeetDTOs());
         hakukohdeDTO.setToteutusTyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS);
         return hakukohdeDTO;

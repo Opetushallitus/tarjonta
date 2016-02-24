@@ -592,7 +592,7 @@ public class ConverterV1 {
         hakukohdeRDTO.setKaytetaanHakukohdekohtaistaHakuaikaa(hakukohde.hakuaikasSet());
         hakukohdeRDTO.setSahkoinenToimitusOsoite(hakukohde.getSahkoinenToimitusOsoite());
         hakukohdeRDTO.setSoraKuvausKoodiUri(checkAndRemoveForEmbeddedVersionInUri(hakukohde.getSoraKuvausKoodiUri()));
-        hakukohdeRDTO.setTila(hakukohde.getTila().name());
+        hakukohdeRDTO.setTila(hakukohde.getTila());
         hakukohdeRDTO.setValintaperustekuvausKoodiUri(checkAndRemoveForEmbeddedVersionInUri(hakukohde.getValintaperustekuvausKoodiUri()));
         hakukohdeRDTO.setLiitteidenToimitusPvm(hakukohde.getLiitteidenToimitusPvm());
         hakukohdeRDTO.setLisatiedot(convertMonikielinenTekstiToMapWithoutVersions(hakukohde.getLisatiedot()));
@@ -1031,7 +1031,7 @@ public class ConverterV1 {
             hakukohde.setHakuaikaLoppuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
         }
 
-        hakukohde.setTila(TarjontaTila.valueOf(hakukohdeRDTO.getTila()));
+        hakukohde.setTila(hakukohdeRDTO.getTila());
         hakukohde.setLiitteidenToimitusPvm(hakukohdeRDTO.getLiitteidenToimitusPvm());
         hakukohde.setValintojenAloituspaikatLkm(hakukohdeRDTO.getValintojenAloituspaikatLkm());
 

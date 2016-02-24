@@ -17,8 +17,8 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KorkeakouluOpintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -170,7 +170,7 @@ public class HakukohdeResourceImplV1Test {
 
     public HakukohdeV1RDTO baseHakukohde() {
         HakukohdeV1RDTO dto = new HakukohdeV1RDTO();
-        dto.setTila(TarjontaTila.LUONNOS.value());
+        dto.setTila(TarjontaTila.LUONNOS);
         return dto;
     }
 

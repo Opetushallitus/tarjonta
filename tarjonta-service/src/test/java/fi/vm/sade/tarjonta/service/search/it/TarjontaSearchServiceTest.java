@@ -416,7 +416,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         // nimet.add(nimi);
 
         hakukohde.setHakukohteenNimet(nimet);
-        hakukohde.setTila(TarjontaTila.VALMIS.toString());
+        hakukohde.setTila(TarjontaTila.VALMIS);
 
         ArrayList<String> koulutusOidit = new ArrayList();
         koulutusOidit.add(koulutusOid);

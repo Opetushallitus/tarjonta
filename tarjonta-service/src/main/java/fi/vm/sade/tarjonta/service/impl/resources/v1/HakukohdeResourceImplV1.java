@@ -793,7 +793,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             Set<KoulutusmoduuliToteutus> komotot = Sets.newHashSet(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(hakukohdeRDTO.getHakukohdeKoulutusOids()));
             setHakukohde(komotot, hakukohde);
 
-            Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, TarjontaTila.valueOf(hakukohdeRDTO.getTila()), hakukohde.getOid());
+            Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, hakukohdeRDTO.getTila(), hakukohde.getOid());
 
             if (publicationDataService.isValidStatusChange(tilamuutos)) {
 
