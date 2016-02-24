@@ -549,10 +549,11 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         Preconditions.checkNotNull(hakukohdeOid, "Hakukohde OID string object cannot be null.");
         List<String> oids = Lists.<String>newArrayList();
         oids.add(hakukohdeOid);
-        Hakukohde findByOid = findHakukohdeByOid(hakukohdeOid);
-        Preconditions.checkArgument(findByOid != null, "Delete failed, entity not found.");
-        findByOid.setTila(TarjontaTila.POISTETTU);
-        findByOid.setLastUpdatedByOid(userOid);
+        Hakukohde hakukohde = findHakukohdeByOid(hakukohdeOid);
+        Preconditions.checkArgument(hakukohde != null, "Delete failed, entity not found.");
+        hakukohde.setTila(TarjontaTila.POISTETTU);
+        hakukohde.setLastUpdatedByOid(userOid);
+        hakukohde.setUniqueExternalId(null); // Unique external id is globally unique, make ID available again
     }
 
     @Override

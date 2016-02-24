@@ -505,10 +505,11 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         Preconditions.checkNotNull(komotoOid, "Komoto OID string object cannot be null.");
         List<String> oids = Lists.<String>newArrayList();
         oids.add(komotoOid);
-        KoulutusmoduuliToteutus findByOid = findByOid(komotoOid);
-        Preconditions.checkArgument(findByOid != null, "Delete failed, entity not found.");
-        findByOid.setTila(TarjontaTila.POISTETTU);
-        findByOid.setLastUpdatedByOid(userOid);
+        KoulutusmoduuliToteutus komoto = findByOid(komotoOid);
+        Preconditions.checkArgument(komoto != null, "Delete failed, entity not found.");
+        komoto.setTila(TarjontaTila.POISTETTU);
+        komoto.setLastUpdatedByOid(userOid);
+        komoto.setUniqueExternalId(null); // Unique external id is globally unique, make ID available again
     }
 
     @Override
