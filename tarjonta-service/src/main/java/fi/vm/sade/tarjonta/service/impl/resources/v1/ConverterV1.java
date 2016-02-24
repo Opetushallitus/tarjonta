@@ -872,6 +872,7 @@ public class ConverterV1 {
         for (PainotettavaOppiaine painotettavaOppiaine : hakukohde.getPainotettavatOppiaineet()) {
             PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO = new PainotettavaOppiaineV1RDTO();
             painotettavaOppiaineV1RDTO.setOid(painotettavaOppiaine.getId().toString());
+            painotettavaOppiaineV1RDTO.setVersion(painotettavaOppiaine.getVersion());
             painotettavaOppiaineV1RDTO.setOppiaineUri(painotettavaOppiaine.getOppiaine());
             painotettavaOppiaineV1RDTO.setPainokerroin(painotettavaOppiaine.getPainokerroin());
             hakukohdeRDTO.getPainotettavatOppiaineet().add(painotettavaOppiaineV1RDTO);
@@ -1464,6 +1465,7 @@ public class ConverterV1 {
         Valintakoe valintakoe = new Valintakoe();
 
         valintakoe.setId(oidFromString(valintakoeV1RDTO.getOid()));
+        valintakoe.setVersion((long) valintakoeV1RDTO.getVersion());
         valintakoe.setValintakoeNimi(valintakoeV1RDTO.getValintakoeNimi());
         valintakoe.setKieli(valintakoeV1RDTO.getKieliUri());
         valintakoe.setTyyppiUri(valintakoeV1RDTO.getValintakoetyyppi());
@@ -1494,6 +1496,7 @@ public class ConverterV1 {
         PainotettavaOppiaine painotettavaOppiaine = new PainotettavaOppiaine();
 
         painotettavaOppiaine.setId(oidFromString(painotettavaOppiaineV1RDTO.getOid()));
+        painotettavaOppiaine.setVersion(painotettavaOppiaineV1RDTO.getVersion());
         painotettavaOppiaine.setOppiaine(painotettavaOppiaineV1RDTO.getOppiaineUri());
         painotettavaOppiaine.setPainokerroin(painotettavaOppiaineV1RDTO.getPainokerroin());
 
@@ -1586,6 +1589,7 @@ public class ConverterV1 {
     private ValintakoeV1RDTO convertValintakoeToValintakoeV1RDTO(Valintakoe valintakoe) {
         ValintakoeV1RDTO valintakoeV1RDTO = new ValintakoeV1RDTO();
         valintakoeV1RDTO.setOid(valintakoe.getId().toString());
+        valintakoeV1RDTO.setVersion(valintakoe.getVersion().intValue());
         valintakoeV1RDTO.setKieliUri(valintakoe.getKieli());
         valintakoeV1RDTO.setValintakoeNimi(valintakoe.getValintakoeNimi());
         valintakoeV1RDTO.setValintakoetyyppi(valintakoe.getTyyppiUri());
