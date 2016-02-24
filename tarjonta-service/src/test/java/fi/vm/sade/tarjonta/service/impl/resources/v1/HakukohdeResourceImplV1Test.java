@@ -133,7 +133,7 @@ public class HakukohdeResourceImplV1Test {
         assertTrue(Iterables.find(result.getResult().getKoulutukset(), new Predicate<KoulutusIdentification>() {
             @Override
             public boolean apply(KoulutusIdentification id) {
-                return koulutusDto.getUniqueExternalId().equals(id.getUlkoinenTunniste());
+                return koulutusDto.getUniqueExternalId().equals(id.getUniqueExternalId());
             }
         }, null) != null);
     }

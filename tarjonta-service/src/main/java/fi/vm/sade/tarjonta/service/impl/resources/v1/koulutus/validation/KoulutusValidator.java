@@ -156,7 +156,7 @@ public class KoulutusValidator {
             KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findKomotoByKoulutusId(id);
             String tunniste = StringUtils.isNotBlank(id.getOid())
                     ? "oid: " + id.getOid()
-                    : "ulkoinenTunniste:" + id.getUlkoinenTunniste();
+                    : "uniqueExternalId:" + id.getUniqueExternalId();
             if (komoto == null || TarjontaTila.POISTETTU.equals(komoto.getTila())) {
                 result.addError(createValidationError(SISALTYY_KOULUTUKSIIN, "koulutus with " + tunniste + " does not exist!"));
             } else {

@@ -3,14 +3,14 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 public class KoulutusIdentification {
 
     private String oid;
-    private String ulkoinenTunniste; // oppilaitoksen käyttämä oma ulkoinenTunniste
+    private String uniqueExternalId; // oppilaitoksen käyttämä oma globaalisti uniikki tunniste
 
     public KoulutusIdentification() {
     }
 
-    public KoulutusIdentification(String oid, String ulkoinenTunniste) {
+    public KoulutusIdentification(String oid, String uniqueExternalId) {
         this.oid = oid;
-        this.ulkoinenTunniste = ulkoinenTunniste;
+        this.uniqueExternalId = uniqueExternalId;
     }
 
     public String getOid() {
@@ -21,11 +21,11 @@ public class KoulutusIdentification {
         this.oid = oid;
     }
 
-    public String getUlkoinenTunniste() {
-        return ulkoinenTunniste;
+    public String getUniqueExternalId() {
+        return uniqueExternalId;
     }
 
-    public void setUlkoinenTunniste(String ulkoinenTunniste) {
-        this.ulkoinenTunniste = ulkoinenTunniste;
+    public void setUniqueExternalId(String uniqueExternalId) {
+        this.uniqueExternalId = uniqueExternalId;
     }
 }
