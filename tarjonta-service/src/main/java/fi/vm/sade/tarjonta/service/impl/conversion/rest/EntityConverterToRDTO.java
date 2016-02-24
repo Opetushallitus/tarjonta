@@ -411,9 +411,10 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             }
 
             final NayttotutkintoV1RDTO nayttoDto = (NayttotutkintoV1RDTO) dto;
-            //nayttoDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
 
-            nayttoDto.setJarjestavaOrganisaatio(commonConverter.searchOrganisaationNimi(komoto.getJarjesteja(), param.getLocale()));
+            if (!StringUtils.isBlank(komoto.getJarjesteja())) {
+                nayttoDto.setJarjestavaOrganisaatio(commonConverter.searchOrganisaationNimi(komoto.getJarjesteja(), param.getLocale()));
+            }
 
             if (komoto.getValmistavaKoulutus() != null) {
                 nayttoDto.setValmistavaKoulutus(convertToValmistavaDto(komoto.getValmistavaKoulutus(), param));
