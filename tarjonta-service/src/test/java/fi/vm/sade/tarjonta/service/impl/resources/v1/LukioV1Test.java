@@ -95,7 +95,7 @@ public class LukioV1Test {
             koulutusmoduuliDAO.insert(parentKomo);
 
             komo = new Koulutusmoduuli();
-            komo.setOid("lukioKomoOid");
+            komo.setOid(KOMO_OID);
             komo.setModuuliTyyppi(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
             komo.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
             koulutusmoduuliDAO.insert(komo);
@@ -158,7 +158,7 @@ public class LukioV1Test {
         KoulutusLukioV1RDTO dto = baseDto();
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
 
-        ResultV1RDTO<KoulutusKorkeakouluV1RDTO> result = (ResultV1RDTO<KoulutusKorkeakouluV1RDTO>) koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusLukioV1RDTO> result = (ResultV1RDTO<KoulutusLukioV1RDTO>) koulutusResourceV1.postKoulutus(dto).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
     }
 
