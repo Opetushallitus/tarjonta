@@ -23,9 +23,12 @@ public class PreloadKoodisto {
         koodistoProactiveCaching.cacheKoodisto("koulutus");
         koodistoProactiveCaching.cacheKoodisto("koulutus", 1);
         koodistoProactiveCaching.cacheKoodisto("koulutus", 2);
+        koodistoProactiveCaching.cacheKoodisto("koulutus", 3);
+        koodistoProactiveCaching.cacheKoodisto("koulutus", 4);
         koodistoProactiveCaching.cacheKoodisto("kieli");
         koodistoProactiveCaching.cacheKoodisto("kausi");
         koodistoProactiveCaching.cacheKoodisto("tutkintonimikkeet");
+        koodistoProactiveCaching.cacheKoodisto("tutkintonimikkeet", 1);
         koodistoProactiveCaching.cacheKoodisto("tutkintonimikekk");
         koodistoProactiveCaching.cacheKoodisto("aiheet");
         koodistoProactiveCaching.cacheKoodisto("osaamisala");
