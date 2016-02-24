@@ -183,18 +183,6 @@ public class KoulutusValidator {
         }
     }
 
-    private static boolean hasInvalidStartingDate(KoulutusV1RDTO dto) {
-        if (dto.getKoulutuksenAlkamisPvms() == null) return false;
-
-        for (Date date : dto.getKoulutuksenAlkamisPvms()) {
-            if (date.before(firstOfJanuary2000)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private static boolean hasStartingDateMissing(KoulutusV1RDTO dto) {
         return (dto.getKoulutuksenAlkamisPvms() == null || dto.getKoulutuksenAlkamisPvms().isEmpty())
                 && (dto.getKoulutuksenAlkamisvuosi() == null
