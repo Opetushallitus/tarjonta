@@ -38,6 +38,7 @@ import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.copy.NullAwareBeanUtilsBean;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidator;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
@@ -53,6 +54,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
+import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -67,6 +69,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.annotation.Nullable;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import static fi.vm.sade.tarjonta.service.AuditHelper.*;
@@ -122,6 +125,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Autowired
     private HakukohdeValidator hakukohdeValidator;
+
+    private BeanUtilsBean beanUtils = new NullAwareBeanUtilsBean();
 
     public final static String KOULUTUSASTE_KEY = "koulutusaste";
 
@@ -242,17 +247,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     @Transactional(readOnly = true)
     public ResultV1RDTO<HakukohdeV1RDTO> findByUlkoinenTunniste(String tarjoajaOid, String ulkoinenTunniste) {
-
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByUlkoinenTunniste(ulkoinenTunniste, tarjoajaOid);
-
-        ResultV1RDTO<HakukohdeV1RDTO> resultV1RDTO = new ResultV1RDTO<HakukohdeV1RDTO>();
-        if (hakukohde != null) {
-            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
-            resultV1RDTO.setResult(converterV1.toHakukohdeRDTO(hakukohde));
-        } else {
-            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
-        }
-        return resultV1RDTO;
+        return findByOid(hakukohde.getOid());
     }
 
     @Override
@@ -580,6 +576,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             return updateHakukohde(existingHakukohde.getOid(), hakukohdeRDTO);
         }
 
+        hakukohdeRDTO = converterV1.setDefaultValues(hakukohdeRDTO);
+
         List<HakukohdeValidationMessages> validationMessageses = validateHakukohdeAndPopulateImplicitFields(hakukohdeRDTO);
 
         if (validationMessageses.size() > 0) {
@@ -727,6 +725,14 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         return dto;
     }
 
+    private HakukohdeV1RDTO mergeExistingHakukohdeData(String oid, HakukohdeV1RDTO dto)
+            throws InvocationTargetException, IllegalAccessException {
+        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
+        HakukohdeV1RDTO originalDto = converterV1.toHakukohdeRDTO(hakukohde);
+        beanUtils.copyProperties(originalDto, dto);
+        return originalDto;
+    }
+
     @Override
     @Transactional
     public Response updateHakukohde(String hakukohdeOid, HakukohdeV1RDTO hakukohdeRDTO) {
@@ -734,6 +740,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         try {
 
             Date today = new Date();
+
+            hakukohdeRDTO = mergeExistingHakukohdeData(hakukohdeOid, hakukohdeRDTO);
 
             List<HakukohdeValidationMessages> validationMessagesList = validateHakukohdeAndPopulateImplicitFields(hakukohdeRDTO);
 

@@ -29,6 +29,7 @@ import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.copy.NullAwareBeanUtilsBean;
 import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestConverters;
@@ -48,6 +49,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
+import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -99,6 +101,8 @@ public class ConverterV1 {
 
     @Value("${koodisto.hakutapa.jatkuvaHaku.uri}")
     private String _jatkuvaHakutapaUri;
+
+    private BeanUtilsBean beanUtils = new NullAwareBeanUtilsBean();
 
     public static boolean isJatkuvaHaku(HakuV1RDTO haku, String jatkuvaHakutapaUriParam) {
 
@@ -494,8 +498,21 @@ public class ConverterV1 {
 
     }
 
+    public HakukohdeV1RDTO setDefaultValues(HakukohdeV1RDTO dto) {
+        HakukohdeV1RDTO defaultDto = HakukohdeV1RDTO.defaultDto();
+        try {
+            beanUtils.copyProperties(defaultDto, dto);
+            return defaultDto;
+        } catch (Exception e) {
+            LOG.error("Error populating default values", e);
+            return dto;
+        }
+    }
+
     public HakukohdeV1RDTO toHakukohdeRDTO(Hakukohde hakukohde) {
         HakukohdeV1RDTO hakukohdeRDTO = new HakukohdeV1RDTO();
+
+        hakukohdeRDTO = setDefaultValues(hakukohdeRDTO);
 
         hakukohdeRDTO.setUniqueExternalId(hakukohde.getUniqueExternalId());
 

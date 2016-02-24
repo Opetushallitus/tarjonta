@@ -47,11 +47,11 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Column(name = "unique_external_id", nullable = true, insertable = true, updatable = false, unique = true)
     private String uniqueExternalId;
 
-    @ManyToMany(mappedBy = "hakukohdes", cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "hakukohdes", cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
 
     @JsonManagedReference
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hakukohde", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "hakukohde", orphanRemoval = true)
     private Set<Valintakoe> valintakoes = new HashSet<Valintakoe>();
 
     /**
@@ -97,7 +97,7 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Enumerated(EnumType.STRING)
     private TarjontaTila tila;
 
-    @OneToMany(mappedBy = "hakukohde", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "hakukohde", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Yhteystiedot> yhteystiedot = new HashSet<Yhteystiedot>();
 
     @Embedded
@@ -107,21 +107,21 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "liitteidenToimitusPvm")
     private Date liitteidenToimitusPvm;
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Haku haku;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "lisatiedot_teksti_id")
     private MonikielinenTeksti lisatiedot;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<PainotettavaOppiaine> painotettavatOppiaineet = new HashSet<PainotettavaOppiaine>();
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hakukohde", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "hakukohde", orphanRemoval = true)
     @OrderBy("jarjestys")
     private List<HakukohdeLiite> liites = new ArrayList<HakukohdeLiite>();
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_hakukelpoisuusvaatimus", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<String> hakukelpoisuusVaatimukset = new HashSet<String>();
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_opinto_oikeus", joinColumns = @JoinColumn(name = TABLE_NAME + "_id"))
     @Column(name = "opinto_oikeus_uri")
     private Set<String> opintoOikeudet = new HashSet<String>();
@@ -167,7 +167,7 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date viimIndeksointiPvm = null;
 
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Hakuaika hakuaika;
 
     @Column(name = "hakuaikaAlkuPvm")
@@ -202,7 +202,7 @@ public class Hakukohde extends TarjontaBaseEntity {
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<String> soraKuvausKielet = new HashSet<String>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinTable(name = "hakukohde_koulutusmoduuli_toteutus_tarjoajatiedot", inverseJoinColumns = @JoinColumn(name = "koulutusmoduuli_toteutus_tarjoajatiedot_id"))
     @MapKeyColumn(name = "koulutusmoduuli_toteutus_oid", nullable = false)
     private Map<String, KoulutusmoduuliToteutusTarjoajatiedot> koulutusmoduuliToteutusTarjoajatiedot = new HashMap<String, KoulutusmoduuliToteutusTarjoajatiedot>();
