@@ -61,8 +61,6 @@ public class HakukohdeResourceImplV1Test {
     @Autowired
     OidServiceMock oidServiceMock;
 
-    private static final String HAUN_OID = "hakuOid";
-
     @Test
     public void testCreateOpintokokonaisuusHakukohdeFailsWhenMissingRequiredData() throws OIDCreationException {
         HakukohdeV1RDTO hakukohde = baseHakukohde();
@@ -140,6 +138,36 @@ public class HakukohdeResourceImplV1Test {
         }, null) != null);
     }
 
+    @Test
+    public void testDeltaEditHakukohde() throws OIDCreationException {
+        when(oidService.get(TarjontaOidType.HAKUKOHDE)).thenReturn(oidServiceMock.getOid());
+
+        Haku haku = insertHaku();
+        final KorkeakouluOpintoV1RDTO koulutusDto = new KorkeakouluOpintoV1RDTO();
+        koulutusDto.setUniqueExternalId("deltaHakukohdeEdit");
+
+        koulutusResourceTest.insertLuonnosOpintokokonaisuus(koulutusDto);
+
+        HakukohdeV1RDTO hakukohde = baseHakukohde();
+        hakukohde.setKoulutukset(Sets.newHashSet(new KoulutusIdentification(null, koulutusDto.getUniqueExternalId())));
+        hakukohde.setHakukohteenNimet(ImmutableMap.of("kieli_fi", "hakukohteen nimi"));
+        hakukohde.setHakuOid(haku.getOid());
+        hakukohde.setUniqueExternalId("deltaHakukohdeEdit");
+        hakukohde.setKelaLinjaKoodi("kelanKoodi");
+
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde).getEntity();
+        assertEquals(OK, result.getStatus());
+
+        HakukohdeV1RDTO deltaDto = new HakukohdeV1RDTO();
+        deltaDto.setUniqueExternalId(hakukohde.getUniqueExternalId());
+        deltaDto.setAloituspaikatLkm(10);
+
+        result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(deltaDto).getEntity();
+        assertEquals(OK, result.getStatus());
+        assertEquals(deltaDto.getAloituspaikatLkm(), result.getResult().getAloituspaikatLkm());
+        assertEquals(hakukohde.getKelaLinjaKoodi(), result.getResult().getKelaLinjaKoodi());
+    }
+
     public HakukohdeV1RDTO baseHakukohde() {
         HakukohdeV1RDTO dto = new HakukohdeV1RDTO();
         dto.setTila(TarjontaTila.LUONNOS.value());
@@ -154,7 +182,7 @@ public class HakukohdeResourceImplV1Test {
         haku.setKohdejoukkoUri("kohdejoukko");
         haku.setHakukausiUri("hakukausiUri");
         haku.setHakutyyppiUri("hakutyyppi");
-        haku.setOid(HAUN_OID);
+        haku.setOid(oidServiceMock.getOid());
         return hakuDAO.insert(haku);
     }
 
