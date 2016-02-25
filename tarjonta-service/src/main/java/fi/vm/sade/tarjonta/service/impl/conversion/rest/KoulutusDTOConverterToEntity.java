@@ -742,7 +742,7 @@ public class KoulutusDTOConverterToEntity {
 
         komoto.setOppiaineet(oppiaineetFromDtoToEntity(dto.getOppiaineet()));
 
-        if (dto.getExtraParams() != null) {
+        if (dto.getExtraParams() != null && !dto.getExtraParams().isEmpty()) {
             if ("true".equals(dto.getExtraParams().get("opintopolkuKesaKausi"))) {
                 komoto.setOpintopolkuAlkamiskausi(OpintopolkuAlkamiskausi.KaudetEnum.KESA);
             }

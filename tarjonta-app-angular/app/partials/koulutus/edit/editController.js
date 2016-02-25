@@ -409,6 +409,7 @@ app.controller('BaseEditController', [
             KoulutusConverterFactory.createUiModels(uiModel, tyyppi);
             uiModel.isMutable = true;
             model.isNew = true;
+            model.extraParams = {};
             $scope.controlFormMessages(form, uiModel, 'INIT');
             KoulutusConverterFactory.createAPIModel(model, Config.app.userLanguages, tyyppi);
             var orgOid = $routeParams.org || model.organisaatio.oid;
