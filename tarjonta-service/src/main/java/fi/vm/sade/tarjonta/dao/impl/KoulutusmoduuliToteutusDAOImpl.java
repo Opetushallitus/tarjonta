@@ -133,7 +133,6 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
 
             pohjakoulutus = stripVersionFromKoodiUri(pohjakoulutus) + "#";
             koulutuskoodi = stripVersionFromKoodiUri(koulutuskoodi) + "#";
-            koulutusohjelma = stripVersionFromKoodiUri(koulutusohjelma) + "#";
 
             StringExpression koulutuslajiW = qKomoto.koulutuslajis.any().koodiUri.append("#");
             StringExpression opetuskieliW = qKomoto.opetuskielis.any().koodiUri.append("#");
@@ -145,7 +144,8 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                     .and(koulutuslajiW.substring(0, koulutuslajiW.indexOf("#")).in(matchWithoutVersion(koulutuslajis)))
                     .and(opetuskieliW.substring(0, opetuskieliW.indexOf("#")).in(matchWithoutVersion(opetuskielis)));
 
-            if (!koulutusohjelma.isEmpty()) {
+            if (!StringUtils.isBlank(koulutusohjelma)) {
+                koulutusohjelma = stripVersionFromKoodiUri(koulutusohjelma) + "#";
                 where = where.and(
                         qKomoto.koulutusohjelmaUri.append("#").startsWith(koulutusohjelma)
                         .or(qKomoto.osaamisalaUri.append("#").startsWith(koulutusohjelma))
