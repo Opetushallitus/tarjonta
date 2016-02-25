@@ -1,7 +1,10 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.KoodiService;
@@ -32,7 +35,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO.notEmpty;
 import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.KORKEAKOULUOPINTO;
@@ -142,10 +148,17 @@ public class KoulutusImplicitDataPopulator {
         if (koodis.size() == 1) {
             final KoodiType koulutustyyppi = koodis.get(0);
             List<KoodiType> sisaltaaKoodit = getAlapuolisetKoodit(new KoodiV1RDTO(koulutustyyppi.getKoodiUri(), koulutustyyppi.getVersio(), null));
-            dto.setKoulutuslaji(findCode(sisaltaaKoodit, KOULUTUSLAJI));
+
+            List<KoodiV1RDTO> koulutuslajis = findCodes(sisaltaaKoodit, KOULUTUSLAJI);
+            if (koulutuslajis.size() == 1) {
+                dto.setKoulutuslaji(koulutuslajis.get(0));
+            }
 
             if (dto instanceof KoulutusGenericV1RDTO) {
-                ((KoulutusGenericV1RDTO) dto).setPohjakoulutusvaatimus(findCode(sisaltaaKoodit, POHJAKOULUTUSVAATIMUS_TOINEN_ASTE));
+                List<KoodiV1RDTO> pkVaatimukset = findCodes(sisaltaaKoodit, POHJAKOULUTUSVAATIMUS_TOINEN_ASTE);
+                if (pkVaatimukset.size() == 1) {
+                    ((KoulutusGenericV1RDTO) dto).setPohjakoulutusvaatimus(pkVaatimukset.get(0));
+                }
             }
         }
     }
@@ -160,14 +173,7 @@ public class KoulutusImplicitDataPopulator {
             dto.setEqf(findCode(sisaltaaKoodit, EQF));
             dto.setTutkinto(findCode(sisaltaaKoodit, TUTKINTO));
 
-            if (dto instanceof KoulutusKorkeakouluV1RDTO) {
-                ((KoulutusKorkeakouluV1RDTO) dto).setTutkintonimikes(findCodes(sisaltaaKoodit, TUTKINTONIMIKEKK));
-            } else if (dto instanceof Koulutus2AsteV1RDTO) {
-                KoodiV1RDTO tutkintonimikeKoodi = findCode(sisaltaaKoodit, TUTKINTONIMIKKEET);
-                if (tutkintonimikeKoodi != null) {
-                    ((Koulutus2AsteV1RDTO) dto).setTutkintonimike(tutkintonimikeKoodi);
-                }
-            }
+            setTutkintonimike(sisaltaaKoodit, dto);
         }
         populateKomoOid(dto);
     }
@@ -176,12 +182,7 @@ public class KoulutusImplicitDataPopulator {
         if (notEmpty(dto.getKoulutusohjelma())) {
             List<KoodiType> sisaltaaKoodit = getAlapuolisetKoodit(dto.getKoulutusohjelma());
 
-            if (dto instanceof Koulutus2AsteV1RDTO) {
-                KoodiV1RDTO tutkintonimikeKoodi = findCode(sisaltaaKoodit, TUTKINTONIMIKKEET);
-                if (tutkintonimikeKoodi != null) {
-                    ((Koulutus2AsteV1RDTO) dto).setTutkintonimike(tutkintonimikeKoodi);
-                }
-            }
+            setTutkintonimike(sisaltaaKoodit, dto);
         }
     }
 
@@ -220,15 +221,31 @@ public class KoulutusImplicitDataPopulator {
         return new KoodiV1RDTO(code.getKoodiUri(), code.getVersio(), code.getKoodiArvo());
     }
 
-    private KoodiUrisV1RDTO findCodes(final List<KoodiType> codes, final String koodisto) {
-        Map<String, Integer> uris = new HashMap<String, Integer>();
-        Iterable<KoodiType> filtered = Iterables.filter(codes, matchKoodisto(koodisto));
-        for (KoodiType koodi : filtered) {
-            uris.put(koodi.getKoodiUri(), koodi.getVersio());
+    private List<KoodiV1RDTO> findCodes(final List<KoodiType> codes, final String koodisto) {
+        return FluentIterable.from(codes)
+                .filter(matchKoodisto(koodisto))
+                .transform(new Function<KoodiType, KoodiV1RDTO>() {
+                    @Override
+                    public KoodiV1RDTO apply(KoodiType input) {
+                        return new KoodiV1RDTO(input.getKoodiUri(), input.getVersio(), input.getKoodiArvo());
+                    }
+                }).toList();
+    }
+
+    private void setTutkintonimike(List<KoodiType> sisaltaaKoodit, KoulutusV1RDTO dto) {
+        if (dto instanceof KoulutusKorkeakouluV1RDTO) {
+            List<KoodiV1RDTO> tutkintonimikes = findCodes(sisaltaaKoodit, TUTKINTONIMIKEKK);
+            if (tutkintonimikes.size() == 1) {
+                ((KoulutusKorkeakouluV1RDTO) dto).setTutkintonimikes(
+                        new KoodiUrisV1RDTO(ImmutableMap.of(tutkintonimikes.get(0).getUri(), tutkintonimikes.get(0).getVersio()))
+                );
+            }
+        } else if (dto instanceof Koulutus2AsteV1RDTO) {
+            List<KoodiV1RDTO> tutkintonimikes = findCodes(sisaltaaKoodit, TUTKINTONIMIKKEET);
+            if (tutkintonimikes.size() == 1) {
+                ((Koulutus2AsteV1RDTO) dto).setTutkintonimike(tutkintonimikes.get(0));
+            }
         }
-        KoodiUrisV1RDTO koodiUris = new KoodiUrisV1RDTO();
-        koodiUris.setUris(uris);
-        return koodiUris;
     }
 
     private static Predicate matchKoodisto(final String koodisto) {
