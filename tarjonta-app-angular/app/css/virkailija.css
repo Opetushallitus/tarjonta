@@ -323,3 +323,21 @@ hr {
     display: inline;
     margin-left: 1em;
 }
+
+.excelImportTableHeader {
+    font-size: 0.75em;
+    font-weight: bold;
+}
+
+.excelImportTableRow {
+    font-size: 0.75em;
+}
+
+.excelImportRowWithErrors {
+    background-color: red;
+}
+
+.excelImportRowWithSuccess {
+    background-color: forestgreen;
+}
+
