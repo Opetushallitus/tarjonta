@@ -264,10 +264,10 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
         }
     };
 
-    var splitToOidList = function(value) {
+    var splitToUniqueExternalIdList = function(value) {
         if (value) {
             return _.map(value.split(','), function (x) {
-                return {oid: x};
+                return {uniqueExternalId: x};
             });
         }
     };
@@ -422,7 +422,7 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
             0: ['uniqueExternalId', identity],                      // Hakukohteen tunniste
             1: ['tila', identity],                                  // Hakukohteen tila
             2: ['hakuOid', identity],                               // Haun OID
-            3: ['koulutukset', splitToOidList],                     // Hakukohteen koulutukset (koulutusten tunnisteet pilkulla erotettuna)
+            3: ['koulutukset', splitToUniqueExternalIdList],                     // Hakukohteen koulutukset (koulutusten tunnisteet pilkulla erotettuna)
             4: ['hakukohteenNimet.kieli_fi', identity],             // Hakukohteen nimi (fi)
             5: ['hakukohteenNimet.kieli_sv', identity],	            // Hakukohteen nimi (sv)
             6: ['hakukohteenNimet.kieli_en', identity],             // Hakukohteen nimi (en)
