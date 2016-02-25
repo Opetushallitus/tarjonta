@@ -200,6 +200,10 @@ public class KoodiV1RDTO implements Serializable {
         return dto != null && !StringUtils.isBlank(dto.getUri());
     }
 
+    public static String stripVersionFromKoodiUri(String koodiUri) {
+        return StringUtils.defaultString(koodiUri).split("#")[0];
+    }
+
     @Override
     public String toString() {
         return this.getClass().getSimpleName() +

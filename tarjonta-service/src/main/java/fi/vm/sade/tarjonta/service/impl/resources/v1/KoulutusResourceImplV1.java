@@ -1701,7 +1701,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             koulutusohjelma = getKoodiUriFromKoodiV1RDTO(dto.getKoulutusohjelma(), true);
         }
 
-        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliWithPohjakoulutusAndTarjoaja(
+        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findSameKoulutus(
                 dto.getOrganisaatio().getOid(),
                 getKoodiUriFromKoodiV1RDTO(dto.getPohjakoulutusvaatimus(), true),
                 getKoodiUriFromKoodiV1RDTO(dto.getKoulutuskoodi(), true),
@@ -1710,11 +1710,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 koulutuslajis
         );
 
-        if (komotos != null) {
-            for (KoulutusmoduuliToteutus tmpKomoto : komotos) {
-                if (!isSameKoulutus(dto, tmpKomoto) && isSameKausiAndVuosi(dto, tmpKomoto)) {
-                    return true;
-                }
+        for (KoulutusmoduuliToteutus tmpKomoto : komotos) {
+            if (!isSameKoulutus(dto, tmpKomoto) && isSameKausiAndVuosi(dto, tmpKomoto)) {
+                return true;
             }
         }
 

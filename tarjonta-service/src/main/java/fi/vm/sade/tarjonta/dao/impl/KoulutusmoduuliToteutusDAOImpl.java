@@ -15,7 +15,9 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mysema.query.jpa.JPASubQuery;
@@ -23,6 +25,7 @@ import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
+import com.mysema.query.types.expr.StringExpression;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
@@ -40,6 +43,7 @@ import javax.persistence.Query;
 import java.util.*;
 
 import static fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils.and;
+import static fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO.stripVersionFromKoodiUri;
 
 /**
  */
@@ -119,46 +123,49 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         ).list(qKomoto);
     }
 
-    /*
-     This is done in JPQL because querydsl seems to have a bug with querying element collections. Even version 2.6 does not seem to work
-     */
     @Override
-    public List<KoulutusmoduuliToteutus> findKoulutusModuuliWithPohjakoulutusAndTarjoaja(String tarjoaja, String pohjakoulutus, String koulutusluokitus, String koulutusohjelma,
-            List<String> opetuskielis, List<String> koulutuslajis) {
+    public List<KoulutusmoduuliToteutus> findSameKoulutus(String tarjoaja,
+                                                          String pohjakoulutus, String koulutuskoodi, String koulutusohjelma,
+                                                          List<String> opetuskielis, List<String> koulutuslajis) {
+
         if (opetuskielis != null && opetuskielis.size() > 0 && koulutuslajis != null && koulutuslajis.size() > 0) {
-            String query = "SELECT komoto FROM "
-                    + "KoulutusmoduuliToteutus komoto, Koulutusmoduuli komo, IN (komoto.opetuskielis) o, IN(komoto.koulutuslajis) k "
-                    + "WHERE komoto.koulutusmoduuli = komo "
-                    + "AND komoto.pohjakoulutusvaatimusUri = :pkv "
-                    + "AND komoto.tarjoaja = :tarjoaja "
-                    + "AND komoto.tila NOT IN ('POISTETTU', 'PERUTTU') "
-                    + "AND komo.koulutusUri = :koulutusUri ";
+            QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
 
-            if (koulutusohjelma != null) {
-                query += "AND komo.koulutusohjelmaUri = :koulutusohjelmaUri ";
+            pohjakoulutus = stripVersionFromKoodiUri(pohjakoulutus) + "#";
+            koulutuskoodi = stripVersionFromKoodiUri(koulutuskoodi) + "#";
+            koulutusohjelma = stripVersionFromKoodiUri(koulutusohjelma) + "#";
+
+            StringExpression koulutuslajiW = qKomoto.koulutuslajis.any().koodiUri.append("#");
+            StringExpression opetuskieliW = qKomoto.opetuskielis.any().koodiUri.append("#");
+
+            BooleanExpression where = qKomoto.pohjakoulutusvaatimusUri.append("#").startsWith(pohjakoulutus)
+                    .and(qKomoto.tarjoaja.eq(tarjoaja))
+                    .and(qKomoto.tila.notIn(TarjontaTila.PERUTTU, TarjontaTila.POISTETTU))
+                    .and(qKomoto.koulutusUri.append("#").startsWith(koulutuskoodi))
+                    .and(koulutuslajiW.substring(0, koulutuslajiW.indexOf("#")).in(matchWithoutVersion(koulutuslajis)))
+                    .and(opetuskieliW.substring(0, opetuskieliW.indexOf("#")).in(matchWithoutVersion(opetuskielis)));
+
+            if (!koulutusohjelma.isEmpty()) {
+                where = where.and(
+                        qKomoto.koulutusohjelmaUri.append("#").startsWith(koulutusohjelma)
+                        .or(qKomoto.osaamisalaUri.append("#").startsWith(koulutusohjelma))
+                );
             }
 
-            query += "AND o.koodiUri IN (:opetuskielis) "
-                    + "AND k.koodiUri IN (:koulutuslajis)";
-
-            Query jpQuery = getEntityManager().createQuery(query);
-
-            jpQuery.setParameter("pkv", pohjakoulutus.trim())
-                    .setParameter("tarjoaja", tarjoaja.trim())
-                    .setParameter("koulutusUri", koulutusluokitus.trim())
-                    .setParameter("opetuskielis", opetuskielis)
-                    .setParameter("koulutuslajis", koulutuslajis);
-
-            if (koulutusohjelma != null) {
-                jpQuery.setParameter("koulutusohjelmaUri", koulutusohjelma.trim());
-            }
-
-            return jpQuery.getResultList();
+            return from(qKomoto).where(where).list(qKomoto);
         } else {
             log.info("Koulutuslajis and opetuskielis was null!!!");
-            return null;
+            return new ArrayList<KoulutusmoduuliToteutus>();
         }
+    }
 
+    private static List<String> matchWithoutVersion(List<String> koodiList) {
+        return FluentIterable.from(koodiList).transform(new Function<String, String>() {
+            @Override
+            public String apply(String koodi) {
+                return stripVersionFromKoodiUri(koodi);
+            }
+        }).toList();
     }
 
     @Override
