@@ -21,7 +21,7 @@ module.exports = [
     'lib/treeview/angular.treeview.js',
     'lib/placeholder/tai-placeholder.js',
     'lib/filesaver.js/FileSaver.min.js',
-    'lib/xlsx/dist/xlsx.core.min.js',
+    'lib/xlsx/xlsx.core.min.js',
     'lib/xlsx-reader.js',
     'js/isocalendar/isocalendar.js',
     'js/shared/logging.js',
