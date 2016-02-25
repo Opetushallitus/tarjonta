@@ -41,7 +41,7 @@ public class KoodiV1RDTO implements Serializable {
     @ApiModelProperty(value = "Koodisto koodin uri", required = true)
     private String uri;
     @ApiModelProperty(value = "Koodisto koodin versio, koodisto koodi uri:a syötettäessä pakollinen tieto", required = true)
-    private Integer versio;
+    private Integer versio = 1;
     @ApiModelProperty(value = "Koodisto koodin uri:n arvo (lisätietoa)")
     private String arvo;
     @ApiModelProperty(value = "Koodisto koodin uri:n nimen kielikäännos (lisätietoa)")
