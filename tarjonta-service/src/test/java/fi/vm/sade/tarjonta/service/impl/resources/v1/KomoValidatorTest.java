@@ -80,15 +80,6 @@ public class KomoValidatorTest extends KoulutusBase {
 
         tutkinto = createDTO(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         NimiV1RDTO nimi = new NimiV1RDTO();
-        nimi.setUri("uri");
-        tutkinto.setKoulutusohjelma(nimi);
-        tutkinto.setOsaamisala(null);
-        result = new ResultV1RDTO();
-        KomoValidator.validateModuleGeneric(tutkinto, result);
-        assertEquals(KOULUTUSOHJELMA, ((ErrorV1RDTO) result.getErrors().get(0)).getErrorMessageKey());
-
-        tutkinto = createDTO(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-        nimi = new NimiV1RDTO();
         nimi.setVersio(1);
         tutkinto.setKoulutusohjelma(nimi);
         tutkinto.setOsaamisala(null);
