@@ -307,6 +307,15 @@ public class KoulutusmoduuliToteutusDAOTest extends TestUtilityBase {
     }
 
     @Test
+    public void testFindSameKoulutusWhenNoKoulutusohjelma() {
+        insertKomoto(getKomo(), "tarjoaja1", Lists.newArrayList("kieli_fi"), Lists.newArrayList("koulutuslaji_n"),
+                "pk_n", "koulutuskoodi_1", null, TarjontaTila.LUONNOS);
+        List<KoulutusmoduuliToteutus> matches = koulutusmoduuliToteutusDAO.findSameKoulutus("tarjoaja1", "pk_n", "koulutuskoodi_1", null,
+                Lists.newArrayList("kieli_fi"), Lists.newArrayList("koulutuslaji_n"));
+        assertEquals(1, matches.size());
+    }
+
+    @Test
     public void testFindSameKoulutusWhenKomotoIsSameButKoodiversionDiffer() {
         insertKomoto(getKomo(), "tarjoaja1", Lists.newArrayList("kieli_fi#1"), Lists.newArrayList("koulutuslaji_n#1"),
                 "pk_n#1", "koulutuskoodi_1#1", "koulutusohjelma_1#1", TarjontaTila.LUONNOS);
