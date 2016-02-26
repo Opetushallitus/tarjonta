@@ -13,13 +13,6 @@ public class NullAwareBeanUtilsBean extends BeanUtilsBean{
     @Override
     public void copyProperty(Object dest, String name, Object value)
             throws IllegalAccessException, InvocationTargetException {
-        /*try {
-            if (getProperty(dest, name) != null) {
-                return;
-            }
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("copyPropertyFailed", e);
-        }*/
         if (value == null) {
             return;
         }
