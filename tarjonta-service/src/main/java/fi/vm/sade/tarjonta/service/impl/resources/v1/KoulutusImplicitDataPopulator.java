@@ -177,7 +177,9 @@ public class KoulutusImplicitDataPopulator {
 
             setTutkintonimike(sisaltaaKoodit, dto);
         }
-        populateKomoOid(dto);
+        if (notEmpty(dto.getKoulutuskoodi())) {
+            populateKomoOid(dto);
+        }
     }
 
     private void populateFieldsByOsaamisalakoodi(final KoulutusV1RDTO dto) {
