@@ -6,6 +6,11 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
     $scope.errors = [];
     $scope.documentLoaded = false;
     $scope.documentParsed = false;
+    $scope.selected = {};
+    $scope.importableEducationTypes = [
+        {name: 'Korkeakouluopinto', id: 'KORKEAKOULUOPINTO', sampleFile: 'korkeakouluopinto.xlsx'},
+        {name: 'Korkeakoulutus', id: 'KORKEAKOULUTUS', sampleFile: ''}
+    ];
 
     var aoId2Row = {},
         eduId2Row = {},
@@ -29,6 +34,7 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
         $scope.documentParsed = $scope.documentLoaded = false;
         $scope.errors = [];
     }
+    $scope.reset = reset;
 
     function toposort(graph) {
         function toposort(nodes, edges) {
@@ -267,7 +273,7 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
     var splitToUniqueExternalIdList = function(value) {
         if (value) {
             return _.map(value.split(','), function (x) {
-                return {uniqueExternalId: x};
+                return {uniqueExternalId: x.trim()};
             });
         }
     };
@@ -459,7 +465,7 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
             }
             var education = eduId2Row[educationDependencies[i]];
             var payload = mapEducationDataRow2JsonPayload(education);
-            payload.toteutustyyppi = "KORKEAKOULUOPINTO";
+            payload.toteutustyyppi = $scope.selected.education.id;
 
             $.ajax({
                 url: '/tarjonta-service/rest/v1/koulutus',
