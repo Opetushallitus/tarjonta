@@ -248,6 +248,7 @@ public class HakukohdeValidator {
                 KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findKomotoByKoulutusId(komotoId);
                 if (komoto != null) {
                     komotoOids.add(komoto.getOid());
+                    dto.getTarjoajaOids().add(komoto.getTarjoaja());
                 } else {
                     throw new KoulutusNotFoundException(komotoId);
                 }
