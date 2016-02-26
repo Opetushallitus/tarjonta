@@ -108,7 +108,7 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
         assertEquals(OK, result.getStatus());
         HakukohdeV1RDTO hakukohdeRes = result.getResult();
         assertEquals("http://haunUrl.com", hakukohdeRes.getHakulomakeUrl());
-        assertFalse(hakukohdeRes.isOverridesHaunHakulomakeUrl());
+        assertFalse(hakukohdeRes.getOverridesHaunHakulomakeUrl());
     }
 
     @Test
@@ -123,7 +123,7 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
         assertEquals(OK, result.getStatus());
         HakukohdeV1RDTO hakukohdeRes = result.getResult();
         assertEquals("http://hakukohdekohtainen.com", hakukohdeRes.getHakulomakeUrl());
-        assertTrue(hakukohdeRes.isOverridesHaunHakulomakeUrl());
+        assertTrue(hakukohdeRes.getOverridesHaunHakulomakeUrl());
     }
 
     @Test

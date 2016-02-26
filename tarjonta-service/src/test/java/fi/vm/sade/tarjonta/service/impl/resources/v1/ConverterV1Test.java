@@ -260,7 +260,7 @@ public class ConverterV1Test extends TestMockBase {
 
         assertEquals(alkuPvm, hakukohdeV1RDTO.getHakuaikaAlkuPvm());
         assertEquals(loppuPvm, hakukohdeV1RDTO.getHakuaikaLoppuPvm());
-        assertTrue(hakukohdeV1RDTO.isKaytetaanHakukohdekohtaistaHakuaikaa());
+        assertTrue(hakukohdeV1RDTO.getKaytetaanHakukohdekohtaistaHakuaikaa());
 
     }
 

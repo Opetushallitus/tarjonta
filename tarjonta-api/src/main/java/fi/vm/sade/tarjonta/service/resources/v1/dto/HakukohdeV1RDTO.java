@@ -37,13 +37,13 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private Set<KoulutusIdentification> koulutukset;
     private Date hakuaikaAlkuPvm;
     private Date hakuaikaLoppuPvm;
-    private double alinHyvaksyttavaKeskiarvo;
-    private int alinValintaPistemaara;
-    private int ylinValintapistemaara;
+    private Double alinHyvaksyttavaKeskiarvo;
+    private Integer alinValintaPistemaara;
+    private Integer ylinValintapistemaara;
     @ApiModelProperty(value = "Hakukohde's aloituspaikat amount", required = true)
-    private int aloituspaikatLkm;
-    private int edellisenVuodenHakijatLkm;
-    private int valintojenAloituspaikatLkm;
+    private Integer aloituspaikatLkm;
+    private Integer edellisenVuodenHakijatLkm;
+    private Integer valintojenAloituspaikatLkm;
     private String sahkoinenToimitusOsoite;
     private String soraKuvausKoodiUri;
     @ApiModelProperty(value = "Hakukohde's state", required = true, allowableValues = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU")
@@ -62,15 +62,15 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private Map<String, String> soraKuvaukset;
     private Map<String, String> hakukelpoisuusVaatimusKuvaukset;
     private Map<String, String> aloituspaikatKuvaukset;
-    private boolean kaytetaanJarjestelmanValintaPalvelua;
-    private boolean kaytetaanHaunPaattymisenAikaa;
-    private boolean kaytetaanHakukohdekohtaistaHakuaikaa;
+    private Boolean kaytetaanJarjestelmanValintaPalvelua;
+    private Boolean kaytetaanHaunPaattymisenAikaa;
+    private Boolean kaytetaanHakukohdekohtaistaHakuaikaa;
     private List<HakukohdeLiiteV1RDTO> hakukohteenLiitteet;
     private List<YhteystiedotV1RDTO> yhteystiedot;
     private OsoiteRDTO liitteidenToimitusOsoite;
     private List<ValintakoeV1RDTO> valintakokeet;
     private Long valintaPerusteKuvausTunniste;
-    private boolean kaksoisTutkinto;
+    private Boolean kaksoisTutkinto;
     private Long soraKuvausTunniste;
     private Set<String> opetusKielet;
     private Set<String> valintaPerusteKuvausKielet;
@@ -117,51 +117,51 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.hakukelpoisuusvaatimusUris = hakukelpoisuusvaatimusUris;
     }
 
-    public double getAlinHyvaksyttavaKeskiarvo() {
+    public Double getAlinHyvaksyttavaKeskiarvo() {
         return alinHyvaksyttavaKeskiarvo;
     }
 
-    public void setAlinHyvaksyttavaKeskiarvo(double alinHyvaksyttavaKeskiarvo) {
+    public void setAlinHyvaksyttavaKeskiarvo(Double alinHyvaksyttavaKeskiarvo) {
         this.alinHyvaksyttavaKeskiarvo = alinHyvaksyttavaKeskiarvo;
     }
 
-    public int getAlinValintaPistemaara() {
+    public Integer getAlinValintaPistemaara() {
         return alinValintaPistemaara;
     }
 
-    public void setAlinValintaPistemaara(int alinValintaPistemaara) {
+    public void setAlinValintaPistemaara(Integer alinValintaPistemaara) {
         this.alinValintaPistemaara = alinValintaPistemaara;
     }
 
-    public int getAloituspaikatLkm() {
+    public Integer getAloituspaikatLkm() {
         return aloituspaikatLkm;
     }
 
-    public void setAloituspaikatLkm(int aloituspaikatLkm) {
+    public void setAloituspaikatLkm(Integer aloituspaikatLkm) {
         this.aloituspaikatLkm = aloituspaikatLkm;
     }
 
-    public int getEdellisenVuodenHakijatLkm() {
+    public Integer getEdellisenVuodenHakijatLkm() {
         return edellisenVuodenHakijatLkm;
     }
 
-    public void setEdellisenVuodenHakijatLkm(int edellisenVuodenHakijatLkm) {
+    public void setEdellisenVuodenHakijatLkm(Integer edellisenVuodenHakijatLkm) {
         this.edellisenVuodenHakijatLkm = edellisenVuodenHakijatLkm;
     }
 
-    public int getValintojenAloituspaikatLkm() {
+    public Integer getValintojenAloituspaikatLkm() {
         return valintojenAloituspaikatLkm;
     }
 
-    public void setValintojenAloituspaikatLkm(int valintojenAloituspaikatLkm) {
+    public void setValintojenAloituspaikatLkm(Integer valintojenAloituspaikatLkm) {
         this.valintojenAloituspaikatLkm = valintojenAloituspaikatLkm;
     }
 
-    public int getYlinValintapistemaara() {
+    public Integer getYlinValintapistemaara() {
         return ylinValintapistemaara;
     }
 
-    public void setYlinValintapistemaara(int ylinValintapistemaara) {
+    public void setYlinValintapistemaara(Integer ylinValintapistemaara) {
         this.ylinValintapistemaara = ylinValintapistemaara;
     }
 
@@ -205,27 +205,27 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.liitteidenToimitusPvm = liitteidenToimitusPvm;
     }
 
-    public boolean isKaytetaanJarjestelmanValintaPalvelua() {
+    public Boolean getKaytetaanJarjestelmanValintaPalvelua() {
         return kaytetaanJarjestelmanValintaPalvelua;
     }
 
-    public void setKaytetaanJarjestelmanValintaPalvelua(boolean kaytetaanJarjestelmanValintaPalvelua) {
+    public void setKaytetaanJarjestelmanValintaPalvelua(Boolean kaytetaanJarjestelmanValintaPalvelua) {
         this.kaytetaanJarjestelmanValintaPalvelua = kaytetaanJarjestelmanValintaPalvelua;
     }
 
-    public boolean isKaytetaanHaunPaattymisenAikaa() {
+    public Boolean getKaytetaanHaunPaattymisenAikaa() {
         return kaytetaanHaunPaattymisenAikaa;
     }
 
-    public void setKaytetaanHaunPaattymisenAikaa(boolean kaytetaanHaunPaattymisenAikaa) {
+    public void setKaytetaanHaunPaattymisenAikaa(Boolean kaytetaanHaunPaattymisenAikaa) {
         this.kaytetaanHaunPaattymisenAikaa = kaytetaanHaunPaattymisenAikaa;
     }
 
-    public boolean isKaytetaanHakukohdekohtaistaHakuaikaa() {
+    public Boolean getKaytetaanHakukohdekohtaistaHakuaikaa() {
         return kaytetaanHakukohdekohtaistaHakuaikaa;
     }
 
-    public void setKaytetaanHakukohdekohtaistaHakuaikaa(boolean kaytetaanHakukohdekohtaistaHakuaikaa) {
+    public void setKaytetaanHakukohdekohtaistaHakuaikaa(Boolean kaytetaanHakukohdekohtaistaHakuaikaa) {
         this.kaytetaanHakukohdekohtaistaHakuaikaa = kaytetaanHakukohdekohtaistaHakuaikaa;
     }
 
@@ -331,7 +331,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         return soraKuvaukset;
     }
 
-    public void setSoraKuvaukset(HashMap<String, String> soraKuvaukset) {
+    public void setSoraKuvaukset(Map<String, String> soraKuvaukset) {
         this.soraKuvaukset = soraKuvaukset;
     }
 
@@ -399,11 +399,11 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.tarjoajaNimet = tarjoajaNimet;
     }
 
-    public boolean getKaksoisTutkinto() {
+    public Boolean getKaksoisTutkinto() {
         return kaksoisTutkinto;
     }
 
-    public void setKaksoisTutkinto(boolean kaksoisTutkinto) {
+    public void setKaksoisTutkinto(Boolean kaksoisTutkinto) {
         this.kaksoisTutkinto = kaksoisTutkinto;
     }
 
@@ -509,7 +509,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         return ryhmaliitokset;
     }
 
-    public void setRyhmaliitokset(ArrayList<RyhmaliitosV1RDTO> ryhmaliitokset) {
+    public void setRyhmaliitokset(List<RyhmaliitosV1RDTO> ryhmaliitokset) {
         this.ryhmaliitokset = ryhmaliitokset;
     }
 
@@ -561,7 +561,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.pohjakoulutusliitteet = pohjakoulutusliitteet;
     }
 
-    public boolean isJosYoEiMuitaLiitepyyntoja() {
+    public Boolean getJosYoEiMuitaLiitepyyntoja() {
         return josYoEiMuitaLiitepyyntoja;
     }
 
@@ -577,7 +577,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.hakulomakeUrl = hakulomakeUrl;
     }
 
-    public boolean isOverridesHaunHakulomakeUrl() {
+    public Boolean getOverridesHaunHakulomakeUrl() {
         return overridesHaunHakulomakeUrl;
     }
 
@@ -608,8 +608,6 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         dto.setPainotettavatOppiaineet(new ArrayList<PainotettavaOppiaineV1RDTO>());
         dto.setRyhmaliitokset(new ArrayList<RyhmaliitosV1RDTO>());
         dto.setPohjakoulutusliitteet(new ArrayList<String>());
-        dto.setJosYoEiMuitaLiitepyyntoja(false);
-        dto.setOverridesHaunHakulomakeUrl(false);
         dto.setHakukelpoisuusvaatimusUris(new ArrayList<String>());
         dto.setHakukohteenLiitteet(new ArrayList<HakukohdeLiiteV1RDTO>());
         dto.setHakukohdeKoulutusOids(new ArrayList<String>());
@@ -621,6 +619,19 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         dto.setHakuMenettelyKuvaukset(new TreeMap<String, String>());
         dto.setPeruutusEhdotKuvaukset(new TreeMap<String, String>());
         dto.setOpintoOikeusUris(new ArrayList<String>());
+        dto.setKaksoisTutkinto(false);
+        dto.setKaytetaanJarjestelmanValintaPalvelua(false);
+        dto.setKaytetaanHaunPaattymisenAikaa(false);
+        dto.setKaytetaanHakukohdekohtaistaHakuaikaa(false);
+        dto.setJosYoEiMuitaLiitepyyntoja(false);
+        dto.setYlioppilastutkintoAntaaHakukelpoisuuden(false);
+        dto.setOverridesHaunHakulomakeUrl(false);
+        dto.setAlinHyvaksyttavaKeskiarvo(0.0);
+        dto.setAlinValintaPistemaara(0);
+        dto.setYlinValintapistemaara(0);
+        dto.setAloituspaikatLkm(0);
+        dto.setEdellisenVuodenHakijatLkm(0);
+        dto.setValintojenAloituspaikatLkm(0);
         return dto;
     }
 

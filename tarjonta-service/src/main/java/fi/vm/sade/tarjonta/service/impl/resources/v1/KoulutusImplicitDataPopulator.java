@@ -133,6 +133,8 @@ public class KoulutusImplicitDataPopulator {
             defaultDto.setOpetusPaikkas(new KoodiUrisV1RDTO());
             defaultDto.setAmmattinimikkeet(new KoodiUrisV1RDTO());
             defaultDto.setAihees(new KoodiUrisV1RDTO());
+            defaultDto.setOpintojenMaksullisuus(false);
+            defaultDto.setIsAvoimenYliopistonKoulutus(false);
 
             beanUtils.copyProperties(defaultDto, dto);
             return defaultDto;

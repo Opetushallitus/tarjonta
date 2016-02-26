@@ -505,7 +505,7 @@ public class ConverterV1 {
             return defaultDto;
         } catch (Exception e) {
             LOG.error("Error populating default values", e);
-            return dto;
+            throw new RuntimeException(e);
         }
     }
 
@@ -1041,15 +1041,14 @@ public class ConverterV1 {
             hakukohde.setSahkoinenToimitusOsoite(null);
         }
 
-        hakukohde.setKaytetaanHaunPaattymisenAikaa(hakukohdeRDTO.isKaytetaanHaunPaattymisenAikaa());
-        hakukohde.setSoraKuvausKoodiUri(hakukohdeRDTO.getSoraKuvausKoodiUri());
+        hakukohde.setKaytetaanHaunPaattymisenAikaa(hakukohdeRDTO.getKaytetaanHaunPaattymisenAikaa());
         hakukohde.setSoraKuvausKoodiUri(hakukohdeRDTO.getSoraKuvausKoodiUri());
         hakukohde.setValintaperustekuvausKoodiUri(hakukohdeRDTO.getValintaperustekuvausKoodiUri());
 
         if (KoulutusasteResolver.isToisenAsteenKoulutus(hakukohdeRDTO.getToteutusTyyppi())) {
             hakukohde.setKaytetaanJarjestelmanValintapalvelua(true);
         } else {
-            hakukohde.setKaytetaanJarjestelmanValintapalvelua(hakukohdeRDTO.isKaytetaanJarjestelmanValintaPalvelua());
+            hakukohde.setKaytetaanJarjestelmanValintapalvelua(hakukohdeRDTO.getKaytetaanJarjestelmanValintaPalvelua());
         }
 
         if (hakukohdeRDTO.getValintaperusteKuvaukset() != null) {
@@ -1120,9 +1119,9 @@ public class ConverterV1 {
         hakukohde.setEnsikertalaistenAloituspaikat(hakukohdeRDTO.getEnsikertalaistenAloituspaikat());
         hakukohde.setOpintoOikeudet(Sets.newHashSet(hakukohdeRDTO.getOpintoOikeusUris()));
         hakukohde.setPohjakoulutusliitteet(fromStringToKoodistoUri(hakukohdeRDTO.getPohjakoulutusliitteet()));
-        hakukohde.setJosYoEiMuitaLiitepyyntoja(BooleanUtils.toBoolean(hakukohdeRDTO.isJosYoEiMuitaLiitepyyntoja()));
+        hakukohde.setJosYoEiMuitaLiitepyyntoja(BooleanUtils.toBoolean(hakukohdeRDTO.getJosYoEiMuitaLiitepyyntoja()));
         hakukohde.setHakulomakeUrl(
-                hakukohdeRDTO.isOverridesHaunHakulomakeUrl()
+                hakukohdeRDTO.getOverridesHaunHakulomakeUrl()
                     ? hakukohdeRDTO.getHakulomakeUrl()
                     : null
         );
