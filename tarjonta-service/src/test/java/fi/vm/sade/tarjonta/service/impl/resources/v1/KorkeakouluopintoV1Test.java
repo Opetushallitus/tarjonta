@@ -324,7 +324,7 @@ public class KorkeakouluopintoV1Test {
 
         upsertLuonnosOpintokokonaisuusWithAllFieldsSet(TarjontaTila.VALMIS);
         modified = getDeltaDto();
-        modified.setOpetusJarjestajat(Sets.newHashSet("modified1", "modified2"));
+        modified.setOpetusJarjestajat(Sets.newHashSet(JARJESTAJA1, JARJESTAJA2));
         modified = insertKoulutusAndGetDtoResult(modified);
         assertDelta(original, modified, KoulutusField.JARJESTAJAT);
 
@@ -544,7 +544,7 @@ public class KorkeakouluopintoV1Test {
         dto.setTila(tila);
         dto.setOrganisaatio(new OrganisaatioV1RDTO(TARJOAJA1));
         dto.setKoulutusmoduuliTyyppi(OPINTOKOKONAISUUS);
-        dto.setOpetusJarjestajat(Sets.newHashSet("jarjestajaOid1", "jarjestajaOid2"));
+        dto.setOpetusJarjestajat(Sets.newHashSet(JARJESTAJA1));
         dto.setKoulutusohjelma(new NimiV1RDTO(){{
             setTekstis(of("kieli_fi", "Opinnon nimi", "kieli_sv", "samme på svenska"));
         }});

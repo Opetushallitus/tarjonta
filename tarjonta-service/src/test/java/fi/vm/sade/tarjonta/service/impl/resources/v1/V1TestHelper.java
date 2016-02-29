@@ -59,6 +59,8 @@ public class V1TestHelper {
 
     public final static String TARJOAJA1 = "1.2.3";
     public final static String TARJOAJA2 = "1.2.3.214.3425.23";
+    public final static String JARJESTAJA1 = "1.2.3.4.57";
+    public final static String JARJESTAJA2 = "1.2.3.4.56";
     public final static String TUNNISTE = "kk virkailijan tunniste, ei uniikki";
 
     public enum KoulutusField {
@@ -96,6 +98,18 @@ public class V1TestHelper {
         when(organisaatioService.findByOid(TARJOAJA2)).thenReturn(
                 new OrganisaatioDTO(){{
                     setOid(TARJOAJA2);
+                    setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti("test", "fi"))));
+                }}
+        );
+        when(organisaatioService.findByOid(JARJESTAJA1)).thenReturn(
+                new OrganisaatioDTO(){{
+                    setOid(JARJESTAJA1);
+                    setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti("test", "fi"))));
+                }}
+        );
+        when(organisaatioService.findByOid(JARJESTAJA2)).thenReturn(
+                new OrganisaatioDTO(){{
+                    setOid(JARJESTAJA2);
                     setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti("test", "fi"))));
                 }}
         );
