@@ -8,8 +8,7 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
     $scope.documentParsed = false;
     $scope.selected = {};
     $scope.importableEducationTypes = [
-        {name: 'Korkeakouluopinto', id: 'KORKEAKOULUOPINTO', sampleFile: 'korkeakouluopinto.xlsx'},
-        {name: 'Korkeakoulutus', id: 'KORKEAKOULUTUS', sampleFile: ''}
+        {name: 'Korkeakouluopinto', id: 'KORKEAKOULUOPINTO', sampleFile: 'korkeakouluopinto.xlsx'}
     ];
 
     var aoId2Row = {},
@@ -244,7 +243,12 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
 
 
     var identity = function (value) {
-        return value;
+        if (value) {
+            if (_.isString(value)) {
+                return value.trim();
+            }
+            return value;
+        }
     };
 
     var setPrice = function (value, result) {
@@ -306,18 +310,24 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
 
     var toUriObject = function (value) {
         if (value) {
+            if (_.isString(value)) {
+                value = value.trim();
+            }
             return {uri: value, versio: 1};
         }
     };
 
     var splitToList = function (value) {
         if (value) {
-            return value.split(',');
+            return _.map(value.split(','), function(x) { return x.trim(); });
         }
     };
 
     var parseExternalIdOrOid = function(value) {
         if (value) {
+            if (_.isString(value)) {
+                value = value.trim();
+            }
             return {uniqueExternalId: value.trim()};
         }
     };
@@ -333,6 +343,9 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
 
     var setOrganisaatio = function (value) {
         if (value) {
+            if (_.isString(value)) {
+                value = value.trim();
+            }
             return {oid: value, nimi: ""};
         }
     };
@@ -475,7 +488,7 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
                 data: JSON.stringify(payload)})
                 .fail(function(error) {
                     education.ui.hasErrors = true;
-                    $scope.errors.push(error.responseText);
+                    $scope.errors.push(error.responseText || "Unexpected error: " + error);
                     $scope.uploadInProgress = false;
                     $scope.$apply();
                     deferred.reject();
@@ -509,7 +522,7 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
                 data: JSON.stringify(payload)})
                 .fail(function(error){
                     applicationOption.ui.hasErrors = true;
-                    $scope.errors.push(error.responseText);
+                    $scope.errors.push(error.responseText || "Unexpected error: " + error);
                     $scope.uploadInProgress = false;
                     $scope.$apply();
                     deferred.reject();

@@ -19,7 +19,12 @@
             <button class="btn" ng-click="processImport()" ng-disabled="!documentParsed">Tuo koulutukset</button>
         </div>
         <div>
-            <a ng-show="selected.education.sampleFile" href="resources/import/{{ selected.education.sampleFile }}">Lataa tämän koulutuksen tuonnin mallitiedosto</a>
+            <p>
+                Seuraavat sarakkeet edellyttävät arvot <a href="/koodisto-ui/html/index.html">Opintopolun koodistosta</a>: "Opinnon tyyppi", "Alkamiskausi", "Opetuskielet", "Koulutuksen maksu", "Opetusaika", "Opetusmuoto", "Opetuspaikka", "Teemat ja aiheet" ja "Oppiaineet/Avainsanat"
+            </p>
+            <p>
+                Lataa tämän koulutuksen tuonnin mallitiedosto: <a class="btn" ng-show="selected.education.sampleFile" href="resources/import/{{ selected.education.sampleFile }}">Lataa</a>
+            </p>
         </div>
         <div>
             <button class="btn" ng-click="reset(); selected.education = null">Takaisin</button>
