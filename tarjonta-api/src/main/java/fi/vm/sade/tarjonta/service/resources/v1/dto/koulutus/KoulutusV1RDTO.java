@@ -131,7 +131,7 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     private KoodiV1RDTO opintojenLaajuusarvo;
 
     @ApiModelProperty(value = "Opintojen järjestäjät", required = false)
-    private HashSet<String> opetusJarjestajat;
+    private Set<String> opetusJarjestajat;
 
     @ApiModelProperty(value = "Opintojen tarjoajat", required = false)
     private HashSet<String> opetusTarjoajat;
@@ -516,7 +516,7 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     /**
      * @return list of opetus organisators oids
      */
-    public HashSet<String> getOpetusJarjestajat() {
+    public Set<String> getOpetusJarjestajat() {
         return opetusJarjestajat;
     }
 
@@ -525,7 +525,7 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      *
      * @param opetusJarjestajat
      */
-    public void setOpetusJarjestajat(HashSet<String> opetusJarjestajat) {
+    public void setOpetusJarjestajat(Set<String> opetusJarjestajat) {
         opetusJarjestajat = (opetusJarjestajat != null) ? opetusJarjestajat : new HashSet<String>();
         this.opetusJarjestajat = opetusJarjestajat;
     }

@@ -69,6 +69,7 @@ public class KoulutusValidator {
     public static final String AIHEES = "aihees";
     public static final String SISALTYY_KOULUTUKSIIN = "sisaltyyKoulutuksiin";
     public static final String TOTEUTUSTYYPPI = "toteutustyyppi";
+    public static final String OPETUS_JARJESTAJAT = "opetusJarjestajat";
 
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
@@ -132,6 +133,16 @@ public class KoulutusValidator {
         }
 
         validateSisaltyyKoulutuksiin(dto, result);
+        validateKoulutuksenJarjestajat(dto, result);
+    }
+
+    private void validateKoulutuksenJarjestajat(TutkintoonJohtamatonKoulutusV1RDTO dto, ResultV1RDTO result) {
+        if (dto.getOpetusJarjestajat() == null) return;
+        for (String orgOid : dto.getOpetusJarjestajat()) {
+            if (!isValidOrganisation(orgOid)) {
+                result.addError(createValidationError(OPETUS_JARJESTAJAT, "organisation with oid '" + orgOid + "' not found!"));
+            }
+        }
     }
 
     // Extra validation of fields that are required in order to show the learning opportunity in opintopolku.fi
@@ -297,19 +308,27 @@ public class KoulutusValidator {
         return result;
     }
 
+    public boolean isValidOrganisation(String orgOid) {
+        try {
+            final OrganisaatioDTO org = organisaatioService.findByOid(orgOid);
+            if (org == null || org.getOid() == null || org.getOid().isEmpty()) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            LOG.error("Organisation service call failed", e);
+            return false;
+        }
+    }
+
     public boolean validateOrganisation(OrganisaatioV1RDTO dto, ResultV1RDTO result, final KoulutusValidationMessages kvmMissing, final KoulutusValidationMessages kvmInvalid) {
         if (dto == null || dto.getOid() == null || dto.getOid().isEmpty()) {
             result.addError(createValidationError(kvmMissing.getFieldName(), kvmMissing.lower()));
         } else {
-            try {
-                final OrganisaatioDTO org = organisaatioService.findByOid(dto.getOid());
-                if (org == null || org.getOid() == null || org.getOid().isEmpty()) {
-                    result.addError(createValidationError(kvmInvalid.getFieldName(), kvmInvalid.lower()));
-                } else {
-                    return true;
-                }
-            } catch (Exception e) {
-                LOG.error("Organisation service call failed", e);
+            if (isValidOrganisation(dto.getOid())) {
+                return true;
+            } else {
                 result.addError(createValidationError(kvmInvalid.getFieldName(), kvmInvalid.lower()));
             }
         }

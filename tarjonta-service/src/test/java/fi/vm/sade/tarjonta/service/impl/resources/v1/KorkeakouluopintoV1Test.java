@@ -189,14 +189,15 @@ public class KorkeakouluopintoV1Test {
         KorkeakouluOpintoV1RDTO dto = new KorkeakouluOpintoV1RDTO();
         dto.setTila(TarjontaTila.LUONNOS);
         dto.setOrganisaatio(new OrganisaatioV1RDTO(TARJOAJA1, "", null));
-
+        dto.setOpetusJarjestajat(Sets.newHashSet(TARJOAJA1, "invalidOrg"));
 
         ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
         List<ErrorV1RDTO> errors = result.getErrors();
-        assertEquals(6, errors.size());
+        assertEquals(7, errors.size());
         assertAlwaysRequiredFields(errors);
         assertExtraRequiredFields(errors);
+        assertTrue(containsError(errors, OPETUS_JARJESTAJAT));
     }
 
     @Test
