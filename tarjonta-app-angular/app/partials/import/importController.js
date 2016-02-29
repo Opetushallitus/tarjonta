@@ -8,7 +8,7 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
     $scope.documentParsed = false;
     $scope.selected = {};
     $scope.importableEducationTypes = [
-        {name: 'Korkeakouluopinto', id: 'KORKEAKOULUOPINTO', sampleFile: 'korkeakouluopinto.xlsx'}
+        {name: 'Tutkintoon johtamaton korkeakoulutus', id: 'KORKEAKOULUOPINTO', sampleFile: 'korkeakouluopinto.xlsx'}
     ];
 
     var aoId2Row = {},
