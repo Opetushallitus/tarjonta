@@ -68,7 +68,7 @@ public class KoulutusPermissionSynchronizer {
 
     final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(KoulutusPermissionSynchronizer.class);
 
-    @Scheduled(cron = "0 0 3 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     @Transactional
     public void runUpdate() throws MalformedURLException {
         LOG.info("KoulutusPermissions start update");
@@ -102,7 +102,7 @@ public class KoulutusPermissionSynchronizer {
     }
 
     @Transactional(readOnly = true)
-    @Scheduled(cron = "0 0 4 * * ?")
+    @Scheduled(cron = "0 0 1 * * ?")
     public void checkExistingKoulutus() {
         LOG.info("Amkoute: check existing koulutus start");
 
