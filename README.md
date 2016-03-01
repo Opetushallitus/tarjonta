@@ -134,3 +134,20 @@ Komojen luonti tapahtuu osoitteessa */tarjonta-app/#/komo*:
 4. Katso läpi lista moduuleista, joita ollaan viemässä tarjontaan
 5. Jos lista näyttää oikealta, klikkaa "Lisää puuttuvat koulutusmoduuli"
 6. Valmista!
+
+
+#### Koulutuskoodin vaihto
+
+Joskus tulee tarve vaihtaa jo tallennettujen koulutusten koulutuskoodeja (tai muita koodeja). Tämä tehdään kanta-ajolla koulutusmoduuli_toteutus-tauluun. Esimerkkitapaus keväältä 2016:
+
+```
+update koulutusmoduuli_toteutus
+
+set koulutus_uri = 'koulutus_999903#2', // asetetaan uusi koulutuskoodi
+viimindeksointipvm = NULL, // pakotetaan Solrin indeksointi tälle koulutukselle
+koulutusmoduuli_id = 6385791 // vaihdetaan koulutusmoduuli uutta koulutuskoodia vastaavaksi (pitää siis selvittää uuden koulutusmoduulin id ensin)
+
+where koulutus_uri LIKE 'koulutus_039999#%' // alkuperäinen koulutuskoodi
+and alkamisvuosi >= 2016 // ei kosketa menneisyydessä oleviin koulutuksiin
+and tila != 'POISTETTU'; // ei kosketa poistettuihin
+```
