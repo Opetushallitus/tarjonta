@@ -297,6 +297,9 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
     };
 
     var parseKoulutuksenAlkamisPvms = function (value) {
+        if (!_.isString(value)) {
+            throw new Error('Invalid value in column "koulutuksen alkamispvm"');
+        }
         if (value) {
             var parts = _.filter(value.split(","), function (x) {
                 return _.isString(x) && !_.isEmpty(x);
@@ -477,7 +480,19 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
                 return deferred;
             }
             var education = eduId2Row[educationDependencies[i]];
-            var payload = mapEducationDataRow2JsonPayload(education);
+            var handleImportError = function(error) {
+                education.ui.hasErrors = true;
+                $scope.errors.push(error.responseText || "Unexpected error: " + error);
+                $scope.uploadInProgress = false;
+                $scope.$apply();
+                deferred.reject();
+            };
+            var payload;
+            try {
+                payload = mapEducationDataRow2JsonPayload(education);
+            } catch (error) {
+                return handleImportError(error);
+            }
             payload.toteutustyyppi = $scope.selected.education.id;
 
             $.ajax({
@@ -487,11 +502,7 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
                 contentType: 'application/json',
                 data: JSON.stringify(payload)})
                 .fail(function(error) {
-                    education.ui.hasErrors = true;
-                    $scope.errors.push(error.responseText || "Unexpected error: " + error);
-                    $scope.uploadInProgress = false;
-                    $scope.$apply();
-                    deferred.reject();
+                    handleImportError(error);
                 })
                 .done(function() {
                     education.ui.uploadOk = true;

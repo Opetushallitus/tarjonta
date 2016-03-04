@@ -33,11 +33,11 @@
 
 
     <div class="progress" ng-show="uploadInProgress">
-        Uploading educations: {{uploadProgress}}:%
+        Lähetetään: {{uploadProgress}}:%
     </div>
 
     <div class="alert alert-danger" ng-show="errors.length">
-        <h3>Processed file contains errors:</h3>
+        <h3>Tuontitiedostossa virheitä:</h3>
         <ul>
             <li ng-repeat="error in errors track by $index">{{ error.errors ? error.errors : error }}</li>
         </ul>
