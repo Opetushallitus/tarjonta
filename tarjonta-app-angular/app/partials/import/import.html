@@ -12,23 +12,24 @@
 </div>
 
 <div ng-show="selected.education">
+    <div class="well">
+        <p>
+            Seuraavat sarakkeet edellyttävät arvot <a href="/koodisto-ui/html/index.html">Opintopolun koodistosta</a>: "Opinnon tyyppi", "Alkamiskausi", "Opetuskielet", "Koulutuksen maksu", "Opetusaika", "Opetusmuoto", "Opetuspaikka", "Teemat ja aiheet" ja "Oppiaineet/Avainsanat"
+        </p>
+        <p>
+            Lataa tämän koulutuksen tuonnin mallitiedosto: <a ng-show="selected.education.sampleFile" href="resources/import/{{ selected.education.sampleFile }}">{{ selected.education.sampleFile }}</a>
+        </p>
+    </div>
     <form>
-        <div class="form-group">
-            <label for="file">Excel-tiedosto</label>
-            <input type="file" id="file" onchange="angular.element(this).scope().readFile(this.files)">
-            <button class="btn" ng-click="processImport()" ng-disabled="!documentParsed">Tuo koulutukset</button>
+        <div class="input-group">
+            <label for="fileInput">Excel-tiedosto</label>
+            <div id="fileInput" file-select="file">
+                <span class="input-group-btn"><button class="btn btn-primary" ng-click="processImport()" ng-disabled="!documentParsed">Tuo koulutukset</button></span>
+                <span class="input-group-btn"><button class="btn" ng-click="reset()">Tyhjennä</button></span>
+            </div>
         </div>
-        <div>
-            <p>
-                Seuraavat sarakkeet edellyttävät arvot <a href="/koodisto-ui/html/index.html">Opintopolun koodistosta</a>: "Opinnon tyyppi", "Alkamiskausi", "Opetuskielet", "Koulutuksen maksu", "Opetusaika", "Opetusmuoto", "Opetuspaikka", "Teemat ja aiheet" ja "Oppiaineet/Avainsanat"
-            </p>
-            <p>
-                Lataa tämän koulutuksen tuonnin mallitiedosto: <a class="btn" ng-show="selected.education.sampleFile" href="resources/import/{{ selected.education.sampleFile }}">Lataa</a>
-            </p>
-        </div>
-        <div>
-            <button class="btn" ng-click="reset(); selected.education = null">Takaisin</button>
-        </div>
+
+        <button class="btn" ng-click="reset(); selected.education = null">Takaisin</button>
     </form>
 
 

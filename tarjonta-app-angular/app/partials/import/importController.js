@@ -1,12 +1,30 @@
 var app = angular.module('app.import.ctrl', []);
-app.controller('ImportController', function($scope, XLSXReaderService) {
+app.directive('fileSelect', function() {
+    var tpl = '<input class="form-control" type="file" name="files" />';
+    return function(scope, elem, attrs) {
+        var d = $(tpl);
+        elem.prepend(d);
+        d.bind('change', function(event) {
+            scope.$apply(function() {
+               scope[attrs.fileSelect] = event.originalEvent.target.files;
+            });
 
+        });
+        scope.$watch(attrs.fileSelect, function(file) {
+            if (file == null) {
+                d.val(file);
+            }
+            scope.readFile();
+        });
+    };
+}).controller('ImportController', function($scope, XLSXReaderService) {
     $scope.importedApplicationSystems = [];
     $scope.importedEducations = [];
     $scope.errors = [];
     $scope.documentLoaded = false;
     $scope.documentParsed = false;
     $scope.selected = {};
+    $scope.file = null;
     $scope.importableEducationTypes = [
         {name: 'Tutkintoon johtamaton korkeakoulutus', id: 'KORKEAKOULUOPINTO', sampleFile: 'korkeakouluopinto.xlsx'}
     ];
@@ -32,6 +50,7 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
         eduId2Row = {};
         $scope.documentParsed = $scope.documentLoaded = false;
         $scope.errors = [];
+        $scope.file = null;
     }
     $scope.reset = reset;
 
@@ -147,20 +166,18 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
         throw new Error('Excel sheets missing, required sheets must be named as "Koulutukset" and "Hakukohteet"');
     };
 
-    $scope.readFile = function (files) {
-        reset();
-        var file = _.first(files);
+    $scope.readFile = function () {
         $scope.importedEducations = null;
         $scope.documentLoaded = false;
         $scope.importedApplicationSystems = null;
         $scope.errors = [];
 
-        if (!file) {
+        if (!$scope.file) {
             return;
         }
 
         XLSXReaderService
-            .readFile(file, true)
+            .readFile($scope.file[0], true)
             .then(function (xlsx) {
                 var sheets = xlsx.sheets;
                 try {
@@ -297,7 +314,7 @@ app.controller('ImportController', function($scope, XLSXReaderService) {
     };
 
     var parseKoulutuksenAlkamisPvms = function (value) {
-        if (!_.isString(value)) {
+        if (!_.isString(value) && !_.isEmpty()) {
             throw new Error('Invalid value in column "koulutuksen alkamispvm"');
         }
         if (value) {
