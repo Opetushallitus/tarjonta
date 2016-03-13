@@ -570,6 +570,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     @Transactional
     public Response postHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
+        if (hakukohdeRDTO == null) {
+            hakukohdeRDTO = new HakukohdeV1RDTO();
+        }
         Hakukohde existingHakukohde = hakukohdeDAO.findExistingHakukohde(hakukohdeRDTO);
         if (existingHakukohde != null) {
             hakukohdeRDTO.setOid(existingHakukohde.getOid());
@@ -736,6 +739,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     @Transactional
     public Response updateHakukohde(String hakukohdeOid, HakukohdeV1RDTO hakukohdeRDTO) {
+        if (hakukohdeRDTO == null) {
+            hakukohdeRDTO = new HakukohdeV1RDTO();
+        }
         permissionChecker.checkUpdateHakukohde(hakukohdeOid, hakukohdeRDTO.getHakuOid(), hakukohdeRDTO.getHakukohdeKoulutusOids());
         try {
 
