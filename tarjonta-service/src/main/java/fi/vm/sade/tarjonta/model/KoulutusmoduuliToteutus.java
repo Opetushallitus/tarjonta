@@ -114,7 +114,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> opetusAikas = new HashSet<KoodistoUri>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(
             name = TABLE_NAME + "_oppiaineet",
             joinColumns = @JoinColumn(name = TABLE_NAME + "_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME),
