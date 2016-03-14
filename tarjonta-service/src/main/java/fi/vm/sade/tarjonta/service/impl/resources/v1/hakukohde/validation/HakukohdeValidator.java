@@ -78,12 +78,6 @@ public class HakukohdeValidator {
             return validationMessages;
         }
 
-        TarjontaTila hakukohdeTila = hakukohdeRDTO.getTila();
-
-        if (hakukohdeRDTO.getOid() == null && hakukohdeTila.equals(TarjontaTila.JULKAISTU) || hakukohdeRDTO.getOid() == null && hakukohdeTila.equals(TarjontaTila.PERUTTU)) {
-            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TILA_WRONG);
-        }
-
         for (YhteystiedotV1RDTO yhteystietoDTO : hakukohdeRDTO.getYhteystiedot()) {
             if (StringUtils.isBlank(yhteystietoDTO.getHakutoimistonNimi())) {
                 validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_YHTEYSTIEDOT_DATA_MISSING);
