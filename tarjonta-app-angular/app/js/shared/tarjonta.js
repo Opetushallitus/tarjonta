@@ -702,7 +702,19 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     // OHJAUSPARAMETRIT
     //
     dataFactory.ohjausparametritCache = {};
+    dataFactory.reloadParametersIfEmpty = function() {
+        var deferred = $q.defer();
+        if (Object.keys(dataFactory.ohjausparametritCache).length === 0) {
+            dataFactory.reloadParameters().then(function() {
+                deferred.resolve();
+            });
+        } else {
+            deferred.resolve();
+        }
+        return deferred.promise;
+    };
     dataFactory.reloadParameters = function() {
+        var deferred = $q.defer();
         $log.info('reloadParameters()');
         var uri = Config.env.tarjontaOhjausparametritRestUrlPrefix;
         if (!angular.isDefined(uri)) {
@@ -745,7 +757,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             });
             dataFactory.ohjausparametritCache = cache;
             $log.info('Processed \'ohjausparametrit\' - now cached.');
+            deferred.resolve();
         });
+        return deferred.promise;
     };
     // LOAD PARAMETERS FROM OHJAUSPARAMETRIT
     dataFactory.reloadParameters();
