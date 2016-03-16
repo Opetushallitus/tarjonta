@@ -217,6 +217,11 @@ angular.module('app').config([
         var resolveHakukohde = function(Hakukohde, $log, $route, SharedStateService, $q, OrganisaatioService,
                                         TarjontaService) {
             var deferred = $q.defer();
+            function loadOhjausparametritAndResolveHakukohde(hakukohde) {
+                TarjontaService.reloadParametersIfEmpty().then(function() {
+                    deferred.resolve(hakukohde);
+                });
+            }
             if ('new' === $route.current.params.id) {
                 var selectedTarjoajaOids;
                 var selectedKoulutusOids;
@@ -256,7 +261,7 @@ angular.module('app').config([
                 hakukohde.multipleOwners = koulutus.opetusTarjoajat.length > 1;
                 hakukohde.opetusKielet = _.keys(koulutus.opetuskielis.uris);
                 hakukohde.toteutusTyyppi = koulutus.toteutustyyppi;
-                deferred.resolve(hakukohde);
+                loadOhjausparametritAndResolveHakukohde(hakukohde);
             }
             else {
                 Hakukohde.get({
@@ -275,11 +280,11 @@ angular.module('app').config([
                     if (tarjoajat.length) {
                         OrganisaatioService.getPopulatedOrganizations(tarjoajat).then(function(orgs) {
                             res.result.uniqueTarjoajat = orgs;
-                            deferred.resolve(res);
+                            loadOhjausparametritAndResolveHakukohde(res);
                         });
                     }
                     else {
-                        deferred.resolve(res);
+                        loadOhjausparametritAndResolveHakukohde(res);
                     }
                 });
             }
