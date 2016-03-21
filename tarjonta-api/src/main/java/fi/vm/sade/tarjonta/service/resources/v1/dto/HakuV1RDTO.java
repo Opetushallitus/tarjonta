@@ -397,6 +397,10 @@ public class HakuV1RDTO extends BaseV1RDTO {
             if (!haku.isKorkeakouluHaku()) {
                 return new YhdenPaikanSaanto(false, "Ei korkeakouluhaku");
             }
+            if (haku.getKoulutuksenAlkamisVuosi() < 2016 ||
+                (haku.getKoulutuksenAlkamisVuosi() == 2016 && haku.getKoulutuksenAlkamiskausiUri().startsWith("kausi_k"))) {
+                return new YhdenPaikanSaanto(false, "Koulutuksen alkamiskausi ennen syksyä 2016");
+            }
             String haunKohdeJoukonTarkenne = haku.getKohdejoukonTarkenne();
             if (StringUtils.isBlank(haunKohdeJoukonTarkenne)) {
                 return new YhdenPaikanSaanto(true, "Korkeakouluhaku ilman kohdejoukon tarkennetta");
