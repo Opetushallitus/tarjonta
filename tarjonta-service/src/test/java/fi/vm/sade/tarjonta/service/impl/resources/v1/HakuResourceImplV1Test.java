@@ -88,6 +88,8 @@ public class HakuResourceImplV1Test extends TestMockBase {
     @Test
     public void thatHakuSingleStudyPlaceIsResolved() {
         HakuV1RDTO hakuDTO = new HakuV1RDTO();
+        hakuDTO.setKoulutuksenAlkamisVuosi(2016);
+        hakuDTO.setKoulutuksenAlkamiskausiUri("kausi_s#1");
 
         hakuDTO.setKohdejoukkoUri("haunkohdejoukko_10#1");
         assertEquals(false, hakuDTO.getYhdenPaikanSaanto().isVoimassa());
@@ -105,6 +107,16 @@ public class HakuResourceImplV1Test extends TestMockBase {
         hakuDTO.setKohdejoukonTarkenne("haunkohdejoukontarkenne_4#1");
         assertEquals(false, hakuDTO.getYhdenPaikanSaanto().isVoimassa());
         assertThat(hakuDTO.getYhdenPaikanSaanto().getSyy(), containsString("Kohdejoukon tarkenne"));
+
+        hakuDTO.setKoulutuksenAlkamisVuosi(2016);
+        hakuDTO.setKoulutuksenAlkamiskausiUri("kausi_k#1");
+        assertEquals(false, hakuDTO.getYhdenPaikanSaanto().isVoimassa());
+        assertThat(hakuDTO.getYhdenPaikanSaanto().getSyy(), containsString("Koulutuksen alkamiskausi ennen syksyä 2016"));
+
+        hakuDTO.setKoulutuksenAlkamisVuosi(2015);
+        hakuDTO.setKoulutuksenAlkamiskausiUri("kausi_s#1");
+        assertEquals(false, hakuDTO.getYhdenPaikanSaanto().isVoimassa());
+        assertThat(hakuDTO.getYhdenPaikanSaanto().getSyy(), containsString("Koulutuksen alkamiskausi ennen syksyä 2016"));
     }
 
     private HakuaikaV1RDTO createHakuaika(Date start, Date end) {
