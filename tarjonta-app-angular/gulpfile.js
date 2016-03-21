@@ -6,7 +6,6 @@ var _ = require('lodash');
 var concat = require('gulp-concat');
 var del = require('del');
 var runSequence = require('run-sequence');
-var bless = require('gulp-bless');
 
 var BUILD_DIR = './dist';
 
@@ -70,7 +69,6 @@ gulp.task('concatJS', function () {
 gulp.task('concatCSS', function () {
     return gulp.src(cssFiles)
             .pipe(concat('all.css'))
-            .pipe(bless())
             .pipe(gulp.dest(BUILD_DIR + '/css'));
 });
 
