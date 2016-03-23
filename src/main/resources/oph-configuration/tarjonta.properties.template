@@ -47,8 +47,8 @@ activeMq.targetDestination.organisaatio=fi.vm.sade.organisaatio.service
 activeMq.targetDestinationAdmin.tarjonta=fi.vm.sade.tarjonta.admin.service
 activeMq.targetDestinationPublic.tarjonta=fi.vm.sade.tarjonta.public.service
 authentication-service.rest.url=https://${host.virkailija}/authentication-service/resources/
-cas.callback.tarjonta-app=http://${server.name}:8302/tarjonta-app
-cas.callback.tarjonta-service=http://${server.name}:8302/tarjonta-service
+cas.callback.tarjonta-app=http://{{ cluster_tarjonta_host | default("${server.name}") }}:{{ cluster_tarjonta_port | default("8302") }}/tarjonta-app
+cas.callback.tarjonta-service=http://{{ cluster_tarjonta_host | default("${server.name}") }}:{{ cluster_tarjonta_port | default("8302") }}/tarjonta-service
 cas.group-role-attribute=cn
 cas.group-search-base=ou\=groups
 cas.group-search-filter=(uniqueMember\={0})
