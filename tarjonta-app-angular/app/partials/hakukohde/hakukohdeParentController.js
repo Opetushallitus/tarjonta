@@ -300,15 +300,30 @@ app.controller('HakukohdeParentController', [
                 }
             }
         };
+
+        function resetObj(obj) {
+            delete obj.oid;
+            delete obj.version;
+        }
+
         $scope.checkIsCopy = function(tilaParam, dontResetHaku) {
             // If scope or route has isCopy parameter defined as true remove
             // oid so that new hakukohde will be created
             if (($route.current.locals && $route.current.locals.isCopy) ||
                 ($scope.isCopy !== undefined && $scope.isCopy)) {
 
-                $scope.model.hakukohde.oid = undefined;
+                resetObj($scope.model.hakukohde);
                 $scope.model.hakukohde.tila = tilaParam;
                 $scope.model.hakukohde.aloituspaikatKuvaukset = null;
+
+                _.each($scope.model.hakukohde.hakukohteenLiitteet, function(liite) {
+                    _.each(liite, function(langVersion) {
+                        resetObj(langVersion);
+                    });
+                });
+                _.each($scope.model.hakukohde.valintakokeet, function(valintakoe) {
+                    resetObj(valintakoe);
+                });
 
                 // Hakua ei kopioida, se pitää aina valita
                 if (!dontResetHaku) {
