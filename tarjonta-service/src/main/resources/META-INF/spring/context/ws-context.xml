@@ -72,7 +72,6 @@
     <bean id="organisaatioryhmaResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.OrganisaatioryhmaResourceImplV1"/>
 
     <bean id="tarjontaProcessResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.ProcessResourceV1Impl"/>
-    <bean id="tarjontaExportResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.ExportResourceV1Impl"/>
 
     <!--
       TEST PROCESS, just to show how to define these, require parameter, time.
