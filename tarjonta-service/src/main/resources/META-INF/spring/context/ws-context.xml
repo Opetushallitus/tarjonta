@@ -111,7 +111,6 @@
             <ref bean="organisaatioryhmaResourceV1"/>
 
             <ref bean="tarjontaProcessResourceV1"/>
-            <ref bean="tarjontaExportResourceV1"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <!--             <ref bean="cors-filter" /> -->
