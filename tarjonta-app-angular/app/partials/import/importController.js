@@ -45,6 +45,14 @@ app.directive('fileSelect', function() {
         numberOfColumnsEducationsSheet = 48,
         numberOfColumnsApplicationOptionSheet = 19;
 
+    function trimEndOfArray(arr) {
+        arr = arr || [];
+        for (var i = arr.length - 1; arr[i] === undefined && i >= 0; i--) {
+            arr.pop();
+        }
+        return arr;
+    }
+
     function reset() {
         aoId2Row = {};
         eduId2Row = {};
@@ -193,7 +201,7 @@ app.directive('fileSelect', function() {
                         throwSheetsMissingException();
                     }
 
-                    $scope.educationsHeaderRow = _.head(educations).rowdata;
+                    $scope.educationsHeaderRow = trimEndOfArray(_.head(educations).rowdata);
                     var educationsHeaderRowLength = $scope.educationsHeaderRow.length;
                     if (educationsHeaderRowLength != numberOfColumnsEducationsSheet) {
                         throw new Error("Invalid input file, number of columns does not match the expected count (expected: " + numberOfColumnsEducationsSheet + " actual: " + educationsHeaderRowLength + ")");
@@ -201,14 +209,14 @@ app.directive('fileSelect', function() {
                     $scope.educationRows = _.tail(educations)
                         .filter(function(row) { return ! _.isUndefined(row); })
                         .map(function (row) {
-                            return {rowdata: row.rowdata, ui: {hasErrors: false}};
+                            return {rowdata: trimEndOfArray(row.rowdata), ui: {hasErrors: false}};
                         });
                     educationDependencies = toposort(parseEducations2DependencyGraph($scope.educationRows)).reverse();
                     eduId2Row = _.object(_($scope.educationRows).map(function (row) {
                         return [row.rowdata[idIdx], row];
                     }));
 
-                    $scope.applicationOptionsHeaderRow = _.head(applicationOptions).rowdata;
+                    $scope.applicationOptionsHeaderRow = trimEndOfArray(_.head(applicationOptions).rowdata);
                     var applicationOptionsHeaderRowLength = $scope.applicationOptionsHeaderRow.length;
                     if (applicationOptionsHeaderRowLength != numberOfColumnsApplicationOptionSheet) {
                         throw new Error("Invalid input file, number of columns does not match the expected count (expected: " + numberOfColumnsApplicationOptionSheet + " actual: " + applicationOptionsHeaderRowLength + ")");
@@ -216,7 +224,7 @@ app.directive('fileSelect', function() {
                     $scope.applicationOptionRows = _.tail(applicationOptions)
                         .filter(function(row) { return !_.isUndefined(row); })
                         .map(function (row) {
-                            return {rowdata: row.rowdata, ui: {hasErrors: false}};
+                            return {rowdata: trimEndOfArray(row.rowdata), ui: {hasErrors: false}};
                         });
                     validateEducationReferences($scope.applicationOptionRows, eduId2Row);
                     aoId2Row = _.object(_($scope.educationRows).map(function (row) {
