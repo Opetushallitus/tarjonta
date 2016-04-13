@@ -14,10 +14,11 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioAikuistenOppimaaraV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
@@ -29,7 +30,6 @@ import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.lang.time.DateUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.context.ActiveProfiles;
@@ -39,14 +39,14 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
-import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 
 @TestExecutionListeners(listeners = {
@@ -57,69 +57,25 @@ import static org.junit.Assert.assertNotNull;
 @ActiveProfiles("embedded-solr")
 @Transactional()
 public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
-    
+
     @Before
     public void setUp() throws OIDCreationException {
         reload();
         createJoinedParentAndChildKomos(KoulutusasteTyyppi.LUKIOKOULUTUS);
+        expectKoodis();
+        expectHierarchy();
     }
 
     @Test
     public void testCreateAndLoadToteutus() throws ExceptionMessage {
-        //EXPECT
-        expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(2);
-        //the calls of the OidServices must be in correct order!
-
-        permissionChecker.checkCreateKoulutus(ORGANISATION_OID);
-        permissionChecker.checkUpdateKoulutusByTarjoajaOid(ORGANISATION_OID);
-
-        /* 
-         * KOODISTO DATA CALLS IN CORRECT CALL ORDER
-         * 1th round, convert to entity 
-         */
-        expectKoodis();
-
-        expectHierarchy();
-
-        /* REPLAY */
-        replay(organisaatioServiceMock);
-        replay(tarjontaKoodistoHelperMock);
-        replay(koulutusSisaltyvyysDAO);
-        /*
-         * INSERT LUKIO TO DB
-         */
-        ResultV1RDTO<KoulutusV1RDTO> v = instance.postKoulutus(createDTO());
+        ResultV1RDTO<KoulutusV1RDTO> v = (ResultV1RDTO<KoulutusV1RDTO>)instance.postKoulutus(createDTO()).getEntity();
         assertEquals("Validation errors", true, v.getErrors() == null || v.getErrors().isEmpty());
-        
-        verify(organisaatioServiceMock);
-        verify(tarjontaKoodistoHelperMock);
-        verify(koulutusSisaltyvyysDAO);
 
-        /*
-         * LOAD LUKIO DTO FROM DB
-         */
-        reset(organisaatioServiceMock);
-        reset(tarjontaKoodistoHelperMock);
-        reset(koulutusSisaltyvyysDAO);
-
-        /* 2nd round, convert to dto */
-        expectKoodis();
-        
-        expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(1);
-        expectHierarchy();
-
-        replay(organisaatioServiceMock);
-        replay(tarjontaKoodistoHelperMock);
-        replay(koulutusSisaltyvyysDAO);
-        
         final ResultV1RDTO result = instance.findByOid(KOMOTO_OID, true, false, "FI");
         KoulutusLukioV1RDTO result1 = (KoulutusLukioV1RDTO) result.getResult();
         assertLoadData(result1);
-        
-        verify(organisaatioServiceMock);
-        verify(tarjontaKoodistoHelperMock);
     }
-    
+
     private void expectKoodis() {
         expectKausiLukio();
         expectMetaUri(KOULUTUSOHJELMA);
@@ -142,21 +98,20 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         expectMetaUri(TUTKINTO);
         expectMetaUri(KOULUTUSTYYPPI);
     }
-    
+
     private void assertLoadData(final KoulutusLukioV1RDTO result) {
         assertNotNull(result);
-        
+
         assertEquals(KOMOTO_OID, result.getOid());
         assertEquals(KOMO_CHILD_OID, result.getKomoOid());
         assertEquals(ORGANISATION_OID, result.getOrganisaatio().getOid());
         assertEquals(ORGANISAATIO_NIMI, result.getOrganisaatio().getNimi());
-        
-        assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS, result.getKoulutusasteTyyppi());
+
         assertEquals(ToteutustyyppiEnum.LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA, result.getToteutustyyppi());
         assertEquals(ModuulityyppiEnum.LUKIOKOULUTUS, result.getModuulityyppi());
-        
+
         final String key = URI_KIELI_FI + "_uri";
-        
+
         assertNotNull(null, result.getKoulutusohjelma().getTekstis().isEmpty());
         assertNotNull(KOULUTUSOHJELMA, result.getKoulutusohjelma().getMeta().get(key));
         assertEqualDtoKoodi(KOULUTUSOHJELMA, result.getKoulutusohjelma());
@@ -171,44 +126,42 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         assertEqualDtoKoodi(TUTKINTONIMIKE, result.getTutkintonimike());
         assertEqualDtoKoodi(KOULUTUSLAJI, result.getKoulutuslaji());
         assertEqualDtoKoodi(TUTKINTO, result.getTutkinto());
-        
+
         assertEquals(TarjontaTila.JULKAISTU, result.getTila());
         assertEquals(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, result.getKoulutusmoduuliTyyppi());
         assertEquals(TUNNISTE, result.getTunniste());
         assertEquals((DateUtils.truncate(DATE.toDate(), Calendar.DATE)), result.getKoulutuksenAlkamisPvms().iterator().next());
         assertEqualDtoKoodi(KAUSI_KOODI_URI, result.getKoulutuksenAlkamiskausi(), true);
         assertEquals(VUOSI, result.getKoulutuksenAlkamisvuosi());
-        
+
         assertEqualMetaDto(MAP_OPETUSKIELI, result.getOpetuskielis());
         assertEqualMetaDto(MAP_OPETUMUOTO, result.getOpetusmuodos());
-        
+
         assertEquals(SUUNNITELTU_KESTO_VALUE, result.getSuunniteltuKestoArvo());
         assertEquals(SUUNNITELTU_KESTO_TYYPPI + "_uri", result.getSuunniteltuKestoTyyppi().getUri());
         assertEquals(new Integer(1), result.getSuunniteltuKestoTyyppi().getVersio());
         YhteyshenkiloTyyppi next = result.getYhteyshenkilos().iterator().next();
         assertEquals(PERSON[0], next.getHenkiloOid());
-        assertEquals(PERSON[1], next.getEtunimet());
-        assertEquals(PERSON[2], next.getSukunimi());
-        assertEquals(PERSON[3], next.getTitteli());
-        assertEquals(PERSON[4], next.getSahkoposti());
-        assertEquals(PERSON[5], next.getPuhelin());
+        assertEquals(PERSON[1], next.getNimi());
+        assertEquals(PERSON[2], next.getTitteli());
+        assertEquals(PERSON[3], next.getSahkoposti());
+        assertEquals(PERSON[4], next.getPuhelin());
         assertEquals(HenkiloTyyppi.YHTEYSHENKILO, next.getHenkiloTyyppi());
         assertEquals(USER_OID, result.getModifiedBy());
     }
-    
+
     private void expectKausiLukio() {
         KoodiType kausiKoodiType = createKoodiType(KAUSI_KOODI_URI, "x" + KAUSI_KOODI_URI);
-        expect(tarjontaKoodistoHelperMock.getKoodiByUri(KAUSI_KOODI_URI + "#1")).andReturn(kausiKoodiType).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodi(KAUSI_KOODI_URI + "_uri", 1)).andReturn(kausiKoodiType).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(kausiKoodiType, new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
-        
+        when(tarjontaKoodistoHelperMock.getKoodiByUri(KAUSI_KOODI_URI + "#1")).thenReturn(kausiKoodiType);
+        when(tarjontaKoodistoHelperMock.getKoodi(KAUSI_KOODI_URI + "_uri", 1)).thenReturn(kausiKoodiType);
+        when(tarjontaKoodistoHelperMock.getKoodiNimi(kausiKoodiType, new Locale(LOCALE_FI))).thenReturn(KAUSI_KOODI_URI);
         KoodiType koodiLanguageFi = createKoodiType(URI_KIELI_FI, "fi");
-        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).andReturn(koodiLanguageFi).times(1);
+        when(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).thenReturn(koodiLanguageFi);
     }
 
     private void expectHierarchy() {
-        expect(koulutusSisaltyvyysDAO.getParents("komo_child_oid")).andReturn(new ArrayList<String>());
-        expect(koulutusSisaltyvyysDAO.getChildren("komo_child_oid")).andReturn(new ArrayList<String>());
+        when(koulutusSisaltyvyysDAO.getParents("komo_child_oid")).thenReturn(new ArrayList<String>());
+        when(koulutusSisaltyvyysDAO.getChildren("komo_child_oid")).thenReturn(new ArrayList<String>());
     }
 
     /*
@@ -216,61 +169,61 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
      */
     private KoulutusLukioV1RDTO createDTO() {
         KoulutusLukioAikuistenOppimaaraV1RDTO dto = new KoulutusLukioAikuistenOppimaaraV1RDTO();
-        dto.getOrganisaatio().setOid(ORGANISATION_OID);
-        
+        dto.setOrganisaatio(new OrganisaatioV1RDTO(ORGANISATION_OID));
+
         dto.setKoulutusaste(toKoodiUri(KOULUTUSASTE));
-        
+
         dto.setKoulutusala(toKoodiUri(KOULUTUSALA));
-        
+
         dto.setOpintoala(toKoodiUri(OPINTOALA));
-        
+
         dto.setTutkinto(toKoodiUri(TUTKINTO));
-        
+
         dto.setEqf(toKoodiUri(EQF));
-        
+
         dto.setNqf(toKoodiUri(NQF));
-        
+
         dto.setTila(TarjontaTila.JULKAISTU);
-        
+
         dto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO);
-        
+
         dto.setTunniste(TUNNISTE);
-        
+
         dto.setKomoOid(KOMO_CHILD_OID);
-        
+
         dto.setPohjakoulutusvaatimus(toKoodiUri(POHJAKOULUTUSVAATIMUS));
-        
+
         dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
-        
+
         dto.setKoulutusohjelma(toNimiKoodiUri(KOULUTUSOHJELMA));
-        
-        dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
-        
-        koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, MAP_OPETUSAIKAS);
-        
-        koodiUrisMap(dto.getOpetusPaikkas(), URI_KIELI_FI, MAP_OPETUSPAIKKAS);
-        
-        koodiUrisMap(dto.getOpetuskielis(), URI_KIELI_FI, MAP_OPETUSKIELI);
-        
-        koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, MAP_OPETUMUOTO);
-        
+
+        dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(DATE.toDate()));
+
+        dto.setOpetusAikas(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSAIKAS));
+
+        dto.setOpetusPaikkas(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSPAIKKAS));
+
+        dto.setOpetuskielis(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSKIELI));
+
+        dto.setOpetusmuodos(koodiUrisMap(URI_KIELI_FI, MAP_OPETUMUOTO));
+
         dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO_TYYPPI));
-        
+
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
-        
-        dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], PERSON[5], null, HenkiloTyyppi.YHTEYSHENKILO));
-        
+
+        dto.setYhteyshenkilos(Sets.newHashSet(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], null, HenkiloTyyppi.YHTEYSHENKILO)));
+
         dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
-        
+
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
-        
+
         dto.setKoulutuslaji(toKoodiUri(KOULUTUSLAJI));
-        
+
         dto.setTutkintonimike(toKoodiUri(TUTKINTONIMIKE));
-        
+
         dto.setKoulutustyyppi(toKoodiUri(KOULUTUSTYYPPI));
-        
+
         return dto;
     }
-    
+
 }

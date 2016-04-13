@@ -12,6 +12,13 @@
 
     <tbody ng-show="!model.collapse.perusTiedot">
 
+        <tr>
+            <th>OID</th>
+            <td colspan="2">
+                {{model.koulutus.oid}}
+            </td>
+        </tr>
+
         <!-- organisaation nimi -->
         <tr>
             <th tt="koulutus.review.perustiedot.organisaatio">Organisaatio</th>
@@ -183,7 +190,7 @@
     <tbody ng-show="!model.collapse.yhteysHenkilot" ng-repeat="yh in model.koulutus.yhteyshenkilos | orderBy:yh.henkiloTyyppi">
         <tr>
             <th><b>{{t('koulutus.review.yhteyshenkilo.'+yh.henkiloTyyppi)}}</b></th>
-            <td colspan="2">{{yh.etunimet}} {{yh.sukunimi}}</td>
+            <td colspan="2">{{yh.nimi}}</td>
         </tr>
         <tr>
             <th tt="koulutus.review.yhteyshenkilo.sahkoposti">Sähköposti</th>

@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.*;
@@ -9,16 +10,14 @@ import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassPepareProcess;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.TestExecutionListeners;
@@ -59,9 +58,20 @@ public class MassCopyTest extends TestUtilityBase {
     @Autowired
     MassCommitProcess commitProcess;
 
+    @Autowired
+    TarjontaKoodistoHelper tarjontaKoodistoHelper;
+
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
+
+        Mockito.when(tarjontaKoodistoHelper.getKoodiByUri(Matchers.anyString())).thenReturn(
+                new KoodiType() {{
+                    setKoodiUri("uri");
+                    setKoodiArvo("arvo");
+                    setVersio(1);
+                }}
+        );
 
         try {
             Mockito.when(oidService.get(TarjontaOidType.KOMO))
@@ -158,7 +168,7 @@ public class MassCopyTest extends TestUtilityBase {
         hakukohde.addKoulutusmoduuliToteutus(komoto);
         komoto.addHakukohde(hakukohde);
     }
-    
+
     public Haku createKorkeakoulutusHaku(String hakuOid) {
         Haku haku = fixtures.createHaku();
         haku.setOid(hakuOid);
@@ -240,7 +250,7 @@ public class MassCopyTest extends TestUtilityBase {
         KoulutusmoduuliToteutus komotoOnlyInHaku2 = getKomoto(komo, "komoto-only-in-haku2");
         Hakukohde hakukohdeInHaku2 = hakukohdeDAO.findHakukohdeByOid("hakukohde-1-haku-2");
         connectHakukohdeWithKomoto(hakukohdeInHaku2, komotoOnlyInHaku2);
-        
+
         int komoCountBeforeCopy = koulutusmoduuliDAO.findAllKomos().size();
         int komotoCountBeforeCopy = koulutusmoduuliToteutusDAO.findAll().size();
         int hakukohdeCountBeforeCopy = hakukohdeDAO.findAll().size();

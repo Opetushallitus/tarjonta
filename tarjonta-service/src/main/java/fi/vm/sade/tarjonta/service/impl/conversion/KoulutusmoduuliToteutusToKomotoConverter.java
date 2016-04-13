@@ -255,7 +255,6 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         }
 
         YhteyshenkiloRDTO t = new YhteyshenkiloRDTO();
-        t.setEtunimet(yhteyshenkilo.getEtunimis());
         t.setTyyppi(yhteyshenkilo.getHenkiloTyyppi() != null ? yhteyshenkilo.getHenkiloTyyppi().name() : null);
         t.setHenkiloOid(yhteyshenkilo.getHenkioOid());
 
@@ -267,7 +266,7 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
 
         t.setPuhelin(yhteyshenkilo.getPuhelin());
         t.setEmail(yhteyshenkilo.getSahkoposti());
-        t.setSukunimi(yhteyshenkilo.getSukunimi());
+        t.setNimi(yhteyshenkilo.getNimi());
         t.setTitteli(yhteyshenkilo.getTitteli());
         t.setOid("" + yhteyshenkilo.getId());
 

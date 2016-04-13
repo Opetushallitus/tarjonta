@@ -14,9 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.*;
 
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
@@ -39,6 +37,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -92,14 +91,26 @@ public interface HakukohdeV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Luo uuden hakukohteen", notes = "Operaatio luo uuden hakukohteen", response = HakukohdeV1RDTO.class)
-    public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(@ApiParam(value = "Luotava hakukohde", required = true) HakukohdeV1RDTO hakukohde);
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Operation successful"),
+            @ApiResponse(code = 400, message = "Invalid request payload"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Permission denied")
+    })
+    public Response postHakukohde(@ApiParam(value = "Luotava hakukohde", required = true) HakukohdeV1RDTO hakukohde);
 
     @PUT
     @Path("/{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Päivittää hakukohteen", notes = "Operaatio päivittää hakukohteen", response = HakukohdeV1RDTO.class)
-    public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Operation successful"),
+            @ApiResponse(code = 400, message = "Invalid request payload"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Permission denied")
+    })
+    public Response updateHakukohde(
             @ApiParam(value = "Päivitettävän hakukohteen oid", required = true) @PathParam("oid") String hakukohdeOid,
             @ApiParam(value = "Päivitetty hakukohde", required = true) HakukohdeV1RDTO hakukohde);
 

@@ -202,7 +202,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     public boolean tarkistaKoulutuksenKopiointi(@WebParam(partName = "parameters", name = "tarkistaKoulutusKopiointi", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") TarkistaKoulutusKopiointiTyyppi parameters) {
         //TODO add permission check??
-        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliWithPohjakoulutusAndTarjoaja(parameters.getTarjoajaOid(), parameters.getPohjakoulutus(), parameters.getKoulutusLuokitusKoodi(), parameters.getKoulutusohjelmaKoodi(),
+        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findSameKoulutus(parameters.getTarjoajaOid(), parameters.getPohjakoulutus(), parameters.getKoulutusLuokitusKoodi(), parameters.getKoulutusohjelmaKoodi(),
                 parameters.getOpetuskielis(), parameters.getKoulutuslajis());
         if (komotos == null || komotos.size() < 1) {
             return true;

@@ -28,7 +28,9 @@ import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -295,6 +297,25 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
+    public Hakukohde findHakukohdeByUniqueExternalId(String uniqueExternalId) {
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+        return from(qHakukohde)
+                .where(qHakukohde.uniqueExternalId.eq(uniqueExternalId)
+                        .and(qHakukohde.tila.notIn(TarjontaTila.POISTETTU)))
+                .singleResult(qHakukohde);
+    }
+
+    @Override
+    public Hakukohde findExistingHakukohde(HakukohdeV1RDTO dto) {
+        if (!StringUtils.isBlank(dto.getOid())) {
+            return findHakukohdeByOid(dto.getOid());
+        } else if (!StringUtils.isBlank(dto.getUniqueExternalId())) {
+            return findHakukohdeByUniqueExternalId(dto.getUniqueExternalId());
+        }
+        return null;
+    }
+
+    @Override
     public Hakukohde findHakukohdeWithKomotosByOid(String oid) {
         return findHakukohdeByOid(oid);
     }
@@ -528,10 +549,11 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         Preconditions.checkNotNull(hakukohdeOid, "Hakukohde OID string object cannot be null.");
         List<String> oids = Lists.<String>newArrayList();
         oids.add(hakukohdeOid);
-        Hakukohde findByOid = findHakukohdeByOid(hakukohdeOid);
-        Preconditions.checkArgument(findByOid != null, "Delete failed, entity not found.");
-        findByOid.setTila(TarjontaTila.POISTETTU);
-        findByOid.setLastUpdatedByOid(userOid);
+        Hakukohde hakukohde = findHakukohdeByOid(hakukohdeOid);
+        Preconditions.checkArgument(hakukohde != null, "Delete failed, entity not found.");
+        hakukohde.setTila(TarjontaTila.POISTETTU);
+        hakukohde.setLastUpdatedByOid(userOid);
+        hakukohde.setUniqueExternalId(null); // Unique external id is globally unique, make ID available again
     }
 
     @Override

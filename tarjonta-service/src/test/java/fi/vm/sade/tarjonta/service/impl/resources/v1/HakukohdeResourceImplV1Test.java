@@ -1,216 +1,198 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import fi.vm.sade.koodisto.service.types.common.KieliType;
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.tarjonta.TestUtilityBase;
-import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
+import com.google.common.collect.Sets;
+import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
-import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
-import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
+import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KorkeakouluOpintoV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import org.junit.After;
-import org.junit.Before;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
-import org.powermock.reflect.Whitebox;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
-import static fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.ErrorCode.VALIDATION;
-import static fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus.ERROR;
+import static fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages.HAKUKOHDE_HAKU_MISSING;
+import static fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_MISSING;
 import static fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus.OK;
-import static org.junit.Assert.*;
+import static fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus.VALIDATION;
+import static fi.vm.sade.tarjonta.shared.types.TarjontaTila.LUONNOS;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
-
-@TestExecutionListeners(listeners = {
-    DependencyInjectionTestExecutionListener.class,
-    DirtiesContextTestExecutionListener.class,
-    TransactionalTestExecutionListener.class})
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @ActiveProfiles("embedded-solr")
-@Transactional()
-public class HakukohdeResourceImplV1Test extends TestUtilityBase {
+@Transactional
+public class HakukohdeResourceImplV1Test {
 
-    private TarjontaPermissionServiceImpl permissionService = Mockito.mock(TarjontaPermissionServiceImpl.class);
-    private TarjontaPermissionServiceImpl originalPermissionService;
+    @Autowired
+    KorkeakouluopintoV1Test koulutusResourceTest;
 
-    @Before
-    public void setup() throws Exception {
-        originalPermissionService = Whitebox.getInternalState(permissionChecker, "permissionService");
-        Whitebox.setInternalState(permissionChecker, "permissionService", permissionService);
-        Mockito.stub(oidService.get(TarjontaOidType.HAKUKOHDE)).toReturn("1.2.3.4.5");
-        stubKoodi("kieli_fi", "suomi");
+    @Autowired
+    HakukohdeV1Resource hakukohdeV1Resource;
 
-        //mock permission service to return true for all requests
-        Mockito.stub(permissionService.userCanUpdateHakukohde(Mockito.any(OrganisaatioContext.class))).toReturn(true);
-        Mockito.stub(permissionService.userCanCreateHakukohde(Mockito.any(OrganisaatioContext.class))).toReturn(true);
-        Mockito.stub(permissionService.userCanDeleteHakukohde(Mockito.any(OrganisaatioContext.class))).toReturn(true);
-    }
+    @Autowired
+    HakuDAO hakuDAO;
 
-    @After
-    public void after() {
-        if(originalPermissionService != null) {
-            Whitebox.setInternalState(permissionChecker, "permissionService", originalPermissionService);
-        }
+    @Autowired
+    OidService oidService;
+
+    @Autowired
+    OidServiceMock oidServiceMock;
+
+    @Test
+    public void testCreateOpintokokonaisuusHakukohdeFailsWhenMissingRequiredData() throws OIDCreationException {
+        HakukohdeV1RDTO hakukohde = baseHakukohde();
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde).getEntity();
+        assertEquals(VALIDATION, result.getStatus());
+        assertEquals(2, result.getErrors().size());
+        assertTrue(containsError(result.getErrors(), HAKUKOHDE_KOULUTUS_MISSING));
+        assertTrue(containsError(result.getErrors(), HAKUKOHDE_HAKU_MISSING));
     }
 
     @Test
-    public void blockDuplicatingHakukohdeThatMatchesHakuAndKomoto() {
-        HakukohdeV1RDTO hakukohde = mkHakukohde(canAddHakukohde(mkRandomHaku()), mkRandomKomoto());
+    public void testCreateOpintokokonaisuusHakukohde() throws OIDCreationException {
+        when(oidService.get(TarjontaOidType.HAKUKOHDE)).thenReturn(oidServiceMock.getOid());
 
-        assertEquals(OK, hakukohdeResource.createHakukohde(hakukohde).getStatus());
+        Haku haku = insertHaku();
+        KoulutusV1RDTO koulutus = koulutusResourceTest.insertLuonnosOpintokokonaisuus(null);
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.createHakukohde(hakukohde);
-        assertEquals(ERROR, result.getStatus());
+        HakukohdeV1RDTO hakukohde = baseHakukohde();
+        hakukohde.setHakukohdeKoulutusOids(Lists.newArrayList(koulutus.getOid()));
+        hakukohde.setHakukohteenNimet(ImmutableMap.of("kieli_fi", "hakukohteen nimi"));
+        hakukohde.setHakuOid(haku.getOid());
 
-        ErrorV1RDTO error = result.getErrors().get(0);
-        assertEquals(VALIDATION, error.getErrorCode());
-        assertEquals("HAKUKOHDE_DUPLIKAATTI", error.getErrorMessageKey());
-    }
-
-    @Test
-    public void testThatHakukohdeInheritsHaunLomakeUrl() {
-        Haku haku = mkRandomHaku();
-        haku.setHakulomakeUrl("http://haunUrl.com");
-        HakukohdeV1RDTO hakukohde = mkHakukohde(canAddHakukohde(haku), mkRandomKomoto());
-
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.createHakukohde(hakukohde);
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde).getEntity();
         assertEquals(OK, result.getStatus());
-        HakukohdeV1RDTO hakukohdeRes = result.getResult();
-        assertEquals("http://haunUrl.com", hakukohdeRes.getHakulomakeUrl());
-        assertFalse(hakukohdeRes.isOverridesHaunHakulomakeUrl());
     }
 
     @Test
-    public void testThatHakukohdeOverridesUkoinenLomakeUrl() {
-        Haku haku = mkRandomHaku();
-        haku.setHakulomakeUrl("http://haunUrl.com");
-        HakukohdeV1RDTO hakukohde = mkHakukohde(canAddHakukohde(haku), mkRandomKomoto());
-        hakukohde.setHakulomakeUrl("http://hakukohdekohtainen.com");
-        hakukohde.setOverridesHaunHakulomakeUrl(true);
+    public void testEditHakukohdeUsingExternalId() throws OIDCreationException {
+        String oid = oidServiceMock.getOid();
+        when(oidService.get(TarjontaOidType.HAKUKOHDE)).thenReturn(oid);
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.createHakukohde(hakukohde);
+        Haku haku = insertHaku();
+        KoulutusV1RDTO koulutus = koulutusResourceTest.insertLuonnosOpintokokonaisuus(null);
+
+        HakukohdeV1RDTO hakukohde = baseHakukohde();
+        hakukohde.setHakukohdeKoulutusOids(Lists.newArrayList(koulutus.getOid()));
+        hakukohde.setHakukohteenNimet(ImmutableMap.of("kieli_fi", "hakukohteen nimi"));
+        hakukohde.setHakuOid(haku.getOid());
+        hakukohde.setUniqueExternalId("someUniqueExternalId");
+
+        // Create hakukohde
+        hakukohdeV1Resource.postHakukohde(hakukohde);
+
+        // Now modify it
+        hakukohde.setAloituspaikatLkm(10);
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde).getEntity();
         assertEquals(OK, result.getStatus());
-        HakukohdeV1RDTO hakukohdeRes = result.getResult();
-        assertEquals("http://hakukohdekohtainen.com", hakukohdeRes.getHakulomakeUrl());
-        assertTrue(hakukohdeRes.isOverridesHaunHakulomakeUrl());
+        assertEquals(oid, result.getResult().getOid());
+        assertEquals(hakukohde.getUniqueExternalId(), result.getResult().getUniqueExternalId());
+        assertEquals(hakukohde.getAloituspaikatLkm(), result.getResult().getAloituspaikatLkm());
     }
 
     @Test
-    public void blockDuplicatingHakukohdeThatMatchesHakuButNotKomoto() {
-        Haku haku = canAddHakukohde(mkRandomHaku());
+    public void testCreateOpintokokonaisuusHakukohdeUsingKoulutusExternalId() throws OIDCreationException {
+        when(oidService.get(TarjontaOidType.HAKUKOHDE)).thenReturn(oidServiceMock.getOid());
 
-        assertEquals(OK, hakukohdeResource.createHakukohde(mkHakukohde(haku, mkRandomKomoto())).getStatus());
+        Haku haku = insertHaku();
+        final KorkeakouluOpintoV1RDTO koulutusDto = new KorkeakouluOpintoV1RDTO();
+        koulutusDto.setUniqueExternalId("1.2.3-externalId-42");
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = hakukohdeResource.createHakukohde(mkHakukohde(haku, mkRandomKomoto()));
+        koulutusResourceTest.insertLuonnosOpintokokonaisuus(koulutusDto);
 
-        assertEquals(ERROR, result.getStatus());
+        HakukohdeV1RDTO hakukohde = baseHakukohde();
+        hakukohde.setKoulutukset(Sets.newHashSet(new KoulutusIdentification(null, koulutusDto.getUniqueExternalId())));
+        hakukohde.setHakukohteenNimet(ImmutableMap.of("kieli_fi", "hakukohteen nimi"));
+        hakukohde.setHakuOid(haku.getOid());
 
-        ErrorV1RDTO error = result.getErrors().get(0);
-        assertEquals(VALIDATION, error.getErrorCode());
-        assertEquals("HAKUKOHDE_DUPLIKAATTI_SAMALLA_NIMELLA", error.getErrorMessageKey());
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde).getEntity();
+        assertEquals(OK, result.getStatus());
+        assertTrue(Iterables.find(result.getResult().getKoulutukset(), new Predicate<KoulutusIdentification>() {
+            @Override
+            public boolean apply(KoulutusIdentification id) {
+                return koulutusDto.getUniqueExternalId().equals(id.getUniqueExternalId());
+            }
+        }, null) != null);
     }
 
-    private KoodiMetadataType getKoodiMeta(String arvo, KieliType kieli) {
-        KoodiMetadataType type = new KoodiMetadataType();
-        type.setKieli(kieli);
-        type.setNimi(arvo + "-nimi-" + kieli.toString());
-        return type;
+    @Test
+    public void testDeltaEditHakukohde() throws OIDCreationException {
+        when(oidService.get(TarjontaOidType.HAKUKOHDE)).thenReturn(oidServiceMock.getOid());
+
+        Haku haku = insertHaku();
+        final KorkeakouluOpintoV1RDTO koulutusDto = new KorkeakouluOpintoV1RDTO();
+        koulutusDto.setUniqueExternalId("deltaHakukohdeEdit");
+
+        koulutusResourceTest.insertLuonnosOpintokokonaisuus(koulutusDto);
+
+        HakukohdeV1RDTO hakukohde = baseHakukohde();
+        hakukohde.setKoulutukset(Sets.newHashSet(new KoulutusIdentification(null, koulutusDto.getUniqueExternalId())));
+        hakukohde.setHakukohteenNimet(ImmutableMap.of("kieli_fi", "hakukohteen nimi"));
+        hakukohde.setHakuOid(haku.getOid());
+        hakukohde.setUniqueExternalId("deltaHakukohdeEdit");
+        hakukohde.setKelaLinjaKoodi("kelanKoodi");
+
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde).getEntity();
+        assertEquals(OK, result.getStatus());
+
+        HakukohdeV1RDTO deltaDto = new HakukohdeV1RDTO();
+        deltaDto.setUniqueExternalId(hakukohde.getUniqueExternalId());
+        deltaDto.setAloituspaikatLkm(10);
+
+        result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(deltaDto).getEntity();
+        assertEquals(OK, result.getStatus());
+        assertEquals(deltaDto.getAloituspaikatLkm(), result.getResult().getAloituspaikatLkm());
+        assertEquals(hakukohde.getKelaLinjaKoodi(), result.getResult().getKelaLinjaKoodi());
     }
 
-    private KoodiType getKoodiType(String uri, String arvo) {
-        KoodiType kt = new KoodiType();
-        kt.setKoodiArvo(arvo);
-        kt.setKoodiUri(uri);
-        kt.getMetadata().addAll(Lists.newArrayList(
-                getKoodiMeta(arvo, KieliType.FI),
-                getKoodiMeta(arvo, KieliType.SV),
-                getKoodiMeta(arvo, KieliType.EN)));
-        return kt;
+    public HakukohdeV1RDTO baseHakukohde() {
+        HakukohdeV1RDTO dto = new HakukohdeV1RDTO();
+        dto.setTila(TarjontaTila.LUONNOS);
+        return dto;
     }
 
-    private void stubKoodi(String uri, String arvo) {
-        Mockito
-                .stub(koodiService.searchKoodis(Matchers.argThat(new KoodistoCriteriaMatcher(uri))))
-                .toReturn(Lists.newArrayList(getKoodiType(uri, arvo)));
+    private Haku insertHaku() {
+        Haku haku = new Haku();
+        haku.setHakutapaUri("hakutapa");
+        haku.setTila(LUONNOS);
+        haku.setHakukausiVuosi(new Date().getYear());
+        haku.setKohdejoukkoUri("kohdejoukko");
+        haku.setHakukausiUri("hakukausiUri");
+        haku.setHakutyyppiUri("hakutyyppi");
+        haku.setOid(oidServiceMock.getOid());
+        return hakuDAO.insert(haku);
     }
 
-    private Haku canAddHakukohde(Haku haku) {
-        Mockito.stub(parameterServices.parameterCanAddHakukohdeToHaku(haku.getOid())).toReturn(true);
-        return haku;
+    private static boolean containsError(List<ErrorV1RDTO> errors, final HakukohdeValidationMessages msg) {
+        return Iterables.find(errors, new Predicate<ErrorV1RDTO>() {
+            @Override
+            public boolean apply(ErrorV1RDTO error) {
+                return StringUtils.defaultString(error.getErrorMessageKey()).contains(msg.name());
+            }
+        }, null) != null;
     }
 
-    private static HakukohdeV1RDTO mkHakukohde(final Haku haku, final KoulutusmoduuliToteutus komoto) {
-        final OsoiteRDTO osoite = new OsoiteRDTO() {{
-            setOsoiterivi1("Juna Korsoon");
-            setPostinumero("posti_12345");
-            setPostitoimipaikka("KORSO");
-            setPostinumeroArvo("12345");
-        }};
-
-        final HakukohdeLiiteV1RDTO liite = new HakukohdeLiiteV1RDTO() {{
-            setKieliUri("kieli_fi");
-            setLiitteenKuvaukset(Collections.singletonMap("kieli_fi", "Looremin ipsumi."));
-            setLiitteenNimi("Liite123");
-            setSahkoinenToimitusOsoite("www-osoite");
-            setToimitettavaMennessa(new Date());
-            setLiitteenToimitusOsoite(osoite);
-        }};
-
-        final ValintakoeAjankohtaRDTO ajankohta = new ValintakoeAjankohtaRDTO() {{
-            setLisatiedot("Lisa Tieto");
-            setOsoite(osoite);
-            setAlkaa(new Date());
-            setLoppuu(new Date());
-        }};
-
-        final ValintakoeV1RDTO valintakoe = new ValintakoeV1RDTO() {{
-            setKieliUri("kieli_fi");
-            setValintakoeNimi("Pudotuspeli");
-            getValintakoeAjankohtas().add(ajankohta);
-        }};
-
-        return new HakukohdeV1RDTO() {{
-            setHakukohteenNimiUri("hakukohteet_255#2");
-            setToteutusTyyppi(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO.toString());
-            setTila(TarjontaTila.LUONNOS.toString());
-            setHakukohteenNimet(Collections.singletonMap("kieli_fi", "Hakukohde #1"));
-            setTarjoajaOids(Collections.singleton(komoto.getTarjoaja()));
-            setTarjoajaNimet(Collections.singletonMap(komoto.getTarjoaja(), "Organisaatio ABC"));
-            setHakuOid(haku.getOid());
-            setHakukohdeKoulutusOids(Collections.singletonList(komoto.getOid()));
-            getHakukohteenLiitteet().add(liite);
-            getValintakokeet().add(valintakoe);
-        }};
-    }
-
-    private Koulutusmoduuli mkRandomKomo() {
-        return koulutusmoduuliDAO.insert(tarjontaFixtures.createTutkintoOhjelma());
-    }
-
-    private KoulutusmoduuliToteutus mkRandomKomoto() {
-        KoulutusmoduuliToteutus komoto = tarjontaFixtures.createTutkintoOhjelmaToteutusWithTarjoajaOid("tarjoajaOid");
-        komoto.setKoulutusmoduuli(mkRandomKomo());
-        return koulutusmoduuliToteutusDAO.insert(komoto);
-    }
-
-    private Haku mkRandomHaku() {
-        return hakuDAO.insert(tarjontaFixtures.createHaku());
-    }
 }

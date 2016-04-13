@@ -211,10 +211,7 @@ describe('Edit koulutus testeja', function() {
 
         $scope.editYhModel.selectHenkilo(henkilo1);
         $httpBackend.flush();
-
-
-        expect($scope.uiModel.contactPerson.etunimet).toEqual('Testeri');
-        expect($scope.uiModel.contactPerson.sukunimi).toEqual('1194-Kuormitus');
+        expect($scope.uiModel.contactPerson.nimi).toEqual('Testeri 1194-Kuormitus');
         expect($scope.uiModel.contactPerson.puhelin).toEqual('012343');
         expect($scope.uiModel.contactPerson.sahkoposti).toEqual('email@foo.bar');
 

@@ -136,7 +136,7 @@ describe('AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS', funct
                 editVal: 'http://www.linkki-joka-ei-toimi.fi'
             },
             yhteyshenkilö: {
-                el: $('[ng-model="uiModel.contactPerson.nimet"]'),
+                el: $('[ng-model="uiModel.contactPerson.nimi"]'),
                 val: 'Emma Nylund',
                 editVal: 'EDIT'
             },

@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.service.resources.v1;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
@@ -54,6 +56,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  *
@@ -76,6 +79,7 @@ public interface KoulutusV1Resource {
 
     @DELETE
     @Path("/{oid}")
+    @PreAuthorize("isAuthenticated()")
     @ApiOperation(
             value = "Poistaa (passivoi) koulutuksen annetulla koulutuksen oid:lla",
             notes = "Operaatio Poistaa (passivoi) koulutuksen annetulla koulutuksen oid:lla")
@@ -83,6 +87,7 @@ public interface KoulutusV1Resource {
 
     @POST
     @Path("/{oid}/siirra")
+    @PreAuthorize("isAuthenticated()")
     @ApiOperation(
             value = "Kopioi tai siirtää koulutuksen annetulla koulutuksen oid:lla",
             notes = "Operaatio kopioi tai siirtää koulutuksen annetulla koulutuksen oid:lla")
@@ -90,19 +95,27 @@ public interface KoulutusV1Resource {
 
     @POST
     @Path("/siirra")
+    @PreAuthorize("isAuthenticated()")
     @ApiOperation(
             value = "Kopioi tai siirtää monta koulutusta",
             notes = "Operaatio kopioi tai siirtää monta koulutusta")
     public ResultV1RDTO copyOrMoveMultiple(KoulutusMultiCopyV1RDTO koulutusMultiCopy);
 
     @POST
+    @PreAuthorize("isAuthenticated()")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
             value = "Luo uuden koulutuksen",
             notes = "Operaatio luo uuden koulutuksen",
             response = KoulutusV1RDTO.class)
-    public ResultV1RDTO<KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO koulutus);
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Operation successful"),
+            @ApiResponse(code = 400, message = "Invalid request payload"),
+            @ApiResponse(code = 401, message = "Unauthorized request"),
+            @ApiResponse(code = 403, message = "Permission denied")
+    })
+    public Response postKoulutus(KoulutusV1RDTO koulutus);
 
     @GET
     @Path("/{oid}/tekstis")
@@ -152,6 +165,7 @@ public interface KoulutusV1Resource {
 
     @POST
     @PUT
+    @PreAuthorize("isAuthenticated()")
     @Path("/{oid}/tekstis/komoto")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
@@ -171,6 +185,7 @@ public interface KoulutusV1Resource {
     @POST
     @PUT
     @Path("/{oid}/tekstis/komo")
+    @PreAuthorize("isAuthenticated()")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
             value = "Lisää koulutusmoduuliin monikielisen kuvaustekstin",
@@ -179,6 +194,7 @@ public interface KoulutusV1Resource {
 
     @DELETE
     @Path("/{oid}/teksti/{key}/{kieliUri}")
+    @PreAuthorize("isAuthenticated()")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
             value = "Poistaa yhden monikieliset kuvaustekstit annetuilla avain- ja koodi uri-parametreilla",
@@ -205,6 +221,7 @@ public interface KoulutusV1Resource {
 
     @POST
     @Path("/{oid}/kuva")
+    @PreAuthorize("isAuthenticated()")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
             value = "Lisää kuvatiedoton koulutusmoduulin toteutukseen",
@@ -213,6 +230,7 @@ public interface KoulutusV1Resource {
 
     @POST
     @Path("/{oid}/kuva/{kieliUri}")
+    @PreAuthorize("isAuthenticated()")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @ApiOperation(
             value = "Lisää kuvatiedoton koulutusmoduulin toteutukseen",
@@ -221,6 +239,7 @@ public interface KoulutusV1Resource {
 
     @DELETE
     @Path("/{oid}/kuva/{kieliUri}")
+    @PreAuthorize("isAuthenticated()")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
             value = "Poistaa kuvatiedoton koulutusmoduulin toteutuksesta annetulla koodi uri:lla",
@@ -240,6 +259,7 @@ public interface KoulutusV1Resource {
     @POST
     @PUT
     @Path("/{oid}/tila")
+    @PreAuthorize("isAuthenticated()")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
             value = "Päivittää koulutuksen tilan",

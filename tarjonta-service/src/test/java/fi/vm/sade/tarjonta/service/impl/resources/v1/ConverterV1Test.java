@@ -10,6 +10,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Test;
@@ -32,11 +33,21 @@ public class ConverterV1Test extends TestMockBase {
     @InjectMocks
     private ConverterV1 converter;
 
+    private void setKomotoForHakukohde(Hakukohde hakukohde) {
+        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
+        komoto.setToteutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS);
+        Koulutusmoduuli komo = new Koulutusmoduuli();
+        komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
+        komoto.setKoulutusmoduuli(komo);
+        hakukohde.setKoulutusmoduuliToteutuses(Sets.newHashSet(komoto));
+    }
+
     @Test
     public void thatPainotettavatOppiaineetAreConverted() {
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setHaku(mock(Haku.class));
         hakukohde.setTila(TarjontaTila.JULKAISTU);
+        setKomotoForHakukohde(hakukohde);
 
         when(tarjontaKoodistoHelper.getHakukelpoisuusvaatimusrymaUriForHakukohde(anyString())).thenReturn(null);
 
@@ -72,6 +83,7 @@ public class ConverterV1Test extends TestMockBase {
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setHaku(mock(Haku.class));
         hakukohde.setTila(TarjontaTila.JULKAISTU);
+        setKomotoForHakukohde(hakukohde);
 
         when(tarjontaKoodistoHelper.getHakukelpoisuusvaatimusrymaUriForHakukohde(anyString())).thenReturn(null);
         when(tarjontaKoodistoHelper.getKoodiByUri("kieli_fi")).thenReturn(mock(KoodiType.class));
@@ -112,6 +124,7 @@ public class ConverterV1Test extends TestMockBase {
         when(tarjontaKoodistoHelper.getHakukelpoisuusvaatimusrymaUriForHakukohde(anyString())).thenReturn(null);
 
         Hakukohde hakukohde = getHakukohde();
+        setKomotoForHakukohde(hakukohde);
 
         HakukohdeV1RDTO hakukohdeDTO = converter.toHakukohdeRDTO(hakukohde);
 
@@ -135,6 +148,7 @@ public class ConverterV1Test extends TestMockBase {
     private Valintakoe getValintakoe() {
         Valintakoe valintakoe = new Valintakoe();
         valintakoe.setId(12345L);
+        valintakoe.setVersion(0L);
         valintakoe.setAjankohtas(getValintakoeAjankohdat());
         return valintakoe;
     }
@@ -146,9 +160,10 @@ public class ConverterV1Test extends TestMockBase {
 
     private HakukohdeV1RDTO getHakukohdeDTO() {
         HakukohdeV1RDTO hakukohdeDTO = new HakukohdeV1RDTO();
-        hakukohdeDTO.setTila("JULKAISTU");
+        hakukohdeDTO = converter.setDefaultValues(hakukohdeDTO);
+        hakukohdeDTO.setTila(TarjontaTila.JULKAISTU);
         hakukohdeDTO.setValintakokeet(getValintakokeetDTOs());
-        hakukohdeDTO.setToteutusTyyppi("LUKIOKOULUTUS");
+        hakukohdeDTO.setToteutusTyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS);
         return hakukohdeDTO;
     }
 
@@ -239,12 +254,13 @@ public class ConverterV1Test extends TestMockBase {
         Hakukohde hakukohde = getHakukohde();
         hakukohde.setHakuaikaAlkuPvm(alkuPvm);
         hakukohde.setHakuaikaLoppuPvm(loppuPvm);
+        setKomotoForHakukohde(hakukohde);
 
         HakukohdeV1RDTO hakukohdeV1RDTO = converter.toHakukohdeRDTO(hakukohde);
 
         assertEquals(alkuPvm, hakukohdeV1RDTO.getHakuaikaAlkuPvm());
         assertEquals(loppuPvm, hakukohdeV1RDTO.getHakuaikaLoppuPvm());
-        assertTrue(hakukohdeV1RDTO.isKaytetaanHakukohdekohtaistaHakuaikaa());
+        assertTrue(hakukohdeV1RDTO.getKaytetaanHakukohdekohtaistaHakuaikaa());
 
     }
 
@@ -374,6 +390,7 @@ public class ConverterV1Test extends TestMockBase {
     @Test
     public void thatRyhmaliitoksetAreConvertedToDTO() {
         Hakukohde hakukohde = getHakukohde();
+        setKomotoForHakukohde(hakukohde);
 
         Ryhmaliitos ryhmaliitos = new Ryhmaliitos();
         ryhmaliitos.setHakukohde(hakukohde);
@@ -396,6 +413,7 @@ public class ConverterV1Test extends TestMockBase {
     @Test
     public void thatOrganisaatioRyhmaOidsAreConvertedToDTO() {
         Hakukohde hakukohde = getHakukohde();
+        setKomotoForHakukohde(hakukohde);
 
         Ryhmaliitos ryhmaliitos = new Ryhmaliitos();
         ryhmaliitos.setHakukohde(hakukohde);
@@ -418,6 +436,7 @@ public class ConverterV1Test extends TestMockBase {
     @Test
     public void thatYlioppilastutkintoAntaaHakukelpoisuudenIsConverted() {
         Hakukohde hakukohde = getHakukohde();
+        setKomotoForHakukohde(hakukohde);
         Haku haku = hakukohde.getHaku();
 
         // Kun hakukohteelle ei ole asetettu valintaa (haun valinta = true)

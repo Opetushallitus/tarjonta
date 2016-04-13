@@ -15,10 +15,16 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
+import fi.vm.sade.koodisto.service.KoodiService;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
+import fi.vm.sade.koodisto.service.types.common.KoodistoItemType;
+import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusImplicitDataPopulator;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
@@ -29,12 +35,13 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import static fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusImplicitDataPopulator.*;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 
@@ -54,6 +61,38 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
     private KoulutusDTOConverterToEntity instance;
 
     private OidService oidServiceMock;
+
+    private KoulutusImplicitDataPopulator dataPopulator = new KoulutusImplicitDataPopulator();
+
+    private static KoodiType mockCode(final String codeValue, final String codeKoodistoUri) {
+        return new KoodiType(){{
+            setKoodiUri(codeValue + "_uri");
+            setKoodiArvo("x" + codeValue);
+            setVersio(1);
+            setKoodisto(new KoodistoItemType(){{
+                setKoodistoUri(codeKoodistoUri);
+            }});
+        }};
+    }
+
+    public static KoodiService mockKoodiService(KoodiService koodiServiceMock) {
+        if (koodiServiceMock == null) {
+            koodiServiceMock = Mockito.mock(KoodiService.class);
+        }
+
+        List<KoodiType> mockedList = new ArrayList<KoodiType>();
+        mockedList.add(mockCode("koulutusala", KOULUTUSALAOPH2002));
+        mockedList.add(mockCode("koulutusaste", KOULUTUSASTEOPH2002));
+        mockedList.add(mockCode("opintoala", OPINTOALAOPH2002));
+        mockedList.add(mockCode("eqf", EQF));
+        mockedList.add(mockCode("tutkinto", TUTKINTO));
+        mockedList.add(mockCode("tutkintonimike", TUTKINTONIMIKEKK));
+        Mockito.when(koodiServiceMock.listKoodiByRelation(
+                Matchers.any(KoodiUriAndVersioType.class), Matchers.anyBoolean(), Matchers.any(SuhteenTyyppiType.class)
+        )).thenReturn(mockedList);
+
+        return koodiServiceMock;
+    }
 
     @Before
     public void setUp() {
@@ -75,6 +114,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
     @Test
     public void testKorkeakouluCopyCommonUrisToKomoAndKomoto() throws OIDCreationException {
         KoulutusKorkeakouluV1RDTO dto = new KoulutusKorkeakouluV1RDTO();
+        dto = (KoulutusKorkeakouluV1RDTO) dataPopulator.defaultValuesForDto(dto);
         dto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO);
         dto.setOrganisaatio(new OrganisaatioV1RDTO("org_oid", "org_name", null));
         dto.setKomoOid(KOMO_OID);
@@ -141,6 +181,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         m.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
 
         KoulutusLukioV1RDTO dto = new KoulutusLukioV1RDTO();
+        dto = (KoulutusLukioV1RDTO) dataPopulator.defaultValuesForDto(dto);
         dto.setOrganisaatio(new OrganisaatioV1RDTO("org_oid", "org_name", null));
         dto.setKomoOid(KOMO_OID);
         dto.setOpintoala(toKoodiUri(Type.KOMOTO, FieldNames.OPINTOALA));

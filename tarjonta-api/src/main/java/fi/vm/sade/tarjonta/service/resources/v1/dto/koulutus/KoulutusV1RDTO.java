@@ -14,37 +14,30 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import fi.vm.sade.tarjonta.service.resources.v1.dto.OppiaineV1RDTO;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeId;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
-
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OppiaineV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
-import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
-import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
-import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.*;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
  * @author jwilen
  */
 @ApiModel(value = "Koulutuksien yleiset tiedot sisältävä rajapintaolio")
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "toteutustyyppi")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "toteutustyyppi", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes({
     @Type(value = AmmattitutkintoV1RDTO.class, name = "AMMATTITUTKINTO"),
     @Type(value = ErikoisammattitutkintoV1RDTO.class, name = "ERIKOISAMMATTITUTKINTO"),
@@ -69,7 +62,6 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
 
     @ApiModelProperty(value = "Koulutuksen toteutuksen tarkasti yksiloiva enumeraatio", required = true)
-    @JsonTypeId
     private ToteutustyyppiEnum toteutustyyppi;
 
     @ApiModelProperty(value = "Koulutusmoduulin karkeasti yksilöivä enumeraatio", required = true)
@@ -87,8 +79,11 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     @ApiModelProperty(value = "Tutkinto-ohjelman nimi monella kielella, ainakin yksi kieli pitää olla täytetty", required = true)
     private NimiV1RDTO koulutusohjelma;
 
-    @ApiModelProperty(value = "Tutkinto-ohjelman tunniste, oppilaitoksen oma tunniste järjestettävälle koulutukselle", required = true)
+    @ApiModelProperty(value = "Tutkinto-ohjelman tunniste, oppilaitoksen oma tunniste järjestettävälle koulutukselle", required = false)
     private String tunniste;
+
+    @ApiModelProperty(value = "Oppilaitoksen globaalisti uniikki tunniste koulutukselle", required = false)
+    private String uniqueExternalId;
 
     @ApiModelProperty(value = "Hakijalle näytettävä tunniste", required = false)
     private String hakijalleNaytettavaTunniste;
@@ -136,10 +131,10 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     private KoodiV1RDTO opintojenLaajuusarvo;
 
     @ApiModelProperty(value = "Opintojen järjestäjät", required = false)
-    private HashSet<String> opetusJarjestajat = new HashSet<String>();
+    private Set<String> opetusJarjestajat;
 
     @ApiModelProperty(value = "Opintojen tarjoajat", required = false)
-    private HashSet<String> opetusTarjoajat = new HashSet<String>();
+    private Set<String> opetusTarjoajat;
 
     @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO ammattinimikkeet;
@@ -176,6 +171,12 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
 
     @ApiModelProperty(value = "Koulutukseen sisältyvät koulutuskoodit", required = false)
     private KoodiUrisV1RDTO sisaltyvatKoulutuskoodit;
+
+    @ApiModelProperty(value = "Koulutukset, joihin tämä koulutus sisältyy", required = false)
+    private Set<KoulutusIdentification> sisaltyyKoulutuksiin;
+
+    @ApiModelProperty(value = "Koulutuslaji-koodi", required = false)
+    private KoodiV1RDTO koulutuslaji;
 
     public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         this.setToteutustyyppi(toteutustyyppi);
@@ -255,9 +256,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the yhteyshenkilos
      */
     public Set<YhteyshenkiloTyyppi> getYhteyshenkilos() {
-        if (yhteyshenkilos == null) {
-            yhteyshenkilos = new HashSet<YhteyshenkiloTyyppi>();
-        }
         return yhteyshenkilos;
     }
 
@@ -272,10 +270,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the organisaatio
      */
     public OrganisaatioV1RDTO getOrganisaatio() {
-        if (organisaatio == null) {
-            organisaatio = new OrganisaatioV1RDTO();
-        }
-
         return organisaatio;
     }
 
@@ -300,27 +294,9 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     }
 
     /**
-     * Will be removed in the future, use the moduulityyppi or toteutustyyppi
-     * enum.
-     *
-     * @return the koulutusasteTyyppi
-     */
-    @Deprecated
-    public KoulutusasteTyyppi getKoulutusasteTyyppi() {
-        if (moduulityyppi != null) {
-            return moduulityyppi.getKoulutusasteTyyppi();
-        }
-        return null;
-    }
-
-    /**
      * @return the kuvausKomo
      */
     public KuvausV1RDTO<KomoTeksti> getKuvausKomo() {
-        if (kuvausKomo == null) {
-            kuvausKomo = new KuvausV1RDTO<KomoTeksti>();
-        }
-
         return kuvausKomo;
     }
 
@@ -335,9 +311,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the kuvausKomoto
      */
     public KuvausV1RDTO<KomotoTeksti> getKuvausKomoto() {
-        if (kuvausKomoto == null) {
-            kuvausKomoto = new KuvausV1RDTO<KomotoTeksti>();
-        }
         return kuvausKomoto;
     }
 
@@ -380,10 +353,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the koulutusohjelma
      */
     public NimiV1RDTO getKoulutusohjelma() {
-        if (koulutusohjelma == null) {
-            koulutusohjelma = new NimiV1RDTO();
-        }
-
         return koulutusohjelma;
     }
 
@@ -412,10 +381,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the koulutuksenAlkamisPvms
      */
     public Set<Date> getKoulutuksenAlkamisPvms() {
-        if (koulutuksenAlkamisPvms == null) {
-            koulutuksenAlkamisPvms = new HashSet<Date>();
-        }
-
         return koulutuksenAlkamisPvms;
     }
 
@@ -458,10 +423,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the opetuskielis
      */
     public KoodiUrisV1RDTO getOpetuskielis() {
-        if (opetuskielis == null) {
-            opetuskielis = new KoodiUrisV1RDTO();
-        }
-
         return opetuskielis;
     }
 
@@ -476,10 +437,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the opetusmuodos
      */
     public KoodiUrisV1RDTO getOpetusmuodos() {
-        if (opetusmuodos == null) {
-            opetusmuodos = new KoodiUrisV1RDTO();
-        }
-
         return opetusmuodos;
     }
 
@@ -491,11 +448,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     }
 
     public KoodiUrisV1RDTO getOpetusAikas() {
-
-        if (opetusAikas == null) {
-            opetusAikas = new KoodiUrisV1RDTO();
-        }
-
         return opetusAikas;
     }
 
@@ -504,10 +456,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     }
 
     public KoodiUrisV1RDTO getOpetusPaikkas() {
-        if (opetusPaikkas == null) {
-            opetusPaikkas = new KoodiUrisV1RDTO();
-        }
-
         return opetusPaikkas;
     }
 
@@ -568,7 +516,7 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     /**
      * @return list of opetus organisators oids
      */
-    public HashSet<String> getOpetusJarjestajat() {
+    public Set<String> getOpetusJarjestajat() {
         return opetusJarjestajat;
     }
 
@@ -577,7 +525,7 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      *
      * @param opetusJarjestajat
      */
-    public void setOpetusJarjestajat(HashSet<String> opetusJarjestajat) {
+    public void setOpetusJarjestajat(Set<String> opetusJarjestajat) {
         opetusJarjestajat = (opetusJarjestajat != null) ? opetusJarjestajat : new HashSet<String>();
         this.opetusJarjestajat = opetusJarjestajat;
     }
@@ -585,7 +533,7 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     /**
      * @return "offerer" oids for koulutus
      */
-    public HashSet<String> getOpetusTarjoajat() {
+    public Set<String> getOpetusTarjoajat() {
         return opetusTarjoajat;
     }
 
@@ -594,7 +542,7 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      *
      * @param opetusTarjoajat list of oids offering the koulutus.
      */
-    public void setOpetusTarjoajat(HashSet<String> opetusTarjoajat) {
+    public void setOpetusTarjoajat(Set<String> opetusTarjoajat) {
         opetusTarjoajat = (opetusTarjoajat != null) ? opetusTarjoajat : new HashSet<String>();
         this.opetusTarjoajat = opetusTarjoajat;
     }
@@ -604,10 +552,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      * @return the ammattinimikkeet
      */
     public KoodiUrisV1RDTO getAmmattinimikkeet() {
-        if (ammattinimikkeet == null) {
-            ammattinimikkeet = new KoodiUrisV1RDTO();
-        }
-
         return ammattinimikkeet;
     }
 
@@ -619,10 +563,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     }
 
     public KoodiUrisV1RDTO getAihees() {
-        if (aihees == null) {
-            aihees = new KoodiUrisV1RDTO();
-        }
-
         return aihees;
     }
 
@@ -686,4 +626,27 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
         this.hakijalleNaytettavaTunniste = hakijalleNaytettavaTunniste;
     }
 
+    public Set<KoulutusIdentification> getSisaltyyKoulutuksiin() {
+        return sisaltyyKoulutuksiin;
+    }
+
+    public void setSisaltyyKoulutuksiin(Set<KoulutusIdentification> sisaltyyKoulutuksiin) {
+        this.sisaltyyKoulutuksiin = sisaltyyKoulutuksiin;
+    }
+
+    public String getUniqueExternalId() {
+        return uniqueExternalId;
+    }
+
+    public void setUniqueExternalId(String uniqueExternalId) {
+        this.uniqueExternalId = uniqueExternalId;
+    }
+
+    public KoodiV1RDTO getKoulutuslaji() {
+        return koulutuslaji;
+    }
+
+    public void setKoulutuslaji(KoodiV1RDTO koulutuslaji) {
+        this.koulutuslaji = koulutuslaji;
+    }
 }

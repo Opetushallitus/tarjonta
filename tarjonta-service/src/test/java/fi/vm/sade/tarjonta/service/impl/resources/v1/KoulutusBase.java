@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.*;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
@@ -35,11 +36,12 @@ import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.impl.ContextDataServiceImpl;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntity;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.*;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.LinkingV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
@@ -56,6 +58,7 @@ import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.joda.time.DateTime;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -65,15 +68,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  *
@@ -107,7 +108,7 @@ abstract class KoulutusBase extends TestUtilityBase {
     protected static final String MAP_AMMATTINIMIKE = "ammattinimike";
     protected static final String MAP_OPETUSAIKAS = "opetusaikas";
     protected static final String MAP_OPETUSPAIKKAS = "opetuspaikkas";
-    protected static final String EQF = "EQF";
+    protected static final String EQF = "eqf";
     protected static final String NQF = "NQF";
     protected static final String KOMO_PARENT_OID = "komo_parent_oid";
     protected static final String KOMO_CHILD_OID = "komo_child_oid";
@@ -118,7 +119,7 @@ abstract class KoulutusBase extends TestUtilityBase {
     protected static final String TUNNISTE = "tunniste_txt";
     protected static final String SUUNNITELTU_KESTO_VALUE = "10";
     protected static final String SUUNNITELTU_KESTO_TYYPPI = "suunnteltu_kesto";
-    protected static final String[] PERSON = {"henkilo_oid", "firstanames", "lastname", "Mr.", "oph@oph.fi", "12345678"};
+    protected static final String[] PERSON = {"henkilo_oid", "Etunimi Etunimi Sukunimi Sukunimi", "Mr.", "oph@oph.fi", "12345678"};
 
     protected KoulutusResourceImplV1 instance;
     protected final DateTime DATE = new DateTime(VUOSI, 1, 1, 1, 1);
@@ -144,8 +145,8 @@ abstract class KoulutusBase extends TestUtilityBase {
 
     public void reload() throws OIDCreationException {
 
-        Mockito.stub(oidService.get(TarjontaOidType.KOMO)).toReturn(KOMO_OID);
-        Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn(KOMOTO_OID);
+        stub(oidService.get(TarjontaOidType.KOMO)).toReturn(KOMO_OID);
+        stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn(KOMOTO_OID);
 
         //used in regexp kieli uri validation
         KoodistoURI.KOODISTO_KIELI_URI = "kieli";
@@ -160,22 +161,27 @@ abstract class KoulutusBase extends TestUtilityBase {
         komoKoulutusConverters = new KoulutusKuvausV1RDTO<KomoTeksti>();
         commonConverter = new KoulutusCommonConverter();
         //CREATE MOCKS
-        organisaatioServiceMock = createMock(OrganisaatioService.class);
-        koulutusPermissionServiceMock = createMock(KoulutusPermissionService.class);
-        tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
-        indexerResourceMock = createMock(IndexerResource.class);
-        permissionChecker = createMock(PermissionChecker.class);
+        koulutusPermissionServiceMock = mock(KoulutusPermissionService.class);
+        tarjontaKoodistoHelperMock = mock(TarjontaKoodistoHelper.class);
+        indexerResourceMock = mock(IndexerResource.class);
+        permissionChecker = mock(PermissionChecker.class);
+        doNothing().when(permissionChecker).checkCreateKoulutus(anyString());
+        doNothing().when(permissionChecker).checkUpdateKoulutusByTarjoajaOid(anyString());
+
         koodistoUri = createMock(KoodistoURI.class);
         contextDataService = new ContextDataServiceImpl();
-        koulutusSisaltyvyysDAO = createMock(KoulutusSisaltyvyysDAO.class);
-        koulutusSearchService = createMock(KoulutusSearchService.class);
-        hakukohdeSearchService = createMock(HakukohdeSearchService.class);
-        oppilaitosKoodiRelations = createMock(OppilaitosKoodiRelations.class);
-        tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
-        publicationDataService = createMock(PublicationDataService.class);
+        koulutusSisaltyvyysDAO = mock(KoulutusSisaltyvyysDAO.class);
+        koulutusSearchService = mock(KoulutusSearchService.class);
+        hakukohdeSearchService = mock(HakukohdeSearchService.class);
+        publicationDataService = mock(PublicationDataService.class);
+        KoulutusImplicitDataPopulator dataPopulator = new KoulutusImplicitDataPopulator();
+        Whitebox.setInternalState(dataPopulator, "koodiService", KoulutusDTOConverterToEntityTest.mockKoodiService(null));
+        Whitebox.setInternalState(dataPopulator, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
+        Whitebox.setInternalState(dataPopulator, "contextDataService", contextDataService);
 
         //INIT DATA CONVERTERS
         converterToRDTO = new EntityConverterToRDTO();
+        Whitebox.setInternalState(dataPopulator, "converterToRDTO", converterToRDTO);
         convertToEntity = new KoulutusDTOConverterToEntity();
         instance = new KoulutusResourceImplV1();
         //SET VALUES TO INSTANCES
@@ -189,6 +195,7 @@ abstract class KoulutusBase extends TestUtilityBase {
         Whitebox.setInternalState(instance, "oppiaineDAO", oppiaineDAO);
         Whitebox.setInternalState(instance, "koulutusPermissionService", koulutusPermissionServiceMock);
         Whitebox.setInternalState(instance, "publicationDataService", publicationDataService);
+        Whitebox.setInternalState(instance, "koulutusImplicitDataPopulator", dataPopulator);
 
         Whitebox.setInternalState(converterToRDTO, "commonConverter", commonConverter);
         Whitebox.setInternalState(commonConverter, "organisaatioService", organisaatioServiceMock);
@@ -198,6 +205,7 @@ abstract class KoulutusBase extends TestUtilityBase {
         Whitebox.setInternalState(converterToRDTO, "komotoKuvausConverters", komotoKoulutusConverters);
         Whitebox.setInternalState(converterToRDTO, "koulutusmoduuliDAO", koulutusmoduuliDAO);
         Whitebox.setInternalState(converterToRDTO, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAO);
+        Whitebox.setInternalState(converterToRDTO, "dataPopulator", new KoulutusImplicitDataPopulator());
 
         Whitebox.setInternalState(convertToEntity, "komoKuvausConverters", komoKoulutusConverters);
         Whitebox.setInternalState(convertToEntity, "komotoKuvausConverters", komotoKoulutusConverters);
@@ -208,7 +216,6 @@ abstract class KoulutusBase extends TestUtilityBase {
 
         Whitebox.setInternalState(instance, "converterToRDTO", converterToRDTO);
         Whitebox.setInternalState(instance, "convertToEntity", convertToEntity);
-
     }
 
     protected void createJoinedParentAndChildKomos(KoulutusasteTyyppi tyyppi) {
@@ -279,14 +286,18 @@ abstract class KoulutusBase extends TestUtilityBase {
 
         contextDataService = new ContextDataServiceImpl();
 
-        organisaatioServiceMock = createMock(OrganisaatioService.class);
-        indexerResourceMock = createMock(IndexerResource.class);
-        permissionChecker = createMock(PermissionChecker.class);
-        koodistoUri = createMock(KoodistoURI.class);
-        koulutusSisaltyvyysDAO = createMock(KoulutusSisaltyvyysDAO.class);
-        koulutusSearchService = createMock(KoulutusSearchService.class);
-        oppilaitosKoodiRelations = createMock(OppilaitosKoodiRelations.class);
-        linkingV1Resource = createMock(LinkingV1Resource.class);
+        organisaatioServiceMock = mock(OrganisaatioService.class);
+        when(organisaatioServiceMock.findByOid(ORGANISATION_OID)).thenReturn(organisaatioDTO);
+
+        indexerResourceMock = mock(IndexerResource.class);
+        permissionChecker = mock(PermissionChecker.class);
+        doNothing().when(permissionChecker).checkCreateKoulutus(anyString());
+        doNothing().when(permissionChecker).checkUpdateKoulutusByTarjoajaOid(anyString());
+        koodistoUri = mock(KoodistoURI.class);
+        koulutusSisaltyvyysDAO = mock(KoulutusSisaltyvyysDAO.class);
+        koulutusSearchService = mock(KoulutusSearchService.class);
+        oppilaitosKoodiRelations = mock(OppilaitosKoodiRelations.class);
+        linkingV1Resource = mock(LinkingV1Resource.class);
 
         //SET VALUES TO INSTANCES
         Whitebox.setInternalState(instance, "organisaatioService", organisaatioServiceMock);
@@ -300,6 +311,12 @@ abstract class KoulutusBase extends TestUtilityBase {
         Whitebox.setInternalState(instance, "oppilaitosKoodiRelations", oppilaitosKoodiRelations);
         Whitebox.setInternalState(instance, "linkingV1Resource", linkingV1Resource);
 
+        KoulutusValidator validatorMock = mock(KoulutusValidator.class);
+        when(validatorMock.validateOrganisation(
+                any(OrganisaatioV1RDTO.class), any(ResultV1RDTO.class), any(KoulutusValidationMessages.class),
+                any(KoulutusValidationMessages.class))
+        ).thenReturn(true);
+        Whitebox.setInternalState(instance, "koulutusValidator", validatorMock);
     }
 
     protected final List<GrantedAuthority> getAuthority(String appPermission, String oid) {
@@ -356,44 +373,40 @@ abstract class KoulutusBase extends TestUtilityBase {
 
     protected KoulutusKorkeakouluV1RDTO getKoulutus() {
         KoulutusKorkeakouluV1RDTO dto = new KoulutusKorkeakouluV1RDTO();
-        /*
-         * KOMO data fields:
-         */
-        teksti(dto.getKoulutusohjelma(), KOULUTUSOHJELMA, URI_KIELI_FI);
-        dto.getKoulutusohjelma().getTekstis().put(URI_KIELI_FI, toNimiValue("koulutusohjelma", URI_KIELI_FI));
-        dto.getOrganisaatio().setOid(ORGANISATION_OID);
-        dto.setKoulutusaste(toKoodiUri(KOULUTUSASTE));
-        dto.setKoulutusala(toKoodiUri(KOULUTUSALA));
-        dto.setOpintoala(toKoodiUri(OPINTOALA));
-        dto.setTutkinto(toKoodiUri(TUTKINTO));
 
-        dto.setEqf(toKoodiUri(EQF));
+        dto.setKoulutusohjelma(teksti(KOULUTUSOHJELMA, URI_KIELI_FI));
+        dto.getKoulutusohjelma().getTekstis().put(URI_KIELI_FI, toNimiValue("koulutusohjelma", URI_KIELI_FI));
+        dto.setOrganisaatio(new OrganisaatioV1RDTO(ORGANISATION_OID));
         dto.setTila(TarjontaTila.JULKAISTU);
         dto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO);
         dto.setTunniste(TUNNISTE);
         dto.setHinta(1.11);
         dto.setOpintojenMaksullisuus(Boolean.TRUE);
         dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
-        dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
+        dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(DATE.toDate()));
+        dto.setOpetusTarjoajat(new HashSet<String>());
+        dto.setOpetusJarjestajat(new HashSet<String>());
 
-        koodiUrisMap(dto.getTutkintonimikes(), URI_KIELI_FI, MAP_TUTKINTONIMIKE);
-        koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, MAP_OPETUSAIKAS);
-        koodiUrisMap(dto.getOpetusPaikkas(), URI_KIELI_FI, MAP_OPETUSPAIKKAS);
-        koodiUrisMap(dto.getAihees(), URI_KIELI_FI, MAP_OPETUSAIHEES);
-        koodiUrisMap(dto.getOpetuskielis(), URI_KIELI_FI, MAP_OPETUSKIELI);
-        koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, MAP_OPETUMUOTO);
-        koodiUrisMap(dto.getAmmattinimikkeet(), URI_KIELI_FI, (MAP_AMMATTINIMIKE));
-        koodiUrisMap(dto.getPohjakoulutusvaatimukset(), URI_KIELI_FI, MAP_POHJAKOULUTUS);
+        dto.setOpetusAikas(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSAIKAS));
+        dto.setOpetusPaikkas(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSPAIKKAS));
+        dto.setAihees(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSAIHEES));
+        dto.setOpetuskielis(koodiUrisMap(URI_KIELI_FI, MAP_OPETUSKIELI));
+        dto.setOpetusmuodos(koodiUrisMap(URI_KIELI_FI, MAP_OPETUMUOTO));
+        dto.setAmmattinimikkeet(koodiUrisMap(URI_KIELI_FI, MAP_AMMATTINIMIKE));
+        dto.setPohjakoulutusvaatimukset(koodiUrisMap(URI_KIELI_FI, MAP_POHJAKOULUTUS));
 
         dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO_TYYPPI));
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
 
-        dto.getYhteyshenkilos().add(
+        dto.setYhteyshenkilos(Sets.newHashSet(
                 new fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2],
-                        PERSON[3], PERSON[4], PERSON[5], null,
-                        HenkiloTyyppi.YHTEYSHENKILO));
+                        PERSON[3], PERSON[4], null,
+                        HenkiloTyyppi.YHTEYSHENKILO)));
         dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
+        dto.setKoulutusala(toKoodiUri(KOULUTUSALA));
+        dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
+        dto.setOpintoala(toKoodiUri(OPINTOALA));
 
         return dto;
     }
@@ -441,7 +454,8 @@ abstract class KoulutusBase extends TestUtilityBase {
         return "koodisto_" + koodistoUri + "_uri";
     }
 
-    protected static NimiV1RDTO teksti(NimiV1RDTO dto, final String nimi, final String kieli) {
+    protected static NimiV1RDTO teksti(final String nimi, final String kieli) {
+        NimiV1RDTO dto = new NimiV1RDTO();
         dto.getTekstis().put(kieli, nimi);
         return dto;
     }
@@ -451,7 +465,9 @@ abstract class KoulutusBase extends TestUtilityBase {
         return dto.getMeta().put(kieli, metaValue);
     }
 
-    protected void koodiUrisMap(final KoodiUrisV1RDTO dto, final String kieliUri, final String fieldName) {
+    protected KoodiUrisV1RDTO koodiUrisMap(final String kieliUri, final String fieldName) {
+        KoodiUrisV1RDTO dto = new KoodiUrisV1RDTO();
+
         meta(dto, kieliUri, toKoodiUri(fieldName));
 
         if (dto.getUris() == null) {
@@ -459,6 +475,8 @@ abstract class KoulutusBase extends TestUtilityBase {
         }
 
         dto.getUris().put(toKoodiUriStr(fieldName), 1);
+
+        return dto;
     }
 
     protected static String toKoodiUriStr(final String type) {
@@ -486,39 +504,39 @@ abstract class KoulutusBase extends TestUtilityBase {
 
     protected void expectKausi() {
         KoodiType kausiKoodiType = createKoodiType(KAUSI_KOODI_URI, "x" + KAUSI_KOODI_URI);
-        expect(tarjontaKoodistoHelperMock.getKoodiByUri(KAUSI_KOODI_URI + "#1")).andReturn(kausiKoodiType).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodi(KAUSI_KOODI_URI + "_uri", 1)).andReturn(kausiKoodiType).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(kausiKoodiType, new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
+        when(tarjontaKoodistoHelperMock.getKoodiByUri(KAUSI_KOODI_URI + "#1")).thenReturn(kausiKoodiType);
+        when(tarjontaKoodistoHelperMock.getKoodi(KAUSI_KOODI_URI + "_uri", 1)).thenReturn(kausiKoodiType);
+        when(tarjontaKoodistoHelperMock.getKoodiNimi(kausiKoodiType, new Locale(LOCALE_FI))).thenReturn(KAUSI_KOODI_URI);
 
         KoodiType koodiLanguageFi = createKoodiType(URI_KIELI_FI, "fi");
-        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).andReturn(koodiLanguageFi).times(1);
+        when(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).thenReturn(koodiLanguageFi);
 
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(koodiLanguageFi, new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
-        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(URI_KIELI_FI)).andReturn(koodiLanguageFi);
+        when(tarjontaKoodistoHelperMock.getKoodiNimi(koodiLanguageFi, new Locale(LOCALE_FI))).thenReturn(KAUSI_KOODI_URI);
+        when(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(URI_KIELI_FI)).thenReturn(koodiLanguageFi);
 
-        expect(tarjontaKoodistoHelperMock.getKoodi(URI_KIELI_FI + "_uri", 1)).andReturn(koodiLanguageFi).times(2);
-        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).andReturn(koodiLanguageFi).times(1);
+        when(tarjontaKoodistoHelperMock.getKoodi(URI_KIELI_FI + "_uri", 1)).thenReturn(koodiLanguageFi);
+        when(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).thenReturn(koodiLanguageFi);
     }
 
     protected void expectMetaUri(final String field) {
-        expect(tarjontaKoodistoHelperMock.getKoodiByUri(field + "_uri#1")).andReturn(createKoodiType(field, "x" + field)).times(1);
+        when(tarjontaKoodistoHelperMock.getKoodiByUri(field + "_uri#1")).thenReturn(createKoodiType(field, "x" + field));
 
         KoodiType koodiType = createKoodiType(field, "x");
-        expect(tarjontaKoodistoHelperMock.getKoodi(field + "_uri", 1)).andReturn(koodiType).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(koodiType, new Locale(LOCALE_FI))).andReturn(field).times(1);
+        when(tarjontaKoodistoHelperMock.getKoodi(field + "_uri", 1)).thenReturn(koodiType);
+        when(tarjontaKoodistoHelperMock.getKoodiNimi(koodiType, new Locale(LOCALE_FI))).thenReturn(field);
 
         KoodiType koodiLanguageFi = createKoodiType(URI_KIELI_FI, "fi");
-        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).andReturn(koodiLanguageFi).times(1);
+        when(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).thenReturn(koodiLanguageFi);
     }
 
     protected void expectMetaMapUris(final String field) {
         KoodiType koodiType = createKoodiType(field, "x" + field);
-        expect(tarjontaKoodistoHelperMock.getKoodi(field + "_uri", 1)).andReturn(koodiType).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodi(field + "_uri", 1)).andReturn(koodiType).times(1);
-        expect(tarjontaKoodistoHelperMock.getKoodiNimi(koodiType, new Locale(LOCALE_FI))).andReturn(field).times(1);
+        when(tarjontaKoodistoHelperMock.getKoodi(field + "_uri", 1)).thenReturn(koodiType);
+        when(tarjontaKoodistoHelperMock.getKoodi(field + "_uri", 1)).thenReturn(koodiType);
+        when(tarjontaKoodistoHelperMock.getKoodiNimi(koodiType, new Locale(LOCALE_FI))).thenReturn(field);
 
         KoodiType koodiLanguageFi = createKoodiType(URI_KIELI_FI, "fi");
-        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).andReturn(koodiLanguageFi).times(1);
+        when(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).thenReturn(koodiLanguageFi);
     }
 
     protected void assertEqualDtoKoodi(final String field, final KoodiV1RDTO dto) {

@@ -141,7 +141,7 @@ describe('VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS', function() {
                 editVal: 'http://www.linkki-joka-ei-toimi.fi'
             },
             yhteyshenkilö: {
-                el: $('[ng-model="uiModel.contactPerson.nimet"]'),
+                el: $('[ng-model="uiModel.contactPerson.nimi"]'),
                 val: '',
                 editVal: 'EDIT'
             },

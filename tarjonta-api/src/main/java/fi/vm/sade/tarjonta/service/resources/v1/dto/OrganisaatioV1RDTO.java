@@ -34,6 +34,10 @@ public class OrganisaatioV1RDTO extends BaseV1RDTO {
     public OrganisaatioV1RDTO() {
     }
 
+    public OrganisaatioV1RDTO(String oid) {
+        this.oid = oid;
+    }
+
     public OrganisaatioV1RDTO(String oid, String nimi, List<LokalisointiV1RDTO> _nimet) {
         this.oid = oid;
         this.nimi = nimi;

@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang.StringUtils;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -39,7 +41,7 @@ public class KoodiV1RDTO implements Serializable {
     @ApiModelProperty(value = "Koodisto koodin uri", required = true)
     private String uri;
     @ApiModelProperty(value = "Koodisto koodin versio, koodisto koodi uri:a syötettäessä pakollinen tieto", required = true)
-    private Integer versio;
+    private Integer versio = 1;
     @ApiModelProperty(value = "Koodisto koodin uri:n arvo (lisätietoa)")
     private String arvo;
     @ApiModelProperty(value = "Koodisto koodin uri:n nimen kielikäännos (lisätietoa)")
@@ -192,6 +194,14 @@ public class KoodiV1RDTO implements Serializable {
 
     public Map<String, KoodiV1RDTO> getMeta() {
         return meta;
+    }
+
+    public static boolean notEmpty(KoodiV1RDTO dto) {
+        return dto != null && !StringUtils.isBlank(dto.getUri());
+    }
+
+    public static String stripVersionFromKoodiUri(String koodiUri) {
+        return StringUtils.defaultString(koodiUri).split("#")[0];
     }
 
     @Override

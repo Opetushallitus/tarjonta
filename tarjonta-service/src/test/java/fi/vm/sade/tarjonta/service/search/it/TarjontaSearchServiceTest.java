@@ -15,6 +15,8 @@ import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.SecurityAwareTestBase;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntityTest;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusImplicitDataPopulator;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
@@ -22,6 +24,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
@@ -81,6 +84,9 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     }
 
     private Hakukohde hakukohde;
+
+    @Autowired
+    private KoulutusImplicitDataPopulator dataPopulator;
 
     @Before
     @Override
@@ -145,6 +151,8 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         stubKoodi(koodiService, "kausi_k", "FI");
         stubKoodi(koodiService, "EQF-uri", "FI");
         stubKoodi(koodiService, "suunniteltu-kesto-uri", "FI");
+
+        KoulutusDTOConverterToEntityTest.mockKoodiService(koodiService);
 
         super.before();
     }
@@ -295,7 +303,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
             @Override
             public void run() {
                 KoulutusKorkeakouluV1RDTO kkKoulutus = getKKKoulutus();
-                ResultV1RDTO<KoulutusV1RDTO> result = koulutusResource.postKoulutus(kkKoulutus);
+                ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResource.postKoulutus(kkKoulutus).getEntity();
                 assertEquals("errors in koulutus insert", false, result.hasErrors());
             }
         });
@@ -319,9 +327,9 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
             @Override
             public void run() {
                 KoulutusKorkeakouluV1RDTO kk = getKKKoulutus();
-                ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus = koulutusResource.postKoulutus(kk);
+                ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResource.postKoulutus(kk).getEntity();
                 HakukohdeV1RDTO hakukohde = getKKHakukohde(postKorkeakouluKoulutus.getResult().getOid());
-                ResultV1RDTO<HakukohdeV1RDTO> response = hakukohdeResource.createHakukohde(hakukohde);
+                ResultV1RDTO<HakukohdeV1RDTO> response = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(hakukohde).getEntity();
                 assertEquals("errors in koulutus insert", false, response.hasErrors());
             }
         });
@@ -345,6 +353,9 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     private KoulutusKorkeakouluV1RDTO getKKKoulutus() {
 
         KoulutusKorkeakouluV1RDTO kk = new KoulutusKorkeakouluV1RDTO();
+
+        kk = (KoulutusKorkeakouluV1RDTO) dataPopulator.defaultValuesForDto(kk);
+
         kk.getKoulutusohjelma().getTekstis().put("kieli_fi", "Otsikko suomeksi");
         kk.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
         kk.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.VALMIS);
@@ -405,7 +416,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         // nimet.add(nimi);
 
         hakukohde.setHakukohteenNimet(nimet);
-        hakukohde.setTila(TarjontaTila.VALMIS.toString());
+        hakukohde.setTila(TarjontaTila.VALMIS);
 
         ArrayList<String> koulutusOidit = new ArrayList();
         koulutusOidit.add(koulutusOid);
@@ -415,7 +426,6 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         osoite.setCreated(new Date());
         osoite.setModified(new Date());
         hakukohde.setLiitteidenToimitusOsoite(osoite);
-        hakukohde.setToteutusTyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS.toString());
         return hakukohde;
     }
 

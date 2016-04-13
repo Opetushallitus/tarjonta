@@ -16,7 +16,6 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.collect.Lists;
 import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -26,7 +25,6 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.publication.model.RestParam;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntity;
@@ -40,11 +38,13 @@ import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 /**
  *
@@ -67,12 +67,11 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
         
         organisaatioDTO.setOid(ORGANISATION_OID);
         
-        koulutusmoduuliToteutusDAO = createMock(KoulutusmoduuliToteutusDAO.class);
+        koulutusmoduuliToteutusDAO = Mockito.mock(KoulutusmoduuliToteutusDAO.class);
         KoulutusmoduuliDAO koulutusmoduuliDAO = createMock(KoulutusmoduuliDAO.class);
-        organisaatioServiceMock = createMock(OrganisaatioService.class);
         EntityConverterToRDTO converterToRDTO = createMock(EntityConverterToRDTO.class);
         KoulutusDTOConverterToEntity convertToEntity = createMock(KoulutusDTOConverterToEntity.class);
-        hakukohdeDAO = createMock(HakukohdeDAO.class);
+        hakukohdeDAO = Mockito.mock(HakukohdeDAO.class);
 
         //SET DAO STATES
         initMockInstanceInternalStates();
@@ -89,22 +88,18 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
         KoulutusCopyV1RDTO dto = new KoulutusCopyV1RDTO();
         dto.setOrganisationOids(Lists.newArrayList(ORGANISATION_OID));
         
-        expect(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).andReturn(null);
-        
-        replay(koulutusmoduuliToteutusDAO);
+        when(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).thenReturn(null);
+
         ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, dto);
-        verify(koulutusmoduuliToteutusDAO);
         
         validation(copyOrMove, ResultV1RDTO.ResultStatus.NOT_FOUND, "oid", KoulutusValidationMessages.KOULUTUS_KOMOTO_MISSING);
     }
     
     @Test
     public void testErrorsMissingRequiredObject() throws ExceptionMessage {
-        expect(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).andReturn(komoto);
-        
-        replay(koulutusmoduuliToteutusDAO);
+        when(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).thenReturn(komoto);
+
         ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, null);
-        verify(koulutusmoduuliToteutusDAO);
         
         validation(copyOrMove, ResultV1RDTO.ResultStatus.ERROR, null, KoulutusValidationMessages.KOULUTUS_INPUT_OBJECT_MISSING);
     }
@@ -112,11 +107,9 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
     @Test
     public void testErrorsMissingRequiredData() throws ExceptionMessage {
         KoulutusCopyV1RDTO dto = new KoulutusCopyV1RDTO();
-        expect(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).andReturn(komoto);
-        
-        replay(koulutusmoduuliToteutusDAO);
+        when(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).thenReturn(komoto);
+
         ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, dto);
-        verify(koulutusmoduuliToteutusDAO);
         
         validation(copyOrMove, ResultV1RDTO.ResultStatus.ERROR, "mode", KoulutusValidationMessages.KOULUTUS_INPUT_PARAM_MISSING);
     }
@@ -127,16 +120,10 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
         dto.setOrganisationOids(Lists.newArrayList(ORGANISATION_OID));
         dto.setMode(CopyMode.MOVE);
         
-        expect(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).andReturn(komoto);
-        expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(null);
-        
-        replay(koulutusmoduuliToteutusDAO);
-        replay(organisaatioServiceMock);
+        when(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).thenReturn(komoto);
+        when(organisaatioServiceMock.findByOid(ORGANISATION_OID)).thenReturn(null);
         
         ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, dto);
-        
-        verify(koulutusmoduuliToteutusDAO);
-        verify(organisaatioServiceMock);
         
         validation(copyOrMove, ResultV1RDTO.ResultStatus.ERROR, "organisationOids[" + ORGANISATION_OID + "]", KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID);
     }
@@ -147,19 +134,11 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
         dto.setOrganisationOids(Lists.newArrayList(ORGANISATION_OID));
         dto.setMode(CopyMode.MOVE);
         
-        expect(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).andReturn(komoto);
-        expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO);
-        expect(oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(ORGANISATION_OID, "kk")).andReturn(false);
-        
-        replay(koulutusmoduuliToteutusDAO);
-        replay(organisaatioServiceMock);
-        replay(oppilaitosKoodiRelations);
+        when(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).thenReturn(komoto);
+        when(organisaatioServiceMock.findByOid(ORGANISATION_OID)).thenReturn(organisaatioDTO);
+        when(oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(ORGANISATION_OID, "kk")).thenReturn(false);
         
         ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, dto);
-        
-        verify(koulutusmoduuliToteutusDAO);
-        verify(organisaatioServiceMock);
-        verify(oppilaitosKoodiRelations);
         
         validation(copyOrMove, ResultV1RDTO.ResultStatus.ERROR, "organisationOids[" + ORGANISATION_OID + "]", KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID);
     }
@@ -171,24 +150,12 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
         dto.setMode(CopyMode.MOVE);
 
         assertEquals(ORGANISATION_OID, komoto.getTarjoaja());
-        expect(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).andReturn(komoto);
-        expect(organisaatioServiceMock.findByOid(ORGANISATION_OID_COPY_OR_MOVE_TO)).andReturn(organisaatioDTO);
-        expect(oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(ORGANISATION_OID_COPY_OR_MOVE_TO, "kk")).andReturn(true);
-        koulutusmoduuliToteutusDAO.update(komoto);
-        
-        expect(hakukohdeDAO.findByKoulutusOid(KOMOTO_OID)).andReturn(Lists.<Hakukohde>newArrayList());
-        
-        replay(koulutusmoduuliToteutusDAO);
-        replay(organisaatioServiceMock);
-        replay(oppilaitosKoodiRelations);
-        replay(hakukohdeDAO);
+        when(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).thenReturn(komoto);
+        when(organisaatioServiceMock.findByOid(ORGANISATION_OID_COPY_OR_MOVE_TO)).thenReturn(organisaatioDTO);
+        when(oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(ORGANISATION_OID_COPY_OR_MOVE_TO, "kk")).thenReturn(true);
+        when(hakukohdeDAO.findByKoulutusOid(KOMOTO_OID)).thenReturn(Lists.<Hakukohde>newArrayList());
         
         ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, dto);
-        
-        verify(koulutusmoduuliToteutusDAO);
-        verify(organisaatioServiceMock);
-        verify(oppilaitosKoodiRelations);
-        verify(hakukohdeDAO);
         
         assertNotNull("no response object", copyOrMove);
         assertNotNull("no result object", copyOrMove.getResult());

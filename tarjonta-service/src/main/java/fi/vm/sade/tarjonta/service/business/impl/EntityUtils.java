@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import fi.vm.sade.tarjonta.service.types.*;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Function;
@@ -47,19 +48,7 @@ import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonFromDTOConverter;
-import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
-import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
-import fi.vm.sade.tarjonta.service.types.NimettyMonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
-import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.Calendar;
@@ -336,26 +325,28 @@ public final class EntityUtils {
     public static void copyFields(final YhteyshenkiloTyyppi from, Yhteyshenkilo to) {
 
         to.setHenkioOid(from.getHenkiloOid());
-        to.setEtunimis(from.getEtunimet());
-        if (from.getSukunimi() == null) {
-            to.setSukunimi("");
+        if (from.getNimi() == null) {
+            to.setNimi("");
         } else {
-            to.setSukunimi(from.getSukunimi());
+            to.setNimi(from.getNimi());
         }
         to.setPuhelin(from.getPuhelin());
         to.setSahkoposti(from.getSahkoposti());
         to.setMultipleKielisByList(from.getKielet());
         to.setTitteli(from.getTitteli());
-        to.setHenkiloTyyppi(from.getHenkiloTyyppi());
+        to.setHenkiloTyyppi(
+                from.getHenkiloTyyppi() != null
+                    ? from.getHenkiloTyyppi()
+                    : HenkiloTyyppi.YHTEYSHENKILO
+        );
     }
 
     public static void copyFields(final Yhteyshenkilo from, YhteyshenkiloTyyppi to) {
 
-        to.setEtunimet(from.getEtunimis());
+        to.setNimi(from.getNimi());
         to.setHenkiloOid(from.getHenkioOid());
         to.setPuhelin(from.getPuhelin());
         to.setSahkoposti(from.getSahkoposti());
-        to.setSukunimi(from.getSukunimi());
         to.setTitteli(from.getTitteli());
         to.setHenkiloTyyppi(from.getHenkiloTyyppi());
 
@@ -567,26 +558,18 @@ public final class EntityUtils {
         return copyFieldsToKoulutusmoduuli(tyyppi, new Koulutusmoduuli());
     }
 
-    public static void copyYhteyshenkilos(Collection<Yhteyshenkilo> fromList, Collection<YhteyshenkiloTyyppi> toList) {
-
+    public static Set<YhteyshenkiloTyyppi> copyYhteyshenkilos(Collection<Yhteyshenkilo> fromList) {
+        Set<YhteyshenkiloTyyppi> toList = new HashSet<YhteyshenkiloTyyppi>();
         for (Yhteyshenkilo fromHenkilo : fromList) {
             YhteyshenkiloTyyppi toHenkilo = new YhteyshenkiloTyyppi();
             copyFields(fromHenkilo, toHenkilo);
             toList.add(toHenkilo);
         }
-
-    }
-
-    public static void copyYhteyshenkilos(Collection<Yhteyshenkilo> fromList, Set<YhteyshenkiloTyyppi> toList) {
-
-        for (Yhteyshenkilo fromHenkilo : fromList) {
-            YhteyshenkiloTyyppi toHenkilo = new YhteyshenkiloTyyppi();
-            copyFields(fromHenkilo, toHenkilo);
-            toList.add(toHenkilo);
-        }
+        return toList;
     }
 
     public static void copyYhteyshenkilos(Set<YhteyshenkiloTyyppi> fromList, Collection<Yhteyshenkilo> toList) {
+        if (fromList == null) return;
         if (!fromList.isEmpty()) {
             if (toList == null) {
                 toList = Sets.<Yhteyshenkilo>newHashSet();

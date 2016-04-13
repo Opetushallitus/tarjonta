@@ -41,6 +41,10 @@ public class KoodiUrisV1RDTO extends KoodiV1RDTO {
     public KoodiUrisV1RDTO() {
     }
 
+    public KoodiUrisV1RDTO(Map<String, Integer> uris) {
+        setUris(uris);
+    }
+
     /**
      * @return the uris
      */
@@ -58,14 +62,16 @@ public class KoodiUrisV1RDTO extends KoodiV1RDTO {
     public List<String> getUrisAsStringList(boolean addVersionToUri) {
         List<String> list = new ArrayList<String>();
 
-        for(Map.Entry<String, Integer> entry : uris.entrySet()) {
-            String uri = entry.getKey();
+        if (uris != null) {
+            for (Map.Entry<String, Integer> entry : uris.entrySet()) {
+                String uri = entry.getKey();
 
-            if (addVersionToUri) {
-                uri = uri.concat("#" + entry.getValue().toString());
+                if (addVersionToUri) {
+                    uri = uri.concat("#" + entry.getValue().toString());
+                }
+
+                list.add(uri);
             }
-
-            list.add(uri);
         }
 
         return list;

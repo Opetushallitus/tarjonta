@@ -43,10 +43,10 @@ app.controller('BaseEditController', [
     '$modal',
     'OrganisaatioService',
     'AuthService',
-    'HakukohdeKoulutukses', function BaseEditController($scope, $log, Config, $routeParams, $route, $location,
+    '$injector', function BaseEditController($scope, $log, Config, $routeParams, $route, $location,
             KoulutusConverterFactory, TarjontaService, PermissionService, organisaatioService, Koodisto, KoodistoURI,
             LocalisationService, dialogService, CacheService, $modal, OrganisaatioService, AuthService,
-            HakukohdeKoulutukses) {
+            $injector) {
         $log = $log.getInstance('BaseEditController');
         var ENUMS = KoulutusConverterFactory.ENUMS;
         /*
@@ -310,45 +310,59 @@ app.controller('BaseEditController', [
                 $scope.controlFormMessages(form, $scope.uiModel, 'ERROR', 'UI_ERRORS');
                 return;
             }
+
+            function processResponse(response) {
+                var model = response.result;
+                if (response.status === 'OK') {
+                    if ($scope.jarjestaUusiKoulutus) {
+                        $scope.jarjestaUusiKoulutus = null;
+                        $scope.uiModel.isMutable = true;
+                    }
+                    // Reset form to "pristine" ($dirty = false)
+                    // WTF? where have all the "form.$setPristine()"s gone?
+                    form.$dirty = false;
+                    form.$pristine = true;
+                    // Tyhjennä initial state, jotta sille asetettaisiin
+                    // uusi arvo kun käyttäjä tekee jotain formille
+                    $scope.modelInitialState = null;
+                    $scope.model = model;
+                    //$scope.updateFormStatusInformation($scope.model);
+                    $scope.controlFormMessages(form, $scope.uiModel, 'SAVED');
+                    $scope.uiModel.tabs.lisatiedot = false;
+                    // OVT-7421 / etusivun hakutuloskakun tyhjentäminen jotta muutokset näkyvät varmasti hakutuloslissa
+                    // - parempi ratkaisu olisi toki tallentaa muutokset kakutettuihin hakutuloksiin, jos sellaisia on
+                    CacheService.evict(new RegExp('/koulutus/.*'));
+                }
+                else {
+                    $scope.controlFormMessages(form, $scope.uiModel, 'ERROR', null, response.errors);
+                }
+                if (fnCustomCallbackAfterSave) {
+                    fnCustomCallbackAfterSave(response);
+                }
+            }
+
             PermissionService.permissionResource().authorize({}, function(authResponse) {
-                $log.debug('Authorization check : ' + authResponse.result);
                 if (authResponse.status !== 'OK') {
-                    //not authenticated
                     $scope.controlFormMessages(form, $scope.uiModel, 'ERROR', ['koulutus.error.auth']);
                     return;
                 }
                 var KoulutusRes = TarjontaService.koulutus();
-                KoulutusRes.save(apiModelReadyForSave, function(saveResponse) {
-                    var model = saveResponse.result;
-                    if (saveResponse.status === 'OK') {
-                        if ($scope.jarjestaUusiKoulutus) {
-                            $scope.jarjestaUusiKoulutus = null;
-                            $scope.uiModel.isMutable = true;
-                        }
-                        // Reset form to "pristine" ($dirty = false)
-                        // WTF? where have all the "form.$setPristine()"s gone?
-                        form.$dirty = false;
-                        form.$pristine = true;
-                        // Tyhjennä initial state, jotta sille asetettaisiin
-                        // uusi arvo kun käyttäjä tekee jotain formille
-                        $scope.modelInitialState = null;
-                        $scope.model = model;
-                        //$scope.updateFormStatusInformation($scope.model);
-                        $scope.controlFormMessages(form, $scope.uiModel, 'SAVED');
-                        $scope.uiModel.tabs.lisatiedot = false;
-                        // OVT-7421 / etusivun hakutuloskakun tyhjentäminen jotta muutokset näkyvät varmasti hakutuloslissa
-                        // - parempi ratkaisu olisi toki tallentaa muutokset kakutettuihin hakutuloksiin, jos sellaisia on
-                        CacheService.evict(new RegExp('/koulutus/.*'));
-                    }
-                    else {
-                        $scope.controlFormMessages(form, $scope.uiModel, 'ERROR', null, saveResponse.errors);
-                    }
-                    if (fnCustomCallbackAfterSave) {
-                        fnCustomCallbackAfterSave(saveResponse);
-                    }
+                KoulutusRes.save(apiModelReadyForSave, function(response) {
+                    processResponse(response);
+                }, function error(response) {
+                    preventSystemErrorDialog();
+                    processResponse(response.data);
                 });
             });
         };
+        
+        function preventSystemErrorDialog() {
+            var loadingService = $injector.get('loadingService');
+            if (loadingService) {
+                loadingService.onErrorHandled();
+            }
+        }
+
         $scope.commonKoodistoLoadHandler = function(uiModel, tyyppi) {
             angular.forEach(KoulutusConverterFactory.STRUCTURE[tyyppi].COMBO, function(value, key) {
                 if (angular.isUndefined(value.skipUiModel)) {
@@ -395,6 +409,7 @@ app.controller('BaseEditController', [
             KoulutusConverterFactory.createUiModels(uiModel, tyyppi);
             uiModel.isMutable = true;
             model.isNew = true;
+            model.extraParams = {};
             $scope.controlFormMessages(form, uiModel, 'INIT');
             KoulutusConverterFactory.createAPIModel(model, Config.app.userLanguages, tyyppi);
             var orgOid = $routeParams.org || model.organisaatio.oid;

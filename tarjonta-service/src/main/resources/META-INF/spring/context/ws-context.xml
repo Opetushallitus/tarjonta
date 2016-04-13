@@ -115,7 +115,7 @@
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <!--             <ref bean="cors-filter" /> -->
-            <!--             <ref bean="tarjontaExceptionMapper"/> -->
+            <ref bean="tarjontaExceptionMapper"/>
             <ref bean="tarjontaJacksonJsonProvider"/>
         </jaxrs:providers>
     </jaxrs:server>

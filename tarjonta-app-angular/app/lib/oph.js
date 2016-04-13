@@ -1,7 +1,8 @@
 (function() {
-    'use stric';
+    'use strict';
     window.oph = {
         removeKoodiVersion: function(uri) {
+            uri = uri || '';
             var hashPos = uri.indexOf('#');
             if (hashPos !== -1) {
                 uri = uri.substring(0, hashPos);

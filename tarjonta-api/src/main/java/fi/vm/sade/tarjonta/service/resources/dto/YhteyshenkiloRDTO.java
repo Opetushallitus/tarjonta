@@ -15,7 +15,6 @@
 package fi.vm.sade.tarjonta.service.resources.dto;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,8 +29,7 @@ public class YhteyshenkiloRDTO extends BaseRDTO {
     private String _tyyppi;
     private String _henkiloOid;
     private String _email;
-    private String _sukunimi;
-    private String _etunimet;
+    private String _nimi;
     private List<String> _kielet;
 
     public String getPuhelin() {
@@ -74,20 +72,12 @@ public class YhteyshenkiloRDTO extends BaseRDTO {
         this._email = email;
     }
 
-    public String getSukunimi() {
-        return _sukunimi;
+    public String getNimi() {
+        return _nimi;
     }
 
-    public void setSukunimi(String sukunimi) {
-        this._sukunimi = sukunimi;
-    }
-
-    public String getEtunimet() {
-        return _etunimet;
-    }
-
-    public void setEtunimet(String etunimet) {
-        this._etunimet = etunimet;
+    public void setNimi(String nimi) {
+        this._nimi = nimi;
     }
 
     public List<String> getKielet() {

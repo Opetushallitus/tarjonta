@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +35,10 @@ public class NimiV1RDTO extends KoodiV1RDTO {
     public NimiV1RDTO() {
     }
 
+    public NimiV1RDTO(Map<String, String> tekstit) {
+        this.setTekstis(tekstit);
+    }
+
     /**
      * @return the tekstis
      */
@@ -49,5 +54,18 @@ public class NimiV1RDTO extends KoodiV1RDTO {
      */
     public void setTekstis(Map<String, String> teksti) {
         this.tekstis = teksti;
+    }
+
+    @Override
+    public int hashCode() {
+        return getTekstis().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof NimiV1RDTO) {
+            return getTekstis().equals(((NimiV1RDTO) obj).getTekstis());
+        }
+        return false;
     }
 }

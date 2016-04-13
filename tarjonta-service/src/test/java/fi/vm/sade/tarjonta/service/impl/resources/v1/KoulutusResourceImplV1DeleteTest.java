@@ -30,10 +30,8 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
@@ -42,12 +40,14 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.stub;
+import static org.mockito.Mockito.when;
 
 
 @TestExecutionListeners(listeners = {
@@ -91,7 +91,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         //a quick test data insert, no unnecessary DTO conversions.
         KoulutusmoduuliToteutus kt1 = quickKKInsert(dto);
 
-        Mockito.stub(oidService.get(TarjontaOidType.KOMO)).toReturn(KOMO2_OID);
+        stub(oidService.get(TarjontaOidType.KOMO)).toReturn(KOMO2_OID);
 
         ResultV1RDTO deleteResult = instance.deleteByOid(null);
         assertEquals("No komoto oid", ResultV1RDTO.ResultStatus.NOT_FOUND, deleteResult.getStatus());
@@ -105,7 +105,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         /*
          * INSERT KORKEAKOULU OBJECT 2 TO DB
          */
-        Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn(KOMOTO2_OID);
+        stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn(KOMOTO2_OID);
         KoulutusmoduuliToteutus kt2 = quickKKInsert(dto);
 
         /*
@@ -118,14 +118,12 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         final String persistedKomotoOid = persistedKomoto.getOid();
         final String persistedKomoOid = persistedKomoto.getKoulutusmoduuli().getOid();
 
-        expect(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).andReturn(Lists.<String>newArrayList());
-        expect(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).andReturn(Lists.<String>newArrayList());
+        when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
+        when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
 
         KoulutuksetVastaus kv = new KoulutuksetVastaus();
         List<KoulutusPerustieto> perustiedot = Lists.newArrayList();
         kv.setKoulutukset(perustiedot);
-
-        replayAll();
 
         ResultV1RDTO deleteResult = instance.deleteByOid(persistedKomotoOid);
         assertEquals("validation error", ResultV1RDTO.ResultStatus.OK, deleteResult.getStatus());
@@ -137,10 +135,6 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         assertEquals("invalid status", TarjontaTila.POISTETTU, komoto.getTila());
         assertEquals("invalid status", TarjontaTila.POISTETTU, komo.getTila());
 
-        verifyAll();
-        resetAll();
-        replayAll();
-
         /* ---------------- NEXT TEST ----------------
          * ERROR : delete will fail as the status of komoto is 'deleted'.
          */
@@ -150,9 +144,6 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
         assertEquals("komoto.tila", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
         assertEquals(KoulutusValidationMessages.KOULUTUS_DELETED.lower(), ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorMessageKey());
-        verifyAll();
-        resetAll();
-
     }
 
     private void deleteValidationTests(KoulutusmoduuliToteutus persistedKomoto) {
@@ -166,21 +157,18 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         ArrayList<String> children = Lists.newArrayList();
         children.add("komo_oid_children");
 
-        expect(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).andReturn(children);
-        expect(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).andReturn(Lists.<String>newArrayList());
+        when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).thenReturn(children);
+        when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
 
         /* ---------------- NEXT TEST ----------------
          * ERROR IN CHILD
          */
-        replayAll();
         ResultV1RDTO deleteResult = instance.deleteByOid(persistedKomotoOid);
         assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
         assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
         assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
         assertEquals("komo.link.childs", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
 
-        verifyAll();
-        resetAll();
 
         /* ---------------- NEXT TEST ----------------
          * ERROR IN PARENT
@@ -188,19 +176,14 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         ArrayList<String> parent = Lists.newArrayList();
         parent.add("komo_oid_parent");
 
-        expect(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).andReturn(Lists.<String>newArrayList());
-        expect(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).andReturn(parent);
-
-        replayAll();
+        when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
+        when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).thenReturn(parent);
 
         deleteResult = instance.deleteByOid(persistedKomotoOid);
         assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
         assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
         assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
         assertEquals("komo.link.parents", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
-
-        verifyAll();
-        resetAll();
 
         /* ---------------- NEXT TEST ----------------
          * ERROR IN HAKUKOHDE (1 x hakukohde and 1 x invalid koulutus)
@@ -220,10 +203,8 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
 
         kv.setKoulutukset(perustiedot);
 
-        expect(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).andReturn(Lists.<String>newArrayList());
-        expect(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).andReturn(Lists.<String>newArrayList());
-
-        replayAll();
+        when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
+        when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
 
         deleteResult = instance.deleteByOid(persistedKomotoOid);
         assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
@@ -231,9 +212,6 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
         //assertEquals("komo.invalid.transition", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
         assertEquals("komoto.hakukohdes", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
-
-        verifyAll();
-        resetAll();
 
         /* ---------------- NEXT TEST ----------------
          * SUCCESS IN HAKUKOHDE (1 x hakukohde, 1 x invalid koulutus, 1 x valid koulutus)
@@ -247,32 +225,13 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
 
         kv.setKoulutukset(perustiedot);
 
-        expect(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).andReturn(Lists.<String>newArrayList());
-        expect(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).andReturn(Lists.<String>newArrayList());
-        replayAll();
+        when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
+        when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
 
         deleteResult = instance.deleteByOid(persistedKomotoOid);
 
         assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
         assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
-        verifyAll();
-        resetAll();
-
-    }
-
-    private void resetAll() {
-        EasyMock.reset(koulutusSisaltyvyysDAO);
-        EasyMock.reset(koulutusSearchService);
-    }
-
-    private void verifyAll() {
-        EasyMock.verify(koulutusSisaltyvyysDAO);
-        EasyMock.verify(koulutusSearchService);
-    }
-
-    private void replayAll() {
-        EasyMock.replay(koulutusSisaltyvyysDAO);
-        EasyMock.replay(koulutusSearchService);
     }
 
     private KoulutusmoduuliToteutus quickKKInsert(KoulutusKorkeakouluV1RDTO dto) throws Exception {

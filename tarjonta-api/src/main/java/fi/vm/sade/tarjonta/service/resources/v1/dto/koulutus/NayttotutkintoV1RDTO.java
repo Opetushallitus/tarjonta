@@ -33,9 +33,6 @@ public abstract class NayttotutkintoV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan", required = false)
     private String linkkiOpetussuunnitelmaan;
 
-    @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
-    private KoodiV1RDTO koulutuslaji;
-
     @ApiModelProperty(value = "Tarjoaja tai organisaation johon koulutus on liitetty", required = true)
     private OrganisaatioV1RDTO jarjestavaOrganisaatio;
 
@@ -89,20 +86,6 @@ public abstract class NayttotutkintoV1RDTO extends KoulutusV1RDTO {
      */
     public void setTutkintonimike(KoodiV1RDTO tutkintonimike) {
         this.tutkintonimike = tutkintonimike;
-    }
-
-    /**
-     * @return the koulutuslaji
-     */
-    public KoodiV1RDTO getKoulutuslaji() {
-        return koulutuslaji;
-    }
-
-    /**
-     * @param koulutuslaji the koulutuslaji to set
-     */
-    public void setKoulutuslaji(KoodiV1RDTO koulutuslaji) {
-        this.koulutuslaji = koulutuslaji;
     }
 
     /**

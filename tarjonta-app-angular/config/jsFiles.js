@@ -20,8 +20,8 @@ module.exports = [
     'lib/buckets-minified.js',
     'lib/treeview/angular.treeview.js',
     'lib/placeholder/tai-placeholder.js',
-    '../node_modules/filesaver.js/FileSaver.min.js',
-    '../node_modules/xlsx/dist/xlsx.core.min.js',
+    'lib/filesaver.js/FileSaver.min.js',
+    'lib/xlsx/xlsx.core.min.js',
     'lib/xlsx-reader.js',
     'js/isocalendar/isocalendar.js',
     'js/shared/logging.js',
@@ -132,5 +132,6 @@ module.exports = [
     'partials/tarjontaApp.js',
     'partials/common/koulutusHakukohdeListing.js',
     'partials/hakukausi/hakukausi.js',
+    'partials/import/importController.js',
     'partials/init.js'
 ];

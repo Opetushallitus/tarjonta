@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.OppiaineDAO;
@@ -25,7 +26,6 @@ import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.ConverterV1;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OppiaineV1RDTO;
@@ -35,15 +35,18 @@ import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.shared.types.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Conversions to entity objects.
@@ -71,7 +74,8 @@ public class KoulutusDTOConverterToEntity {
     private IndexerResource indexerResource;
     @Autowired
     private OppiaineDAO oppiaineDAO;
-
+    @Autowired
+    KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
 
     /*
      * KORKEAKOULU RDTO CONVERSION TO ENTITY
@@ -166,15 +170,12 @@ public class KoulutusDTOConverterToEntity {
             owner.setOwnerType(KoulutusOwner.TARJOAJA);
             komoto.getOwners().add(owner);
         }
-
-        LOG.info("updateOwners()... done.");
     }
 
     /*
     * Update tutkintoonjohtamaton komo data.
     */
     private void updateTutkintoonjohtamatonKomoData(Koulutusmoduuli komo, final TutkintoonJohtamatonKoulutusV1RDTO dto) {
-        // TODO Check what needs to be here!
         Preconditions.checkNotNull(dto, "TutkintoonJohtamatonKoulutusV1RDTO object cannot be null.");
         Preconditions.checkNotNull(komo, "KoulutusmoduuliToteutus object cannot be null.");
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
@@ -218,7 +219,6 @@ public class KoulutusDTOConverterToEntity {
             komoto.setOpintojenLaajuusyksikkoUri("opintojenlaajuusyksikko_2#1");
         }
 
-        komoto.setKkPohjakoulutusvaatimus(commonConverter.convertToUris(dto.getPohjakoulutusvaatimukset(), komoto.getKkPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUS));
         komoto.setNimi(commonConverter.convertToTexts(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA)); //OVT-7531
 
         if (dto.getAihees() != null) {
@@ -408,30 +408,6 @@ public class KoulutusDTOConverterToEntity {
             if (aikuPerus.getKielivalikoima() != null) {
                 commonConverter.convertToKielivalikoima(aikuPerus.getKielivalikoima(), komoto);
             }
-        }
-
-        /**
-         * ParentKomotojen käsittely. ParentKomotoista oli jo luovuttu samalla kun Vaadin-toteutuksesta
-         * luovuttiin. Ilmeni kuitenkin, että koulutusinformaation integraation nykyinen toteutus
-         * on riippuvainen parentKomotoista, eikä tätä riippuvuutta saa pienellä vaivalla poistettua.
-         * Siispä parentKomototo pitää vielä säilyttää koulutusinformaatiota varten.
-         */
-        switch (dto.getToteutustyyppi()) {
-            case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
-            case MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
-            case MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
-            case PERUSOPETUKSEN_LISAOPETUS:
-            case VAPAAN_SIVISTYSTYON_KOULUTUS:
-            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS:
-            case LUKIOKOULUTUS:
-                handleParentKomoto(komoto, komo);
-                break;
-
-            case AMMATILLINEN_PERUSTUTKINTO:
-            case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
-                handleParentKomoto(komoto, komo);
-                handleCommonFields(komoto);
-                break;
         }
 
         return komoto;
@@ -754,6 +730,10 @@ public class KoulutusDTOConverterToEntity {
         komoto.setMaksullisuus(dto.getOpintojenMaksullisuus());
         komoto.setHakijalleNaytettavaTunniste(dto.getHakijalleNaytettavaTunniste());
 
+        if (!StringUtils.isBlank(dto.getUniqueExternalId())) {
+            komoto.setUniqueExternalId(dto.getUniqueExternalId());
+        }
+
         if (dto.getSisaltyvatKoulutuskoodit() != null) {
             komoto.setSisaltyvatKoulutuskoodit(commonConverter.convertToUris(dto.getSisaltyvatKoulutuskoodit(), null, null));
         }
@@ -762,13 +742,37 @@ public class KoulutusDTOConverterToEntity {
 
         komoto.setOppiaineet(oppiaineetFromDtoToEntity(dto.getOppiaineet()));
 
-        if (dto.getExtraParams() != null) {
+        if (dto.getExtraParams() != null && !dto.getExtraParams().isEmpty()) {
             if ("true".equals(dto.getExtraParams().get("opintopolkuKesaKausi"))) {
                 komoto.setOpintopolkuAlkamiskausi(OpintopolkuAlkamiskausi.KaudetEnum.KESA);
             }
             else {
                 komoto.setOpintopolkuAlkamiskausi(null);
             }
+        }
+    }
+
+    public void setSisaltyyKoulutuksiin(KoulutusmoduuliToteutus komoto, KoulutusV1RDTO dto) {
+        if (dto.getSisaltyyKoulutuksiin() == null) {
+            return;
+        }
+
+        // Remove previous sisaltyvyydet
+        List<String> parents = koulutusSisaltyvyysDAO.getParents(komoto.getKoulutusmoduuli().getOid());
+        for (String parentKomoOid : parents) {
+            Koulutusmoduuli parent = koulutusmoduuliDAO.findByOid(parentKomoOid);
+            for (KoulutusSisaltyvyys sisaltyvyys : parent.getSisaltyvyysList()) {
+                koulutusSisaltyvyysDAO.remove(sisaltyvyys);
+            }
+        }
+
+        // Insert new sisaltyvyydet
+        for (KoulutusIdentification koulutusId : dto.getSisaltyyKoulutuksiin()) {
+            KoulutusmoduuliToteutus parentKomoto = koulutusmoduuliToteutusDAO.findKomotoByKoulutusId(koulutusId);
+            KoulutusSisaltyvyys sisaltyvyys = new KoulutusSisaltyvyys(
+                    parentKomoto.getKoulutusmoduuli(), komoto.getKoulutusmoduuli(), KoulutusSisaltyvyys.ValintaTyyppi.ALL_OFF
+            );
+            koulutusSisaltyvyysDAO.insert(sisaltyvyys);
         }
     }
 
@@ -843,73 +847,6 @@ public class KoulutusDTOConverterToEntity {
 
     private static String toListUri(ToteutustyyppiEnum e) {
         return EntityUtils.joinListToString(e.uri());
-    }
-
-    /*
-    * Handling the creation or update of the parent komoto (KI still needs parent komoto)
-    */
-    private void handleParentKomoto(KoulutusmoduuliToteutus komoto, Koulutusmoduuli moduuli) {
-        Preconditions.checkNotNull(komoto, "Komoto cannot be null!");
-
-        ToteutustyyppiEnum toteutustyyppi = komoto.getToteutustyyppi();
-
-        Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(moduuli);
-
-        if (parentKomo == null) {
-            return;
-        }
-
-        List<KoulutusmoduuliToteutus> parentKomotos = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(
-            parentKomo,
-            komoto.getTarjoaja(),
-            komoto.getPohjakoulutusvaatimusUri()
-        );
-        KoulutusmoduuliToteutus parentKomoto = (parentKomotos != null && !parentKomotos.isEmpty()) ? parentKomotos.get(0) : null;
-
-        boolean createNew = parentKomoto == null;
-
-        if (createNew) {
-            parentKomoto = new KoulutusmoduuliToteutus();
-            parentKomoto.setTarjoaja(komoto.getTarjoaja());
-            parentKomoto.setTila(komoto.getTila());
-            parentKomoto.setKoulutusmoduuli(parentKomo);
-            try {
-                parentKomoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
-            }
-            catch (OIDCreationException e) {
-                throw new RuntimeException(e);
-            }
-            parentKomoto.setPohjakoulutusvaatimusUri(komoto.getPohjakoulutusvaatimusUri());
-            parentKomo.addKoulutusmoduuliToteutus(parentKomoto);
-            LOG.warn("**** handleParentKomoto - create new parent komoto: pkv = {}", parentKomoto.getPohjakoulutusvaatimusUri());
-        }
-
-        /**
-         * Amm pt. tutkinnot -> koulutusohjelman valinta on yhteinen
-         */
-        switch (toteutustyyppi) {
-            case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
-            case AMMATILLINEN_PERUSTUTKINTO:
-                Map<KomotoTeksti, MonikielinenTeksti> tekstit = komoto.getTekstit();
-                if (tekstit.get(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA) != null) {
-                    parentKomoto.getTekstit().put(
-                        KomotoTeksti.KOULUTUSOHJELMAN_VALINTA,
-                        copyMkTeksti(tekstit.get(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA))
-                    );
-                }
-                break;
-        }
-
-        if (parentKomoto.getToteutustyyppi() == null) {
-            parentKomoto.setToteutustyyppi(toteutustyyppi);
-        }
-
-        if (createNew) {
-            this.koulutusmoduuliToteutusDAO.insert(parentKomoto);
-        }
-        else {
-            this.koulutusmoduuliToteutusDAO.update(parentKomoto);
-        }
     }
 
     /*

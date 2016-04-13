@@ -5,13 +5,19 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
+import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
+import fi.vm.sade.tarjonta.service.business.exception.KoulutusNotFoundException;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
 import fi.vm.sade.tarjonta.service.search.KoodistoKoodi;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
@@ -37,27 +43,39 @@ public class HakukohdeValidator {
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
 
-    private List<HakukohdeValidationMessages> validateCommonProperties(HakukohdeV1RDTO hakukohdeRDTO) {
+    @Autowired
+    private HakuDAO hakuDAO;
+
+    @Autowired
+    PermissionChecker permissionChecker;
+
+    public List<HakukohdeValidationMessages> validateCommonProperties(HakukohdeV1RDTO hakukohdeRDTO) {
 
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
 
-        if (hakukohdeRDTO.getHakukohdeKoulutusOids() == null || hakukohdeRDTO.getHakukohdeKoulutusOids().size() < 1) {
-            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_MISSING);
+        Set<String> komotoOids = new HashSet<String>();
+        komotoOids.addAll(hakukohdeRDTO.getHakukohdeKoulutusOids());
+        try {
+            komotoOids.addAll(getKomotoOidsFromKoulutusIds(hakukohdeRDTO));
+        } catch (KoulutusNotFoundException e) {
+            return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_DOES_NOT_EXIST);
         }
+        hakukohdeRDTO.setHakukohdeKoulutusOids(Lists.newArrayList(komotoOids));
 
-        if (hakukohdeRDTO.getHakuOid() == null) {
+        validationMessages.addAll(checkKoulutukset(hakukohdeRDTO.getHakukohdeKoulutusOids()));
+
+        if (StringUtils.isBlank(hakukohdeRDTO.getHakuOid())) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_HAKU_MISSING);
+        } else {
+            Haku haku = hakuDAO.findByOid(hakukohdeRDTO.getHakuOid());
+            if (haku == null || TarjontaTila.POISTETTU.equals(haku.getTila())) {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_INVALID_HAKU_OID);
+            }
         }
 
         if (hakukohdeRDTO.getTila() == null) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TILA_MISSING);
             return validationMessages;
-        }
-
-        TarjontaTila hakukohdeTila = TarjontaTila.valueOf(hakukohdeRDTO.getTila());
-
-        if (hakukohdeRDTO.getOid() == null && hakukohdeTila.equals(TarjontaTila.JULKAISTU) || hakukohdeRDTO.getOid() == null && hakukohdeTila.equals(TarjontaTila.PERUTTU)) {
-            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TILA_WRONG);
         }
 
         for (YhteystiedotV1RDTO yhteystietoDTO : hakukohdeRDTO.getYhteystiedot()) {
@@ -78,8 +96,6 @@ public class HakukohdeValidator {
 
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
 
-        validationMessages.addAll(validateCommonProperties(hakukohdeRDTO));
-
         if (hakukohdeRDTO.getHakukohteenNimiUri() == null || hakukohdeRDTO.getHakukohteenNimiUri().trim().length() < 1) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_NIMI_MISSING);
         }
@@ -91,7 +107,6 @@ public class HakukohdeValidator {
 
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
 
-        validationMessages.addAll(validateCommonProperties(hakukohdeRDTO));
         validationMessages.addAll(validateDuplicateHakukohteet(hakukohdeRDTO));
 
         if (Strings.isNullOrEmpty(hakukohdeRDTO.getHakukohteenNimiUri())) {
@@ -141,8 +156,6 @@ public class HakukohdeValidator {
 
     public List<HakukohdeValidationMessages> validateHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
-
-        validationMessages.addAll(validateCommonProperties(hakukohdeRDTO));
 
         if (hakukohdeRDTO.getHakukohteenNimet() == null || hakukohdeRDTO.getHakukohteenNimet().size() < 1) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_NIMI_MISSING);
@@ -203,7 +216,7 @@ public class HakukohdeValidator {
         String hakuOid = hakukohdeDTO.getHakuOid();
         String nimiUri = hakukohdeDTO.getHakukohteenNimiUri();
 
-        if (!includeInDuplicateCheck(TarjontaTila.valueOf(hakukohdeDTO.getTila()))) {
+        if (!includeInDuplicateCheck(hakukohdeDTO.getTila())) {
             return false;
         }
 
@@ -222,21 +235,49 @@ public class HakukohdeValidator {
         return !tila.equals(TarjontaTila.POISTETTU) && !tila.equals(TarjontaTila.PERUTTU);
     }
 
+    private Collection<String> getKomotoOidsFromKoulutusIds(HakukohdeV1RDTO dto) throws KoulutusNotFoundException {
+        Set<String> komotoOids = new HashSet<String>();
+        if (dto.getKoulutukset() != null) {
+            for (KoulutusIdentification komotoId : dto.getKoulutukset()) {
+                KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findKomotoByKoulutusId(komotoId);
+                if (komoto != null) {
+                    komotoOids.add(komoto.getOid());
+                    dto.getTarjoajaOids().add(komoto.getTarjoaja());
+                } else {
+                    throw new KoulutusNotFoundException(komotoId);
+                }
+            }
+        }
+        return komotoOids;
+    }
+
     /**
      * Tarkista että kaikilla koulutuksilla sama vuosi/kausi ja että niiden tila
-     * ei ole peruttu, poistettu
+     * ei ole poistettu
      *
-     * @param komotot
+     * @param komotoOids
      */
-    public List<HakukohdeValidationMessages> checkKoulutukset(Collection<KoulutusmoduuliToteutus> komotot) {
+    public List<HakukohdeValidationMessages> checkKoulutukset(Collection<String> komotoOids) {
         String kausi = null;
         Integer vuosi = null;
 
-        if (komotot.size() == 0) {
+        if (komotoOids == null || komotoOids.size() == 0) {
             return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_MISSING);
         }
 
-        for (KoulutusmoduuliToteutus komoto : komotot) {
+        for (String komotoOid : komotoOids) {
+            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findKomotoByOid(komotoOid);
+
+            if (komoto == null || TarjontaTila.POISTETTU.equals(komoto.getTila())) {
+                return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_DOES_NOT_EXIST);
+            }
+
+            try {
+                permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
+            } catch (NotAuthorizedException e) {
+                return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_PERMISSION_DENIED_FOR_KOULUTUS);
+            }
+
             if (kausi == null) {
                 kausi = komoto.getAlkamiskausiUri();
                 vuosi = komoto.getAlkamisVuosi();
@@ -245,8 +286,8 @@ public class HakukohdeValidator {
                     return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_VUOSI_KAUSI_INVALID);
                 }
             }
-
         }
+
         return Collections.EMPTY_LIST;
     }
 

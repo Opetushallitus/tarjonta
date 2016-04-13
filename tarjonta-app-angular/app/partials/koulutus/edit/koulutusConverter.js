@@ -89,7 +89,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         if (factory.isNull(person)) {
             factory.throwError('Contact percon cannot be null');
         }
-        person.nimet = person.etunimet + ' ' + person.sukunimi;
         return person; //dummy
     };
     /**
@@ -146,22 +145,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             if (angular.isUndefined(henkilo.henkiloTyyppi)) {
                 throw 'Unknown henkilo tyyppi';
             }
-            if (!angular.isUndefined(henkilo) && !angular.isUndefined(henkilo.nimet) && henkilo.nimet.length > 0) {
-                henkilo.sukunimi = '';
-                henkilo.etunimet = '';
-                if (henkilo.nimet) {
-                    var words = henkilo.nimet.split(' ');
-                    if (words.length === 1) {
-                        //ei välilyöntiä nimessä
-                        henkilo.etunimet = henkilo.nimet;
-                    }
-                    else {
-                        henkilo.etunimet = _.initial(words).join(' ');
-                        henkilo.sukunimi = _.last(words);
-                    }
-                }
-                delete henkilo.nimet;
-                delete henkilo.kielet;
+            if (!angular.isUndefined(henkilo) && !angular.isUndefined(henkilo.nimi) && henkilo.nimi.length > 0) {
                 arrOutputPersons.push(henkilo);
             }
         }
@@ -173,7 +157,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         }
     };
     factory.createUiModels = function(uiModel, tyyppi) {
-        //single select nodels
+        //single select nodel
+
+
         uiModel.contactPerson = {
             henkiloTyyppi: 'YHTEYSHENKILO'
         };

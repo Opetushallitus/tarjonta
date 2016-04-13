@@ -17,6 +17,7 @@ import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KorkeakouluOpintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.search.it.TarjontaSearchServiceTest;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -50,6 +51,9 @@ public class KoulutusResourceImplV1CopyTest extends SecurityAwareTestBase {
     @Spy
     private OrganisaatioService organisaatioService;
 
+    @Autowired
+    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
+
     @Before
     @Override
     public void before() {
@@ -63,6 +67,14 @@ public class KoulutusResourceImplV1CopyTest extends SecurityAwareTestBase {
         Mockito.doReturn(organisaatioDTO).when(organisaatioService).findByOid(Matchers.anyString());
 
         stubKorkeakoulutusConvertKoodis(koodiService);
+
+        Mockito.when(tarjontaKoodistoHelper.getKoodiByUri(Matchers.anyString())).thenReturn(
+                new KoodiType(){{
+                    setKoodiArvo("arvo");
+                    setKoodiUri("uri");
+                    setVersio(1);
+                }}
+        );
 
         super.before();
     }

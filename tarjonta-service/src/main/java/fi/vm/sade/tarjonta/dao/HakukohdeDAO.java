@@ -20,6 +20,7 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 import java.util.*;
@@ -45,6 +46,10 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
     List<Valintakoe> findValintakoeByHakukohdeOid(String oid);
 
     Hakukohde findHakukohdeByOid(String oid);
+
+    Hakukohde findHakukohdeByUniqueExternalId(String uniqueExternalId);
+
+    Hakukohde findExistingHakukohde(HakukohdeV1RDTO dto);
 
     Hakukohde findHakukohdeByOid(final String oid, final boolean showDeleted);
 

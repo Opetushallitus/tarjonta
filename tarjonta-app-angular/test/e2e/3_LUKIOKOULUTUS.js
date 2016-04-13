@@ -144,7 +144,7 @@ describe('LUKIOKOULUTUS', function() {
                 editVal: 'http://www.linkki-joka-ei-toimi.fi'
             },
             yhteyshenkilö: {
-                el: $('[ng-model="uiModel.contactPerson.nimet"]'),
+                el: $('[ng-model="uiModel.contactPerson.nimi"]'),
                 val: 'Ilpo Ahlholm',
                 editVal: 'Ilpo Ahlholm EDIT'
             },

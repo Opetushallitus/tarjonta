@@ -109,7 +109,7 @@ describe('AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA', function() {
                 editVal: 'http://www.linkki-joka-ei-toimi.fi'
             },
             yhteyshenkilö: {
-                el: $('[ng-model="uiModel.contactPerson.nimet"]'),
+                el: $('[ng-model="uiModel.contactPerson.nimi"]'),
                 val: '',
                 editVal: 'EDIT'
             },

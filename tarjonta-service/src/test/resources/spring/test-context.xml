@@ -14,6 +14,7 @@
 
     <context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.tarjonta" />
+    <context:property-placeholder ignore-resource-not-found="true" ignore-unresolvable="true" />
 
     <import resource="classpath:META-INF/spring/context/service-context.xml"/>
     <import resource="test-dao-context.xml" />
@@ -28,12 +29,15 @@
     <mockito:mock id="parameterServices" class="fi.vm.sade.tarjonta.shared.ParameterServices"/>
     <mockito:mock id="oidService" class="fi.vm.sade.tarjonta.service.OidService"/>
     <mockito:mock id="koodistoProactiveCaching" class="fi.vm.sade.tarjonta.shared.KoodistoProactiveCaching"/>
+    <mockito:mock id="permissionChecker" class="fi.vm.sade.tarjonta.service.auth.PermissionChecker"/>
+    <mockito:mock id="tarjontaKoodistoHelper" class="fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper"/>
 
     <bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResourceImpl"/>
     <bean id="tarjontaHakukohdeResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakukohdeResourceImpl"/>
     <bean id="tarjontaHakukohdeResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakukohdeResourceImplV1"/>
     <bean id="tarjontaKoulutusResource" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusResourceImplV1"/>
     <bean id="tarjontaKomoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomoResourceImpl" />
+    <mockito:mock id="komoResourceImplV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KomoResourceImplV1" />
     <bean id="tarjontaKomotoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomotoResourceImpl" />
     <bean id="linkingResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.LinkingResourceImplV1" />
     <bean id="processResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.ProcessResourceV1Impl"/>
@@ -42,6 +46,7 @@
 
     <bean id="massCopyProcess" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess"/>
     <bean id="processTest" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.TestProcess"/>
+    <bean id="helper" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.V1TestHelper"/>
     
     <!--
         Create a dynamic mock class for the jms message sender.
