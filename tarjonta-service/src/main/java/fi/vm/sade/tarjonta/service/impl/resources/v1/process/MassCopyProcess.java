@@ -23,7 +23,7 @@ public class MassCopyProcess implements ProcessDefinition {
 
     private static final Logger LOG = LoggerFactory.getLogger(MassCopyProcess.class);
 
-    public static final int BATCH_KOMOTO_SIZE = 100;
+    public static final int BATCH_KOMOTO_SIZE = 50;
     public static final int BATCH_HAKUKOHDE_SIZE = 10;
 
     public static final String PROCESS_STEP_TYPE = "process_step";
