@@ -48,14 +48,14 @@ public class EntityToJsonHelper {
             mapper.writeValue(strWriter, entity);
             json = strWriter.toString();
         } catch (IOException ex) {
-            LOG.error("Convert object to JSON failed", ex);
+            throw new RuntimeException("Convert object to JSON failed", ex);
+        } finally {
             try {
                 strWriter.close();  // close the writer
             } catch (IOException e) {
                 LOG.error("StringWriter close failed");
             }
         }
-
         return json;
     }
 
