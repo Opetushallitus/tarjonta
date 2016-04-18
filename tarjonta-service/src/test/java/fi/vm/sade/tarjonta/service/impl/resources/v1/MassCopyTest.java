@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.tarjonta.TestUtilityBase;
@@ -133,6 +134,15 @@ public class MassCopyTest extends TestUtilityBase {
         KoulutusmoduuliToteutus komoto = KoulutusResourceImplV1CopyTest.getKorkeakoulutusKomoto(fixtures, komo);
         komoto.setTila(TarjontaTila.JULKAISTU);
         komoto.setOid(oid);
+        Oppiaine suomi = oppiaineDAO.findOneByOppiaineKieliKoodi("suomi", "fi");;
+        if(suomi == null) {
+            suomi = new Oppiaine();
+            suomi.setOppiaine("suomi");
+            suomi.setKieliKoodi("fi");
+            oppiaineDAO.insert(suomi);
+        }
+        suomi.getKomotos().add(komoto);
+        komoto.setOppiaineet(Sets.newHashSet(suomi));
         komoto.setToteutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS);
         komoto.setKoulutusmoduuli(komo);
         komoto.setUlkoinenTunniste("komoton-ulkoinen-tunniste");
