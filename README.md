@@ -32,15 +32,17 @@ Ajoympäristöä varten tarvitaan:
   ```
   wget https://archive.apache.org/dist/lucene/solr/4.10.4/solr-4.10.4-src.tgz
   tar xzf solr-4.10.4-src.tgz
+  cd solr-4.10.4/solr
+  ant example
   ```
 
 - Käynnistä Solr, `solr.data.dir` hakemistoon muodostuu palvelimen tietokannat,
   `solr.solr.home` pitää osoittaa projektista löytyvään hakemistoon.
 
   ```
-  cd solr-4.10.2/example
-  java -Dsolr.solr.home=../../tarjonta-service/src/main/resources/solr \
-    -Dsolr.data.dir=../../core -jar ./start.jar
+  cd solr-4.10.4/solr/example
+  java -Dsolr.solr.home=../../../tarjonta/tarjonta-service/src/main/resources/solr \
+    -Dsolr.data.dir=../../../core -jar ./start.jar
   ```
 
 - Tyhjään Solr:iin pitää populoida dataa jotta käyttöliittymässä voi tehdä
@@ -108,12 +110,13 @@ Ajoympäristöä varten tarvitaan:
     ln -s ../develop/override.properties oph-configuration/override.properties
     ln -s ../develop/security-context-backend.xml oph-configuration/security-context-backend.xml
     ```
-  - Hanki sopiva `common.properties`, esim 
+  - Hanki sopiva `common.properties`, esim
   `scp luokka:/data00/oph/tarjonta/oph-configuration/common.properties src/main/resources/oph-configuration/`
 
 - Aja `mvn install` jotta frontend koodit paketoituvat (`tarjonta-app-angular/dist`)
 - Run -> Run ... -> *luotu Tomcat ympäristö*
   - Selaimen pitäisi avautua automaattisesti tarjonnan etusivulle
+  - katso tunnukset `security-context-backend.xml`:sta
 - Front-kehityksessä voit käyttää selaimessa /dist polkua. Staattinen sovellus buildataan komennolla `(cd tarjonta-app-angular && gulp build:dev)`
 
 ### Ylläpidon toimintoja
