@@ -54,8 +54,6 @@ import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
 @Component
 public class MassCommitProcess {
 
-    private static final int BATCH_KOMOTO_SIZE = 100;
-    private static final int BATCH_HAKUKOHDE_SIZE = 10;
     private static final Logger LOG = LoggerFactory.getLogger(MassCommitProcess.class);
 
     private ProcessV1RDTO state;
@@ -208,7 +206,7 @@ public class MassCommitProcess {
     private void handleKomotos(String processId, List<String> oldKomotoOids) {
         Set<String> oidBatch = Sets.newHashSet();
         for (String oldKomotoOid : oldKomotoOids) {
-            if (countKomoto % BATCH_KOMOTO_SIZE == 0 || oldKomotoOids.size() - 1 == countKomoto) {
+            if (countKomoto % MassCopyProcess.BATCH_KOMOTO_SIZE == 0 || oldKomotoOids.size() - 1 == countKomoto) {
                 insertKomotoBatch(processId, oidBatch);
                 oidBatch = Sets.newHashSet();
             }
@@ -221,7 +219,7 @@ public class MassCommitProcess {
     private void handleHakukohdes(String processId, List<String> oldHakukohdeOids) {
         Set<String> oidBatch = Sets.newHashSet();
         for (String oldHakukohdeOid : oldHakukohdeOids) {
-            if (countHakukohde % BATCH_HAKUKOHDE_SIZE == 0 || oldHakukohdeOids.size() - 1 == countHakukohde) {
+            if (countHakukohde % MassCopyProcess.BATCH_HAKUKOHDE_SIZE == 0 || oldHakukohdeOids.size() - 1 == countHakukohde) {
                 insertHakukohdeBatch(processId, targetHakuoid, oidBatch);
                 oidBatch = Sets.newHashSet();
             }
