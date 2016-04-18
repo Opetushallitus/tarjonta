@@ -248,7 +248,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Transactional(readOnly = true)
     public ResultV1RDTO<HakukohdeV1RDTO> findByUlkoinenTunniste(String tarjoajaOid, String ulkoinenTunniste) {
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByUlkoinenTunniste(ulkoinenTunniste, tarjoajaOid);
-        return findByOid(hakukohde.getOid());
+        return findByOid(hakukohde == null ? null : hakukohde.getOid());
     }
 
     @Override
