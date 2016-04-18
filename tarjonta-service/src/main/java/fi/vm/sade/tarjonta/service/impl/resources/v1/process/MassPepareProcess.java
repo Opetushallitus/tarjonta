@@ -49,7 +49,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class MassPepareProcess {
 
     private static final Logger LOG = LoggerFactory.getLogger(MassPepareProcess.class);
-    private static final int BATCH_SIZE = 100;
+    private static final int BATCH_SIZE = 50;
     private static final TarjontaTila[] COPY_TILAS = {TarjontaTila.JULKAISTU};
     private static final List<TarjontaTila> COPY_TILAS_AS_LIST = Lists.newArrayList(COPY_TILAS);
 
