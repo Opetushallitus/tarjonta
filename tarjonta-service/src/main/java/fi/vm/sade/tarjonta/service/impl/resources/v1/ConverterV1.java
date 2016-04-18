@@ -141,7 +141,7 @@ public class ConverterV1 {
         hakuDTO.setCreatedBy(null);
         hakuDTO.setHakuaikas(convertHakuaikaListToV1RDTO(haku.getHakuaikas()));
         hakuDTO.setHakukausiUri(haku.getHakukausiUri());
-        if (haku.getKoulutuksenAlkamiskausiUri() != null) {
+        if (StringUtils.isNotBlank(haku.getKoulutuksenAlkamiskausiUri())) {
             hakuDTO.setKoulutuksenAlkamiskausiUri(haku.getKoulutuksenAlkamiskausiUri());
         }
         if (haku.getKoulutuksenAlkamisVuosi() != null) {
