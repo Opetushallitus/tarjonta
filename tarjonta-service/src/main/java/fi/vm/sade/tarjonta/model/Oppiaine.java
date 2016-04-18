@@ -10,6 +10,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 @Entity
 @Table(name = Oppiaine.TABLE_NAME)
@@ -20,6 +21,7 @@ public class Oppiaine extends BaseEntity {
 	public static final String TABLE_NAME = "oppiaineet";
 
     @ManyToMany(mappedBy = "oppiaineet", fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<KoulutusmoduuliToteutus> komotos = new HashSet<KoulutusmoduuliToteutus>();
 
     @Column(name = "oppiaine")
