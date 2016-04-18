@@ -122,13 +122,13 @@ public class MassPepareProcess {
             batch = Sets.<Long>newHashSet();
             LOG.info("hakukohde rows total : {}", countTotalHakukohde);
 
-            for (Long komotoId : hakukohdeIds) {
-                if (countHakukohde % BATCH_SIZE == 0 || komotoIds.size() - 1 == countHakukohde) {
+            for (Long hakukohdeId : hakukohdeIds) {
+                if (countHakukohde % BATCH_SIZE == 0 || hakukohdeIds.size() - 1 == countHakukohde) {
                     flushHakukohdeBatch(processId, fromOid, batch);
                     batch = Sets.<Long>newHashSet();
                 }
 
-                batch.add(komotoId);
+                batch.add(hakukohdeId);
                 countHakukohde++;
             }
             flushHakukohdeBatch(processId, fromOid, batch);
