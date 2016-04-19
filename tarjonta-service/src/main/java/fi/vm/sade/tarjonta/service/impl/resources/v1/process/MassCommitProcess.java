@@ -102,7 +102,7 @@ public class MassCommitProcess {
         state.getParameters().put(MassCopyProcess.COMMIT_COUNT_KOMOTO, countKomoto + "");
         state.getParameters().put(MassCopyProcess.COMMIT_TOTAL_HAKUKOHDE, countTotalHakukohde + "");
         state.getParameters().put(MassCopyProcess.COMMIT_TOTAL_KOMOTO, countTotalKomoto + "");
-        state.setState(calcPercentage());
+        state.setState(MassCopyBatchSizeCalculator.calcPercentage(countKomoto, countTotalKomoto, countHakukohde, countTotalHakukohde));
         return state;
     }
 
@@ -206,7 +206,7 @@ public class MassCommitProcess {
     private void handleKomotos(String processId, List<String> oldKomotoOids) {
         Set<String> oidBatch = Sets.newHashSet();
         for (String oldKomotoOid : oldKomotoOids) {
-            if (countKomoto % MassCopyProcess.BATCH_KOMOTO_SIZE == 0 || oldKomotoOids.size() - 1 == countKomoto) {
+            if (MassCopyBatchSizeCalculator.shouldStartNewKomotoBatch(countKomoto)) {
                 insertKomotoBatch(processId, oidBatch);
                 oidBatch = Sets.newHashSet();
             }
@@ -219,7 +219,7 @@ public class MassCommitProcess {
     private void handleHakukohdes(String processId, List<String> oldHakukohdeOids) {
         Set<String> oidBatch = Sets.newHashSet();
         for (String oldHakukohdeOid : oldHakukohdeOids) {
-            if (countHakukohde % MassCopyProcess.BATCH_HAKUKOHDE_SIZE == 0 || oldHakukohdeOids.size() - 1 == countHakukohde) {
+            if (MassCopyBatchSizeCalculator.shouldStartNewHakukohdeBatch(countHakukohde)) {
                 insertHakukohdeBatch(processId, targetHakuoid, oidBatch);
                 oidBatch = Sets.newHashSet();
             }
@@ -579,12 +579,5 @@ public class MassCommitProcess {
 
     public boolean isCompleted() {
         return completed;
-    }
-
-    private double calcPercentage() {
-        if (countTotalHakukohde + countTotalKomoto > 0) {
-            return ((countHakukohde + countKomoto) * 100 / (countTotalHakukohde + countTotalKomoto));
-        }
-        return 0;
     }
 }
