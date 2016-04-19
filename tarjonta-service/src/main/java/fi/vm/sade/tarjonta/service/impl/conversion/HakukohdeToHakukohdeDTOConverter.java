@@ -274,8 +274,8 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
      * @param s
      * @return
      */
-    private List<HakukohdeLiiteDTO> convertLiitteet(List<HakukohdeLiite> s) {
-        List<HakukohdeLiiteDTO> result = new ArrayList<HakukohdeLiiteDTO>();
+    private List<HakukohdeLiiteDTO> convertLiitteet(Set<HakukohdeLiite> s) {
+        List<HakukohdeLiiteDTO> result = new ArrayList<>();
 
         for (HakukohdeLiite hakukohdeLiite : s) {
             result.add(getConversionService().convert(hakukohdeLiite, HakukohdeLiiteDTO.class));

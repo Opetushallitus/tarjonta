@@ -470,7 +470,7 @@ public class MassCommitProcess {
                 /*
                  * LIITE
                  */
-                List<HakukohdeLiite> liites = hk.getLiites();
+                Set<HakukohdeLiite> liites = hk.getLiites();
                 for (HakukohdeLiite l : liites) {
                     l.setHakukohde(hk);
 
