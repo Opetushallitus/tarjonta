@@ -3,7 +3,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1.process;
 public class MassCopyBatchSizeCalculator {
 
     private static final int BATCH_KOMOTO_SIZE = 50;
-    private static final int BATCH_HAKUKOHDE_SIZE = 10;
+    private static final int BATCH_HAKUKOHDE_SIZE = 20;
 
     public static boolean shouldStartNewHakukohdeBatch(long currentCount) {
         return currentCount > 0 && currentCount % BATCH_HAKUKOHDE_SIZE == 0;
