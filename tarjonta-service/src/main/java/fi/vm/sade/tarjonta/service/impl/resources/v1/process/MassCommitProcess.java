@@ -367,7 +367,7 @@ public class MassCommitProcess {
         final Date processing = new Date();
         DateTime dateTime = new DateTime(processing);
         Date indexFutureDate = dateTime.plusHours(5).toDate();
-        LOG.info("insert koulutus batch size of : {}/{}", oldOids.size(), countKomoto);
+        LOG.info("insert koulutus batch size of {}: {}/{}", oldOids.size(), countKomoto, countTotalKomoto);
 
         Set<Long> batchOfIndexIds = Sets.<Long>newHashSet();
         for (final String oldKomotoOid : oldOids) {
@@ -438,7 +438,7 @@ public class MassCommitProcess {
         final Date processing = new Date();
         DateTime dateTime = new DateTime(processing);
         Date indexFutureDate = dateTime.plusHours(5).toDate();
-        LOG.info("insert hakukohde batch size of : {}/{}", oldOids.size(), countHakukohde);
+        LOG.info("insert hakukohde batch size of {}: {}/{}", oldOids.size(), countHakukohde, countTotalHakukohde);
         Haku targetHaku = hakuDAO.findByOid(targetHakuOid);
         Set<Long> batchOfIndexIds = Sets.<Long>newHashSet();
 
