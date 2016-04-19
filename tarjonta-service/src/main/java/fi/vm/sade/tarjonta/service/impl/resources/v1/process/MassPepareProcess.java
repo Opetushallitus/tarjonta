@@ -246,7 +246,7 @@ public class MassPepareProcess {
                 LOG.info("prepare hakukohde batch size of : {}/{}", hakukohdeIds.size(), countHakukohde);
                 for (Long hakukohdeId : hakukohdeIds) {
                     LOG.debug("convert {} hakukohde by id : {}", countHakukohde, hakukohdeId);
-                    Hakukohde hakukohde = hakukohdeDAO.read(hakukohdeId);
+                    Hakukohde hakukohde = hakukohdeDAO.findHakukohdeById(hakukohdeId);
                     Preconditions.checkNotNull(hakukohde, "Hakukohde entity cannot be null!");
 
                     MetaObject metaObject = new MetaObject();
