@@ -86,7 +86,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     public KoulutusmoduuliToteutus findFirstByKomoOid(String komoOid) {
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         QKoulutusmoduuli qKomo = QKoulutusmoduuli.koulutusmoduuli;
-        List<KoulutusmoduuliToteutus> list = from(qKomo, qKomoto)
+        List<KoulutusmoduuliToteutus> list = from(qKomoto)
                                                 .join(qKomoto.koulutusmoduuli, qKomo)
                                                 .where(qKomo.oid.eq(komoOid))
                                                 .distinct()
