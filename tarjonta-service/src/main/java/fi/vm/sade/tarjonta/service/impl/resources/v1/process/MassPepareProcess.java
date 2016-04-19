@@ -175,7 +175,7 @@ public class MassPepareProcess {
         executeInTransaction(new Runnable() {
             @Override
             public void run() {
-                LOG.info("prepare koulutus batch size of : {}/{}", komotoIds.size(), countKomoto);
+                LOG.info("prepare koulutus batch size of {}: {}/{}", komotoIds.size(), countKomoto, countTotalKomoto);
                 for (Long komotoId : komotoIds) {
                     LOG.debug("convert {} komoto by id : {}", countKomoto, komotoId);
 
@@ -243,7 +243,7 @@ public class MassPepareProcess {
         executeInTransaction(new Runnable() {
             @Override
             public void run() {
-                LOG.info("prepare hakukohde batch size of : {}/{}", hakukohdeIds.size(), countHakukohde);
+                LOG.info("prepare hakukohde batch size of {}: {}/{}", hakukohdeIds.size(), countHakukohde, countTotalHakukohde);
                 for (Long hakukohdeId : hakukohdeIds) {
                     LOG.debug("convert {} hakukohde by id : {}", countHakukohde, hakukohdeId);
                     Hakukohde hakukohde = hakukohdeDAO.findHakukohdeById(hakukohdeId);
