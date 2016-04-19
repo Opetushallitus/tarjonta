@@ -119,7 +119,9 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
         }
 
         if (result == null || result.getJson() == null) {
-            LOG.info("No item found by oid '{}' class : json : '{}'", oldOid, clazz);
+            if(processId != null) {
+                LOG.warn("No item found by oid '{}' class : json : '{}'", oldOid, clazz);
+            }
             return null;
         }
 
