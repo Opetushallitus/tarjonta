@@ -245,7 +245,7 @@ public class MassPepareProcess {
             public void run() {
                 LOG.info("prepare hakukohde batch size of : {}/{}", hakukohdeIds.size(), countHakukohde);
                 for (Long hakukohdeId : hakukohdeIds) {
-                    LOG.debug("convert {} hakukohde by id : {}", countHakukohde, hakukohdeId);
+                    LOG.info("convert {} hakukohde by id : {}", countHakukohde, hakukohdeId);
                     Hakukohde hakukohde = hakukohdeDAO.read(hakukohdeId);
                     Preconditions.checkNotNull(hakukohde, "Hakukohde entity cannot be null!");
 
