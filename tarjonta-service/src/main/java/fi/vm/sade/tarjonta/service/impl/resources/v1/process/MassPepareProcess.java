@@ -78,7 +78,7 @@ public class MassPepareProcess {
         state.getParameters().put(MassCopyProcess.PREPARE_COUNT_KOMOTO, countKomoto + "");
         state.getParameters().put(MassCopyProcess.PREPARE_TOTAL_HAKUKOHDE, countTotalHakukohde + "");
         state.getParameters().put(MassCopyProcess.PREPARE_TOTAL_KOMOTO, countTotalKomoto + "");
-        state.setState(calcPercentage());
+        state.setState(MassCopyBatchSizeCalculator.calcPercentage(countKomoto, countTotalKomoto, countHakukohde, countTotalHakukohde));
         return state;
     }
 
@@ -108,7 +108,7 @@ public class MassPepareProcess {
 
             Set<Long> batch = Sets.<Long>newHashSet();
             for (Long komotoId : komotoIds) {
-                if (countKomoto % MassCopyProcess.BATCH_KOMOTO_SIZE == 0 || komotoIds.size() - 1 == countKomoto) {
+                if (MassCopyBatchSizeCalculator.shouldStartNewKomotoBatch(countKomoto)) {
                     flushKoulutusBatch(fromOid, batch);
                     batch = Sets.<Long>newHashSet();
                 }
@@ -122,7 +122,7 @@ public class MassPepareProcess {
             LOG.info("hakukohde rows total : {}", countTotalHakukohde);
 
             for (Long hakukohdeId : hakukohdeIds) {
-                if (countHakukohde % MassCopyProcess.BATCH_HAKUKOHDE_SIZE == 0 || hakukohdeIds.size() - 1 == countHakukohde) {
+                if (MassCopyBatchSizeCalculator.shouldStartNewHakuKohdeBatch(countTotalHakukohde)) {
                     flushHakukohdeBatch(processId, fromOid, batch);
                     batch = Sets.<Long>newHashSet();
                 }
@@ -291,10 +291,4 @@ public class MassPepareProcess {
         return completed;
     }
 
-    public double calcPercentage() {
-        if (countTotalHakukohde + countTotalKomoto > 0) {
-            return ((countHakukohde + countKomoto) * 100 / (countTotalHakukohde + countTotalKomoto));
-        }
-        return 0;
-    }
 }
