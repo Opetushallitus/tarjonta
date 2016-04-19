@@ -93,7 +93,7 @@ public class ProcessResourceV1Impl implements ProcessResourceV1 {
 
     @Override
     public ProcessV1RDTO get(String id) {
-        LOG.info("get({})", id);
+        LOG.debug("get({})", id);
         ProcessDefinition pd = getProcessById(id);
 
         removeOldProcesses();
