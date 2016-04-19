@@ -65,7 +65,7 @@ public class LastModifiedResourceV1Impl implements LastModifiedV1Resource {
         Date ts = new Date(lastModifiedTs);
         String tsFmt = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(ts);
 
-        LOG.info("lastModified({}) - search changes since: {}", lastModifiedTs, tsFmt);
+        LOG.debug("lastModified({}) - search changes since: {}", lastModifiedTs, tsFmt);
 
         Map<String, List<String>> result = new HashMap<String, List<String>>();
 
