@@ -335,7 +335,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
         // TODO add organisation check for hakujenhallinta org!
         userCanDeleteHalku = userCanDeleteHalku || hakujenHallintaPermissionServiceWrapped.userCanCreateReadUpdateAndDelete();
 
-        LOGGER.info("userCanDeleteHaku:" + userCanDeleteHalku);
+        LOGGER.debug("userCanDeleteHaku:" + userCanDeleteHalku);
         return userCanDeleteHalku;
         // return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
     }
@@ -363,7 +363,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
         // TODO add organisation check for hakujenhallinta org!
         userCanCreateHalku = userCanCreateHalku || hakujenHallintaPermissionServiceWrapped.userCanCreateReadUpdateAndDelete();
 
-        LOGGER.info("userCanCreateHaku:" + userCanCreateHalku);
+        LOGGER.debug("userCanCreateHaku:" + userCanCreateHalku);
         return userCanCreateHalku;
         // return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
     }
@@ -395,7 +395,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
         // TODO add organisation check for hakujenhallinta org!
         userCanUpdateHalku = userCanUpdateHalku || hakujenHallintaPermissionServiceWrapped.userCanReadAndUpdate();
 
-        LOGGER.info("userCanUpdateHaku:" + userCanUpdateHalku);
+        LOGGER.debug("userCanUpdateHaku:" + userCanUpdateHalku);
         return userCanUpdateHalku;
 
 //        boolean userCanEditHaku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
@@ -474,7 +474,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
         // TODO add organisation check for hakujenhallinta org!
         userCanPublishHalku = userCanPublishHalku || hakujenHallintaPermissionServiceWrapped.checkAccess(hakujenHallintaPermissionServiceWrapped.ROLE_CRUD);
 
-        LOGGER.info("userCanUpdateHaku:" + userCanPublishHalku);
+        LOGGER.debug("userCanUpdateHaku:" + userCanPublishHalku);
         return userCanPublishHalku;
 
         // return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
