@@ -233,7 +233,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Override
     public ResultV1RDTO<HakuV1RDTO> findByOid(String oid) {
-        LOG.info("findByOid({})", oid);
+        LOG.debug("findByOid({})", oid);
 
         ResultV1RDTO<HakuV1RDTO> result = new ResultV1RDTO<HakuV1RDTO>();
 
@@ -291,9 +291,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 permissionChecker.checkCreateHakuWithOrgs(hakuDto.getTarjoajaOids());
 
                 hakuDto.setOid(oidService.get(TarjontaOidType.HAKU));
-                LOG.info("updateHakue() - NEW haku! - oid ==> {}", hakuDto.getOid());
+                LOG.debug("updateHakue() - NEW haku! - oid ==> {}", hakuDto.getOid());
             } else {
-                LOG.info("updateHaku() - OLD haku - find by oid");
+                LOG.debug("updateHaku() - OLD haku - find by oid");
 
                 final String oid = hakuDto.getOid();
 
@@ -318,20 +318,20 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 permissionChecker.checkCreateHakuWithOrgs(hakuToUpdate.getTarjoajaOids());
             }
 
-            LOG.info("updateHaku() - validate");
+            LOG.debug("updateHaku() - validate");
 
             if (!validateHaku(hakuDto, result)) {
                 return result;
             }
 
-            LOG.info("updateHaku() - convert");
+            LOG.debug("updateHaku() - convert");
 
             hakuToUpdate = converterV1.convertHakuV1DRDTOToHaku(hakuDto, hakuToUpdate);
 
             HakuV1RDTO hakuDtoAfterUpdate;
 
             if (isNew) {
-                LOG.info("updateHaku() - insert");
+                LOG.debug("updateHaku() - insert");
                 hakuDAO.insert(hakuToUpdate);
 
                 hakuDtoAfterUpdate = converterV1.fromHakuToHakuRDTO(hakuToUpdate, false);
@@ -342,7 +342,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                         .setDelta(getHakuDelta(hakuDtoAfterUpdate, null))
                         .setResourceOid(hakuToUpdate.getOid()).build());
             } else {
-                LOG.info("updateHaku() - update");
+                LOG.debug("updateHaku() - update");
                 hakuDAO.update(hakuToUpdate);
                 indexerDao.setHakukohdeViimindeksointiPvmToNull(hakuToUpdate);
 
@@ -355,7 +355,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                         .setResourceOid(hakuToUpdate.getOid()).build());
             }
 
-            LOG.info("updateHaku() - make whopee!");
+            LOG.debug("updateHaku() - make whopee!");
 
             hakuToUpdate = hakuDAO.findByOid(hakuDto.getOid());
             result.setResult(converterV1.fromHakuToHakuRDTO(hakuToUpdate, true));
@@ -365,7 +365,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             createSystemErrorFromException(ex, result);
         }
 
-        LOG.info("RETURN RESULT: " + result);
+        LOG.debug("RETURN RESULT: " + result);
 
         hakuCache.invalidate(FIND_ALL_CACHE_KEY);
 
@@ -421,7 +421,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     // GET /haku/OID/hakukohde
     @Override
     public ResultV1RDTO<List<OidV1RDTO>> getHakukohdesForHaku(String oid, GenericSearchParamsV1RDTO params) {
-        LOG.info("getHakukohdesForHaku(): oid={}, params={}", oid, params);
+        LOG.debug("getHakukohdesForHaku(): oid={}, params={}", oid, params);
 
         ResultV1RDTO<List<OidV1RDTO>> result = new ResultV1RDTO<List<OidV1RDTO>>();
         result.setResult(new ArrayList<OidV1RDTO>());
@@ -445,7 +445,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Override
     public ResultV1RDTO<String> getHakuState(String oid) {
-        LOG.info("getHakuState({})", oid);
+        LOG.debug("getHakuState({})", oid);
 
         ResultV1RDTO<String> result = new ResultV1RDTO<String>();
 
@@ -461,7 +461,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Override
     public ResultV1RDTO<Tilamuutokset> setHakuState(String oid, TarjontaTila tila, boolean onlyHaku) {
-        LOG.info("setHakuState({}, {})", oid, tila);
+        LOG.debug("setHakuState({}, {})", oid, tila);
 
         final Haku haku = hakuDAO.findByOid(oid);
         permissionChecker.checkUpdateHaku(haku.getTarjoajaOids());
@@ -553,7 +553,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
      * @return if false Haku has errors.
      */
     private boolean validateHaku(HakuV1RDTO haku, ResultV1RDTO<HakuV1RDTO> result) {
-        LOG.info("validateHaku() {}", haku);
+        LOG.debug("validateHaku() {}", haku);
 
         if (haku == null) {
             result.addError(ErrorV1RDTO.createValidationError("", "haku.validation.null"));
@@ -631,7 +631,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
 
             for (ErrorV1RDTO err : result.getErrors()) {
-                LOG.info("  ERROR: t={}, f={}, msg={}", err.getErrorTarget(), err.getErrorField(), err.getErrorMessageKey());
+                LOG.warn("  ERROR: t={}, f={}, msg={}", err.getErrorTarget(), err.getErrorField(), err.getErrorMessageKey());
             }
         }
 
@@ -682,9 +682,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         boolean result = (haku.getHakutapaUri().equals(_jatkuvaHakutapaUri));
 
-//        LOG.info("isJatkuvaHaku(), uri = '{}'", haku.getHakutapaUri());
-//        LOG.info("        property uri = '{}'", _jatkuvaHakutapaUri);
-//        LOG.info("        => result = {}", result);
         return result;
     }
 
@@ -716,7 +713,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             result.getAccessRights().put("delete", false);
         }
 
-        LOG.info("updateRightsInformation(): {}", result.getAccessRights());
+        LOG.debug("updateRightsInformation(): {}", result.getAccessRights());
     }
 
     @Override
@@ -911,7 +908,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             try {
                 field = Field.valueOf(key);
             } catch (Throwable t) {
-                LOG.info("Ignoring unknown parameter:" + key);
+                LOG.warn("Ignoring unknown parameter:" + key);
                 continue;
             }
 
