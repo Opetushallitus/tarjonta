@@ -1,13 +1,9 @@
 # Logger
-log4j.rootLogger={{env_loglevel}}, FILE
+log4j.rootLogger=INFO, FILE
 {# raw-endraw -välillä template engine ei tee mitään! #} 
 {% raw %}
-# Console output
-log4j.appender.STDOUT=org.apache.log4j.ConsoleAppender
-log4j.appender.STDOUT.Threshold=ERROR
-log4j.appender.STDOUT.layout.ConversionPattern=%d{ISO8601} %-5p {%X{user}} [%t] %-5p %c: %m%n
 # File output
-log4j.appender.FILE.Threshold=ERROR
+log4j.appender.FILE.Threshold=INFO
 log4j.appender.FILE.File=${user.home}/tomcat/logs/oph-tarjonta.log
 log4j.appender.FILE=org.apache.log4j.RollingFileAppender
 log4j.appender.FILE.Append=true
