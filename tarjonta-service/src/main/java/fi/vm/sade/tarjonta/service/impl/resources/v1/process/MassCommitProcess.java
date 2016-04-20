@@ -206,7 +206,7 @@ public class MassCommitProcess {
     private void handleKomotos(String processId, List<String> oldKomotoOids) {
         Set<String> oidBatch = Sets.newHashSet();
         for (String oldKomotoOid : oldKomotoOids) {
-            if (MassCopyBatchSizeCalculator.shouldStartNewKomotoBatch(countKomoto)) {
+            if (MassCopyBatchSizeCalculator.shouldStartNewBatch(countKomoto)) {
                 insertKomotoBatch(processId, oidBatch);
                 oidBatch = Sets.newHashSet();
             }
@@ -219,7 +219,7 @@ public class MassCommitProcess {
     private void handleHakukohdes(String processId, List<String> oldHakukohdeOids) {
         Set<String> oidBatch = Sets.newHashSet();
         for (String oldHakukohdeOid : oldHakukohdeOids) {
-            if (MassCopyBatchSizeCalculator.shouldStartNewHakukohdeBatch(countHakukohde)) {
+            if (MassCopyBatchSizeCalculator.shouldStartNewBatch(countHakukohde)) {
                 insertHakukohdeBatch(processId, targetHakuoid, oidBatch);
                 oidBatch = Sets.newHashSet();
             }
