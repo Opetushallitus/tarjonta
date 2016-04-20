@@ -108,7 +108,7 @@ public class MassPepareProcess {
 
             Set<Long> batch = Sets.<Long>newHashSet();
             for (Long komotoId : komotoIds) {
-                if (MassCopyBatchSizeCalculator.shouldStartNewKomotoBatch(countKomoto)) {
+                if (MassCopyBatchSizeCalculator.shouldStartNewBatch(countKomoto)) {
                     flushKoulutusBatch(fromOid, batch);
                     batch = Sets.<Long>newHashSet();
                 }
@@ -122,7 +122,7 @@ public class MassPepareProcess {
             LOG.info("hakukohde rows total : {}", countTotalHakukohde);
 
             for (Long hakukohdeId : hakukohdeIds) {
-                if (MassCopyBatchSizeCalculator.shouldStartNewHakukohdeBatch(countHakukohde)) {
+                if (MassCopyBatchSizeCalculator.shouldStartNewBatch(countHakukohde)) {
                     flushHakukohdeBatch(processId, fromOid, batch);
                     batch = Sets.<Long>newHashSet();
                 }
