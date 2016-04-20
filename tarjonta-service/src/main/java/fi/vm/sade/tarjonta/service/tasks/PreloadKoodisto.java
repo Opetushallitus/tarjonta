@@ -56,6 +56,9 @@ public class PreloadKoodisto {
         koodistoProactiveCaching.cacheKoodisto("lukiodiplomit");
         koodistoProactiveCaching.cacheKoodisto("posti");
         koodistoProactiveCaching.cacheKoodisto("oppilaitostyyppi");
+        koodistoProactiveCaching.cacheKoodisto("hakutapa");
+        koodistoProactiveCaching.cacheKoodisto("hakutyyppi");
+        koodistoProactiveCaching.cacheKoodisto("haunkohdejoukko");
         koodistoProactiveCaching.cacheKoodisto("hakukohteet");
         koodistoProactiveCaching.cacheKoodisto("hakukohteet", 1);
         koodistoProactiveCaching.cacheKoodisto("hakukohteet", 2);
