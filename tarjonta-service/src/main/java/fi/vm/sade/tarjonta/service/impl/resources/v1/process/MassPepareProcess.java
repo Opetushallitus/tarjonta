@@ -49,7 +49,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class MassPepareProcess {
 
     private static final Logger LOG = LoggerFactory.getLogger(MassPepareProcess.class);
-    private static final int BATCH_SIZE = 100;
     private static final TarjontaTila[] COPY_TILAS = {TarjontaTila.JULKAISTU};
     private static final List<TarjontaTila> COPY_TILAS_AS_LIST = Lists.newArrayList(COPY_TILAS);
 
@@ -79,7 +78,7 @@ public class MassPepareProcess {
         state.getParameters().put(MassCopyProcess.PREPARE_COUNT_KOMOTO, countKomoto + "");
         state.getParameters().put(MassCopyProcess.PREPARE_TOTAL_HAKUKOHDE, countTotalHakukohde + "");
         state.getParameters().put(MassCopyProcess.PREPARE_TOTAL_KOMOTO, countTotalKomoto + "");
-        state.setState(calcPercentage());
+        state.setState(MassCopyBatchSizeCalculator.calcPercentage(countKomoto, countTotalKomoto, countHakukohde, countTotalHakukohde));
         return state;
     }
 
@@ -109,7 +108,7 @@ public class MassPepareProcess {
 
             Set<Long> batch = Sets.<Long>newHashSet();
             for (Long komotoId : komotoIds) {
-                if (countKomoto % BATCH_SIZE == 0 || komotoIds.size() - 1 == countKomoto) {
+                if (MassCopyBatchSizeCalculator.shouldStartNewBatch(countKomoto)) {
                     flushKoulutusBatch(fromOid, batch);
                     batch = Sets.<Long>newHashSet();
                 }
@@ -122,13 +121,13 @@ public class MassPepareProcess {
             batch = Sets.<Long>newHashSet();
             LOG.info("hakukohde rows total : {}", countTotalHakukohde);
 
-            for (Long komotoId : hakukohdeIds) {
-                if (countHakukohde % BATCH_SIZE == 0 || komotoIds.size() - 1 == countHakukohde) {
+            for (Long hakukohdeId : hakukohdeIds) {
+                if (MassCopyBatchSizeCalculator.shouldStartNewBatch(countHakukohde)) {
                     flushHakukohdeBatch(processId, fromOid, batch);
                     batch = Sets.<Long>newHashSet();
                 }
 
-                batch.add(komotoId);
+                batch.add(hakukohdeId);
                 countHakukohde++;
             }
             flushHakukohdeBatch(processId, fromOid, batch);
@@ -176,7 +175,7 @@ public class MassPepareProcess {
         executeInTransaction(new Runnable() {
             @Override
             public void run() {
-                LOG.info("prepare koulutus batch size of : {}/{}", komotoIds.size(), countKomoto);
+                LOG.info("prepare koulutus batch size of {}: {}/{}", komotoIds.size(), countKomoto, countTotalKomoto);
                 for (Long komotoId : komotoIds) {
                     LOG.debug("convert {} komoto by id : {}", countKomoto, komotoId);
 
@@ -244,10 +243,10 @@ public class MassPepareProcess {
         executeInTransaction(new Runnable() {
             @Override
             public void run() {
-                LOG.info("prepare hakukohde batch size of : {}/{}", hakukohdeIds.size(), countHakukohde);
+                LOG.info("prepare hakukohde batch size of {}: {}/{}", hakukohdeIds.size(), countHakukohde, countTotalHakukohde);
                 for (Long hakukohdeId : hakukohdeIds) {
                     LOG.debug("convert {} hakukohde by id : {}", countHakukohde, hakukohdeId);
-                    Hakukohde hakukohde = hakukohdeDAO.read(hakukohdeId);
+                    Hakukohde hakukohde = hakukohdeDAO.findHakukohdeById(hakukohdeId);
                     Preconditions.checkNotNull(hakukohde, "Hakukohde entity cannot be null!");
 
                     MetaObject metaObject = new MetaObject();
@@ -292,10 +291,4 @@ public class MassPepareProcess {
         return completed;
     }
 
-    public double calcPercentage() {
-        if (countTotalHakukohde + countTotalKomoto > 0) {
-            return ((countHakukohde + countKomoto) * 100 / (countTotalHakukohde + countTotalKomoto));
-        }
-        return 0;
-    }
 }

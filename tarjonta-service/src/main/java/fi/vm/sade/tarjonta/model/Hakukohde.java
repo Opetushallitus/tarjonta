@@ -116,7 +116,7 @@ public class Hakukohde extends TarjontaBaseEntity {
     private Set<PainotettavaOppiaine> painotettavatOppiaineet = new HashSet<PainotettavaOppiaine>();
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "hakukohde", orphanRemoval = true)
     @OrderBy("jarjestys")
-    private List<HakukohdeLiite> liites = new ArrayList<HakukohdeLiite>();
+    private Set<HakukohdeLiite> liites = new HashSet<>();
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_hakukelpoisuusvaatimus", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
@@ -396,9 +396,9 @@ public class Hakukohde extends TarjontaBaseEntity {
         this.haku = haku;
     }
 
-    public List<HakukohdeLiite> getLiites() {
+    public Set<HakukohdeLiite> getLiites() {
         if (liites == null) {
-            liites = new ArrayList<HakukohdeLiite>();
+            liites = new HashSet<>();
         }
 
         return liites;

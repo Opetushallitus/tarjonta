@@ -54,8 +54,6 @@ import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
 @Component
 public class MassCommitProcess {
 
-    private static final int BATCH_KOMOTO_SIZE = 100;
-    private static final int BATCH_HAKUKOHDE_SIZE = 10;
     private static final Logger LOG = LoggerFactory.getLogger(MassCommitProcess.class);
 
     private ProcessV1RDTO state;
@@ -104,7 +102,7 @@ public class MassCommitProcess {
         state.getParameters().put(MassCopyProcess.COMMIT_COUNT_KOMOTO, countKomoto + "");
         state.getParameters().put(MassCopyProcess.COMMIT_TOTAL_HAKUKOHDE, countTotalHakukohde + "");
         state.getParameters().put(MassCopyProcess.COMMIT_TOTAL_KOMOTO, countTotalKomoto + "");
-        state.setState(calcPercentage());
+        state.setState(MassCopyBatchSizeCalculator.calcPercentage(countKomoto, countTotalKomoto, countHakukohde, countTotalHakukohde));
         return state;
     }
 
@@ -208,7 +206,7 @@ public class MassCommitProcess {
     private void handleKomotos(String processId, List<String> oldKomotoOids) {
         Set<String> oidBatch = Sets.newHashSet();
         for (String oldKomotoOid : oldKomotoOids) {
-            if (countKomoto % BATCH_KOMOTO_SIZE == 0 || oldKomotoOids.size() - 1 == countKomoto) {
+            if (MassCopyBatchSizeCalculator.shouldStartNewBatch(countKomoto)) {
                 insertKomotoBatch(processId, oidBatch);
                 oidBatch = Sets.newHashSet();
             }
@@ -221,7 +219,7 @@ public class MassCommitProcess {
     private void handleHakukohdes(String processId, List<String> oldHakukohdeOids) {
         Set<String> oidBatch = Sets.newHashSet();
         for (String oldHakukohdeOid : oldHakukohdeOids) {
-            if (countHakukohde % BATCH_HAKUKOHDE_SIZE == 0 || oldHakukohdeOids.size() - 1 == countHakukohde) {
+            if (MassCopyBatchSizeCalculator.shouldStartNewBatch(countHakukohde)) {
                 insertHakukohdeBatch(processId, targetHakuoid, oidBatch);
                 oidBatch = Sets.newHashSet();
             }
@@ -369,7 +367,7 @@ public class MassCommitProcess {
         final Date processing = new Date();
         DateTime dateTime = new DateTime(processing);
         Date indexFutureDate = dateTime.plusHours(5).toDate();
-        LOG.info("insert koulutus batch size of : {}/{}", oldOids.size(), countKomoto);
+        LOG.info("insert koulutus batch size of {}: {}/{}", oldOids.size(), countKomoto, countTotalKomoto);
 
         Set<Long> batchOfIndexIds = Sets.<Long>newHashSet();
         for (final String oldKomotoOid : oldOids) {
@@ -440,7 +438,7 @@ public class MassCommitProcess {
         final Date processing = new Date();
         DateTime dateTime = new DateTime(processing);
         Date indexFutureDate = dateTime.plusHours(5).toDate();
-        LOG.info("insert hakukohde batch size of : {}/{}", oldOids.size(), countHakukohde);
+        LOG.info("insert hakukohde batch size of {}: {}/{}", oldOids.size(), countHakukohde, countTotalHakukohde);
         Haku targetHaku = hakuDAO.findByOid(targetHakuOid);
         Set<Long> batchOfIndexIds = Sets.<Long>newHashSet();
 
@@ -472,7 +470,7 @@ public class MassCommitProcess {
                 /*
                  * LIITE
                  */
-                List<HakukohdeLiite> liites = hk.getLiites();
+                Set<HakukohdeLiite> liites = hk.getLiites();
                 for (HakukohdeLiite l : liites) {
                     l.setHakukohde(hk);
 
@@ -581,12 +579,5 @@ public class MassCommitProcess {
 
     public boolean isCompleted() {
         return completed;
-    }
-
-    private double calcPercentage() {
-        if (countTotalHakukohde + countTotalKomoto > 0) {
-            return ((countHakukohde + countKomoto) * 100 / (countTotalHakukohde + countTotalKomoto));
-        }
-        return 0;
     }
 }
