@@ -15,10 +15,8 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.base.Predicate;
+import com.google.common.collect.*;
 import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.auditlog.tarjonta.LogMessage;
 import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
@@ -158,7 +156,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                                                                              Integer offset,
                                                                              Integer limit) {
 
-        organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
+        organisationOids = removeBlankStrings(organisationOids);
         hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas : new ArrayList<String>();
 
         HakukohteetKysely q = new HakukohteetKysely();
@@ -206,6 +204,17 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         r.setHakukohteet(filterRemovedHakukohteet(r.getHakukohteet()));
 
         return new ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>>(converterV1.fromHakukohteetVastaus(r));
+    }
+
+    private static List<String> removeBlankStrings(List<String> list) {
+        return FluentIterable.from(list)
+                .filter(new Predicate<String>() {
+                    @Override
+                    public boolean apply(String input) {
+                        return !StringUtils.isBlank(input);
+                    }
+                })
+                .toList();
     }
 
     private List<HakukohdePerustieto> filterRemovedHakukohteet(List<HakukohdePerustieto> perustietosParam) {
