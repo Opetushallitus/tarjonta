@@ -27,7 +27,7 @@ public class HakukohteetKysely implements Serializable {
     private String koulutuslaji;
     private String kohdejoukko;
     private String oppilaitostyyppi;
-    private String organisaatioRyhmaOid;
+    private List<String> organisaatioRyhmaOid = new ArrayList<>();
     private String kunta;
 
     private Integer koulutuksenAlkamisvuosi;
@@ -47,7 +47,7 @@ public class HakukohteetKysely implements Serializable {
 
     private List<KoulutusmoduuliTyyppi> koulutusmoduuliTyyppi = new ArrayList<KoulutusmoduuliTyyppi>();
 
-    public String getOrganisaatioRyhmaOid() {
+    public List<String> getOrganisaatioRyhmaOid() {
         return organisaatioRyhmaOid;
     }
 
@@ -134,7 +134,7 @@ public class HakukohteetKysely implements Serializable {
         return kys;
     }
 
-    public void setOrganisaatioRyhmaOid(String organisaatioRyhmaOid) {
+    public void setOrganisaatioRyhmaOid(List<String> organisaatioRyhmaOid) {
         this.organisaatioRyhmaOid = organisaatioRyhmaOid;
     }
 

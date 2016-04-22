@@ -147,8 +147,8 @@ public class HakukohdeSearchService extends SearchService {
     }
 
     private void addFilterForOrganisaatioRyhmaOid(HakukohteetKysely kysely, SolrQuery q) {
-        if (kysely.getOrganisaatioRyhmaOid() != null) {
-            q.addFilterQuery(String.format(matchFull(), ORGANISAATIORYHMAOID, kysely.getOrganisaatioRyhmaOid()));
+        if (!kysely.getOrganisaatioRyhmaOid().isEmpty()) {
+            q.addFilterQuery(String.format(matchFull(), ORGANISAATIORYHMAOID, Joiner.on(' ').join(kysely.getOrganisaatioRyhmaOid())));
         }
     }
 
