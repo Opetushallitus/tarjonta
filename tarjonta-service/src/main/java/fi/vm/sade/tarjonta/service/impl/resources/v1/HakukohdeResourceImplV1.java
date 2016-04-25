@@ -141,7 +141,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                                                                              String hakukohdeOid,
                                                                              List<KoulutusasteTyyppi> koulutusastetyyppi,
                                                                              String hakuOid,
-                                                                             String organisaatioRyhmaOid,
+                                                                             List<String> organisaatioRyhmaOid,
                                                                              List<ToteutustyyppiEnum> koulutustyypit,
                                                                              List<KoulutusmoduuliTyyppi> koulutusmoduulityypit,
                                                                              String defaultTarjoaja,
@@ -185,7 +185,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
 
         if (organisaatioRyhmaOid != null) {
-            q.setOrganisaatioRyhmaOid(organisaatioRyhmaOid);
+            q.setOrganisaatioRyhmaOid(removeBlankStrings(organisaatioRyhmaOid));
         }
 
         q.getKoulutusasteTyypit().addAll(koulutusastetyyppi);

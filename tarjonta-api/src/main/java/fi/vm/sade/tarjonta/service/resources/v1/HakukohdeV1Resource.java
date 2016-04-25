@@ -236,7 +236,7 @@ public interface HakukohdeV1Resource {
             @ApiParam(value = "Hakukohteen oid", required = false) @QueryParam("hakukohdeOid") String hakukohdeOid,
             @ApiParam(value = "Lista koulutusasteen tyyppejä", required = false) @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi,
             @ApiParam(value = "Haun oid", required = false) @QueryParam("hakuOid") String hakuOid,
-            @ApiParam(value = "Hakukohderyhmä", required = false) @QueryParam("organisaatioRyhmaOid") String organisaatioRyhmaOid,
+            @ApiParam(value = "Lista hakukohderyhmiä", required = false) @QueryParam("organisaatioRyhmaOid") List<String> organisaatioRyhmaOid,
             @ApiParam(value = "Lista toteutustyyppejä", required = false) @QueryParam("koulutustyyppi") List<ToteutustyyppiEnum> koulutustyypit,
             @ApiParam(value = "Lista koulutusmoduuli tyyppejä", required = false) @QueryParam("koulutusmoduuliTyyppi") List<KoulutusmoduuliTyyppi> koulutusmoduulityypit,
             @QueryParam("defaultTarjoaja") String defaultTarjoaja,
