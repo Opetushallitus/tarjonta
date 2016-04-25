@@ -983,6 +983,10 @@ public class ConverterV1 {
         return result;
     }
 
+    private static boolean isValidTunniste(Long tunniste) {
+        return tunniste != null && tunniste > 0;
+    }
+
     public Hakukohde toHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setOid(hakukohdeRDTO.getOid());
@@ -1008,11 +1012,11 @@ public class ConverterV1 {
             hakukohde.setHakukohdeNimi(hakukohdeRDTO.getHakukohteenNimiUri());
         }
 
-        if (hakukohdeRDTO.getValintaPerusteKuvausTunniste() != null) {
+        if (isValidTunniste(hakukohdeRDTO.getValintaPerusteKuvausTunniste())) {
             hakukohde.setValintaPerusteKuvausTunniste(hakukohdeRDTO.getValintaPerusteKuvausTunniste());
         }
 
-        if (hakukohdeRDTO.getSoraKuvausTunniste() != null) {
+        if (isValidTunniste(hakukohdeRDTO.getSoraKuvausTunniste())) {
             hakukohde.setSoraKuvausTunniste(hakukohdeRDTO.getSoraKuvausTunniste());
         }
 

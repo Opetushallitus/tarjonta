@@ -804,7 +804,7 @@ app.controller('HakukohdeParentController', [
                 var nkuvausTunniste;
                 for (var i in kuvaukset) {
                     var kuvaus = kuvaukset[i];
-                    nkuvausTunniste = kuvaus.toimintoTyyppi == 'link' ? kuvaus.tunniste : undefined;
+                    nkuvausTunniste = kuvaus.toimintoTyyppi == 'link' ? kuvaus.tunniste : 0;
                     nkuvaukset[kuvaus.kieliUri] = kuvaus.teksti;
                     nkuvausKielet.push(kuvaus.kieliUri);
                 }
@@ -1479,35 +1479,37 @@ app.controller('HakukohdeParentController', [
                 $scope.model.hakukohde.liitteidenToimitusPvm = hakuaika.loppuPvm;
             }
         };
-        $scope.setSelectedValintaPerusteKuvausByTunniste = function() {
-            if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
-                Kuvaus.findKuvausWithId($scope.model.hakukohde.valintaPerusteKuvausTunniste).then(function(data) {
-                    $scope.model.selectedValintaperusteKuvaus = data.result;
-                    $scope.model.selectedValintaperusteKuvaus.title
-                        = data.result.kuvauksenNimet['kieli_' + AuthService.getLanguage().toLowerCase()];
-                    if ($scope.model.selectedValintaperusteKuvaus.title === undefined) {
-                        $scope.model.selectedValintaperusteKuvaus.title = Object.keys(data.result.kuvauksenNimet)[0];
-                    }
+        function setKuvausByTunniste(tunniste) {
+            var deferred = $q.defer();
+
+            function getTitle(data) {
+                var lang = AuthService.getLanguage().toLowerCase();
+                return data.kuvauksenNimet['kieli_' + lang] || Object.keys(data.kuvauksenNimet)[0];
+            }
+
+            if (tunniste) {
+                Kuvaus.findKuvausWithId(tunniste).then(function(data) {
+                    var kuvaus = _.extend({}, data.result, {
+                        title: getTitle(data.result)
+                    });
+                    deferred.resolve(kuvaus);
                 });
             }
             else {
-                $scope.model.selectedValintaperusteKuvaus = undefined;
+                deferred.resolve();
             }
+
+            return deferred.promise;
+        }
+        $scope.setSelectedValintaPerusteKuvausByTunniste = function() {
+            setKuvausByTunniste($scope.model.hakukohde.valintaPerusteKuvausTunniste).then(function(kuvaus) {
+                $scope.model.selectedValintaperusteKuvaus = kuvaus;
+            });
         };
         $scope.setSelectedSoraKuvausByTunniste = function() {
-            if ($scope.model.hakukohde.soraKuvausTunniste !== undefined) {
-                Kuvaus.findKuvausWithId($scope.model.hakukohde.soraKuvausTunniste).then(function(data) {
-                    $scope.model.selectedSoraKuvaus = data.result;
-                    $scope.model.selectedSoraKuvaus.title
-                        = data.result.kuvauksenNimet['kieli_' + AuthService.getLanguage().toLowerCase()];
-                    if ($scope.model.selectedSoraKuvaus.title === undefined) {
-                        $scope.model.selectedSoraKuvaus.title = Object.keys(data.result.kuvauksenNimet)[0];
-                    }
-                });
-            }
-            else {
-                $scope.model.selectedSoraKuvaus = undefined;
-            }
+            setKuvausByTunniste($scope.model.hakukohde.soraKuvausTunniste).then(function(kuvaus) {
+                $scope.model.selectedSoraKuvaus = kuvaus;
+            });
         };
         $scope.setSelectedValintaPerusteKuvausByTunniste();
         $scope.setSelectedSoraKuvausByTunniste();
@@ -1521,7 +1523,7 @@ app.controller('HakukohdeParentController', [
             d.result.then(function(data) {
                 if (data) {
                     $scope.model.selectedValintaperusteKuvaus = undefined;
-                    $scope.model.hakukohde.valintaPerusteKuvausTunniste = undefined;
+                    $scope.model.hakukohde.valintaPerusteKuvausTunniste = 0;
                     $scope.model.hakukohde.valintaperusteKuvaukset = {};
                     $scope.model.hakukohde.valintaPerusteKuvausKielet = [];
                 }
@@ -1537,7 +1539,7 @@ app.controller('HakukohdeParentController', [
             d.result.then(function(data) {
                 if (data) {
                     $scope.model.selectedSoraKuvaus = undefined;
-                    $scope.model.hakukohde.soraKuvausTunniste = undefined;
+                    $scope.model.hakukohde.soraKuvausTunniste = 0;
                     $scope.model.hakukohde.soraKuvaukset = {};
                     $scope.model.hakukohde.soraKuvausKielet = [];
                 }
