@@ -5,18 +5,24 @@
     <div class="modal-body">
         <form name="ValintakoeModalForm">
             <p>{{ dialog.titles.toimintoTitle }}</p>
-            
+
             <dl>
-                <dt><input type="radio" data-ng-model="dialog.copySelection" value="link"/> {{ dialog.titles.linkkausTitle }}</dt>
+                <dt>
+                    <input id="link" type="radio" data-ng-model="dialog.copySelection" value="link"/>
+                    <label for="link">{{ dialog.titles.linkkausTitle }}</label>
+                </dt>
                 <dd>{{dialog.titles.linkkausHelp}}</dd>
-                <dt><input type="radio" data-ng-model="dialog.copySelection" value="copy"> {{ dialog.titles.kopioTitle }}</dt>
+                <dt>
+                    <input id="copy" type="radio" data-ng-model="dialog.copySelection" value="copy">
+                    <label for="copy">{{ dialog.titles.kopioTitle }}</label>
+                </dt>
                 <dd>{{dialog.titles.kopioiHelp}}</dd>
            </dl>
-           
+
            <div ng-grid="kuvausGrid" class="kuvausGridStyle"></div>
-           
+
             <p>{{dialog.titles.tuoMyosMuutkieletTitle}}</p>
-            
+
 	        <multi-select
 	            model="dialog.kuvauksenKielet"
 	            selection="dialog.valitutKuvauksenKielet"

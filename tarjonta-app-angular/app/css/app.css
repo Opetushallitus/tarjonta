@@ -620,14 +620,17 @@ div#soraVapeChooserDialog table tr.selected td {
 div#soraVapeChooserDialog div.kuvausGridStyle {
 	border-radius:4px;
     border: 1px solid #cccccc;
-
     width:100%;
-    height:95px;
+    height:200px;
     margin-bottom:15px;
 }
 
 div#soraVapeChooserDialog .multiselect .dualpane ul, div#soraVapeChooserDialog .multiselect .dualpane select {
-	width:410px;
+	width:300px;
+}
+
+#soraVapeChooserDialog .modal-body {
+    max-height: 600px;
 }
 
 /* date-time */
