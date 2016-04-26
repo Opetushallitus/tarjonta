@@ -1,7 +1,7 @@
 <div class="mkRichTextarea">
 	<tabset>
         <tab ng-repeat="l in selectedLangs" heading="{{langs[l]}}" active="selectedTab[l]">
-            <rich-textarea model="model[l]" mode="_isDisabled()" max="{{max}}"></rich-textarea>
+            <rich-textarea model="model[l]" disable-edit="_isDisabled()" max="{{max}}"></rich-textarea>
         </tab>
         <tab disabled="_isDisabled()" ng-disabled="_isDisabled()">
             <tab-heading><span class="icon-plus"></span></tab-heading>
@@ -13,6 +13,5 @@
                 promise="langsPromise"
                 display="dualpane"></multi-select>
         </tab>
-
 	</tabset>
 </div>
