@@ -1,5 +1,8 @@
 package fi.vm.sade.tarjonta.shared.types;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public enum ToteutustyyppiEnum {
 
     AMMATILLINEN_PERUSTUTKINTO("koulutustyyppi_1"),
@@ -61,6 +64,20 @@ public enum ToteutustyyppiEnum {
             }
         }
         throw new IllegalArgumentException("Valmistava toteutustyyppi enum not found by : '" + toteutustyyppi + "'");
+    }
+
+    public static boolean isValmistavaToteutustyyppi(ToteutustyyppiEnum tyyppi) {
+        return getValmistavatToteutustyypit().contains(tyyppi);
+    }
+
+    public static Set<ToteutustyyppiEnum> getValmistavatToteutustyypit() {
+        Set<ToteutustyyppiEnum> valmistavatToteutustyypit = new HashSet<>();
+
+        valmistavatToteutustyypit.add(ERIKOISAMMATTITUTKINTO_VALMISTAVA);
+        valmistavatToteutustyypit.add(AMMATTITUTKINTO_VALMISTAVA);
+        valmistavatToteutustyypit.add(AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA);
+
+        return valmistavatToteutustyypit;
     }
 
 }

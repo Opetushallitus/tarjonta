@@ -44,6 +44,7 @@ import java.util.*;
 
 import static fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils.and;
 import static fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO.stripVersionFromKoodiUri;
+import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.*;
 
 /**
  */
@@ -103,8 +104,8 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         // Sisarkoulutukset palautetaan vain ammatillisille perustutkinnoille
         Set<ToteutustyyppiEnum> siblingToteutustyyppis = new HashSet<ToteutustyyppiEnum>();
 
-        siblingToteutustyyppis.add(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO);
-        siblingToteutustyyppis.add(ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA);
+        siblingToteutustyyppis.add(AMMATILLINEN_PERUSTUTKINTO);
+        siblingToteutustyyppis.add(AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA);
 
         if (!siblingToteutustyyppis.contains(komoto.getToteutustyyppi())) {
             return null;
@@ -359,6 +360,8 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         if (lastModifiedAfter != null) {
             whereExpr = QuerydslUtils.and(whereExpr, komoto.updated.after(lastModifiedAfter));
         }
+
+        whereExpr = QuerydslUtils.and(whereExpr, komoto.toteutustyyppi.notIn(getValmistavatToteutustyypit()));
 
         JPAQuery q = from(komoto);
         if (whereExpr != null) {

@@ -92,6 +92,7 @@ import static fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.createSys
 import static fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.createValidationError;
 import static fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus.*;
 import static fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.create;
+import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.isValmistavaToteutustyyppi;
 
 /**
  * @author mlyly
@@ -189,7 +190,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(komotoOid);
-        if (komoto == null) {
+        if (komoto == null || isValmistavaToteutustyyppi(komoto.getToteutustyyppi())) {
             result.setStatus(NOT_FOUND);
             return result;
         }
