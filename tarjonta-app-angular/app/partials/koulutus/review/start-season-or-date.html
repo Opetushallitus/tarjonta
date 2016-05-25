@@ -1,0 +1,6 @@
+<span ng-if="startSeason">
+    {{startSeason}}
+</span>
+<span ng-if="startDates && !startSeason">
+    <p ng-repeat="pvm in startDates | orderBy:'toString()'"> {{ pvm | date:'dd.MM.yyyy' }}</p>
+</span>
