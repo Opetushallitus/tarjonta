@@ -1,7 +1,6 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import com.sun.org.apache.bcel.internal.util.Objects;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import java.util.Objects;
 
 public class OppiaineV1RDTO {
 
