@@ -1,21 +1,9 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
-import org.jgrapht.alg.CycleDetector;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
+import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
+import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
@@ -27,7 +15,22 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KomoLink;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
+import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
+import org.jgrapht.alg.CycleDetector;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+import static fi.vm.sade.tarjonta.service.AuditHelper.AUDIT;
+import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
 
 /**
  * TODO, authorization!!
@@ -143,6 +146,12 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
                         logger.info("remove link by komo oid {}", childKomoOid);
                         removeAlamoduulitByKomoOid(childKomoOid, parentKomo.getSisaltyvyysList());
                     }
+                    AUDIT.log(builder()
+                            .setOperation(TarjontaOperation.UNLINK_KOULUTUS)
+                            .setResource(TarjontaResource.KOULUTUS)
+                            .setResourceOid(parentKomoOid)
+                            .add("unlinkOids", paramChildOids.toString())
+                            .build());
                 }
             }
         } else {
@@ -220,6 +229,12 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
                         parentKomo, komo, ValintaTyyppi.ALL_OFF);
                 koulutusSisaltyvyysDAO.insert(sisaltyvyys);
             }
+            AUDIT.log(builder()
+                    .setOperation(TarjontaOperation.LINK_KOULUTUS)
+                    .setResource(TarjontaResource.KOULUTUS)
+                    .setResourceOid(parent)
+                    .add("linkOids", children.toString())
+                    .build());
         }
         return result;
     }
