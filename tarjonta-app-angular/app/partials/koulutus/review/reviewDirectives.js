@@ -31,7 +31,7 @@ app.directive('startSeasonOrDate', function () {
             }
 
             // Set scope objects. Prefer season/year combination.
-            if (aloitusKausi != null && aloitusVuosi != null) {
+            if (aloitusKausi && aloitusVuosi) {
                 $scope.startSeason = aloitusKausi + " " + aloitusVuosi;
             } else {
                 $scope.startDates = k.koulutuksenAlkamisPvms;
