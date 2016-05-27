@@ -115,6 +115,7 @@ module.exports = [
     'partials/koulutus/edit/laajuus.js',
     'partials/koulutus/edit/alkamispaiva-ja-kausi.js',
     'partials/koulutus/review/reviewControllers.js',
+    'partials/koulutus/review/reviewDirectives.js',
     'partials/koulutus/remove/poista-koulutus-ctrl.js',
     'partials/valintaperustekuvaus/remove/poista-ctrl.js',
     'partials/koulutus/copy/copy-move-koulutus.js',

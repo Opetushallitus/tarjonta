@@ -1,4 +1,4 @@
-var app = angular.module('app.review.ctrl', []);
+var app = angular.module('app.review.ctrl', ['app.review.directives']);
 app.controller('BaseReviewController', function BaseReviewController(PermissionService, $q, $scope, $window,
      $location, $route, $log, TarjontaService, $routeParams, LocalisationService, dialogService, Koodisto,
      KoodistoURI, $modal, KoulutusConverterFactory, HakukohdeKoulutukses, SharedStateService, AuthService,
