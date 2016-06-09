@@ -355,7 +355,7 @@ app.controller('BaseEditController', [
                 });
             });
         };
-        
+
         function preventSystemErrorDialog() {
             var loadingService = $injector.get('loadingService');
             if (loadingService) {
@@ -645,6 +645,7 @@ app.controller('BaseEditController', [
                     $scope.tarjoajanKoulutus = angular.copy(model);
                     model.tarjoajanKoulutus = model.oid;
                     model.oid = null;
+                    model.uniqueExternalId = null;
                     model.opetusJarjestajat = [];
                     model.opetusTarjoajat = [$routeParams.organisaatioOid];
                     $scope.jarjestaUusiKoulutus = true;
