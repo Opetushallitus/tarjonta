@@ -116,11 +116,32 @@
         <authentication-provider ref="casAuthenticationProvider" />
     </authentication-manager>
 
+    <beans:bean id="casTicketsCacheBean" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+        <beans:property name="cacheManager" ref="casTicketCache" />
+        <beans:property name="diskExpiryThreadIntervalSeconds" value="120" />
+        <beans:property name="diskPersistent" value="false" />
+        <beans:property name="maxElementsInMemory" value="100000" />
+        <beans:property name="maxElementsOnDisk" value="10000000" />
+        <beans:property name="memoryStoreEvictionPolicy" value="LRU" />
+        <beans:property name="overflowToDisk" value="true" />
+        <beans:property name="cacheName" value="casTickets" />
+        <beans:property name="timeToLive" value="7200" />
+        <beans:property name="timeToIdle" value="7200" />
+        <beans:property name="eternal" value="false" />
+        <beans:property name="cacheEventListeners" ref="jgroupsEventListener"/>
+    </beans:bean>
+
+    <beans:bean id="ehCacheBasedTicketCache" class="org.springframework.security.cas.authentication.EhCacheBasedTicketCache">
+        <beans:property name="cache" ref="casTicketsCacheBean"/>
+    </beans:bean>
+
     <beans:bean id="casAuthenticationProvider" class="org.springframework.security.cas.authentication.CasAuthenticationProvider">
         <beans:property name="userDetailsService" ref="ldapUserService"/>
         <beans:property name="serviceProperties" ref="casServiceProperties"/>
         <beans:property name="ticketValidator" ref="casTicketValidator"/>
         <beans:property name="key" value="${cas_key}"/>
+        <!-- enable reusable servicetickets -->
+        <beans:property name="statelessTicketCache" ref="ehCacheBasedTicketCache" />
     </beans:bean>
     
     <beans:bean id="jgroupsEventListener" class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicator">
@@ -132,6 +153,13 @@
 
     <beans:bean id="casTicketValidator" class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
         <beans:constructor-arg index="0" value="${web.url.cas}" />
+    </beans:bean>
+
+    <!-- enable reusable servicetickets -->
+    <beans:bean id="casTicketCache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <beans:property name="configLocation" value="file://${user.home}/oph-configuration/ehcache.xml" />
+        <beans:property name="shared" value="true" />
+        <beans:property name="cacheManagerName" value="casTicketCache" />
     </beans:bean>
 
     <!-- NOTE! role-prefix means that every role fetched from ldap will be prefixed with the prefix. so role 'X' in ldap will be 'ROLE_X' in code eg when used in @Secured-annotation -->
