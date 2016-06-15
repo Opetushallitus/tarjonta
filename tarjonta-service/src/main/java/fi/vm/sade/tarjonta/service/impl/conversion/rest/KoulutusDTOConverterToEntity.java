@@ -762,7 +762,10 @@ public class KoulutusDTOConverterToEntity {
         for (String parentKomoOid : parents) {
             Koulutusmoduuli parent = koulutusmoduuliDAO.findByOid(parentKomoOid);
             for (KoulutusSisaltyvyys sisaltyvyys : parent.getSisaltyvyysList()) {
-                koulutusSisaltyvyysDAO.remove(sisaltyvyys);
+                if (sisaltyvyys.getAlamoduuliList().contains(komoto.getKoulutusmoduuli())
+                        && sisaltyvyys.getAlamoduuliList().size() == 1) {
+                    koulutusSisaltyvyysDAO.remove(sisaltyvyys);
+                }
             }
         }
 
