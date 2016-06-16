@@ -452,6 +452,34 @@ public class KorkeakouluopintoV1Test {
         }
     }
 
+    @Test
+    public void testThatSisaltyvyydetAreModifiedCorrectly() throws OIDCreationException {
+        KoulutusV1RDTO parent = insertParentKokonaisuus(null, null);
+
+        KoulutusV1RDTO jakso1 = insertJaksoWithParent(parent.getOid());
+        KoulutusV1RDTO jakso2 = insertJaksoWithParent(parent.getOid());
+
+        parent = koulutusResourceV1.findByOid(parent.getOid(), false, false, null).getResult();
+        assertEquals(2, parent.getChildren().size());
+
+        koulutusResourceV1.postKoulutus(jakso1);
+
+        parent = koulutusResourceV1.findByOid(parent.getOid(), false, false, null).getResult();
+        assertEquals(2, parent.getChildren().size());
+    }
+
+    private KoulutusV1RDTO insertJaksoWithParent(String parentOid) throws OIDCreationException {
+        when(oidService.get(TarjontaOidType.KOMO)).thenReturn(oidServiceMock.getOid());
+        when(oidService.get(TarjontaOidType.KOMOTO)).thenReturn(oidServiceMock.getOid());
+        KorkeakouluOpintoV1RDTO jakso2 = baseKorkeakouluopinto(OPINTOJAKSO);
+        jakso2.setTila(TarjontaTila.PUUTTEELLINEN);
+        jakso2.setSisaltyyKoulutuksiin(Sets.newHashSet(
+                new KoulutusIdentification(parentOid, null)
+        ));
+        ResultV1RDTO<KoulutusV1RDTO> res = (ResultV1RDTO<KoulutusV1RDTO>) koulutusResourceV1.postKoulutus(jakso2).getEntity();
+        return res.getResult();
+    }
+
     private <T extends Enum> void modifyKuvausTextAndAssertDelta(KorkeakouluOpintoV1RDTO original, final T field) throws OIDCreationException {
         upsertLuonnosOpintokokonaisuusWithAllFieldsSet(TarjontaTila.VALMIS);
         KorkeakouluOpintoV1RDTO modified = getDeltaDto();
