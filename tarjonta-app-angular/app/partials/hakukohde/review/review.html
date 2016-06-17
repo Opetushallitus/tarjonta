@@ -224,6 +224,14 @@
                         <mk-text model="model.hakukohde.hakukelpoisuusVaatimusKuvaukset" display="tabs"/>
                     </td>
                 </tr>
+                <tr ng-if="isKK">
+                    <th tt="ohjeetUudelleOpiskelijalle">Ohjeet uudelle opiskelijalle</th>
+                    <td colspan="2" ng-if="model.hakukohde.ohjeetUudelleOpiskelijalle">
+                        <a href="{{model.hakukohde.ohjeetUudelleOpiskelijalle}}" target="_blank">
+                            {{ model.hakukohde.ohjeetUudelleOpiskelijalle }}
+                        </a>
+                    </td>
+                </tr>
             </tbody>
             <tr class="collapse" ng-class="model.collapse.valintakokeet ? '' : 'open'">
                 <th colspan="2" tt="hakukohde.review.valintakokeet.otsikko" ng-click="model.collapse.valintakokeet = !model.collapse.valintakokeet"></th>
