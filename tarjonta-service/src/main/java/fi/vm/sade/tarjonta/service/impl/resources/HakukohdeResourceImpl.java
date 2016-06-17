@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.*;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
@@ -16,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -198,14 +199,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
         if (organisaatioOid != null) {
             result.setTarjoajaOid(organisaatioOid);
-            OrganisaatioDTO organisaatio = organisaatioService.findByOid(organisaatioOid);
-            if (organisaatio != null) {
-                Map<String, String> map = new HashMap<String, String>();
-                for (MonikielinenTekstiTyyppi.Teksti teksti : organisaatio.getNimi().getTeksti()) {
-                    map.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(teksti.getKieliKoodi()), teksti.getValue());
-                }
-                result.setTarjoajaNimi(map);
-            }
+            result.setTarjoajaNimi(organisaatioService.getTarjoajaNimiMap(organisaatioOid));
         }
 
         LOG.debug("  --> result = {}", result);

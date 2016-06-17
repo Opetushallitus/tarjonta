@@ -1,6 +1,6 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
@@ -186,17 +186,7 @@ public class HakukohdeToHakukohdeValintaperusteetDTOConverter extends BaseRDTOCo
                 // Assumes that only one provider for koulutus - is this true?
                 String organisaatioOid = koulutusmoduuliToteutus.getTarjoaja();
                 t.setTarjoajaOid(organisaatioOid);
-                if (organisaatioOid != null) {
-                    OrganisaatioDTO organisaatio = organisaatioService.findByOid(organisaatioOid);
-                    if (organisaatio != null) {
-                        Map<String, String> map = new HashMap<String, String>();
-                        for (MonikielinenTekstiTyyppi.Teksti teksti : organisaatio.getNimi().getTeksti()) {
-                            map.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(teksti.getKieliKoodi()),
-                                    teksti.getValue());
-                        }
-                        t.setTarjoajaNimi(map);
-                    }
-                }
+                t.setTarjoajaNimi(organisaatioService.getTarjoajaNimiMap(organisaatioOid));
                 break;
             }
         }

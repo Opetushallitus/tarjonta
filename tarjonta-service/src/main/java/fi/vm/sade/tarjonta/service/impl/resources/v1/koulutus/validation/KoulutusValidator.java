@@ -19,7 +19,8 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
@@ -310,7 +311,7 @@ public class KoulutusValidator {
 
     public boolean isValidOrganisation(String orgOid) {
         try {
-            final OrganisaatioDTO org = organisaatioService.findByOid(orgOid);
+            final OrganisaatioRDTO org = organisaatioService.findByOid(orgOid);
             if (org == null || org.getOid() == null || org.getOid().isEmpty()) {
                 return false;
             } else {

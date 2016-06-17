@@ -21,9 +21,7 @@ import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
@@ -44,6 +42,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
 import fi.vm.sade.tarjonta.shared.KoulutusasteResolver;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -745,15 +744,13 @@ public class ConverterV1 {
     private void convertTarjoajaNimetToDTO(HakukohdeV1RDTO hakukohdeRDTO) {
         if (hakukohdeRDTO.getTarjoajaOids() != null && hakukohdeRDTO.getTarjoajaOids().size() > 0) {
             for (String tarjoajaOid : hakukohdeRDTO.getTarjoajaOids()) {
-                OrganisaatioDTO org = organisaatioService.findByOid(tarjoajaOid);
+                OrganisaatioRDTO org = organisaatioService.findByOid(tarjoajaOid);
 
                 if (org == null) {
                     continue;
                 }
 
-                for (MonikielinenTekstiTyyppi.Teksti text : org.getNimi().getTeksti()) {
-                    hakukohdeRDTO.getTarjoajaNimet().put(text.getKieliKoodi(), text.getValue());
-                }
+                hakukohdeRDTO.setTarjoajaNimet(org.getNimi());
             }
         }
     }
@@ -1167,17 +1164,7 @@ public class ConverterV1 {
                 // Assumes that only one provider for koulutus - is this true?
                 String organisaatioOid = koulutusmoduuliToteutus.getTarjoaja();
                 t.setTarjoajaOid(organisaatioOid);
-                if (organisaatioOid != null) {
-                    OrganisaatioDTO organisaatio = organisaatioService.findByOid(organisaatioOid);
-                    if (organisaatio != null) {
-                        Map<String, String> map = new HashMap<String, String>();
-                        for (MonikielinenTekstiTyyppi.Teksti teksti : organisaatio.getNimi().getTeksti()) {
-                            map.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(teksti.getKieliKoodi()),
-                                    teksti.getValue());
-                        }
-                        t.setTarjoajaNimi(map);
-                    }
-                }
+                t.setTarjoajaNimi(organisaatioService.getTarjoajaNimiMap(organisaatioOid));
                 break;
             }
         }

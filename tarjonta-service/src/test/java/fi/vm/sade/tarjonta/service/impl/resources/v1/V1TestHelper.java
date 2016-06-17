@@ -1,13 +1,11 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.MapDifference;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodistoItemType;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.service.OidService;
@@ -90,27 +88,27 @@ public class V1TestHelper {
 
     public void init() {
         when(organisaatioService.findByOid(TARJOAJA1)).thenReturn(
-                new OrganisaatioDTO(){{
+                new OrganisaatioRDTO(){{
                     setOid(TARJOAJA1);
-                    setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti("test", "fi"))));
+                    setNimi(ImmutableMap.of("fi", "test"));
                 }}
         );
         when(organisaatioService.findByOid(TARJOAJA2)).thenReturn(
-                new OrganisaatioDTO(){{
+                new OrganisaatioRDTO(){{
                     setOid(TARJOAJA2);
-                    setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti("test", "fi"))));
+                    setNimi(ImmutableMap.of("fi", "test"));
                 }}
         );
         when(organisaatioService.findByOid(JARJESTAJA1)).thenReturn(
-                new OrganisaatioDTO(){{
+                new OrganisaatioRDTO(){{
                     setOid(JARJESTAJA1);
-                    setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti("test", "fi"))));
+                    setNimi(ImmutableMap.of("fi", "test"));
                 }}
         );
         when(organisaatioService.findByOid(JARJESTAJA2)).thenReturn(
-                new OrganisaatioDTO(){{
+                new OrganisaatioRDTO(){{
                     setOid(JARJESTAJA2);
-                    setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti("test", "fi"))));
+                    setNimi(ImmutableMap.of("fi", "test"));
                 }}
         );
         doNothing().when(permissionChecker).checkCreateKoulutus(TARJOAJA1);
