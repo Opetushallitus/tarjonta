@@ -28,7 +28,8 @@ import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.koodisto.KoulutuskoodiRelations;
@@ -1451,7 +1452,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             result.addError(createValidationError("organisationOids", KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING.lower()));
         } else {
             for (String orgOid : koulutusCopy.getOrganisationOids()) {
-                final OrganisaatioDTO org = organisaatioService.findByOid(orgOid);
+                final OrganisaatioRDTO org = organisaatioService.findByOid(orgOid);
                 if (org == null) {
                     result.addError(createValidationError("organisationOids[" + orgOid + "]", KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID.lower(), orgOid));
                 } else if (!oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(

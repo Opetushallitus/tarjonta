@@ -15,13 +15,12 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.*;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.security.SadeUserDetailsWrapper;
 import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
@@ -52,14 +51,13 @@ import fi.vm.sade.tarjonta.service.search.KoulutusSearchService;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.joda.time.DateTime;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -73,7 +71,8 @@ import java.util.*;
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
@@ -127,7 +126,7 @@ abstract class KoulutusBase extends TestUtilityBase {
     protected KoulutusPermissionService koulutusPermissionServiceMock;
     protected EntityConverterToRDTO converterToRDTO;
     protected KoulutusDTOConverterToEntity convertToEntity;
-    protected OrganisaatioDTO organisaatioDTO;
+    protected OrganisaatioRDTO organisaatioDTO;
     protected IndexerResource indexerResourceMock;
     protected TarjontaKoodistoHelper tarjontaKoodistoHelperMock;
     protected KoulutusKuvausV1RDTO<KomoTeksti> komoKoulutusConverters;
@@ -152,10 +151,9 @@ abstract class KoulutusBase extends TestUtilityBase {
         KoodistoURI.KOODISTO_KIELI_URI = "kieli";
 
         //INIT ORGANISATION DTO
-        organisaatioDTO = new OrganisaatioDTO();
+        organisaatioDTO = new OrganisaatioRDTO();
         organisaatioDTO.setOid(ORGANISATION_OID);
-        organisaatioDTO.setNimi(new MonikielinenTekstiTyyppi());
-        organisaatioDTO.getNimi().getTeksti().add(new MonikielinenTekstiTyyppi.Teksti(ORGANISAATIO_NIMI, LOCALE_FI));
+        organisaatioDTO.setNimi(ImmutableMap.of("fi", ORGANISAATIO_NIMI));
 
         komotoKoulutusConverters = new KoulutusKuvausV1RDTO<KomotoTeksti>();
         komoKoulutusConverters = new KoulutusKuvausV1RDTO<KomoTeksti>();

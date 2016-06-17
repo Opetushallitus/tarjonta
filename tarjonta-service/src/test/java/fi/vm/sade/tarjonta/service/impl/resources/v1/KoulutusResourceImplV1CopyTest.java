@@ -7,9 +7,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.service.types.common.KoodistoItemType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.SecurityAwareTestBase;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.*;
@@ -17,6 +15,7 @@ import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KorkeakouluOpintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.search.it.TarjontaSearchServiceTest;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -59,10 +58,10 @@ public class KoulutusResourceImplV1CopyTest extends SecurityAwareTestBase {
     public void before() {
         MockitoAnnotations.initMocks(this);
 
-        OrganisaatioDTO organisaatioDTO = new OrganisaatioDTO();
+        OrganisaatioRDTO organisaatioDTO = new OrganisaatioRDTO();
         organisaatioDTO.setOid("1.2.3.4");
-        organisaatioDTO.setOppilaitosTyyppi(OrganisaatioTyyppi.OPPILAITOS.value());
-        organisaatioDTO.getTyypit().add(OrganisaatioTyyppi.OPPILAITOS);
+        organisaatioDTO.setOppilaitosTyyppiUri(OrganisaatioService.OrganisaatioTyyppi.OPPILAITOS.value());
+        organisaatioDTO.getTyypit().add(OrganisaatioService.OrganisaatioTyyppi.OPPILAITOS.value());
 
         Mockito.doReturn(organisaatioDTO).when(organisaatioService).findByOid(Matchers.anyString());
 
