@@ -20,7 +20,7 @@
     <import resource="test-dao-context.xml" />
     <import resource="classpath:/META-INF/spring/logger-mock-context.xml" />
 
-    <mockito:mock id="organisaatioService" class="fi.vm.sade.organisaatio.api.model.OrganisaatioService"/>
+    <mockito:mock id="organisaatioService" class="fi.vm.sade.tarjonta.shared.OrganisaatioService"/>
     <mockito:mock id="organisaatioSearchService" class="fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService"/>
 
     <mockito:mock id="koodiPublicService" class="fi.vm.sade.koodisto.service.KoodiService"/>

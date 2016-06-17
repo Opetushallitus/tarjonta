@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.service.search.it;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -9,9 +10,8 @@ import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.SecurityAwareTestBase;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
@@ -24,7 +24,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
@@ -169,12 +168,10 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         });
     }
 
-    private OrganisaatioDTO getOrgDTO(String string) {
-        OrganisaatioDTO organisaatioDTO = new OrganisaatioDTO();
+    private OrganisaatioRDTO getOrgDTO(String string) {
+        OrganisaatioRDTO organisaatioDTO = new OrganisaatioRDTO();
         organisaatioDTO.setOid(string);
-        organisaatioDTO.setNimi(new MonikielinenTekstiTyyppi());
-
-        organisaatioDTO.getNimi().getTeksti().add(new MonikielinenTekstiTyyppi.Teksti("organisaation nimi", "FI"));
+        organisaatioDTO.setNimi(ImmutableMap.of("fi", "organisaation nimi"));
         return organisaatioDTO;
     }
 

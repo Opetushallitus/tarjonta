@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.publication;
 
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationCollector.EventHandler;
 import org.junit.Before;
@@ -155,7 +155,7 @@ public class PublicationCollectorTest {
         }
 
         @Override
-        public void onCollect(OrganisaatioDTO tarjoaja) throws Exception {
+        public void onCollect(OrganisaatioRDTO tarjoaja) throws Exception {
             koulutustarjoajaEvents++;
         }
 

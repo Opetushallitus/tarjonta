@@ -2,7 +2,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;

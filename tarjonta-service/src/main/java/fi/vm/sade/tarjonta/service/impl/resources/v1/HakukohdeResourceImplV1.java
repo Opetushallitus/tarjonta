@@ -22,7 +22,8 @@ import fi.vm.sade.auditlog.tarjonta.LogMessage;
 import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
 import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -676,7 +677,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                     continue;
                 }
 
-                OrganisaatioDTO tmpOrg = organisaatioService.findByOid(owner.getOwnerOid());
+                OrganisaatioRDTO tmpOrg = organisaatioService.findByOid(owner.getOwnerOid());
 
                 if (tmpOrg == null) {
                     continue;

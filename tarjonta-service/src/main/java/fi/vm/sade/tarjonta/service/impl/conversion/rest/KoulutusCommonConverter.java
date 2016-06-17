@@ -22,7 +22,8 @@ import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.model.RestParam;
@@ -321,26 +322,25 @@ public class KoulutusCommonConverter {
         OrganisaatioV1RDTO organisaatioRDTO = new OrganisaatioV1RDTO();
 
         try {
-            final OrganisaatioDTO organisaatioDto = organisaatioService.findByOid(tarjoajaOid);
+            final OrganisaatioRDTO organisaatioDto = organisaatioService.findByOid(tarjoajaOid);
             Preconditions.checkNotNull(organisaatioDto, "OrganisaatioDTO object cannot be null.");
             Preconditions.checkNotNull(organisaatioDto.getOid(), "OrganisaatioDTO OID cannot be null.");
             Preconditions.checkNotNull(organisaatioDto.getNimi(), "OrganisaatioDTO name object cannot be null.");
             organisaatioRDTO.setOid(organisaatioDto.getOid());
-            final List<fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti> tekstis = organisaatioDto.getNimi().getTeksti();
 
             String nimi = null;
 
-            for (fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti teksti : tekstis) {
-                Preconditions.checkNotNull(teksti.getKieliKoodi(), "Locale language code cannot be null.");
-                if (teksti.getKieliKoodi().toLowerCase().equals(locale.getLanguage())) {
-                    nimi = teksti.getValue();
+            for (Map.Entry<String, String> entry : organisaatioDto.getNimi().entrySet()) {
+                Preconditions.checkNotNull(entry.getKey(), "Locale language code cannot be null.");
+                if (entry.getKey().toLowerCase().equals(locale.getLanguage())) {
+                    nimi = entry.getValue();
                     break;
                 }
             }
 
             //fallback
-            if (nimi == null && tekstis.size() > 0) {
-                nimi = tekstis.get(0).getValue();
+            if (nimi == null && organisaatioDto.getNimi().size() > 0) {
+                nimi = organisaatioDto.getNimi().values().iterator().next();
             } else if (nimi == null) {
                 nimi = "No name";
             }
