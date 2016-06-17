@@ -607,6 +607,7 @@ app.controller('BaseEditController', [
             model.uniqueExternalId = null;
             model.opetusJarjestajat = [];
             model.sisaltyyKoulutuksiin = [];
+            model.modified = null;
             model.opetusTarjoajat = [$routeParams.organisaatioOid];
         }
 
