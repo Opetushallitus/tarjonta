@@ -600,6 +600,17 @@ app.controller('BaseEditController', [
             });
             return tutkintoModules;
         }
+
+        function setJarjestettavaKoulutusFields(model) {
+            model.tarjoajanKoulutus = model.oid;
+            model.oid = null;
+            model.uniqueExternalId = null;
+            model.opetusJarjestajat = [];
+            model.sisaltyyKoulutuksiin = [];
+            model.modified = null;
+            model.opetusTarjoajat = [$routeParams.organisaatioOid];
+        }
+
         $scope.init = function(initValues, initFunction) {
             $log.debug('init');
             initValues = initValues || {};
@@ -643,12 +654,8 @@ app.controller('BaseEditController', [
 
                 if ($route.current.action === 'koulutus.jarjesta' && $routeParams.organisaatioOid) {
                     $scope.tarjoajanKoulutus = angular.copy(model);
-                    model.tarjoajanKoulutus = model.oid;
-                    model.oid = null;
-                    model.uniqueExternalId = null;
-                    model.opetusJarjestajat = [];
-                    model.opetusTarjoajat = [$routeParams.organisaatioOid];
                     $scope.jarjestaUusiKoulutus = true;
+                    setJarjestettavaKoulutusFields(model);
                 }
                 else if (model.tarjoajanKoulutus) {
                     TarjontaService.getKoulutus({
