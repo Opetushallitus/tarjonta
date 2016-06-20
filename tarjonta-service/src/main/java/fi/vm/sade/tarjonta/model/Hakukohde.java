@@ -220,6 +220,9 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Column(name = "jos_yo_ei_muita_liitepyyntoja")
     private boolean josYoEiMuitaLiitepyyntoja = false;
 
+    @Column(name = "ohjeet_uudelle_opiskelijalle")
+    private String ohjeetUudelleOpiskelijalle;
+
     @PreRemove
     public void detachOnDelete() {
         for (KoulutusmoduuliToteutus komoto : koulutusmoduuliToteutuses) {
@@ -878,5 +881,13 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void setUniqueExternalId(String uniqueExternalId) {
         this.uniqueExternalId = uniqueExternalId;
+    }
+
+    public String getOhjeetUudelleOpiskelijalle() {
+        return ohjeetUudelleOpiskelijalle;
+    }
+
+    public void setOhjeetUudelleOpiskelijalle(String ohjeetUudelleOpiskelijalle) {
+        this.ohjeetUudelleOpiskelijalle = ohjeetUudelleOpiskelijalle;
     }
 }

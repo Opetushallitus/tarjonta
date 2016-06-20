@@ -199,6 +199,21 @@
                     <tr class="hakukohdeYhteystiedot" ng-include="'partials/hakukohde/edit/yhteystiedot.html'">
                     </tr>
 
+                    <tr>
+                        <th tt="ohjeetUudelleOpiskelijalle">Ohjeet uudelle opiskelijalle</th>
+                        <td>
+                            <input type="url" ng-model="model.hakukohde.ohjeetUudelleOpiskelijalle"
+                                   name="ohjeetUudelleOpiskelijalle"
+                                   placeholder="{{ t('ohjeetUudelleOpiskelijallePlaceholder') }}" />
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && editHakukohdeForm.ohjeetUudelleOpiskelijalle.$invalid"
+                               tt="tarjonta.hakukohde.ohjeetUudelleOpiskelijalle.validation.failed">
+                                Tarkista osoite
+                            </p>
+                        </td>
+                    </tr>
+
                     <!-- ryhma -->
                     <tr>
                         <th data-tt="kk.hakukohde.ryhma.label">Hakukohderyhmät</th>

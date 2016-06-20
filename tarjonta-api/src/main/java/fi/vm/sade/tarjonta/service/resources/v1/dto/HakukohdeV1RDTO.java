@@ -92,6 +92,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private String hakulomakeUrl;
     @ApiModelProperty(value = "Onko haulle asetettu hakulomakkeen url ylikirjoitettu hakukohdekohtaisella urlilla")
     private Boolean overridesHaunHakulomakeUrl;
+    private String ohjeetUudelleOpiskelijalle;
 
     public String getHakukohteenNimi() {
         return hakukohteenNimi;
@@ -599,6 +600,14 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setUniqueExternalId(String uniqueExternalId) {
         this.uniqueExternalId = uniqueExternalId;
+    }
+
+    public String getOhjeetUudelleOpiskelijalle() {
+        return ohjeetUudelleOpiskelijalle;
+    }
+
+    public void setOhjeetUudelleOpiskelijalle(String ohjeetUudelleOpiskelijalle) {
+        this.ohjeetUudelleOpiskelijalle = ohjeetUudelleOpiskelijalle;
     }
 
     public static HakukohdeV1RDTO defaultDto() {

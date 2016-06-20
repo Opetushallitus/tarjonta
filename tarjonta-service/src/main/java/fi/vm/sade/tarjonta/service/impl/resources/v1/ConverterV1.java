@@ -616,6 +616,7 @@ public class ConverterV1 {
                         : hakukohde.getHaku().getHakulomakeUrl()
         );
         hakukohdeRDTO.setOverridesHaunHakulomakeUrl(hakukohde.getHakulomakeUrl() != null);
+        hakukohdeRDTO.setOhjeetUudelleOpiskelijalle(hakukohde.getOhjeetUudelleOpiskelijalle());
 
         convertTarjoatiedotToDTO(hakukohde, hakukohdeRDTO);
         convertHakukohteenNimetToDTO(hakukohde, hakukohdeRDTO, null);
@@ -1129,6 +1130,7 @@ public class ConverterV1 {
                     ? hakukohdeRDTO.getHakulomakeUrl()
                     : null
         );
+        hakukohde.setOhjeetUudelleOpiskelijalle(hakukohdeRDTO.getOhjeetUudelleOpiskelijalle());
 
         return hakukohde;
     }
