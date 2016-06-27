@@ -14,7 +14,8 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
@@ -71,15 +72,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
                 hakukohdeDTO.setTarjoajaOid(organisaatioOid);
                 if (organisaatioOid != null) {
                     try {
-                        OrganisaatioDTO organisaatio = organisaatioService.findByOid(organisaatioOid);
-                        if (organisaatio != null) {
-                            Map<String, String> map = new HashMap<String, String>();
-                            for (MonikielinenTekstiTyyppi.Teksti teksti : organisaatio.getNimi().getTeksti()) {
-                                map.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(teksti.getKieliKoodi()),
-                                        teksti.getValue());
-                            }
-                            hakukohdeDTO.setTarjoajaNimi(map);
-                        }
+                        hakukohdeDTO.setTarjoajaNimi(organisaatioService.getTarjoajaNimiMap(organisaatioOid));
                     } catch (Throwable th) {
                         //organisaation nimihaku epäonnistui!!!
                         Map<String, String> map = new HashMap<String, String>();

@@ -18,7 +18,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
-        <organisaatio.api.version>13.0</organisaatio.api.version>
+        <organisaatio.api.version>2015-13</organisaatio.api.version>
+        <organisaatio.solr.version>13.0</organisaatio.solr.version>
         <authentication.api.version>10.0-SNAPSHOT</authentication.api.version>
         <generic.version>9.4-SNAPSHOT</generic.version>
         <httpcomponents.version>4.2.5</httpcomponents.version>

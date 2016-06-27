@@ -20,24 +20,20 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidListType;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidType;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchOidType;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -68,7 +64,7 @@ public class OppilaitosKoodiRelations {
     public boolean isKoulutusAllowedForOrganisation(final String organisaatioOid, final String koulutusaste) {
         Preconditions.checkNotNull(koulutusaste, "Koulutusaste URI cannot be null");
         Preconditions.checkNotNull(organisaatioOid, "Organisaatio OID cannot be null");
-        final OrganisaatioDTO orgDto = organisaatioService.findByOid(organisaatioOid);
+        final OrganisaatioRDTO orgDto = organisaatioService.findByOid(organisaatioOid);
 
         if (orgDto == null) {
             LOG.info("org not found: {}", organisaatioOid);
@@ -78,7 +74,7 @@ public class OppilaitosKoodiRelations {
         List<String> oids = splitOrganisationPath(orgDto.getParentOidPath());
         oids.remove(rootOphOid); //remove OPH OID from the list
 
-        if (orgDto.getTyypit().contains(OrganisaatioTyyppi.OPPILAITOS)) {
+        if (orgDto.getTyypit().contains(OrganisaatioService.OrganisaatioTyyppi.OPPILAITOS.value())) {
             if (isCorrectOppilaitostyyppis(organisaatioOid, koulutusaste)) {
                 return true;
             } else {
@@ -86,12 +82,12 @@ public class OppilaitosKoodiRelations {
             }
         }
 
-        if (orgDto.getTyypit().contains(OrganisaatioTyyppi.KOULUTUSTOIMIJA)) {
+        if (orgDto.getTyypit().contains(OrganisaatioService.OrganisaatioTyyppi.KOULUTUSTOIMIJA.value())) {
             //search all children organisations, one of them must be OPPILAITOS
-            final OrganisaatioOidListType childrenOids = organisaatioService.findChildrenOidsByOid(new OrganisaatioSearchOidType(organisaatioOid));
+            final Set<String> childrenOids = organisaatioService.findChildrenOidsByOid(organisaatioOid);
             List<String> oppilaitostyyppiUris = Lists.newArrayList();
-            for (OrganisaatioOidType oidType : childrenOids.getOrganisaatioOidList()) {
-                oppilaitostyyppiUris.addAll(getAllOppilaitosTyyppisByOrganisaatioOid(oidType.getOrganisaatioOid()));
+            for (String oid : childrenOids) {
+                oppilaitostyyppiUris.addAll(getAllOppilaitosTyyppisByOrganisaatioOid(oid));
             }
 
             if (!oppilaitostyyppiUris.isEmpty()) {
@@ -106,13 +102,11 @@ public class OppilaitosKoodiRelations {
             return false;
         }
 
-        if (orgDto.getTyypit().contains(OrganisaatioTyyppi.TOIMIPISTE)) {
+        if (orgDto.getTyypit().contains(OrganisaatioService.OrganisaatioTyyppi.TOIMIPISTE.value())) {
             String oid = oids.get(1); // oppilaitos (oph/kt/ol/op)
-            final OrganisaatioDTO pathOrgDto = organisaatioService
-                    .findByOid(oid);
+            final OrganisaatioRDTO pathOrgDto = organisaatioService.findByOid(oid);
             if (pathOrgDto == null) {
-                LOG.error("Data error - organisation with OID {} not found!",
-                        oid);
+                LOG.error("Data error - organisation with OID {} not found!", oid);
             } else {
                 // search one organisation
                 final List<String> oppilaitostyyppiUris = getAllOppilaitosTyyppisByOrganisaatioOid(pathOrgDto);
@@ -142,7 +136,7 @@ public class OppilaitosKoodiRelations {
      */
     public Set<String> getKoulutustyyppiUris(final String organisaatioOid) {
         Preconditions.checkNotNull(organisaatioOid, "Organisaatio OID cannot be null");
-        final OrganisaatioDTO orgDto = organisaatioService.findByOid(organisaatioOid);
+        final OrganisaatioRDTO orgDto = organisaatioService.findByOid(organisaatioOid);
 
         if (orgDto == null) {
             LOG.info("org not found: {}", organisaatioOid);
@@ -152,23 +146,23 @@ public class OppilaitosKoodiRelations {
         List<String> oids = splitOrganisationPath(orgDto.getParentOidPath());
         oids.remove(rootOphOid); //remove OPH OID from the list
 
-        if (orgDto.getTyypit().contains(OrganisaatioTyyppi.OPPILAITOS)) {
+        if (orgDto.getTyypit().contains(OrganisaatioService.OrganisaatioTyyppi.OPPILAITOS.value())) {
             return getKoodistoKoulutustyyppiUrisByOppilaitostyyppiUris(getAllOppilaitosTyyppisByOrganisaatioOid(organisaatioOid));
         }
 
-        if (orgDto.getTyypit().contains(OrganisaatioTyyppi.KOULUTUSTOIMIJA)) {
+        if (orgDto.getTyypit().contains(OrganisaatioService.OrganisaatioTyyppi.KOULUTUSTOIMIJA.value())) {
             //search all children organisations, one of them must be OPPILAITOS
-            final OrganisaatioOidListType childrenOids = organisaatioService.findChildrenOidsByOid(new OrganisaatioSearchOidType(organisaatioOid));
+            final Set<String> childrenOids = organisaatioService.findChildrenOidsByOid(organisaatioOid);
             List<String> oppilaitostyyppiUris = Lists.newArrayList();
-            for (OrganisaatioOidType oidType : childrenOids.getOrganisaatioOidList()) {
-                oppilaitostyyppiUris.addAll(getAllOppilaitosTyyppisByOrganisaatioOid(oidType.getOrganisaatioOid()));
+            for (String oid : childrenOids) {
+                oppilaitostyyppiUris.addAll(getAllOppilaitosTyyppisByOrganisaatioOid(oid));
             }
             return getKoodistoKoulutustyyppiUrisByOppilaitostyyppiUris(oppilaitostyyppiUris);
         }
 
-        if (orgDto.getTyypit().contains(OrganisaatioTyyppi.TOIMIPISTE)) {
+        if (orgDto.getTyypit().contains(OrganisaatioService.OrganisaatioTyyppi.TOIMIPISTE.value())) {
             String oid = oids.get(1); // oppilaitos (oph/kt/ol/op)
-            final OrganisaatioDTO pathOrgDto = organisaatioService.findByOid(oid);
+            final OrganisaatioRDTO pathOrgDto = organisaatioService.findByOid(oid);
             if (pathOrgDto == null) {
                 LOG.error("Data error - organisation with OID {} not found!", oid);
             } else {
@@ -205,11 +199,12 @@ public class OppilaitosKoodiRelations {
         return list;
     }
 
-    private List<String> getOppilaitosTyyppis(OrganisaatioDTO org) {
-        List<String> oppilaitostyyppis = Lists.<String>newArrayList();
+    private List<String> getOppilaitosTyyppis(OrganisaatioRDTO org) {
+        List<String> oppilaitostyyppis = Lists.newArrayList();
 
-        for (OrganisaatioTyyppi organisaatioTyyppi : org.getTyypit()) {
-            switch (organisaatioTyyppi) {
+        for (String organisaatioTyyppi : org.getTyypit()) {
+            OrganisaatioService.OrganisaatioTyyppi tyyppi = OrganisaatioService.OrganisaatioTyyppi.fromValue(organisaatioTyyppi);
+            switch (tyyppi) {
                 case TOIMIPISTE:
                     //- we are on the leaf (or one of them)
                     break;
@@ -218,7 +213,7 @@ public class OppilaitosKoodiRelations {
                     break;
                 case OPPILAITOS:
                     //success : end of the line
-                    oppilaitostyyppis.add(org.getOppilaitosTyyppi());
+                    oppilaitostyyppis.add(org.getOppilaitosTyyppiUri());
                     break;
             }
         }
@@ -230,7 +225,7 @@ public class OppilaitosKoodiRelations {
         return getOppilaitosTyyppis(organisaatioService.findByOid(oid));
     }
 
-    private List<String> getAllOppilaitosTyyppisByOrganisaatioOid(OrganisaatioDTO dto) {
+    private List<String> getAllOppilaitosTyyppisByOrganisaatioOid(OrganisaatioRDTO dto) {
         return getOppilaitosTyyppis(dto);
     }
 

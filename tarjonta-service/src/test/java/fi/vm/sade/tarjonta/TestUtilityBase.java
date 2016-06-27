@@ -1,7 +1,7 @@
 package fi.vm.sade.tarjonta;
 
 import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.security.OrganisationHierarchyAuthorizer;
 import fi.vm.sade.tarjonta.dao.*;

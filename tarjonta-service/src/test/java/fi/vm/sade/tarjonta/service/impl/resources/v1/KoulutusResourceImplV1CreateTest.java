@@ -1,10 +1,8 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
-import fi.vm.sade.oid.service.types.Exception;
-import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
@@ -20,20 +18,14 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import org.apache.commons.beanutils.BeanUtilsBean;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.powermock.reflect.Whitebox;
-
-import javax.inject.Inject;
-
-import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
@@ -53,9 +45,9 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
     @Before
     public void setUp() {
         when(organisaatioService.findByOid(anyString())).thenReturn(
-                new OrganisaatioDTO(){{
+                new OrganisaatioRDTO(){{
                     setOid("1.2.3.4");
-                    setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti("test", "fi"))));
+                    setNimi(ImmutableMap.of("fi", "test"));
                 }}
         );
 

@@ -3,8 +3,7 @@ package fi.vm.sade.tarjonta.service.impl.aspects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
@@ -13,6 +12,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -130,9 +130,9 @@ public class KoulutusPermissionService {
 
         Preconditions.checkArgument(!alkamispvmt.isEmpty(), "alkamispvm cannot be empty!");
 
-        OrganisaatioDTO org = organisaatioService.findByOid(orgOid);
+        OrganisaatioRDTO org = organisaatioService.findByOid(orgOid);
 
-        String kuntaKoodi = org.getKotipaikka();
+        String kuntaKoodi = org.getKotipaikkaUri();
 
         List<String> orgOids = Lists.newArrayList(org.getOid());
         if (org.getParentOidPath() != null) {
@@ -162,13 +162,13 @@ public class KoulutusPermissionService {
 
     }
 
-    private void checkPermissions(List<String> orgOids, OrganisaatioDTO orgDto, String koodisto, String code, Date pvm) {
+    private void checkPermissions(List<String> orgOids, OrganisaatioRDTO orgDto, String koodisto, String code, Date pvm) {
         List<KoulutusPermission> permissions = koulutusPermissionDAO.find(orgOids, koodisto, code, pvm);
         if (permissions.isEmpty()) {
             String organisaationNimi = "-";
             try {
-                organisaationNimi = orgDto.getNimi().getTeksti().iterator().next().getValue();
-            } catch (NullPointerException e) {}
+                organisaationNimi = orgDto.getNimi().values().iterator().next();
+            } catch (Exception e) {}
 
             throw new KoulutusPermissionException(
                     organisaationNimi,

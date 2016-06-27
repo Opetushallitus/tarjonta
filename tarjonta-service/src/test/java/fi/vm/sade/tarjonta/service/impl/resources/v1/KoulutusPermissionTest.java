@@ -18,7 +18,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
@@ -232,10 +233,10 @@ public class KoulutusPermissionTest extends TestUtilityBase {
     }
 
     private void expectOrganization() {
-        OrganisaatioDTO orgDto = new OrganisaatioDTO();
+        OrganisaatioRDTO orgDto = new OrganisaatioRDTO();
         orgDto.setOid(ORG_OID);
         orgDto.setParentOidPath("orgRoot|orgChild1|orgChild2|orgChild3");
-        orgDto.setKotipaikka("kunta_1");
+        orgDto.setKotipaikkaUri("kunta_1");
 
         expect(organisaatioServiceMock.findByOid(ORG_OID)).andReturn(orgDto);
         replay(organisaatioServiceMock);

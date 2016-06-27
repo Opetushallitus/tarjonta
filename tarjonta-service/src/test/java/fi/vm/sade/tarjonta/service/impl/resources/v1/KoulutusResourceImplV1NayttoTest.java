@@ -14,12 +14,12 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
@@ -69,10 +69,9 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
     public void setUp() throws OIDCreationException {
         reload();
         createJoinedParentAndChildKomos(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
-        OrganisaatioDTO jarjestajaDTO = new OrganisaatioDTO();
+        OrganisaatioRDTO jarjestajaDTO = new OrganisaatioRDTO();
         jarjestajaDTO.setOid(ORGANISATION_JARJESTAJA_OID);
-        jarjestajaDTO.setNimi(new MonikielinenTekstiTyyppi());
-        jarjestajaDTO.getNimi().getTeksti().add(new MonikielinenTekstiTyyppi.Teksti("jarjestaja", LOCALE_FI));
+        jarjestajaDTO.setNimi(ImmutableMap.of("fi", "jarjestaja"));
         when(organisaatioServiceMock.findByOid(ORGANISATION_JARJESTAJA_OID)).thenReturn(jarjestajaDTO);
     }
 

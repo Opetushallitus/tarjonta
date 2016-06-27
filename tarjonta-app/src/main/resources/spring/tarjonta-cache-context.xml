@@ -74,8 +74,6 @@
     <aop:config>
         <aop:advisor advice-ref="cacheAdviceKoodiService" pointcut="execution(* fi.vm.sade.koodisto.service.KoodiService.*(..))"/>
         <aop:advisor advice-ref="cacheAdviceKoodistoService" pointcut="execution(* fi.vm.sade.koodisto.service.KoodistoService.*(..))"/>
-
-        <aop:advisor advice-ref="cacheAdviceOrganisaatioService" pointcut="execution(* fi.vm.sade.organisaatio.api.model.OrganisaatioService.*(..))"/>
     </aop:config>
 
 </beans>

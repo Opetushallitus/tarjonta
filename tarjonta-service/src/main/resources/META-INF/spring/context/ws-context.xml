@@ -12,13 +12,7 @@
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
 
-    <jaxws:client id="organisaatioService"
-                  serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
-                  address="${organisaatio.webservice.url.backend}">
-        <jaxws:outInterceptors>
-            <ref bean="callerIdInterceptor"></ref>
-        </jaxws:outInterceptors>
-    </jaxws:client>
+    <bean id="organisaatioService" class="fi.vm.sade.tarjonta.shared.OrganisaatioService" />
 
     <jaxws:client id="koodiPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"

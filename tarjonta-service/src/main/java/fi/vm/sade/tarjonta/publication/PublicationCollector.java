@@ -15,25 +15,18 @@
  */
 package fi.vm.sade.tarjonta.publication;
 
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.enums.MetaCategory;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.xml.ws.WebServiceException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
-import fi.vm.sade.tarjonta.service.enums.MetaCategory;
-import javax.xml.ws.WebServiceException;
 
 /**
  * Gathers learning opportunity material (tarjonta) that is ready for
@@ -112,7 +105,7 @@ public class PublicationCollector {
 
     }
 
-    protected void fireCollect(OrganisaatioDTO dto) throws Exception {
+    protected void fireCollect(OrganisaatioRDTO dto) throws Exception {
         if (dto == null) {
             return;
         }
@@ -222,14 +215,14 @@ public class PublicationCollector {
 
     }
 
-    private OrganisaatioDTO findProviderByOid(final String oid, final boolean allowNull) {
+    private OrganisaatioRDTO findProviderByOid(final String oid, final boolean allowNull) {
         if (allowNull) {
             return null;
         } else if (oid == null) {
             throw new IllegalArgumentException("Provider OID cannot be null");
         }
 
-        OrganisaatioDTO dto = null;
+        OrganisaatioRDTO dto = null;
         try {
             dto = organisaatioService.findByOid(oid);
 
@@ -334,7 +327,7 @@ public class PublicationCollector {
 
         public void onCollect(Haku haku) throws Exception;
 
-        public void onCollect(OrganisaatioDTO tarjoaja) throws Exception;
+        public void onCollect(OrganisaatioRDTO tarjoaja) throws Exception;
     }
 
     /**
@@ -359,7 +352,7 @@ public class PublicationCollector {
         }
 
         @Override
-        public void onCollect(OrganisaatioDTO tarjoaja) throws Exception {
+        public void onCollect(OrganisaatioRDTO tarjoaja) throws Exception {
         }
 
         @Override

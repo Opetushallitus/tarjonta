@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import com.google.common.collect.Lists;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
@@ -57,7 +58,7 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     private KoulutusmoduuliToteutus komoto;
     private TarjontaFixtures tarjontaFixtures = new TarjontaFixtures();
-    private OrganisaatioDTO organisaatioDTO = new OrganisaatioDTO();
+    private OrganisaatioRDTO organisaatioDTO = new OrganisaatioRDTO();
     private HakukohdeDAO hakukohdeDAO;
     
     @Before
