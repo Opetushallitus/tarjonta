@@ -128,7 +128,8 @@ app.controller('HakukohdeParentController', [
             var tilat = [
                 'LUONNOS',
                 'PERUTTU',
-                'KOPIOITU'
+                'KOPIOITU',
+                'PUUTTEELLINEN'
             ];
             if ($scope.model.hakukohde.tila === undefined || tilat.indexOf($scope.model.hakukohde.tila) !== -1) {
                 console.log('asetetaan tila modeliin!', tila);
