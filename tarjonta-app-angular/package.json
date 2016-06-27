@@ -17,6 +17,7 @@
     "gulp-protractor": "0.0.11",
     "karma": "*",
     "karma-chrome-launcher": "*",
+    "karma-firefox-launcher": "*",
     "karma-jasmine": "*",
     "karma-junit-reporter": "*",
     "karma-ng-html2js-preprocessor": "~0.1.0",
