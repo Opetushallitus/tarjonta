@@ -170,8 +170,6 @@ public class KoulutusImplicitDataPopulator {
             dto.setTutkinto(findCode(sisaltaaKoodit, TUTKINTO));
 
             setTutkintonimike(sisaltaaKoodit, dto);
-        }
-        if (notEmpty(dto.getKoulutuskoodi())) {
             populateKomoOid(dto);
         }
     }
