@@ -144,30 +144,24 @@ public class KoulutusImplicitDataPopulator {
     }
 
     private void populateFieldsByKoulutustyyppi(final KoulutusV1RDTO dto) {
-        List<KoodiType> koodis = koodiService.searchKoodis(new SearchKoodisCriteriaType(){{
-            getKoodiUris().add(dto.getToteutustyyppi().uri());
-        }});
-        if (koodis.size() == 1) {
-            final KoodiType koulutustyyppi = koodis.get(0);
-            List<KoodiType> sisaltaaKoodit = getAlapuolisetKoodit(new KoodiV1RDTO(koulutustyyppi.getKoodiUri(), koulutustyyppi.getVersio(), null));
+        List<KoodiType> sisaltaaKoodit = getAlapuolisetKoodit(dto.getToteutustyyppi().uri());
 
-            List<KoodiV1RDTO> koulutuslajis = findCodes(sisaltaaKoodit, KOULUTUSLAJI);
-            if (koulutuslajis.size() == 1) {
-                dto.setKoulutuslaji(koulutuslajis.get(0));
-            }
+        List<KoodiV1RDTO> koulutuslajis = findCodes(sisaltaaKoodit, KOULUTUSLAJI);
+        if (koulutuslajis.size() == 1) {
+            dto.setKoulutuslaji(koulutuslajis.get(0));
+        }
 
-            if (dto instanceof KoulutusGenericV1RDTO) {
-                List<KoodiV1RDTO> pkVaatimukset = findCodes(sisaltaaKoodit, POHJAKOULUTUSVAATIMUS_TOINEN_ASTE);
-                if (pkVaatimukset.size() == 1) {
-                    ((KoulutusGenericV1RDTO) dto).setPohjakoulutusvaatimus(pkVaatimukset.get(0));
-                }
+        if (dto instanceof KoulutusGenericV1RDTO) {
+            List<KoodiV1RDTO> pkVaatimukset = findCodes(sisaltaaKoodit, POHJAKOULUTUSVAATIMUS_TOINEN_ASTE);
+            if (pkVaatimukset.size() == 1) {
+                ((KoulutusGenericV1RDTO) dto).setPohjakoulutusvaatimus(pkVaatimukset.get(0));
             }
         }
     }
 
     private void populateFieldsByKoulutuskoodi(final KoulutusV1RDTO dto) {
         if (notEmpty(dto.getKoulutuskoodi())) {
-            List<KoodiType> sisaltaaKoodit = getAlapuolisetKoodit(dto.getKoulutuskoodi());
+            List<KoodiType> sisaltaaKoodit = getAlapuolisetKoodit(dto.getKoulutuskoodi().getUri());
 
             dto.setKoulutusala(findCode(sisaltaaKoodit, KOULUTUSALAOPH2002));
             dto.setKoulutusaste(findCode(sisaltaaKoodit, KOULUTUSASTEOPH2002));
@@ -176,15 +170,27 @@ public class KoulutusImplicitDataPopulator {
             dto.setTutkinto(findCode(sisaltaaKoodit, TUTKINTO));
 
             setTutkintonimike(sisaltaaKoodit, dto);
-        }
-        if (notEmpty(dto.getKoulutuskoodi())) {
             populateKomoOid(dto);
+        }
+    }
+
+    private int getLatestKoodiVersion(final String koodiUri) {
+        List<KoodiType> koodis = koodiService.searchKoodis(new SearchKoodisCriteriaType(){{
+            getKoodiUris().add(koodiUri);
+        }});
+
+        if (koodis.size() == 1) {
+            return koodis.get(0).getVersio();
+        } else {
+            LOG.error("Failed to get latest koodi version: expected 1 but found {} codes for koodi {}", koodis.size(), koodiUri);
+            int defaultVersion = 1;
+            return defaultVersion;
         }
     }
 
     private void populateFieldsByOsaamisalakoodi(final KoulutusV1RDTO dto) {
         if (notEmpty(dto.getKoulutusohjelma())) {
-            List<KoodiType> sisaltaaKoodit = getAlapuolisetKoodit(dto.getKoulutusohjelma());
+            List<KoodiType> sisaltaaKoodit = getAlapuolisetKoodit(dto.getKoulutusohjelma().getUri());
 
             setTutkintonimike(sisaltaaKoodit, dto);
         }
@@ -261,12 +267,13 @@ public class KoulutusImplicitDataPopulator {
         };
     }
 
-    private List<KoodiType> getAlapuolisetKoodit(final KoodiV1RDTO code) {
+    private List<KoodiType> getAlapuolisetKoodit(final String koodiUri) {
+        KoodiUriAndVersioType koodiWithVersion = new KoodiUriAndVersioType();
+        koodiWithVersion.setKoodiUri(koodiUri);
+        koodiWithVersion.setVersio(getLatestKoodiVersion(koodiUri));
+
         return koodiService.listKoodiByRelation(
-                new KoodiUriAndVersioType() {{
-                    this.setKoodiUri(code.getUri());
-                    this.setVersio(code.getVersio());
-                }},
+                koodiWithVersion,
                 false,
                 SuhteenTyyppiType.SISALTYY
         );

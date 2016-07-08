@@ -200,18 +200,19 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
             getValintakoeAjankohtas().add(ajankohta);
         }};
 
-        return new HakukohdeV1RDTO() {{
-            setHakukohteenNimiUri("hakukohteet_255#2");
-            setToteutusTyyppi(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO);
-            setTila(TarjontaTila.LUONNOS);
-            setHakukohteenNimet(Collections.singletonMap("kieli_fi", "Hakukohde #1"));
-            setTarjoajaOids(Collections.singleton(komoto.getTarjoaja()));
-            setTarjoajaNimet(Collections.singletonMap(komoto.getTarjoaja(), "Organisaatio ABC"));
-            setHakuOid(haku.getOid());
-            setHakukohdeKoulutusOids(Collections.singletonList(komoto.getOid()));
-            getHakukohteenLiitteet().add(liite);
-            getValintakokeet().add(valintakoe);
-        }};
+        HakukohdeV1RDTO dto = HakukohdeV1RDTO.defaultDto();
+        dto.setHakukohteenNimiUri("hakukohteet_255#2");
+        dto.setToteutusTyyppi(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO);
+        dto.setTila(TarjontaTila.LUONNOS);
+        dto.setHakukohteenNimet(Collections.singletonMap("kieli_fi", "Hakukohde #1"));
+        dto.setTarjoajaOids(Collections.singleton(komoto.getTarjoaja()));
+        dto.setTarjoajaNimet(Collections.singletonMap(komoto.getTarjoaja(), "Organisaatio ABC"));
+        dto.setHakuOid(haku.getOid());
+        dto.setHakukohdeKoulutusOids(Collections.singletonList(komoto.getOid()));
+        dto.getHakukohteenLiitteet().add(liite);
+        dto.getValintakokeet().add(valintakoe);
+
+        return dto;
     }
 
     private Koulutusmoduuli mkRandomKomo() {
