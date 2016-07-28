@@ -211,7 +211,7 @@ public class MassPepareProcess {
                     }
 
                     // KOMON tiedot
-                    if (ToteutustyyppiEnum.KORKEAKOULUTUS.equals(komoto.getToteutustyyppi())) {
+                    if (Sets.newHashSet(KORKEAKOULUTUS, KORKEAKOULUOPINTO).contains(komoto.getToteutustyyppi())) {
                         massakopiointiDAO.saveEntityAsJson(
                                 fromOid,
                                 komoto.getKoulutusmoduuli().getOid() + "_" + komoto.getOid(),
