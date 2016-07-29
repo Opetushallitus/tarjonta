@@ -712,8 +712,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     private KoulutusmoduuliToteutus updateTutkintoonjohtamaton(KoulutusmoduuliToteutus komoto, final TutkintoonJohtamatonKoulutusV1RDTO dto) {
-        convertToEntity.setSisaltyyKoulutuksiin(komoto, dto);
-        return convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), null, null);
+        KoulutusmoduuliToteutus updatedKomoto = convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), null, null);
+        convertToEntity.setSisaltyyKoulutuksiin(updatedKomoto, dto);
+        return updatedKomoto;
     }
 
     private KoulutusmoduuliToteutus insertKoulutusKorkeakoulu(final KoulutusKorkeakouluV1RDTO dto) {
