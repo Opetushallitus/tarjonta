@@ -1,8 +1,9 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
+import com.google.common.primitives.Longs;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
@@ -11,6 +12,7 @@ import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassPepareProcess;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
@@ -27,10 +29,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -337,4 +336,73 @@ public class MassCopyTest extends TestUtilityBase {
         assertNotNull(newRyhmaliitos);
         assertEquals("testiryhma", newRyhmaliitos.getRyhmaOid());
     }
+
+    @Test
+    public void testTutkintoonJohtamatonCopy() {
+        final String HAKU_OID = "tutkintoon-johtamaton-1";
+
+        Haku haku = fixtures.createHaku();
+        haku.setOid(HAKU_OID);
+        haku.setTarjoajaOids(new String[]{ophOid});
+        haku.setTila(TarjontaTila.JULKAISTU);
+        hakuDAO.insert(haku);
+
+        KoulutusmoduuliToteutus kokonaisuus = getKorkeakouluopinto("kokonaisuus");
+        KoulutusmoduuliToteutus jakso1 = getKorkeakouluopinto("jakso1");
+        KoulutusmoduuliToteutus jakso2 = getKorkeakouluopinto("jakso2");
+        KoulutusmoduuliToteutus jakso3 = getKorkeakouluopinto("jakso3");
+        jakso1.setTila(TarjontaTila.VALMIS);
+        addOpintojakso(kokonaisuus, jakso1, jakso2, jakso3);
+
+        Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setHaku(haku);
+        haku.addHakukohde(hakukohde);
+        hakukohde.setTila(TarjontaTila.JULKAISTU);
+        hakukohde.setOid("tutkintoon-johtamaton-hakukohde");
+        connectHakukohdeWithKomoto(hakukohde, kokonaisuus);
+        hakukohdeDAO.insert(hakukohde);
+
+        copyHaku(HAKU_OID);
+
+        List<Haku> hakus = hakuDAO.findAll();
+        Collections.sort(hakus, new Ordering<Haku>() {
+            @Override
+            public int compare(Haku h1, Haku h2) {
+                return Longs.compare(h2.getId(), h1.getId());
+            }
+        });
+
+        Haku copiedHaku = hakus.get(0);
+        assertEquals(1, copiedHaku.getHakukohdes().size());
+
+        Hakukohde copiedHakukohde = copiedHaku.getHakukohdes().iterator().next();
+        assertEquals(1, copiedHakukohde.getKoulutusmoduuliToteutuses().size());
+
+        KoulutusmoduuliToteutus copiedKokonaisuus = copiedHakukohde.getKoulutusmoduuliToteutuses().iterator().next();
+        Koulutusmoduuli copiedKokonaisuusKomo = copiedKokonaisuus.getKoulutusmoduuli();
+        List<String> children = koulutusSisaltyvyysDAO.getChildren(copiedKokonaisuusKomo.getOid());
+        assertEquals(2, children.size());
+    }
+
+    private KoulutusmoduuliToteutus getKorkeakouluopinto(String oid) {
+        Koulutusmoduuli komo = getKomo("komo-" + oid);
+        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
+        komoto.setToteutustyyppi(ToteutustyyppiEnum.KORKEAKOULUOPINTO);
+        komoto.setOid("komoto-" + oid);
+        komoto.setTila(TarjontaTila.JULKAISTU);
+        komoto.setKoulutusmoduuli(komo);
+        komoto.setTarjoaja("TEST_TARJOAJA");
+        komoto.setAlkamisVuosi(2016);
+        komoto.setAlkamiskausiUri("kausi_s#1");
+        return koulutusmoduuliToteutusDAO.insert(komoto);
+    }
+
+    private void addOpintojakso(KoulutusmoduuliToteutus kokonaisuus, KoulutusmoduuliToteutus ...jaksot) {
+        Koulutusmoduuli komo = kokonaisuus.getKoulutusmoduuli();
+
+        for (KoulutusmoduuliToteutus jakso : jaksot) {
+            koulutusSisaltyvyysDAO.insert(new KoulutusSisaltyvyys(komo, jakso.getKoulutusmoduuli(), KoulutusSisaltyvyys.ValintaTyyppi.ALL_OFF));
+        }
+    }
+
 }
