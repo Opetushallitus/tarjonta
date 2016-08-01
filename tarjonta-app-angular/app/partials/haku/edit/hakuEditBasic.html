@@ -200,7 +200,8 @@
     <tr class="required">
         <th data-tt='haku.edit.hakulomake'>Hakulomake</th>
         <td>
-            <input id="kaytetaanJarjestelmanHakulomaketta" type="radio" ng-model="model.haku.hakulomake" value="SYSTEM" ng-change="updatedHakulomakeSelection()">
+            <input id="kaytetaanJarjestelmanHakulomaketta" type="radio" ng-model="model.haku.hakulomake" value="SYSTEM" ng-change="updatedHakulomakeSelection()"
+                   ng-disabled="model.hakux.koulutusmoduuliTyyppi == 'OPINTOKOKONAISUUS'">
             <label for="kaytetaanJarjestelmanHakulomaketta" data-tt='haku.edit.hakulomake.jarjestelman'>
                 Käytetään järjestelmän hakulomaketta.
                 Hakutoiveiden enimmäismäärä hakulomakkeella:
