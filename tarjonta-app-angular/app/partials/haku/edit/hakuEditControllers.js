@@ -108,8 +108,18 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         var haku = $scope.model.hakux.result;
         $scope.doSaveHakuAndParameters(haku, 'VALMIS', true, form);
     };
+
+    function validateOpintokokonaisuusHakulomake(form) {
+        var invalidCombo = $scope.model.hakux.result.koulutusmoduuliTyyppi === 'OPINTOKOKONAISUUS' &&
+            $scope.model.haku.hakulomake === 'SYSTEM';
+        form.hakulomake.$setValidity('opintokokonaisuus', !invalidCombo);
+    }
+
     $scope.doSaveHakuAndParameters = function(haku, tila, reload, form) {
         clearErrors();
+
+        validateOpintokokonaisuusHakulomake(form);
+
         if (form.$invalid) {
             reportFormValidationErrors(form);
             return;
