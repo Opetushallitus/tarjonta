@@ -108,6 +108,13 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         var haku = $scope.model.hakux.result;
         $scope.doSaveHakuAndParameters(haku, 'VALMIS', true, form);
     };
+
+    $scope.haunTyyppiChanged = function(){
+       if($scope.model.hakux.result.koulutusmoduuliTyyppi === 'OPINTOKOKONAISUUS'){
+           $scope.model.haku.hakulomake = 'OTHER';
+           updatedHakulomakeSelection();
+       }
+    };
     $scope.doSaveHakuAndParameters = function(haku, tila, reload, form) {
         clearErrors();
         if (form.$invalid) {
