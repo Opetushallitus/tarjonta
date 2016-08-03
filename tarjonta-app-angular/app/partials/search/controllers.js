@@ -407,37 +407,22 @@ angular.module('app.search.controllers', [
     };
     $scope.siirraTaiKopioi = function() {
         var komotoOid = $scope.selection.koulutukset[0];
-        //single select
-        var koulutusNimi;
-        var organisaatioNimi;
-        var stop = false;
-        for (var i = 0; i < $scope.koulutusResults.tulokset.length; i++) {
-            var org = $scope.koulutusResults.tulokset;
-            for (var c = 0; c < org[i].tulokset.length; c++) {
-                if (komotoOid === org[i].tulokset[c].oid) {
-                    koulutusNimi = org[i].tulokset[c].nimi;
-                    stop = true;
-                    break;
-                }
-            }
-            if (stop) {
-                break;
-            }
-        }
+
+        var koulutus = _.chain($scope.koulutusResults.tulokset)
+                            .pluck('tulokset')
+                            .flatten()
+                            .findWhere({oid: komotoOid}).value();
+
         $modal.open({
             templateUrl: 'partials/koulutus/copy/copy-move-koulutus.html',
             controller: 'CopyMoveKoulutusController',
             resolve: {
                 targetKoulutus: function() {
-                    return [{
-                        oid: komotoOid,
-                        nimi: koulutusNimi
-                    }];
+                    return [koulutus];
                 },
                 targetOrganisaatio: function() {
                     return {
-                        oid: $scope.selectedOrgOid,
-                        nimi: organisaatioNimi
+                        oid: $scope.selectedOrgOid
                     };
                 }
             }
