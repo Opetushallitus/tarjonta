@@ -258,10 +258,10 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
             controller: 'CopyMoveKoulutusController',
             resolve: {
                 targetKoulutus: function() {
-                    return [{
+                    return {
                         oid: $scope.model.koulutus.oid,
                         nimi: $scope.getKoulutusohjelmaNimi()
-                    }];
+                    };
                 },
                 targetOrganisaatio: function() {
                     return {

@@ -418,7 +418,7 @@ angular.module('app.search.controllers', [
             controller: 'CopyMoveKoulutusController',
             resolve: {
                 targetKoulutus: function() {
-                    return [koulutus];
+                    return koulutus;
                 },
                 targetOrganisaatio: function() {
                     return {

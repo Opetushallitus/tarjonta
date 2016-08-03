@@ -17,7 +17,7 @@ app.controller('CopyMoveKoulutusController', [
         // Tähän populoidaan formin valinnat:
         $scope.model = {
             text: {
-                help: LocalisationService.t('koulutus.copy.help', [targetKoulutus[0].nimi])
+                help: LocalisationService.t('koulutus.copy.help', [targetKoulutus.nimi])
             },
             errors: [],
             targetKoulutus: targetKoulutus,
@@ -163,7 +163,7 @@ app.controller('CopyMoveKoulutusController', [
                     mode: $scope.model.mode,
                     organisationOids: orgOids
                 };
-                TarjontaService.koulutus($scope.model.targetKoulutus[0].oid).copyAndMove(apiModel, function(response) {
+                TarjontaService.koulutus($scope.model.targetKoulutus.oid).copyAndMove(apiModel, function(response) {
                     if (response.status === 'OK') {
                         $modalInstance.close(response);
                         if (response.result.to.length > 0) {
