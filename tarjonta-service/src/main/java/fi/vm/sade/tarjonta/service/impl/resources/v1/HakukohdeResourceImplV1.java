@@ -23,8 +23,6 @@ import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
 import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
-import fi.vm.sade.tarjonta.shared.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
@@ -43,9 +41,11 @@ import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.Hakuko
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
 import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.ParameterServices;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
@@ -752,7 +752,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         if (hakukohdeRDTO == null) {
             hakukohdeRDTO = new HakukohdeV1RDTO();
         }
-        permissionChecker.checkUpdateHakukohde(hakukohdeOid, hakukohdeRDTO.getHakuOid(), hakukohdeRDTO.getHakukohdeKoulutusOids());
+        permissionChecker.checkUpdateHakukohde(hakukohdeOid, hakukohdeRDTO.getHakuOid(), getKomotoOidsForHakukohde(hakukohdeRDTO));
         try {
 
             Date today = new Date();
@@ -900,6 +900,25 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             errorResult.addTechnicalError(exp);
             return errorResult;
         }
+    }
+
+    private Set<String> getKomotoOidsForHakukohde(HakukohdeV1RDTO hakukohde) {
+        Set<String> oids = new HashSet<>();
+
+        if (hakukohde.getHakukohdeKoulutusOids() != null) {
+            oids.addAll(hakukohde.getHakukohdeKoulutusOids());
+        }
+
+        if (hakukohde.getKoulutukset() != null) {
+            for (KoulutusIdentification id : hakukohde.getKoulutukset()) {
+                KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findKomotoByKoulutusId(id);
+                if (komoto != null) {
+                    oids.add(komoto.getOid());
+                }
+            }
+        }
+
+        return oids;
     }
 
     @Override
