@@ -20,6 +20,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mysema.query.Tuple;
 import com.mysema.query.jpa.JPASubQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPAUpdateClause;
@@ -568,5 +569,22 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
             .setParameter("komotoOid", komoto.getOid());
 
             return query.getResultList();
+    }
+
+    @Override
+    public ToteutustyyppiEnum getToteutustyyppiByKomotoId(Long komotoId) {
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        return from(qKomoto).where(qKomoto.id.eq(komotoId)).singleResult(qKomoto.toteutustyyppi);
+    }
+
+    @Override
+    public String getKoulutusmoduuliOidByKomotoId(Long komotoId) {
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        QKoulutusmoduuli qKoulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
+
+        return from(qKomoto)
+                .join(qKomoto.koulutusmoduuli, qKoulutusmoduuli)
+                .where(qKomoto.id.eq(komotoId))
+                .singleResult(qKoulutusmoduuli.oid);
     }
 }

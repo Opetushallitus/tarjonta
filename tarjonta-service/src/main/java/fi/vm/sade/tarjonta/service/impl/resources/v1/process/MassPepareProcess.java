@@ -32,6 +32,7 @@ import fi.vm.sade.tarjonta.service.copy.MetaObject;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.KORKEAKOULUOPINTO;
@@ -157,9 +159,9 @@ public class MassPepareProcess {
         final Set<Long> childKomotoIds = new HashSet<>();
 
         for (long komotoId : komotoIds) {
-            final KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.read(komotoId);
-            if (KORKEAKOULUOPINTO.equals(komoto.getToteutustyyppi())) {
-                List<String> children = koulutusSisaltyvyysDAO.getChildren(komoto.getKoulutusmoduuli().getOid());
+            ToteutustyyppiEnum toteutustyyppi = koulutusmoduuliToteutusDAO.getToteutustyyppiByKomotoId(komotoId);
+            if (KORKEAKOULUOPINTO.equals(toteutustyyppi)) {
+                List<String> children = koulutusSisaltyvyysDAO.getChildren(koulutusmoduuliToteutusDAO.getKoulutusmoduuliOidByKomotoId(komotoId));
                 for (String childKomoOid : children) {
                     final KoulutusmoduuliToteutus childKomoto = koulutusmoduuliToteutusDAO.findFirstByKomoOid(childKomoOid);
                     if (childKomoto != null && Sets.newHashSet(COPY_TILAS).contains(childKomoto.getTila())) {
