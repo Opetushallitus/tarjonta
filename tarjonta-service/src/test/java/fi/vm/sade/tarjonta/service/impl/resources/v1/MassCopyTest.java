@@ -29,6 +29,8 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -337,14 +339,36 @@ public class MassCopyTest extends TestUtilityBase {
         assertEquals("testiryhma", newRyhmaliitos.getRyhmaOid());
     }
 
+    private Hakuaika getHakuaika(String nimi, Date alkamisPvm, Date paattymisPvm) {
+        Hakuaika hakuaika = new Hakuaika();
+        hakuaika.setNimi(new MonikielinenTeksti("fi", nimi + "_fi", "sv", nimi + "_sv", "en", nimi + "_en"));
+        hakuaika.setAlkamisPvm(alkamisPvm);
+        hakuaika.setPaattymisPvm(paattymisPvm);
+        return hakuaika;
+    }
+
+    private Date toDate(String date) {
+        java.text.SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        try {
+            return format.parse(date);
+        } catch (ParseException pe) {
+            return null;
+        }
+    }
+
     @Test
     public void testTutkintoonJohtamatonCopy() {
         final String HAKU_OID = "tutkintoon-johtamaton-1";
+
+        Hakuaika hakuaika1 = getHakuaika("Hakuaika1", toDate("01.01.2016"), toDate("01.06.2016"));
+        Hakuaika hakuaika2 = getHakuaika("Hakuaika2", toDate("01.09.2016"), toDate("01.12.2016"));
 
         Haku haku = fixtures.createHaku();
         haku.setOid(HAKU_OID);
         haku.setTarjoajaOids(new String[]{ophOid});
         haku.setTila(TarjontaTila.JULKAISTU);
+        haku.addHakuaika(hakuaika1);
+        haku.addHakuaika(hakuaika2);
         hakuDAO.insert(haku);
 
         KoulutusmoduuliToteutus kokonaisuus = getKorkeakouluopinto("kokonaisuus");
@@ -359,6 +383,7 @@ public class MassCopyTest extends TestUtilityBase {
         haku.addHakukohde(hakukohde);
         hakukohde.setTila(TarjontaTila.JULKAISTU);
         hakukohde.setOid("tutkintoon-johtamaton-hakukohde");
+        hakukohde.setHakuaika(hakuaika2);
         connectHakukohdeWithKomoto(hakukohde, kokonaisuus);
         hakukohdeDAO.insert(hakukohde);
 
@@ -376,6 +401,9 @@ public class MassCopyTest extends TestUtilityBase {
         assertEquals(1, copiedHaku.getHakukohdes().size());
 
         Hakukohde copiedHakukohde = copiedHaku.getHakukohdes().iterator().next();
+        assertEquals("Hakuaika2_fi", copiedHakukohde.getHakuaika().getNimi().getTekstiForKieliKoodi("fi"));
+        assertEquals(toDate("01.09.2017").getTime(), copiedHakukohde.getHakuaika().getAlkamisPvm().getTime());
+        assertEquals(toDate("01.12.2017").getTime(), copiedHakukohde.getHakuaika().getPaattymisPvm().getTime());
         assertEquals(1, copiedHakukohde.getKoulutusmoduuliToteutuses().size());
 
         KoulutusmoduuliToteutus copiedKokonaisuus = copiedHakukohde.getKoulutusmoduuliToteutuses().iterator().next();
