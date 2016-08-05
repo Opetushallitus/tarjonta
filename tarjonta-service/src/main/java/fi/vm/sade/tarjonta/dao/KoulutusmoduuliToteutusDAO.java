@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import com.mysema.commons.lang.Pair;
 
 import java.util.*;
 
@@ -144,4 +145,8 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
     void safeDelete(final String komotoOid, final String userOid);
 
     void setViimIndeksointiPvmToNull(Long id);
+
+    Pair<ToteutustyyppiEnum, String> getToteutustyyppiAndKoulutusmoduuliOidByKomotoId(Long komotoId);
+
+    Pair<Long, TarjontaTila> getFirstIdAndTilaByKomoOid(String komoOid);
 }

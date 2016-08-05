@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1.process;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.mysema.commons.lang.Pair;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
@@ -32,6 +31,8 @@ import fi.vm.sade.tarjonta.service.copy.MetaObject;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import com.mysema.commons.lang.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.KORKEAKOULUOPINTO;
@@ -157,13 +159,13 @@ public class MassPepareProcess {
         final Set<Long> childKomotoIds = new HashSet<>();
 
         for (long komotoId : komotoIds) {
-            final KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.read(komotoId);
-            if (KORKEAKOULUOPINTO.equals(komoto.getToteutustyyppi())) {
-                List<String> children = koulutusSisaltyvyysDAO.getChildren(komoto.getKoulutusmoduuli().getOid());
+            Pair<ToteutustyyppiEnum, String> tyyppiAndOid = koulutusmoduuliToteutusDAO.getToteutustyyppiAndKoulutusmoduuliOidByKomotoId(komotoId);
+            if (KORKEAKOULUOPINTO.equals(tyyppiAndOid.getFirst())) {
+                List<String> children = koulutusSisaltyvyysDAO.getChildren(tyyppiAndOid.getSecond());
                 for (String childKomoOid : children) {
-                    final KoulutusmoduuliToteutus childKomoto = koulutusmoduuliToteutusDAO.findFirstByKomoOid(childKomoOid);
-                    if (childKomoto != null && Sets.newHashSet(COPY_TILAS).contains(childKomoto.getTila())) {
-                        childKomotoIds.add(childKomoto.getId());
+                    Pair<Long, TarjontaTila> idAndTila = koulutusmoduuliToteutusDAO.getFirstIdAndTilaByKomoOid(childKomoOid);
+                    if (idAndTila != null && Sets.newHashSet(COPY_TILAS).contains(idAndTila.getSecond())) {
+                        childKomotoIds.add(idAndTila.getFirst());
                     }
                 }
             }
