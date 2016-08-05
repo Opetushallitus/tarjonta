@@ -27,6 +27,7 @@ import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
 import com.mysema.query.types.expr.StringExpression;
+import com.mysema.query.types.path.EnumPath;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
@@ -36,6 +37,7 @@ import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.lang.StringUtils;
+import com.mysema.commons.lang.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -572,19 +574,31 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     }
 
     @Override
-    public ToteutustyyppiEnum getToteutustyyppiByKomotoId(Long komotoId) {
+    public Pair<ToteutustyyppiEnum, String> getToteutustyyppiAndKoulutusmoduuliOidByKomotoId(Long komotoId) {
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        return from(qKomoto).where(qKomoto.id.eq(komotoId)).singleResult(qKomoto.toteutustyyppi);
+        QKoulutusmoduuli qKoulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
+        Tuple row = from(qKomoto)
+                .join(qKomoto.koulutusmoduuli, qKoulutusmoduuli)
+                .where(qKomoto.id.eq(komotoId))
+                .singleResult(qKomoto.toteutustyyppi, qKoulutusmoduuli.oid);
+        return new Pair(row.get(0, ToteutustyyppiEnum.class), row.get(1, String.class));
     }
 
     @Override
-    public String getKoulutusmoduuliOidByKomotoId(Long komotoId) {
+    public Pair<Long, TarjontaTila> getFirstIdAndTilaByKomoOid(String komoOid) {
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        QKoulutusmoduuli qKoulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
+        QKoulutusmoduuli qKomo = QKoulutusmoduuli.koulutusmoduuli;
+        List<Tuple> list = from(qKomoto)
+                .join(qKomoto.koulutusmoduuli, qKomo)
+                .where(qKomo.oid.eq(komoOid))
+                .distinct()
+                .list(qKomoto.id, qKomoto.tila);
 
-        return from(qKomoto)
-                .join(qKomoto.koulutusmoduuli, qKoulutusmoduuli)
-                .where(qKomoto.id.eq(komotoId))
-                .singleResult(qKoulutusmoduuli.oid);
+        if(list.isEmpty()) {
+            return null;
+        } else {
+            Tuple row = list.get(0);
+            return new Pair(row.get(0, Long.class), row.get(1, TarjontaTila.class));
+        }
     }
 }
