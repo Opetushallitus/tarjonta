@@ -25,6 +25,23 @@ app.controller('CopyMoveKoulutusController', [
             organisaatiot: [],
             mode: 'COPY'
         };
+
+        function buildDialog(data) {
+            $scope.alkorganisaatiot = data.organizations;
+            $scope.organisaatiomap = data.organizationMap;
+        }
+
+        var isJarjestettyKoulutus = targetKoulutus.koulutuksenTarjoajaKomoto;
+        if (isJarjestettyKoulutus) {
+            $scope.model.disableCopy = true;
+            $scope.model.mode = 'MOVE';
+            TarjontaService.getJarjestajaCandidates(targetKoulutus.koulutuksenTarjoajaKomoto).then(function(orgs) {
+                OrganisaatioService.buildOrganizationSelectionDialog(orgs).then(buildDialog);
+            });
+        } else {
+            OrganisaatioService.buildOrganizationSelectionDialog().then(buildDialog);
+        }
+
         $scope.alkorganisaatio = $scope.alkorganisaatio || {
             currentNode: undefined
         };
@@ -39,11 +56,6 @@ app.controller('CopyMoveKoulutusController', [
         });
 
         $scope.valitut = $scope.valitut || [];
-
-        OrganisaatioService.buildOrganizationSelectionDialog().then(function(data) {
-            $scope.alkorganisaatiot = data.organizations;
-            $scope.organisaatiomap = data.organizationMap;
-        });
 
         var lisaaOrganisaatio = function(organisaatio) {
             $scope.model.organisaatiot.push(organisaatio);
