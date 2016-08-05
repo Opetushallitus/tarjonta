@@ -144,4 +144,8 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
     void safeDelete(final String komotoOid, final String userOid);
 
     void setViimIndeksointiPvmToNull(Long id);
+
+    ToteutustyyppiEnum getToteutustyyppiByKomotoId(Long komotoId);
+
+    String getKoulutusmoduuliOidByKomotoId(Long komotoId);
 }
