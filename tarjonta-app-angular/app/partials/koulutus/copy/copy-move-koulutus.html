@@ -16,7 +16,8 @@
                     <span tt="koulutus.copy.siirra-tai-kopioi">Siirrä tai kopioi</span>
                 </td>
                 <td style="vertical-align: top">
-                    <label><input type="radio" ng-model="model.mode" value="COPY"><span tt="koulutus.copy.kopioi">Kopioi</span></label><br/>
+                    <label><input type="radio" ng-disabled="model.disableCopy" ng-model="model.mode"
+                                  value="COPY"><span tt="koulutus.copy.kopioi">Kopioi</span></label><br/>
                     <label><input type="radio" ng-model="model.mode" value="MOVE"><span tt="koulutus.copy.siirra">Siirrä</span></label><br/>
                 </td>
             </tr>

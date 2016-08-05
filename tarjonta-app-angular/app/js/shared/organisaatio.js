@@ -3,7 +3,7 @@ angular.module('Organisaatio', [
     'config',
     'Logging'
 ]) // "organisaatioservice"
-    .factory('OrganisaatioService', function($resource, $log, $q, Config, $http, Koodisto) {
+    .factory('OrganisaatioService', function($resource, $log, $q, Config, $http, Koodisto, AuthService) {
         $log = $log.getInstance('OrganisaatioService');
         var orgHaku = $resource(Config.env['organisaatio.api.rest.url'] + 'organisaatio/hae', null, {
             get: {
@@ -289,6 +289,31 @@ angular.module('Organisaatio', [
                 });
                 return defer.promise;
             },
-            getAllowedKoulutustyypit: getAllowedKoulutustyypit
+            getAllowedKoulutustyypit: getAllowedKoulutustyypit,
+            buildOrganizationSelectionDialog: function(oidRestrictionList) {
+                var deferred = $q.defer();
+
+                etsi({
+                    oidRestrictionList: oidRestrictionList || AuthService.getOrganisations()
+                }).then(function(response) {
+                    var organizationMap = {};
+                    function buildOrganizationMap(organizations) {
+                        _.each(organizations, function(organization) {
+                            organizationMap[organization.oid] = organization;
+                            if (organization.children) {
+                                buildOrganizationMap(organization.children);
+                            }
+                        });
+                    }
+                    buildOrganizationMap(response.organisaatiot);
+
+                    deferred.resolve({
+                        organizations: response.organisaatiot,
+                        organizationMap: organizationMap
+                    });
+                });
+
+                return deferred.promise;
+            }
         };
     });

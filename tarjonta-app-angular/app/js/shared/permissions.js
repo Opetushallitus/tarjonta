@@ -83,13 +83,6 @@ angular.module('TarjontaPermissions', [
             resolveData(defer.promise);
             if (hakutulos.tulokset !== undefined && hakutulos.tulokset.length == 1) {
                 var koulutuksetByOrg = hakutulos.tulokset[0];
-                var koulutus = koulutuksetByOrg.tulokset[0];
-
-                // Järjestettyjä koulutuksia ei voi kopioida tai siirtää
-                if (extraParams.moveOrCopy && koulutus.koulutuksenTarjoajaKomoto) {
-                    defer.resolve(false);
-                    return;
-                }
 
                 AuthService.updateOrg(koulutuksetByOrg.oid).then(function(result) {
                     defer.resolve(result);

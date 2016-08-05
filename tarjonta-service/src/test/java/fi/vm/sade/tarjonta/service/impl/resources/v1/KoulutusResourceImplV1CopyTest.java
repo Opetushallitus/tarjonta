@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 
@@ -194,6 +195,7 @@ public class KoulutusResourceImplV1CopyTest extends SecurityAwareTestBase {
 
         Koulutusmoduuli originalKomo = koulutusmoduuliDAO.insert(getKorkeakouluopintoKomo(fixtures));
         KoulutusmoduuliToteutus originalKomoto = koulutusmoduuliToteutusDAO.insert(getKorkeakouluopintoKomoto(fixtures, originalKomo));
+        originalKomoto.setUniqueExternalId("some-unique-id-1");
 
         List<Koulutusmoduuli> komos = koulutusmoduuliDAO.findAllKomos();
         List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findAll();
@@ -210,6 +212,7 @@ public class KoulutusResourceImplV1CopyTest extends SecurityAwareTestBase {
 
         assertEquals("korkeakouluopinto-komoto-oid", newKomoto.getOid());
         assertEquals("korkeakouluopinto-komo-oid", newKomoto.getKoulutusmoduuli().getOid());
+        assertNull(newKomoto.getUniqueExternalId());
 
         assertEquals(originalKomo.getKoulutuksenTunnisteOid(), newKomoto.getKoulutusmoduuli().getKoulutuksenTunnisteOid());
 
