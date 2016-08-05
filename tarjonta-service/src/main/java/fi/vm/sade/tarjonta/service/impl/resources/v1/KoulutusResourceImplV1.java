@@ -29,8 +29,6 @@ import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
-import fi.vm.sade.tarjonta.shared.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.koodisto.KoulutuskoodiRelations;
 import fi.vm.sade.tarjonta.koodisto.OppilaitosKoodiRelations;
@@ -63,6 +61,7 @@ import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.types.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
@@ -1456,6 +1455,10 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 final OrganisaatioRDTO org = organisaatioService.findByOid(orgOid);
                 if (org == null) {
                     result.addError(createValidationError("organisationOids[" + orgOid + "]", KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID.lower(), orgOid));
+                } else if (komoto.getTarjoajanKoulutus() != null) {
+                    if (!isValidJarjestaja(org, komoto.getTarjoajanKoulutus().getJarjestajaOids())) {
+                        result.addError(createValidationError("organisationOids[" + orgOid + "]", KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID.lower(), orgOid));
+                    }
                 } else if (!oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(
                         orgOid,
                         findKoodistoKoodiKoulutusasteUri(komoto))) {
@@ -1655,6 +1658,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         }
 
         return result;
+    }
+
+    private boolean isValidJarjestaja(OrganisaatioRDTO org, Set<String> validJarjestajat) {
+        Set<String> orgWithParents = Sets.newHashSet(StringUtils.split(org.getParentOidPath(), '|'));
+        orgWithParents.add(org.getOid());
+
+        return !Sets.intersection(orgWithParents, validJarjestajat).isEmpty();
     }
 
     @Override

@@ -56,6 +56,7 @@ public class KoulutusUtilService {
         copy.setTila(TarjontaTila.LUONNOS);
         copy.setOrganisaatio(new OrganisaatioV1RDTO(orgOid, null, null));
         copy.setOpetusTarjoajat(Sets.newHashSet(orgOid));
+        copy.setUniqueExternalId(null);
         return copy;
     }
 

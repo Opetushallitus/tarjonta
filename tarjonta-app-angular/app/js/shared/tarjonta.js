@@ -384,6 +384,41 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     dataFactory.getKoulutusPromise = function(oid) {
         return $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + oid + '?img=true').get().$promise;
     };
+
+    function includesOwnOrganizations(ownOrganizations, candidateOrganizations) {
+        return _.intersection(ownOrganizations, candidateOrganizations).length > 0;
+    }
+
+    dataFactory.getJarjestajaCandidates = function(oid) {
+        var deferred = $q.defer();
+
+        dataFactory.getKoulutus({
+            oid: oid
+        }).$promise.then(function(response) {
+            var koulutus = response.result;
+            var orgOids = koulutus.opetusJarjestajat;
+            var ownOrganizations = AuthService.getOrganisations();
+
+            var promises = _.map(orgOids, function(orgOid) {
+                var deferred = $q.defer();
+
+                OrganisaatioService.byOid(orgOid).then(function(org) {
+                    deferred.resolve(includesOwnOrganizations(ownOrganizations, org.oidAndParentOids));
+                });
+
+                return deferred.promise;
+            });
+
+            $q.all(promises).then(function(orgPermissions) {
+                deferred.resolve(orgOids.filter(function(value, index) {
+                    return orgPermissions[index];
+                }));
+            });
+        });
+
+        return deferred.promise;
+    };
+
     dataFactory.getKoulutuskoodiRelations = function(arg, func) {
         $log.debug('getKoulutuskoodiRelations()');
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix +
