@@ -643,4 +643,17 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
     $scope.isKoulutuksenAlkamiskausiLocked = function() {
         return hasHakukohdes && !AuthService.isUserOph();
     };
+    $scope.isKorkeakouluhaku = function() {
+        return $scope.model.hakux.result.kohdejoukkoUri.indexOf('haunkohdejoukko_12#') !== -1;
+    };
+    $scope.isErillishaku = function() {
+        return $scope.model.hakux.result.hakutapaUri.indexOf('hakutapa_02#') !== -1;
+    };
+    $scope.isKoulutuksetChecked = function() {
+        if(_.isUndefined($scope.model.parameter.PH_KTK)) {
+            return true;
+        } else {
+            return $scope.model.parameter.PH_KTK;
+        }
+    };
 });
