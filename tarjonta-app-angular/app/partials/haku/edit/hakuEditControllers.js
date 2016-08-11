@@ -635,10 +635,10 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         return $scope.model.hakux.result.hakutapaUri.indexOf('hakutapa_02#') !== -1;
     };
     $scope.isKoulutuksetChecked = function() {
-        if(_.isUndefined($scope.model.parameter.PH_KTK)) {
+        if(_.isUndefined($scope.model.parameter.PH_KVT)) {
             return true;
         } else {
-            return $scope.model.parameter.PH_KTK;
+            return $scope.model.parameter.PH_KVT;
         }
     };
 });
