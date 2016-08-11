@@ -69,7 +69,7 @@
         </td>
     </tr>
 
-    <tr ng-if="model.hakux.result.kohdejoukkoUri.indexOf('haunkohdejoukko_12#') !== -1">
+    <tr ng-if="isKorkeakouluhaku()">
         <th data-tt='haku.edit.haunKohdejoukonTarkenne'>Haun kohdejoukon tarkenne</th>
         <td>
             <div koodistocombo koodistouri="'haunkohdejoukontarkenne'"
@@ -158,7 +158,7 @@
     </tr>
 
     <!-- Jos korkeakoulutus -->
-    <tr ng-if="model.hakux.result.kohdejoukkoUri.indexOf('haunkohdejoukko_12#') !== -1">
+    <tr ng-if="isKorkeakouluhaku()">
         <th data-tt="haku.edit.ylioppilastutkinnonHakukelpoisuus">Ylioppilastutkinnon hakukelpoisuus</th>
         <td>
             <input type="checkbox" ng-model="model.hakux.result.ylioppilastutkintoAntaaHakukelpoisuuden" id="yoAntaaHakukelpoisuuden">
@@ -212,6 +212,15 @@
                    ng-required="model.hakux.result.jarjestelmanHakulomake"
                    ng-disabled='model.haku.hakulomake != "SYSTEM"'
                    min="0">
+            <ul>
+                <input data-ng-if="isKorkeakouluhaku() && isErillishaku()"
+                       type="checkbox"
+                       ng-model="model.parameter.PH_KTK" 
+                       name="PH_KTK"
+                       ng-checked="isKoulutuksetChecked()"
+                       ng-disabled='model.haku.hakulomake != "SYSTEM"'>
+                <label data-ng-if="isKorkeakouluhaku() && isErillishaku()" tt='haku.edit.PH_KTK'>Kysytään tietoa vanhoista tutkinnoista</label>
+            </ul>
         </td>
         <td>
             <div show-errors form="hakuForm" field="maxHakukohdes" tt-prefix="haku.edit" field-check="model.showError"></div>
