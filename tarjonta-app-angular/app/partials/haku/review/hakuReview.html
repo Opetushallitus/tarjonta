@@ -122,6 +122,11 @@
                         <br/>
                         <span tt="haku.review.haunTiedot.hakulomake.maxHakukohdes">Hakukohteiden maksimimäärä: </span>
                         {{ model.hakux.result.maxHakukohdes }}
+                        <div ng-show="isKorkeakouluhaku() && isErillishaku()">
+                            <br/>
+                            <span tt="haku.review.haunTiedot.hakulomake.PH_KVT">Kysytään tietoa vanhoista tutkinnoista: </span>
+                            {{ isKoulutuksetChecked() ? t("yes") : t("no") }}
+                        </div>
                         <br/>
                         <span tt="haku.review.haunTiedot.hakulomake.priorisointi">Haussa käytetään priorisointia: </span>
                         {{ model.hakux.result.usePriority ? t("yes") : t("no") }}

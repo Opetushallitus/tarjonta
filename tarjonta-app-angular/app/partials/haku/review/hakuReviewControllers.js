@@ -267,6 +267,19 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
         var aloituspaikat = hakukohde.aloituspaikatKuvaukset || {};
         return aloituspaikat[lang] || aloituspaikat[Object.keys(aloituspaikat)[0]] || hakukohde.aloituspaikat;
     };
+    $scope.isKorkeakouluhaku = function() {
+        return $scope.model.hakux.result.kohdejoukkoUri.indexOf('haunkohdejoukko_12#') !== -1;
+    };
+    $scope.isErillishaku = function() {
+        return $scope.model.hakux.result.hakutapaUri.indexOf('hakutapa_02#') !== -1;
+    };
+    $scope.isKoulutuksetChecked = function() {
+        if(_.isUndefined($scope.parameterit.PH_KVT)) {
+            return true;
+        } else {
+            return $scope.parameterit.PH_KVT.booleanValue;
+        }
+    };
 });
 
 // From http://sheetjs.com/demos/Export2Excel.js
