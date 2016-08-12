@@ -653,7 +653,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         if(_.isUndefined($scope.model.parameter.PH_KVT)) {
             return true;
         } else {
-            return $scope.model.parameter.PH_KVT;
+            return $scope.model.parameter.PH_KVT.booleanValue;
         }
     };
 });
