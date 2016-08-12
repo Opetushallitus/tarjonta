@@ -215,7 +215,7 @@
             <ul>
                 <input data-ng-if="isKorkeakouluhaku() && isErillishaku()"
                        type="checkbox"
-                       ng-model="model.parameter.PH_KVT"
+                       ng-model="model.parameter.PH_KVT.booleanValue"
                        name="PH_KVT"
                        ng-checked="isKoulutuksetChecked()"
                        ng-disabled='model.haku.hakulomake != "SYSTEM"'>
