@@ -198,6 +198,10 @@ public class ConverterV1 {
                     fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.fromValue(haku.getKoulutusmoduuliTyyppi().name()));
         }
 
+        hakuDTO.setAutosyncTarjonta(haku.isAutosyncTarjonta());
+        hakuDTO.setAutosyncTarjontaFrom(haku.getAutosyncTarjontaFrom());
+        hakuDTO.setAutosyncTarjontaTo(haku.getAutosyncTarjontaTo());
+
         return hakuDTO;
     }
 
@@ -300,6 +304,10 @@ public class ConverterV1 {
         } else {
             haku.setParentHaku(null);
         }
+
+        haku.setAutosyncTarjonta(hakuV1RDTO.isAutosyncTarjonta());
+        haku.setAutosyncTarjontaFrom(hakuV1RDTO.getAutosyncTarjontaFrom());
+        haku.setAutosyncTarjontaTo(hakuV1RDTO.getAutosyncTarjontaTo());
 
         return haku;
     }

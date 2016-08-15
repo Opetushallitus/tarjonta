@@ -120,6 +120,15 @@ public class HakuV1RDTO extends BaseV1RDTO {
     @ApiModelProperty(value = "Onko yhden paikan sääntö voimassa haulle ja miksi", required = true)
     private YhdenPaikanSaanto yhdenPaikanSaanto;
 
+    @ApiModelProperty(value = "Käytetäänkö haussa tarjonnan automaattista sykkausta")
+    private boolean autosyncTarjonta = false;
+
+    @ApiModelProperty(value = "Päivämäärä, josta lähin tarjonnan automaattinen synkkaus on käytössä")
+    private Date autosyncTarjontaFrom;
+
+    @ApiModelProperty(value = "Päivämäärä, johon asti tarjonnan automaattinen synkkaus on käytössä")
+    private Date autosyncTarjontaTo;
+
     public void addKoodiMeta(KoodiV1RDTO koodi) {
         if (koodi == null) {
             return;
@@ -385,6 +394,30 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     public YhdenPaikanSaanto getYhdenPaikanSaanto() {
         return yhdenPaikanSaanto;
+    }
+
+    public boolean isAutosyncTarjonta() {
+        return autosyncTarjonta;
+    }
+
+    public void setAutosyncTarjonta(boolean autosyncTarjonta) {
+        this.autosyncTarjonta = autosyncTarjonta;
+    }
+
+    public Date getAutosyncTarjontaFrom() {
+        return autosyncTarjontaFrom;
+    }
+
+    public void setAutosyncTarjontaFrom(Date autosyncTarjontaFrom) {
+        this.autosyncTarjontaFrom = autosyncTarjontaFrom;
+    }
+
+    public Date getAutosyncTarjontaTo() {
+        return autosyncTarjontaTo;
+    }
+
+    public void setAutosyncTarjontaTo(Date autosyncTarjontaTo) {
+        this.autosyncTarjontaTo = autosyncTarjontaTo;
     }
 
     @ApiModel(value = "Yhden paikan säännön voimassaolotieto haulle")

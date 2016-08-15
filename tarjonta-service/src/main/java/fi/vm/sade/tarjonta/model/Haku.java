@@ -166,6 +166,17 @@ public class Haku extends TarjontaBaseEntity {
     @OneToMany(mappedBy = "parentHaku", cascade = CascadeType.ALL)
     private Set<Haku> sisaltyvatHaut = new HashSet<Haku>();
 
+    @Column(name = "autosync_tarjonta")
+    private boolean autosyncTarjonta = false;
+
+    @Column(name = "autosync_tarjonta_from")
+    @Type(type = "date")
+    private Date autosyncTarjontaFrom;
+
+    @Column(name = "autosync_tarjonta_to")
+    @Type(type = "date")
+    private Date autosyncTarjontaTo;
+
     /**
      * If this is true, then the hakukohde choises users make should be arranged
      * in priority order.
@@ -544,4 +555,27 @@ public class Haku extends TarjontaBaseEntity {
         this.kohdejoukonTarkenne = kohdejoukonTarkenne;
     }
 
+    public boolean isAutosyncTarjonta() {
+        return autosyncTarjonta;
+    }
+
+    public void setAutosyncTarjonta(boolean autosyncTarjonta) {
+        this.autosyncTarjonta = autosyncTarjonta;
+    }
+
+    public Date getAutosyncTarjontaFrom() {
+        return autosyncTarjontaFrom;
+    }
+
+    public void setAutosyncTarjontaFrom(Date autosyncTarjontaFrom) {
+        this.autosyncTarjontaFrom = autosyncTarjontaFrom;
+    }
+
+    public Date getAutosyncTarjontaTo() {
+        return autosyncTarjontaTo;
+    }
+
+    public void setAutosyncTarjontaTo(Date autosyncTarjontaTo) {
+        this.autosyncTarjontaTo = autosyncTarjontaTo;
+    }
 }
