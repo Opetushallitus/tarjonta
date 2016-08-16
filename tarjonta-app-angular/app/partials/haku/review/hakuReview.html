@@ -119,11 +119,11 @@
                 <th tt="">Haussa käytetään tarjonnan automaattista synkronointia</th>
                 <td colspan="2">
                     {{ model.hakux.result.autosyncTarjonta ? t("yes") : t("no") }}
-                    <div ng-show="model.hakux.result.autosyncTarjonta">
+                    <span ng-show="model.hakux.result.autosyncTarjonta">
                         <span t-show-date value="model.hakux.result.autosyncTarjontaFrom"></span>
                         <span> &rarr; </span>
                         <span t-show-date value="model.hakux.result.autosyncTarjontaTo"></span>
-                    </div>
+                    </span>
                 </td>
             </tr>
 
