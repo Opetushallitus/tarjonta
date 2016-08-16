@@ -213,6 +213,9 @@ public class Haku extends TarjontaBaseEntity {
         setNimi("en", nimiEn);
     }
 
+    public boolean isKorkeakouluHaku() {
+        return StringUtils.defaultString(getKohdejoukkoUri()).startsWith("haunkohdejoukko_12#");
+    }
     /**
      * Koulutukseen hakeutumisen tyypin tieto. Esim. varsinainen haku,
      * täydennys- tai lisähaku. Arvo on viittaus koodistoon.

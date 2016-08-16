@@ -33,6 +33,7 @@ import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestConverters;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.ValintaperusteetUtil;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.ValintaperustekuvausHelper;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.util.YhdenPaikanSaantoBuilder;
 import fi.vm.sade.tarjonta.service.resources.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
@@ -174,6 +175,7 @@ public class ConverterV1 {
             );
         }
 
+        hakuDTO.setYhdenPaikanSaanto(YhdenPaikanSaantoBuilder.from(haku));
         hakuDTO.setOrganisaatioOids(haku.getOrganisationOids());
         hakuDTO.setTarjoajaOids(haku.getTarjoajaOids());
 
