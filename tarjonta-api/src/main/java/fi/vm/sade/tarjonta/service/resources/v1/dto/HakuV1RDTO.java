@@ -375,12 +375,16 @@ public class HakuV1RDTO extends BaseV1RDTO {
                 );
     }
 
-    private boolean isKorkeakouluHaku() {
+    public boolean isKorkeakouluHaku() {
         return StringUtils.defaultString(getKohdejoukkoUri()).startsWith("haunkohdejoukko_12#");
     }
 
-    public YhdenPaikanSaanto  getYhdenPaikanSaanto() {
-        return YhdenPaikanSaanto.from(this);
+    public void setYhdenPaikanSaanto(YhdenPaikanSaanto yhdenPaikanSaanto) {
+        this.yhdenPaikanSaanto = yhdenPaikanSaanto;
+    }
+
+    public YhdenPaikanSaanto getYhdenPaikanSaanto() {
+        return yhdenPaikanSaanto;
     }
 
     @ApiModel(value = "Yhden paikan säännön voimassaolotieto haulle")
@@ -390,34 +394,10 @@ public class HakuV1RDTO extends BaseV1RDTO {
         @ApiModelProperty(value = "Yhden paikan säännön perustelu", required = true)
         private String syy;
 
-        private static final String JATKOTUTKINTOHAKU_URI = "haunkohdejoukontarkenne_3#";
-        private static final List<String> TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO = Collections.singletonList(JATKOTUTKINTOHAKU_URI);
-
-        public static YhdenPaikanSaanto from(HakuV1RDTO haku) {
-            if (!haku.isKorkeakouluHaku()) {
-                return new YhdenPaikanSaanto(false, "Ei korkeakouluhaku");
-            }
-            if (haku.getKoulutuksenAlkamisVuosi() < 2016 ||
-                (haku.getKoulutuksenAlkamisVuosi() == 2016 && haku.getKoulutuksenAlkamiskausiUri().startsWith("kausi_k"))) {
-                return new YhdenPaikanSaanto(false, "Koulutuksen alkamiskausi ennen syksyä 2016");
-            }
-            String haunKohdeJoukonTarkenne = haku.getKohdejoukonTarkenne();
-            if (StringUtils.isBlank(haunKohdeJoukonTarkenne)) {
-                return new YhdenPaikanSaanto(true, "Korkeakouluhaku ilman kohdejoukon tarkennetta");
-            }
-            for (String tarkenne : TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO) {
-                if (haunKohdeJoukonTarkenne.startsWith(tarkenne)) {
-                    return new YhdenPaikanSaanto(true, String.format("Kohdejoukon tarkenne on '%s'", haunKohdeJoukonTarkenne));
-                }
-            }
-            return new YhdenPaikanSaanto(false, String.format("Kohdejoukon tarkenne on '%s', sääntö on voimassa tarkenteille %s",
-                haunKohdeJoukonTarkenne, TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO));
-        }
-
         public YhdenPaikanSaanto() {
         }
 
-        private YhdenPaikanSaanto(boolean voimassa, String syy) {
+        public YhdenPaikanSaanto(boolean voimassa, String syy) {
             this.voimassa = voimassa;
             this.syy = syy;
         }

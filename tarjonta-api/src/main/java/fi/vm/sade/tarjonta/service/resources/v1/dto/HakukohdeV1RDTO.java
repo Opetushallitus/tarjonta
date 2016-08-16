@@ -93,6 +93,16 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     @ApiModelProperty(value = "Onko haulle asetettu hakulomakkeen url ylikirjoitettu hakukohdekohtaisella urlilla")
     private Boolean overridesHaunHakulomakeUrl;
     private String ohjeetUudelleOpiskelijalle;
+    @ApiModelProperty(value = "Onko yhden paikan sääntö voimassa hakukohteelle ja miksi", required = true)
+    private HakuV1RDTO.YhdenPaikanSaanto yhdenPaikanSaanto;
+
+    public HakuV1RDTO.YhdenPaikanSaanto getYhdenPaikanSaanto() {
+        return yhdenPaikanSaanto;
+    }
+
+    public void setYhdenPaikanSaanto(HakuV1RDTO.YhdenPaikanSaanto yhdenPaikanSaanto) {
+        this.yhdenPaikanSaanto = yhdenPaikanSaanto;
+    }
 
     public String getHakukohteenNimi() {
         return hakukohteenNimi;
