@@ -30,6 +30,8 @@ public class YhdenPaikanSaantoBuilder {
             if (isBeforeSyksy2016) {
                 return new YhdenPaikanSaanto(false, "Koulutuksen alkamiskausi ennen syksyä 2016");
             }
+        } else {
+            return new YhdenPaikanSaanto(false, "Koulutuksella ei ole alkamisvuotta ja alkamiskautta");
         }
         String haunKohdeJoukonTarkenne = haku.getKohdejoukonTarkenne();
         if (StringUtils.isBlank(haunKohdeJoukonTarkenne)) {
