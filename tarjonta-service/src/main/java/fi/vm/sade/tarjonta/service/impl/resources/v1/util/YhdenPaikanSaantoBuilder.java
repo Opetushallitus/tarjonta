@@ -23,8 +23,13 @@ public class YhdenPaikanSaantoBuilder {
         if (!haku.isKorkeakouluHaku()) {
             return new YhdenPaikanSaanto(false, "Ei korkeakouluhaku");
         }
-        if (isBeforeSyksy2016(haku)) {
-            return new YhdenPaikanSaanto(false, "Koulutuksen alkamiskausi ennen syksyä 2016");
+        boolean hasAlkamisVuosiAndUri = haku.getKoulutuksenAlkamisVuosi() != null && haku.getKoulutuksenAlkamiskausiUri() != null;
+        if(hasAlkamisVuosiAndUri) {
+            boolean isBeforeSyksy2016 = haku.getKoulutuksenAlkamisVuosi() < 2016 ||
+                    (haku.getKoulutuksenAlkamisVuosi() == 2016 && haku.getKoulutuksenAlkamiskausiUri().startsWith("kausi_k"));
+            if (isBeforeSyksy2016) {
+                return new YhdenPaikanSaanto(false, "Koulutuksen alkamiskausi ennen syksyä 2016");
+            }
         }
         String haunKohdeJoukonTarkenne = haku.getKohdejoukonTarkenne();
         if (StringUtils.isBlank(haunKohdeJoukonTarkenne)) {
@@ -85,11 +90,5 @@ public class YhdenPaikanSaantoBuilder {
             }
         });
     }
-
-    private static boolean isBeforeSyksy2016(Haku haku) {
-        return haku.getKoulutuksenAlkamisVuosi() < 2016 ||
-                (haku.getKoulutuksenAlkamisVuosi() == 2016 && haku.getKoulutuksenAlkamiskausiUri().startsWith("kausi_k"));
-    }
-
 
 }
