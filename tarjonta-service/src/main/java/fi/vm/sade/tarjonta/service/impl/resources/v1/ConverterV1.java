@@ -626,7 +626,7 @@ public class ConverterV1 {
         );
         hakukohdeRDTO.setOverridesHaunHakulomakeUrl(hakukohde.getHakulomakeUrl() != null);
         hakukohdeRDTO.setOhjeetUudelleOpiskelijalle(hakukohde.getOhjeetUudelleOpiskelijalle());
-
+        hakukohdeRDTO.setYhdenPaikanSaanto(YhdenPaikanSaantoBuilder.from(hakukohde));
         convertTarjoatiedotToDTO(hakukohde, hakukohdeRDTO);
         convertHakukohteenNimetToDTO(hakukohde, hakukohdeRDTO, null);
         convertOpetuskieletToDTO(hakukohde, hakukohdeRDTO);
