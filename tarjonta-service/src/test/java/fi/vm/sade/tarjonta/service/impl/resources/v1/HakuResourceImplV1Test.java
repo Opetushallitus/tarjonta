@@ -5,17 +5,23 @@ import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
 import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.util.YhdenPaikanSaantoBuilder;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 
 import static org.junit.Assert.*;
 import static org.junit.internal.matchers.StringContains.containsString;
@@ -86,37 +92,67 @@ public class HakuResourceImplV1Test extends TestMockBase {
     }
 
     @Test
-    public void thatHakuSingleStudyPlaceIsResolved() {
-        HakuV1RDTO hakuDTO = new HakuV1RDTO();
-        hakuDTO.setKoulutuksenAlkamisVuosi(2016);
-        hakuDTO.setKoulutuksenAlkamiskausiUri("kausi_s#1");
+    public void thatHakuAndHakukohdeSingleStudyPlaceIsResolved() {
+        Haku haku = new Haku();
+        Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setHaku(haku);
+        haku.setKoulutuksenAlkamisVuosi(2016);
+        haku.setKoulutuksenAlkamiskausiUri("kausi_s#1");
 
-        hakuDTO.setKohdejoukkoUri("haunkohdejoukko_10#1");
-        assertEquals(false, hakuDTO.getYhdenPaikanSaanto().isVoimassa());
-        assertEquals("Ei korkeakouluhaku", hakuDTO.getYhdenPaikanSaanto().getSyy());
+        haku.setKohdejoukkoUri("haunkohdejoukko_10#1");
+        assertEquals(false, YhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
+        assertEquals("Ei korkeakouluhaku", YhdenPaikanSaantoBuilder.from(hakukohde).getSyy());
 
-        hakuDTO.setKohdejoukkoUri("haunkohdejoukko_12#1");
-        hakuDTO.setKohdejoukonTarkenne("");
-        assertEquals(true, hakuDTO.getYhdenPaikanSaanto().isVoimassa());
-        assertEquals("Korkeakouluhaku ilman kohdejoukon tarkennetta", hakuDTO.getYhdenPaikanSaanto().getSyy());
+        haku.setKohdejoukkoUri("haunkohdejoukko_12#1");
+        haku.setKohdejoukonTarkenne("");
+        assertEquals(true, YhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
+        assertEquals("Korkeakouluhaku ilman kohdejoukon tarkennetta", YhdenPaikanSaantoBuilder.from(hakukohde).getSyy());
 
-        hakuDTO.setKohdejoukonTarkenne("haunkohdejoukontarkenne_3#1");
-        assertEquals(true, hakuDTO.getYhdenPaikanSaanto().isVoimassa());
-        assertThat(hakuDTO.getYhdenPaikanSaanto().getSyy(), containsString("Kohdejoukon tarkenne"));
+        haku.setKohdejoukonTarkenne("haunkohdejoukontarkenne_3#1");
+        assertEquals(true, YhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
+        assertThat(YhdenPaikanSaantoBuilder.from(hakukohde).getSyy(), containsString("Kohdejoukon tarkenne"));
 
-        hakuDTO.setKohdejoukonTarkenne("haunkohdejoukontarkenne_4#1");
-        assertEquals(false, hakuDTO.getYhdenPaikanSaanto().isVoimassa());
-        assertThat(hakuDTO.getYhdenPaikanSaanto().getSyy(), containsString("Kohdejoukon tarkenne"));
+        haku.setKohdejoukonTarkenne("haunkohdejoukontarkenne_4#1");
+        assertEquals(false, YhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
+        assertThat(YhdenPaikanSaantoBuilder.from(hakukohde).getSyy(), containsString("Kohdejoukon tarkenne"));
 
-        hakuDTO.setKoulutuksenAlkamisVuosi(2016);
-        hakuDTO.setKoulutuksenAlkamiskausiUri("kausi_k#1");
-        assertEquals(false, hakuDTO.getYhdenPaikanSaanto().isVoimassa());
-        assertThat(hakuDTO.getYhdenPaikanSaanto().getSyy(), containsString("Koulutuksen alkamiskausi ennen syksyä 2016"));
+        haku.setKoulutuksenAlkamisVuosi(2016);
+        haku.setKoulutuksenAlkamiskausiUri("kausi_k#1");
+        assertEquals(false, YhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
+        assertThat(YhdenPaikanSaantoBuilder.from(hakukohde).getSyy(), containsString("Koulutuksen alkamiskausi ennen syksyä 2016"));
 
-        hakuDTO.setKoulutuksenAlkamisVuosi(2015);
-        hakuDTO.setKoulutuksenAlkamiskausiUri("kausi_s#1");
-        assertEquals(false, hakuDTO.getYhdenPaikanSaanto().isVoimassa());
-        assertThat(hakuDTO.getYhdenPaikanSaanto().getSyy(), containsString("Koulutuksen alkamiskausi ennen syksyä 2016"));
+        haku.setKoulutuksenAlkamisVuosi(2015);
+        haku.setKoulutuksenAlkamiskausiUri("kausi_s#1");
+        assertEquals(false, YhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
+        assertThat(YhdenPaikanSaantoBuilder.from(hakukohde).getSyy(), containsString("Koulutuksen alkamiskausi ennen syksyä 2016"));
+
+        haku.setHakutapaUri("hakutapa_03");
+        assertEquals(false, YhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
+        assertThat(YhdenPaikanSaantoBuilder.from(hakukohde).getSyy(), containsString("hakukohteella ei ole oikean tilaista koulutusmoduulia"));
+
+        KoulutusmoduuliToteutus komoto1 = new KoulutusmoduuliToteutus();
+        komoto1.setTila(TarjontaTila.JULKAISTU);
+        komoto1.setAlkamisVuosi(2010);
+        komoto1.setAlkamiskausiUri("kausi_k");
+        KoulutusmoduuliToteutus komoto2 = new KoulutusmoduuliToteutus();
+        komoto2.setTila(TarjontaTila.JULKAISTU);
+        komoto2.setAlkamisVuosi(2016);
+        komoto2.setAlkamiskausiUri("kausi_k");
+        hakukohde.setKoulutusmoduuliToteutuses(new HashSet<>(Arrays.asList(komoto1,komoto2)));
+        assertEquals(false, YhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
+        assertThat(YhdenPaikanSaantoBuilder.from(hakukohde).getSyy(), containsString("hakukohteella on liian monta oikean tilaista koulutusmoduulia"));
+
+        hakukohde.setKoulutusmoduuliToteutuses(new HashSet<>(Arrays.asList(komoto2)));
+        assertEquals(false, YhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
+        assertThat(YhdenPaikanSaantoBuilder.from(hakukohde).getSyy(), containsString("hakukohteen alkamiskausi ja vuosi on ennen syksyä 2016"));
+
+        KoulutusmoduuliToteutus komoto3 = new KoulutusmoduuliToteutus();
+        komoto3.setTila(TarjontaTila.JULKAISTU);
+        komoto3.setAlkamisVuosi(2016);
+        komoto3.setAlkamiskausiUri("kausi_s");
+        hakukohde.setKoulutusmoduuliToteutuses(new HashSet<>(Arrays.asList(komoto3)));
+        assertEquals(true, YhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
+        assertThat(YhdenPaikanSaantoBuilder.from(hakukohde).getSyy(), containsString("Jatkuvan haun hakukohteen alkamiskausi ja vuosi on jälkeen kevään 2016"));
     }
 
     private HakuaikaV1RDTO createHakuaika(Date start, Date end) {
