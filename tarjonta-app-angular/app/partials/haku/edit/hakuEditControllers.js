@@ -390,6 +390,16 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         }
     };
     /**
+      * checkAutosyncTarjonta()
+      *
+      * Called when the automatic synchronization of tarjonta is toggled.
+      *
+      * @returns {undefined}
+      */
+    $scope.checkAutosyncTarjonta = function() {
+        $log.debug('checkAutosyncTarjonta');
+    };
+    /**
                * This method is called when halulomake selection changes.
                *
                * Accepted states are: SYSTEM, OTHER, NONE

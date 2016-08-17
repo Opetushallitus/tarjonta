@@ -182,6 +182,18 @@
         </td>
     </tr>
 
+    <!-- Tarjonnan automaattinen synkronointi -->
+    <tr>
+        <th data-tt='haku.edit.tarjonnanSynkronointi'>Tarjonnan synkronointi</th>
+        <td>
+            <input id="autosync-tarjonta" type="checkbox" ng-model="model.hakux.result.autosyncTarjonta" ng-change="checkAutosyncTarjonta()">
+            <label for="autosync-tarjonta" data-tt="">Haussa käytetään tarjonnan automaattista synkronointia</label>
+        </td>
+        <td>
+        </td>
+    </tr>
+
+
     <!-- Priorisointi -->
 
     <tr>
