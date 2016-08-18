@@ -27,6 +27,13 @@ Ajoympäristöä varten tarvitaan:
 
 ## Solr-palvelin
 
+- Asenna Ant ja Ivy (jos ei jo ole asennettuna)
+  Esim.
+  ```
+  brew install ant
+  ant ivy-bootstrap
+  ```
+
 - Lataa ja pura Solr haluamaasi paikkaan
 
   ```

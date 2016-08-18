@@ -170,11 +170,9 @@ public class Haku extends TarjontaBaseEntity {
     private boolean autosyncTarjonta = false;
 
     @Column(name = "autosync_tarjonta_from")
-    @Type(type = "date")
     private Date autosyncTarjontaFrom;
 
     @Column(name = "autosync_tarjonta_to")
-    @Type(type = "date")
     private Date autosyncTarjontaTo;
 
     /**
