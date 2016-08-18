@@ -187,7 +187,22 @@
         <th data-tt='haku.edit.tarjonnanSynkronointi'>Tarjonnan synkronointi</th>
         <td>
             <input id="autosync-tarjonta" type="checkbox" ng-model="model.hakux.result.autosyncTarjonta" ng-change="checkAutosyncTarjonta()">
-            <label for="autosync-tarjonta" data-tt="">Haussa käytetään tarjonnan automaattista synkronointia</label>
+            <label for="autosync-tarjonta" data-tt="haku.edit.kaytetaanTarjonnanSykronointia">Haussa käytetään tarjonnan automaattista synkronointia</label>
+        </td>
+        <td>
+        </td>
+    </tr>
+
+    <!-- Tarjonnan synkronoinnin aikaväli -->
+    <tr ng-show="model.hakux.result.autosyncTarjonta">
+        <th data-tt='haku.edit.tarjonnanSynkronointiAika'>Synkronointi aikavälillä</th>
+        <td>
+            <t-date-time type="long" name="alkuPvm" timestamp="true" scope-model="model.hakux.result.autosyncTarjontaFrom"
+                         tt-bounds="haku.edit.autosyncTarjonta.alkuPvm.error"
+                         max="model.hakux.result.autosyncTarjontaTo"></t-date-time>
+            <t-date-time type="long" name="loppuPvm" timestamp="true" scope-model="model.hakux.result.autosyncTarjontaTo"
+                         tt-bounds="haku.edit.autosyncTarjonta.loppuPvm.error"
+                         min="model.hakux.result.autosyncTarjontaFrom"></t-date-time>
         </td>
         <td>
         </td>

@@ -398,6 +398,11 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
       */
     $scope.checkAutosyncTarjonta = function() {
         $log.debug('checkAutosyncTarjonta');
+        if (!$scope.model.hakux.result.autosyncTarjonta) {
+            $scope.model.hakux.result.autosyncTarjontaFrom = null;
+            $scope.model.hakux.result.autosyncTarjontaTo = null;
+        }
+
     };
     /**
                * This method is called when halulomake selection changes.
