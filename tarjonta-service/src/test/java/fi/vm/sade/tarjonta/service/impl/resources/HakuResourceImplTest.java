@@ -114,7 +114,7 @@ public class HakuResourceImplTest extends TestUtilityBase {
 
         LOG.info("testSearchHaku()... done.");
     }
-
+    
 
 
 }

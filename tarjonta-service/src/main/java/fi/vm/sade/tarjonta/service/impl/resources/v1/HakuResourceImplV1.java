@@ -955,4 +955,25 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         return criteriaList;
     }
+
+    @Override
+    public ResultV1RDTO<Set<String>> findOidsToSyncTarjontaFor() {
+        ResultV1RDTO result = new ResultV1RDTO<>();
+        Date today = new Date();
+
+        try {
+            Set<String> oids = hakuDAO.findHakusToSync(today);
+            if (!oids.isEmpty()) {
+                result.setStatus(ResultStatus.OK);
+                result.setResult(oids);
+            }
+            else {
+                result.setStatus(ResultStatus.NOT_FOUND);
+            }
+        }
+        catch (Exception ex) {
+            createSystemErrorFromException(ex, result);
+        }
+        return result;
+    }
 }

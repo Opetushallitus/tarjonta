@@ -130,4 +130,10 @@ public interface HakuV1Resource {
     @Path("{oid}/hakukohteidenOrganisaatiot")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<Set<String>> getHakukohteidenOrganisaatioOids(@PathParam("oid") String oid);
+
+    @GET
+    @Path("/findOidsToSyncTarjontaFor")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Hakee oidit hauille, joille tulee suorittaa automaattinen tarjonnan synkronointi.")
+    public ResultV1RDTO<Set<String>> findOidsToSyncTarjontaFor();
 }
