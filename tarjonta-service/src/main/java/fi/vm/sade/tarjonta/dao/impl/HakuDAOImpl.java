@@ -33,6 +33,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import java.util.*;
 
 /**
@@ -312,6 +313,20 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
                 .list(qRyhmaliitos.ryhmaOid);
     }
 
+    @Override
+    public Set<String> findHakusToSync(Date date) {
+        String hql =
+                "select h.oid " +
+                "from Haku h " +
+                "where h.autosyncTarjonta = true and " +
+                "((h.autosyncTarjontaFrom is null or h.autosyncTarjontaFrom <= :date) and " +
+                "(h.autosyncTarjontaTo is null or h.autosyncTarjontaTo >= :date))";
+
+        Query query = getEntityManager().createQuery(hql);
+        query.setParameter("date", date, TemporalType.TIMESTAMP);
+        return new HashSet<>(query.getResultList());
+    }
+
     private Set<String> getKomotoTarjoajaOrganisaatioOids(String hakuOid) {
         String hql = "select komoto.tarjoaja " +
                 "from Hakukohde hk " +
@@ -319,7 +334,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
                 "where hk.haku.oid = :hakuOid";
         Query query = getEntityManager().createQuery(hql);
         query.setParameter("hakuOid", hakuOid);
-        return new HashSet<String>(query.getResultList());
+        return new HashSet<>(query.getResultList());
     }
 
     private Set<String> getMontaTarjoajaaOrganisaatioOids(String hakuOid) {
@@ -329,6 +344,6 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
                 "where hk.haku.oid = :hakuOid";
         Query query = getEntityManager().createQuery(hql);
         query.setParameter("hakuOid", hakuOid);
-        return new HashSet<String>(query.getResultList());
+        return new HashSet<>(query.getResultList());
     }
 }
