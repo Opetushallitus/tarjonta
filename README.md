@@ -10,7 +10,7 @@ Tarjonnan tarvitsemat ulkoiset palveluriippuvuudet tulevat
 
 Ajoympäristöä varten tarvitaan:
 
-- Java 7 ja [Java Cryptography Extension (JCE)](http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html)
+- Java 8 ja [Java Cryptography Extension (JCE)](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)
 - Tomcat (projektissa ei ole embedded palvelinta)
 - PostgreSQL-palvelin
 - Solr-palvelin
