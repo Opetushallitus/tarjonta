@@ -113,11 +113,11 @@ public class IndexerResource {
                     // try 3 times
                     for (int i = 0; i < 5; i++) {
                         try {
-                            logger.info("Indexing {} docs, try {}", localDocs.size(), i);
+                            logger.debug("Indexing {} docs, try {}", localDocs.size(), i);
                             solr.add(localDocs);
-                            logger.info("Committing changes to index.");
+                            logger.debug("Committing changes to index.");
                             solr.commit(true, true, false);
-                            logger.info("Done.");
+                            logger.debug("Done.");
                             return; //exit on success!
                         } catch (Exception e) {
                             lastException = e;
@@ -155,10 +155,10 @@ public class IndexerResource {
 
     private static void afterCommit(TransactionSynchronization sync) {
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
-            logger.info("Transaction synchronization is ACTIVE. Executing later!");
+            logger.debug("Transaction synchronization is ACTIVE. Executing later!");
             TransactionSynchronizationManager.registerSynchronization(sync);
         } else {
-            logger.info("Transaction synchronization is NOT ACTIVE. Executing right now!");
+            logger.debug("Transaction synchronization is NOT ACTIVE. Executing right now!");
             sync.afterCommit();
         }
     }
@@ -178,11 +178,11 @@ public class IndexerResource {
             for (int j = index; j < index + batch_size && j < hakukohdeIdt.size(); j++) {
 
                 Long hakukohdeId = hakukohdeIdt.get(j);
-                logger.info(j + ". Fetching hakukohde:" + hakukohdeId);
+                logger.debug(j + ". Fetching hakukohde:" + hakukohdeId);
                 docs.addAll(hakukohdeConverter.apply(hakukohdeId));
             }
             index += batch_size;
-            logger.info("indexing:" + docs.size() + " docs");
+            logger.debug("indexing:" + docs.size() + " docs");
             index(hakukohdeSolr, docs);
             docs.clear();
         } while (index < hakukohdeIdt.size());
@@ -197,7 +197,7 @@ public class IndexerResource {
         for (Long hakukohdeId : hakukohdeIds) {
             docs.addAll(hakukohdeConverter.apply(hakukohdeId));
             if (docs.size() > batch_size) {
-                logger.info("indexing:" + docs.size() + " docs");
+                logger.debug("indexing:" + docs.size() + " docs");
                 hakukohdeSolr.add(docs);
                 docs.clear();
             }
@@ -229,7 +229,7 @@ public class IndexerResource {
             for (int j = index; j < index + batch_size && j < koulutukset.size(); j++) {
 
                 Long koulutusId = koulutukset.get(j);
-                logger.info(j + ". Fetching koulutus:" + koulutusId);
+                logger.debug(j + ". Fetching koulutus:" + koulutusId);
                 docs.addAll(koulutusConverter.apply(koulutusId));
 
                 // Reindex sibling komotos
@@ -246,7 +246,7 @@ public class IndexerResource {
                 }
             }
             index += batch_size;
-            logger.info("indexing:" + docs.size() + " docs");
+            logger.debug("indexing:" + docs.size() + " docs");
             index(koulutusSolr, docs);
             docs.clear();
         } while (index < koulutukset.size());
