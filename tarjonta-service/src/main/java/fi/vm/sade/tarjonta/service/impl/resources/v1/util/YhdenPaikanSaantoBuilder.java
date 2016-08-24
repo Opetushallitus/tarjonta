@@ -33,17 +33,14 @@ public class YhdenPaikanSaantoBuilder {
         } else {
             return new YhdenPaikanSaanto(false, "Koulutuksella ei ole alkamisvuotta ja alkamiskautta");
         }
-        String haunKohdeJoukonTarkenne = haku.getKohdejoukonTarkenne();
-        if (StringUtils.isBlank(haunKohdeJoukonTarkenne)) {
+        Boolean ypsKohdejoukontarkenne = haunKohdejoukontarkenneYPSYhteensopiva(haku);
+        if(ypsKohdejoukontarkenne == null) {
             return new YhdenPaikanSaanto(true, "Korkeakouluhaku ilman kohdejoukon tarkennetta");
-        }
-        for (String tarkenne : TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO) {
-            if (haunKohdeJoukonTarkenne.startsWith(tarkenne)) {
-                return new YhdenPaikanSaanto(true, String.format("Kohdejoukon tarkenne on '%s'", haunKohdeJoukonTarkenne));
-            }
+        } else if(Boolean.TRUE.equals(ypsKohdejoukontarkenne)){
+            return new YhdenPaikanSaanto(true, String.format("Kohdejoukon tarkenne on '%s'", haku.getKohdejoukonTarkenne()));
         }
         return new YhdenPaikanSaanto(false, String.format("Kohdejoukon tarkenne on '%s', sääntö on voimassa tarkenteille %s",
-                haunKohdeJoukonTarkenne, TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO));
+                    haku.getKohdejoukonTarkenne(), TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO));
     }
 
     public static YhdenPaikanSaanto from(Hakukohde hakukohde) {
@@ -53,6 +50,10 @@ public class YhdenPaikanSaantoBuilder {
             return yhdenPaikanSaantoBasedOnHaku;
         }
         if(haku.isKorkeakouluHaku()) {
+            Boolean ypsKohdejoukontarkenne = haunKohdejoukontarkenneYPSYhteensopiva(haku);
+            if (!Boolean.TRUE.equals(ypsKohdejoukontarkenne)) {
+                return yhdenPaikanSaantoBasedOnHaku;
+            }
             if(haku.isJatkuva()) {
                 Collection<KoulutusmoduuliToteutus> validKomotos = filterOnlyValidKomotos(hakukohde.getKoulutusmoduuliToteutuses());
                 if(validKomotos.isEmpty()) {
@@ -92,5 +93,16 @@ public class YhdenPaikanSaantoBuilder {
             }
         });
     }
-
+    private static Boolean haunKohdejoukontarkenneYPSYhteensopiva(Haku haku) {
+        String haunKohdeJoukonTarkenne = haku.getKohdejoukonTarkenne();
+        if (StringUtils.isBlank(haunKohdeJoukonTarkenne)) {
+            return null;
+        }
+        for (String tarkenne : TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO) {
+            if (haunKohdeJoukonTarkenne.startsWith(tarkenne)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
