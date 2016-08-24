@@ -127,6 +127,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
         assertThat(YhdenPaikanSaantoBuilder.from(hakukohde).getSyy(), containsString("Koulutuksen alkamiskausi ennen syksyä 2016"));
 
         haku.setHakutapaUri("hakutapa_03");
+        haku.setKohdejoukonTarkenne("haunkohdejoukontarkenne_3#1");
         assertEquals(false, YhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
         assertThat(YhdenPaikanSaantoBuilder.from(hakukohde).getSyy(), containsString("hakukohteella ei ole oikean tilaista koulutusmoduulia"));
 
@@ -153,6 +154,9 @@ public class HakuResourceImplV1Test extends TestMockBase {
         hakukohde.setKoulutusmoduuliToteutuses(new HashSet<>(Arrays.asList(komoto3)));
         assertEquals(true, YhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
         assertThat(YhdenPaikanSaantoBuilder.from(hakukohde).getSyy(), containsString("Jatkuvan haun hakukohteen alkamiskausi ja vuosi on jälkeen kevään 2016"));
+
+        haku.setKohdejoukonTarkenne("haunkohdejoukontarkenne_4#1");
+        assertEquals(false, YhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
     }
 
     private HakuaikaV1RDTO createHakuaika(Date start, Date end) {
