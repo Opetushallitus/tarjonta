@@ -249,21 +249,21 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
                 result.put(PERMISSION_UPDATE, true);
                 result.put(PERMISSION_COPY, true); // If can update can copy?
 
-                LOG.info("  (permission) can update/copy hakukohde: {}", key);
+                LOG.debug("  (permission) can update/copy hakukohde: {}", key);
             } catch (Exception ex) {
                 permissionCanUpdateHakukohde = false;
                 result.put(PERMISSION_UPDATE, false);
                 result.put(PERMISSION_COPY, false);
 
-                LOG.info("  (permission) cannot update/copy hakukohde: {}", key);
+                LOG.debug("  (permission) cannot update/copy hakukohde: {}", key);
             }
             
             try {
                 permissionChecker.checkRemoveHakukohde(key);
-                LOG.info("  (permission) can remove hakukohde: {}", key);
+                LOG.debug("  (permission) can remove hakukohde: {}", key);
                 result.put(PERMISSION_REMOVE, true);
             } catch (Exception ex) {
-                LOG.info("  (permission) cannot remove hakukohde: {}", key);
+                LOG.debug("  (permission) cannot remove hakukohde: {}", key);
                 result.put(PERMISSION_REMOVE, false);                
             }
             
