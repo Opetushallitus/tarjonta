@@ -18,10 +18,16 @@
         <powermock.version>1.4.12</powermock.version>
         <webapp.port>8084</webapp.port>
         <skipDbDiagramGenerate>false</skipDbDiagramGenerate>
+        <postgresql.version>9.4.1209</postgresql.version>
     </properties>
 
     <dependencies>
-
+        <!-- Postgresql -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-client-support-distributed-ehcache</artifactId>
