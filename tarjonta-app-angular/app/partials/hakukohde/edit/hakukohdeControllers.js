@@ -133,53 +133,60 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
         if ($scope.model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS') {
             $scope.loadPainotettavatOppiainevaihtoehdot();
         }
+        var appendOrReplaceHakukohteenNimi = function(currentUri, koulutusohjelmanKoodi) {
+            var koodi = {
+                uri: koulutusohjelmanKoodi.koodiUri +
+                '#' + koulutusohjelmanKoodi.koodiVersio,
+                label: koulutusohjelmanKoodi.koodiNimi,
+                uriWithoutVersion: koulutusohjelmanKoodi.koodiUri,
+                version: parseInt(koulutusohjelmanKoodi.koodiVersio)
+            };
+
+            // Default index -> append new item
+            var index = $scope.model.hakukohteenNimet.length;
+
+            var sameKoodi = _.find($scope.model.hakukohteenNimet, function(obj, i) {
+                if (obj.uriWithoutVersion === koodi.uriWithoutVersion) {
+                    index = i; // Prev koodi position in array
+                    return true;
+                }
+            });
+
+            // Same koodi, but older version -> skip
+            if (sameKoodi && koodi.version < sameKoodi.version) {
+                return;
+            }
+
+            // Append or replace (depends on index)
+            $scope.model.hakukohteenNimet[index] = koodi;
+
+            // Update model value to newest koodi version
+            if (currentUri === koodi.uriWithoutVersion) {
+                $scope.model.hakukohde.hakukohteenNimiUri = currentUri + '#' + koodi.version;
+            }
+        };
         var populateHakukohteenNimetByKoulutus = function(koulutus) {
             var uri = koulutus.koulutusohjelma.uri ? koulutus.koulutusohjelma.uri : koulutus.koulutuskoodi.uri;
             var pohjakoulutusvaatimus = koulutus.pohjakoulutusvaatimus;
 
             var currentUri = window.oph.removeKoodiVersion($scope.model.hakukohde.hakukohteenNimiUri || '');
-
+            var kaytettavaKoodisto = $scope.model.hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA' ? 'aikuhakukohteet' : 'hakukohteet';
             Koodisto.getAlapuolisetKoodit(uri, AuthService.getLanguage())
             .then(function(koulutusohjelmanKoodit) {
                 angular.forEach(koulutusohjelmanKoodit, function(koulutusohjelmanKoodi) {
-                    if (koulutusohjelmanKoodi.koodiKoodisto === 'hakukohteet') {
-                        Koodisto.getYlapuolisetKoodit(koulutusohjelmanKoodi.koodiUri, AuthService.getLanguage())
-                        .then(function(hakukohteenYlapuolisetKoodit) {
-                            angular.forEach(hakukohteenYlapuolisetKoodit, function(hakukohteenYlapuolinenKoodi) {
-                                if (hakukohteenYlapuolinenKoodi.koodiUri === pohjakoulutusvaatimus.uri) {
-                                    var koodi = {
-                                        uri: koulutusohjelmanKoodi.koodiUri +
-                                            '#' + koulutusohjelmanKoodi.koodiVersio,
-                                        label: koulutusohjelmanKoodi.koodiNimi,
-                                        uriWithoutVersion: koulutusohjelmanKoodi.koodiUri,
-                                        version: parseInt(koulutusohjelmanKoodi.koodiVersio)
-                                    };
-
-                                    // Default index -> append new item
-                                    var index = $scope.model.hakukohteenNimet.length;
-
-                                    var sameKoodi = _.find($scope.model.hakukohteenNimet, function(obj, i) {
-                                        if (obj.uriWithoutVersion === koodi.uriWithoutVersion) {
-                                            index = i; // Prev koodi position in array
-                                            return true;
+                    if (koulutusohjelmanKoodi.koodiKoodisto === kaytettavaKoodisto) {
+                        if(kaytettavaKoodisto === 'aikuhakukohteet') {
+                            appendOrReplaceHakukohteenNimi(currentUri, koulutusohjelmanKoodi);
+                        } else {
+                            Koodisto.getYlapuolisetKoodit(koulutusohjelmanKoodi.koodiUri, AuthService.getLanguage())
+                                .then(function(hakukohteenYlapuolisetKoodit) {
+                                    angular.forEach(hakukohteenYlapuolisetKoodit, function(hakukohteenYlapuolinenKoodi) {
+                                        if (hakukohteenYlapuolinenKoodi.koodiUri === pohjakoulutusvaatimus.uri) {
+                                            appendOrReplaceHakukohteenNimi(currentUri, koulutusohjelmanKoodi);
                                         }
                                     });
-
-                                    // Same koodi, but older version -> skip
-                                    if (sameKoodi && koodi.version < sameKoodi.version) {
-                                        return;
-                                    }
-
-                                    // Append or replace (depends on index)
-                                    $scope.model.hakukohteenNimet[index] = koodi;
-
-                                    // Update model value to newest koodi version
-                                    if (currentUri === koodi.uriWithoutVersion) {
-                                        $scope.model.hakukohde.hakukohteenNimiUri = currentUri + '#' + koodi.version;
-                                    }
-                                }
-                            });
-                        });
+                                });
+                        }
                     }
                 });
             });
