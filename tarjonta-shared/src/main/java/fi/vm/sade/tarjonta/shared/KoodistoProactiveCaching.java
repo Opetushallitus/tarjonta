@@ -42,13 +42,11 @@ public class KoodistoProactiveCaching {
     }
 
     public KoodiType getKoodi(String koodi) {
+        String[] koodiAndVersion = TarjontaKoodistoHelper.splitKoodiURIWithVersion(koodi);
+        if("-1".equals(koodiAndVersion[1])) {
+            return koodiMap.get(koodiAndVersion[0]);
+        }
         return koodiMap.get(koodi);
-    }
-
-    public KoodiType getKoodi(String koodi, Integer version) {
-        String key = koodi + "#" + version;
-
-        return koodiMap.get(key);
     }
 
 }
