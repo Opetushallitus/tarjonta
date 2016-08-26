@@ -7,7 +7,7 @@
 
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
     
-        <non-jta-data-source>java:comp/env/jdbc/tarjonta</non-jta-data-source>
+        <non-jta-data-source>dbDataSource</non-jta-data-source>
         <!-- oid service entities: -->
         <class>fi.vm.sade.oid.model.OID</class>
     	<class>fi.vm.sade.oid.model.NodeClass</class>
