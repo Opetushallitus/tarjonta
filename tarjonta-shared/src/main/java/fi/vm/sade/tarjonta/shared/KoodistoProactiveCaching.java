@@ -45,10 +45,4 @@ public class KoodistoProactiveCaching {
         return koodiMap.get(koodi);
     }
 
-    public KoodiType getKoodi(String koodi, Integer version) {
-        String key = koodi + "#" + version;
-
-        return koodiMap.get(key);
-    }
-
 }
