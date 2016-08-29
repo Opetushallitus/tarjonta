@@ -1,5 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Longs;
@@ -25,6 +27,7 @@ import org.mockito.*;
 import org.mockito.stubbing.answers.ReturnsElementsOf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -59,16 +62,13 @@ public class MassCopyTest extends TestUtilityBase {
     protected String ophOid;
 
     @Autowired
-    MassPepareProcess prepareProcess;
-
-    @Autowired
-    MassCommitProcess commitProcess;
-
-    @Autowired
     PlatformTransactionManager tm;
 
     @Autowired
     TarjontaKoodistoHelper tarjontaKoodistoHelper;
+
+    @Autowired
+    ApplicationContext applicationContext;
 
     @Before
     public void before() {
@@ -237,18 +237,19 @@ public class MassCopyTest extends TestUtilityBase {
         }
     }
 
-    private void createHakuWithHakukohdesAndKomotos(final String hakuOid) {
+    private void createHakuWithHakukohdesAndKomotos(final String hakuOid, final int numberOfHakukohdes) {
         executeInTransaction(new Runnable() {
             @Override
             public void run() {
                 Haku haku = fixtures.createHaku();
                 haku.setOid(hakuOid);
+                haku.setHaunTunniste(hakuOid);
                 haku.setTarjoajaOids(new String[]{ophOid});
                 haku.setTila(TarjontaTila.JULKAISTU);
                 hakuDAO.insert(haku);
 
-                for (int i = 0; i < 4; i ++) {
-                    createKoulutusAndHakukohde(String.valueOf(i), haku);
+                for (int i = 0; i < numberOfHakukohdes; i ++) {
+                    createKoulutusAndHakukohde(hakuOid + String.valueOf(i), haku);
                 }
             }
         });
@@ -258,20 +259,34 @@ public class MassCopyTest extends TestUtilityBase {
     public void testBug1091RaceConditionWhenCopyingMultipleHakus() throws InterruptedException {
         mockOids(40, "bug1091");
 
-        createHakuWithHakukohdesAndKomotos("race-condition-1");
-        createHakuWithHakukohdesAndKomotos("race-condition-2");
+        createHakuWithHakukohdesAndKomotos("race-condition-1", 4);
+        createHakuWithHakukohdesAndKomotos("race-condition-2", 3);
 
-        copyHaku("race-condition-1");
-        copyHaku("race-condition-2");
-        Thread.sleep(1000);
+        final String processId1 = copyHaku("race-condition-1");
+        final String processId2 = copyHaku("race-condition-2");
+        Thread.sleep(4000);
 
         executeInTransaction(new Runnable() {
             @Override
             public void run() {
-                Haku copiedHaku = getLatestHaku();
-                assertEquals(10, copiedHaku.getHakukohdes().size());
+                assertHaku("race-condition-1", processId1, 4);
+                assertHaku("race-condition-2", processId2, 3);
             }
         });
+    }
+
+    private void assertHaku(String fromOid, String copyProcessId, int expectedHakukohdeCount) {
+        Haku copiedHaku = getLatestHakuByUlkoinenTunniste(fromOid);
+
+        assertEquals(fromOid, copiedHaku.getHaunTunniste());
+        assertEquals(copiedHaku.getHakukohdes().size(), expectedHakukohdeCount);
+
+        for (Hakukohde hakukohde : copiedHaku.getHakukohdes()) {
+            assertEquals(copyProcessId, hakukohde.getHaunKopioinninTunniste());
+            for (KoulutusmoduuliToteutus komoto: hakukohde.getKoulutusmoduuliToteutuses()) {
+                assertEquals(copyProcessId, komoto.getHaunKopioinninTunniste());
+            }
+        }
     }
 
     private void createKoulutusAndHakukohde(String identifier, Haku haku) {
@@ -287,11 +302,13 @@ public class MassCopyTest extends TestUtilityBase {
         params.put(MassCopyProcess.SELECTED_HAKU_OID, hakuOid);
         state.setParameters(params);
 
+        MassPepareProcess prepareProcess = applicationContext.getBean(MassPepareProcess.class);
         prepareProcess.setState(state);
         prepareProcess.run();
 
         assertEquals(true, prepareProcess.isCompleted());
 
+        MassCommitProcess commitProcess = applicationContext.getBean(MassCommitProcess.class);
         commitProcess.setState(state);
         commitProcess.run();
 
@@ -483,6 +500,10 @@ public class MassCopyTest extends TestUtilityBase {
     }
 
     private Haku getLatestHaku() {
+        return getLatestHakus().get(0);
+    }
+
+    private List<Haku> getLatestHakus() {
         List<Haku> hakus = hakuDAO.findAll();
         Collections.sort(hakus, new Ordering<Haku>() {
             @Override
@@ -490,7 +511,16 @@ public class MassCopyTest extends TestUtilityBase {
                 return Longs.compare(h2.getId(), h1.getId());
             }
         });
-        return hakus.get(0);
+        return hakus;
+    }
+
+    private Haku getLatestHakuByUlkoinenTunniste(final String tunniste) {
+        return Iterables.find(getLatestHakus(), new Predicate<Haku>() {
+            @Override
+            public boolean apply(Haku haku) {
+                return tunniste.equals(haku.getHaunTunniste());
+            }
+        });
     }
 
     private KoulutusmoduuliToteutus getKorkeakouluopinto(String oid) {
