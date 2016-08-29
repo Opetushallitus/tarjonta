@@ -114,6 +114,19 @@
                 </td>
             </tr>
 
+            <!-- Tarjonnan automaattinen synkronointi -->
+            <tr>
+                <th tt="haku.review.haunTiedot.tarjonnanSynkronointi">Haussa käytetään tarjonnan automaattista synkronointia</th>
+                <td colspan="2">
+                    {{ model.hakux.result.autosyncTarjonta ? t("yes") : t("no") }}
+                    <span ng-show="model.hakux.result.autosyncTarjonta && (model.hakux.result.autosyncTarjontaFrom || model.hakux.result.autosyncTarjontaTo)">
+                        <span t-show-date value="model.hakux.result.autosyncTarjontaFrom" timestamp></span>
+                        <span> &rarr; </span>
+                        <span t-show-date value="model.hakux.result.autosyncTarjontaTo" timestamp></span>
+                    </span>
+                </td>
+            </tr>
+
             <tr>
                 <th tt="haku.review.haunTiedot.hakulomake">Hakulomake</th>
                 <td colspan="2">

@@ -78,4 +78,19 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
     Set<String> findOrganisaatioOidsFromHakukohteetByHakuOid(String hakuOid);
 
     List<String> findOrganisaatioryhmaOids(String hakuOid);
+
+    /**
+     * Find hakus that should be automatically synchronized.
+     *
+     * The underlying query fetches oids for all hakus that
+     * 1) 'autosync_tarjonta' field is set to 'true' and
+     * 2) 'autosync_tarjonta_from' and 'autosync_tarjonta_to' fields are either:
+     *      - null, or
+     *      - contain timestamps so that given date is in between them
+     *
+     * @param date Date context, usually the current date
+     *
+     * @return Set of hakuOids
+     */
+    Set<String> findHakusToSync(Date date);
 }

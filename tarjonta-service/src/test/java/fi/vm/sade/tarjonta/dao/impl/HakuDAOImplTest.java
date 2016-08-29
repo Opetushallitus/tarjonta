@@ -36,10 +36,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -285,6 +282,71 @@ public class HakuDAOImplTest extends TestData {
         Haku haku = fixtures.createPersistedHaku();
         List<String> oids = hakuDAO.findOrganisaatioryhmaOids(haku.getOid());
         assertTrue(oids.isEmpty());
+    }
+
+    @Test
+    public void shouldFindHakuToSync() {
+        String expectedOid = fixtures.createPersistedHaku().getOid();
+        Calendar calToday = new GregorianCalendar();
+        calToday.set(2016, 7, 15);
+        Set<String> hakuOids = hakuDAO.findHakusToSync(calToday.getTime());
+        assertTrue("should not be empty", !hakuOids.isEmpty());
+        assertTrue("should contain correct hakuOid", hakuOids.contains(expectedOid));
+    }
+
+    @Test
+    public void shouldNotFindTooEarlyHakuToSync() {
+        fixtures.createPersistedHaku();
+        Calendar calToday = new GregorianCalendar();
+        calToday.set(2016, 6, 31);
+        Set<String> hakuOids = hakuDAO.findHakusToSync(calToday.getTime());
+        assertTrue("should be empty", hakuOids.isEmpty());
+    }
+
+    @Test
+    public void shouldFindTooLateHakuToSync() {
+        fixtures.createPersistedHaku();
+        Calendar calToday = new GregorianCalendar();
+        calToday.set(2016, 8, 1);
+        Set<String> hakuOids = hakuDAO.findHakusToSync(calToday.getTime());
+        assertTrue("should be empty", hakuOids.isEmpty());
+    }
+
+    @Test
+    public void shouldFindHakuWithNullTimestampToSync() {
+        Haku haku = fixtures.createPersistedHaku();
+        haku.setAutosyncTarjontaFrom(null);
+        haku.setAutosyncTarjontaTo(null);
+        hakuDao.update(haku);
+
+        Calendar calToday = new GregorianCalendar();
+        calToday.set(2016, 8, 15);
+        Set<String> hakuOids = hakuDAO.findHakusToSync(calToday.getTime());
+        assertTrue("should contain correct hakuOid", hakuOids.contains(haku.getOid()));
+    }
+
+    @Test
+    public void shouldFindHakuWithNullFromTimestampToSync() {
+        Haku haku = fixtures.createPersistedHaku();
+        haku.setAutosyncTarjontaFrom(null);
+        hakuDao.update(haku);
+
+        Calendar calToday = new GregorianCalendar();
+        calToday.set(2016, 5, 15);
+        Set<String> hakuOids = hakuDAO.findHakusToSync(calToday.getTime());
+        assertTrue("should contain correct hakuOid", hakuOids.contains(haku.getOid()));
+    }
+
+    @Test
+    public void shouldFindHakuWithNullToTimestampToSync() {
+        Haku haku = fixtures.createPersistedHaku();
+        haku.setAutosyncTarjontaTo(null);
+        hakuDao.update(haku);
+
+        Calendar calToday = new GregorianCalendar();
+        calToday.set(2016, 9, 15);
+        Set<String> hakuOids = hakuDAO.findHakusToSync(calToday.getTime());
+        assertTrue("should contain correct hakuOid", hakuOids.contains(haku.getOid()));
     }
 
     private void createHakuWithMontaTarjoajaa() {

@@ -339,6 +339,14 @@ public class TarjontaFixtures {
         haku.setTila(TarjontaTila.LUONNOS);
         haku.setLastUpdateDate(new Date());
         haku.setLastUpdatedByOid("TEST");
+        haku.setAutosyncTarjonta(true);
+        Calendar calFrom = new GregorianCalendar();
+        calFrom.set(2016, 7, 1);
+        haku.setAutosyncTarjontaFrom(calFrom.getTime());
+        Calendar calTo = new GregorianCalendar();
+        calFrom.set(2016, 7, 31);
+        haku.setAutosyncTarjontaTo(calTo.getTime());
+
         return haku;
     }
 
