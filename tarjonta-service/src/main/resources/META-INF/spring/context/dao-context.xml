@@ -50,7 +50,7 @@
         <constructor-arg ref="hikariConfig" />
     </bean>
 
-    <bean id="flyway" class="com.googlecode.flyway.core.Flyway" init-method="migrate">
+    <bean id="flyway" class="com.googlecode.flyway.core.Flyway" init-method="migrate" depends-on="dbDataSource">
         <property name="initOnMigrate" value="${flyway.initOnMigrate}"/>
         <property name="dataSource" ref="dbDataSource" />
     </bean>
