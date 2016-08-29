@@ -962,14 +962,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         Date today = new Date();
 
         try {
-            Set<String> oids = hakuDAO.findHakusToSync(today);
-            if (!oids.isEmpty()) {
-                result.setStatus(ResultStatus.OK);
-                result.setResult(oids);
-            }
-            else {
-                result.setStatus(ResultStatus.NOT_FOUND);
-            }
+            result.setResult(hakuDAO.findHakusToSync(today));
+            result.setStatus(ResultStatus.OK);
         }
         catch (Exception ex) {
             createSystemErrorFromException(ex, result);

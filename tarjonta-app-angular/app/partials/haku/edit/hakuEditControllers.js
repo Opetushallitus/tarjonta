@@ -389,15 +389,8 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             $scope.model.hakux.result.usePriority = false;
         }
     };
-    /**
-      * checkAutosyncTarjonta()
-      *
-      * Called when the automatic synchronization of tarjonta is toggled.
-      *
-      * @returns {undefined}
-      */
+
     $scope.checkAutosyncTarjonta = function() {
-        $log.debug('checkAutosyncTarjonta');
         if (!$scope.model.hakux.result.autosyncTarjonta) {
             $scope.model.hakux.result.autosyncTarjontaFrom = null;
             $scope.model.hakux.result.autosyncTarjontaTo = null;
