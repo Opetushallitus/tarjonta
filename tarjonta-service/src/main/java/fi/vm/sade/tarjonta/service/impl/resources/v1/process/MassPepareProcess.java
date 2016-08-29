@@ -36,6 +36,7 @@ import com.mysema.commons.lang.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -52,6 +53,7 @@ import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.KORKEAKOULUOPI
 import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.KORKEAKOULUTUS;
 
 @Component
+@Scope("prototype")
 public class MassPepareProcess {
 
     private static final Logger LOG = LoggerFactory.getLogger(MassPepareProcess.class);

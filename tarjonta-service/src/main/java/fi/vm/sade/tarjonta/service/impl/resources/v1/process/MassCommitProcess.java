@@ -38,6 +38,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -52,6 +53,7 @@ import static fi.vm.sade.tarjonta.service.AuditHelper.AUDIT;
 import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
 
 @Component
+@Scope("prototype")
 public class MassCommitProcess {
 
     private static final Logger LOG = LoggerFactory.getLogger(MassCommitProcess.class);
