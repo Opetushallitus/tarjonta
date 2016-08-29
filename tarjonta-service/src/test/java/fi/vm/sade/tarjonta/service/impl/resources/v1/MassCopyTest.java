@@ -254,6 +254,26 @@ public class MassCopyTest extends TestUtilityBase {
         });
     }
 
+    @Test
+    public void testBug1091RaceConditionWhenCopyingMultipleHakus() throws InterruptedException {
+        mockOids(40, "bug1091");
+
+        createHakuWithHakukohdesAndKomotos("race-condition-1");
+        createHakuWithHakukohdesAndKomotos("race-condition-2");
+
+        copyHaku("race-condition-1");
+        copyHaku("race-condition-2");
+        Thread.sleep(1000);
+
+        executeInTransaction(new Runnable() {
+            @Override
+            public void run() {
+                Haku copiedHaku = getLatestHaku();
+                assertEquals(10, copiedHaku.getHakukohdes().size());
+            }
+        });
+    }
+
     private void createKoulutusAndHakukohde(String identifier, Haku haku) {
         Koulutusmoduuli komo = getKomo("komo-" + identifier);
         KoulutusmoduuliToteutus komoto = getKomoto(komo, "komoto-" + identifier);
