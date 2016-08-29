@@ -298,6 +298,12 @@
             <artifactId>oid-service</artifactId>
             <version>${oid.version}</version>
             <classifier>embed</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>fi.vm.sade.oid</groupId>
