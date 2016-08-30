@@ -66,8 +66,15 @@ public class HakukohdeDAOImplTest extends TestData {
 
     @Before
     public void setUp() {
+        cleanDb();
         EntityManager em = instance.getEntityManager();
         super.initializeData(em, fixtures);
+    }
+
+    private void cleanDb() {
+        for (Hakukohde hakukohde : instance.findAll()) {
+            instance.remove(hakukohde);
+        }
     }
 
     @Test

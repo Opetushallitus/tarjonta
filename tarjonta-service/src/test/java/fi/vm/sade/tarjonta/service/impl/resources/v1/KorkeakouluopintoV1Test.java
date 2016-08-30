@@ -186,6 +186,8 @@ public class KorkeakouluopintoV1Test {
 
     @Test
     public void testCreateOpintojaksoFailsWhenMissingRequiredFieldsAndTilaNotPuuttellinen() {
+        when(organisaatioService.findByOid("invalidOrg")).thenThrow(new RuntimeException("not found"));
+
         KorkeakouluOpintoV1RDTO dto = new KorkeakouluOpintoV1RDTO();
         dto.setTila(TarjontaTila.LUONNOS);
         dto.setOrganisaatio(new OrganisaatioV1RDTO(TARJOAJA1, "", null));
