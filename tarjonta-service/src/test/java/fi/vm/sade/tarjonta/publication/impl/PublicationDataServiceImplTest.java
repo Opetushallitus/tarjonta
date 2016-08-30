@@ -172,35 +172,6 @@ public class PublicationDataServiceImplTest extends TestUtilityBase {
         assertEquals(1, result.size());
     }
 
-    /**
-     * Test of listHakukohde method, of class PublicationDataServiceImpl.
-     */
-    @Test
-    public void testListHakukohde() {
-        quickObjectStatusChange(TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
-        List<Hakukohde> result = publicationDataService.listHakukohde();
-        assertEquals(0, result.size());
-
-        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
-        result = publicationDataService.listHakukohde();
-        assertEquals(1, result.size());
-    }
-
-    /**
-     * Test of listHaku method, of class PublicationDataServiceImpl.
-     */
-    @Test
-    public void testListHaku() {
-        quickObjectStatusChange(TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
-        List<Haku> result = publicationDataService.listHaku();
-        assertEquals(0, result.size());
-
-        quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
-        result = publicationDataService.listHaku();
-
-        assertEquals(1, result.size());
-    }
-
     @Test(expected = IllegalArgumentException.class)
     public void testisValidStateChangeNullParam() {
         publicationDataService.isValidStatusChange(null);

@@ -1,17 +1,20 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Longs;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCommitProcess;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassPepareProcess;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
@@ -21,13 +24,18 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
+import org.mockito.stubbing.answers.ReturnsElementsOf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,10 +46,9 @@ import static org.junit.Assert.*;
 
 @TestExecutionListeners(listeners = {
         DependencyInjectionTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class,
-        TransactionalTestExecutionListener.class
+        DirtiesContextTestExecutionListener.class
 })
-@Transactional
+@ActiveProfiles("embedded-solr")
 public class MassCopyTest extends TestUtilityBase {
     @Autowired
     @Spy
@@ -55,17 +62,21 @@ public class MassCopyTest extends TestUtilityBase {
     protected String ophOid;
 
     @Autowired
-    MassPepareProcess prepareProcess;
-
-    @Autowired
-    MassCommitProcess commitProcess;
+    PlatformTransactionManager tm;
 
     @Autowired
     TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
+    @Autowired
+    ApplicationContext applicationContext;
+
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
+
+        OrganisaatioRDTO org = new OrganisaatioRDTO();
+        org.setOid("test_oid");
+        Mockito.when(organisaatioService.findByOid(Matchers.anyString())).thenReturn(org);
 
         Mockito.when(tarjontaKoodistoHelper.getKoodiByUri(Matchers.anyString())).thenReturn(
                 new KoodiType() {{
@@ -74,42 +85,6 @@ public class MassCopyTest extends TestUtilityBase {
                     setVersio(1);
                 }}
         );
-
-        try {
-            Mockito.when(oidService.get(TarjontaOidType.KOMO))
-                    .thenReturn("new-komo-oid-1")
-                    .thenReturn("new-komo-oid-2")
-                    .thenReturn("new-komo-oid-3")
-                    .thenReturn("new-komo-oid-4")
-                    .thenReturn("new-komo-oid-5")
-                    .thenReturn("new-komo-oid-6")
-                    .thenReturn("new-komo-oid-7")
-                    .thenReturn("new-komo-oid-8");
-
-            Mockito.when(oidService.get(TarjontaOidType.KOMOTO))
-                    .thenReturn("new-komoto-oid-1")
-                    .thenReturn("new-komoto-oid-2")
-                    .thenReturn("new-komoto-oid-3")
-                    .thenReturn("new-komoto-oid-4")
-                    .thenReturn("new-komoto-oid-5")
-                    .thenReturn("new-komoto-oid-6")
-                    .thenReturn("new-komoto-oid-7")
-                    .thenReturn("new-komoto-oid-8");
-
-            Mockito.when(oidService.get(TarjontaOidType.HAKU))
-                    .thenReturn("new-haku-oid-1")
-                    .thenReturn("new-haku-oid-2")
-                    .thenReturn("new-haku-oid-3")
-                    .thenReturn("new-haku-oid-4");
-
-            Mockito.when(oidService.get(TarjontaOidType.HAKUKOHDE))
-                    .thenReturn("new-hakukohde-oid-1")
-                    .thenReturn("new-hakukohde-oid-2")
-                    .thenReturn("new-hakukohde-oid-3")
-                    .thenReturn("new-hakukohde-oid-4");
-        } catch (OIDCreationException e1) {
-            e1.printStackTrace();
-        }
 
         KoulutusResourceImplV1CopyTest.stubKorkeakoulutusConvertKoodis(koodiService);
     }
@@ -236,16 +211,104 @@ public class MassCopyTest extends TestUtilityBase {
     }
 
     public String copyHaku(String hakuOid) {
+        ResultV1RDTO<String> result = hakuV1Resource.copyHaku(hakuOid, "");
+
+        return result.getResult();
+    }
+
+    private void mockOids(int limit, String prefix) {
+        Map<TarjontaOidType, List<String>> oidMap = new HashMap<>();
+
+        for (int i = 0; i < limit; i ++) {
+            for (TarjontaOidType type : TarjontaOidType.values()) {
+                if (!oidMap.containsKey(type)) {
+                    oidMap.put(type, new LinkedList<String>());
+                }
+                oidMap.get(type).add(prefix + "-" + type.name() + "-" + i);
+            }
+        }
+
+        try {
+            for (TarjontaOidType type : TarjontaOidType.values()) {
+                Mockito.when(oidService.get(type)).thenAnswer(new ReturnsElementsOf(oidMap.get(type)));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void createHakuWithHakukohdesAndKomotos(final String hakuOid, final int numberOfHakukohdes) {
+        executeInTransaction(new Runnable() {
+            @Override
+            public void run() {
+                Haku haku = fixtures.createHaku();
+                haku.setOid(hakuOid);
+                haku.setHaunTunniste(hakuOid);
+                haku.setTarjoajaOids(new String[]{ophOid});
+                haku.setTila(TarjontaTila.JULKAISTU);
+                hakuDAO.insert(haku);
+
+                for (int i = 0; i < numberOfHakukohdes; i ++) {
+                    createKoulutusAndHakukohde(hakuOid + String.valueOf(i), haku);
+                }
+            }
+        });
+    }
+
+    @Test
+    public void testBug1091RaceConditionWhenCopyingMultipleHakus() throws InterruptedException {
+        mockOids(40, "bug1091");
+
+        createHakuWithHakukohdesAndKomotos("race-condition-1", 4);
+        createHakuWithHakukohdesAndKomotos("race-condition-2", 3);
+
+        final String processId1 = copyHaku("race-condition-1");
+        final String processId2 = copyHaku("race-condition-2");
+        Thread.sleep(4000);
+
+        executeInTransaction(new Runnable() {
+            @Override
+            public void run() {
+                assertHaku("race-condition-1", processId1, 4);
+                assertHaku("race-condition-2", processId2, 3);
+            }
+        });
+    }
+
+    private void assertHaku(String fromOid, String copyProcessId, int expectedHakukohdeCount) {
+        Haku copiedHaku = getLatestHakuByUlkoinenTunniste(fromOid);
+
+        assertEquals(fromOid, copiedHaku.getHaunTunniste());
+        assertEquals(copiedHaku.getHakukohdes().size(), expectedHakukohdeCount);
+
+        for (Hakukohde hakukohde : copiedHaku.getHakukohdes()) {
+            assertEquals(copyProcessId, hakukohde.getHaunKopioinninTunniste());
+            for (KoulutusmoduuliToteutus komoto: hakukohde.getKoulutusmoduuliToteutuses()) {
+                assertEquals(copyProcessId, komoto.getHaunKopioinninTunniste());
+            }
+        }
+    }
+
+    private void createKoulutusAndHakukohde(String identifier, Haku haku) {
+        Koulutusmoduuli komo = getKomo("komo-" + identifier);
+        KoulutusmoduuliToteutus komoto = getKomoto(komo, "komoto-" + identifier);
+        Hakukohde hakukohde = getHakukohde("hakukohde-" + identifier, haku);
+        connectHakukohdeWithKomoto(hakukohde, komoto);
+    }
+
+    private String copyHakuInSameThread(String hakuOid) {
         ProcessV1RDTO state = ProcessV1RDTO.generate();
-        HashMap<String, String> params = new HashMap<String, String>();
+        HashMap<String, String> params = new HashMap<>();
         params.put(MassCopyProcess.SELECTED_HAKU_OID, hakuOid);
         state.setParameters(params);
 
+        MassPepareProcess prepareProcess = applicationContext.getBean(MassPepareProcess.class);
         prepareProcess.setState(state);
         prepareProcess.run();
 
         assertEquals(true, prepareProcess.isCompleted());
 
+        MassCommitProcess commitProcess = applicationContext.getBean(MassCommitProcess.class);
         commitProcess.setState(state);
         commitProcess.run();
 
@@ -254,6 +317,16 @@ public class MassCopyTest extends TestUtilityBase {
 
     @Test
     public void testKorkeakoulutusCopy() {
+        mockOids(10, "korkeakoulutus");
+        executeInTransaction(new Runnable() {
+            @Override
+            public void run() {
+                testKorkeakoulutusCopyTransactional();
+            }
+        });
+    }
+
+    private void testKorkeakoulutusCopyTransactional() {
         Haku haku1 = createKorkeakoulutusHaku("haku-1");
         Haku haku2 = createKorkeakoulutusHaku("haku-2");
 
@@ -267,8 +340,8 @@ public class MassCopyTest extends TestUtilityBase {
         int hakukohdeCountBeforeCopy = hakukohdeDAO.findAll().size();
         int hakuCountBeforeCopy = hakuDAO.findAll().size();
 
-        String processId = copyHaku("haku-1");
-        String processId2 = copyHaku("haku-2");
+        String processId = copyHakuInSameThread("haku-1");
+        String processId2 = copyHakuInSameThread("haku-2");
 
         int komoCountAfterCopy = koulutusmoduuliDAO.findAllKomos().size();
         int komotoCountAfterCopy = koulutusmoduuliToteutusDAO.findAll().size();
@@ -303,24 +376,24 @@ public class MassCopyTest extends TestUtilityBase {
         assertEquals(processId, newKomoto.getHaunKopioinninTunniste());
         assertEquals("komoton-ulkoinen-tunniste", newKomoto.getUlkoinenTunniste());
 
-        Set<String> newHakukohdeOids = new HashSet<String>();
+        Set<String> newHakukohdeOids = new HashSet<>();
         for (Hakukohde hakukohde : newKomoto.getHakukohdes()) {
             newHakukohdeOids.add(hakukohde.getOid());
         }
         assertEquals(2, newHakukohdeOids.size());
 
-        Haku newHaku1 = hakuDAO.findByOid("new-haku-oid-1");
-        Haku newHaku2 = hakuDAO.findByOid("new-haku-oid-1");
+        String NEW_HAKU_1_OID = "korkeakoulutus-HAKU-0";
+        Haku newHaku1 = hakuDAO.findByOid(NEW_HAKU_1_OID);
+        int expectedNumberOfHakukohdes = 2;
 
-        Hakukohde newHakukohdeFromHaku1 = newHaku1.getHakukohdes().iterator().next();
-        assertEquals(processId, newHakukohdeFromHaku1.getHaunKopioinninTunniste());
-        assertEquals("new-haku-oid-1", newHakukohdeFromHaku1.getHaku().getOid());
-        assertEquals("hakukohteen-ulkoinen-tunniste", newHakukohdeFromHaku1.getUlkoinenTunniste());
-        assertEquals(10, newHakukohdeFromHaku1.getAloituspaikatLkm());
-
-        Hakukohde newHakukohdeFromHaku2 = newHaku1.getHakukohdes().iterator().next();
-        assertEquals("new-haku-oid-1", newHakukohdeFromHaku2.getHaku().getOid());
-        assertEquals("hakukohteen-ulkoinen-tunniste", newHakukohdeFromHaku2.getUlkoinenTunniste());
+        Iterator<Hakukohde> copiedHakukohdes = newHaku1.getHakukohdes().iterator();
+        for (int i = 0; i < expectedNumberOfHakukohdes; i ++) {
+            Hakukohde copiedHakukohde = copiedHakukohdes.next();
+            assertEquals(processId, copiedHakukohde.getHaunKopioinninTunniste());
+            assertEquals(NEW_HAKU_1_OID, copiedHakukohde.getHaku().getOid());
+            assertEquals("hakukohteen-ulkoinen-tunniste", copiedHakukohde.getUlkoinenTunniste());
+            assertEquals(10, copiedHakukohde.getAloituspaikatLkm());
+        }
 
         Hakukohde originalHakukohdeHaku1 = hakukohdeDAO.findHakukohdeByOid("hakukohde-1-haku-1");
         Ryhmaliitos originalLiitos = originalHakukohdeHaku1.getRyhmaliitokset().iterator().next();
@@ -356,8 +429,30 @@ public class MassCopyTest extends TestUtilityBase {
         }
     }
 
+    private void executeInTransaction(final Runnable runnable) {
+        TransactionTemplate tt = new TransactionTemplate(tm);
+        tt.execute(new TransactionCallback<Object>() {
+
+            @Override
+            public Object doInTransaction(TransactionStatus status) {
+                runnable.run();
+                return null;
+            }
+        });
+    }
+
     @Test
     public void testTutkintoonJohtamatonCopy() {
+        mockOids(10, "korkeakouluopinto");
+        executeInTransaction(new Runnable() {
+            @Override
+            public void run() {
+                testTutkintoonJohtamatonCopyTransactional();
+            }
+        });
+    }
+
+    private void testTutkintoonJohtamatonCopyTransactional() {
         final String HAKU_OID = "tutkintoon-johtamaton-1";
 
         Hakuaika hakuaika1 = getHakuaika("Hakuaika1", toDate("01.01.2016"), toDate("01.06.2016"));
@@ -387,17 +482,9 @@ public class MassCopyTest extends TestUtilityBase {
         connectHakukohdeWithKomoto(hakukohde, kokonaisuus);
         hakukohdeDAO.insert(hakukohde);
 
-        copyHaku(HAKU_OID);
+        copyHakuInSameThread(HAKU_OID);
 
-        List<Haku> hakus = hakuDAO.findAll();
-        Collections.sort(hakus, new Ordering<Haku>() {
-            @Override
-            public int compare(Haku h1, Haku h2) {
-                return Longs.compare(h2.getId(), h1.getId());
-            }
-        });
-
-        Haku copiedHaku = hakus.get(0);
+        Haku copiedHaku = getLatestHaku();
         assertEquals(1, copiedHaku.getHakukohdes().size());
 
         Hakukohde copiedHakukohde = copiedHaku.getHakukohdes().iterator().next();
@@ -410,6 +497,30 @@ public class MassCopyTest extends TestUtilityBase {
         Koulutusmoduuli copiedKokonaisuusKomo = copiedKokonaisuus.getKoulutusmoduuli();
         List<String> children = koulutusSisaltyvyysDAO.getChildren(copiedKokonaisuusKomo.getOid());
         assertEquals(2, children.size());
+    }
+
+    private Haku getLatestHaku() {
+        return getLatestHakus().get(0);
+    }
+
+    private List<Haku> getLatestHakus() {
+        List<Haku> hakus = hakuDAO.findAll();
+        Collections.sort(hakus, new Ordering<Haku>() {
+            @Override
+            public int compare(Haku h1, Haku h2) {
+                return Longs.compare(h2.getId(), h1.getId());
+            }
+        });
+        return hakus;
+    }
+
+    private Haku getLatestHakuByUlkoinenTunniste(final String tunniste) {
+        return Iterables.find(getLatestHakus(), new Predicate<Haku>() {
+            @Override
+            public boolean apply(Haku haku) {
+                return tunniste.equals(haku.getHaunTunniste());
+            }
+        });
     }
 
     private KoulutusmoduuliToteutus getKorkeakouluopinto(String oid) {

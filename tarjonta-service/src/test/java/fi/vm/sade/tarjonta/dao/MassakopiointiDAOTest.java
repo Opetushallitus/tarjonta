@@ -78,6 +78,7 @@ public class MassakopiointiDAOTest extends TestUtilityBase {
 
     @Before
     public void setUp() {
+        cleanDb();
 
         metaJson = new MetaObject();
         metaJson.addHakukohdeOid("oid1");
@@ -89,6 +90,12 @@ public class MassakopiointiDAOTest extends TestUtilityBase {
         toteutus3 = createKomoto(ANY_UNIQUE_OID_3, KOULUTUS_URI3);
         toteutus4 = createKomoto(ANY_UNIQUE_OID_4, KOULUTUS_URI4);
         toteutus5 = createKomoto(ANY_UNIQUE_OID_5, KOULUTUS_URI5);
+    }
+
+    private void cleanDb() {
+        for (Massakopiointi massakopiointi : instance.findAll()) {
+            instance.remove(massakopiointi);
+        }
     }
 
     /**

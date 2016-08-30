@@ -27,6 +27,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import junit.framework.Assert;
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestExecutionListeners;
@@ -69,6 +70,13 @@ public class HakuDAOImplTest extends TestData {
 
     public void cleanUp() {
         super.clean();
+    }
+
+    @Before
+    public void deleteAllHakus() {
+        for (Haku haku : hakuDAO.findAll()) {
+            hakuDAO.remove(haku);
+        }
     }
 
     @Test
