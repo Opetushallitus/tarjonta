@@ -20,8 +20,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
-import fi.vm.sade.tarjonta.shared.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
@@ -35,6 +33,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.shared.ImageMimeValidator;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -258,7 +257,7 @@ public class KoulutusValidator {
             if(invalidNimi) {
                 result.addError(createValidationError(KoulutusValidationMessages.KOULUTUS_NIMI_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_NIMI_MISSING.lower()));
             }
-        } else if (!ToteutustyyppiEnum.EB_RP_ISH.equals(dto.getToteutustyyppi())) {
+        } else if (mustValidateLaajuus(dto)) {
             validateKoodi(result, dto.getOpintojenLaajuusarvo(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_INVALID);
         }
 
@@ -383,7 +382,7 @@ public class KoulutusValidator {
 
         if (!TarjontaTila.PUUTTEELLINEN.equals(dto.getTila())) {
             validateKoodi(result, dto.getKoulutusala(), KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_INVALID);
-            if (!ToteutustyyppiEnum.EB_RP_ISH.equals(dto.getToteutustyyppi())) {
+            if (mustValidateLaajuus(dto)) {
                 validateKoodi(result, dto.getOpintojenLaajuusyksikko(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_INVALID);
             }
             validateKoodi(result, dto.getKoulutuslaji(), KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_INVALID);
@@ -413,6 +412,14 @@ public class KoulutusValidator {
         validateKoodi(result, dto.getKoulutuskoodi(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_INVALID);
         validateKoodi(result, dto.getTutkintonimike(), KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_MISSING, KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_INVALID);
         validateKoodi(result, dto.getKoulutuslaji(), KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_INVALID);
+    }
+
+    private static boolean mustValidateLaajuus(KoulutusV1RDTO dto) {
+        Set<ToteutustyyppiEnum> toteutustyypitWithoutLaajuusValidation = Sets.newHashSet(
+                ToteutustyyppiEnum.EB_RP_ISH,
+                ToteutustyyppiEnum.LUKIOKOULUTUS
+        );
+        return !toteutustyypitWithoutLaajuusValidation.contains(dto.getToteutustyyppi());
     }
 
     /**

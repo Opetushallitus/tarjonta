@@ -82,7 +82,7 @@ public class KoulutusValidatorTest {
         dto.setSuunniteltuKestoArvo(null);
         dto.setSuunniteltuKestoTyyppi(null);
 
-        checkMissingErrors(KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, result), 18);
+        checkMissingErrors(KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, result), 16);
     }
 
 
@@ -112,7 +112,7 @@ public class KoulutusValidatorTest {
         dto.setSuunniteltuKestoTyyppi(new KoodiV1RDTO());
 
         ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
-        checkMissingErrors(v, 17);
+        checkMissingErrors(v, 15);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_TILA_ENUM_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidator.KOULUTUKSEN_ALKAMISPVMS);
@@ -139,7 +139,7 @@ public class KoulutusValidatorTest {
         dto.setSuunniteltuKestoTyyppi(new KoodiV1RDTO("1", -1, null));
 
         v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
-        checkMissingErrors(v, 16);
+        checkMissingErrors(v, 14);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_INVALID);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_MISSING);
 
@@ -264,8 +264,6 @@ public class KoulutusValidatorTest {
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING);
-        assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_MISSING);
-        assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_POHJAKOULUTUSVAATIMUS_MISSING);
