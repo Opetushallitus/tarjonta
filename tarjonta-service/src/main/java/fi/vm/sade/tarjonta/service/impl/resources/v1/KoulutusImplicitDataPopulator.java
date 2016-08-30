@@ -67,6 +67,8 @@ public class KoulutusImplicitDataPopulator {
     public static final String KOULUTUSLAJI = "koulutuslaji";
     public static final String POHJAKOULUTUSVAATIMUS_TOINEN_ASTE = "pohjakoulutusvaatimustoinenaste";
     public static final String TUTKINTONIMIKKEET = "tutkintonimikkeet";
+    public static final String OPINTOJEN_LAAJUUS = "opintojenlaajuus";
+    public static final String OPINTOJEN_LAAJUUS_YKSIKKO = "opintojenlaajuusyksikko";
 
     private BeanUtilsBean beanUtils = new NullAwareBeanUtilsBean();
 
@@ -170,7 +172,19 @@ public class KoulutusImplicitDataPopulator {
             dto.setTutkinto(findCode(sisaltaaKoodit, TUTKINTO));
 
             setTutkintonimike(sisaltaaKoodit, dto);
+            populateLaajuusAndLaajuusYksikko(dto, sisaltaaKoodit);
             populateKomoOid(dto);
+        }
+    }
+
+    private void populateLaajuusAndLaajuusYksikko(final KoulutusV1RDTO dto, final List<KoodiType> sisaltaaKoodit) {
+        KoodiV1RDTO laajuus = findCode(sisaltaaKoodit, OPINTOJEN_LAAJUUS);
+        if (laajuus != null) {
+            dto.setOpintojenLaajuusarvo(laajuus);
+        }
+        KoodiV1RDTO laajuusYksikko = findCode(sisaltaaKoodit, OPINTOJEN_LAAJUUS_YKSIKKO);
+        if (laajuusYksikko != null) {
+            dto.setOpintojenLaajuusyksikko(laajuusYksikko);
         }
     }
 
@@ -193,6 +207,7 @@ public class KoulutusImplicitDataPopulator {
             List<KoodiType> sisaltaaKoodit = getAlapuolisetKoodit(dto.getKoulutusohjelma().getUri());
 
             setTutkintonimike(sisaltaaKoodit, dto);
+            populateLaajuusAndLaajuusYksikko(dto, sisaltaaKoodit);
         }
     }
 
