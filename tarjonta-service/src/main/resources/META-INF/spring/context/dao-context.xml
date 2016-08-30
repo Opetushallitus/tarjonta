@@ -31,9 +31,9 @@
         <property name="poolName" value="springHikariCP" />
         <property name="connectionTestQuery" value="SELECT 1" />
         <property name="dataSourceClassName" value="org.postgresql.ds.PGSimpleDataSource" />
-        <property name="maximumPoolSize" value="${tarjonta-service.postgresql.maxactive ?: 80}" />
-        <property name="connectionTimeout" value="${tarjonta-service.postgresql.maxwait ?: 10000}" />
-        <property name="maxLifetime" value="${tarjonta-service.postgresql.maxlifetimemillis ?: 1800000}"/>
+        <property name="maximumPoolSize" value="${tarjonta-service.postgresql.maxactive}" />
+        <property name="connectionTimeout" value="${tarjonta-service.postgresql.maxwait}" />
+        <property name="maxLifetime" value="${tarjonta-service.postgresql.maxlifetimemillis}"/>
         <property name="registerMbeans" value="true" />
 
         <property name="dataSourceProperties">
