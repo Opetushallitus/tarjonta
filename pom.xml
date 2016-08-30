@@ -28,6 +28,7 @@
         <koodisto.widget.version>10.0-SNAPSHOT</koodisto.widget.version>
         <log.version>8.0</log.version>
         <oid.version>8.0-SNAPSHOT</oid.version>
+        <postgresql.version>9.4.1209</postgresql.version>
     </properties>
 
     <modules>
@@ -132,6 +133,18 @@
     </pluginRepositories>
     <dependencyManagement>
         <dependencies>
+            <!-- Hikari CP -->
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>2.4.7</version>
+            </dependency>
+            <!-- Postgresql -->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
