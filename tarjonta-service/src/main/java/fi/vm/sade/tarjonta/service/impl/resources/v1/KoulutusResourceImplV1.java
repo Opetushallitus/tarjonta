@@ -582,8 +582,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         switch (dto.getToteutustyyppi()) {
             case AMMATILLINEN_PERUSTUTKINTO:
             case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
-                if (existsDuplicateKoulutus(dto)) {
-                    result.addError(createValidationError("", "koulutus.koulutusOnJoOlemassa"));
+                KoulutusmoduuliToteutus duplicateKomoto = findDuplicateKoulutus(dto);
+                if (duplicateKomoto != null) {
+                    result.addError(createValidationError("", "koulutus.koulutusOnJoOlemassa", String.format("Existing koulutus OID: %s", duplicateKomoto.getOid())));
                 }
                 break;
         }
@@ -1705,7 +1706,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return koulutusUtilService.koulutusDtoForCopy(clazz, komoto, orgOid);
     }
 
-    public boolean existsDuplicateKoulutus(KoulutusGenericV1RDTO dto) {
+    public KoulutusmoduuliToteutus findDuplicateKoulutus(KoulutusGenericV1RDTO dto) {
         List<String> koulutuslajis = new ArrayList<String>();
         koulutuslajis.add(getKoodiUriFromKoodiV1RDTO(dto.getKoulutuslaji(), true));
 
@@ -1725,11 +1726,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         for (KoulutusmoduuliToteutus tmpKomoto : komotos) {
             if (!isSameKoulutus(dto, tmpKomoto) && isSameKausiAndVuosi(dto, tmpKomoto)) {
-                return true;
+                return tmpKomoto;
             }
         }
 
-        return false;
+        return null;
     }
 
     public static boolean isSameKoulutus(KoulutusGenericV1RDTO dto, KoulutusmoduuliToteutus komoto) {
