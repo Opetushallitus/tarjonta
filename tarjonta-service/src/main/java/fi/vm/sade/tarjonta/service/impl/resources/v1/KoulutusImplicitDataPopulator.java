@@ -216,11 +216,16 @@ public class KoulutusImplicitDataPopulator {
 
         if (komoRes.getResult().size() == 1) {
             dto.setKomoOid(komoRes.getResult().get(0).getOid());
+        } else if (komoRes.getResult().size() > 1) {
+            throwError("Multiple koulutusmoduulis found, missing osaamisala/koulutusohjelma? Osaamisala/koulutusohjelma: " + koulutusohjelma);
         } else {
-            String msg = "No matching komo found for koulutusohjelma: " + dto.getKoulutusohjelma().getUri();
-            LOG.error(msg);
-            throw new RuntimeException(msg);
+            throwError("No matching koulutusmoduuli found for koulutusohjelma: " + koulutusohjelma);
         }
+    }
+
+    private void throwError(String msg) {
+        LOG.error(msg);
+        throw new RuntimeException(msg);
     }
 
     private KoodiV1RDTO findCode(final List<KoodiType> codes, final String koodisto) {
