@@ -24,6 +24,7 @@ import fi.vm.sade.tarjonta.service.search.KoulutusSearchService;
 import fi.vm.sade.tarjonta.service.search.SolrServerFactory;
 import fi.vm.sade.tarjonta.service.tasks.KoulutusPermissionSynchronizer;
 import fi.vm.sade.tarjonta.shared.ParameterServices;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -88,6 +89,9 @@ abstract public class TestUtilityBase {
 
     @Autowired
     protected TarjontaPublicService service;
+
+    @Autowired
+    protected TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
     @Autowired
     protected OrganisationHierarchyAuthorizer authorizer;

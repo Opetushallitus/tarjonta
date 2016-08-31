@@ -139,6 +139,21 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         Mockito.stub(organisaatioService.findByOid("1.2.3.4.555")).toReturn(
                 getOrgDTO("1.2.3.4.555"));
 
+        KoodiType kausiK = new KoodiType();
+        kausiK.setKoodiArvo("kausi_k");
+        kausiK.setKoodiUri("kausi_k");
+        KoodiMetadataType metadata = new KoodiMetadataType() {{
+            setKieli(KieliType.FI);
+            setNimi("kausi_k");
+        }};
+        kausiK.getMetadata().add(metadata);
+        Mockito.when(tarjontaKoodistoHelper.getKoodiByUri("kausi_k#1")).thenReturn(kausiK);
+
+        KoodiType kieliFi = new KoodiType();
+        kieliFi.setKoodiArvo("fi");
+        kieliFi.setKoodiUri("kieli_fi");
+        Mockito.when(tarjontaKoodistoHelper.getKoodiByUri("kieli_fi")).thenReturn(kieliFi);
+
         stubKoodi(koodiService, "kieli_fi", "FI");
         stubKoodi(koodiService, "tutkinto-uri", "FI");
         stubKoodi(koodiService, "laajuus-uri", "FI");
