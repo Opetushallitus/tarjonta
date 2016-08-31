@@ -23,7 +23,6 @@ import org.mockito.internal.util.reflection.Whitebox;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -61,7 +60,7 @@ public class IndexerResourceTest {
 
         HakukohdeDAOImpl hakukohdeDAO = Mockito.mock(HakukohdeDAOImpl.class);
         Whitebox.setInternalState(hakukohdeToSolr, "hakukohdeDAO", hakukohdeDAO);
-        Mockito.stub(hakukohdeDAO.findBy("id", 1L)).toReturn(Arrays.asList(getHakukohde()));
+        Mockito.stub(hakukohdeDAO.read(1L)).toReturn(getHakukohde());
     }
 
     private OrganisaatioPerustieto getOrg(String oid) {

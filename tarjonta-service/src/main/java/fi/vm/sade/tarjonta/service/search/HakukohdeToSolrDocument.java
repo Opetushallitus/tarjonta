@@ -65,7 +65,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
 
     @Override
     public List<SolrInputDocument> apply(final Long hakukohdeId) {
-        Hakukohde hakukohde = hakukohdeDAO.findBy("id", hakukohdeId).get(0);
+        Hakukohde hakukohde = hakukohdeDAO.read(hakukohdeId);
 
         Set<KoulutusmoduuliToteutus> koulutukses = hakukohde.getKoulutusmoduuliToteutuses();
         if (koulutukses.isEmpty()) {

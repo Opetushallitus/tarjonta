@@ -40,7 +40,7 @@ public class HakukohdeToSolrDocumentTest extends TestMockBase {
         hakukohde = createHakukohde();
         List<OrganisaatioPerustieto> organisaatioPerustiedot = createOrganisaatioPerustiedot();
 
-        when(hakukohdeDAO.findBy("id", 1L)).thenReturn(Arrays.asList(hakukohde));
+        when(hakukohdeDAO.read(1L)).thenReturn(hakukohde);
         when(organisaatioSearchService.findByOidSet(new HashSet<String>(Arrays.asList("1.2.3")))).thenReturn(organisaatioPerustiedot);
         when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(0))).thenReturn("oppilaitostyyppi_41");
     }

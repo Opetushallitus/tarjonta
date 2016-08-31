@@ -30,7 +30,6 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
@@ -66,7 +65,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
 
     @Override
     public List<SolrInputDocument> apply(final Long koulutusId) {
-        KoulutusmoduuliToteutus koulutusmoduuliToteutus = koulutusmoduuliToteutusDAO.findBy("id", koulutusId).get(0);
+        KoulutusmoduuliToteutus koulutusmoduuliToteutus = koulutusmoduuliToteutusDAO.read(koulutusId);
 
         final List<OrganisaatioPerustieto> orgs = getTarjoajat(koulutusmoduuliToteutus);
 
