@@ -4,14 +4,12 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionException;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
-import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteJarjestamiskuntaDTO;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteKoulutusDTO;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOpetuskieliDTO;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOrgDTO;
@@ -231,16 +229,6 @@ public class KoulutusPermissionSynchronizer {
                         permissionDto.getLoppupvm()
                 ));
             }
-        }
-
-        for (AmkouteJarjestamiskuntaDTO permissionDto : nullSafe(org.getJarjestamiskunnat())) {
-            permissions.add(new KoulutusPermission(
-                    org.getOid(),
-                    "kunta",
-                    "kunta_" + permissionDto.getKunta(),
-                    permissionDto.getAlkupvm(),
-                    permissionDto.getLoppupvm()
-            ));
         }
 
         return permissions;

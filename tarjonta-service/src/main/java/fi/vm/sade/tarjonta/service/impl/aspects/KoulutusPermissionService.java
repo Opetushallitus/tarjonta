@@ -136,8 +136,6 @@ public class KoulutusPermissionService {
 
         OrganisaatioRDTO org = organisaatioService.findByOid(orgOid);
 
-        String kuntaKoodi = org.getKotipaikkaUri();
-
         List<String> orgOids = Lists.newArrayList(org.getOid());
         if (org.getParentOidPath() != null) {
             String[] parentPath = org.getParentOidPath().split("\\|");
@@ -162,8 +160,6 @@ public class KoulutusPermissionService {
             for (String kieli : opetuskielet) {
                 checkPermissions(permissions, org, "kieli", kieli, pvm);
             }
-
-            checkPermissions(permissions, org, "kunta", kuntaKoodi, pvm);
         }
 
     }
