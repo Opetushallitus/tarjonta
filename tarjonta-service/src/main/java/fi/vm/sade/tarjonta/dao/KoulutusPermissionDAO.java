@@ -29,6 +29,8 @@ public interface KoulutusPermissionDAO extends JpaDAO<KoulutusPermission, Long> 
 
     List<KoulutusPermission> find(List<String> orgOids, String koodisto, String koodiUri);
 
+    List<KoulutusPermission> findByOrganization(List<String> orgOids);
+
     Long removeAll();
 
 }

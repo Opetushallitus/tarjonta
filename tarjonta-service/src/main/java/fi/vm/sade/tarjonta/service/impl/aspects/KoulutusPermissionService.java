@@ -1,6 +1,8 @@
 package fi.vm.sade.tarjonta.service.impl.aspects;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
@@ -18,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper.getKoodiURIFromVersionedUri;
 
 @Service
 public class KoulutusPermissionService {
@@ -144,27 +148,30 @@ public class KoulutusPermissionService {
             }
         }
 
+        List<KoulutusPermission> permissions = koulutusPermissionDAO.findByOrganization(orgOids);
+
         for (Date pvm : alkamispvmt) {
             if (koulutusKoodi != null) {
-                checkPermissions(orgOids, org, "koulutus", koulutusKoodi, pvm);
+                checkPermissions(permissions, org, "koulutus", koulutusKoodi, pvm);
             }
 
             if (osaamisalaKoodi != null) {
-                checkPermissions(orgOids, org, "osaamisala", osaamisalaKoodi, pvm);
+                checkPermissions(permissions, org, "osaamisala", osaamisalaKoodi, pvm);
             }
 
             for (String kieli : opetuskielet) {
-                checkPermissions(orgOids, org, "kieli", kieli, pvm);
+                checkPermissions(permissions, org, "kieli", kieli, pvm);
             }
 
-            checkPermissions(orgOids, org, "kunta", kuntaKoodi, pvm);
+            checkPermissions(permissions, org, "kunta", kuntaKoodi, pvm);
         }
 
     }
 
-    private void checkPermissions(List<String> orgOids, OrganisaatioRDTO orgDto, String koodisto, String code, Date pvm) {
-        List<KoulutusPermission> permissions = koulutusPermissionDAO.find(orgOids, koodisto, code, pvm);
-        if (permissions.isEmpty()) {
+    private static void checkPermissions(List<KoulutusPermission> permissions, OrganisaatioRDTO orgDto, final String koodisto, final String code, final Date pvm) {
+        KoulutusPermission matchingPermission = Iterables.find(permissions, matchPermission(koodisto, code, pvm), null);
+
+        if (matchingPermission == null) {
             String organisaationNimi = "-";
             try {
                 organisaationNimi = orgDto.getNimi().values().iterator().next();
@@ -177,6 +184,24 @@ public class KoulutusPermissionService {
                     code
             );
         }
+    }
+
+    private static Predicate<KoulutusPermission> matchPermission(final String koodisto, final String code, final Date pvm) {
+        return new Predicate<KoulutusPermission>() {
+            @Override
+            public boolean apply(KoulutusPermission permission) {
+                return koodisto.equals(permission.getKoodisto())
+                        && getKoodiURIFromVersionedUri(code).equals(permission.getKoodiUri())
+                        && (
+                            permission.getAlkuPvm() == null
+                            || pvm.after(permission.getAlkuPvm())
+                        )
+                        && (
+                            permission.getLoppuPvm() == null
+                            || pvm.before(permission.getLoppuPvm())
+                        );
+            }
+        };
     }
 
 }

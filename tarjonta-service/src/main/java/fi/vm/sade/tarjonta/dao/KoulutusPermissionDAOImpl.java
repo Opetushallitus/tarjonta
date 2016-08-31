@@ -49,6 +49,15 @@ public class KoulutusPermissionDAOImpl extends AbstractJpaDAOImpl<KoulutusPermis
     }
 
     @Override
+    public List<KoulutusPermission> findByOrganization(List<String> orgOids) {
+        QKoulutusPermission qKoulutusPermission = QKoulutusPermission.koulutusPermission;
+
+        return from(qKoulutusPermission)
+                .where(qKoulutusPermission.orgOid.in(orgOids))
+                .list(qKoulutusPermission);
+    }
+
+    @Override
     public Long removeAll() {
         QKoulutusPermission qKoulutusPermission= QKoulutusPermission.koulutusPermission;
         return new JPADeleteClause(getEntityManager(), qKoulutusPermission).execute();
