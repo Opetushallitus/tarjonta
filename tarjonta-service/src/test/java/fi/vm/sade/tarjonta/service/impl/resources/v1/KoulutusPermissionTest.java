@@ -71,7 +71,7 @@ public class KoulutusPermissionTest extends TestUtilityBase {
         KoulutusPermission permission = new KoulutusPermission("org1", "koulutus", "koulutus_1", null, null);
         koulutusPermissionDAO.insert(permission);
 
-        List<KoulutusPermission> matchingPermissions = koulutusPermissionDAO.find(Lists.newArrayList("org1"), "koulutus", "koulutus_1", null);
+        List<KoulutusPermission> matchingPermissions = koulutusPermissionDAO.findByOrganization(Lists.newArrayList("org1"));
         assertEquals(1, matchingPermissions.size());
 
         KoulutusPermission firstMatch = matchingPermissions.iterator().next();
@@ -81,7 +81,7 @@ public class KoulutusPermissionTest extends TestUtilityBase {
         assertNull(firstMatch.getAlkuPvm());
         assertNull(firstMatch.getLoppuPvm());
 
-        matchingPermissions = koulutusPermissionDAO.find(Lists.newArrayList("org1"), "koulutus", "koulutus_2", null);
+        matchingPermissions = koulutusPermissionDAO.findByOrganization(Lists.newArrayList("nonExistingOrg"));
         assertEquals(0, matchingPermissions.size());
     }
 
@@ -90,7 +90,7 @@ public class KoulutusPermissionTest extends TestUtilityBase {
         // This permission should be removed after update
         KoulutusPermission permission = new KoulutusPermission("org1", "koulutus", "koulutus_1", null, null);
         koulutusPermissionDAO.insert(permission);
-        List<KoulutusPermission> beforeUpdatePermission = koulutusPermissionDAO.find(Lists.newArrayList("org1"), "koulutus", "koulutus_1", null);
+        List<KoulutusPermission> beforeUpdatePermission = koulutusPermissionDAO.findByOrganization(Lists.newArrayList("org1"));
         assertEquals(1, beforeUpdatePermission.size());
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -104,15 +104,15 @@ public class KoulutusPermissionTest extends TestUtilityBase {
         koulutusPermissionSynchronizer.updatePermissionsToDb(orgs);
 
         // Update should have removed old permission
-        List<KoulutusPermission> deletedPermission = koulutusPermissionDAO.find(Lists.newArrayList("org1"), "koulutus", "koulutus_1", null);
+        List<KoulutusPermission> deletedPermission = koulutusPermissionDAO.findByOrganization(Lists.newArrayList("org1"));
         assertEquals(0, deletedPermission.size());
 
         // And inserted all permissions from JSON
-        List<KoulutusPermission> permissions = koulutusPermissionDAO.getAll();
+        List<KoulutusPermission> permissions = koulutusPermissionDAO.findAll();
         assertEquals(107, permissions.size());
 
-        permissions = koulutusPermissionDAO.find(Lists.newArrayList("1.2.246.562.10.354067406510"), "koulutus", "koulutus_381113", null);
-        assertEquals(1, permissions.size());
+        permissions = koulutusPermissionDAO.findByOrganization(Lists.newArrayList("1.2.246.562.10.354067406510"));
+        assertEquals(13, permissions.size());
     }
 
     @Test(expected = KoulutusPermissionException.class)
