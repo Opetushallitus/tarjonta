@@ -69,7 +69,7 @@ public class KoulutusPermissionService {
         osaamisala.setUri(getFromKomotoOrKomo(komoto.getOsaamisalaUri(), komo.getOsaamisalaUri()));
         dto.setKoulutusohjelma(osaamisala);
 
-        Map<String, Integer> kielet = new HashMap<String, Integer>();
+        Map<String, Integer> kielet = new HashMap<>();
         for (KoodistoUri uri : komoto.getOpetuskielis()) {
             kielet.put(uri.getKoodiUri().split("#")[0], 1);
         }
@@ -118,7 +118,7 @@ public class KoulutusPermissionService {
         if (dto.getKoulutusohjelma() != null) {
             osaamisalaKoodi = dto.getKoulutusohjelma().getUri();
         }
-        List<String> opetuskielet = new ArrayList<String>();
+        List<String> opetuskielet = new ArrayList<>();
         if (dto.getOpetuskielis() != null && dto.getOpetuskielis().getUris() != null) {
             for (String kieli : dto.getOpetuskielis().getUrisAsStringList(false)) {
                 opetuskielet.add(kieli);
