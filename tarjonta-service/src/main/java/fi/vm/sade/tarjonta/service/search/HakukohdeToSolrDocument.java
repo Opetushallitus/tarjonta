@@ -21,7 +21,6 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
@@ -29,6 +28,7 @@ import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.common.SolrInputDocument;
@@ -55,7 +55,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     private OrganisaatioSearchService organisaatioSearchService;
 
     @Autowired
-    private KoodiService koodiService;
+    private TarjontaKoodistoHelper koodistoHelper;
 
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
@@ -191,7 +191,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     }
 
     private void addKausikoodiTiedot(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
-        IndexDataUtils.addKausikoodiTiedot(hakukohdeDoc, hakukohde.getFirstKoulutus().getAlkamiskausiUri(), koodiService);
+        IndexDataUtils.addKausikoodiTiedot(hakukohdeDoc, hakukohde.getFirstKoulutus().getAlkamiskausiUri(), koodistoHelper);
     }
 
     private void addOid(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
@@ -288,7 +288,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
 
             for (TekstiKaannos tekstikaannos : aloituspaikatKuvaus.getTekstiKaannos()) {
 
-                KoodiType type = IndexDataUtils.getKoodiByUriWithVersion(tekstikaannos.getKieliKoodi(), koodiService);
+                KoodiType type = koodistoHelper.getKoodiByUri(tekstikaannos.getKieliKoodi());
 
                 if (type != null) {
                     add(doc, ALOITUSPAIKAT_KUVAUKSET, tekstikaannos.getArvo());
@@ -323,7 +323,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     private void addPohjakoulutusvaatimus(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
         for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
             IndexDataUtils.addKoodiLyhytnimiTiedot(hakukohdeDoc, komoto.getPohjakoulutusvaatimusUri(),
-                    koodiService,
+                    koodistoHelper,
                     POHJAKOULUTUSVAATIMUS_URI,
                     POHJAKOULUTUSVAATIMUS_FI,
                     POHJAKOULUTUSVAATIMUS_SV,
@@ -361,8 +361,8 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
             MonikielinenTeksti nimi = hakukohde.getHakukohdeMonikielinenNimi();
             for (TekstiKaannos tekstikaannos : nimi.getTekstiKaannos()) {
 
-                Preconditions.checkNotNull(koodiService);
-                KoodiType type = IndexDataUtils.getKoodiByUriWithVersion(tekstikaannos.getKieliKoodi(), koodiService);
+                Preconditions.checkNotNull(koodistoHelper);
+                KoodiType type = koodistoHelper.getKoodiByUri(tekstikaannos.getKieliKoodi());
 
                 if (type != null) {
                     add(hakukohdeDoc, NIMET, tekstikaannos.getArvo());
@@ -376,7 +376,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
         if (!hakukohde.getKoulutusmoduuliToteutuses().isEmpty() &&
                 !ToteutustyyppiEnum.VAPAAN_SIVISTYSTYON_KOULUTUS.equals(hakukohde.getFirstKoulutus().getToteutustyyppi())) {
 
-            KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(hakukohde.getHakukohdeNimi(), koodiService);
+            KoodiType koodi = koodistoHelper.getKoodiByUri(hakukohde.getHakukohdeNimi());
 
             if (koodi != null) {
                 KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
@@ -399,7 +399,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     }
 
     private void addHakutapaTiedot(SolrInputDocument doc, Hakukohde hakukohde) {
-        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(hakukohde.getHaku().getHakutapaUri(), koodiService);
+        KoodiType koodi = koodistoHelper.getKoodiByUri(hakukohde.getHaku().getHakutapaUri());
 
         if (koodi != null) {
             KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
@@ -427,7 +427,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
             return;
         }
 
-        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koulutusmoduuliToteutus.getKoulutuslajis().iterator().next().getKoodiUri(), koodiService);
+        KoodiType koodi = koodistoHelper.getKoodiByUri(koulutusmoduuliToteutus.getKoulutuslajis().iterator().next().getKoodiUri());
 
         if (koodi != null) {
             KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));

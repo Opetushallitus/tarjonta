@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.model.*;
@@ -9,13 +10,16 @@ import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
+import fi.vm.sade.tarjonta.shared.KoodistoProactiveCaching;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
+import org.mockito.internal.util.reflection.Whitebox;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -32,6 +36,13 @@ public class ConverterV1Test extends TestMockBase {
 
     @InjectMocks
     private ConverterV1 converter;
+
+    @Before
+    public void init() {
+        Whitebox.setInternalState(tarjontaKoodistoHelper, "koodiService", koodiService);
+        Whitebox.setInternalState(tarjontaKoodistoHelper, "koodistoProactiveCaching", mock(KoodistoProactiveCaching.class));
+        Whitebox.setInternalState(converter, "tarjontaKoodistoHelper", tarjontaKoodistoHelper);
+    }
 
     private void setKomotoForHakukohde(Hakukohde hakukohde) {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
@@ -85,8 +96,9 @@ public class ConverterV1Test extends TestMockBase {
         hakukohde.setTila(TarjontaTila.JULKAISTU);
         setKomotoForHakukohde(hakukohde);
 
-        when(tarjontaKoodistoHelper.getHakukelpoisuusvaatimusrymaUriForHakukohde(anyString())).thenReturn(null);
-        when(tarjontaKoodistoHelper.getKoodiByUri("kieli_fi")).thenReturn(mock(KoodiType.class));
+        when(koodiService.searchKoodis(Matchers.any(SearchKoodisCriteriaType.class))).thenReturn(
+                Lists.newArrayList(mock(KoodiType.class))
+        );
 
         addLiitteet(hakukohde);
 
