@@ -344,7 +344,7 @@ public class TarjontaFixtures {
         calFrom.set(2016, 7, 1);
         haku.setAutosyncTarjontaFrom(calFrom.getTime());
         Calendar calTo = new GregorianCalendar();
-        calFrom.set(2016, 7, 31);
+        calTo.set(2016, 7, 31);
         haku.setAutosyncTarjontaTo(calTo.getTime());
 
         return haku;
