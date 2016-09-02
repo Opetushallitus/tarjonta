@@ -298,8 +298,8 @@ public class HakuDAOImplTest extends TestData {
         Calendar calToday = new GregorianCalendar();
         calToday.set(2016, 7, 15);
         Set<String> hakuOids = hakuDAO.findHakusToSync(calToday.getTime());
-        assertTrue("should not be empty", !hakuOids.isEmpty());
-        assertTrue("should contain correct hakuOid", hakuOids.contains(expectedOid));
+        assertTrue("should not be empty:" + hakuOids, !hakuOids.isEmpty());
+        assertTrue("should contain correct hakuOid:" + hakuOids, hakuOids.contains(expectedOid));
     }
 
     @Test
@@ -308,7 +308,7 @@ public class HakuDAOImplTest extends TestData {
         Calendar calToday = new GregorianCalendar();
         calToday.set(2016, 6, 31);
         Set<String> hakuOids = hakuDAO.findHakusToSync(calToday.getTime());
-        assertTrue("should be empty", hakuOids.isEmpty());
+        assertTrue("should be empty: " + hakuOids, hakuOids.isEmpty());
     }
 
     @Test
@@ -317,7 +317,7 @@ public class HakuDAOImplTest extends TestData {
         Calendar calToday = new GregorianCalendar();
         calToday.set(2016, 8, 1);
         Set<String> hakuOids = hakuDAO.findHakusToSync(calToday.getTime());
-        assertTrue("should be empty", hakuOids.isEmpty());
+        assertTrue("should be empty: " + hakuOids, hakuOids.isEmpty());
     }
 
     @Test
@@ -330,7 +330,7 @@ public class HakuDAOImplTest extends TestData {
         Calendar calToday = new GregorianCalendar();
         calToday.set(2016, 8, 15);
         Set<String> hakuOids = hakuDAO.findHakusToSync(calToday.getTime());
-        assertTrue("should contain correct hakuOid", hakuOids.contains(haku.getOid()));
+        assertTrue("should contain correct hakuOid: " + hakuOids, hakuOids.contains(haku.getOid()));
     }
 
     @Test
@@ -342,7 +342,7 @@ public class HakuDAOImplTest extends TestData {
         Calendar calToday = new GregorianCalendar();
         calToday.set(2016, 5, 15);
         Set<String> hakuOids = hakuDAO.findHakusToSync(calToday.getTime());
-        assertTrue("should contain correct hakuOid", hakuOids.contains(haku.getOid()));
+        assertTrue("should contain correct hakuOid:" + hakuOids, hakuOids.contains(haku.getOid()));
     }
 
     @Test
@@ -354,7 +354,7 @@ public class HakuDAOImplTest extends TestData {
         Calendar calToday = new GregorianCalendar();
         calToday.set(2016, 9, 15);
         Set<String> hakuOids = hakuDAO.findHakusToSync(calToday.getTime());
-        assertTrue("should contain correct hakuOid", hakuOids.contains(haku.getOid()));
+        assertTrue("should contain correct hakuOid:" + hakuOids, hakuOids.contains(haku.getOid()));
     }
 
     private void createHakuWithMontaTarjoajaa() {
