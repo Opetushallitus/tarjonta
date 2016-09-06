@@ -59,7 +59,7 @@
                 <tr>
                     <th tt="hakukohde.review.perustiedot.haku"/>
                     <td colspan="2">
-                        {{ model.hakuNimiInformation.nimi }} (
+                        <a href="/tarjonta-app/#/haku/{{model.hakukohde.hakuOid}}">{{ model.hakuNimiInformation.nimi }}</a> (
                         {{ model.hakuNimiInformation.hakuaikaNimi }} {{ model.hakuNimiInformation.alkuPvm | date:'dd.MM.yyyy HH:mm ' }} -
                         {{ model.hakuNimiInformation.loppuPvm | date:'dd.MM.yyyy HH:mm ' }}
                         )
