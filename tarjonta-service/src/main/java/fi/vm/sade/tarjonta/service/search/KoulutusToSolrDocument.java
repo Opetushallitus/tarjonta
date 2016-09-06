@@ -21,7 +21,6 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
@@ -30,7 +29,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
@@ -53,7 +52,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
     private OrganisaatioSearchService organisaatioSearchService;
 
     @Autowired
-    private KoodiService koodiService;
+    private TarjontaKoodistoHelper koodistoHelper;
 
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
@@ -66,7 +65,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
 
     @Override
     public List<SolrInputDocument> apply(final Long koulutusId) {
-        KoulutusmoduuliToteutus koulutusmoduuliToteutus = koulutusmoduuliToteutusDAO.findBy("id", koulutusId).get(0);
+        KoulutusmoduuliToteutus koulutusmoduuliToteutus = koulutusmoduuliToteutusDAO.read(koulutusId);
 
         final List<OrganisaatioPerustieto> orgs = getTarjoajat(koulutusmoduuliToteutus);
 
@@ -209,7 +208,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
     private void addPohjakoulutusvaatimukset(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
         IndexDataUtils.addKoodiLyhytnimiTiedot(komotoDoc,
                 koulutusmoduuliToteutus.getPohjakoulutusvaatimusUri(),
-                koodiService,
+                koodistoHelper,
                 POHJAKOULUTUSVAATIMUS_URI,
                 POHJAKOULUTUSVAATIMUS_FI,
                 POHJAKOULUTUSVAATIMUS_SV,
@@ -250,10 +249,10 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         Date alkamisPvm = koulutusmoduuliToteutus.getMinAlkamisPvm();
 
         if (alkamisPvm == null) {
-            IndexDataUtils.addKausikoodiTiedot(komotoDoc, koulutusmoduuliToteutus.getAlkamiskausiUri(), koodiService);
+            IndexDataUtils.addKausikoodiTiedot(komotoDoc, koulutusmoduuliToteutus.getAlkamiskausiUri(), koodistoHelper);
             add(komotoDoc, VUOSI_KOODI, koulutusmoduuliToteutus.getAlkamisVuosi());
         } else {
-            IndexDataUtils.addKausikoodiTiedot(komotoDoc, IndexDataUtils.parseKausiKoodi(alkamisPvm), koodiService);
+            IndexDataUtils.addKausikoodiTiedot(komotoDoc, IndexDataUtils.parseKausiKoodi(alkamisPvm), koodistoHelper);
             add(komotoDoc, VUOSI_KOODI, IndexDataUtils.parseYear(alkamisPvm));
         }
     }
@@ -337,8 +336,8 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
 
     private void addMonikielinenNimi(SolrInputDocument komotoDoc, MonikielinenTeksti nimi) {
         for (TekstiKaannos tekstikaannos : nimi.getTekstiKaannos()) {
-            Preconditions.checkNotNull(koodiService);
-            KoodiType type = IndexDataUtils.getKoodiByUriWithVersion(tekstikaannos.getKieliKoodi(), koodiService);
+            Preconditions.checkNotNull(koodistoHelper);
+            KoodiType type = koodistoHelper.getKoodiByUri(tekstikaannos.getKieliKoodi());
 
             if (type != null) {
                 add(komotoDoc, NIMET, tekstikaannos.getArvo());
@@ -418,7 +417,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
 
         for (String uri : koodistoUris) {
             //käännökset, vain yksi käännös tallennetaan
-            KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(uri, koodiService);
+            KoodiType koodi = koodistoHelper.getKoodiByUri(uri);
 
             if (koodi != null) {
                 add(doc, KOULUTUSLAJI_URIS, koodi.getKoodiUri()); // no '#'-characters!
@@ -477,7 +476,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
             return;
         }
 
-        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koulutusUri, koodiService);
+        KoodiType koodi = koodistoHelper.getKoodiByUri(koulutusUri);
 
         if (koodi != null) {
             KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
@@ -508,7 +507,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
     private void addKoulutusohjelmaTiedot(SolrInputDocument doc, String koulutusohjelmaKoodi) {
         if (koulutusohjelmaKoodi != null) {
 
-            KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koulutusohjelmaKoodi, koodiService);
+            KoodiType koodi = koodistoHelper.getKoodiByUri(koulutusohjelmaKoodi);
 
             if (koodi != null) {
                 KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));

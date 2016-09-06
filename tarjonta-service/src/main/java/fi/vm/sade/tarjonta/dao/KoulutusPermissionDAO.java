@@ -23,11 +23,7 @@ import java.util.List;
 
 public interface KoulutusPermissionDAO extends JpaDAO<KoulutusPermission, Long>  {
 
-    List<KoulutusPermission> getAll();
-
-    List<KoulutusPermission> find(List<String> orgOids, String koodisto, String koodiUri, Date pvm);
-
-    List<KoulutusPermission> find(List<String> orgOids, String koodisto, String koodiUri);
+    List<KoulutusPermission> findByOrganization(List<String> orgOids);
 
     Long removeAll();
 

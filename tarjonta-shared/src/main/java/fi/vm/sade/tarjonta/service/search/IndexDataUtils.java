@@ -24,11 +24,13 @@ import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
@@ -50,6 +52,9 @@ public class IndexDataUtils {
 
     public static final String KEVAT_URI = "kausi_k#1";
     public static final String SYKSY_URI = "kausi_s#1";
+
+    @Autowired
+    TarjontaKoodistoHelper koodistoHelper;
 
     /**
      * Extract components from the versioned koodi uri.
@@ -244,12 +249,12 @@ public class IndexDataUtils {
         return nimi;
     }
 
-    public static void addKausikoodiTiedot(SolrInputDocument doc, String kausikoodi, KoodiService koodiService) {
+    public static void addKausikoodiTiedot(SolrInputDocument doc, String kausikoodi, TarjontaKoodistoHelper koodistoHelper) {
         if (kausikoodi == null) {
             return;
         }
 
-        KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(kausikoodi, koodiService);
+        KoodiType koodi = koodistoHelper.getKoodiByUri(kausikoodi);
 
         if (koodi != null) {
             KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
@@ -267,7 +272,7 @@ public class IndexDataUtils {
 
     public static void addKoodiLyhytnimiTiedot(SolrInputDocument doc,
                                                String koodiUri,
-                                               KoodiService koodiService,
+                                               TarjontaKoodistoHelper koodistoHelper,
                                                String uriField,
                                                String fiField,
                                                String svField,
@@ -276,7 +281,7 @@ public class IndexDataUtils {
             return;
         }
 
-        final KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koodiUri, koodiService);
+        final KoodiType koodi = koodistoHelper.getKoodiByUri(koodiUri);
 
         if (koodi != null) {
             KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));

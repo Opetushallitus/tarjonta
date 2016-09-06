@@ -12,18 +12,20 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
+import fi.vm.sade.tarjonta.shared.KoodistoProactiveCaching;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -53,15 +55,17 @@ public class IndexerResourceTest {
         stub(oppilaitostyyppiResolver.resolve(any(OrganisaatioPerustieto.class))).toReturn("oppilaitostyyppi_41");
         ReflectionTestUtils.setField(hakukohdeToSolr, "oppilaitostyyppiResolver", oppilaitostyyppiResolver);
 
-        KoodiService koodiService = Mockito.mock(KoodiService.class);
-        ReflectionTestUtils.setField(hakukohdeToSolr, "koodiService", koodiService);
+        TarjontaKoodistoHelper tarjontaKoodistoHelper = new TarjontaKoodistoHelper();
+        Whitebox.setInternalState(tarjontaKoodistoHelper, "koodiService", mock(KoodiService.class));
+        Whitebox.setInternalState(tarjontaKoodistoHelper, "koodistoProactiveCaching", mock(KoodistoProactiveCaching.class));
+        Whitebox.setInternalState(hakukohdeToSolr, "koodistoHelper", tarjontaKoodistoHelper);
 
         IndexerDAO indexerDao = Mockito.mock(IndexerDAO.class);
         ReflectionTestUtils.setField(indexer, "indexerDao", indexerDao);
 
         HakukohdeDAOImpl hakukohdeDAO = Mockito.mock(HakukohdeDAOImpl.class);
         Whitebox.setInternalState(hakukohdeToSolr, "hakukohdeDAO", hakukohdeDAO);
-        Mockito.stub(hakukohdeDAO.findBy("id", 1L)).toReturn(Arrays.asList(getHakukohde()));
+        Mockito.stub(hakukohdeDAO.read(1L)).toReturn(getHakukohde());
     }
 
     private OrganisaatioPerustieto getOrg(String oid) {

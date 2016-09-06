@@ -48,8 +48,7 @@ abstract public class TestMockBase {
     @Mock
     protected PermissionChecker permissionChecker;
 
-    @Mock
-    protected TarjontaKoodistoHelper tarjontaKoodistoHelper;
+    protected TarjontaKoodistoHelper tarjontaKoodistoHelper = new TarjontaKoodistoHelper();
 
     @Mock
     protected ConverterV1 converterV1;

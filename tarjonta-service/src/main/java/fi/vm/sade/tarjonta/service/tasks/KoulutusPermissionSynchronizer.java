@@ -4,14 +4,12 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionException;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
-import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteJarjestamiskuntaDTO;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteKoulutusDTO;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOpetuskieliDTO;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOrgDTO;
@@ -59,7 +57,7 @@ public class KoulutusPermissionSynchronizer {
     private static final Map<String, String> opetuskieliKoodiMap;
     private static final int KOMOTO_BATCH_SIZE = 500;
     static {
-        opetuskieliKoodiMap = new HashMap<String, String>();
+        opetuskieliKoodiMap = new HashMap<>();
         opetuskieliKoodiMap.put("1", "kieli_fi");
         opetuskieliKoodiMap.put("2", "kieli_sv");
         opetuskieliKoodiMap.put("4", "kieli_en");
@@ -74,7 +72,7 @@ public class KoulutusPermissionSynchronizer {
         LOG.info("KoulutusPermissions start update");
 
         ObjectMapper objectMapper = new ObjectMapper();
-        List<AmkouteOrgDTO> orgs = new ArrayList<AmkouteOrgDTO>();
+        List<AmkouteOrgDTO> orgs = new ArrayList<>();
 
         try {
             orgs = objectMapper.readValue(
@@ -108,7 +106,7 @@ public class KoulutusPermissionSynchronizer {
 
         List<ToteutustyyppiEnum> tyyppis = KoulutusPermissionService.getToteustustyyppisToCheckPermissionFor();
         List<KoulutusmoduuliToteutus> komotos;
-        Map<String, List<KoulutusPermissionException>> orgsWithInvalidKomotos = new HashMap<String, List<KoulutusPermissionException>>();
+        Map<String, List<KoulutusPermissionException>> orgsWithInvalidKomotos = new HashMap<>();
         int offset = 0;
 
         do {
@@ -123,7 +121,7 @@ public class KoulutusPermissionSynchronizer {
                     e.setKomoto(komoto);
                     List<KoulutusPermissionException> invalidKomotos = orgsWithInvalidKomotos.get(e.getOrganisaationOid());
                     if (invalidKomotos == null) {
-                        invalidKomotos = new ArrayList<KoulutusPermissionException>();
+                        invalidKomotos = new ArrayList<>();
                     }
                     invalidKomotos.add(e);
                     orgsWithInvalidKomotos.put(e.getOrganisaationOid(), invalidKomotos);
@@ -189,9 +187,9 @@ public class KoulutusPermissionSynchronizer {
     }
 
     public static List<KoulutusPermission> convertFromDto(AmkouteOrgDTO org) {
-        List<KoulutusPermission> permissions = new ArrayList<KoulutusPermission>();
+        List<KoulutusPermission> permissions = new ArrayList<>();
 
-        Map<String, KoulutusPermission> koulutusKoodit = new HashMap<String, KoulutusPermission>();
+        Map<String, KoulutusPermission> koulutusKoodit = new HashMap<>();
 
         for (AmkouteKoulutusDTO permissionDto : nullSafe(org.getKoulutukset())) {
             if (permissionDto.getOsaamisala() != null) {
@@ -231,16 +229,6 @@ public class KoulutusPermissionSynchronizer {
                         permissionDto.getLoppupvm()
                 ));
             }
-        }
-
-        for (AmkouteJarjestamiskuntaDTO permissionDto : nullSafe(org.getJarjestamiskunnat())) {
-            permissions.add(new KoulutusPermission(
-                    org.getOid(),
-                    "kunta",
-                    "kunta_" + permissionDto.getKunta(),
-                    permissionDto.getAlkupvm(),
-                    permissionDto.getLoppupvm()
-            ));
         }
 
         return permissions;
