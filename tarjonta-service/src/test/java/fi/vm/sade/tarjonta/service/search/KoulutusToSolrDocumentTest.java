@@ -7,7 +7,6 @@ import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
 import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.shared.KoodistoProactiveCaching;
-import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -18,7 +17,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
-import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import java.util.*;
@@ -46,7 +44,7 @@ public class KoulutusToSolrDocumentTest extends TestMockBase {
         Whitebox.setInternalState(tarjontaKoodistoHelper, "koodistoProactiveCaching", mock(KoodistoProactiveCaching.class));
         Whitebox.setInternalState(converter, "koodistoHelper", tarjontaKoodistoHelper);
 
-        when(koulutusmoduuliToteutusDAO.read(1L)).thenReturn(koulutusmoduuliToteutus);
+        when(koulutusmoduuliToteutusDAO.findBy("id", 1L)).thenReturn(Arrays.asList(koulutusmoduuliToteutus));
         when(organisaatioSearchService.findByOidSet(new HashSet<String>(Arrays.asList("1.2.3", "4.5.6")))).thenReturn(organisaatioPerustiedot);
         when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(0))).thenReturn("oppilaitostyyppi_41");
         when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(1))).thenReturn("oppilaitostyyppi_42");

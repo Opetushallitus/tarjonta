@@ -65,7 +65,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
 
     @Override
     public List<SolrInputDocument> apply(final Long koulutusId) {
-        KoulutusmoduuliToteutus koulutusmoduuliToteutus = koulutusmoduuliToteutusDAO.read(koulutusId);
+        KoulutusmoduuliToteutus koulutusmoduuliToteutus = koulutusmoduuliToteutusDAO.findBy("id", koulutusId).get(0);
 
         final List<OrganisaatioPerustieto> orgs = getTarjoajat(koulutusmoduuliToteutus);
 

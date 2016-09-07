@@ -1,7 +1,6 @@
 package fi.vm.sade.tarjonta.service.search;
 
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
@@ -26,7 +25,6 @@ import java.util.*;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -49,7 +47,7 @@ public class HakukohdeToSolrDocumentTest extends TestMockBase {
         Whitebox.setInternalState(tarjontaKoodistoHelper, "koodistoProactiveCaching", mock(KoodistoProactiveCaching.class));
         Whitebox.setInternalState(converter, "koodistoHelper", tarjontaKoodistoHelper);
 
-        when(hakukohdeDAO.read(1L)).thenReturn(hakukohde);
+        when(hakukohdeDAO.findBy("id", 1L)).thenReturn(Arrays.asList(hakukohde));
         when(organisaatioSearchService.findByOidSet(new HashSet<String>(Arrays.asList("1.2.3")))).thenReturn(organisaatioPerustiedot);
         when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(0))).thenReturn("oppilaitostyyppi_41");
     }
