@@ -10,19 +10,24 @@ app.controller('GenerateLomakeController', function($modalInstance, hakuOid, $ht
     $scope.generateLomake = function(oid) {
         $scope.loading = true;
 
-        $http.post('/haku-app/generatelomake/one/' + oid)
+        $http.get('/haku-app/generatelomake/ping')
             .then(function success(response) {
-                $scope.loading = false;
-                $scope.success = response.status == 200;
-                $scope.error = !$scope.success;
-            }, function error(response) {
-                var loadingService = $injector.get('loadingService');
-                loadingService.onErrorHandled();
+                $http.post('/haku-app/generatelomake/one/' + oid)
+                    .then(function success(response) {
+                        $scope.loading = false;
+                        $scope.success = response.status == 200;
+                        $scope.error = !$scope.success;
+                    }, handleError(response))
+            }, handleError(response));
+    };
 
-                $scope.loading = false;
-                $scope.error = true;
-                $scope.permissionDenied = response.status == 403;
-            });
+    $scope.handleError = function(response) {
+        var loadingService = $injector.get('loadingService');
+        loadingService.onErrorHandled();
+
+        $scope.loading = false;
+        $scope.error = true;
+        $scope.permissionDenied = response.status == 403;
     };
 
     $scope.generateLomake(hakuOid);
