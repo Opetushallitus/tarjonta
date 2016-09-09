@@ -13,7 +13,7 @@ app.controller('GenerateLomakeController', function($modalInstance, hakuOid, $ht
         $http.get('/haku-app/generatelomake/ping')
             .then(function success(response) {
                $scope.callGenerateLomake();
-            }, $scope.handleError(response));
+            }, $scope.handleError);
     };
 
     $scope.callGenerateLomake = function() {
@@ -22,7 +22,7 @@ app.controller('GenerateLomakeController', function($modalInstance, hakuOid, $ht
                 $scope.loading = false;
                 $scope.success = response.status == 200;
                 $scope.error = !$scope.success;
-            }, $scope.handleError(response));
+            }, $scope.handleError);
     };
 
     $scope.handleError = function(response) {
