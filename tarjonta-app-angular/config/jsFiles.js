@@ -10,6 +10,7 @@ module.exports = [
     'lib/angular/angular-cookies.js',
     'lib/ngGrid/ng-grid-2.0.7.debug.js',
     'lib/moment-with-langs.min.js',
+    'lib/moment-tz-all.js',
     'lib/bootstrap-datetimepicker.min.js',
     'lib/bootstrap-datetimepicker.fi.js',
     'lib/bootstrap-datetimepicker.sv.js',
