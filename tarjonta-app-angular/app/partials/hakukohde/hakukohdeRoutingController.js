@@ -61,12 +61,14 @@ app.controller('HakukohdeRoutingController', [
         $scope.canEdit = $route.current.locals.canEdit;
 
         $scope.valintakoeAjankohtaToCurrentLocale = function(ajankohta) {
-            var t = new Date(ajankohta),
-                year = t.getFullYear(),
-                month = t.getMonth() + 1,
-                day = t.getDate(),
-                hours = t.getHours(),
-                minutes = t.getMinutes();
+            //Split to get date parts in fin locale
+            //Example of split: ["2016", "09", "14", "13", "27", "47", "03", "00"]
+            var t = new moment.tz(ajankohta, "Europe/Helsinki").format().split(/[^-9]/),
+                year = t[0],
+                month = t[1],
+                day = t[2],
+                hours = t[3],
+                minutes = t[4];
             return new Date(year, month, day, hours, minutes).getTime();
         };
 
@@ -90,8 +92,8 @@ app.controller('HakukohdeRoutingController', [
 
             angular.forEach(hakukohdeResource.valintakokeet, function(koe) {
                 _.each(koe.valintakoeAjankohtas, function(ajankohta) {
-                    ajankohta.alkaa = valintakoeAjankohtaToCurrentLocale(ajankohta.alkaa);
-                    ajankohta.loppuu = valintakoeAjankohtaToCurrentLocale(ajankohta.loppuu);
+                    ajankohta.alkaa = $scope.valintakoeAjankohtaToCurrentLocale(ajankohta.alkaa);
+                    ajankohta.loppuu = $scope.valintakoeAjankohtaToCurrentLocale(ajankohta.loppuu);
                 });
             });
 
