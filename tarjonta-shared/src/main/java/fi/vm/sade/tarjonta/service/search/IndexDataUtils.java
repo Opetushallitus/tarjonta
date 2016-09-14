@@ -204,16 +204,20 @@ public class IndexDataUtils {
             if (defaultTarjoaja != null) {
 
                 for (String tmpOrgOid : orgOidCandidates) {
+                    try {
+                        // Need to check whole organization path
+                        OrganisaatioPerustieto organisaatioPerustieto = orgResponse.get(tmpOrgOid);
+                        ArrayList<String> path = new ArrayList<String>();
+                        path.add(tmpOrgOid);
+                        path.addAll(Arrays.asList(organisaatioPerustieto.getParentOidPath().split("/")));
 
-                    // Need to check whole organization path
-                    OrganisaatioPerustieto organisaatioPerustieto = orgResponse.get(tmpOrgOid);
-                    ArrayList<String> path = new ArrayList<String>();
-                    path.add(tmpOrgOid);
-                    path.addAll(Arrays.asList(organisaatioPerustieto.getParentOidPath().split("/")));
-
-                    if (path.indexOf(defaultTarjoaja) != -1) {
-                        tarjoaja.setOid(tmpOrgOid);
-                        break;
+                        if (path.indexOf(defaultTarjoaja) != -1) {
+                            tarjoaja.setOid(tmpOrgOid);
+                            break;
+                        }
+                    } catch(Exception e) {
+                        log.error("organisation:" + tmpOrgOid + " missing either perustieto or parentoidpath.");
+                        throw e;
                     }
                 }
             }
