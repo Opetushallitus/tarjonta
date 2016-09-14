@@ -1278,6 +1278,17 @@ app.controller('HakukohdeParentController', [
             }
         }
 
+        function valintakoeAjankohtaToFinnishLocale(ajankohta) {
+            var t = new Date(ajankohta),
+                year = t.getFullYear(),
+                month = t.getMonth(),
+                day = t.getDay(),
+                hours = t.getHours(),
+                minutes = t.getMinutes(),
+                date = day + '-' + month + '-' + year + ' ' + hours + ':' + minutes;
+            moment.tz(date, 'DD-MM-YYYY HH:mm', 'Europe/Helsinki').toDate().getTime()
+        }
+
         $scope.model.saveParent = function(tila) {
             if (!tila) {
                 throw 'tila cannot be undefined!';
@@ -1314,6 +1325,13 @@ app.controller('HakukohdeParentController', [
                     if(!$scope.model.hakukohde.hakuaikaLoppuPvm) {
                         $scope.model.hakukohde.hakuaikaLoppuPvm = 0;
                     }
+                    angular.forEach($scope.model.hakukohde.valintakokeet, function(koe) {
+                        _.each(koe.valintakoeAjankohtas, function(ajankohta) {
+                            ajankohta.alkaa = valintakoeAjankohtaToFinnishLocale(ajankohta.alkaa);
+                            ajankohta.loppuu = valintakoeAjankohtaToFinnishLocale(ajankohta.loppuu);
+                        });
+                    });
+
                     if ($scope.model.hakukohde.oid === undefined) {
                         // KJOH-778, pitää tietää mille organisaatiolle ollaan luomassa hakukohdetta
                         var tarjoajatiedot = {};
