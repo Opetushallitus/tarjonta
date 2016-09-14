@@ -1246,17 +1246,36 @@ app.controller('HakukohdeParentController', [
             }
         }
 
-        function processResponse(hakukohde) {
-            $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+        function valintakoeAjankohtaToCurrentLocale(ajankohta) {
+            //Split to get date parts in fin locale
+            //Example of split: ["2016", "09", "14", "13", "27", "47", "03", "00"]
+            var t = moment.tz(ajankohta, "Europe/Helsinki").format().split(/[^0-9]/),
+                year = t[0],
+                month = t[1],
+                day = t[2],
+                hours = t[3],
+                minutes = t[4];
+            return new Date(year, month, day, hours, minutes).getTime();
+        }
+
+        function processResponse(response) {
+            var hakukohde = response.result;
+            angular.forEach(hakukohde.valintakokeet, function(koe) {
+                _.each(koe.valintakoeAjankohtas, function(ajankohta) {
+                    ajankohta.alkaa = valintakoeAjankohtaToCurrentLocale(ajankohta.alkaa);
+                    ajankohta.loppuu = valintakoeAjankohtaToCurrentLocale(ajankohta.loppuu);
+                });
+            });
+            $scope.model.hakukohde = new Hakukohde(hakukohde);
             initValintaperusteAndSoraKuvaukset();
             reloadHakukohdeModel();
-            if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
+            if (response.errors === undefined || response.errors.length < 1) {
                 $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
                 $scope.showSuccess();
                 $scope.checkIfSavingCopy($scope.model.hakukohde);
             }
             else {
-                $scope.showError(hakukohde.errors);
+                $scope.showError(repsonse.errors);
             }
             $scope.canEdit = true;
             $scope.model.continueToReviewEnabled = true;
