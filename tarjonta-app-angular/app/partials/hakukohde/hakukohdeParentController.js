@@ -1281,12 +1281,12 @@ app.controller('HakukohdeParentController', [
         function valintakoeAjankohtaToFinnishLocale(ajankohta) {
             var t = new Date(ajankohta),
                 year = t.getFullYear(),
-                month = t.getMonth(),
-                day = t.getDay(),
+                month = t.getMonth() + 1,
+                day = t.getDate(),
                 hours = t.getHours(),
                 minutes = t.getMinutes(),
                 date = day + '-' + month + '-' + year + ' ' + hours + ':' + minutes;
-            moment.tz(date, 'DD-MM-YYYY HH:mm', 'Europe/Helsinki').toDate().getTime()
+            return moment.tz(date, 'DD-MM-YYYY HH:mm', 'Europe/Helsinki').toDate().getTime();
         }
 
         $scope.model.saveParent = function(tila) {
