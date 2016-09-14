@@ -59,6 +59,17 @@ app.controller('HakukohdeRoutingController', [
         // controls-layouttia varten
         $scope.canCreate = $route.current.locals.canCreate;
         $scope.canEdit = $route.current.locals.canEdit;
+
+        $scope.valintakoeAjankohtaToCurrentLocale = function(ajankohta) {
+            var t = new Date(ajankohta),
+                year = t.getFullYear(),
+                month = t.getMonth() + 1,
+                day = t.getDate(),
+                hours = t.getHours(),
+                minutes = t.getMinutes();
+            return new Date(year, month, day, hours, minutes).getTime();
+        };
+
         if ($route.current.locals.hakukohdex.result === undefined) {
             $scope.model = {
                 collapse: {
@@ -76,6 +87,14 @@ app.controller('HakukohdeRoutingController', [
         }
         else {
             var hakukohdeResource = new Hakukohde($route.current.locals.hakukohdex.result);
+
+            angular.forEach(hakukohdeResource.valintakokeet, function(koe) {
+                _.each(koe.valintakoeAjankohtas, function(ajankohta) {
+                    ajankohta.alkaa = valintakoeAjankohtaToCurrentLocale(ajankohta.alkaa);
+                    ajankohta.loppuu = valintakoeAjankohtaToCurrentLocale(ajankohta.loppuu);
+                });
+            });
+
             if ($route.current.locals.isCopy !== undefined) {
                 SharedStateService.addToState('SelectedToteutusTyyppi', hakukohdeResource.toteutusTyyppi);
             }
