@@ -1286,7 +1286,7 @@ app.controller('HakukohdeParentController', [
                 hours = t.getHours(),
                 minutes = t.getMinutes(),
                 date = day + '-' + month + '-' + year + ' ' + hours + ':' + minutes;
-            return moment.tz(date, 'DD-MM-YYYY HH:mm', 'Europe/Helsinki').toDate().getTime();
+            return moment.tz(date, 'DD-MM-YYYY HH:mm', 'Europe/Helsinki').valueOf();
         }
 
         $scope.model.saveParent = function(tila) {
