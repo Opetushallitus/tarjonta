@@ -10,7 +10,7 @@ app.controller('GenerateLomakeController', function($modalInstance, hakuOid, $ht
     $scope.generateLomake = function(oid) {
         $scope.loading = true;
 
-        $http.get('/haku-app/generatelomake/ping')
+        $http.get('/haku-app/generatelomake/ping/' + oid)
             .then(function success(response) {
                $scope.callGenerateLomake(oid);
             }, $scope.handleError);
