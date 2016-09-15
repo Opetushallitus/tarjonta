@@ -1297,10 +1297,10 @@ app.controller('HakukohdeParentController', [
             }
         }
 
-        function valintakoeAjankohtaToFinnishLocale(ajankohta) {
+        function valintakoeAjankohtaToFinnishTime(ajankohta) {
             var t = new Date(ajankohta),
                 year = t.getFullYear(),
-                month = t.getMonth() + 1,
+                month = t.getMonth(),
                 day = t.getDate(),
                 hours = t.getHours(),
                 minutes = t.getMinutes(),
@@ -1339,8 +1339,8 @@ app.controller('HakukohdeParentController', [
 
                     angular.forEach($scope.model.hakukohde.valintakokeet, function(koe) {
                         _.each(koe.valintakoeAjankohtas, function(ajankohta) {
-                            ajankohta.alkaa = valintakoeAjankohtaToFinnishLocale(ajankohta.alkaa);
-                            ajankohta.loppuu = valintakoeAjankohtaToFinnishLocale(ajankohta.loppuu);
+                            ajankohta.alkaa = valintakoeAjankohtaToFinnishTime(ajankohta.alkaa);
+                            ajankohta.loppuu = valintakoeAjankohtaToFinnishTime(ajankohta.loppuu);
                         });
                     });
 
