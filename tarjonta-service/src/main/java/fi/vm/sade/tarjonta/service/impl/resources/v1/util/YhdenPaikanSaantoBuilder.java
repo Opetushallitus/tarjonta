@@ -57,11 +57,14 @@ public class YhdenPaikanSaantoBuilder {
                     TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO
             ));
         }
-        List<KoulutusmoduuliToteutus> koulutukset = hakukohde.getKoulutusmoduuliToteutuses().stream()
-                .filter(koulutus -> !IGNORE_KOULUTUS_STATES.contains(koulutus.getTila()) &&
-                        koulutus.getAlkamisVuosi() != null &&
-                        koulutus.getAlkamiskausiUri() != null)
-                .collect(Collectors.toList());
+        List<KoulutusmoduuliToteutus> koulutukset = new ArrayList<>();
+        for (KoulutusmoduuliToteutus koulutus : hakukohde.getKoulutusmoduuliToteutuses()) {
+            if (!IGNORE_KOULUTUS_STATES.contains(koulutus.getTila()) &&
+                    koulutus.getAlkamisVuosi() != null &&
+                    koulutus.getAlkamiskausiUri() != null) {
+                koulutukset.add(koulutus);
+            }
+        }
         if (koulutukset.isEmpty()) {
             return new YhdenPaikanSaanto(false, String.format(
                     "%s ja hakukohteella ei ole oikean tilaista koulutusta",
@@ -69,10 +72,14 @@ public class YhdenPaikanSaantoBuilder {
             ));
         }
         if (!uniqueKoulutuksenAlkamiskausi(koulutukset)) {
+            List<String> koulutusOids = new ArrayList<>();
+            for (KoulutusmoduuliToteutus koulutus : koulutukset) {
+                koulutusOids.add(koulutus.getOid());
+            }
             throw new IllegalStateException(String.format(
                     "Hakukohteen %s koulutusten %s koulutusten alkamiskaudet eivät ole yhtenevät.",
                     hakukohde.getOid(),
-                    koulutukset.stream().map(BaseKoulutusmoduuli::getOid).collect(Collectors.toList())
+                    koulutusOids
             ));
         }
         KoulutusmoduuliToteutus koulutus = koulutukset.get(0);
@@ -89,16 +96,25 @@ public class YhdenPaikanSaantoBuilder {
     }
 
     private static boolean haunKohdejoukontarkenneYPSYhteensopiva(Haku haku) {
-        return StringUtils.isBlank(haku.getKohdejoukonTarkenne()) ||
-                TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO.stream()
-                        .anyMatch(tarkenne -> haku.getKohdejoukonTarkenne().startsWith(tarkenne));
+        if (StringUtils.isBlank(haku.getKohdejoukonTarkenne())) {
+            return true;
+        }
+        for (String kohdejoukonTarkenne: TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO) {
+            if (haku.getKohdejoukonTarkenne().startsWith(kohdejoukonTarkenne)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean uniqueKoulutuksenAlkamiskausi(List<KoulutusmoduuliToteutus> koulutukset) {
         int alkamisvuosi = koulutukset.get(0).getAlkamisVuosi();
         String alkamiskausiUri = koulutukset.get(0).getAlkamiskausiUri();
-        return koulutukset.stream()
-                .allMatch(koulutus -> alkamisvuosi == koulutus.getAlkamisVuosi() &&
-                        alkamiskausiUri.equals(koulutus.getAlkamiskausiUri()));
+        for (KoulutusmoduuliToteutus koulutus : koulutukset) {
+            if (alkamisvuosi != koulutus.getAlkamisVuosi() || !alkamiskausiUri.equals(koulutus.getAlkamiskausiUri())) {
+                return false;
+            }
+        }
+        return true;
     }
 }
