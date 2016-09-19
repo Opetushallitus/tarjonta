@@ -16,6 +16,7 @@ public class YhdenPaikanSaantoBuilder {
     private static final String JATKOTUTKINTOHAKU_URI = "haunkohdejoukontarkenne_3#";
     private static final List<String> TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO = Collections.singletonList(JATKOTUTKINTOHAKU_URI);
     private static final List<TarjontaTila> IGNORE_KOULUTUS_STATES = Arrays.asList(TarjontaTila.LUONNOS, TarjontaTila.KOPIOITU);
+    public static final String KAUSI_KEVAT = "kausi_k";
 
     public static YhdenPaikanSaanto from(Haku haku) {
         if (!haku.isKorkeakouluHaku()) {
@@ -24,7 +25,7 @@ public class YhdenPaikanSaantoBuilder {
         boolean hasAlkamisVuosiAndUri = haku.getKoulutuksenAlkamisVuosi() != null && haku.getKoulutuksenAlkamiskausiUri() != null;
         if (hasAlkamisVuosiAndUri) {
             boolean isBeforeSyksy2016 = haku.getKoulutuksenAlkamisVuosi() < 2016 ||
-                    (haku.getKoulutuksenAlkamisVuosi() == 2016 && haku.getKoulutuksenAlkamiskausiUri().startsWith("kausi_k"));
+                    (haku.getKoulutuksenAlkamisVuosi() == 2016 && haku.getKoulutuksenAlkamiskausiUri().startsWith(KAUSI_KEVAT));
             if (isBeforeSyksy2016) {
                 return new YhdenPaikanSaanto(false, "Haun koulutuksen alkamiskausi on ennen syksyä 2016");
             }
@@ -76,7 +77,7 @@ public class YhdenPaikanSaantoBuilder {
         }
         KoulutusmoduuliToteutus koulutus = koulutukset.get(0);
         boolean ennenSyksya2016 = koulutus.getAlkamisVuosi() < 2016 ||
-                (koulutus.getAlkamisVuosi() == 2016 && koulutus.getAlkamiskausiUri().startsWith("kausi_k"));
+                (koulutus.getAlkamisVuosi() == 2016 && koulutus.getAlkamiskausiUri().startsWith(KAUSI_KEVAT));
         if (ennenSyksya2016) {
             return new YhdenPaikanSaanto(false, String.format(
                     "%s ja hakukohteen koulutuksen alkamiskausi on ennen syksyä 2016",
