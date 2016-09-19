@@ -45,39 +45,41 @@ public class YhdenPaikanSaantoBuilder {
 
     public static YhdenPaikanSaanto from(Hakukohde hakukohde) {
         Haku haku = hakukohde.getHaku();
-        YhdenPaikanSaanto yhdenPaikanSaantoBasedOnHaku = from(haku);
-        if (yhdenPaikanSaantoBasedOnHaku.isVoimassa()) {
-            return yhdenPaikanSaantoBasedOnHaku;
+        YhdenPaikanSaanto ypsBasedOnHaku = from(haku);
+        if (ypsBasedOnHaku.isVoimassa()) {
+            return ypsBasedOnHaku;
         }
-        if (haku.isKorkeakouluHaku()) {
-            if (!haunKohdejoukontarkenneYPSYhteensopiva(haku)) {
-                return yhdenPaikanSaantoBasedOnHaku;
-            }
-            if (haku.isJatkuva()) {
-                Collection<KoulutusmoduuliToteutus> validKomotos = filterOnlyValidKomotos(hakukohde.getKoulutusmoduuliToteutuses());
-                if (validKomotos.isEmpty()) {
-                    return new YhdenPaikanSaanto(false, String.format("%s ja hakukohteella ei ole oikean tilaista koulutusmoduulia",
-                            yhdenPaikanSaantoBasedOnHaku.getSyy()));
-                } else if (validKomotos.size() > 1) {
-                    return new YhdenPaikanSaanto(false, String.format("%s ja hakukohteella on liian monta oikean tilaista koulutusmoduulia",
-                            yhdenPaikanSaantoBasedOnHaku.getSyy()));
-                } else {
-                    KoulutusmoduuliToteutus validKomoto = validKomotos.iterator().next();
-                    boolean ennenSyksya2016 = validKomoto.getAlkamisVuosi() < 2016 ||
-                            (validKomoto.getAlkamisVuosi() == 2016 && validKomoto.getAlkamiskausiUri().startsWith("kausi_k"));
-                    if (ennenSyksya2016) {
-                        return new YhdenPaikanSaanto(false, String.format("%s ja hakukohteen alkamiskausi ja vuosi on ennen syksyä 2016",
-                                yhdenPaikanSaantoBasedOnHaku.getSyy()));
-                    } else {
-                        return new YhdenPaikanSaanto(true, "Jatkuvan haun hakukohteen alkamiskausi ja vuosi on jälkeen kevään 2016");
-                    }
-                }
-            } else {
-                return new YhdenPaikanSaanto(false, String.format("%s ja kyseessä ei ole jatkuva haku",
-                        yhdenPaikanSaantoBasedOnHaku.getSyy()));
-            }
+        if (!(haku.isKorkeakouluHaku() && haku.isJatkuva() && haunKohdejoukontarkenneYPSYhteensopiva(haku))) {
+            return new YhdenPaikanSaanto(false, String.format(
+                    "%s ja hakukohde ei kuulu jatkuvaan korkeakouluhakuun, jonka kohdejoukon tarkenne kuuluu joukkoon %s tai sitä ei ole",
+                    ypsBasedOnHaku.getSyy(),
+                    TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO
+            ));
         }
-        return yhdenPaikanSaantoBasedOnHaku;
+        Collection<KoulutusmoduuliToteutus> validKomotos = filterOnlyValidKomotos(hakukohde.getKoulutusmoduuliToteutuses());
+        if (validKomotos.isEmpty()) {
+            return new YhdenPaikanSaanto(false, String.format(
+                    "%s ja hakukohteella ei ole oikean tilaista koulutusmoduulia",
+                    ypsBasedOnHaku.getSyy()
+            ));
+        }
+        if (validKomotos.size() > 1) {
+            return new YhdenPaikanSaanto(false, String.format(
+                    "%s ja hakukohteella on liian monta oikean tilaista koulutusmoduulia",
+                    ypsBasedOnHaku.getSyy()
+            ));
+        }
+        KoulutusmoduuliToteutus validKomoto = validKomotos.iterator().next();
+        boolean ennenSyksya2016 = validKomoto.getAlkamisVuosi() < 2016 ||
+                (validKomoto.getAlkamisVuosi() == 2016 && validKomoto.getAlkamiskausiUri().startsWith("kausi_k"));
+        if (ennenSyksya2016) {
+            return new YhdenPaikanSaanto(false, String.format(
+                    "%s ja hakukohteen alkamiskausi ja vuosi on ennen syksyä 2016",
+                    ypsBasedOnHaku.getSyy()
+            ));
+        }
+
+        return new YhdenPaikanSaanto(true, "Jatkuvan haun hakukohteen alkamiskausi ja vuosi on jälkeen kevään 2016");
     }
 
     private static Collection<KoulutusmoduuliToteutus> filterOnlyValidKomotos(Set<KoulutusmoduuliToteutus> komotos) {
