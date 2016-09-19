@@ -77,4 +77,27 @@ app.service('CommonUtilService', function($resource, $log, $q, Config, Organisaa
         }
         return deferred.promise;
     };
+
+    this.valintakoeAjankohtaToCurrentTime = function(ajankohta) {
+        //Split to get date parts in fin locale
+        //Example of split: ["2016", "09", "14", "13", "27", "47", "03", "00"]
+        var t = moment.tz(ajankohta, "Europe/Helsinki").format().split(/[^0-9]/),
+            year = t[0],
+            month = t[1] - 1,
+            day = t[2],
+            hours = t[3],
+            minutes = t[4];
+        return new Date(year, month, day, hours, minutes).getTime();
+    };
+
+    this.valintakoeAjankohtaToFinnishTime = function(ajankohta) {
+        var t = new Date(ajankohta),
+            year = t.getFullYear(),
+            month = t.getMonth() + 1,
+            day = t.getDate(),
+            hours = t.getHours(),
+            minutes = t.getMinutes(),
+            date = day + '-' + month + '-' + year + ' ' + hours + ':' + minutes;
+        return moment.tz(date, 'DD-MM-YYYY HH:mm', 'Europe/Helsinki').valueOf();
+    }
 });
