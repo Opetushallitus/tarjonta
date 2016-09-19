@@ -63,7 +63,7 @@ public class YhdenPaikanSaantoBuilder {
                 .collect(Collectors.toList());
         if (koulutukset.isEmpty()) {
             return new YhdenPaikanSaanto(false, String.format(
-                    "%s ja hakukohteella ei ole oikean tilaista koulutusmoduulia",
+                    "%s ja hakukohteella ei ole oikean tilaista koulutusta",
                     ypsBasedOnHaku.getSyy()
             ));
         }
@@ -79,7 +79,7 @@ public class YhdenPaikanSaantoBuilder {
                 (koulutus.getAlkamisVuosi() == 2016 && koulutus.getAlkamiskausiUri().startsWith("kausi_k"));
         if (ennenSyksya2016) {
             return new YhdenPaikanSaanto(false, String.format(
-                    "%s ja hakukohteen alkamiskausi ja vuosi on ennen syksyä 2016",
+                    "%s ja hakukohteen koulutuksen alkamiskausi on ennen syksyä 2016",
                     ypsBasedOnHaku.getSyy()
             ));
         }
