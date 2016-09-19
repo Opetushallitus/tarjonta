@@ -1,12 +1,10 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.util;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO.YhdenPaikanSaanto;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.StringUtils;
@@ -33,14 +31,15 @@ public class YhdenPaikanSaantoBuilder {
         } else {
             return new YhdenPaikanSaanto(false, "Koulutuksella ei ole alkamisvuotta ja alkamiskautta");
         }
-        Boolean ypsKohdejoukontarkenne = haunKohdejoukontarkenneYPSYhteensopiva(haku);
-        if(ypsKohdejoukontarkenne == null) {
-            return new YhdenPaikanSaanto(true, "Korkeakouluhaku ilman kohdejoukon tarkennetta");
-        } else if(Boolean.TRUE.equals(ypsKohdejoukontarkenne)){
-            return new YhdenPaikanSaanto(true, String.format("Kohdejoukon tarkenne on '%s'", haku.getKohdejoukonTarkenne()));
+        if (haunKohdejoukontarkenneYPSYhteensopiva(haku)) {
+            if (StringUtils.isBlank(haku.getKohdejoukonTarkenne())) {
+                return new YhdenPaikanSaanto(true, "Korkeakouluhaku ilman kohdejoukon tarkennetta");
+            } else {
+                return new YhdenPaikanSaanto(true, String.format("Kohdejoukon tarkenne on '%s'", haku.getKohdejoukonTarkenne()));
+            }
         }
         return new YhdenPaikanSaanto(false, String.format("Kohdejoukon tarkenne on '%s', sääntö on voimassa tarkenteille %s",
-                    haku.getKohdejoukonTarkenne(), TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO));
+                haku.getKohdejoukonTarkenne(), TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO));
     }
 
     public static YhdenPaikanSaanto from(Hakukohde hakukohde) {
@@ -50,8 +49,7 @@ public class YhdenPaikanSaantoBuilder {
             return yhdenPaikanSaantoBasedOnHaku;
         }
         if(haku.isKorkeakouluHaku()) {
-            Boolean ypsKohdejoukontarkenne = haunKohdejoukontarkenneYPSYhteensopiva(haku);
-            if (!Boolean.TRUE.equals(ypsKohdejoukontarkenne)) {
+            if (!haunKohdejoukontarkenneYPSYhteensopiva(haku)) {
                 return yhdenPaikanSaantoBasedOnHaku;
             }
             if(haku.isJatkuva()) {
@@ -93,16 +91,9 @@ public class YhdenPaikanSaantoBuilder {
             }
         });
     }
-    private static Boolean haunKohdejoukontarkenneYPSYhteensopiva(Haku haku) {
-        String haunKohdeJoukonTarkenne = haku.getKohdejoukonTarkenne();
-        if (StringUtils.isBlank(haunKohdeJoukonTarkenne)) {
-            return null;
-        }
-        for (String tarkenne : TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO) {
-            if (haunKohdeJoukonTarkenne.startsWith(tarkenne)) {
-                return true;
-            }
-        }
-        return false;
+    private static boolean haunKohdejoukontarkenneYPSYhteensopiva(Haku haku) {
+        return StringUtils.isBlank(haku.getKohdejoukonTarkenne()) ||
+                TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO.stream()
+                        .anyMatch(tarkenne -> haku.getKohdejoukonTarkenne().startsWith(tarkenne));
     }
 }
