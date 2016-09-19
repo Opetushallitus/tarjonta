@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.util;
 
+import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
@@ -66,10 +67,11 @@ public class YhdenPaikanSaantoBuilder {
                     ypsBasedOnHaku.getSyy()
             ));
         }
-        if (koulutukset.size() > 1) {
-            return new YhdenPaikanSaanto(false, String.format(
-                    "%s ja hakukohteella on liian monta oikean tilaista koulutusmoduulia",
-                    ypsBasedOnHaku.getSyy()
+        if (!uniqueKoulutuksenAlkamiskausi(koulutukset)) {
+            throw new IllegalStateException(String.format(
+                    "Hakukohteen %s koulutusten %s koulutusten alkamiskaudet eivät ole yhtenevät.",
+                    hakukohde.getOid(),
+                    koulutukset.stream().map(BaseKoulutusmoduuli::getOid).collect(Collectors.toList())
             ));
         }
         KoulutusmoduuliToteutus koulutus = koulutukset.get(0);
@@ -89,5 +91,13 @@ public class YhdenPaikanSaantoBuilder {
         return StringUtils.isBlank(haku.getKohdejoukonTarkenne()) ||
                 TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO.stream()
                         .anyMatch(tarkenne -> haku.getKohdejoukonTarkenne().startsWith(tarkenne));
+    }
+
+    private static boolean uniqueKoulutuksenAlkamiskausi(List<KoulutusmoduuliToteutus> koulutukset) {
+        int alkamisvuosi = koulutukset.get(0).getAlkamisVuosi();
+        String alkamiskausiUri = koulutukset.get(0).getAlkamiskausiUri();
+        return koulutukset.stream()
+                .allMatch(koulutus -> alkamisvuosi == koulutus.getAlkamisVuosi() &&
+                        alkamiskausiUri.equals(koulutus.getAlkamiskausiUri()));
     }
 }
