@@ -1306,7 +1306,14 @@ app.controller('HakukohdeParentController', [
                         });
                     });
                     $scope.checkIsCopy($scope.luonnosVal, true);
+                    // BUG-1108
+                    if(!$scope.model.hakukohde.hakuaikaAlkuPvm) {
+                        $scope.model.hakukohde.hakuaikaAlkuPvm = 0;
 
+                    }
+                    if(!$scope.model.hakukohde.hakuaikaLoppuPvm) {
+                        $scope.model.hakukohde.hakuaikaLoppuPvm = 0;
+                    }
                     if ($scope.model.hakukohde.oid === undefined) {
                         // KJOH-778, pitää tietää mille organisaatiolle ollaan luomassa hakukohdetta
                         var tarjoajatiedot = {};
