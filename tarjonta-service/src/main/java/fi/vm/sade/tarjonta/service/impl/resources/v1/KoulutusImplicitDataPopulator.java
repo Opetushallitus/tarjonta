@@ -178,11 +178,13 @@ public class KoulutusImplicitDataPopulator {
     }
 
     private void populateLaajuusAndLaajuusYksikko(final KoulutusV1RDTO dto, final List<KoodiType> sisaltaaKoodit) {
-        if(dto.getOpintojenLaajuusarvo() == null){
+        if (dto.getOpintojenLaajuusarvo() == null) {
             KoodiV1RDTO laajuus = findCode(sisaltaaKoodit, OPINTOJEN_LAAJUUS);
             if (laajuus != null) {
                 dto.setOpintojenLaajuusarvo(laajuus);
             }
+        }
+        if (dto.getOpintojenLaajuusyksikko() == null) {
             KoodiV1RDTO laajuusYksikko = findCode(sisaltaaKoodit, OPINTOJEN_LAAJUUS_YKSIKKO);
             if (laajuusYksikko != null) {
                 dto.setOpintojenLaajuusyksikko(laajuusYksikko);
