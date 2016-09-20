@@ -1041,6 +1041,7 @@ app.controller('HakukohdeParentController', [
                     if (yhteystieto.osoiteTyyppi !== undefined && yhteystieto.osoiteTyyppi === 'posti') {
                         var kieliUris = yhteystieto.kieli.split('#');
                         var kieliUri = kieliUris[0];
+                        var hakutoimistonNimi = data.metadata.hakutoimistonNimi ? data.metadata.hakutoimistonNimi[yhteystieto.kieli] : undefined;
                         $scope.model.liitteidenToimitusOsoite[kieliUri] = {};
                         $scope.model.liitteidenToimitusOsoite[kieliUri].osoiterivi1 = yhteystieto.osoite;
                         $scope.model.liitteidenToimitusOsoite[kieliUri].postinumero = yhteystieto.postinumeroUri;
