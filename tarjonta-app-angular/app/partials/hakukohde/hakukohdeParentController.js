@@ -1317,8 +1317,11 @@ app.controller('HakukohdeParentController', [
                         });
                         $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot = tarjoajatiedot;
                         // BUG-1108
-                        if($scope.model.hakukohde.hakuaikaAlkuPvm == null && $scope.model.hakukohde.hakuaikaLoppuPvm == null) {
+                        if($scope.model.hakukohde.hakuaikaAlkuPvm == null) {
                             $scope.model.hakukohde.hakuaikaAlkuPvm = 0;
+
+                        }
+                        if($scope.model.hakukohde.hakuaikaLoppuPvm == null) {
                             $scope.model.hakukohde.hakuaikaLoppuPvm = 0;
                         }
                         $scope.model.hakukohde.$save().then(processResponse, processError);
