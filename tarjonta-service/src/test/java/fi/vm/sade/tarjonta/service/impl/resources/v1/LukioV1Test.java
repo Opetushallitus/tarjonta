@@ -162,7 +162,7 @@ public class LukioV1Test {
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
     }
 
-    private static KoulutusLukioV1RDTO baseDto() {
+    protected static KoulutusLukioV1RDTO baseDto() {
         KoulutusLukioV1RDTO dto = new KoulutusLukioV1RDTO();
         dto.setOrganisaatio(new OrganisaatioV1RDTO(TARJOAJA1));
         dto.setTila(TarjontaTila.LUONNOS);
