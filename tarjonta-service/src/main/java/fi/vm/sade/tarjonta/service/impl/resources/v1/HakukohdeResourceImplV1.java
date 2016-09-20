@@ -741,15 +741,16 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     private HakukohdeV1RDTO mergeExistingHakukohdeData(String oid, HakukohdeV1RDTO dto)
             throws InvocationTargetException, IllegalAccessException {
         // Nullable properties
-        Date hakuaikaAlkuPvm = dto.getHakuaikaAlkuPvm();
-        Date hakuaikaLoppuPvm = dto.getHakuaikaLoppuPvm();
+        boolean removeHakuaikaPvms = dto.getHakuaikaAlkuPvm() == new Date(0) && dto.getHakuaikaLoppuPvm() == new Date(0);
 
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
         HakukohdeV1RDTO originalDto = converterV1.toHakukohdeRDTO(hakukohde);
         beanUtils.copyProperties(originalDto, dto);
-        
-        originalDto.setHakuaikaAlkuPvm(hakuaikaAlkuPvm);
-        originalDto.setHakuaikaLoppuPvm(hakuaikaLoppuPvm);
+
+        if(removeHakuaikaPvms) {
+            originalDto.setHakuaikaAlkuPvm(null);
+            originalDto.setHakuaikaLoppuPvm(null);
+        }
         return originalDto;
     }
 
