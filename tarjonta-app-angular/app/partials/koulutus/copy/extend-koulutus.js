@@ -21,20 +21,6 @@ app.controller('ExtendKoulutusController',
             }
         }
 
-        function preselectOrganization(organisaatiot) {
-            if (organisaatiot.length === 1) {
-                lisaaOrganisaatio(organisaatiot[0]);
-            }
-            else if (selectedOrganization) {
-                OrganisaatioService.byOid(selectedOrganization).then(function(org) {
-                    var searchResultOids = _.pluck(organisaatiot, 'oid');
-                    if (_.intersection(searchResultOids, org.oidAndParentOids).length > 0) {
-                        lisaaOrganisaatio(org);
-                    }
-                });
-            }
-        }
-
         // Tähän populoidaan formin valinnat:
         $scope.model = {
             text: {
