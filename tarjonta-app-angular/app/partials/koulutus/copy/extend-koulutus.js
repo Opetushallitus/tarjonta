@@ -50,16 +50,10 @@ app.controller('ExtendKoulutusController',
         });
 
         var lisaaOrganisaatio = function(organisaatio) {
-            OrganisaatioService.byOid(organisaatio.oid).then(function(org) {
-                var intersection = _.intersection(_.keys(koulutusMap), org.oidAndParentOids);
-                if (intersection.length > 0) {
-                    $scope.model.onJoJarjestetty = koulutusMap[intersection[0]];
-                }
-                else {
-                    $scope.model.onJoJarjestetty = false;
-                    $scope.model.organisaatiot.push(organisaatio);
-                }
-            });
+            $scope.model.jarjestettyKoulutus = koulutusMap[organisaatio.oid];
+            if (!$scope.model.jarjestettyKoulutus) {
+                $scope.model.organisaatiot.push(organisaatio);
+            }
         };
 
         /**
@@ -101,7 +95,7 @@ app.controller('ExtendKoulutusController',
 
         $scope.reviewExistingKoulutus = function() {
             $modalInstance.dismiss();
-            $location.path('/koulutus/' + $scope.model.onJoJarjestetty.oid);
+            $location.path('/koulutus/' + $scope.model.jarjestettyKoulutus.oid);
         };
 
         /**
