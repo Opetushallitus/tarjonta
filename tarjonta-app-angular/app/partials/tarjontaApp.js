@@ -389,12 +389,8 @@ angular.module('app').config([
                         nimet += ' | ' + org.nimi;
                     });
                     res.result.organisaatioidenNimet = nimet.substring(3);
-
-                    // jarjestajat
                     res.result.jarjestavatOrganisaatiot = jarjestajat;
-
-                    res.result.jarjestettavatKoulutuksetMap = jarjestettavatKoulutukset.map;
-                    res.result.jarjestettavatKoulutuksetOrphans = jarjestettavatKoulutukset.orphans;
+                    res.result.jarjestettavatKoulutukset = jarjestettavatKoulutukset;
 
                     defer.resolve(res);
                 });
@@ -626,7 +622,7 @@ angular.module('app').factory('ajaxInterceptor', function(Config, $cookies) {
             if (callerid) {
                 config.headers['clientSubSystemCode'] = callerid;
             }
-            if($cookies['CSRF']) {
+            if ($cookies['CSRF']) {
                 config.headers['CSRF'] = $cookies['CSRF'];
             }
             // Fix IE caching AJAX-requests to tarjonta-service.

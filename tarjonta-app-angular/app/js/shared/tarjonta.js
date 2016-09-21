@@ -431,53 +431,69 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         });
         return koulutus.get(arg, func);
     };
+
+    function createEmptyKoulutus(oid) {
+        return OrganisaatioService.byOid(oid).then(function(org) {
+            return [{
+                org: org,
+                tila: 'EI_JARJESTETTY'
+            }];
+        });
+    }
+
+    function createKoulutusListing(koulutukset, jarjestajat) {
+        var deferred = $q.defer();
+
+        var promises = _.map(jarjestajat, function(jarjestajaOrgOid) {
+                var jarjestajanKoulutukset = _.filter(koulutukset, function(koulutus) {
+                    return _.contains(koulutus.org.oidAndParentOids, jarjestajaOrgOid);
+                });
+                if (jarjestajanKoulutukset.length === 0) {
+                    jarjestajanKoulutukset = createEmptyKoulutus(jarjestajaOrgOid);
+                }
+                return $q.when(jarjestajanKoulutukset);
+            });
+
+        $q.all(promises).then(function(allDone) {
+            deferred.resolve(
+                _.chain(allDone)
+                    .flatten()
+                    .value()
+            );
+        });
+
+        return deferred.promise;
+    }
+
     dataFactory.getJarjestettavatKoulutukset = function(tarjoajanKoulutusOid, jarjestajat) {
         var deferred = $q.defer();
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/'
+        var jarjestettavatKoulutukset = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/'
                             + tarjoajanKoulutusOid + '/jarjestettavatKoulutukset');
 
-        // Koulutukset tallennetaan mappiin, jossa avaimena toimii organisaation oid
-        var map = {};
+        jarjestettavatKoulutukset.get().$promise.then(function(data) {
+            var koulutukset = data.result;
+            var orgPromises = _.map(koulutukset, function(koulutus) {
+                return OrganisaatioService.byOid(koulutus.tarjoajat[0]);
+            });
 
-        var getOrphan = typeof jarjestajat !== 'undefined';
-
-        // Lista koulutuksista, jotka on jo ehditty järjestää, mutta järjestämisoikeus on
-        // tämän jälkeen poistettu
-        var orphanKoulutukset = [];
-
-        koulutus.get().$promise.then(function(data) {
-            var promises = [];
-            _.each(data.result, function(koulutus) {
-                _.each(koulutus.tarjoajat, function(tarjoaja) {
-                    var deferred = $q.defer();
-                    OrganisaatioService.byOid(tarjoaja).then(function(org) {
-                        _.each(org.oidAndParentOids, function(orgOid) {
-                            if (orgOid !== Config.env['root.organisaatio.oid']) {
-                                map[orgOid] = koulutus;
-                            }
-                        });
-                        if (getOrphan && _.intersection(jarjestajat, org.oidAndParentOids).length === 0) {
-                            orphanKoulutukset.push(_.extend({}, koulutus, {
-                                tarjoajaNimi: org.nimi
-                            }));
-                        }
-                        deferred.resolve();
+            $q.all(orgPromises).then(function(orgs) {
+                return _.map(koulutukset, function(koulutus, i) {
+                    koulutus.org = orgs[i];
+                    return koulutus;
+                });
+            }).then(function() {
+                _.each(koulutukset, function(koulutus) {
+                    koulutus.isOrphan = _.intersection(jarjestajat, koulutus.org.oidAndParentOids).length === 0;
+                });
+                createKoulutusListing(koulutukset, jarjestajat).then(function(koulutusListing) {
+                    deferred.resolve({
+                        koulutukset: koulutusListing,
+                        orphanKoulutukset: _.where(koulutukset, {isOrphan: true})
                     });
-                    promises.push(deferred.promise);
                 });
             });
-            $q.all(promises).then(function() {
-                if (getOrphan) {
-                    deferred.resolve({
-                        map: map,
-                        orphans: orphanKoulutukset
-                    });
-                }
-                else {
-                    deferred.resolve(map);
-                }
-            });
         });
+
         return deferred.promise;
     };
     dataFactory.resourceKomoKuvaus = function(komotoOid) {

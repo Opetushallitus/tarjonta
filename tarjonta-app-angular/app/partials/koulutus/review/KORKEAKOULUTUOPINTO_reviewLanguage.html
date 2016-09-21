@@ -46,21 +46,21 @@
                     <th>Organisaatio</th>
                     <th>Koulutuksen tila</th>
                 </tr>
-                <tr ng-repeat="org in model.koulutus.jarjestavatOrganisaatiot | orderBy: 'nimi'"
-                    ng-init="jarjestettavaKoulutus = model.koulutus.jarjestettavatKoulutuksetMap[org.oid]">
-                    <td>{{org.nimi}}</td>
-                    <td ng-if="jarjestettavaKoulutus">
-                        <a href="#/koulutus/{{jarjestettavaKoulutus.oid}}">{{jarjestettavaKoulutus.tila}}</a>
+
+                <tr ng-repeat="koulutus in model.koulutus.jarjestettavatKoulutukset.koulutukset | orderBy: 'org.nimi'">
+                    <td>{{koulutus.org.nimi}}</td>
+                    <td ng-if="koulutus.tila != 'EI_JARJESTETTY'">
+                        <a href="#/koulutus/{{koulutus.oid}}">{{koulutus.tila}}</a>
                     </td>
-                    <td ng-if="!jarjestettavaKoulutus" tt="koulutus.review.tilaEiJarjestetty">
+                    <td ng-if="koulutus.tila === 'EI_JARJESTETTY'" tt="koulutus.review.tilaEiJarjestetty">
                         EI JÄRJESTETTY
                     </td>
                 </tr>
 
                 <!-- Listaa myös ne koulutukset, jotka on jo ehditty järjestää, ja joiden järjestämisoikeus
                     on poistettu tämän jälkeen -->
-                <tr ng-repeat="koulutus in model.koulutus.jarjestettavatKoulutuksetOrphans  | orderBy: 'tarjoajaNimi'">
-                    <td>{{koulutus.tarjoajaNimi}}</td>
+                <tr ng-repeat="koulutus in model.koulutus.jarjestettavatKoulutukset.orphanKoulutukset  | orderBy: 'org.nimi'">
+                    <td>{{koulutus.org.nimi}}</td>
                     <td>
                         <a href="#/koulutus/{{koulutus.oid}}">{{koulutus.tila}}</a><br>
                         <span tt="koulutus.review.jarjestettyVaikkaJarjestamisoikeusPoistettu">
