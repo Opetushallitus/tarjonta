@@ -1246,17 +1246,24 @@ app.controller('HakukohdeParentController', [
             }
         }
 
-        function processResponse(hakukohde) {
-            $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+        function processResponse(response) {
+            var hakukohde = response.result;
+            angular.forEach(hakukohde.valintakokeet, function(koe) {
+                _.each(koe.valintakoeAjankohtas, function(ajankohta) {
+                    ajankohta.alkaa = CommonUtilService.valintakoeAjankohtaToCurrentTime(ajankohta.alkaa);
+                    ajankohta.loppuu = CommonUtilService.valintakoeAjankohtaToCurrentTime(ajankohta.loppuu);
+                });
+            });
+            $scope.model.hakukohde = new Hakukohde(hakukohde);
             initValintaperusteAndSoraKuvaukset();
             reloadHakukohdeModel();
-            if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
+            if (response.errors === undefined || response.errors.length < 1) {
                 $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
                 $scope.showSuccess();
                 $scope.checkIfSavingCopy($scope.model.hakukohde);
             }
             else {
-                $scope.showError(hakukohde.errors);
+                $scope.showError(repsonse.errors);
             }
             $scope.canEdit = true;
             $scope.model.continueToReviewEnabled = true;
@@ -1306,6 +1313,14 @@ app.controller('HakukohdeParentController', [
                         });
                     });
                     $scope.checkIsCopy($scope.luonnosVal, true);
+
+                    angular.forEach($scope.model.hakukohde.valintakokeet, function(koe) {
+                        _.each(koe.valintakoeAjankohtas, function(ajankohta) {
+                            ajankohta.alkaa = CommonUtilService.valintakoeAjankohtaToFinnishTime(ajankohta.alkaa);
+                            ajankohta.loppuu = CommonUtilService.valintakoeAjankohtaToFinnishTime(ajankohta.loppuu);
+                        });
+                    });
+
                     // BUG-1108
                     if(!$scope.model.hakukohde.hakuaikaAlkuPvm) {
                         $scope.model.hakukohde.hakuaikaAlkuPvm = 0;
@@ -1314,6 +1329,7 @@ app.controller('HakukohdeParentController', [
                     if(!$scope.model.hakukohde.hakuaikaLoppuPvm) {
                         $scope.model.hakukohde.hakuaikaLoppuPvm = 0;
                     }
+
                     if ($scope.model.hakukohde.oid === undefined) {
                         // KJOH-778, pitää tietää mille organisaatiolle ollaan luomassa hakukohdetta
                         var tarjoajatiedot = {};
