@@ -202,7 +202,7 @@
                 <tr ng-show="needsLiitteidenToimitustiedot(model.hakukohde.toteutusTyyppi)">
                     <th tt="tarjonta.hakukohde.liitteet.toimitusosoite"></th>
                     <td colspan="2">
-                        {{ model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 }}, {{ model.hakukohde.liitteidenToimitusOsoite.postinumeroArvo }}, {{ model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka }}
+                        {{ model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 }}<span data-ng-if="model.hakukohde.liitteidenToimitusOsoite.osoiterivi2">, {{ model.hakukohde.liitteidenToimitusOsoite.osoiterivi2 }}</span>,  {{ model.hakukohde.liitteidenToimitusOsoite.postinumeroArvo }}, {{ model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka }}
                     </td>
                 </tr>
                 <tr ng-show="model.hakukohde.sahkoinenToimitusOsoite">
@@ -394,7 +394,7 @@
                             <tr>
                                 <td ng-if="liite.liitteenNimi">{{ liite.liitteenNimi}}</td>
                                 <td data-ng-bind-html="getLiitteenKuvaus(liite, liiteWithLangs.selectedKieli)"/>
-                                <td>{{ liite.liitteenToimitusOsoite.osoiterivi1}}, {{ liite.liitteenToimitusOsoite.postinumeroArvo}}, {{ liite.liitteenToimitusOsoite.postitoimipaikka}}</td>
+                                <td>{{ liite.liitteenToimitusOsoite.osoiterivi1}}<span data-ng-if="liite.liitteenToimitusOsoite.osoiterivi2">, {{ liite.liitteenToimitusOsoite.osoiterivi2 }}</span>, {{ liite.liitteenToimitusOsoite.postinumeroArvo}}, {{ liite.liitteenToimitusOsoite.postitoimipaikka}}</td>
                                 <td>{{ liite.sahkoinenToimitusOsoite }}</td>
                             </tr>
                         </table>
