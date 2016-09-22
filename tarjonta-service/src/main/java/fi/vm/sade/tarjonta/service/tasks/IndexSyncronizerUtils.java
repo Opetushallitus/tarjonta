@@ -1,10 +1,11 @@
 package fi.vm.sade.tarjonta.service.tasks;
 
+import fi.vm.sade.tarjonta.shared.UrlConfiguration;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,19 +16,23 @@ import java.util.List;
 @Service
 public class IndexSyncronizerUtils {
 
-    @Value("${organisaatio.api.rest.url}")
-    private String organizationServiceRestApi;
+    private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(IndexSyncronizerUtils.class);
 
-    final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(IndexSyncronizerUtils.class);
+    private final UrlConfiguration urlConfiguration;
+
+    @Autowired
+    public IndexSyncronizerUtils(UrlConfiguration urlConfiguration) {
+        this.urlConfiguration = urlConfiguration;
+    }
 
     public List<String> getChangedOrganizationOids() {
         String yesterday = new SimpleDateFormat("yyyy-MM-dd").format(new DateTime().minusDays(1).toDate());
-        String apiUril = organizationServiceRestApi + "organisaatio/v2/muutetut/oid?lastModifiedSince=" + yesterday;
+        String apiUril =  urlConfiguration.url("organisaatio-service.changedOrganizationOids", yesterday);
         logger.info("Loading changed organizations from " + apiUril);
 
         RestTemplate restTemplate = new RestTemplate();
         String response = restTemplate.getForObject(apiUril, String.class);
-        List<String> oids = new ArrayList<String>();
+        List<String> oids = new ArrayList<>();
 
         try {
             JSONObject json = new JSONObject(response);
