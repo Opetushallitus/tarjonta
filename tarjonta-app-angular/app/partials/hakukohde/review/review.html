@@ -394,7 +394,7 @@
                             <tr>
                                 <td ng-if="liite.liitteenNimi">{{ liite.liitteenNimi}}</td>
                                 <td data-ng-bind-html="getLiitteenKuvaus(liite, liiteWithLangs.selectedKieli)"/>
-                                <td>{{ liite.liitteenToimitusOsoite.osoiterivi1}}<span data-ng-if="liite.liitteenToimitusOsoite.osoiterivi2">, {{ liite.liitteenToimitusOsoite.osoiterivi2 }}</span>, {{ liite.liitteenToimitusOsoite.postinumeroArvo}}, {{ liite.liitteenToimitusOsoite.postitoimipaikka}}</td>
+                                <td><span data-ng-if="liite.liitteenVastaanottaja">{{ liite.liitteenVastaanottaja }}, </span>{{ liite.liitteenToimitusOsoite.osoiterivi1}}<span data-ng-if="liite.liitteenToimitusOsoite.osoiterivi2">, {{ liite.liitteenToimitusOsoite.osoiterivi2 }}</span>, {{ liite.liitteenToimitusOsoite.postinumeroArvo}}, {{ liite.liitteenToimitusOsoite.postitoimipaikka}}</td>
                                 <td>{{ liite.sahkoinenToimitusOsoite }}</td>
                             </tr>
                         </table>
