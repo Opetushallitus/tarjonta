@@ -33,7 +33,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -48,15 +48,18 @@ public class ParameterServices implements InitializingBean {
     
     private static final Logger LOG = LoggerFactory.getLogger(ParameterServices.class);
 
-    @Value("${cas.service.ohjausparametrit-service}/api/v1/rest/parametri/")
-    private String _ohjausparemetritServiceUrl;
-    // = "http://localhost:8085/ohjausparametrit-service/api/v1/rest/parametri/";
-    
     private LoadingCache<String, JSONObject> _cache;
-    
+
+    private final UrlConfiguration urlConfiguration;
+
+    @Autowired
+    public ParameterServices(UrlConfiguration urlConfiguration) {
+        this.urlConfiguration = urlConfiguration;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
-        LOG.debug("afterPropertiesSet() --  _ohjausparemetritServiceUrl = {}", _ohjausparemetritServiceUrl);
+        LOG.debug("afterPropertiesSet() --  _ohjausparemetritServiceUrl = {}", urlConfiguration.url("ohjausparemetrit.base"));
 
         final RemovalListener<String, JSONObject> onRemoval = new RemovalListener<String, JSONObject>() {
 
@@ -91,13 +94,13 @@ public class ParameterServices implements InitializingBean {
         
         try {
             // Read ohjausparametrit and parse result with GSON
-            URL url = new URL(_ohjausparemetritServiceUrl + target);
+            URL url = new URL(urlConfiguration.url("ohjausparemetrit.getParametrit", target));
             URLConnection conn = url.openConnection();
             return new JSONObject(IOUtils.toString(conn.getInputStream()));
         } catch (FileNotFoundException ex) {
             LOG.debug("No parameters for target: " + target);
         } catch (Exception ex) {
-            LOG.error("Failed to load parameter from: " + _ohjausparemetritServiceUrl + target, ex);
+            LOG.error("Failed to load parameter from: " + urlConfiguration.url("ohjausparemetrit.getParametrit", target), ex);
         }
         return new JSONObject();
     }
