@@ -26,6 +26,8 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
     private String kieliNimi;
     @ApiModelProperty(value = "Liite's name", required = true)
     private String liitteenNimi;
+    @ApiModelProperty(value = "Liite's receiver", required = false)
+    private String liitteenVastaanottaja;
     @ApiModelProperty(value = "Liite's tyyppi", required = true)
     private String liitteenTyyppi;
     @ApiModelProperty(value = "Liite's order", required = false)
@@ -135,5 +137,13 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
 
     public void setKaytetaanHakulomakkeella(boolean kaytetaanHakulomakkeella) {
         this.kaytetaanHakulomakkeella = kaytetaanHakulomakkeella;
+    }
+
+    public String getLiitteenVastaanottaja() {
+        return liitteenVastaanottaja;
+    }
+
+    public void setLiitteenVastaanottaja(String liitteenVastaanottaja) {
+        this.liitteenVastaanottaja = liitteenVastaanottaja;
     }
 }
