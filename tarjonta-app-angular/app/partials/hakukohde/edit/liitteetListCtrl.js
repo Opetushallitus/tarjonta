@@ -41,6 +41,9 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
                 if (typeof liite !== 'object' || lang === 'commonFields') {
                     return;
                 }
+                if (!liite.liitteenVastaanottaja) {
+                    liite.liitteenVastaanottaja = $scope.model.hakutoimistonNimi[liite.kieliUri];
+                }
                 if (!liite.liitteenToimitusOsoite || Object.keys(liite.liitteenToimitusOsoite).length === 0) {
                     liite.liitteenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite[liite.kieliUri]);
                     postProcessLiite(liite);
@@ -69,7 +72,8 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
             HakukohdeService.addLiite(
                 $scope.model.hakukohde,
                 $scope.liitteetModel.opetusKielet,
-                $scope.model.liitteidenToimitusOsoite
+                $scope.model.liitteidenToimitusOsoite,
+                $scope.model.hakutoimistonNimi
             );
         }
         else {
@@ -78,6 +82,7 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
                     $scope.model.hakukohde,
                     $scope.liitteetModel.opetusKielet,
                     $scope.model.liitteidenToimitusOsoite,
+                    $scope.model.hakutoimistonNimi,
                     liiteWithLangs
                 );
             });
@@ -200,7 +205,8 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
         HakukohdeService.addLiite(
             $scope.model.hakukohde,
             $scope.liitteetModel.opetusKielet,
-            $scope.model.liitteidenToimitusOsoite
+            $scope.model.liitteidenToimitusOsoite,
+            $scope.model.hakutoimistonNimi
         );
     };
     var setLiitetyypit = function(toteutustyyppi) {

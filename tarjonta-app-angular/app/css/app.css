@@ -660,6 +660,10 @@ table.table.selection tr.selected td {
 
 /* osoitefield */
 
+div .liiteVastaanottaja {
+    width:320px;
+}
+
 div.tarjontaOsoiteField .osoite {
     width:320px;
 }

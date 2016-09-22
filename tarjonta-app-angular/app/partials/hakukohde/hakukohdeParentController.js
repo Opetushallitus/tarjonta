@@ -183,6 +183,7 @@ app.controller('HakukohdeParentController', [
         $scope.model.hakukelpoisuusValidationErrMsg = false;
         $scope.model.tallennaValmiinaEnabled = true;
         $scope.model.tallennaLuonnoksenaEnabled = true;
+        $scope.model.hakutoimistonNimi = {};
         $scope.model.liitteidenToimitusOsoite = {};
         $scope.model.hakukohde.muuYhteystieto = false;
         var deferredOsoite = $q.defer();
@@ -1037,11 +1038,12 @@ app.controller('HakukohdeParentController', [
         var checkAndAddHakutoimisto = function(data) {
             var hakutoimistoFound = false;
             if (data.metadata !== undefined && data.metadata.yhteystiedot !== undefined) {
-                angular.forEach(data.metadata.yhteystiedot, function(yhteystieto) {
+                angular.forEach(data.metadata.yhteystiedot, function (yhteystieto) {
                     if (yhteystieto.osoiteTyyppi !== undefined && yhteystieto.osoiteTyyppi === 'posti') {
                         var kieliUris = yhteystieto.kieli.split('#');
                         var kieliUri = kieliUris[0];
                         var hakutoimistonNimi = data.metadata.hakutoimistonNimi ? data.metadata.hakutoimistonNimi[yhteystieto.kieli] : undefined;
+                        $scope.model.hakutoimistonNimi[kieliUri] = hakutoimistonNimi;
                         $scope.model.liitteidenToimitusOsoite[kieliUri] = {};
                         $scope.model.liitteidenToimitusOsoite[kieliUri].osoiterivi1 = yhteystieto.osoite;
                         $scope.model.liitteidenToimitusOsoite[kieliUri].postinumero = yhteystieto.postinumeroUri;
