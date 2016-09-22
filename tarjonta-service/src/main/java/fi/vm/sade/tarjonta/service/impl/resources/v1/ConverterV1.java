@@ -1427,6 +1427,7 @@ public class ConverterV1 {
         hakukohdeLiite.setHakukohdeLiiteNimi(hakukohdeLiiteV1RDTO.getLiitteenNimi());
         hakukohdeLiite.setSahkoinenToimitusosoite(hakukohdeLiiteV1RDTO.getSahkoinenToimitusOsoite());
         hakukohdeLiite.setErapaiva(hakukohdeLiiteV1RDTO.getToimitettavaMennessa());
+        hakukohdeLiite.setVastaanottaja(hakukohdeLiiteV1RDTO.getLiitteenVastaanottaja());
         hakukohdeLiite.setToimitusosoite(CommonRestConverters.toOsoite(hakukohdeLiiteV1RDTO.getLiitteenToimitusOsoite()));
         hakukohdeLiite.setKuvaus(convertMapToMonikielinenTeksti(hakukohdeLiiteV1RDTO.getLiitteenKuvaukset()));
         hakukohdeLiite.setLiitetyyppi(hakukohdeLiiteV1RDTO.getLiitteenTyyppi());
@@ -1449,6 +1450,7 @@ public class ConverterV1 {
             hakukohdeLiiteV1RDTO.setKieliNimi(getDefaultKoodinimi(kieliKoodi.getMetadata()));
         }
 
+        hakukohdeLiiteV1RDTO.setLiitteenVastaanottaja(hakukohdeLiite.getVastaanottaja());
         hakukohdeLiiteV1RDTO.setLiitteenNimi(hakukohdeLiite.getHakukohdeLiiteNimi());
         hakukohdeLiiteV1RDTO.setToimitettavaMennessa(hakukohdeLiite.getErapaiva());
         hakukohdeLiiteV1RDTO.setSahkoinenToimitusOsoite(hakukohdeLiite.getSahkoinenToimitusosoite());
