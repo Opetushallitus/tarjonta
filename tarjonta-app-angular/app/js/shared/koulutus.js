@@ -38,9 +38,8 @@ app.factory('KoulutusService', function($resource, Config, $location, $modal, Ta
                             nimi: strName
                         }];
                     },
-                    koulutusMap: function() {
-                        // Tarkista, onko koulutus jo järjestetty kyseiselle organisaatiolle (tai sen aliorganisaatiolle)
-                        return TarjontaService.getJarjestettavatKoulutukset(koulutus.oid);
+                    jarjestetytKoulutukset: function() {
+                        return TarjontaService.getJarjestettavatKoulutukset(koulutus.oid, koulutus.opetusJarjestajat);
                     }
                 }
             });

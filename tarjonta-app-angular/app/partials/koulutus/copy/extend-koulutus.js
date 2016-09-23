@@ -3,7 +3,7 @@ var app = angular.module('app.koulutus.extend.ctrl', []);
 app.controller('ExtendKoulutusController',
     function($modalInstance, targetKoulutus,
             TarjontaService, LocalisationService, $q, $scope,
-            OrganisaatioService, AuthService, PermissionService, $location, KoulutusService, koulutusMap) {
+            OrganisaatioService, AuthService, PermissionService, $location, KoulutusService, jarjestetytKoulutukset) {
 
         'use strict';
 
@@ -36,7 +36,11 @@ app.controller('ExtendKoulutusController',
         });
 
         var lisaaOrganisaatio = function(organisaatio) {
-            $scope.model.jarjestettyKoulutus = koulutusMap[organisaatio.oid];
+            $scope.model.jarjestettyKoulutus = _.chain(jarjestetytKoulutukset.koulutukset)
+                .find(function(koulutus) {
+                    return koulutus.tila != 'EI_JARJESTETTY' && koulutus.org.oid === organisaatio.oid;
+                })
+                .value();
             if (!$scope.model.jarjestettyKoulutus) {
                 $scope.model.organisaatiot.push(organisaatio);
             }
