@@ -3,23 +3,9 @@ var app = angular.module('app.koulutus.extend.ctrl', []);
 app.controller('ExtendKoulutusController',
     function($modalInstance, targetKoulutus,
             TarjontaService, LocalisationService, $q, $scope,
-            OrganisaatioService, AuthService, PermissionService, $location, KoulutusService, Config, koulutusMap,
-            SharedStateService) {
+            OrganisaatioService, AuthService, PermissionService, $location, KoulutusService, koulutusMap) {
 
         'use strict';
-
-        // Hakunäkymässä valittu organisaatio
-        var selectedOrganization;
-        if (SharedStateService.state.puut && SharedStateService.state.puut.organisaatio
-            && SharedStateService.state.puut.organisaatio.selected) {
-            selectedOrganization = SharedStateService.state.puut.organisaatio.selected;
-        }
-        else {
-            var ownOrgs = AuthService.getOrganisations();
-            if (ownOrgs[0]) {
-                selectedOrganization = ownOrgs[0];
-            }
-        }
 
         // Tähän populoidaan formin valinnat:
         $scope.model = {
