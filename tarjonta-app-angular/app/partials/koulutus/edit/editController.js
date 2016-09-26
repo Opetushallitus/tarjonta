@@ -604,6 +604,7 @@ app.controller('BaseEditController', [
         function setJarjestettavaKoulutusFields(model) {
             model.tarjoajanKoulutus = model.oid;
             model.oid = null;
+            model.tila = null;
             model.uniqueExternalId = null;
             model.opetusJarjestajat = [];
             model.sisaltyyKoulutuksiin = [];
