@@ -1,108 +1,121 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.util;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO.YhdenPaikanSaanto;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.StringUtils;
 
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class YhdenPaikanSaantoBuilder {
 
     private static final String JATKOTUTKINTOHAKU_URI = "haunkohdejoukontarkenne_3#";
     private static final List<String> TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO = Collections.singletonList(JATKOTUTKINTOHAKU_URI);
+    private static final List<TarjontaTila> IGNORE_KOULUTUS_STATES = Arrays.asList(TarjontaTila.LUONNOS, TarjontaTila.KOPIOITU);
+    public static final String KAUSI_KEVAT = "kausi_k";
 
     public static YhdenPaikanSaanto from(Haku haku) {
         if (!haku.isKorkeakouluHaku()) {
             return new YhdenPaikanSaanto(false, "Ei korkeakouluhaku");
         }
         boolean hasAlkamisVuosiAndUri = haku.getKoulutuksenAlkamisVuosi() != null && haku.getKoulutuksenAlkamiskausiUri() != null;
-        if(hasAlkamisVuosiAndUri) {
+        if (hasAlkamisVuosiAndUri) {
             boolean isBeforeSyksy2016 = haku.getKoulutuksenAlkamisVuosi() < 2016 ||
-                    (haku.getKoulutuksenAlkamisVuosi() == 2016 && haku.getKoulutuksenAlkamiskausiUri().startsWith("kausi_k"));
+                    (haku.getKoulutuksenAlkamisVuosi() == 2016 && haku.getKoulutuksenAlkamiskausiUri().startsWith(KAUSI_KEVAT));
             if (isBeforeSyksy2016) {
-                return new YhdenPaikanSaanto(false, "Koulutuksen alkamiskausi ennen syksyä 2016");
+                return new YhdenPaikanSaanto(false, "Haun koulutuksen alkamiskausi on ennen syksyä 2016");
             }
         } else {
-            return new YhdenPaikanSaanto(false, "Koulutuksella ei ole alkamisvuotta ja alkamiskautta");
+            return new YhdenPaikanSaanto(false, "Haulla ei ole koulutuksen alkamisvuotta tai alkamiskautta");
         }
-        Boolean ypsKohdejoukontarkenne = haunKohdejoukontarkenneYPSYhteensopiva(haku);
-        if(ypsKohdejoukontarkenne == null) {
+        if (!haunKohdejoukontarkenneYPSYhteensopiva(haku)) {
+            return new YhdenPaikanSaanto(false, String.format("Haulla on kohdejoukon tarkenne, joka ei ole joukossa %s",
+                    TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO));
+        }
+        if (StringUtils.isBlank(haku.getKohdejoukonTarkenne())) {
             return new YhdenPaikanSaanto(true, "Korkeakouluhaku ilman kohdejoukon tarkennetta");
-        } else if(Boolean.TRUE.equals(ypsKohdejoukontarkenne)){
-            return new YhdenPaikanSaanto(true, String.format("Kohdejoukon tarkenne on '%s'", haku.getKohdejoukonTarkenne()));
+        } else {
+            return new YhdenPaikanSaanto(true, String.format("Haun kohdejoukon tarkenne on '%s'",
+                    haku.getKohdejoukonTarkenne()));
         }
-        return new YhdenPaikanSaanto(false, String.format("Kohdejoukon tarkenne on '%s', sääntö on voimassa tarkenteille %s",
-                    haku.getKohdejoukonTarkenne(), TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO));
     }
 
     public static YhdenPaikanSaanto from(Hakukohde hakukohde) {
         Haku haku = hakukohde.getHaku();
-        YhdenPaikanSaanto yhdenPaikanSaantoBasedOnHaku = from(haku);
-        if(yhdenPaikanSaantoBasedOnHaku.isVoimassa()) {
-            return yhdenPaikanSaantoBasedOnHaku;
+        YhdenPaikanSaanto ypsBasedOnHaku = from(haku);
+        if (ypsBasedOnHaku.isVoimassa()) {
+            return ypsBasedOnHaku;
         }
-        if(haku.isKorkeakouluHaku()) {
-            Boolean ypsKohdejoukontarkenne = haunKohdejoukontarkenneYPSYhteensopiva(haku);
-            if (!Boolean.TRUE.equals(ypsKohdejoukontarkenne)) {
-                return yhdenPaikanSaantoBasedOnHaku;
-            }
-            if(haku.isJatkuva()) {
-                Collection<KoulutusmoduuliToteutus> validKomotos = filterOnlyValidKomotos(hakukohde.getKoulutusmoduuliToteutuses());
-                if(validKomotos.isEmpty()) {
-                    return new YhdenPaikanSaanto(false, String.format("%s ja hakukohteella ei ole oikean tilaista koulutusmoduulia",
-                            yhdenPaikanSaantoBasedOnHaku.getSyy()));
-                } else if(validKomotos.size() > 1) {
-                    return new YhdenPaikanSaanto(false, String.format("%s ja hakukohteella on liian monta oikean tilaista koulutusmoduulia",
-                            yhdenPaikanSaantoBasedOnHaku.getSyy()));
-                } else {
-                    KoulutusmoduuliToteutus validKomoto = validKomotos.iterator().next();
-                    boolean ennenSyksya2016 = validKomoto.getAlkamisVuosi() < 2016 ||
-                            (validKomoto.getAlkamisVuosi() == 2016 && validKomoto.getAlkamiskausiUri().startsWith("kausi_k"));
-                    if(ennenSyksya2016) {
-                        return new YhdenPaikanSaanto(false, String.format("%s ja hakukohteen alkamiskausi ja vuosi on ennen syksyä 2016",
-                                yhdenPaikanSaantoBasedOnHaku.getSyy()));
-                    } else {
-                        return new YhdenPaikanSaanto(true, "Jatkuvan haun hakukohteen alkamiskausi ja vuosi on jälkeen kevään 2016");
-                    }
-                }
-            } else {
-                return new YhdenPaikanSaanto(false, String.format("%s ja kyseessä ei ole jatkuva haku",
-                        yhdenPaikanSaantoBasedOnHaku.getSyy()));
+        if (!(haku.isKorkeakouluHaku() && haku.isJatkuva() && haunKohdejoukontarkenneYPSYhteensopiva(haku))) {
+            return new YhdenPaikanSaanto(false, String.format(
+                    "%s ja hakukohde ei kuulu jatkuvaan korkeakouluhakuun, jonka kohdejoukon tarkenne kuuluu joukkoon %s tai sitä ei ole",
+                    ypsBasedOnHaku.getSyy(),
+                    TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO
+            ));
+        }
+        List<KoulutusmoduuliToteutus> koulutukset = new ArrayList<>();
+        for (KoulutusmoduuliToteutus koulutus : hakukohde.getKoulutusmoduuliToteutuses()) {
+            if (!IGNORE_KOULUTUS_STATES.contains(koulutus.getTila()) &&
+                    koulutus.getAlkamisVuosi() != null &&
+                    koulutus.getAlkamiskausiUri() != null) {
+                koulutukset.add(koulutus);
             }
         }
-        return yhdenPaikanSaantoBasedOnHaku;
+        if (koulutukset.isEmpty()) {
+            return new YhdenPaikanSaanto(false, String.format(
+                    "%s ja hakukohteella ei ole oikean tilaista koulutusta",
+                    ypsBasedOnHaku.getSyy()
+            ));
+        }
+        if (!uniqueKoulutuksenAlkamiskausi(koulutukset)) {
+            List<String> koulutusOids = new ArrayList<>();
+            for (KoulutusmoduuliToteutus koulutus : koulutukset) {
+                koulutusOids.add(koulutus.getOid());
+            }
+            throw new IllegalStateException(String.format(
+                    "Hakukohteen %s koulutusten %s koulutusten alkamiskaudet eivät ole yhtenevät.",
+                    hakukohde.getOid(),
+                    koulutusOids
+            ));
+        }
+        KoulutusmoduuliToteutus koulutus = koulutukset.get(0);
+        boolean ennenSyksya2016 = koulutus.getAlkamisVuosi() < 2016 ||
+                (koulutus.getAlkamisVuosi() == 2016 && koulutus.getAlkamiskausiUri().startsWith(KAUSI_KEVAT));
+        if (ennenSyksya2016) {
+            return new YhdenPaikanSaanto(false, String.format(
+                    "%s ja hakukohteen koulutuksen alkamiskausi on ennen syksyä 2016",
+                    ypsBasedOnHaku.getSyy()
+            ));
+        }
+
+        return new YhdenPaikanSaanto(true, "Jatkuvan haun hakukohteen alkamiskausi ja vuosi on jälkeen kevään 2016");
     }
 
-    private static Collection<KoulutusmoduuliToteutus> filterOnlyValidKomotos(Set<KoulutusmoduuliToteutus> komotos) {
-        return Collections2.filter(komotos, new Predicate<KoulutusmoduuliToteutus>() {
-            private final List<TarjontaTila> INVALID = Arrays.asList(TarjontaTila.LUONNOS, TarjontaTila.KOPIOITU);
-            @Override
-            public boolean apply(@Nullable KoulutusmoduuliToteutus input) {
-                if(input == null) {
-                    return false;
-                }
-                return !INVALID.contains(input.getTila()) && input.getAlkamisVuosi() != null && input.getAlkamiskausiUri() != null;
-            }
-        });
-    }
-    private static Boolean haunKohdejoukontarkenneYPSYhteensopiva(Haku haku) {
-        String haunKohdeJoukonTarkenne = haku.getKohdejoukonTarkenne();
-        if (StringUtils.isBlank(haunKohdeJoukonTarkenne)) {
-            return null;
+    private static boolean haunKohdejoukontarkenneYPSYhteensopiva(Haku haku) {
+        if (StringUtils.isBlank(haku.getKohdejoukonTarkenne())) {
+            return true;
         }
-        for (String tarkenne : TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO) {
-            if (haunKohdeJoukonTarkenne.startsWith(tarkenne)) {
+        for (String kohdejoukonTarkenne: TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO) {
+            if (haku.getKohdejoukonTarkenne().startsWith(kohdejoukonTarkenne)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static boolean uniqueKoulutuksenAlkamiskausi(List<KoulutusmoduuliToteutus> koulutukset) {
+        int alkamisvuosi = koulutukset.get(0).getAlkamisVuosi();
+        String alkamiskausiUri = koulutukset.get(0).getAlkamiskausiUri();
+        for (KoulutusmoduuliToteutus koulutus : koulutukset) {
+            if (alkamisvuosi != koulutus.getAlkamisVuosi() || !alkamiskausiUri.equals(koulutus.getAlkamiskausiUri())) {
+                return false;
+            }
+        }
+        return true;
     }
 }
