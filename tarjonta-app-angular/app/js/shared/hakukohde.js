@@ -220,7 +220,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
     /**
     * Lisää hakukohteeseen liitteen (opetuskieli[0]).
     */
-    function addLiite(hakukohde, kielet, liitteidenToimitusosoitteet, liiteWithLangs) {
+    function addLiite(hakukohde, kielet, liitteidenToimitusosoitteet, hakutoimistonNimi, liiteWithLangs) {
         var liite = liiteWithLangs || {
             isNew: true
         };
@@ -230,7 +230,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
 
         _.each(kielet, function(kieli) {
             liite[kieli.koodiUri] = liite[kieli.koodiUri] || newLiite(hakukohde, kieli.koodiUri,
-                liitteidenToimitusosoitteet[kieli.koodiUri]);
+                liitteidenToimitusosoitteet[kieli.koodiUri], hakutoimistonNimi[kieli.koodiUri]);
 
             liite[kieli.koodiUri].isEmpty = function(commonFields) {
                 commonFields = commonFields || {};
@@ -252,7 +252,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
     /**
     * Luo liite objektin
     */
-    function newLiite(hakukohde, kieliUri, liitteidenToimitusosoite) {
+    function newLiite(hakukohde, kieliUri, liitteidenToimitusosoite, hakutoimistonNimi) {
         var kuvaukset = {
             kieliUri: ''
         };
@@ -264,6 +264,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
             liitteenKuvaukset: kuvaukset,
             toimitettavaMennessa: null,
             //tmennessa,
+            liitteenVastaanottaja: hakutoimistonNimi,
             liitteenToimitusOsoite: addr ? angular.copy(addr) : {},
             muuOsoiteEnabled: !addr,
             sahkoinenOsoiteEnabled: false,

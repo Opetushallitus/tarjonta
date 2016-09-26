@@ -106,6 +106,14 @@
                             </label>
 
 	                        <div class="inset">
+                                <input type="text" class="liiteVastaanottaja"
+                                       ng-required="true"
+                                       ng-disabled="!liite.muuOsoiteEnabled"
+                                       placeholder="{{tt.tarjonta.hakukohde.liite.modal.liitteenVastaanottaja}}"
+                                       data-ng-model="liite.liitteenVastaanottaja"
+                                       ng-change="status.dirtify()"
+                                />
+                                <br/>
 	                            <osoite-field required model="liite.liitteenToimitusOsoite" ng-disabled="!liite.muuOsoiteEnabled" on-change="status.dirtify()"></osoite-field>
 	                        </div>
                         </td>

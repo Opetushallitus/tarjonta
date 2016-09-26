@@ -264,7 +264,7 @@ public class MassCopyTest extends TestUtilityBase {
 
         final String processId1 = copyHaku("race-condition-1");
         final String processId2 = copyHaku("race-condition-2");
-        Thread.sleep(4000);
+        Thread.sleep(6000);
 
         executeInTransaction(new Runnable() {
             @Override

@@ -3840,6 +3840,11 @@
   "locale" : "fi",
   "category" : "tarjonta"
 }, {
+    "value" : "Liitteen vastaanottaja",
+    "key" : "tarjonta.hakukohde.liite.modal.liitteenVastaanottaja",
+    "locale" : "fi",
+    "category" : "tarjonta"
+}, {
   "value" : "Käytetään muuta osoitetta",
   "key" : "tarjonta.hakukohde.liite.modal.kaytetaanMuutaOsoitetta",
   "locale" : "fi",
