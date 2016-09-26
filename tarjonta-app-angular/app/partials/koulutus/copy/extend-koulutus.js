@@ -3,37 +3,9 @@ var app = angular.module('app.koulutus.extend.ctrl', []);
 app.controller('ExtendKoulutusController',
     function($modalInstance, targetKoulutus,
             TarjontaService, LocalisationService, $q, $scope,
-            OrganisaatioService, AuthService, PermissionService, $location, KoulutusService, Config, koulutusMap,
-            SharedStateService) {
+            OrganisaatioService, AuthService, PermissionService, $location, KoulutusService, jarjestetytKoulutukset) {
 
         'use strict';
-
-        // Hakunäkymässä valittu organisaatio
-        var selectedOrganization;
-        if (SharedStateService.state.puut && SharedStateService.state.puut.organisaatio
-            && SharedStateService.state.puut.organisaatio.selected) {
-            selectedOrganization = SharedStateService.state.puut.organisaatio.selected;
-        }
-        else {
-            var ownOrgs = AuthService.getOrganisations();
-            if (ownOrgs[0]) {
-                selectedOrganization = ownOrgs[0];
-            }
-        }
-
-        function preselectOrganization(organisaatiot) {
-            if (organisaatiot.length === 1) {
-                lisaaOrganisaatio(organisaatiot[0]);
-            }
-            else if (selectedOrganization) {
-                OrganisaatioService.byOid(selectedOrganization).then(function(org) {
-                    var searchResultOids = _.pluck(organisaatiot, 'oid');
-                    if (_.intersection(searchResultOids, org.oidAndParentOids).length > 0) {
-                        lisaaOrganisaatio(org);
-                    }
-                });
-            }
-        }
 
         // Tähän populoidaan formin valinnat:
         $scope.model = {
@@ -64,16 +36,14 @@ app.controller('ExtendKoulutusController',
         });
 
         var lisaaOrganisaatio = function(organisaatio) {
-            OrganisaatioService.byOid(organisaatio.oid).then(function(org) {
-                var intersection = _.intersection(_.keys(koulutusMap), org.oidAndParentOids);
-                if (intersection.length > 0) {
-                    $scope.model.onJoJarjestetty = koulutusMap[intersection[0]];
-                }
-                else {
-                    $scope.model.onJoJarjestetty = false;
-                    $scope.model.organisaatiot.push(organisaatio);
-                }
-            });
+            $scope.model.jarjestettyKoulutus = _.chain(jarjestetytKoulutukset.koulutukset)
+                .find(function(koulutus) {
+                    return koulutus.tila != 'EI_JARJESTETTY' && koulutus.org.oid === organisaatio.oid;
+                })
+                .value();
+            if (!$scope.model.jarjestettyKoulutus) {
+                $scope.model.organisaatiot.push(organisaatio);
+            }
         };
 
         /**
@@ -115,7 +85,7 @@ app.controller('ExtendKoulutusController',
 
         $scope.reviewExistingKoulutus = function() {
             $modalInstance.dismiss();
-            $location.path('/koulutus/' + $scope.model.onJoJarjestetty.oid);
+            $location.path('/koulutus/' + $scope.model.jarjestettyKoulutus.oid);
         };
 
         /**
