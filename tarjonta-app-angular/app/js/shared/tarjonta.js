@@ -444,7 +444,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     function createKoulutusListing(koulutukset, jarjestajat) {
         var deferred = $q.defer();
 
-        var promises = _.map(jarjestajat, function(jarjestajaOrgOid) {
+        var listingPromises = _.map(jarjestajat, function(jarjestajaOrgOid) {
                 var jarjestajanKoulutukset = _.filter(koulutukset, function(koulutus) {
                     return _.contains(koulutus.org.oidAndParentOids, jarjestajaOrgOid);
                 });
@@ -454,12 +454,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 return $q.when(jarjestajanKoulutukset);
             });
 
-        $q.all(promises).then(function(allDone) {
-            deferred.resolve(
-                _.chain(allDone)
-                    .flatten()
-                    .value()
-            );
+        $q.all(listingPromises).then(function(groupedKoulutukset) {
+            deferred.resolve(_.flatten(groupedKoulutukset));
         });
 
         return deferred.promise;
