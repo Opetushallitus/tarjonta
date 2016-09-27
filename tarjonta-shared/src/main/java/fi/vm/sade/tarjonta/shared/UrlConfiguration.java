@@ -10,6 +10,7 @@ public class UrlConfiguration extends OphProperties {
     public UrlConfiguration() {
         debugMode();
         addFiles("/tarjonta-oph.properties");
+        addFiles("/tarjonta-front-oph.properties");
         addOptionalFiles(Paths.get(System.getProperties().getProperty("user.home"), "/oph-configuration/common.properties").toString());
     }
 }
