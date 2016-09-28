@@ -10,14 +10,14 @@ app.controller('GenerateLomakeController', function($modalInstance, hakuOid, $ht
     $scope.generateLomake = function(oid) {
         $scope.loading = true;
 
-        $http.get('/haku-app/generatelomake/ping/' + oid)
+        $http.get(window.url("haku-app.pingLomake", oid))
             .then(function success(response) {
                $scope.callGenerateLomake(oid);
             }, $scope.handleError);
     };
 
     $scope.callGenerateLomake = function(oid) {
-        $http.post('/haku-app/generatelomake/one/' + oid)
+        $http.post(window.url("haku-app.generateLomake", oid))
             .then(function success(response) {
                 $scope.loading = false;
                 $scope.success = response.status == 200;

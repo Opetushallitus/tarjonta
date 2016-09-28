@@ -292,30 +292,21 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
     $scope.doPreview = function(event) {
         //example : https://<oppija-env>/app/preview.html#!/korkeakoulu/1.2.246.562.5.2014021318092550673640?lang=fi
         if ($scope.model.koulutus.toteutustyyppi === 'KORKEAKOULUTUS') {
-            $window.location.href = window.CONFIG.env['web.url.oppija.preview'] + $scope.model.koulutus.oid +
-                '?lang=' + $scope.model.koodistoLocale;
+            $window.location.href = windows.url("koulutusinformaatio-app-web.preview", "korkeakoulu", $scope.model.koulutus.oid, $scope.model.koodistoLocale);
         }
         else if ($scope.model.koulutus.toteutustyyppi === 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA') {
-            //TODO: fix the 'korkeakoulu' in the env config.
-            $window.location.href = window.CONFIG.env['web.url.oppija.preview'].replace('korkeakoulu', 'aikuislukio') +
-                $scope.model.koulutus.oid + '?lang=' + $scope.model.koodistoLocale;
+            $window.location.href = windows.url("koulutusinformaatio-app-web.preview", "aikuislukio", $scope.model.koulutus.oid, $scope.model.koodistoLocale);
         }
         else if ($scope.model.koulutus.toteutustyyppi === 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA' ||
             $scope.model.koulutus.toteutustyyppi === 'ERIKOISAMMATTITUTKINTO' ||
             $scope.model.koulutus.toteutustyyppi === 'AMMATTITUTKINTO') {
-            //TODO: fix the 'korkeakoulu' in the env config.
-            $window.location.href = window.CONFIG.env['web.url.oppija.preview']
-                .replace('korkeakoulu', 'ammatillinenaikuiskoulutus') + $scope.model.koulutus.oid +
-                '?lang=' + $scope.model.koodistoLocale;
+            $window.location.href = windows.url("koulutusinformaatio-app-web.preview", "ammatillinenaikuiskoulutus", $scope.model.koulutus.oid, $scope.model.koodistoLocale);
         }
         else if ($scope.model.koulutus.toteutustyyppi === 'AIKUISTEN_PERUSOPETUS') {
-            $window.location.href = window.CONFIG.env['web.url.oppija.preview']
-                .replace('korkeakoulu', 'aikuistenperusopetus') +
-                $scope.model.koulutus.oid + '?lang=' + $scope.model.koodistoLocale;
+            $window.location.href = windows.url("koulutusinformaatio-app-web.preview", "aikuistenperusopetus", $scope.model.koulutus.oid, $scope.model.koodistoLocale);
         }
         else {
-            $window.location.href = window.CONFIG.env['web.url.oppija.preview'].replace('korkeakoulu', 'koulutus') +
-                $scope.model.koulutus.oid + '?lang=' + $scope.model.koodistoLocale;
+            $window.location.href = windows.url("koulutusinformaatio-app-web.preview", "koulutus", $scope.model.koulutus.oid, $scope.model.koodistoLocale);
         }
     };
     $scope.findHakukohdeNimi = function(lang, hakukohde) {

@@ -1,3 +1,4 @@
+
 angular.module('Organisaatio', [
     'ngResource',
     'config',
@@ -5,12 +6,12 @@ angular.module('Organisaatio', [
 ]) // "organisaatioservice"
     .factory('OrganisaatioService', function($resource, $log, $q, Config, $http, Koodisto, AuthService) {
         $log = $log.getInstance('OrganisaatioService');
-        var orgHaku = $resource(Config.env['organisaatio.api.rest.url'] + 'organisaatio/hae', null, {
+        var orgHaku = $resource(window.url("organisaatio-service.search"), null, {
             get: {
                 cache: true
             }
         });
-        var orgLuku = $resource(Config.env['organisaatio.api.rest.url'] + 'organisaatio/:oid', null, {
+        var orgLuku = $resource(window.urls().noEncode().url("organisaatio-service.byOid", ":oid"), null, {
             get: {
                 cache: true
             }
@@ -28,7 +29,7 @@ angular.module('Organisaatio', [
             tyyppi = tyyppi || 'hakukohde';
             var ret = $q.defer();
             var request = $http({
-                url: Config.env['organisaatio.api.rest.url'] + 'organisaatio/v2/ryhmat',
+                url: window.url("organisaatio-service.ryhmat"),
                 method: 'GET',
                 withCredentials: true,
                 cache: true

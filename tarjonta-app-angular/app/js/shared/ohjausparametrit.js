@@ -8,14 +8,8 @@ angular.module('Parameter', [
 ]).factory('ParameterService', function($q, $resource, $log, Config, $injector) {
     var loadingService = $injector.get('loadingService');
     $log = $log.getInstance('ParameterService');
-    var NAME = 'tarjontaOhjausparametritRestUrlPrefix';
-    if (Config.env[NAME] === undefined) {
-        throw '\'' + NAME + '\' ei ole m\xE4\xE4ritelty!';
-    }
-    var baseUrl = Config.env[NAME] + '/api/v1/rest/parametri';
-    var haeUrl = baseUrl + '/:target/:name';
     // Luo resurssi hakemiseen ja päivittämiseen
-    var parametrit = $resource(haeUrl, {}, {
+    var parametrit = $resource(window.urls().noEncode().url("ohjausparametrit-service.parametri", ":target", ":name"), {}, {
         cache: false,
         get: {
             params: {

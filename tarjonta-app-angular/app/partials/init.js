@@ -43,9 +43,9 @@ function tarjontaInit() {
     //
     // Preload "tarjonta.tila"???
     //
-    console.log('** Loading tarjonta.tila info; from: ' + window.CONFIG.env.tarjontaRestUrlPrefix + 'tila');
+    console.log('** Loading tarjonta.tila info; from: ' + window.url("tarjonta-service.tila"));
     init_counter++;
-    jQuery.ajax(window.CONFIG.env.tarjontaRestUrlPrefix + 'tila', {
+    jQuery.ajax(window.urls().noEncode().url("tarjonta-service.tila"), {
         dataType: 'json',
         crossDomain: true,
         complete: logRequest,
@@ -61,7 +61,7 @@ function tarjontaInit() {
     //
     // Preload application localisations for tarjonta
     //
-    var localisationUrl = window.CONFIG.env.tarjontaLocalisationRestUrl + '?category=tarjonta&value=cached';
+    var localisationUrl = window.urls().noEncode().url("lokalisointi.loadAll", {category:"tarjonta", value:"cached"});
     console.log('** Loading localisation info; from: ', localisationUrl);
     init_counter++;
     jQuery.ajax(localisationUrl, {
@@ -79,5 +79,5 @@ function tarjontaInit() {
     });
 
     // Init authentication-service session
-    jQuery.get(window.CONFIG.env['authentication-service.rest.url'] + 'henkilo/henkilotypes');
+    jQuery.get(window.url("authentication-service.henkilotypes"));
 }

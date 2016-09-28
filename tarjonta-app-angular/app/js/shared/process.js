@@ -24,7 +24,7 @@ angular.module('Process', [
     'use strict';
     $log = $log.getInstance('ProcessV1');
     $log.info('ProcessV1()');
-    var serviceUrl = Config.env.tarjontaRestUrlPrefix + 'process/:id';
+    var serviceUrl = window.urls().noEncode().url("tarjonta-service.process", ":id");
     return $resource(serviceUrl, {}, {
         get: {
             method: 'GET',
@@ -34,7 +34,7 @@ angular.module('Process', [
             }
         },
         list: {
-            url: Config.env.tarjontaRestUrlPrefix + 'process/',
+            url: window.url("tarjonta-service.process", ""),
             method: 'GET',
             withCredentials: true,
             isArray: true,

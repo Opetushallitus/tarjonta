@@ -9,8 +9,8 @@ import java.nio.file.Paths;
 public class UrlConfiguration extends OphProperties {
     public UrlConfiguration() {
         debugMode();
-        addFiles("/tarjonta-oph.properties");
-        addFiles("/tarjonta-front-oph.properties");
+        addFiles("/tarjonta-service-oph.properties");
         addOptionalFiles(Paths.get(System.getProperties().getProperty("user.home"), "/oph-configuration/common.properties").toString());
+        frontProperties.put("koulutusinformaatio-app-web.baseUrl", "https://${host.haku}");
     }
 }
