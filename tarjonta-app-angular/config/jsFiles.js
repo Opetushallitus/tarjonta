@@ -75,6 +75,7 @@ module.exports = [
     'js/shared/filters/orderByNum.js',
     'js/shared/filters/dateFormat.js',
     'js/shared/filters/startsWith.js',
+    'js/shared/oph_urls/oph_urls.js',
     'partials/controllers.js',
     'partials/directives.js',
     'partials/services.js',
