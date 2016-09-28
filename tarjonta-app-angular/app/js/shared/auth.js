@@ -79,10 +79,6 @@ app.factory('MyRolesModel', function($http, $log, Config) {
 });
 app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Config, SharedStateService) {
     $log = $log.getInstance('AuthService');
-    var ORGANISAATIO_URL_BASE;
-    if (undefined !== Config.env) {
-        ORGANISAATIO_URL_BASE = Config.env['organisaatio.api.rest.url'];
-    }
     //$log.debug("prefix:", ORGANISAATIO_URL_BASE);
     // CRUD ||UPDATE || READ
     var readAccess = function(service, org) {
@@ -119,15 +115,12 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
         }
         var deferred = $q.defer();
         //        $log.debug("accessCheck().check()", service, orgOid, accessFunction);
-        var url = ORGANISAATIO_URL_BASE + 'organisaatio/' + orgOid + '/parentoids';
-        //       	$log.debug("getting url:", url);
-        //      	console.log("helloi!", orgOid, Config.env['root.organisaatio.oid']);
         if (orgOid === Config.env['root.organisaatio.oid']) {
             //      	  console.log("oph speciaali");
             deferred.resolve(accessFunction(service, orgOid));
         }
         else {
-            $http.get(url, {
+            $http.get(window.url("organisaatio-service.parentOids", orgOid), {
                 cache: true
             }).then(function(result) {
                 // $log.debug("got:", result);

@@ -103,11 +103,10 @@ angular.module('app').value('globalConfig', window.CONFIG);
 angular.module('app').factory('errorLogService', function($log, $window, Config) {
     'use strict';
 
-    var serviceUrl = Config.env.tarjontaRestUrlPrefix + 'permission/recordUiStacktrace';
     var errorsLoggingTimeout = Config.env['errorlog.timeout'] || 60000;
     var errorsLoggingSuspended = false;
     var loggedErrors = [];
-    $log.info('*** errorLogService ***', serviceUrl);
+    $log.info('*** errorLogService ***', window.url("tarjonta-service.permission.recordUiStacktrace"));
     function get_browser() {
         var N = navigator.appName;
         var ua = navigator.userAgent;
@@ -168,7 +167,7 @@ angular.module('app').factory('errorLogService', function($log, $window, Config)
             // Log the JavaScript error to the server.
             $.ajax({
                 type: 'POST',
-                url: serviceUrl,
+                url: window.url("tarjonta-service.permission.recordUiStacktrace"),
                 contentType: 'application/json',
                 xhrFields: {
                     withCredentials: true
