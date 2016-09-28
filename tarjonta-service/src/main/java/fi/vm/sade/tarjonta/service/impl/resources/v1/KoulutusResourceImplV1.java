@@ -403,10 +403,29 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
         }
 
-        // Jatkuvalla haulla ei ole kautta eikä vuotta, joten näiden koulutusten osalta ei alkamispäivämäärää
-        // tarvitse validoida
+        // Jos haulla ei ole kautta ja vuotta, tarkastellaan koulutuksen hakukohteiden muita koulutuksia
         if (targetKausi == null && targetVuosi == null) {
-            return true;
+            for (Hakukohde hakukohde : komoto.getHakukohdes()) {
+                if (hakukohde.getTila() != TarjontaTila.POISTETTU) {
+                    for (KoulutusmoduuliToteutus k : hakukohde.getKoulutusmoduuliToteutuses()) {
+                        if (k.getTila() != TarjontaTila.POISTETTU &&
+                                !k.getOid().equals(dto.getOid()) &&
+                                k.getAlkamiskausiUri() != null &&
+                                k.getAlkamisVuosi() != null) {
+                            targetKausi = k.getAlkamiskausiUri();
+                            targetVuosi = k.getAlkamisVuosi();
+                            break;
+                        }
+                    }
+                    if (targetKausi != null && targetVuosi != null) {
+                        break;
+                    }
+                }
+            }
+            if (targetKausi == null && targetVuosi == null) {
+                // Ei mahdollisesti ristiriitaisia koulutuksia
+                return true;
+            }
         }
 
         if (dto.getKoulutuksenAlkamisPvms() != null && dto.getKoulutuksenAlkamisPvms().size() > 0) {

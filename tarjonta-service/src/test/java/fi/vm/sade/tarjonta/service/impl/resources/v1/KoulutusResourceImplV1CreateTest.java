@@ -247,6 +247,8 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
         Hakukohde hakukohde = new Hakukohde();
         Haku haku = new Haku();
         haku.setHakutapaUri("hakutapa_02#1");
+        haku.setKoulutuksenAlkamisVuosi(2016);
+        haku.setKoulutuksenAlkamiskausiUri("kausi_k");
         hakukohde.setHaku(haku);
         hakukohde.setTila(TarjontaTila.LUONNOS);
         komoto.addHakukohde(hakukohde);
@@ -290,6 +292,8 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
         koulutusDTO.setOid("1.2.3");
         koulutusDTO.setOrganisaatio(new OrganisaatioV1RDTO("1.2.3.4", "", null));
         koulutusDTO.setTila(TarjontaTila.LUONNOS);
+        koulutusDTO.setKoulutuksenAlkamisvuosi(2016);
+        koulutusDTO.setKoulutuksenAlkamiskausi(new KoodiV1RDTO("kausi_k", 1, "Kevät"));
         return koulutusDTO;
     }
 
