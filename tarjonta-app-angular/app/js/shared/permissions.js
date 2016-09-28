@@ -445,7 +445,7 @@ angular.module('TarjontaPermissions', [
             }
         },
         permissionResource: function() {
-            return $resource(Config.env.tarjontaRestUrlPrefix + 'permission/authorize', {}, {
+            return $resource(window.url("tarjonta-service.permission.authorize"), {}, {
                 authorize: {
                     method: 'GET',
                     withCredentials: true,
@@ -466,7 +466,7 @@ angular.module('TarjontaPermissions', [
          * @returns {$q@call;defer.promise}
          */
         getPermissions: function(type, target) {
-            var permissionsUrl = Config.env.tarjontaRestUrlPrefix + 'permission/permissions/:type/:target';
+            var permissionsUrl = window.urls().noEncode().url("tarjonta-service.permission.get", ":type", ":target");
             var permissions = $resource(permissionsUrl, {}, {
                 cache: false,
                 get: {

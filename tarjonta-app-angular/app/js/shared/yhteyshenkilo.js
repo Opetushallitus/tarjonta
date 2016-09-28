@@ -4,26 +4,24 @@ angular.module('Yhteyshenkilo', [
     'Logging'
 ]) //"henkiloservice"
     .factory('YhteyshenkiloService', function($resource, $log, $q, Config, CacheService, $injector) {
+        var plainUrls = window.urls().noEncode();
+
         $log = $log.getInstance('YhteyshenkiloService');
-        var baseUrl = Config.env['authentication-service.henkilo.rest.url'];
-        var urlEtsi = baseUrl + '?count=2000&index=0&ht=VIRKAILIJA';
-        var urlHaeTiedot = baseUrl + '/:oid';
-        var urlHaeOrganisaatioHenkiloTiedot = baseUrl + '/:oid/organisaatiohenkilo';
-        var henkHaku = $resource(urlEtsi, {}, {
+        var henkHaku = $resource(plainUrls.url("authentication-service.henkilo", {count:2000, index:0, ht:"VIRKAILIJA"}), {}, {
             cache: true,
             get: {
                 method: 'GET',
                 withCredentials: true
             }
         });
-        var henkilo = $resource(urlHaeTiedot, {}, {
+        var henkilo = $resource(plainUrls.url("authentication-service.urlHaeTiedot", ":oid"), {}, {
             cache: true,
             get: {
                 method: 'GET',
                 withCredentials: true
             }
         });
-        var organisaatioHenkilo = $resource(urlHaeOrganisaatioHenkiloTiedot, {}, {
+        var organisaatioHenkilo = $resource(plainUrls.url("authentication-service.organisaatiohenkilo", ":oid"), {}, {
             cache: true,
             get: {
                 isArray: true,

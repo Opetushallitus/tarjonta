@@ -18,6 +18,8 @@ var app = angular.module('Koodisto', [
     'TarjontaCache',
     'Logging'
 ]);
+var plainUrls = window.urls().noEncode();
+
 app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, AuthService) {
     $log = $log.getInstance('Koodisto');
     var host = Config.env.tarjontaKoodistoRestUrlPrefix;
@@ -231,8 +233,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, Auth
             locale = getLocale(locale);
             var returnYlapuoliKoodis = $q.defer();
             var returnKoodis = [];
-            var ylapuoliKoodiUri = host + 'relaatio/sisaltyy-ylakoodit/:koodiUri';
-            $resource(ylapuoliKoodiUri, {
+            $resource(plainUrls.url("koodisto-service.ylakoodi", ":koodiUri"), {
                 koodiUri: '@koodiUri'
             }, {
                     cache: true
@@ -252,8 +253,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, Auth
             locale = getLocale(locale);
             var returnYlapuoliKoodis = $q.defer();
             var returnKoodis = [];
-            var ylapuoliKoodiUri = host + 'relaatio/sisaltyy-alakoodit/:koodiUri';
-            $resource(ylapuoliKoodiUri, {
+            $resource(plainUrls.url("koodisto-service.alakoodi", ":koodiUri"), {
                 koodiUri: '@koodiUri'
             }, {
                     cache: true
@@ -283,12 +283,11 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, Auth
                 map: {}
             };
             var promises = [];
-            var uri = host + 'relaatio/sisaltyy-alakoodit/';
             var that = this;
             _.each(koodiUriList, function(koodiUri) {
                 koodiUri = oph.removeKoodiVersion(koodiUri);
                 var vu = that.versionUtil();
-                var promise = $resource(uri + koodiUri, {}, {
+                var promise = $resource(window.url("koodisto-service.alakoodi", koodiUri), {}, {
                     get: {
                         method: 'GET',
                         isArray: true
@@ -322,12 +321,11 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, Auth
             };
             var promises = [];
             var vu = this.versionUtil();
-            var uri = host + 'relaatio/sisaltyy-ylakoodit/';
             _.each(koodiUriList, function(koodiUri) {
                 if (koodiUri.indexOf('#') != -1) {
                     koodiUri = koodiUri.substring(0, koodiUri.indexOf('#'));
                 }
-                var promise = $resource(uri + koodiUri, {}, {
+                var promise = $resource(window.url("koodisto-service.ylakoodi", koodiUri), {}, {
                     get: {
                         method: 'GET',
                         isArray: true
@@ -359,8 +357,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, Auth
                 }
                 var passiivinenTila = 'PASSIIVINEN';
                 var returnKoodis = [];
-                var koodiUri = host + ':koodistoUri/koodi';
-                $resource(koodiUri, {
+                $resource(plainUrls.url("koodisto-service.koodi",":koodistoUri"), {
                     koodistoUri: '@koodistoUri'
                 }, {
                         cache: true
@@ -392,9 +389,8 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, Auth
             koodiUriParam = removeVersion(koodiUriParam);
             locale = getLocale(locale);
             var returnKoodi = $q.defer();
-            var koodiUri = host + ':koodistoUri/koodi/:koodiUri';
             //console.log('Calling getKoodistoWithKoodiUri with : ' + koodistoUriParam + '/koodi/'+ koodiUriParam +' ' + locale);
-            $resource(koodiUri, {
+            $resource(plainUrls.url("koodisto-service.koodiInKoodisto",":koodistoUri", ":koodiUri"), {
                 koodistoUri: '@koodistoUri',
                 koodiUri: '@koodiUri'
             }, {
@@ -420,8 +416,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, Auth
             return CacheService.lookup('koodi/' + koodiUri + '/' + locale, function(ret) {
                 //var ret = $q.defer();
                 //          https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/searchKoodis?koodiUris=haunkohdejoukko_11
-                var resourceUrl = host + 'searchKoodis';
-                $resource(resourceUrl, {}, {
+                $resource(window.url("koodisto-service.search"), {}, {
                     'get': {
                         method: 'GET',
                         isArray: true

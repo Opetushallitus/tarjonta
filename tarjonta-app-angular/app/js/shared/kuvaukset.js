@@ -1,18 +1,16 @@
 var app = angular.module('Kuvaus', [
     'ngResource',
-    'config',
     'Logging',
     'TarjontaPermissions'
 ]);
-app.factory('Kuvaus', function($http, Config, $q, $log, PermissionService) {
+app.factory('Kuvaus', function($http, $q, $log, PermissionService) {
     $log = $log.getInstance('Kuvaus');
     var kuvausUriPrefix = 'kuvaus/';
     return {
         removeKuvausWithId: function(kuvausTunniste) {
             var promise = $q.defer();
             if (kuvausTunniste !== undefined) {
-                var kuvausGetUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + kuvausTunniste;
-                $http.delete(kuvausGetUri, {
+                $http.delete(window.url("tarjonta-service.kuvaus.byTunniste", kuvausTunniste), {
                     withCredentials: true
                 }).success(function(data) {
                     promise.resolve(data);
@@ -27,9 +25,7 @@ app.factory('Kuvaus', function($http, Config, $q, $log, PermissionService) {
         },
         findWithVuosiOppilaitostyyppiTyyppiVuosi: function(oppilaitosTyyppi, tyyppi, vuosi) {
             var promise = $q.defer();
-            var queryUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + tyyppi + '/' +
-                oppilaitosTyyppi + '/' + vuosi + '/' + 'kuvaustenTiedot';
-            $http.get(queryUri).success(function(data) {
+            $http.get(window.url("tarjonta-service.kuvaus.findWithVuosiOppilaitostyyppiTyyppiVuosi", tyyppi, oppilaitosTyyppi, vuosi)).success(function(data) {
                 promise.resolve(data);
             }).error(function(data) {
                 promise.resolve(data);
@@ -39,8 +35,7 @@ app.factory('Kuvaus', function($http, Config, $q, $log, PermissionService) {
         findKuvausWithId: function(kuvausTunniste) {
             var promise = $q.defer();
             if (kuvausTunniste !== undefined) {
-                var kuvausGetUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + kuvausTunniste;
-                $http.get(kuvausGetUri).success(function(data) {
+                $http.get(window.url("tarjonta-service.kuvaus.byTunniste", kuvausTunniste)).success(function(data) {
                     promise.resolve(data);
                 }).error(function(data) {
                     promise.resolve(data);
@@ -56,8 +51,7 @@ app.factory('Kuvaus', function($http, Config, $q, $log, PermissionService) {
             PermissionService.permissionResource().authorize({}, function(authResponse) {
                 console.log('AUTH RESPONSE : ', authResponse);
                 if (kuvaus !== undefined && tyyppi !== undefined) {
-                    var kuvausPostUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + tyyppi;
-                    $http.post(kuvausPostUri, kuvaus, {
+                    $http.post(window.url("tarjonta-service.kuvaus.byTunniste", tyyppi), kuvaus, {
                         withCredentials: true,
                         headers: {
                             'Content-Type': 'application/json; charset=UTF-8'
@@ -78,8 +72,7 @@ app.factory('Kuvaus', function($http, Config, $q, $log, PermissionService) {
             var promise = $q.defer();
             PermissionService.permissionResource().authorize({}, function(authResponse) {
                 if (kuvaus !== undefined && tyyppi !== undefined) {
-                    var kuvausPostUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + tyyppi;
-                    $http.put(kuvausPostUri, kuvaus, {
+                    $http.put(window.url("tarjonta-service.kuvaus.byTunniste", tyyppi), kuvaus, {
                         withCredentials: true,
                         headers: {
                             'Content-Type': 'application/json; charset=UTF-8'
@@ -99,9 +92,8 @@ app.factory('Kuvaus', function($http, Config, $q, $log, PermissionService) {
         findKuvausWithTyyppiNimiOppilaitos: function(tyyppi, nimi, oppilaitosTyyppi) {
             var promise = $q.defer();
             if (tyyppi !== undefined && nimi !== undefined && oppilaitosTyyppi !== undefined) {
-                var kuvausQueriUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + tyyppi +
-                    oppilaitosTyyppi + nimi;
-                $http.get(kuvausQueriUri).success(function(data) {
+                $http.get(window.url("tarjonta-service.kuvaus.findKuvausWithTyyppiNimiOppilaitos", tyyppi , oppilaitosTyyppi, nimi)
+                ).success(function(data) {
                     promise.resolve(data);
                 }).error(function(data) {
                     promise.resolve(data);
@@ -115,9 +107,8 @@ app.factory('Kuvaus', function($http, Config, $q, $log, PermissionService) {
         findKuvausBasicInformation: function(tyyppi, oppilaitosTyyppi) {
             var promise = $q.defer();
             if (tyyppi !== undefined && oppilaitosTyyppi !== undefined) {
-                var queryUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + tyyppi + '/' +
-                    oppilaitosTyyppi + '/kuvaustenTiedot';
-                $http.get(queryUri).success(function(data) {
+                $http.get(window.url("tarjonta-service.kuvaus.findKuvausBasicInformation", tyyppi, oppilaitosTyyppi)
+                ).success(function(data) {
                     promise.resolve(data);
                 }).error(function(data) {
                     promise.resolve();
@@ -131,7 +122,7 @@ app.factory('Kuvaus', function($http, Config, $q, $log, PermissionService) {
         findKuvauksesWithSearchSpec: function(searchSpec, tyyppi) {
             var promise = $q.defer();
             if (searchSpec !== undefined && tyyppi !== undefined) {
-                var queryUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + tyyppi + '/search';
+                var queryUri = window.url("tarjonta-service.kuvaus.search", tyyppi);
                 $log.info('KUVAUS SEARCH SPEC URI : ', queryUri);
                 searchSpec.avain = searchSpec.valintaperustekuvausryhma || searchSpec.sorakuvaus;
                 $http.post(queryUri, searchSpec, {
@@ -152,8 +143,7 @@ app.factory('Kuvaus', function($http, Config, $q, $log, PermissionService) {
         findAllNimesWithType: function(tyyppi) {
             var promise = $q.defer();
             if (tyyppi !== undefined) {
-                var nimiQueryUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + tyyppi + '/nimet';
-                $http.get(nimiQueryUri).success(function(data) {
+                $http.get(window.url("tarjonta-service.kuvaus.nimet", tyyppi)).success(function(data) {
                     promise.resolve(data);
                 }).error(function(data) {
                     promise.resolve(data);
