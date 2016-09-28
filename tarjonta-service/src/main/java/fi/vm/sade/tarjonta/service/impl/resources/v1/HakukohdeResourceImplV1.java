@@ -590,6 +590,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             return updateHakukohde(existingHakukohde.getOid(), hakukohdeRDTO);
         }
 
+        // Nullable properties BUG-1143
+        if(NO_HAKUAIKA_PVM.equals(hakukohdeRDTO.getHakuaikaAlkuPvm())) hakukohdeRDTO.setHakuaikaAlkuPvm(null);
+        if(NO_HAKUAIKA_PVM.equals(hakukohdeRDTO.getHakuaikaLoppuPvm())) hakukohdeRDTO.setHakuaikaLoppuPvm(null);
+
         hakukohdeRDTO = converterV1.setDefaultValues(hakukohdeRDTO);
 
         List<HakukohdeValidationMessages> validationMessageses = validateHakukohdeAndPopulateImplicitFields(hakukohdeRDTO);
