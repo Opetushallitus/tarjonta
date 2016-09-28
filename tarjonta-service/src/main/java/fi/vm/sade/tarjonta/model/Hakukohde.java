@@ -18,10 +18,8 @@ package fi.vm.sade.tarjonta.model;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonManagedReference;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
@@ -40,6 +38,7 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public static final String TABLE_NAME = "hakukohde";
     private static final long serialVersionUID = -3320464257959195992L;
+    private static final Date NO_HAKUAIKA_PVM = new Date(0);
 
     @Column(name = "oid", unique = true, updatable = false, nullable = false)
     private String oid;
@@ -772,7 +771,10 @@ public class Hakukohde extends TarjontaBaseEntity {
     }
 
     public boolean hakuaikasSet() {
-        return getHakuaikaAlkuPvm() != null && getHakuaikaLoppuPvm() != null;
+        return getHakuaikaAlkuPvm() != null
+                && getHakuaikaLoppuPvm() != null
+                && !getHakuaikaAlkuPvm().equals(NO_HAKUAIKA_PVM)
+                && !getHakuaikaLoppuPvm().equals(NO_HAKUAIKA_PVM);
     }
 
     public KoulutusmoduuliToteutus getFirstKoulutus() {
