@@ -76,7 +76,6 @@ import static fi.vm.sade.tarjonta.service.AuditHelper.*;
 public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResourceImplV1.class);
-    private static final Date NO_HAKUAIKA_PVM = new Date(0);
 
     @Autowired
     private HakuDAO hakuDAO;
@@ -741,16 +740,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     private HakukohdeV1RDTO mergeExistingHakukohdeData(String oid, HakukohdeV1RDTO dto)
             throws InvocationTargetException, IllegalAccessException {
-        // Nullable properties
-        boolean removeHakuaikaAlkuPvm = NO_HAKUAIKA_PVM.equals(dto.getHakuaikaAlkuPvm());
-        boolean removeHakuaikaLoppuPvm = NO_HAKUAIKA_PVM.equals(dto.getHakuaikaLoppuPvm());
-
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
         HakukohdeV1RDTO originalDto = converterV1.toHakukohdeRDTO(hakukohde);
         beanUtils.copyProperties(originalDto, dto);
-
-        if(removeHakuaikaAlkuPvm) {originalDto.setHakuaikaAlkuPvm(null);}
-        if(removeHakuaikaLoppuPvm) {originalDto.setHakuaikaLoppuPvm(null);}
 
         return originalDto;
     }

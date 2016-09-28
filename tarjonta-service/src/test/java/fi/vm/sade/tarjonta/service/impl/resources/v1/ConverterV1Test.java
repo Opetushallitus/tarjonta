@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static junit.framework.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.hasItem;
@@ -129,6 +130,32 @@ public class ConverterV1Test extends TestMockBase {
 
         ValintakoeAjankohta valintakoeAjankohta = valintakoe.getAjankohtas().iterator().next();
         assertTrue(valintakoeAjankohta.isKellonaikaKaytossa());
+    }
+
+    @Test
+    public void thatValintakoeDTOsDatesCanBeNullOrZero() {
+        HakukohdeV1RDTO hakukohdeDTO = getHakukohdeDTO();
+        hakukohdeDTO.setHakuaikaAlkuPvm(new Date(0));
+        hakukohdeDTO.setHakuaikaLoppuPvm(null);
+
+        Hakukohde hakukohde = converter.toHakukohde(hakukohdeDTO);
+        assertNull(hakukohde.getHakuaikaAlkuPvm());
+        assertNull(hakukohde.getHakuaikaLoppuPvm());
+
+    }
+
+    @Test
+    public void thatValintakoeDTOsDatesAreConverted() {
+        HakukohdeV1RDTO hakukohdeDTO = getHakukohdeDTO();
+        Date alkuPvm = new Date(20);
+        Date loppuPvm = new Date(2000);
+        hakukohdeDTO.setHakuaikaAlkuPvm(alkuPvm);
+        hakukohdeDTO.setHakuaikaLoppuPvm(loppuPvm);
+
+        Hakukohde hakukohde = converter.toHakukohde(hakukohdeDTO);
+        assertEquals(alkuPvm, hakukohde.getHakuaikaAlkuPvm());
+        assertEquals(loppuPvm, hakukohde.getHakuaikaLoppuPvm());
+
     }
 
     @Test
@@ -273,6 +300,37 @@ public class ConverterV1Test extends TestMockBase {
         assertEquals(alkuPvm, hakukohdeV1RDTO.getHakuaikaAlkuPvm());
         assertEquals(loppuPvm, hakukohdeV1RDTO.getHakuaikaLoppuPvm());
         assertTrue(hakukohdeV1RDTO.getKaytetaanHakukohdekohtaistaHakuaikaa());
+
+    }
+
+    @Test
+    public void thatHakukohdekohtainenHakuaikaCanBeZero() {
+        Date alkuPvm = new Date(0);
+        Date loppuPvm = new Date();
+
+        Hakukohde hakukohde = getHakukohde();
+        hakukohde.setHakuaikaAlkuPvm(alkuPvm);
+        hakukohde.setHakuaikaLoppuPvm(loppuPvm);
+        setKomotoForHakukohde(hakukohde);
+
+        HakukohdeV1RDTO hakukohdeV1RDTO = converter.toHakukohdeRDTO(hakukohde);
+
+        assertFalse(hakukohdeV1RDTO.getKaytetaanHakukohdekohtaistaHakuaikaa());
+
+    }
+    @Test
+    public void thatHakukohdekohtainenHakuaikaCanBeNull() {
+        Date alkuPvm = null;
+        Date loppuPvm = new Date();
+
+        Hakukohde hakukohde = getHakukohde();
+        hakukohde.setHakuaikaAlkuPvm(alkuPvm);
+        hakukohde.setHakuaikaLoppuPvm(loppuPvm);
+        setKomotoForHakukohde(hakukohde);
+
+        HakukohdeV1RDTO hakukohdeV1RDTO = converter.toHakukohdeRDTO(hakukohde);
+
+        assertFalse(hakukohdeV1RDTO.getKaytetaanHakukohdekohtaistaHakuaikaa());
 
     }
 

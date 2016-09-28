@@ -18,10 +18,8 @@ package fi.vm.sade.tarjonta.model;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonManagedReference;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
@@ -40,6 +38,7 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public static final String TABLE_NAME = "hakukohde";
     private static final long serialVersionUID = -3320464257959195992L;
+    private static final Date NO_HAKUAIKA_PVM = new Date(0);
 
     @Column(name = "oid", unique = true, updatable = false, nullable = false)
     private String oid;
@@ -243,7 +242,7 @@ public class Hakukohde extends TarjontaBaseEntity {
     }
 
     public void setHakuaikaAlkuPvm(Date hakuaikaAlkuPvm) {
-        this.hakuaikaAlkuPvm = hakuaikaAlkuPvm;
+        this.hakuaikaAlkuPvm = getPvmOrNull(hakuaikaAlkuPvm);
     }
 
     public Date getHakuaikaLoppuPvm() {
@@ -251,7 +250,11 @@ public class Hakukohde extends TarjontaBaseEntity {
     }
 
     public void setHakuaikaLoppuPvm(Date hakuaikaLoppuPvm) {
-        this.hakuaikaLoppuPvm = hakuaikaLoppuPvm;
+        this.hakuaikaLoppuPvm = getPvmOrNull(hakuaikaLoppuPvm);
+    }
+
+    private Date getPvmOrNull(Date pvm) {
+        return (pvm == null || NO_HAKUAIKA_PVM.equals(pvm)) ? null : pvm;
     }
 
     /**
