@@ -146,11 +146,11 @@
                         <td>
                             <input name="aloituspaikatlkm" ng-disabled="model.isDeEnabled"
                                    class="thin" type="number" ng-pattern="model.integerval" min="1" max="999"
-                                   valid-decimal show-zero-as-empty
+                                   valid-decimal ng-required="true"
                                    ng-model="model.hakukohde.aloituspaikatLkm" />
                         </td>
                         <td>
-                            <p class="error" ng-show="model.showError && editHakukohdeForm.aloituspaikatlkm.$invalid"
+                            <p class="error" ng-show="model.showError && editHakukohdeForm.aloituspaikatlkm.$error"
                                tt="tarjonta.hakukohde.aloituspaikatlkm.validation.failed">Tarkista aloituspaikat</p>
                         </td>
                     </tr>
