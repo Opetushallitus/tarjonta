@@ -15,19 +15,14 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import java.util.Comparator;
 import java.util.Date;
 import javax.persistence.*;
 
 import com.google.common.base.Preconditions;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonManagedReference;
 
 import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 
-/**
- *
- */
 @Entity
 @JsonIgnoreProperties({"id","version", "hibernateLazyInitializer", "handler", "hakukohde"})
 @Table(name = "hakukohdeliite")
@@ -38,6 +33,9 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
     @ManyToOne (fetch = FetchType.LAZY, optional=false)
     @JoinColumn(name="hakukohde_id", nullable=false)
     private Hakukohde hakukohde;
+
+    @Column(name="vastaanottaja")
+    private String vastaanottaja;
 
     @Column(name="hakukohde_liite_nimi", nullable=false)
     private String hakukohdeLiiteNimi;
@@ -192,6 +190,14 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
 
     public void setKaytetaanHakulomakkeella(boolean kaytetaanHakulomakkeella) {
         this.kaytetaanHakulomakkeella = kaytetaanHakulomakkeella;
+    }
+
+    public String getVastaanottaja() {
+        return vastaanottaja;
+    }
+
+    public void setVastaanottaja(String vastaanottaja) {
+        this.vastaanottaja = vastaanottaja;
     }
 }
 
