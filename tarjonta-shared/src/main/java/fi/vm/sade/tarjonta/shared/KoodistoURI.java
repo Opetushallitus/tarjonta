@@ -75,6 +75,8 @@ public class KoodistoURI {
     public static String KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI;
     public static String KOODISTO_EQF_LUOKITUS_URI;
     public static String KOODISTO_OSAAMISALA_URI;
+    public static String KOODISTO_TUTKINTOON_JOHTAVA_KOULUTUS_URI;
+    public static String KOODI_ON_TUTKINTO_URI;
     /*
      * KOMOTO URIs
      */
@@ -372,6 +374,16 @@ public class KoodistoURI {
     @Value("${koodisto-uris.ammattinimikkeet}")
     public void setAmmattinimikkeetUri(String uri) {
         KOODISTO_AMMATTINIMIKKEET_URI = uri;
+    }
+
+    @Value("${koodisto-uris.tutkintoonjohtavakoulutus}")
+    public void setKoodistoTutkintoonJohtavaKoulutusUri(String uri) {
+        KOODISTO_TUTKINTOON_JOHTAVA_KOULUTUS_URI = uri;
+    }
+
+    @Value("${koodi-uri.ontutkinto}")
+    public void setKoodiOnTutkintoUri(String uri) {
+        KOODI_ON_TUTKINTO_URI = uri;
     }
 
     /*
