@@ -1,23 +1,33 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.util;
 
+import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO.YhdenPaikanSaanto;
+import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
+@Component
 public class YhdenPaikanSaantoBuilder {
 
     private static final String JATKOTUTKINTOHAKU_URI = "haunkohdejoukontarkenne_3#";
     private static final List<String> TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO = Collections.singletonList(JATKOTUTKINTOHAKU_URI);
-    private static final List<TarjontaTila> IGNORE_KOULUTUS_STATES = Arrays.asList(TarjontaTila.LUONNOS, TarjontaTila.KOPIOITU);
-    public static final String KAUSI_KEVAT = "kausi_k";
+    private static final String KAUSI_KEVAT = "kausi_k";
+
+    @Autowired
+    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
     public static YhdenPaikanSaanto from(Haku haku) {
         if (!haku.isKorkeakouluHaku()) {
@@ -45,7 +55,7 @@ public class YhdenPaikanSaantoBuilder {
         }
     }
 
-    public static YhdenPaikanSaanto from(Hakukohde hakukohde) {
+    public YhdenPaikanSaanto from(Hakukohde hakukohde) {
         Haku haku = hakukohde.getHaku();
         YhdenPaikanSaanto ypsBasedOnHaku = from(haku);
         if (ypsBasedOnHaku.isVoimassa()) {
@@ -58,34 +68,15 @@ public class YhdenPaikanSaantoBuilder {
                     TARKENTEET_JOILLE_YHDEN_PAIKAN_SAANTO
             ));
         }
-        List<KoulutusmoduuliToteutus> koulutukset = new ArrayList<>();
-        for (KoulutusmoduuliToteutus koulutus : hakukohde.getKoulutusmoduuliToteutuses()) {
-            if (!IGNORE_KOULUTUS_STATES.contains(koulutus.getTila()) &&
-                    koulutus.getAlkamisVuosi() != null &&
-                    koulutus.getAlkamiskausiUri() != null) {
-                koulutukset.add(koulutus);
-            }
-        }
-        if (koulutukset.isEmpty()) {
+        if (!tutkintoonJohtavaHakukohde(hakukohde)) {
             return new YhdenPaikanSaanto(false, String.format(
-                    "%s ja hakukohteella ei ole oikean tilaista koulutusta",
+                    "%s ja hakukohteen koulutus ei ole tutkintoon johtavaa",
                     ypsBasedOnHaku.getSyy()
             ));
         }
-        if (!uniqueKoulutuksenAlkamiskausi(koulutukset)) {
-            List<String> koulutusOids = new ArrayList<>();
-            for (KoulutusmoduuliToteutus koulutus : koulutukset) {
-                koulutusOids.add(koulutus.getOid());
-            }
-            throw new IllegalStateException(String.format(
-                    "Hakukohteen %s koulutusten %s koulutusten alkamiskaudet eivät ole yhtenevät.",
-                    hakukohde.getOid(),
-                    koulutusOids
-            ));
-        }
-        KoulutusmoduuliToteutus koulutus = koulutukset.get(0);
-        boolean ennenSyksya2016 = koulutus.getAlkamisVuosi() < 2016 ||
-                (koulutus.getAlkamisVuosi() == 2016 && koulutus.getAlkamiskausiUri().startsWith(KAUSI_KEVAT));
+        Pair<Integer, String> koulutuksenAlkamiskausi = uniqueHakukohteenAlkamiskausi(hakukohde);
+        boolean ennenSyksya2016 = koulutuksenAlkamiskausi.getLeft() < 2016 ||
+                (koulutuksenAlkamiskausi.getLeft() == 2016 && koulutuksenAlkamiskausi.getRight().startsWith(KAUSI_KEVAT));
         if (ennenSyksya2016) {
             return new YhdenPaikanSaanto(false, String.format(
                     "%s ja hakukohteen koulutuksen alkamiskausi on ennen syksyä 2016",
@@ -94,6 +85,34 @@ public class YhdenPaikanSaantoBuilder {
         }
 
         return new YhdenPaikanSaanto(true, "Jatkuvan haun hakukohteen alkamiskausi ja vuosi on jälkeen kevään 2016");
+    }
+
+    private boolean tutkintoonJohtavaHakukohde(Hakukohde hakukohde) {
+        for (KoulutusmoduuliToteutus koulutus : hakukohde.getKoulutusmoduuliToteutuses()) {
+            if (koulutus.getTila() != TarjontaTila.POISTETTU && tutkintoonJohtavaKoulutus(koulutus)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean tutkintoonJohtavaKoulutus(KoulutusmoduuliToteutus koulutus) {
+        if (koulutus.getKoulutusUri() == null) {
+            return false;
+        }
+        String tutkintoonjohtavuus = tarjontaKoodistoHelper.getUniqueKoodistoRelation(
+                koulutus.getKoulutusUri().split("#")[0],
+                KoodistoURI.KOODISTO_TUTKINTOON_JOHTAVA_KOULUTUS_URI,
+                SuhteenTyyppiType.SISALTYY,
+                false
+        );
+        if (tutkintoonjohtavuus == null) {
+            throw new IllegalStateException(String.format(
+                    "Koulutus koodi %s ei ole relaatiossa koodiston %s kanssa",
+                    koulutus.getKoulutusUri(), KoodistoURI.KOODISTO_TUTKINTOON_JOHTAVA_KOULUTUS_URI
+            ));
+        }
+        return tutkintoonjohtavuus.startsWith(KoodistoURI.KOODI_ON_TUTKINTO_URI);
     }
 
     private static boolean haunKohdejoukontarkenneYPSYhteensopiva(Haku haku) {
@@ -108,14 +127,54 @@ public class YhdenPaikanSaantoBuilder {
         return false;
     }
 
-    private static boolean uniqueKoulutuksenAlkamiskausi(List<KoulutusmoduuliToteutus> koulutukset) {
-        int alkamisvuosi = koulutukset.get(0).getAlkamisVuosi();
-        String alkamiskausiUri = koulutukset.get(0).getAlkamiskausiUri();
-        for (KoulutusmoduuliToteutus koulutus : koulutukset) {
-            if (alkamisvuosi != koulutus.getAlkamisVuosi() || !alkamiskausiUri.equals(koulutus.getAlkamiskausiUri())) {
-                return false;
+    private static Pair<Integer, String> uniqueHakukohteenAlkamiskausi(Hakukohde hakukohde) {
+        Pair<Integer, String> r = null;
+        for (KoulutusmoduuliToteutus koulutus : hakukohde.getKoulutusmoduuliToteutuses()) {
+            if (koulutus.getTila() != TarjontaTila.POISTETTU) {
+                Pair<Integer, String> kausi = uniqueKoulutuksenAlkamiskausi(koulutus);
+                if (r != null && !r.equals(kausi)) {
+                    ArrayList<String> koulutusOids = new ArrayList<>();
+                    for (KoulutusmoduuliToteutus k : hakukohde.getKoulutusmoduuliToteutuses()) {
+                        koulutusOids.add(koulutus.getOid());
+                    }
+                    throw new IllegalStateException(String.format(
+                            "Hakukohteen %s koulutuksilla %s ristiriitaiset koulutuksen alkamiskaudet",
+                            hakukohde.getOid(), koulutusOids
+                    ));
+                }
+                r = kausi;
             }
         }
-        return true;
+        if (r == null) {
+            throw new IllegalStateException(String.format(
+                    "Hakukohteella %s ei ole koulutuksen alkamiskautta", hakukohde.getOid()
+            ));
+        }
+        return r;
+    }
+
+    private static Pair<Integer, String> uniqueKoulutuksenAlkamiskausi(KoulutusmoduuliToteutus koulutus) {
+        Pair<Integer, String> r = null;
+        if (koulutus.getAlkamisVuosi() != null && koulutus.getAlkamiskausiUri() != null) {
+            r = Pair.of(koulutus.getAlkamisVuosi(), koulutus.getAlkamiskausiUri());
+        }
+        for (Date alkamispaiva : koulutus.getKoulutuksenAlkamisPvms()) {
+            Pair<Integer, String> kausi = Pair.of(
+                    IndexDataUtils.parseYearInt(alkamispaiva),
+                    IndexDataUtils.parseKausiKoodi(alkamispaiva)
+            );
+            if (r != null && !r.equals(kausi)) {
+                throw new IllegalStateException(String.format(
+                        "Koulutuksen %s alkamiskaudet ovat ristiriitaiset", koulutus.getOid()
+                ));
+            }
+            r = kausi;
+        }
+        if (r == null) {
+            throw new IllegalStateException(String.format(
+                    "Koulutuksella %s ei ole alkamiskautta", koulutus.getOid()
+            ));
+        }
+        return r;
     }
 }
