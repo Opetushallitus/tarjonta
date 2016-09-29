@@ -99,6 +99,9 @@ public class ConverterV1 {
     @Autowired
     private ValintaperustekuvausHelper valintaperustekuvausHelper;
 
+    @Autowired
+    private YhdenPaikanSaantoBuilder yhdenPaikanSaantoBuilder;
+
     @Value("${koodisto.hakutapa.jatkuvaHaku.uri}")
     private String _jatkuvaHakutapaUri;
 
@@ -175,7 +178,7 @@ public class ConverterV1 {
             );
         }
 
-        hakuDTO.setYhdenPaikanSaanto(YhdenPaikanSaantoBuilder.from(haku));
+        hakuDTO.setYhdenPaikanSaanto(yhdenPaikanSaantoBuilder.from(haku));
         hakuDTO.setOrganisaatioOids(haku.getOrganisationOids());
         hakuDTO.setTarjoajaOids(haku.getTarjoajaOids());
 
@@ -626,7 +629,7 @@ public class ConverterV1 {
         );
         hakukohdeRDTO.setOverridesHaunHakulomakeUrl(hakukohde.getHakulomakeUrl() != null);
         hakukohdeRDTO.setOhjeetUudelleOpiskelijalle(hakukohde.getOhjeetUudelleOpiskelijalle());
-        hakukohdeRDTO.setYhdenPaikanSaanto(YhdenPaikanSaantoBuilder.from(hakukohde));
+        hakukohdeRDTO.setYhdenPaikanSaanto(yhdenPaikanSaantoBuilder.from(hakukohde));
         convertTarjoatiedotToDTO(hakukohde, hakukohdeRDTO);
         convertHakukohteenNimetToDTO(hakukohde, hakukohdeRDTO, null);
         convertOpetuskieletToDTO(hakukohde, hakukohdeRDTO);
