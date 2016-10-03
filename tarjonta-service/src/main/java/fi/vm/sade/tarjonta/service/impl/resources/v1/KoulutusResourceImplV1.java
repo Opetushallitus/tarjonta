@@ -67,6 +67,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
@@ -75,6 +76,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jms.IllegalStateException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
@@ -407,18 +409,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         if (targetKausi == null && targetVuosi == null) {
             for (Hakukohde hakukohde : komoto.getHakukohdes()) {
                 if (hakukohde.getTila() != TarjontaTila.POISTETTU) {
-                    for (KoulutusmoduuliToteutus k : hakukohde.getKoulutusmoduuliToteutuses()) {
-                        if (k.getTila() != TarjontaTila.POISTETTU &&
-                                !k.getOid().equals(dto.getOid()) &&
-                                k.getAlkamiskausiUri() != null &&
-                                k.getAlkamisVuosi() != null) {
-                            targetKausi = k.getAlkamiskausiUri();
-                            targetVuosi = k.getAlkamisVuosi();
-                            break;
-                        }
-                    }
-                    if (targetKausi != null && targetVuosi != null) {
+                    try {
+                        targetVuosi = hakukohde.getUniqueAlkamisVuosi();
+                        targetKausi = hakukohde.getUniqueAlkamiskausiUri();
                         break;
+                    } catch (IllegalStateException e) {
+                        LOG.error(String.format("Koulutuksen %s hakukohteella ristiriitaisia tietoja", komoto.getOid()), e);
+                        return false;
                     }
                 }
             }
