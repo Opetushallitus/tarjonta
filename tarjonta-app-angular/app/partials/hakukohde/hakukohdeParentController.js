@@ -1288,6 +1288,12 @@ app.controller('HakukohdeParentController', [
             }
         }
 
+        function nullAsZero(hakukohde, field) {
+            if (!hakukohde[field]) {
+                hakukohde[field] = 0;
+            }
+        }
+
         $scope.model.saveParent = function(tila) {
             if (!tila) {
                 throw 'tila cannot be undefined!';
@@ -1317,13 +1323,9 @@ app.controller('HakukohdeParentController', [
                     });
                     $scope.checkIsCopy($scope.luonnosVal, true);
                     // BUG-1108
-                    if(!$scope.model.hakukohde.hakuaikaAlkuPvm) {
-                        $scope.model.hakukohde.hakuaikaAlkuPvm = 0;
-
-                    }
-                    if(!$scope.model.hakukohde.hakuaikaLoppuPvm) {
-                        $scope.model.hakukohde.hakuaikaLoppuPvm = 0;
-                    }
+                    ['hakuaikaAlkuPvm', 'hakuaikaLoppuPvm', 'aloituspaikatLkm'].map(function(field) {
+                        nullAsZero($scope.model.hakukohde, field);
+                    });
                     angular.forEach($scope.model.hakukohde.valintakokeet, function(koe) {
                         _.each(koe.valintakoeAjankohtas, function(ajankohta) {
                             ajankohta.alkaa = CommonUtilService.valintakoeAjankohtaToFinnishTime(ajankohta.alkaa);
