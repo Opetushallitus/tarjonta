@@ -1073,8 +1073,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                     'default': 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA'
                 }
             }),
-            reviewFields: angular.extend([], GENERIC_LUKIOKOULUTUS_STRUCTURE.reviewFields, ['KOHDERYHMA', 'OPPIAINEET_JA_KURSSIT']),
-            KUVAUS_ORDER: angular.extend([], GENERIC_LUKIOKOULUTUS_STRUCTURE.KUVAUS_ORDER, [
+            reviewFields: [].concat(GENERIC_LUKIOKOULUTUS_STRUCTURE.reviewFields, ['KOHDERYHMA', 'OPPIAINEET_JA_KURSSIT']),
+            KUVAUS_ORDER: [].concat(GENERIC_LUKIOKOULUTUS_STRUCTURE.KUVAUS_ORDER, [
                 {
                     type: 'KOHDERYHMA',
                     isKomo: false,
