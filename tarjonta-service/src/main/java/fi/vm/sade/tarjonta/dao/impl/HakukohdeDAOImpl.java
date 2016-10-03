@@ -515,8 +515,6 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
     @Override
     public void update(Hakukohde entity) {
-        detach(entity); //optimistic locking requires detach + reload so that the entity exists in hibernate session before merging
-        Preconditions.checkNotNull(getEntityManager().find(Hakukohde.class, entity.getId()));
         super.update(entity);
     }
 
