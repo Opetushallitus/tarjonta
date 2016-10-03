@@ -21,6 +21,7 @@ import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.AutowireHelper;
+import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.OpintopolkuAlkamiskausi;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -1009,6 +1010,46 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         }
 
         return this.koulutuksenAlkamisPvms.iterator().next();
+    }
+
+    public int getUniqueAlkamisVuosi() {
+        Integer vuosi = this.getAlkamisVuosi();
+        for (Date pvm : this.getKoulutuksenAlkamisPvms()) {
+            int v = IndexDataUtils.parseYearInt(pvm);
+            if (vuosi != null && vuosi != v) {
+                throw new IllegalStateException(String.format(
+                        "Koulutuksen %s alkamisvuodet ovat ristiriitaiset", this.getOid()
+                ));
+            } else {
+                vuosi = v;
+            }
+        }
+        if (vuosi == null) {
+            throw new IllegalStateException(String.format(
+                    "Koulutuksella %s ei ole alkamisvuotta", this.getOid()
+            ));
+        }
+        return vuosi;
+    }
+
+    public String getUniqueAlkamiskausiUri() {
+        String kausiUri = this.getAlkamiskausiUri();
+        for (Date pvm : this.getKoulutuksenAlkamisPvms()) {
+            String k = IndexDataUtils.parseKausiKoodi(pvm);
+            if (kausiUri != null && !kausiUri.equals(k)) {
+                throw new IllegalStateException(String.format(
+                        "Koulutuksen %s alkamiskaudet ovat ristiriitaiset", this.getOid()
+                ));
+            } else {
+                kausiUri = k;
+            }
+        }
+        if (kausiUri == null) {
+            throw new IllegalStateException(String.format(
+                    "Koulutuksella %s ei ole alkamiskautta", this.getOid()
+            ));
+        }
+        return kausiUri;
     }
 
     public Date getMinAlkamisPvm() {

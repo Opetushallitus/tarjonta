@@ -893,4 +893,60 @@ public class Hakukohde extends TarjontaBaseEntity {
     public void setOhjeetUudelleOpiskelijalle(String ohjeetUudelleOpiskelijalle) {
         this.ohjeetUudelleOpiskelijalle = ohjeetUudelleOpiskelijalle;
     }
+
+    public int getUniqueAlkamisVuosi() {
+        Integer vuosi = null;
+        for (KoulutusmoduuliToteutus koulutus : this.getKoulutusmoduuliToteutuses()) {
+            if (koulutus.getTila() != TarjontaTila.POISTETTU) {
+                int v = koulutus.getUniqueAlkamisVuosi();
+                if (vuosi != null && vuosi != v) {
+                    throw new IllegalStateException(String.format(
+                            "Hakukohteen %s koulutusten %s alkamisvuodet ovat ristiriitaiset",
+                            this.getOid(), this.koulutusOids()
+                    ));
+                } else {
+                    vuosi = v;
+                }
+            }
+        }
+        if (vuosi == null) {
+            throw new IllegalStateException(String.format(
+                    "Hakukohteen %s koulutuksilla %s ei ole alkamisvuotta",
+                    this.getOid(), this.koulutusOids()
+            ));
+        }
+        return vuosi;
+    }
+
+    public String getUniqueAlkamiskausiUri() {
+        String kausiUri = null;
+        for (KoulutusmoduuliToteutus koulutus : this.getKoulutusmoduuliToteutuses()) {
+            if (koulutus.getTila() != TarjontaTila.POISTETTU) {
+                String k = koulutus.getUniqueAlkamiskausiUri();
+                if (kausiUri != null && kausiUri != k) {
+                    throw new IllegalStateException(String.format(
+                            "Hakukohteen %s koulutusten %s alkamisvuodet ovat ristiriitaiset",
+                            this.getOid(), this.koulutusOids()
+                    ));
+                } else {
+                    kausiUri = k;
+                }
+            }
+        }
+        if (kausiUri == null) {
+            throw new IllegalStateException(String.format(
+                    "Hakukohteen %s koulutuksilla %s ei ole alkamisvuotta",
+                    this.getOid(), this.koulutusOids()
+            ));
+        }
+        return kausiUri;
+    }
+
+    private List<String> koulutusOids() {
+        ArrayList<String> koulutusOids = new ArrayList<>();
+        for (KoulutusmoduuliToteutus k : this.getKoulutusmoduuliToteutuses()) {
+            koulutusOids.add(k.getOid());
+        }
+        return koulutusOids;
+    }
 }
