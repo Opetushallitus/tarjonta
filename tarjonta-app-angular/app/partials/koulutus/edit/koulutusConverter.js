@@ -1072,7 +1072,20 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 toteutustyyppi: {
                     'default': 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA'
                 }
-            })
+            }),
+            reviewFields: angular.extend([], GENERIC_LUKIOKOULUTUS_STRUCTURE.reviewFields, ['KOHDERYHMA', 'OPPIAINEET_JA_KURSSIT']),
+            KUVAUS_ORDER: angular.extend([], GENERIC_LUKIOKOULUTUS_STRUCTURE.KUVAUS_ORDER, [
+                {
+                    type: 'KOHDERYHMA',
+                    isKomo: false,
+                    length: 2000
+                },
+                {
+                    type: 'OPPIAINEET_JA_KURSSIT',
+                    isKomo: false,
+                    length: 2000
+                }
+            ])
         }),
 
         EB_RP_ISH: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE, {
