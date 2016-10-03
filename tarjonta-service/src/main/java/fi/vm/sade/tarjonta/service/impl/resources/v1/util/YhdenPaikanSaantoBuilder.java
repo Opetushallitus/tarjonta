@@ -74,9 +74,9 @@ public class YhdenPaikanSaantoBuilder {
                     ypsBasedOnHaku.getSyy()
             ));
         }
-        Pair<Integer, String> koulutuksenAlkamiskausi = uniqueHakukohteenAlkamiskausi(hakukohde);
-        boolean ennenSyksya2016 = koulutuksenAlkamiskausi.getLeft() < 2016 ||
-                (koulutuksenAlkamiskausi.getLeft() == 2016 && koulutuksenAlkamiskausi.getRight().startsWith(KAUSI_KEVAT));
+        int alkamisvuosi = hakukohde.getUniqueAlkamisVuosi();
+        String alkamiskausi = hakukohde.getUniqueAlkamiskausiUri();
+        boolean ennenSyksya2016 = alkamisvuosi < 2016 || (alkamisvuosi == 2016 && alkamiskausi.startsWith(KAUSI_KEVAT));
         if (ennenSyksya2016) {
             return new YhdenPaikanSaanto(false, String.format(
                     "%s ja hakukohteen koulutuksen alkamiskausi on ennen syksyä 2016",
@@ -125,56 +125,5 @@ public class YhdenPaikanSaantoBuilder {
             }
         }
         return false;
-    }
-
-    private static Pair<Integer, String> uniqueHakukohteenAlkamiskausi(Hakukohde hakukohde) {
-        Pair<Integer, String> r = null;
-        for (KoulutusmoduuliToteutus koulutus : hakukohde.getKoulutusmoduuliToteutuses()) {
-            if (koulutus.getTila() != TarjontaTila.POISTETTU) {
-                Pair<Integer, String> kausi = uniqueKoulutuksenAlkamiskausi(koulutus);
-                if (r != null && !r.equals(kausi)) {
-                    ArrayList<String> koulutusOids = new ArrayList<>();
-                    for (KoulutusmoduuliToteutus k : hakukohde.getKoulutusmoduuliToteutuses()) {
-                        koulutusOids.add(koulutus.getOid());
-                    }
-                    throw new IllegalStateException(String.format(
-                            "Hakukohteen %s koulutuksilla %s ristiriitaiset koulutuksen alkamiskaudet",
-                            hakukohde.getOid(), koulutusOids
-                    ));
-                }
-                r = kausi;
-            }
-        }
-        if (r == null) {
-            throw new IllegalStateException(String.format(
-                    "Hakukohteella %s ei ole koulutuksen alkamiskautta", hakukohde.getOid()
-            ));
-        }
-        return r;
-    }
-
-    private static Pair<Integer, String> uniqueKoulutuksenAlkamiskausi(KoulutusmoduuliToteutus koulutus) {
-        Pair<Integer, String> r = null;
-        if (koulutus.getAlkamisVuosi() != null && koulutus.getAlkamiskausiUri() != null) {
-            r = Pair.of(koulutus.getAlkamisVuosi(), koulutus.getAlkamiskausiUri());
-        }
-        for (Date alkamispaiva : koulutus.getKoulutuksenAlkamisPvms()) {
-            Pair<Integer, String> kausi = Pair.of(
-                    IndexDataUtils.parseYearInt(alkamispaiva),
-                    IndexDataUtils.parseKausiKoodi(alkamispaiva)
-            );
-            if (r != null && !r.equals(kausi)) {
-                throw new IllegalStateException(String.format(
-                        "Koulutuksen %s alkamiskaudet ovat ristiriitaiset", koulutus.getOid()
-                ));
-            }
-            r = kausi;
-        }
-        if (r == null) {
-            throw new IllegalStateException(String.format(
-                    "Koulutuksella %s ei ole alkamiskautta", koulutus.getOid()
-            ));
-        }
-        return r;
     }
 }
