@@ -46,7 +46,7 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Column(name = "unique_external_id", nullable = true, insertable = true, updatable = false, unique = true)
     private String uniqueExternalId;
 
-    @ManyToMany(mappedBy = "hakukohdes", cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "hakukohdes", cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
 
     @JsonManagedReference
@@ -106,7 +106,7 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "liitteidenToimitusPvm")
     private Date liitteidenToimitusPvm;
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Haku haku;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "lisatiedot_teksti_id")
