@@ -923,9 +923,9 @@ public class Hakukohde extends TarjontaBaseEntity {
         for (KoulutusmoduuliToteutus koulutus : this.getKoulutusmoduuliToteutuses()) {
             if (koulutus.getTila() != TarjontaTila.POISTETTU) {
                 String k = koulutus.getUniqueAlkamiskausiUri();
-                if (kausiUri != null && kausiUri != k) {
+                if (kausiUri != null && !kausiUri.equals(k)) {
                     throw new IllegalStateException(String.format(
-                            "Hakukohteen %s koulutusten %s alkamisvuodet ovat ristiriitaiset",
+                            "Hakukohteen %s koulutusten %s alkamiskaudet ovat ristiriitaiset",
                             this.getOid(), this.koulutusOids()
                     ));
                 } else {
@@ -935,7 +935,7 @@ public class Hakukohde extends TarjontaBaseEntity {
         }
         if (kausiUri == null) {
             throw new IllegalStateException(String.format(
-                    "Hakukohteen %s koulutuksilla %s ei ole alkamisvuotta",
+                    "Hakukohteen %s koulutuksilla %s ei ole alkamiskautta",
                     this.getOid(), this.koulutusOids()
             ));
         }
