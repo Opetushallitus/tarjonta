@@ -27,27 +27,18 @@ Ajoympäristöä varten tarvitaan:
 
 ## Solr-palvelin
 
-- Asenna Ant ja Ivy (jos ei jo ole asennettuna)
-  Esim.
-  ```
-  brew install ant
-  ant ivy-bootstrap
-  ```
-
 - Lataa ja pura Solr haluamaasi paikkaan
 
   ```
-  wget https://archive.apache.org/dist/lucene/solr/4.10.4/solr-4.10.4-src.tgz
-  tar xzf solr-4.10.4-src.tgz
-  cd solr-4.10.4/solr
-  ant example
+  wget https://archive.apache.org/dist/lucene/solr/4.10.4/solr-4.10.4.tgz
+  tar -xf solr-4.10.4.tgz
+  cd solr-4.10.4/example
   ```
 
 - Käynnistä Solr, `solr.data.dir` hakemistoon muodostuu palvelimen tietokannat,
   `solr.solr.home` pitää osoittaa projektista löytyvään hakemistoon.
 
   ```
-  cd solr-4.10.4/solr/example
   java -Dsolr.solr.home=../../../tarjonta/tarjonta-service/src/main/resources/solr \
     -Dsolr.data.dir=../../../core -jar ./start.jar
   ```
@@ -59,7 +50,7 @@ Ajoympäristöä varten tarvitaan:
   tarkistaa uusia indeksoitavia tietoja 10 sekunnin välein.
 
   - Kaiken indeksointi (clear-parametrin kanssa kannattaa olla varoivainen,
-    koska se tyhjentää koko indeksin ja uudelleenindeksoinnissa voi mennä pari tuntia)
+    koska se tyhjentää koko indeksin ja uudelleenindeksoinnissa voi mennä jopa pari päivää!)
 
     ```
     curl http://localhost:8302/tarjonta-service/rest/indexer/koulutukset?clear=true
