@@ -57,10 +57,22 @@ Ajoympäristöä varten tarvitaan:
     curl http://localhost:8302/tarjonta-service/rest/indexer/hakukohteet?clear=true
     ```
 
-  - Yksittäisten tietojen indeksointi `hakukohde` tai `koulutusmoduuli_toteututus` tauluista
+  - Yksittäisiä koulutuksia ja hakukohteita voi asettaa indeksoitavaksi tietokantakyselyllä.
+  Alla olevassa esimerkissä indeksoidaan Aalto Yliopiston perustieteiden korkeakoulun kaikki
+  koulutukset ja hakukohteet (organisaation OID on 1.2.246.562.10.39920288212).
 
     ```sql
-    UPDATE SET tarjonta.hakukohde.viimindeksointipvm = NULL WHERE oid = '1.2.3...';
+    /* koulutusten indeksointi */
+    UPDATE koulutusmoduuli_toteutus SET viimindeksointipvm = NULL WHERE tarjoaja = '1.2.246.562.10.39920288212';
+    
+    /* hakukohteiden indeksointi */
+    UPDATE hakukohde SET viimindeksointipvm = NULL WHERE id IN (
+      SELECT hakukohde_id
+      FROM koulutus_hakukohde
+      JOIN hakukohde ON hakukohde.id = koulutus_hakukohde.hakukohde_id
+      JOIN koulutusmoduuli_toteutus ON koulutusmoduuli_toteutus.id = koulutus_hakukohde.koulutus_id
+      WHERE koulutusmoduuli_toteutus.tarjoaja = '1.2.246.562.10.39920288212'
+    )
     ```
 
 
