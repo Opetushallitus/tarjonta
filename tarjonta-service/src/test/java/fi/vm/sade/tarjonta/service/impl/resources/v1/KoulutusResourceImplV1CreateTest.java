@@ -27,6 +27,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.reflect.Whitebox;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
@@ -174,7 +177,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
         koulutusDTO.setKoulutuksenAlkamisvuosi(2015);
 
         KoodiV1RDTO kausiDTO = new KoodiV1RDTO();
-        kausiDTO.setUri("kausi_s");
+        kausiDTO.setUri("kausi_s#1");
         koulutusDTO.setKoulutuksenAlkamiskausi(kausiDTO);
 
         return koulutusDTO;
@@ -185,7 +188,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
         koulutusDTO.setKoulutuksenAlkamisvuosi(2016);
 
         KoodiV1RDTO kausiDTO = new KoodiV1RDTO();
-        kausiDTO.setUri("kausi_k");
+        kausiDTO.setUri("kausi_k#1");
         koulutusDTO.setKoulutuksenAlkamiskausi(kausiDTO);
 
         return koulutusDTO;
@@ -247,6 +250,8 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
         Hakukohde hakukohde = new Hakukohde();
         Haku haku = new Haku();
         haku.setHakutapaUri("hakutapa_02#1");
+        haku.setKoulutuksenAlkamisVuosi(2016);
+        haku.setKoulutuksenAlkamiskausiUri("kausi_k");
         hakukohde.setHaku(haku);
         hakukohde.setTila(TarjontaTila.LUONNOS);
         komoto.addHakukohde(hakukohde);
@@ -264,6 +269,9 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
         haku.setKoulutuksenAlkamiskausiUri("");
         hakukohde.setHaku(haku);
         hakukohde.setTila(TarjontaTila.LUONNOS);
+        Set<KoulutusmoduuliToteutus> s = new HashSet<>(hakukohde.getKoulutusmoduuliToteutuses());
+        s.add(komoto);
+        hakukohde.setKoulutusmoduuliToteutuses(s);
         komoto.addHakukohde(hakukohde);
 
         return komoto;
@@ -272,6 +280,8 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
     private KoulutusmoduuliToteutus createKomotoWithEmptyHakukohdes() {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         komoto.setOid("1.2.3");
+        komoto.setAlkamisVuosi(2015);
+        komoto.setAlkamiskausiUri("kausi_s#1");
         return komoto;
     }
 
@@ -290,6 +300,8 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
         koulutusDTO.setOid("1.2.3");
         koulutusDTO.setOrganisaatio(new OrganisaatioV1RDTO("1.2.3.4", "", null));
         koulutusDTO.setTila(TarjontaTila.LUONNOS);
+        koulutusDTO.setKoulutuksenAlkamisvuosi(2016);
+        koulutusDTO.setKoulutuksenAlkamiskausi(new KoodiV1RDTO("kausi_k", 1, "Kevät"));
         return koulutusDTO;
     }
 

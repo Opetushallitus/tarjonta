@@ -7,6 +7,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.util.YhdenPaikanSaantoBuilder;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
@@ -43,6 +44,7 @@ public class ConverterV1Test extends TestMockBase {
         Whitebox.setInternalState(tarjontaKoodistoHelper, "koodiService", koodiService);
         Whitebox.setInternalState(tarjontaKoodistoHelper, "koodistoProactiveCaching", mock(KoodistoProactiveCaching.class));
         Whitebox.setInternalState(converter, "tarjontaKoodistoHelper", tarjontaKoodistoHelper);
+        Whitebox.setInternalState(converter, "yhdenPaikanSaantoBuilder", mock(YhdenPaikanSaantoBuilder.class));
     }
 
     private void setKomotoForHakukohde(Hakukohde hakukohde) {
