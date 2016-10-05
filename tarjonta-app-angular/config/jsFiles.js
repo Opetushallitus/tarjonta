@@ -1,6 +1,7 @@
 module.exports = [
     'lib/jquery-1.10.2.min.js',
     'lib/jquery-ui.min.js',
+    'js/shared/oph_urls/oph_urls.js',
     'js/app-configuration.js',
     'lib/angular/angular.js',
     'lib/angular/angular-resource.js',
@@ -75,9 +76,6 @@ module.exports = [
     'js/shared/filters/orderByNum.js',
     'js/shared/filters/dateFormat.js',
     'js/shared/filters/startsWith.js',
-    'js/shared/oph_urls/oph_urls.js',
-    '/tarjonta-service/rest/frontProperties.js',
-    'resources/tarjonta-app-url_properties.js',
     'partials/controllers.js',
     'partials/directives.js',
     'partials/services.js',
