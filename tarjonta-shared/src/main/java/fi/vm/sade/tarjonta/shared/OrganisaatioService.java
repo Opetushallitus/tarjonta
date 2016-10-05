@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -88,7 +89,7 @@ public class OrganisaatioService {
 
     private OrganisaatioRDTO fetchOrganisation(String oid) {
         try {
-            return objectMapper.readValue(urlConfiguration.url("organisaatio-service.fetchOrganisation", oid), OrganisaatioRDTO.class);
+            return objectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.fetchOrganisation", oid)), OrganisaatioRDTO.class);
         } catch (Exception e) {
             final String msg = "Could not fetch organization with oid " + oid;
             LOG.error(msg);
@@ -99,7 +100,7 @@ public class OrganisaatioService {
     public Set<String> findChildrenOidsByOid(String oid) {
         try {
             OrganisaatioHakutulosSuppeaDTOV2 result = objectMapper.readValue(
-                    urlConfiguration.url("organisaatio-service.findChildrenOidsByOid", oid), OrganisaatioHakutulosSuppeaDTOV2.class);
+                    new URL(urlConfiguration.url("organisaatio-service.findChildrenOidsByOid", oid)), OrganisaatioHakutulosSuppeaDTOV2.class);
             return FluentIterable
                     .from(result.getOrganisaatiot())
                     .transform(new Function<OrganisaatioPerustietoSuppea, String>() {
