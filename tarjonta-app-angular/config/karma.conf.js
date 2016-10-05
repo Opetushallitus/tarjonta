@@ -26,7 +26,9 @@ module.exports = function(config) {
             'lib/ngGrid/ng-grid-2.0.7.min.js',
             'lib/ui-bootstrap-0.9.0.js',
             'lib/ui-bootstrap-tpls-0.11.0.js',
-            'lib/imageupload.js'
+            'lib/imageupload.js',
+            '../test/mockJS/*.js',
+            'resources/tarjonta-app-url_properties.js'
         ],
         autoWatch: true,
         preprocessors: {
