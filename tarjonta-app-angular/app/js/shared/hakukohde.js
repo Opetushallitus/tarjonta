@@ -16,10 +16,9 @@ var app = angular.module('Hakukohde', [
     'ngResource',
     'Logging'
 ]);
-var plainUrls = window.urls().noEncode();
-
 //TODO: after refactoring the rest to v1 change this
 app.factory('Hakukohde', function($resource) {
+    var plainUrls = window.urls().noEncode();
     var hakukohdeUri = plainUrls.url("tarjonta-service.hakukohde.byOid", ":oid");
     return $resource(hakukohdeUri, {
         oid: '@oid'
@@ -60,6 +59,7 @@ app.factory('Hakukohde', function($resource) {
         });
 });
 app.factory('Liite', function($resource) {
+    var plainUrls = window.urls().noEncode();
     var hakukohdeLiiteUri = plainUrls.url("tarjonta-service.hakukohde.liite", ":hakukohdeOid", ":liiteId");
     return $resource(hakukohdeLiiteUri, {
         hakukohdeOid: '@hakukohdeOid',
