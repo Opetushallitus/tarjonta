@@ -3,10 +3,9 @@ var app = angular.module('Tarjonta', [
     'config',
     'Logging'
 ]);
-var plainUrls = window.urls().noEncode();
-
 app.factory('TarjontaService', function($resource, $http, Config, LocalisationService, Koodisto,
                                         CacheService, $q, $log, OrganisaatioService, AuthService, dialogService) {
+    var plainUrls = window.urls().noEncode();
     $log = $log.getInstance('TarjontaService');
     var hakukohdeHaku = $resource(window.url("tarjonta-service.hakukohde.haku"));
     var koulutusHaku = $resource(window.url("tarjonta-service.koulutus.haku"));

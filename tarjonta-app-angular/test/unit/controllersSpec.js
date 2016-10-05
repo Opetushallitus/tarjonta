@@ -198,9 +198,9 @@ describe('Edit koulutus testeja', function() {
                 "passivoitu": false
             }];
 
-        $httpBackend.whenGET('https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo?count=2000&index=0&ht=VIRKAILIJA&org=org-oid-1.2.3.4').respond(response);
-        $httpBackend.whenGET('https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo/1.2.246.562.24.91121139885').respond(henkilo);
-        $httpBackend.whenGET('https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo/1.2.246.562.24.91121139885/organisaatiohenkilo').respond(organisaatiohenkilo);
+        $httpBackend.whenGET('/authentication-service/resources/henkilo?count=2000&index=0&ht=VIRKAILIJA&org=org-oid-1.2.3.4').respond(response);
+        $httpBackend.whenGET('/authentication-service/resources/henkilo/1.2.246.562.24.91121139885').respond(henkilo);
+        $httpBackend.whenGET('/authentication-service/resources/henkilo/1.2.246.562.24.91121139885/organisaatiohenkilo').respond(organisaatiohenkilo);
 
         $scope.uiModel = {};
         $scope.init($scope.uiModel);

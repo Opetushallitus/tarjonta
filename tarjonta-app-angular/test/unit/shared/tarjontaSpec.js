@@ -78,17 +78,17 @@ describe('Tarjonta', function() {
 
     var mockHttp = function($httpBackend) {
         var response = {status: true, data: ['a', 'b', 'c', 'd']};
-        $httpBackend.whenGET('/link/oid-1.2.3.4.5.6.7').respond(response);
-        $httpBackend.whenGET('/link/oid-1.2.3.4.5.6.7/parents').respond(response);
-        $httpBackend.whenPOST('/link').respond(function(method, url, data) {
+        $httpBackend.whenGET('/tarjonta-service/rest/v1/link/oid-1.2.3.4.5.6.7').respond(response);
+        $httpBackend.whenGET('/tarjonta-service/rest/v1/link/oid-1.2.3.4.5.6.7/parents').respond(response);
+        $httpBackend.whenPOST('/tarjonta-service/rest/v1/link').respond(function(method, url, data) {
             console.log(data);
             return response;
         });
-        $httpBackend.whenPOST('/link/test').respond(function(method, url, data) {
+        $httpBackend.whenPOST('/tarjonta-service/rest/v1/link/test').respond(function(method, url, data) {
             console.log(data);
             return response;
         });
-        $httpBackend.whenDELETE('/link/p-oid-1.2.3.4.5.6.7/oid-1.2.3.4.5.6.7').respond(response);
+        $httpBackend.whenDELETE('/tarjonta-service/rest/v1/link/p-oid-1.2.3.4.5.6.7/oid-1.2.3.4.5.6.7').respond(response);
 
         // Parameters
         var parameterResponse = {
@@ -99,7 +99,7 @@ describe('Tarjonta', function() {
             }
         };
 
-        $httpBackend.whenGET('PARAMETRIT/api/v1/rest/parametri/ALL').respond(parameterResponse);
+        $httpBackend.whenGET('/ohjausparametrit-service/api/v1/rest/parametri/ALL').respond(parameterResponse);
     };
 
     beforeEach(function() {

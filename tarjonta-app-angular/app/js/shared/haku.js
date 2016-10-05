@@ -17,8 +17,6 @@ var app = angular.module('Haku', [
     'config',
     'Logging'
 ]);
-var plainUrls = window.urls().noEncode();
-
 app.constant('HAKUTAPA', {
     'YHTEISHAKU': 'hakutapa_01',
     'ERILLISHAKU': 'hakutapa_02',
@@ -71,6 +69,7 @@ app.factory('HakuService', function($http, $q, Config, $log) {
 });
 app.factory('HakuV1', function($resource, Config) {
     'use strict';
+    var plainUrls = window.urls().noEncode();
     var serviceUrl = plainUrls.url("tarjonta-service.haku.byOid", ":oid")
     return $resource(serviceUrl, {
         oid: '@oid',

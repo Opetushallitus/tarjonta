@@ -18,9 +18,8 @@ var app = angular.module('Koodisto', [
     'TarjontaCache',
     'Logging'
 ]);
-var plainUrls = window.urls().noEncode();
-
 app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, AuthService) {
+    var plainUrls = window.urls().noEncode();
     $log = $log.getInstance('Koodisto');
     var host = Config.env.tarjontaKoodistoRestUrlPrefix;
 
