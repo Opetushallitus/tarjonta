@@ -76,6 +76,8 @@ module.exports = [
     'js/shared/filters/dateFormat.js',
     'js/shared/filters/startsWith.js',
     'js/shared/oph_urls/oph_urls.js',
+    'tarjonta-service/rest/frontProperties.js',
+    'resources/tarjonta-app-url_properties.js',
     'partials/controllers.js',
     'partials/directives.js',
     'partials/services.js',

@@ -45,7 +45,7 @@ function tarjontaInit() {
     //
     console.log('** Loading tarjonta.tila info; from: ' + window.url("tarjonta-service.tila"));
     init_counter++;
-    jQuery.ajax(window.urls().noEncode().url("tarjonta-service.tila"), {
+    jQuery.ajax(window.url("tarjonta-service.tila"), {
         dataType: 'json',
         crossDomain: true,
         complete: logRequest,
