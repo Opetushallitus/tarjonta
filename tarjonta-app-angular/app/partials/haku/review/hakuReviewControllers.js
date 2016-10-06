@@ -280,6 +280,7 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
             return $scope.parametrit.PH_KVT.booleanValue;
         }
     };
+    $scope.url=window.url
 });
 
 // From http://sheetjs.com/demos/Export2Excel.js
