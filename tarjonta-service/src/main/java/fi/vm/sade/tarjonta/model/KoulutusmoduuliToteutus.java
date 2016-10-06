@@ -170,7 +170,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @MapKeyColumn(name = "teksti", nullable = false)
     private Map<KomotoTeksti, MonikielinenTeksti> tekstit = new HashMap<KomotoTeksti, MonikielinenTeksti>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinTable(name = TABLE_NAME + "_kuvat", inverseJoinColumns = @JoinColumn(name = "binary_data_id"))
     @MapKeyColumn(name = "kieli_uri", nullable = false)
     private Map<String, BinaryData> kuvat = new HashMap<String, BinaryData>();
@@ -259,7 +259,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     /**
      * Se koulutus, josta tämä koulutus on järjestetty
      */
-    @ManyToOne(optional = true, fetch = FetchType.EAGER, cascade = {})
+    @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {})
     @JoinColumn(name = "tarjoajan_koulutus_id", nullable = true)
     private KoulutusmoduuliToteutus tarjoajanKoulutus;
 
