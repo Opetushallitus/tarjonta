@@ -1555,11 +1555,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             }
 
             hakukohde.setLastUpdateDate(new Date());
+            hakukohdeDAO.update(hakukohde);
+
             indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
             for (KoulutusmoduuliToteutus komoto: hakukohde.getKoulutusmoduuliToteutuses()) {
                 indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
             }
-            hakukohdeDAO.update(hakukohde);
 
             AUDIT.log(builder()
                     .setResource(TarjontaResource.HAKUKOHDE)
