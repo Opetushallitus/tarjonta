@@ -73,7 +73,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
         ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
 
-        assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.alkamiskauttamuutettu"))));
+        assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla"))));
     }
 
     @Test
@@ -85,42 +85,155 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
         ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
 
-        assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.alkamiskauttamuutettu"))));
+        assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla"))));
     }
 
     @Test
-    public void thatAjankohtaIsValidIfNotChanged() {
+    public void thatAjankohtaIsValidWithHakukohdesThatDoNotContainAjankohtaInformation() {
+        when(koulutusmoduuliToteutusDAO.findByOid("1.2.3")).thenReturn(createKomotoWithHakukohdesWithoutAjankohtas());
+        when(publicationDataService.isValidStatusChange(any(Tila.class))).thenReturn(true);
+
+        KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTO();
+
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
+
+        assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla"))));
+    }
+
+    @Test
+    public void thatAjankohtaIsValidWithHakukohdesWithValidAjankohdas() {
         when(koulutusmoduuliToteutusDAO.findByOid("1.2.3")).thenReturn(createKomotoWithHakukohdesWithValidAjankohdas());
         when(publicationDataService.isValidStatusChange(any(Tila.class))).thenReturn(true);
 
-        KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTO();
+        KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTOWithValidAjankohta();
 
         ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
 
-        assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.alkamiskauttamuutettu"))));
+        assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla"))));
     }
 
     @Test
-    public void thatAjankohtaIsInvalidIfChanged() {
-        when(koulutusmoduuliToteutusDAO.findByOid("1.2.3")).thenReturn(createKomotoWithHakukohdesWithInvalidAjankohdas());
+    public void thatAjankohtaIsInvalidWithWrongSeason() {
+        when(koulutusmoduuliToteutusDAO.findByOid("1.2.3")).thenReturn(createKomotoWithHakukohdesWithValidAjankohdas());
         when(publicationDataService.isValidStatusChange(any(Tila.class))).thenReturn(true);
 
-        KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTO();
+        KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTOWithInvalidAjankohta();
 
         ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
 
-        assertThat(resultDTO.getErrors(), hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.alkamiskauttamuutettu")));
+        assertThat(resultDTO.getErrors(), hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla")));
+    }
+
+    @Test
+    public void thatAjankohtaIsInvalidWithHakukohdesWithOneValidAndOneInvalidAjankohta() {
+        when(koulutusmoduuliToteutusDAO.findByOid("1.2.3")).thenReturn(createKomotoWithHakukohdesWithValidAjankohdas());
+        when(publicationDataService.isValidStatusChange(any(Tila.class))).thenReturn(true);
+
+        KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTOWithOneValidAndOneInvalidAjankohta();
+
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
+
+        assertThat(resultDTO.getErrors(), hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla")));
+    }
+
+    @Test
+    public void thatKausiAndYearComboIsValidWithHakukohdesWithValidAjankohta() {
+        when(koulutusmoduuliToteutusDAO.findByOid("1.2.3")).thenReturn(createKomotoWithHakukohdesWithValidAjankohdas());
+        when(publicationDataService.isValidStatusChange(any(Tila.class))).thenReturn(true);
+
+        KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTOWithValidKausiAndYear();
+
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
+
+        assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla"))));
+    }
+
+    @Test
+    public void thatKausiAndYearComboIsInvalidWithHakukohdesWithInvalidAjankohta() {
+        when(koulutusmoduuliToteutusDAO.findByOid("1.2.3")).thenReturn(createKomotoWithHakukohdesWithValidAjankohdas());
+        when(publicationDataService.isValidStatusChange(any(Tila.class))).thenReturn(true);
+
+        KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTOWithInvalidKausiAndYear();
+
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
+
+        assertThat(resultDTO.getErrors(), hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla")));
+    }
+
+    @Test
+    public void thatAjankohtaIsValidWithHakukohdesWithJatkuvaHaku() {
+        when(koulutusmoduuliToteutusDAO.findByOid("1.2.3")).thenReturn(createKomotoWithHakukohdesWithJatkuvatHaku());
+        when(publicationDataService.isValidStatusChange(any(Tila.class))).thenReturn(true);
+
+        KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTOWithValidAjankohta();
+
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
+
+        assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla"))));
+    }
+
+    private KoulutusV1RDTO createExistingKoulutusDTOWithValidKausiAndYear() {
+        KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTO();
+        koulutusDTO.setKoulutuksenAlkamisvuosi(2015);
+
+        KoodiV1RDTO kausiDTO = new KoodiV1RDTO();
+        kausiDTO.setUri("kausi_s#1");
+        koulutusDTO.setKoulutuksenAlkamiskausi(kausiDTO);
+
+        return koulutusDTO;
+    }
+
+    private KoulutusV1RDTO createExistingKoulutusDTOWithInvalidKausiAndYear() {
+        KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTO();
+        koulutusDTO.setKoulutuksenAlkamisvuosi(2016);
+
+        KoodiV1RDTO kausiDTO = new KoodiV1RDTO();
+        kausiDTO.setUri("kausi_k#1");
+        koulutusDTO.setKoulutuksenAlkamiskausi(kausiDTO);
+
+        return koulutusDTO;
+    }
+
+    private KoulutusV1RDTO createExistingKoulutusDTOWithValidAjankohta() {
+        KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTO();
+        DateTime datetime = new DateTime();
+        datetime = datetime.withYear(2015);
+        datetime = datetime.withMonthOfYear(8);
+        koulutusDTO.setKoulutuksenAlkamisPvms(Sets.newHashSet(datetime.toDate()));
+        return koulutusDTO;
+    }
+
+    private KoulutusV1RDTO createExistingKoulutusDTOWithOneValidAndOneInvalidAjankohta() {
+        KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTO();
+
+        DateTime datetime = new DateTime();
+        datetime = datetime.withYear(2015);
+        datetime = datetime.withMonthOfYear(8);
+        koulutusDTO.setKoulutuksenAlkamisPvms(Sets.newHashSet(datetime.toDate()));
+
+        datetime = new DateTime();
+        datetime = datetime.withYear(2016);
+        datetime = datetime.withMonthOfYear(1);
+        koulutusDTO.getKoulutuksenAlkamisPvms().add(datetime.toDate());
+
+        return koulutusDTO;
+    }
+
+    private KoulutusV1RDTO createExistingKoulutusDTOWithInvalidAjankohta() {
+        KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTO();
+        DateTime datetime = new DateTime();
+        datetime = datetime.withYear(2015);
+        datetime = datetime.withMonthOfYear(1);
+        koulutusDTO.setKoulutuksenAlkamisPvms(Sets.newHashSet(datetime.toDate()));
+        return koulutusDTO;
     }
 
     private KoulutusmoduuliToteutus createKomotoWithHakukohdesWithValidAjankohdas() {
-        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
-        komoto.setOid("1.2.3");
-        komoto.setAlkamisVuosi(2016);
-        komoto.setAlkamiskausiUri("kausi_k#1");
+        KoulutusmoduuliToteutus komoto = createKomotoWithEmptyHakukohdes();
 
         Haku haku = new Haku();
-        haku.setKoulutuksenAlkamiskausiUri("kausi_k#1");
-        haku.setKoulutuksenAlkamisVuosi(2016);
+        haku.setKoulutuksenAlkamiskausiUri("kausi_s#1");
+        haku.setKoulutuksenAlkamisVuosi(2015);
         haku.setHakutapaUri("hakutapa_02#1");
 
         Hakukohde hakukohde = new Hakukohde();
@@ -131,20 +244,34 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
         return komoto;
     }
 
-    private KoulutusmoduuliToteutus createKomotoWithHakukohdesWithInvalidAjankohdas() {
-        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
-        komoto.setOid("1.2.3");
-        komoto.setAlkamisVuosi(2015);
-        komoto.setAlkamiskausiUri("kausi_s#1");
-
-        Haku haku = new Haku();
-        haku.setKoulutuksenAlkamiskausiUri("kausi_s#1");
-        haku.setKoulutuksenAlkamisVuosi(2015);
-        haku.setHakutapaUri("hakutapa_02#1");
+    private KoulutusmoduuliToteutus createKomotoWithHakukohdesWithoutAjankohtas() {
+        KoulutusmoduuliToteutus komoto = createKomotoWithEmptyHakukohdes();
 
         Hakukohde hakukohde = new Hakukohde();
-        hakukohde.setTila(TarjontaTila.LUONNOS);
+        Haku haku = new Haku();
+        haku.setHakutapaUri("hakutapa_02#1");
+        haku.setKoulutuksenAlkamisVuosi(2016);
+        haku.setKoulutuksenAlkamiskausiUri("kausi_k");
         hakukohde.setHaku(haku);
+        hakukohde.setTila(TarjontaTila.LUONNOS);
+        komoto.addHakukohde(hakukohde);
+
+        return komoto;
+    }
+
+    private KoulutusmoduuliToteutus createKomotoWithHakukohdesWithJatkuvatHaku() {
+        KoulutusmoduuliToteutus komoto = createKomotoWithEmptyHakukohdes();
+
+        Hakukohde hakukohde = new Hakukohde();
+        Haku haku = new Haku();
+        haku.setHakutapaUri("hakutapa_03#1");
+        haku.setKoulutuksenAlkamisVuosi(2014);
+        haku.setKoulutuksenAlkamiskausiUri("");
+        hakukohde.setHaku(haku);
+        hakukohde.setTila(TarjontaTila.LUONNOS);
+        Set<KoulutusmoduuliToteutus> s = new HashSet<>(hakukohde.getKoulutusmoduuliToteutuses());
+        s.add(komoto);
+        hakukohde.setKoulutusmoduuliToteutuses(s);
         komoto.addHakukohde(hakukohde);
 
         return komoto;
