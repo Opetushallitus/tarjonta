@@ -96,6 +96,7 @@ app.factory('Liite', function($resource) {
         });
 });
 app.factory('Valintakoe', function($resource, $log, $q) {
+    var plainUrls = window.urls().noEncode();
     var hakukohdeValintakoeUri = plainUrls.url("tarjonta-service.hakukohde.valintakoe", ":hakukohdeOid", ":valintakoeOid");
     return $resource(hakukohdeValintakoeUri, {
         hakukohdeOid: '@hakukohdeOid',
