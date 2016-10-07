@@ -382,7 +382,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     };
     //hakee koulutuksen, palauttaa promisen
     dataFactory.getKoulutusPromise = function(oid) {
-        return $resource(plainUrls.url("tarjonta-service.koulutus.byOid", ":oid", {img:true})).get().$promise;
+        return $resource(plainUrls.url("tarjonta-service.koulutus.byOid", oid, {img:true})).get().$promise;
     };
 
     function includesOwnOrganizations(ownOrganizations, candidateOrganizations) {
