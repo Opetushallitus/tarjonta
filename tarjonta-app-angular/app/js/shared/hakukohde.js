@@ -136,7 +136,7 @@ app.factory('HakukohdeKoulutukses', function($http, $q) {
     return {
         removeKoulutuksesFromHakukohde: function(hakukohdeOid, koulutusOids) {
             if (hakukohdeOid !== undefined && koulutusOids !== undefined) {
-                $http.post(window.url("tarjonta-service.hakukohde.byOid.removeKoulutuksesFromHakukohde", hakukohdeOid), koulutusOids, {
+                $http.post(window.url("tarjonta-service.hakukohde.removeKoulutuksesFromHakukohde", hakukohdeOid), koulutusOids, {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json; charset=UTF-8'
@@ -151,7 +151,7 @@ app.factory('HakukohdeKoulutukses', function($http, $q) {
         addKoulutuksesToHakukohde: function(hakukohdeOid, koulutusOids) {
             var promise = $q.defer();
             if (hakukohdeOid !== undefined && koulutusOids !== undefined) {
-                $http.post(window.url("tarjonta-service.hakukohde.byOid.addKoulutuksesToHakukohde", hakukohdeOid), koulutusOids, {
+                $http.post(window.url("tarjonta-service.hakukohde.addKoulutuksesToHakukohde", hakukohdeOid), koulutusOids, {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json; charset=UTF-8'
@@ -168,7 +168,7 @@ app.factory('HakukohdeKoulutukses', function($http, $q) {
             var promise = $q.defer();
             $http({
                 method: 'GET',
-                url: window.url("tarjonta-service.hakukohde.byOid.validateHakukohdeKomotos"),
+                url: window.url("tarjonta-service.hakukohde.validateHakukohdeKomotos"),
                 params: {
                     oid: komotoIds
                 }
