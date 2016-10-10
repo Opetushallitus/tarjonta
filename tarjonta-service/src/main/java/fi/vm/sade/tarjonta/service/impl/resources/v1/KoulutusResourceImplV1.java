@@ -67,7 +67,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
@@ -76,7 +75,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jms.IllegalStateException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
@@ -317,10 +315,10 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
         }
 
-        if (!validAjankohta(dto)) {
+        if (!alkamiskausiMuuttumatonHakukohteeseenLiittamisenJalkeen(dto)) {
             return Response
                     .status(Response.Status.BAD_REQUEST)
-                    .entity(create(ERROR, null, createValidationError("alkamispvm", "koulutus.error.alkamispvm.ajankohtaerikuinhaulla")))
+                    .entity(create(ERROR, null, createValidationError("alkamispvm", "koulutus.error.alkamispvm.alkamiskauttamuutettu")))
                     .build();
         }
 
@@ -381,7 +379,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         }
     }
 
-    private boolean validAjankohta(KoulutusV1RDTO dto) {
+    private boolean alkamiskausiMuuttumatonHakukohteeseenLiittamisenJalkeen(KoulutusV1RDTO dto) {
         if (dto.getOid() == null) {
             return true;
         }
@@ -391,58 +389,27 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             return true;
         }
 
-        String targetKausi = null;
-        Integer targetVuosi = null;
-        for (Hakukohde hakukohde : komoto.getHakukohdes()) {
-            if (!hakukohde.getTila().equals(TarjontaTila.POISTETTU)) {
-                Haku haku = hakukohde.getHaku();
-                if (!haku.isJatkuva() &&
-                        (haku.getKoulutuksenAlkamiskausiUri() != null && haku.getKoulutuksenAlkamisVuosi() != null)) {
-                    targetKausi = haku.getKoulutuksenAlkamiskausiUri();
-                    targetVuosi = haku.getKoulutuksenAlkamisVuosi();
-                    break;
-                }
-            }
-        }
-
-        // Jos haulla ei ole kautta ja vuotta, tarkastellaan koulutuksen hakukohteiden muita koulutuksia
-        if (targetKausi == null && targetVuosi == null) {
-            for (Hakukohde hakukohde : komoto.getHakukohdes()) {
-                if (hakukohde.getTila() != TarjontaTila.POISTETTU) {
-                    try {
-                        targetVuosi = hakukohde.getUniqueAlkamisVuosi();
-                        targetKausi = hakukohde.getUniqueAlkamiskausiUri();
-                        break;
-                    } catch (IllegalStateException e) {
-                        LOG.error(String.format("Koulutuksen %s hakukohteella ristiriitaisia tietoja", komoto.getOid()), e);
-                        return false;
-                    }
-                }
-            }
-            if (targetKausi == null && targetVuosi == null) {
-                // Ei mahdollisesti ristiriitaisia koulutuksia
-                return true;
-            }
-        }
+        String nykyinenKausi = komoto.getUniqueAlkamiskausiUri();
+        Integer nykyinenVuosi = komoto.getUniqueAlkamisVuosi();
 
         if (dto.getKoulutuksenAlkamisPvms() != null && dto.getKoulutuksenAlkamisPvms().size() > 0) {
-            return validAlkamisPvms(dto, targetKausi, targetVuosi);
+            return alkamisPvmsMuuttumattomat(dto, nykyinenKausi, nykyinenVuosi);
         } else {
-            return validKausiVuosi(dto, targetKausi, targetVuosi);
+            return alkamiskausiMuuttumaton(dto, nykyinenKausi, nykyinenVuosi);
         }
     }
 
-    private boolean validKausiVuosi(KoulutusV1RDTO dto, String targetKausi, Integer targetVuosi) {
+    private boolean alkamiskausiMuuttumaton(KoulutusV1RDTO dto, String nykyinenKausi, Integer nykyinenVuosi) {
         KoodiV1RDTO kausi = dto.getKoulutuksenAlkamiskausi();
         Integer vuosi = dto.getKoulutuksenAlkamisvuosi();
-        return StringUtils.contains(targetKausi, kausi.getUri()) && targetVuosi.equals(vuosi);
+        return StringUtils.contains(nykyinenKausi, kausi.getUri()) && nykyinenVuosi.equals(vuosi);
     }
 
-    private boolean validAlkamisPvms(KoulutusV1RDTO dto, String targetKausi, Integer targetVuosi) {
+    private boolean alkamisPvmsMuuttumattomat(KoulutusV1RDTO dto, String nykyinenKausi, Integer nykyinenVuosi) {
         for (Date alkamisPvm : dto.getKoulutuksenAlkamisPvms()) {
             String kausi = IndexDataUtils.parseKausiKoodi(alkamisPvm);
             Integer vuosi = IndexDataUtils.parseYearInt(alkamisPvm);
-            if (!targetKausi.equals(kausi) || !targetVuosi.equals(vuosi)) {
+            if (!nykyinenKausi.equals(kausi) || !nykyinenVuosi.equals(vuosi)) {
                 return false;
             }
         }
