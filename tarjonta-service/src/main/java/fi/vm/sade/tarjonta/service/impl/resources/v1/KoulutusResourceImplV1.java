@@ -385,7 +385,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         }
 
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(dto.getOid());
-        if (komoto.getHakukohdes().isEmpty()) {
+        boolean vainPoistettujaHakukohteita = true;
+        for (Hakukohde h : komoto.getHakukohdes()) {
+            if (h.getTila() != TarjontaTila.POISTETTU) {
+                vainPoistettujaHakukohteita = false;
+            }
+        }
+        if (vainPoistettujaHakukohteita) {
             return true;
         }
 
