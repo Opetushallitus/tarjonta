@@ -42,6 +42,9 @@ public class HakuV1RDTO extends BaseV1RDTO {
     @ApiModelProperty(value = "Hakulomakkeen www-osoite", required = false)
     private String hakulomakeUri;
 
+    @ApiModelProperty(value = "Ataru lomakeavain", required = false)
+    private String ataruLomakeAvain;
+
     @ApiModelProperty(value = "Hakutyypin koodisto uri", required = true)
     private String hakutyyppiUri;
 
@@ -173,6 +176,14 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     public void setHakulomakeUri(String hakulomakeUri) {
         this.hakulomakeUri = hakulomakeUri;
+    }
+
+    public String getAtaruLomakeAvain() {
+        return ataruLomakeAvain;
+    }
+
+    public void setAtaruLomakeAvain(String ataruLomakeAvain) {
+        this.ataruLomakeAvain = ataruLomakeAvain;
     }
 
     public String getHakutyyppiUri() {
