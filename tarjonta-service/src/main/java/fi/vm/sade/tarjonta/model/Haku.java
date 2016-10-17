@@ -110,6 +110,9 @@ public class Haku extends TarjontaBaseEntity {
     @Column(name = "hakulomake_url")
     private String hakulomakeUrl;
 
+    @Column(name = "ataru_lomake_avain")
+    private String ataruLomakeAvain;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private TarjontaTila tila;
@@ -312,6 +315,14 @@ public class Haku extends TarjontaBaseEntity {
 
     public void setHakulomakeUrl(String hakulomakeUrl) {
         this.hakulomakeUrl = hakulomakeUrl;
+    }
+
+    public String getAtaruLomakeAvain() {
+        return ataruLomakeAvain;
+    }
+
+    public void setAtaruLomakeAvain(String ataruLomakeAvain) {
+        this.ataruLomakeAvain = ataruLomakeAvain;
     }
 
     public MonikielinenTeksti getNimi() {
