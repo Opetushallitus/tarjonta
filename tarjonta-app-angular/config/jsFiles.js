@@ -40,6 +40,7 @@ module.exports = [
     'js/shared/localisation.js',
     'js/shared/config.js',
     'js/shared/haku.js',
+    'js/shared/ataru.js',
     'js/shared/process.js',
     'js/shared/hakukohde.js',
     'js/shared/ohjausparametrit.js',
