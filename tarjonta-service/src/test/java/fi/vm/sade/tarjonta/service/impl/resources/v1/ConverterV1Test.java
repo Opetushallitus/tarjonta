@@ -557,6 +557,28 @@ public class ConverterV1Test extends TestMockBase {
         assertEquals(dto.getHakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden().size(), 2);
     }
 
+    @Test
+    public void thatAtaruLomakeAvainIsConvertedToDTO() {
+        Haku haku = createValidHaku();
+        String ataruLomakeAvain = "01234567-89ab-cdef-0123-4567890abcdef";
+        haku.setAtaruLomakeAvain(ataruLomakeAvain);
+
+        HakuV1RDTO hakuDTO = converter.fromHakuToHakuRDTO(haku, false);
+
+        assertEquals(hakuDTO.getAtaruLomakeAvain(), ataruLomakeAvain);
+    }
+
+    @Test
+    public void thatAtaruLomakeAvainIsConvertedToEntity() throws OIDCreationException {
+        HakuV1RDTO hakuDTO = new HakuV1RDTO();
+        String ataruLomakeAvain = "01234567-89ab-cdef-0123-4567890abcdef";
+        hakuDTO.setAtaruLomakeAvain(ataruLomakeAvain);
+
+        Haku haku = converter.convertHakuV1DRDTOToHaku(hakuDTO, new Haku());
+
+        assertEquals(haku.getAtaruLomakeAvain(), ataruLomakeAvain);
+    }
+
     private BaseMatcher<RyhmaliitosV1RDTO> getRyhmaliitosElementMatcher(final String ryhmaOid,
                                                                         final Integer prioriteetti) {
         return new BaseMatcher<RyhmaliitosV1RDTO>() {
