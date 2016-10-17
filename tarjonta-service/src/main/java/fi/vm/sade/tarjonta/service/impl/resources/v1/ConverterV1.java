@@ -152,6 +152,7 @@ public class ConverterV1 {
         }
 
         hakuDTO.setHakulomakeUri(haku.getHakulomakeUrl());
+        hakuDTO.setAtaruLomakeAvain(haku.getAtaruLomakeAvain());
         hakuDTO.setHakutapaUri(haku.getHakutapaUri());
         hakuDTO.setHakutyyppiUri(haku.getHakutyyppiUri());
         hakuDTO.setHaunTunniste(haku.getHaunTunniste());
@@ -236,6 +237,7 @@ public class ConverterV1 {
         haku.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
         haku.setOid(hakuV1RDTO.getOid());
         haku.setHakulomakeUrl(hakuV1RDTO.getHakulomakeUri());
+        haku.setAtaruLomakeAvain(hakuV1RDTO.getAtaruLomakeAvain());
         haku.setHaunTunniste(hakuV1RDTO.getHaunTunniste());
         haku.setHakutyyppiUri(hakuV1RDTO.getHakutyyppiUri());
         haku.setHakutapaUri(hakuV1RDTO.getHakutapaUri());
