@@ -589,6 +589,15 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             }
         }
 
+        // Ataru form key
+        if (!isEmpty(haku.getAtaruLomakeAvain())) {
+            try {
+                UUID uuid = UUID.fromString(haku.getAtaruLomakeAvain());
+            } catch (IllegalArgumentException ex) {
+                result.addError(ErrorV1RDTO.createValidationError("ataruLomakeAvain", "haku.validation.ataruLomakeAvain.invalid"));
+            }
+        }
+
         // Must have at least one hakuaika
         if (haku.getHakuaikas() == null || haku.getHakuaikas().isEmpty()) {
             result.addError(ErrorV1RDTO.createValidationError("hakuaikas", "haku.validation.hakuaikas.empty"));

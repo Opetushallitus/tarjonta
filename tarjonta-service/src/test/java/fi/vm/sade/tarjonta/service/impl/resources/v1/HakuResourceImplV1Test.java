@@ -29,6 +29,8 @@ import org.mockito.internal.util.reflection.Whitebox;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 import static org.junit.internal.matchers.StringContains.containsString;
@@ -308,6 +310,50 @@ public class HakuResourceImplV1Test extends TestMockBase {
 
         komoto1.setKoulutusUri("koulutusUri1");
         assertTrue(yhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
+    }
+
+    @Test
+    public void thatHakuIsCreatedWithValidAtaruLomakeAvain() {
+        List<String> validAtaruLomakeAvainList = new ArrayList<>();
+        validAtaruLomakeAvainList.add("01234567-89ab-cdef-0123-4567890abcdef");
+
+        for (String validAtaruLomakeAvain : validAtaruLomakeAvainList) {
+            ResultV1RDTO<HakuV1RDTO> result = createHakuWithAtaruLomakeAvain(validAtaruLomakeAvain);
+
+            assertNotNull(result);
+            assertNotNull(result.getStatus());
+            assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
+        }
+    }
+
+    @Test
+    public void thatHakuIsNotCreatedWithInValidAtaruLomakeAvain() {
+        List<String> invalidAtaruLomakeAvainList = new ArrayList<>();
+        invalidAtaruLomakeAvainList.add("01234567");
+
+        for (String inValidAtaruLomakeAvain : invalidAtaruLomakeAvainList) {
+            ResultV1RDTO<HakuV1RDTO> result = createHakuWithAtaruLomakeAvain(inValidAtaruLomakeAvain);
+
+            assertNotNull(result);
+            assertNotNull(result.getStatus());
+            assertEquals(ResultV1RDTO.ResultStatus.ERROR, result.getStatus());
+        }
+    }
+
+    private ResultV1RDTO<HakuV1RDTO> createHakuWithAtaruLomakeAvain(String ataruLomakeAvain) {
+        HakuV1RDTO hakuDTO = new HakuV1RDTO();
+        hakuDTO.setHakukausiUri("kausi_k");
+        hakuDTO.setHakutapaUri("hakutapa_01");
+        hakuDTO.setHakutyyppiUri("hakutyyppi_01");
+        hakuDTO.setKohdejoukkoUri("haunkohdejoukko_12");
+        hakuDTO.setKoulutuksenAlkamiskausiUri("kausi_k");
+        hakuDTO.setMaxHakukohdes(42);
+        hakuDTO.getNimi().put("kieli_fi", "Nimi suomi");
+        hakuDTO.getHakuaikas().add(createHakuaika(new Date(), new Date()));
+        hakuDTO.setAtaruLomakeAvain(ataruLomakeAvain);
+
+        ResultV1RDTO<HakuV1RDTO> result = hakuResource.createHaku(hakuDTO);
+        return result;
     }
 
     private HakuaikaV1RDTO createHakuaika(Date start, Date end) {
