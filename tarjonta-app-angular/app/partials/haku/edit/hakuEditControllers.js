@@ -511,6 +511,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             })
             .then(AtaruService.getForms)
             .then(function(forms) {
+                $scope.model.isAtaruRole = true;
                 $scope.model.ataruForms = forms;
             });
     };
@@ -531,6 +532,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             parameter: {},
             selectedOrganisations: [],
             selectedTarjoajaOrganisations: [],
+            isAtaruRole: false,
             ataruForms: [],
             config: Config.env
         };
