@@ -389,6 +389,16 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             $scope.model.hakux.result.usePriority = false;
         }
     };
+    $scope.checkKaytaTunnistusta = function() {
+        $log.debug('checkKaytaTunnistusta()');
+        if ($scope.model.hakux.result.jarjestelmanHakulomake
+            && $scope.model.hakux.result.tunnistusKaytossa) {
+            $scope.model.hakux.result.tunnistusKaytossa = true;
+        }
+        if (!$scope.model.hakux.result.jarjestelmanHakulomake) {
+            $scope.model.hakux.result.tunnistusKaytossa = false;
+        }
+    };
 
     $scope.checkAutosyncTarjonta = function() {
         if (!$scope.model.hakux.result.autosyncTarjonta) {
