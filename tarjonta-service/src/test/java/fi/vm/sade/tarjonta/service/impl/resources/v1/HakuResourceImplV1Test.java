@@ -8,6 +8,7 @@ import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.YhdenPaikanSaantoBuilder;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
@@ -38,6 +39,7 @@ import static org.mockito.Mockito.when;
 public class HakuResourceImplV1Test extends TestMockBase {
 
     private KoodistoHelper koodistoHelper = new KoodistoHelper();
+    private ConverterV1 realConverter = new ConverterV1();
 
     @InjectMocks
     private YhdenPaikanSaantoBuilder yhdenPaikanSaantoBuilder;
@@ -80,6 +82,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
         hakuResource.createHaku(null);
     }
 
+
     @Test
     public void thatHakuWithOidIsNotCreated() {
         HakuV1RDTO hakuDTO = new HakuV1RDTO();
@@ -114,6 +117,60 @@ public class HakuResourceImplV1Test extends TestMockBase {
         assertNotNull(result);
         assertNotNull(result.getStatus());
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
+    }
+
+    @Test
+    public void testHakuMaksumuuriAndTunnistus() {
+        boolean maksumuuri = false;
+        boolean tunnistus = false;
+
+        Haku haku = new Haku();
+        haku.setOid("1.2.3.4.5");
+        haku.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
+        haku.setKohdejoukkoUri("haunkohdejoukko_12#");
+        haku.setKohdejoukonTarkenne("");
+        haku.setHakutyyppiUri("");
+        haku.setTila(TarjontaTila.VALMIS);
+        haku.setHakukausiVuosi(2019);
+        haku.setHakukausiUri("s#1");
+        haku.setTunnistusKaytossa(true);
+
+        haku.setKoulutuksenAlkamisVuosi(2016);
+        haku.setKoulutuksenAlkamiskausiUri("kausi_k#1");
+        HakuV1RDTO hakuV1RDTO = realConverter.fromHakuToHakuRDTO(haku, false);
+        maksumuuri = hakuV1RDTO.isMaksumuuriKaytossa();
+        tunnistus = hakuV1RDTO.isTunnistusKaytossa();
+        assertTrue(tunnistus);
+        assertFalse(maksumuuri);
+
+        haku.setKoulutuksenAlkamisVuosi(2016);
+        haku.setKoulutuksenAlkamiskausiUri("kausi_s#1");
+        hakuV1RDTO = realConverter.fromHakuToHakuRDTO(haku, false);
+        maksumuuri = hakuV1RDTO.isMaksumuuriKaytossa();
+        assertTrue(maksumuuri);
+
+        haku.setKoulutuksenAlkamisVuosi(2017);
+        haku.setKoulutuksenAlkamiskausiUri("kausi_k#1");
+        haku.setTunnistusKaytossa(false);
+        hakuV1RDTO = realConverter.fromHakuToHakuRDTO(haku, false);
+        maksumuuri = hakuV1RDTO.isMaksumuuriKaytossa();
+        tunnistus = hakuV1RDTO.isTunnistusKaytossa();
+        assertFalse(tunnistus);
+        assertTrue(maksumuuri);
+
+        haku.setKoulutuksenAlkamisVuosi(2017);
+        haku.setKoulutuksenAlkamiskausiUri("kausi_k#1");
+        haku.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.OPINTOJAKSO);
+        hakuV1RDTO = realConverter.fromHakuToHakuRDTO(haku, false);
+        maksumuuri = hakuV1RDTO.isMaksumuuriKaytossa();
+        assertFalse(maksumuuri);
+
+        haku.setKoulutuksenAlkamisVuosi(2017);
+        haku.setKoulutuksenAlkamiskausiUri("kausi_s#1");
+        hakuV1RDTO = realConverter.fromHakuToHakuRDTO(haku, false);
+        maksumuuri = hakuV1RDTO.isMaksumuuriKaytossa();
+        assertFalse(maksumuuri);
+
     }
 
     @Test
