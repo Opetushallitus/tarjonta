@@ -19,7 +19,7 @@
     <parent>
         <artifactId>tarjonta</artifactId>
         <groupId>fi.vm.sade.tarjonta</groupId>
-        <version>2016-07-SNAPSHOT</version>
+        <version>feature_kasittelymaksun_poisto_2016-07-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tarjonta-api</artifactId>
