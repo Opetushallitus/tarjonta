@@ -504,10 +504,15 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             label: LocalisationService.t('haku.edit.koulutuksenTyyppi.opintokokonaisuusOpintojakso')});
     };
     $scope.initAtaruForms = function() {
-        $scope.model.ataruForms = [];
-        AtaruService.getForms().then(function(forms) {
-            $scope.model.ataruForms = forms;
-        });
+        AuthService
+            .crudOrg(AuthService.getUserDefaultOid(), 'APP_HAKULOMAKKEENHALLINTA')
+            .then(function(authorised) {
+                return (authorised) ? authorised : $q.reject('Unauthorised');
+            })
+            .then(AtaruService.getForms)
+            .then(function(forms) {
+                $scope.model.ataruForms = forms;
+            });
     };
     $scope.init = function() {
         var model = {
