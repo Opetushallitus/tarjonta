@@ -90,6 +90,8 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private Boolean josYoEiMuitaLiitepyyntoja;
     @ApiModelProperty(value = "Hakulomakkeen www-osoite")
     private String hakulomakeUrl;
+    @ApiModelProperty(value = "Atarulomakkeen avain")
+    private String ataruLomakeAvain;
     @ApiModelProperty(value = "Onko haulle asetettu hakulomakkeen url ylikirjoitettu hakukohdekohtaisella urlilla")
     private Boolean overridesHaunHakulomakeUrl;
     private String ohjeetUudelleOpiskelijalle;
@@ -590,6 +592,10 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     public void setHakulomakeUrl(String hakulomakeUrl) {
         this.hakulomakeUrl = hakulomakeUrl;
     }
+
+    public String getAtaruLomakeAvain() { return ataruLomakeAvain; }
+
+    public void setAtaruLomakeAvain(String ataruLomakeAvain) { this.ataruLomakeAvain = ataruLomakeAvain; }
 
     public Boolean getOverridesHaunHakulomakeUrl() {
         return overridesHaunHakulomakeUrl;

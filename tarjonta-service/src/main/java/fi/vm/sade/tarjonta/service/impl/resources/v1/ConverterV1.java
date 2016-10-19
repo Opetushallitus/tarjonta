@@ -635,6 +635,7 @@ public class ConverterV1 {
                         ? hakukohde.getHakulomakeUrl()
                         : hakukohde.getHaku().getHakulomakeUrl()
         );
+        hakukohdeRDTO.setAtaruLomakeAvain(hakukohde.getHaku().getAtaruLomakeAvain());
         hakukohdeRDTO.setOverridesHaunHakulomakeUrl(hakukohde.getHakulomakeUrl() != null);
         hakukohdeRDTO.setOhjeetUudelleOpiskelijalle(hakukohde.getOhjeetUudelleOpiskelijalle());
         hakukohdeRDTO.setYhdenPaikanSaanto(yhdenPaikanSaantoBuilder.from(hakukohde));
