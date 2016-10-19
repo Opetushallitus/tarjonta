@@ -37,6 +37,8 @@ import static org.mockito.Mockito.when;
 
 public class ConverterV1Test extends TestMockBase {
 
+    private String ataruLomakeAvain = "01234567-89ab-cdef-0123-4567890abcdef";
+
     @InjectMocks
     private ConverterV1 converter;
 
@@ -559,45 +561,36 @@ public class ConverterV1Test extends TestMockBase {
     }
 
     @Test
-    public void thatAtaruLomakeAvainIsConvertedToDTO() {
+    public void thatAtaruLomakeAvainInHakuIsConvertedToHakuDTO() {
         Haku haku = createValidHaku();
-        String ataruLomakeAvain = "01234567-89ab-cdef-0123-4567890abcdef";
         haku.setAtaruLomakeAvain(ataruLomakeAvain);
 
         HakuV1RDTO hakuDTO = converter.fromHakuToHakuRDTO(haku, false);
-
         assertEquals(hakuDTO.getAtaruLomakeAvain(), ataruLomakeAvain);
     }
 
     @Test
-    public void thatAtaruLomakeAvainIsConvertedToEntity() throws OIDCreationException {
+    public void thatAtaruLomakeAvainInHakuDTOIsConvertedToHakuEntity() throws OIDCreationException {
         HakuV1RDTO hakuDTO = new HakuV1RDTO();
-        String ataruLomakeAvain = "01234567-89ab-cdef-0123-4567890abcdef";
         hakuDTO.setAtaruLomakeAvain(ataruLomakeAvain);
 
         Haku haku = converter.convertHakuV1DRDTOToHaku(hakuDTO, new Haku());
-
         assertEquals(haku.getAtaruLomakeAvain(), ataruLomakeAvain);
     }
 
     @Test
     public void thatAtaruLomakeAvainFromHakuIsConvertedToHakukohdeDTO() {
-        String ataruLomakeAvain = "01234567-89ab-cdef-0123-4567890abcdef";
-
         Haku haku = new Haku();
         haku.setAtaruLomakeAvain(ataruLomakeAvain);
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setHaku(haku);
 
         HakukohdeV1RDTO hakukohdeV1RDTO = converter.toHakukohdeRDTO(hakukohde);
-
         assertEquals(ataruLomakeAvain, hakukohdeV1RDTO.getAtaruLomakeAvain());
     }
 
     @Test
     public void thatHakukohdeDTOWithAtaruLomakeAvainConvertsToHakukohdeEntity() {
-        String ataruLomakeAvain = "01234567-89ab-cdef-0123-4567890abcdef";
-
         HakukohdeV1RDTO hakukohdeDTO = getHakukohdeDTO();
         hakukohdeDTO.setAtaruLomakeAvain(ataruLomakeAvain);
 
