@@ -32,13 +32,12 @@ app.factory('HakuService', function($http, $q, Config, $log) {
     return {
         getAllHakus: function(params) {
             var hakuPromise = $q.defer();
-            var hakuUri = Config.env.tarjontaRestUrlPrefix + 'haku/find';
             params = params || {
                 addHakukohdes: false
             };
             $http({
                 method: 'GET',
-                url: hakuUri,
+                url: window.url("tarjonta-service.haku.find"),
                 params: params
             }).success(function(data) {
                 var filtered = _.filter(data.result, function(haku) {
@@ -52,10 +51,9 @@ app.factory('HakuService', function($http, $q, Config, $log) {
         },
         getHakuWithOid: function(oid) {
             var hakuPromise = $q.defer();
-            var hakuOidUri = Config.env.tarjontaRestUrlPrefix + 'haku/' + oid;
             $http({
                 method: 'GET',
-                url: hakuOidUri
+                url: window.url("tarjonta-service.haku.byOid", oid)
             }).success(function(data, status, headers, config) {
                 hakuPromise.resolve(data.result);
             }).error(function(data, status, headers, config) {
@@ -71,7 +69,8 @@ app.factory('HakuService', function($http, $q, Config, $log) {
 });
 app.factory('HakuV1', function($resource, Config) {
     'use strict';
-    var serviceUrl = Config.env.tarjontaRestUrlPrefix + 'haku/:oid';
+    var plainUrls = window.urls().noEncode();
+    var serviceUrl = plainUrls.url("tarjonta-service.haku.byOid", ":oid")
     return $resource(serviceUrl, {
         oid: '@oid',
         state: '@state',
@@ -104,13 +103,13 @@ app.factory('HakuV1', function($resource, Config) {
             }
         },
         mget: {
-            url: Config.env.tarjontaRestUrlPrefix + 'haku/multi',
+            url: window.url("tarjonta-service.haku.multi"),
             method: 'GET',
             withCredentials: true,
             isArray: false
         },
         search: {
-            url: Config.env.tarjontaRestUrlPrefix + 'haku/find',
+            url: window.url("tarjonta-service.haku.find"),
             method: 'GET',
             withCredentials: true,
             isArray: false,
@@ -126,21 +125,21 @@ app.factory('HakuV1', function($resource, Config) {
             }
         },
         checkStateChange: {
-            url: Config.env.tarjontaRestUrlPrefix + 'haku/:oid/stateChangeCheck',
+            url: plainUrls.url("tarjonta-service.haku.checkStateChange", ":oid"),
             method: 'GET',
             withCredentials: true
         },
         changeState: {
-            url: Config.env.tarjontaRestUrlPrefix + 'haku/:oid/state?state=:state',
+            url: plainUrls.url("tarjonta-service.haku.changeState", ":oid", ":state"),
             method: 'PUT',
             withCredentials: true
         },
         copy: {
-            url: Config.env.tarjontaRestUrlPrefix + 'haku/:oid/copy',
+            url: plainUrls.url("tarjonta-service.haku.copy", ":oid"),
             method: 'PUT'
         },
         paste: {
-            url: Config.env.tarjontaRestUrlPrefix + 'haku/paste/:oid/:processId',
+            url: plainUrls.url("tarjonta-service.haku.paste", ":oid", ":processId"),
             method: 'PUT'
         }
     });

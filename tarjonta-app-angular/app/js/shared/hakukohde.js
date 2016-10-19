@@ -14,12 +14,12 @@
  */
 var app = angular.module('Hakukohde', [
     'ngResource',
-    'config',
     'Logging'
 ]);
 //TODO: after refactoring the rest to v1 change this
-app.factory('Hakukohde', function($resource, Config) {
-    var hakukohdeUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/:oid';
+app.factory('Hakukohde', function($resource) {
+    var plainUrls = window.urls().noEncode();
+    var hakukohdeUri = plainUrls.url("tarjonta-service.hakukohde.byOid", ":oid");
     return $resource(hakukohdeUri, {
         oid: '@oid'
     }, {
@@ -45,7 +45,7 @@ app.factory('Hakukohde', function($resource, Config) {
                 }
             },
             checkStateChange: {
-                url: Config.env.tarjontaRestUrlPrefix + 'hakukohde/:oid/stateChangeCheck',
+                url: plainUrls.url("tarjonta-service.hakukohde.checkStateChange", ":oid"),
                 method: 'GET',
                 withCredentials: true
             },
@@ -58,8 +58,9 @@ app.factory('Hakukohde', function($resource, Config) {
             }
         });
 });
-app.factory('Liite', function($resource, Config) {
-    var hakukohdeLiiteUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/:hakukohdeOid/liite/:liiteId';
+app.factory('Liite', function($resource) {
+    var plainUrls = window.urls().noEncode();
+    var hakukohdeLiiteUri = plainUrls.url("tarjonta-service.hakukohde.liite", ":hakukohdeOid", ":liiteId");
     return $resource(hakukohdeLiiteUri, {
         hakukohdeOid: '@hakukohdeOid',
         liiteId: '@liiteId'
@@ -94,8 +95,9 @@ app.factory('Liite', function($resource, Config) {
             }
         });
 });
-app.factory('Valintakoe', function($resource, $log, $q, Config) {
-    var hakukohdeValintakoeUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/:hakukohdeOid/valintakoe/:valintakoeOid';
+app.factory('Valintakoe', function($resource, $log, $q) {
+    var plainUrls = window.urls().noEncode();
+    var hakukohdeValintakoeUri = plainUrls.url("tarjonta-service.hakukohde.valintakoe", ":hakukohdeOid", ":valintakoeOid");
     return $resource(hakukohdeValintakoeUri, {
         hakukohdeOid: '@hakukohdeOid',
         valintakoeOid: '@valintakoeOid'
@@ -130,13 +132,11 @@ app.factory('Valintakoe', function($resource, $log, $q, Config) {
             }
         });
 });
-app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
+app.factory('HakukohdeKoulutukses', function($http, $q) {
     return {
         removeKoulutuksesFromHakukohde: function(hakukohdeOid, koulutusOids) {
             if (hakukohdeOid !== undefined && koulutusOids !== undefined) {
-                var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/' +
-                    hakukohdeOid + '/koulutukset';
-                $http.post(hakukohdeKoulutusUri, koulutusOids, {
+                $http.post(window.url("tarjonta-service.hakukohde.removeKoulutuksesFromHakukohde", hakukohdeOid), koulutusOids, {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json; charset=UTF-8'
@@ -151,9 +151,7 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
         addKoulutuksesToHakukohde: function(hakukohdeOid, koulutusOids) {
             var promise = $q.defer();
             if (hakukohdeOid !== undefined && koulutusOids !== undefined) {
-                var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/' + hakukohdeOid +
-                    '/koulutukset/lisaa';
-                $http.post(hakukohdeKoulutusUri, koulutusOids, {
+                $http.post(window.url("tarjonta-service.hakukohde.addKoulutuksesToHakukohde", hakukohdeOid), koulutusOids, {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json; charset=UTF-8'
@@ -168,10 +166,9 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
         },
         geValidateHakukohdeKomotos: function(komotoIds) {
             var promise = $q.defer();
-            var serviceUrl = Config.env.tarjontaRestUrlPrefix + 'hakukohde/komotoSelectedCheck';
             $http({
                 method: 'GET',
-                url: serviceUrl,
+                url: window.url("tarjonta-service.hakukohde.validateHakukohdeKomotos"),
                 params: {
                     oid: komotoIds
                 }
@@ -184,7 +181,7 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
         }
     };
 });
-app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, KoulutusConverterFactory,
+app.factory('HakukohdeService', function($resource, $http, $rootScope, KoulutusConverterFactory,
                                          Koodisto, $q) {
     function addValintakoeIfEmpty(hakukohde) {
         if (hakukohde.valintakokeet.length === 0) {
@@ -348,7 +345,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope, K
         addLiite: addLiite,
         addPainotettavaOppiaine: addPainotettavaOppiaine,
         findHakukohdesByKuvausId: function(kuvausId) {
-            return $http.get(Config.env.tarjontaRestUrlPrefix + 'hakukohde/findHakukohdesByKuvausId/' + kuvausId);
+            return $http.get(window.url("tarjonta-service.hakukohde.byKuvausId"), kuvausId);
         },
         config: hakukohdeConfig
     };

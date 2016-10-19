@@ -13,8 +13,7 @@ app.directive('oppiaineet', function() {
                 translate: LocalisationService,
 
                 getOppiaineet: function(oppiaine, kieliKoodi) {
-                    var url = Config.env.tarjontaRestUrlPrefix + 'koulutus/oppiaineet';
-                    return $http.get(url, {
+                    return $http.get(window.url("tarjonta-service.koulutus.oppiaineet"), {
                         params: {
                             oppiaine: oppiaine,
                             kieliKoodi: kieliKoodi

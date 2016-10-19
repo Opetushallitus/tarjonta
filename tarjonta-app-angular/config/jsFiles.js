@@ -1,6 +1,7 @@
 module.exports = [
     'lib/jquery-1.10.2.min.js',
     'lib/jquery-ui.min.js',
+    'js/shared/oph_urls/oph_urls.js',
     'js/app-configuration.js',
     'lib/angular/angular.js',
     'lib/angular/angular-resource.js',

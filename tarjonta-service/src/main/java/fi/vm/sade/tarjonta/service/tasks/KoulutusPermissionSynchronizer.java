@@ -10,6 +10,7 @@ import fi.vm.sade.tarjonta.model.KoulutusPermission;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionException;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
+import fi.vm.sade.tarjonta.shared.UrlConfiguration;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteKoulutusDTO;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOpetuskieliDTO;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOrgDTO;
@@ -45,8 +46,8 @@ public class KoulutusPermissionSynchronizer {
     @Autowired
     KoulutusPermissionService koulutusPermissionService;
 
-    @Value("${host.virkailija}")
-    private String HOST_VIRKAILIJA;
+    @Autowired
+    UrlConfiguration urlConfiguration;
 
     @Value("${invalid.koulutus.report.recipient}")
     private String RECIPIENT;
@@ -145,8 +146,7 @@ public class KoulutusPermissionSynchronizer {
 
             for (KoulutusPermissionException exception : entry.getValue()) {
                 KoulutusmoduuliToteutus komoto = exception.getKomoto();
-                body += "\thttps://" + HOST_VIRKAILIJA + "/tarjonta-app/#/koulutus/"
-                        + komoto.getOid() + " (" + komoto.getTila().toString()
+                body += "\t" + urlConfiguration.url("tarjonta-service.koulutus") + " (" + komoto.getTila().toString()
                         + ") (ei oikeutta koodiin \"" + exception.getPuuttuvaKoodi() + "\")\n";
             }
         }

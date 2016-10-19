@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.shared;
 
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.CachingKoodistoClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -11,17 +12,18 @@ import java.util.Map;
 @Service
 public class KoodistoProactiveCaching {
 
-    CachingKoodistoClient cachingKoodistoClient;
+    private CachingKoodistoClient cachingKoodistoClient;
 
-    public KoodistoProactiveCaching() {
-        this.cachingKoodistoClient = new CachingKoodistoClient();
+    @Autowired
+    public KoodistoProactiveCaching(UrlConfiguration urlConfiguration) {
+        this.cachingKoodistoClient = new CachingKoodistoClient(urlConfiguration.url("koodisto-service.base"));
         this.clearCache();
     }
 
-    Map<String, KoodiType> koodiMap;
+    private Map<String, KoodiType> koodiMap;
 
     public void clearCache() {
-        koodiMap = new HashMap<String, KoodiType>();
+        koodiMap = new HashMap<>();
     }
 
     public void cacheKoodisto(String koodisto) {

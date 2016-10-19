@@ -13,7 +13,6 @@ import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
@@ -28,11 +27,9 @@ public class OrganisaatioService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger LOG = LoggerFactory.getLogger(OrganisaatioService.class);
 
-    @Value("${organisaatio.api.rest.url}")
-    private String organisaatioRestUri;
+    private final TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
-    @Autowired
-    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
+    private final UrlConfiguration urlConfiguration;
 
     private final LoadingCache<String, OrganisaatioRDTO> orgCache = CacheBuilder.newBuilder()
             .maximumSize(1000)
@@ -42,6 +39,12 @@ public class OrganisaatioService {
                     return fetchOrganisation(oid);
                 }
             });
+
+    @Autowired
+    public OrganisaatioService(TarjontaKoodistoHelper tarjontaKoodistoHelper, UrlConfiguration urlConfiguration) {
+        this.tarjontaKoodistoHelper = tarjontaKoodistoHelper;
+        this.urlConfiguration = urlConfiguration;
+    }
 
     /**
      * Enum declaration is only available in Organisation SOAP/WSDL description,
@@ -86,7 +89,7 @@ public class OrganisaatioService {
 
     private OrganisaatioRDTO fetchOrganisation(String oid) {
         try {
-            return objectMapper.readValue(new URL(organisaatioRestUri + "organisaatio/" + oid), OrganisaatioRDTO.class);
+            return objectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.fetchOrganisation", oid)), OrganisaatioRDTO.class);
         } catch (Exception e) {
             final String msg = "Could not fetch organization with oid " + oid;
             LOG.error(msg);
@@ -97,9 +100,7 @@ public class OrganisaatioService {
     public Set<String> findChildrenOidsByOid(String oid) {
         try {
             OrganisaatioHakutulosSuppeaDTOV2 result = objectMapper.readValue(
-                    new URL(organisaatioRestUri + "organisaatio/v2/hae/nimi" +
-                    "?aktiiviset=true&lakkautetut=false&suunnitellut=true&oidRestrictionList=" + oid),
-                    OrganisaatioHakutulosSuppeaDTOV2.class);
+                    new URL(urlConfiguration.url("organisaatio-service.findChildrenOidsByOid", oid)), OrganisaatioHakutulosSuppeaDTOV2.class);
             return FluentIterable
                     .from(result.getOrganisaatiot())
                     .transform(new Function<OrganisaatioPerustietoSuppea, String>() {
@@ -120,7 +121,7 @@ public class OrganisaatioService {
     public Map<String, String> getTarjoajaNimiMap(String orgOid) {
         final OrganisaatioRDTO org = findByOid(orgOid);
         if (org != null) {
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             for (Map.Entry<String, String> entry : org.getNimi().entrySet()) {
                 map.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(entry.getKey()), entry.getValue());
             }
