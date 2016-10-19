@@ -36,6 +36,8 @@ public class ConverterV1Test extends TestMockBase {
 
     private static final String ALKAMISKAUSI = "kausi_S";
     private static final Integer ALKAMISVUOSI = 1999;
+    private static final String ATARULOMAKEAVAIN = "01234567-89ab-cdef-0123-4567890abcdef";
+
     @InjectMocks
     private ConverterV1 converter;
 
@@ -567,47 +569,38 @@ public class ConverterV1Test extends TestMockBase {
     }
 
     @Test
-    public void thatAtaruLomakeAvainIsConvertedToDTO() {
+    public void thatAtaruLomakeAvainInHakuIsConvertedToHakuDTO() {
         Haku haku = createValidHaku();
-        String ataruLomakeAvain = "01234567-89ab-cdef-0123-4567890abcdef";
-        haku.setAtaruLomakeAvain(ataruLomakeAvain);
+        haku.setAtaruLomakeAvain(ATARULOMAKEAVAIN);
 
         HakuV1RDTO hakuDTO = converter.fromHakuToHakuRDTO(haku, false);
-
-        assertEquals(hakuDTO.getAtaruLomakeAvain(), ataruLomakeAvain);
+        assertEquals(hakuDTO.getAtaruLomakeAvain(), ATARULOMAKEAVAIN);
     }
 
     @Test
-    public void thatAtaruLomakeAvainIsConvertedToEntity() throws OIDCreationException {
+    public void thatAtaruLomakeAvainInHakuDTOIsConvertedToHakuEntity() throws OIDCreationException {
         HakuV1RDTO hakuDTO = new HakuV1RDTO();
-        String ataruLomakeAvain = "01234567-89ab-cdef-0123-4567890abcdef";
-        hakuDTO.setAtaruLomakeAvain(ataruLomakeAvain);
+        hakuDTO.setAtaruLomakeAvain(ATARULOMAKEAVAIN);
 
         Haku haku = converter.convertHakuV1DRDTOToHaku(hakuDTO, new Haku());
-
-        assertEquals(haku.getAtaruLomakeAvain(), ataruLomakeAvain);
+        assertEquals(haku.getAtaruLomakeAvain(), ATARULOMAKEAVAIN);
     }
 
     @Test
     public void thatAtaruLomakeAvainFromHakuIsConvertedToHakukohdeDTO() {
-        String ataruLomakeAvain = "01234567-89ab-cdef-0123-4567890abcdef";
-
         Haku haku = new Haku();
-        haku.setAtaruLomakeAvain(ataruLomakeAvain);
+        haku.setAtaruLomakeAvain(ATARULOMAKEAVAIN);
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setHaku(haku);
 
         HakukohdeV1RDTO hakukohdeV1RDTO = converter.toHakukohdeRDTO(hakukohde);
-
-        assertEquals(ataruLomakeAvain, hakukohdeV1RDTO.getAtaruLomakeAvain());
+        assertEquals(ATARULOMAKEAVAIN, hakukohdeV1RDTO.getAtaruLomakeAvain());
     }
 
     @Test
     public void thatHakukohdeDTOWithAtaruLomakeAvainConvertsToHakukohdeEntity() {
-        String ataruLomakeAvain = "01234567-89ab-cdef-0123-4567890abcdef";
-
         HakukohdeV1RDTO hakukohdeDTO = getHakukohdeDTO();
-        hakukohdeDTO.setAtaruLomakeAvain(ataruLomakeAvain);
+        hakukohdeDTO.setAtaruLomakeAvain(ATARULOMAKEAVAIN);
 
         Hakukohde hakukohde = converter.toHakukohde(hakukohdeDTO);
         assertNotNull(hakukohde);
