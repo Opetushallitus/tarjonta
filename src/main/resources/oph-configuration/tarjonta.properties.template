@@ -92,3 +92,5 @@ tarjonta-service.postgresql.password={{host_postgresql_tarjonta_password}}
 tarjonta-service.postgresql.maxactive={{host_postgresql_tarjonta_max_active}}
 tarjonta-service.postgresql.maxwait={{host_postgresql_tarjonta_max_wait}}
 tarjonta-service.postgresql.maxlifetimemillis=60000
+
+invalid.koulutus.report.recipient={{tarjonta_invalid_koulutus_report_recipient}}
