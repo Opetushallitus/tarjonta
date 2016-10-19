@@ -29,6 +29,7 @@ import static junit.framework.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -577,6 +578,31 @@ public class ConverterV1Test extends TestMockBase {
         Haku haku = converter.convertHakuV1DRDTOToHaku(hakuDTO, new Haku());
 
         assertEquals(haku.getAtaruLomakeAvain(), ataruLomakeAvain);
+    }
+
+    @Test
+    public void thatAtaruLomakeAvainFromHakuIsConvertedToHakukohdeDTO() {
+        String ataruLomakeAvain = "01234567-89ab-cdef-0123-4567890abcdef";
+
+        Haku haku = new Haku();
+        haku.setAtaruLomakeAvain(ataruLomakeAvain);
+        Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setHaku(haku);
+
+        HakukohdeV1RDTO hakukohdeV1RDTO = converter.toHakukohdeRDTO(hakukohde);
+
+        assertEquals(ataruLomakeAvain, hakukohdeV1RDTO.getAtaruLomakeAvain());
+    }
+
+    @Test
+    public void thatHakukohdeDTOWithAtaruLomakeAvainConvertsToHakukohdeEntity() {
+        String ataruLomakeAvain = "01234567-89ab-cdef-0123-4567890abcdef";
+
+        HakukohdeV1RDTO hakukohdeDTO = getHakukohdeDTO();
+        hakukohdeDTO.setAtaruLomakeAvain(ataruLomakeAvain);
+
+        Hakukohde hakukohde = converter.toHakukohde(hakukohdeDTO);
+        assertNotNull(hakukohde);
     }
 
     private BaseMatcher<RyhmaliitosV1RDTO> getRyhmaliitosElementMatcher(final String ryhmaOid,
