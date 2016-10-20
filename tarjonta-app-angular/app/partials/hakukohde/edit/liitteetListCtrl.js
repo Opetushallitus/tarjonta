@@ -18,9 +18,11 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
         }
         if (liite.muuOsoiteEnabled === undefined && osoitteetReceived) {
             if ($scope.model.liitteidenToimitusOsoite[liite.kieliUri]) {
+                var nimi1 = $scope.model.hakutoimistonNimi[liite.kieliUri];
+                var nimi2 = liite.liitteenVastaanottaja;
                 var os1 = $scope.model.liitteidenToimitusOsoite[liite.kieliUri];
                 var os2 = liite.liitteenToimitusOsoite;
-                liite.muuOsoiteEnabled = os1.osoiterivi1 != os2.osoiterivi1 || os1.postinumero != os2.postinumero;
+                liite.muuOsoiteEnabled = nimi1 != nimi2 || os1.osoiterivi1 != os2.osoiterivi1 || os1.postinumero != os2.postinumero;
             }
             else {
                 liite.muuOsoiteEnabled = true;
