@@ -138,4 +138,10 @@ public interface HakuV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Hakee oidit hauille, joille tulee suorittaa automaattinen tarjonnan synkronointi.")
     public ResultV1RDTO<Set<String>> findOidsToSyncTarjontaFor();
+
+    @GET
+    @Path("/ataru/all")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Hakee listauksen käytössäolevista Ataru-lomakkeista niihin liittyvät haut.")
+    public ResultV1RDTO<List<AtaruFormUsageV1RDTO>> findAtaruFormUsage();
 }
