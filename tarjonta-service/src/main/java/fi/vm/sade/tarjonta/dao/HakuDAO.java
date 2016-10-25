@@ -93,4 +93,11 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
      * @return Set of hakuOids
      */
     Set<String> findHakusToSync(Date date);
+
+    /**
+     * Find hakus that use Ataru forms
+     *
+     * @return List of haku's
+     */
+    List<Haku> findHakusWithAtaruFormKeys();
 }

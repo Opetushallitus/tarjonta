@@ -346,4 +346,11 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
         query.setParameter("hakuOid", hakuOid);
         return new HashSet<>(query.getResultList());
     }
+
+    @Override
+    public List<Haku> findHakusWithAtaruFormKeys() {
+        String hql = "select h from Haku h where h.ataruLomakeAvain is not null";
+        Query query = getEntityManager().createQuery(hql);
+        return query.getResultList();
+    }
 }
