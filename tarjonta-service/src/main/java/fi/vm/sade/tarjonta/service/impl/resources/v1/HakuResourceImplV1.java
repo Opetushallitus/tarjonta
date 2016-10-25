@@ -988,4 +988,32 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             return one.compareToIgnoreCase(two);
         }
     }
+
+    @Override
+    public ResultV1RDTO<List<AtaruFormUsageV1RDTO>> findAtaruFormUsage() {
+        List<Haku> hakus = hakuDAO.findHakusWithAtaruFormKeys();
+        Map<String, List<String>> grouped = new HashMap<>();
+        List<AtaruFormUsageV1RDTO> result = new ArrayList<>();
+
+        for (Haku haku : hakus) {
+            String key = haku.getAtaruLomakeAvain();
+            if (!grouped.containsKey(key)) {
+                grouped.put(key, new ArrayList<String>());
+            }
+            grouped.get(key).add(haku.getOid());
+        }
+
+        for (Map.Entry<String, List<String>> entry : grouped.entrySet()) {
+            AtaruFormUsageV1RDTO dto = new AtaruFormUsageV1RDTO();
+            dto.setAtaruFormKey(entry.getKey());
+            dto.setHakuOids(entry.getValue());
+            result.add(dto);
+        }
+
+        ResultV1RDTO<List<AtaruFormUsageV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
+        resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+        resultV1RDTO.setResult(result);
+
+        return resultV1RDTO;
+    }
 }
