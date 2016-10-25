@@ -357,6 +357,31 @@ public class HakuDAOImplTest extends TestData {
         assertTrue("should contain correct hakuOid:" + hakuOids, hakuOids.contains(haku.getOid()));
     }
 
+    @Test
+    public void thatHakusWithAtaruFormsAreFound() {
+        String ataruLomakeAvain1 = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeeee";
+        String ataruLomakeAvain2 = "ffffffff-ffff-ffff-ffff-fffffffffffff";
+        String HAKU_OID3 = "hakuoid3";
+        String HAKU_OID4 = "hakuoid4";
+
+        Haku haku1 = createHaku(HAKU_OID1);
+        Haku haku2 = createHaku(HAKU_OID2);
+        Haku haku3 = createHaku(HAKU_OID3);
+        Haku haku4 = createHaku(HAKU_OID4); // No ataru lomake for this haku
+
+        haku1.setAtaruLomakeAvain(ataruLomakeAvain1);
+        haku2.setAtaruLomakeAvain(ataruLomakeAvain1);
+        haku3.setAtaruLomakeAvain(ataruLomakeAvain2);
+
+        hakuDAO.insert(haku1);
+        hakuDAO.insert(haku2);
+        hakuDAO.insert(haku3);
+        hakuDAO.insert(haku4);
+
+        List<Haku> ataruFormKeys = hakuDAO.findHakusWithAtaruFormKeys();
+        assertTrue(ataruFormKeys.size() == 3);
+    }
+
     private void createHakuWithMontaTarjoajaa() {
         Haku haku = new Haku();
         haku.setOid("1.1.1");
@@ -413,7 +438,7 @@ public class HakuDAOImplTest extends TestData {
         hakuDAO.insert(haku);
     }
 
-    private void createHaku1(String oid) {
+    private Haku createHaku(String oid) {
         Haku haku = new Haku();
         haku.setOid(oid);
         haku.setNimi(new MonikielinenTeksti("fi", "nimi1_fi"));
@@ -426,6 +451,11 @@ public class HakuDAOImplTest extends TestData {
         haku.setKohdejoukkoUri("kohdejoukko1#1");
         haku.setHakukausiVuosi(2014);
         haku.setLastUpdateDate(getLastUpdatedDate());
+        return haku;
+    }
+
+    private void createHaku1(String oid) {
+        Haku haku = createHaku(oid);
         hakuDAO.insert(haku);
     }
 
