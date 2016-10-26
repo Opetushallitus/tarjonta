@@ -101,6 +101,11 @@ Ajoympäristöä varten tarvitaan:
       -Dpostgresql.password=""
       -Xmx2048m
       -XX:PermSize=512m
+      -Dfront.lokalisointi.baseUrl="https://itest-virkailija.oph.ware.fi"
+      -Dfront.authentication-service.baseUrl="https://itest-virkailija.oph.ware.fi"
+      -Dfront.ohjausparametrit-service.baseUrl="https://itest-virkailija.oph.ware.fi"
+      -Dfront.koodisto-service.baseUrl="https://itest-virkailija.oph.ware.fi"
+      -Dfront.organisaatio-service.baseUrl="https://itest-virkailija.oph.ware.fi"
       ```
     - Jos haluat nähdä logeja, voit myös lisätä VM-optionilla haluamasilaisen log4j-konfiguraation, esim
     `-Dlog4j.configuration=file:///work/oph/opintopolku/tarjonta/tarjonta-service/src/main/profile/standalone/log4j.properties`
