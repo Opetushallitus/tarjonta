@@ -142,6 +142,6 @@ public interface HakuV1Resource {
     @GET
     @Path("/ataru/all")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "Hakee listauksen käytössäolevista Ataru-lomakkeista niihin liittyvät haut.")
+    @ApiOperation(value = "Hakee listauksen käytössäolevista Lomake-editorin (Ataru) lomakkeista ja niihin liittyvät haut.", notes = "Hakee listauksen käytössäolevista Lomake-editorin (Ataru) lomakkeista ja niihin liittyvät haut.", response = AtaruFormUsageV1RDTO.class)
     public ResultV1RDTO<List<AtaruFormUsageV1RDTO>> findAtaruFormUsage();
 }
