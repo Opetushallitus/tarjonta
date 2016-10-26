@@ -92,13 +92,13 @@ public class ParameterServices implements InitializingBean {
         
         try {
             // Read ohjausparametrit and parse result with GSON
-            URL url = new URL(urlConfiguration.url("ohjausparametrit.getParametrit", target));
+            URL url = new URL(urlConfiguration.url("ohjausparametrit-service.getParametrit", target));
             URLConnection conn = url.openConnection();
             return new JSONObject(IOUtils.toString(conn.getInputStream()));
         } catch (FileNotFoundException ex) {
             LOG.debug("No parameters for target: " + target);
         } catch (Exception ex) {
-            LOG.error("Failed to load parameter from: " + urlConfiguration.url("ohjausparametrit.getParametrit", target), ex);
+            LOG.error("Failed to load parameter from: " + urlConfiguration.url("ohjausparametrit-service.getParametrit", target), ex);
         }
         return new JSONObject();
     }
