@@ -276,13 +276,13 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
         return $scope.model.hakux.result.hakutapaUri.indexOf('hakutapa_02#') !== -1;
     };
     $scope.isKoulutuksetChecked = function() {
-        if(_.isUndefined($scope.parametrit.PH_KVT)) {
+        if (_.isUndefined($scope.parametrit.PH_KVT)) {
             return true;
         } else {
             return $scope.parametrit.PH_KVT.booleanValue;
         }
     };
-    $scope.url=window.url
+    $scope.url = window.url;
 });
 
 // From http://sheetjs.com/demos/Export2Excel.js
