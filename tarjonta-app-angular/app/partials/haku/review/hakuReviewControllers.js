@@ -18,7 +18,7 @@ var app = angular.module('app.haku.review.ctrl', [
 ]);
 app.controller('HakuReviewController', function($scope, $route, $log, $routeParams, ParameterService, $location,
                 HakuV1Service, TarjontaService, dialogService, LocalisationService, $q, PermissionService,
-                OrganisaatioService, $modal, AuthService, KoulutusConverterFactory, Koodisto) {
+                OrganisaatioService, $modal, AuthService, KoulutusConverterFactory, Koodisto, AtaruService) {
     $log = $log.getInstance('HakuReviewController');
     $scope.isMutable = false;
     $scope.isRemovable = false;
@@ -138,6 +138,14 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
             });
         });
     };
+    $scope.initAtaruForm = function(ataruLomakeAvain) {
+        AtaruService.getForms().then(function(forms) {
+            var form = _.findWhere(forms, {'key': ataruLomakeAvain});
+            if (form) {
+                $scope.model.ataruFormName = form.name;
+            }
+        });
+    };
     $scope.init = function() {
         $log.info('HakuReviewController.init()...');
         _.extend($scope.model, {
@@ -164,7 +172,8 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
             // { tarjoajaOids : [...] }
             hakukohdeOrganisations: [],
             // { organisaatioOids : [...] }
-            place: 'holder'
+            place: 'holder',
+            ataruFormName: ''
         });
         //
         // Get organisation information
@@ -185,6 +194,7 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
             hakuaika.nimi = HakuV1Service.resolveLocalizedValue(hakuaika.nimet);
         });
         $scope.getHakukohteet();
+        $scope.initAtaruForm($scope.model.hakux.result.ataruLomakeAvain);
     };
     $scope.downloadHakukohteetExcel = function() {
         Koodisto.getAllKoodisWithKoodiUri('koulutustyyppi', AuthService.getLanguage().toLowerCase())
