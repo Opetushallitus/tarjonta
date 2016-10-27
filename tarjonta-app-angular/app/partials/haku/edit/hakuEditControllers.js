@@ -696,4 +696,5 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             return $scope.model.parameter.PH_KVT.booleanValue;
         }
     };
+    $scope.url = window.url;
 });
