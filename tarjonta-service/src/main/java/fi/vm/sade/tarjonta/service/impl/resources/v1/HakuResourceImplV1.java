@@ -990,27 +990,30 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<List<AtaruFormUsageV1RDTO>> findAtaruFormUsage() {
+    public ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> findAtaruFormUsage() {
         List<Haku> hakus = hakuDAO.findHakusWithAtaruFormKeys();
-        Map<String, List<String>> grouped = new HashMap<>();
-        List<AtaruFormUsageV1RDTO> result = new ArrayList<>();
+        Map<String, List<AtaruLomakeHakuV1RDTO>> grouped = new HashMap<>();
+        List<AtaruLomakkeetV1RDTO> result = new ArrayList<>();
 
         for (Haku haku : hakus) {
+            AtaruLomakeHakuV1RDTO dto = new AtaruLomakeHakuV1RDTO();
+            dto.setOid(haku.getOid());
+            dto.setNimi(haku.getNimiFi());
             String key = haku.getAtaruLomakeAvain();
             if (!grouped.containsKey(key)) {
-                grouped.put(key, new ArrayList<String>());
+                grouped.put(key, new ArrayList<AtaruLomakeHakuV1RDTO>());
             }
-            grouped.get(key).add(haku.getOid());
+            grouped.get(key).add(dto);
         }
 
-        for (Map.Entry<String, List<String>> entry : grouped.entrySet()) {
-            AtaruFormUsageV1RDTO dto = new AtaruFormUsageV1RDTO();
-            dto.setAtaruFormKey(entry.getKey());
-            dto.setHakuOids(entry.getValue());
+        for (Map.Entry<String, List<AtaruLomakeHakuV1RDTO>> entry : grouped.entrySet()) {
+            AtaruLomakkeetV1RDTO dto = new AtaruLomakkeetV1RDTO();
+            dto.setAvain(entry.getKey());
+            dto.setHaut(entry.getValue());
             result.add(dto);
         }
 
-        ResultV1RDTO<List<AtaruFormUsageV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
+        ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
         resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
         resultV1RDTO.setResult(result);
 
