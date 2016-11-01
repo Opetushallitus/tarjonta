@@ -11,7 +11,8 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.YhdenPaikanSaantoBuilder;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.AtaruFormUsageV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.AtaruLomakeHakuV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.AtaruLomakkeetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
@@ -346,52 +347,74 @@ public class HakuResourceImplV1Test extends TestMockBase {
         String oid1 = "ataru1";
         String oid2 = "ataru2";
         String oid3 = "ataru3";
+        String name1 = "name1";
+        String name2 = "name2";
+        String name3 = "name3";
         String key1 = "aaaa-aaaa-aaaa-aaaa-aaaa";
         String key2 = "bbbb-bbbb-bbbb-bbbb-bbbb";
 
-        Haku haku1 = new Haku();
-        haku1.setOid(oid1);
-        haku1.setAtaruLomakeAvain(key1); // haku1 uses atarulomake1
-
-        Haku haku2 = new Haku();
-        haku2.setOid(oid2);
-        haku2.setAtaruLomakeAvain(key1); // haku2 uses atarulomake1
-
-        Haku haku3 = new Haku();
-        haku3.setOid(oid3);
-        haku3.setAtaruLomakeAvain(key2); // haku3 uses atarulomake2
-
         List<Haku> hakus = new ArrayList<>();
+        Haku haku1 = new Haku();
+        Haku haku2 = new Haku();
+        Haku haku3 = new Haku();
+        haku1.setOid(oid1);
+        haku2.setOid(oid2);
+        haku3.setOid(oid3);
+        haku1.setNimiFi(name1);
+        haku2.setNimiFi(name2);
+        haku3.setNimiFi(name3);
+        haku1.setAtaruLomakeAvain(key1); // haku1 uses atarulomake1
+        haku2.setAtaruLomakeAvain(key1); // haku2 uses atarulomake1
+        haku3.setAtaruLomakeAvain(key2); // haku3 uses atarulomake2
         hakus.add(haku1);
         hakus.add(haku2);
         hakus.add(haku3);
 
         when(hakuDAO.findHakusWithAtaruFormKeys()).thenReturn(hakus);
 
-        AtaruFormUsageV1RDTO expected1 = new AtaruFormUsageV1RDTO();
-        List<String> expectedOids1 = new ArrayList<>();
-        expectedOids1.add(oid1);
-        expectedOids1.add(oid2);
-        expected1.setAtaruFormKey(key1);
-        expected1.setHakuOids(expectedOids1); // expected [haku1, haku2] that use atarulomake1
+        AtaruLomakeHakuV1RDTO item1 = new AtaruLomakeHakuV1RDTO();
+        AtaruLomakeHakuV1RDTO item2 = new AtaruLomakeHakuV1RDTO();
+        AtaruLomakeHakuV1RDTO item3 = new AtaruLomakeHakuV1RDTO();
+        AtaruLomakkeetV1RDTO expectedUsage1 = new AtaruLomakkeetV1RDTO();
+        AtaruLomakkeetV1RDTO expectedUsage2 = new AtaruLomakkeetV1RDTO();
+        List<AtaruLomakeHakuV1RDTO> expectedItems1 = new ArrayList<>();
+        List<AtaruLomakeHakuV1RDTO> expectedItems2 = new ArrayList<>();
+        item1.setOid(oid1);
+        item2.setOid(oid2);
+        item3.setOid(oid3);
+        item1.setNimi(name1);
+        item2.setNimi(name2);
+        item3.setNimi(name3);
+        expectedItems1.add(item1);
+        expectedItems1.add(item2);
+        expectedItems2.add(item3);
+        expectedUsage1.setAvain(key1);
+        expectedUsage2.setAvain(key2);
+        expectedUsage1.setHaut(expectedItems1); // expected [haku1, haku2] with atarulomake1
+        expectedUsage2.setHaut(expectedItems2); // expected [haku3] with atarulomake2
 
-        AtaruFormUsageV1RDTO expected2 = new AtaruFormUsageV1RDTO();
-        List<String> expectedOids2 = new ArrayList<>();
-        expectedOids2.add(oid3);
-        expected2.setAtaruFormKey(key2);
-        expected2.setHakuOids(expectedOids2); // expected [haku3] that use atarulomake2
-
-        ResultV1RDTO<List<AtaruFormUsageV1RDTO>> result = hakuResource.findAtaruFormUsage();
+        ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> result = hakuResource.findAtaruFormUsage();
         assertNotNull(result);
         assertNotNull(result.getStatus());
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
 
-        List<AtaruFormUsageV1RDTO> ataruFormsWithHakuOids = result.getResult();
-        assertEquals(2, ataruFormsWithHakuOids.size());
-        assertEquals(expected1.getAtaruFormKey(), ataruFormsWithHakuOids.get(0).getAtaruFormKey());
-        assertEquals(expected1.getHakuOids(), ataruFormsWithHakuOids.get(0).getHakuOids());
-        assertEquals(expected2.getAtaruFormKey(), ataruFormsWithHakuOids.get(1).getAtaruFormKey());
-        assertEquals(expected2.getHakuOids(), ataruFormsWithHakuOids.get(1).getHakuOids());
+        List<AtaruLomakkeetV1RDTO> ataruResult = result.getResult();
+        assertEquals(2, ataruResult.size());
+
+        AtaruLomakkeetV1RDTO usage1 = ataruResult.get(0);
+        AtaruLomakkeetV1RDTO usage2 = ataruResult.get(1);
+        List<AtaruLomakeHakuV1RDTO> items1 = usage1.getHaut();
+        List<AtaruLomakeHakuV1RDTO> items2 = usage2.getHaut();
+        assertEquals(expectedUsage1.getAvain(), usage1.getAvain());
+        assertEquals(expectedUsage2.getAvain(), usage2.getAvain());
+        assertEquals(expectedItems1.size(), items1.size());
+        assertEquals(expectedItems2.size(), items2.size());
+        assertEquals(expectedItems1.get(0).getOid(), items1.get(0).getOid());
+        assertEquals(expectedItems1.get(0).getNimi(), items1.get(0).getNimi());
+        assertEquals(expectedItems1.get(1).getOid(), items1.get(1).getOid());
+        assertEquals(expectedItems1.get(1).getNimi(), items1.get(1).getNimi());
+        assertEquals(expectedItems2.get(0).getOid(), items2.get(0).getOid());
+        assertEquals(expectedItems2.get(0).getNimi(), items2.get(0).getNimi());
     }
 
     private ResultV1RDTO<HakuV1RDTO> createHakuWithAtaruLomakeAvain(String ataruLomakeAvain) {

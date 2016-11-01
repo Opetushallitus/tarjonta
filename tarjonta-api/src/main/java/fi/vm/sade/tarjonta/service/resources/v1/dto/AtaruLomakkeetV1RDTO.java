@@ -18,27 +18,27 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AtaruFormUsageV1RDTO implements Serializable {
+public class AtaruLomakkeetV1RDTO implements Serializable {
 
-  private String ataruFormKey;
-  private List<String> hakuOids;
+  private String avain;
+  private List<AtaruLomakeHakuV1RDTO> haut;
 
-  public String getAtaruFormKey() {
-    return ataruFormKey;
+  public String getAvain() {
+    return avain;
   }
 
-  public void setAtaruFormKey(String ataruFormKey) {
-    this.ataruFormKey = ataruFormKey;
+  public void setAvain(String avain) {
+    this.avain = avain;
   }
 
-  public List<String> getHakuOids() {
-    if (hakuOids == null) {
-      hakuOids = new ArrayList<String>();
+  public List<AtaruLomakeHakuV1RDTO> getHaut() {
+    if (haut == null) {
+      haut = new ArrayList<AtaruLomakeHakuV1RDTO>();
     }
-    return hakuOids;
+    return haut;
   }
 
-  public void setHakuOids(List<String> hakuOids) {
-    this.hakuOids = hakuOids;
+  public void setHaut(List<AtaruLomakeHakuV1RDTO> haut) {
+    this.haut = haut;
   }
 }
