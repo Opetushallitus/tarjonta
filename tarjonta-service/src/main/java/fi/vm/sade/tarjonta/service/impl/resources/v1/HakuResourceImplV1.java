@@ -996,9 +996,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         List<AtaruLomakkeetV1RDTO> result = new ArrayList<>();
 
         for (Haku haku : hakus) {
-            AtaruLomakeHakuV1RDTO dto = new AtaruLomakeHakuV1RDTO();
-            dto.setOid(haku.getOid());
-            dto.setNimi(haku.getNimiFi());
+            AtaruLomakeHakuV1RDTO dto = converterV1.fromHakuToAtaruLomakeHakuRDTO(haku);
             String key = haku.getAtaruLomakeAvain();
             if (!grouped.containsKey(key)) {
                 grouped.put(key, new ArrayList<AtaruLomakeHakuV1RDTO>());

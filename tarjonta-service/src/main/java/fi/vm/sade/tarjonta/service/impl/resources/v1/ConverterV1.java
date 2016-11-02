@@ -2050,4 +2050,14 @@ public class ConverterV1 {
         }
         return kuvaukset;
     }
+
+    public AtaruLomakeHakuV1RDTO fromHakuToAtaruLomakeHakuRDTO(Haku haku) {
+        if (haku == null) {
+            return null;
+        }
+        AtaruLomakeHakuV1RDTO dto = new AtaruLomakeHakuV1RDTO();
+        dto.setOid(haku.getOid());
+        dto.setNimi(convertMonikielinenTekstiToMap(haku.getNimi(), true));
+        return dto;
+    }
 }
