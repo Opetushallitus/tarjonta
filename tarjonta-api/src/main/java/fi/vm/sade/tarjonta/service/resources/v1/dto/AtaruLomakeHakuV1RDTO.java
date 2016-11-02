@@ -15,10 +15,12 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AtaruLomakeHakuV1RDTO implements Serializable {
   private String oid;
-  private String nimi;
+  private Map<String, String> nimi = new HashMap<String, String>();
 
   public String getOid() {
     return oid;
@@ -28,11 +30,11 @@ public class AtaruLomakeHakuV1RDTO implements Serializable {
     this.oid = oid;
   }
 
-  public String getNimi() {
+  public Map<String, String> getNimi() {
     return nimi;
   }
 
-  public void setNimi(String nimi) {
+  public void setNimi(Map<String, String> nimi) {
     this.nimi = nimi;
   }
 }
