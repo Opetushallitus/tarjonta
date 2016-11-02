@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
@@ -595,6 +596,24 @@ public class ConverterV1Test extends TestMockBase {
 
         HakukohdeV1RDTO hakukohdeV1RDTO = converter.toHakukohdeRDTO(hakukohde);
         assertEquals(ATARULOMAKEAVAIN, hakukohdeV1RDTO.getAtaruLomakeAvain());
+    }
+
+    @Test
+    public void thatHakuIsConvertedToAtaruLomakeDTO() {
+        String oid = "haku";
+        String nimiFi = "haku (fi)";
+        String nimiSv = "haku (sv)";
+        String nimiEn = "haku (en)";
+        Haku haku = new Haku();
+        haku.setOid(oid);
+        haku.setNimi(TarjontaFixtures.createText(nimiFi, nimiSv, nimiEn));
+
+        AtaruLomakeHakuV1RDTO result = converter.fromHakuToAtaruLomakeHakuRDTO(haku);
+
+        assertEquals(oid, result.getOid());
+        assertEquals(nimiFi, result.getNimi().get("kieli_fi"));
+        assertEquals(nimiSv, result.getNimi().get("kieli_sv"));
+        assertEquals(nimiEn, result.getNimi().get("kieli_en"));
     }
 
     @Test

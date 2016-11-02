@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
+import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
 import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
@@ -9,6 +10,7 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.YhdenPaikanSaantoBuilder;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.AtaruLomakeHakuV1RDTO;
@@ -343,78 +345,66 @@ public class HakuResourceImplV1Test extends TestMockBase {
     }
 
     @Test
-    public void thatAtaruFormsInUseAreFound() {
-        String oid1 = "ataru1";
-        String oid2 = "ataru2";
-        String oid3 = "ataru3";
-        String name1 = "name1";
-        String name2 = "name2";
-        String name3 = "name3";
-        String key1 = "aaaa-aaaa-aaaa-aaaa-aaaa";
-        String key2 = "bbbb-bbbb-bbbb-bbbb-bbbb";
-
-        List<Haku> hakus = new ArrayList<>();
-        Haku haku1 = new Haku();
-        Haku haku2 = new Haku();
-        Haku haku3 = new Haku();
-        haku1.setOid(oid1);
-        haku2.setOid(oid2);
-        haku3.setOid(oid3);
-        haku1.setNimiFi(name1);
-        haku2.setNimiFi(name2);
-        haku3.setNimiFi(name3);
-        haku1.setAtaruLomakeAvain(key1); // haku1 uses atarulomake1
-        haku2.setAtaruLomakeAvain(key1); // haku2 uses atarulomake1
-        haku3.setAtaruLomakeAvain(key2); // haku3 uses atarulomake2
-        hakus.add(haku1);
-        hakus.add(haku2);
-        hakus.add(haku3);
-
-        when(hakuDAO.findHakusWithAtaruFormKeys()).thenReturn(hakus);
-
-        AtaruLomakeHakuV1RDTO item1 = new AtaruLomakeHakuV1RDTO();
-        AtaruLomakeHakuV1RDTO item2 = new AtaruLomakeHakuV1RDTO();
-        AtaruLomakeHakuV1RDTO item3 = new AtaruLomakeHakuV1RDTO();
-        AtaruLomakkeetV1RDTO expectedUsage1 = new AtaruLomakkeetV1RDTO();
-        AtaruLomakkeetV1RDTO expectedUsage2 = new AtaruLomakkeetV1RDTO();
-        List<AtaruLomakeHakuV1RDTO> expectedItems1 = new ArrayList<>();
-        List<AtaruLomakeHakuV1RDTO> expectedItems2 = new ArrayList<>();
-        item1.setOid(oid1);
-        item2.setOid(oid2);
-        item3.setOid(oid3);
-        item1.setNimi(name1);
-        item2.setNimi(name2);
-        item3.setNimi(name3);
-        expectedItems1.add(item1);
-        expectedItems1.add(item2);
-        expectedItems2.add(item3);
-        expectedUsage1.setAvain(key1);
-        expectedUsage2.setAvain(key2);
-        expectedUsage1.setHaut(expectedItems1); // expected [haku1, haku2] with atarulomake1
-        expectedUsage2.setHaut(expectedItems2); // expected [haku3] with atarulomake2
+    public void thatHakusWithoutAtaruFormsReturnsEmpty() {
+        List<Haku> empty = new ArrayList<>();
+        when(hakuDAO.findHakusWithAtaruFormKeys()).thenReturn(empty);
 
         ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> result = hakuResource.findAtaruFormUsage();
+
         assertNotNull(result);
         assertNotNull(result.getStatus());
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
+        assertEquals(0, result.getResult().size());
+    }
+
+    @Test
+    public void thatHakusWithAtaruFormsAreGrouped() {
+        String oid1 = "ataru1";
+        String oid2 = "ataru2";
+        String oid3 = "ataru3";
+        String lomakeKey1 = "aaaa-aaaa-aaaa-aaaa-aaaa";
+        String lomakeKey2 = "bbbb-bbbb-bbbb-bbbb-bbbb";
+        MonikielinenTeksti nimi1 = TarjontaFixtures.createText("nimi1_fi", "nimi1_sv", "nimi1_en");
+        MonikielinenTeksti nimi2 = TarjontaFixtures.createText("nimi2_fi", "nimi2_sv", "nimi2_en");
+        MonikielinenTeksti nimi3 = TarjontaFixtures.createText("nimi3_fi", "nimi3_sv", "nimi3_en");
+
+        Haku mockHaku1 = createHakuWithName(oid1, nimi1, lomakeKey1);
+        Haku mockHaku2 = createHakuWithName(oid2, nimi2, lomakeKey1);
+        Haku mockHaku3 = createHakuWithName(oid3, nimi3, lomakeKey2);
+        List<Haku> mockHaut = new ArrayList<>(Arrays.asList(mockHaku1, mockHaku2, mockHaku3));
+        when(hakuDAO.findHakusWithAtaruFormKeys()).thenReturn(mockHaut);
+
+        AtaruLomakeHakuV1RDTO mockItem1 = createAtaruLomakeItem(oid1, nimi1);
+        AtaruLomakeHakuV1RDTO mockItem2 = createAtaruLomakeItem(oid2, nimi2);
+        AtaruLomakeHakuV1RDTO mockItem3 = createAtaruLomakeItem(oid3, nimi3);
+        when(converterV1.fromHakuToAtaruLomakeHakuRDTO(mockHaku1)).thenReturn(mockItem1);
+        when(converterV1.fromHakuToAtaruLomakeHakuRDTO(mockHaku2)).thenReturn(mockItem2);
+        when(converterV1.fromHakuToAtaruLomakeHakuRDTO(mockHaku3)).thenReturn(mockItem3);
+
+        AtaruLomakkeetV1RDTO expectedForLomake1 = createAtaruLomakkeet(lomakeKey1, new ArrayList<>(Arrays.asList(mockItem1, mockItem2)));
+        AtaruLomakkeetV1RDTO expectedForLomake2 = createAtaruLomakkeet(lomakeKey2, new ArrayList<>(Arrays.asList(mockItem3)));
+
+        ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> result = hakuResource.findAtaruFormUsage();
+
+        assertNotNull(result);
+        assertNotNull(result.getStatus());
+        assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
+        assertEquals(2, result.getResult().size());
 
         List<AtaruLomakkeetV1RDTO> ataruResult = result.getResult();
-        assertEquals(2, ataruResult.size());
+        AtaruLomakkeetV1RDTO resultForLomake1 = ataruResult.get(0);
+        AtaruLomakkeetV1RDTO resultForLomake2 = ataruResult.get(1);
 
-        AtaruLomakkeetV1RDTO usage1 = ataruResult.get(0);
-        AtaruLomakkeetV1RDTO usage2 = ataruResult.get(1);
-        List<AtaruLomakeHakuV1RDTO> items1 = usage1.getHaut();
-        List<AtaruLomakeHakuV1RDTO> items2 = usage2.getHaut();
-        assertEquals(expectedUsage1.getAvain(), usage1.getAvain());
-        assertEquals(expectedUsage2.getAvain(), usage2.getAvain());
-        assertEquals(expectedItems1.size(), items1.size());
-        assertEquals(expectedItems2.size(), items2.size());
-        assertEquals(expectedItems1.get(0).getOid(), items1.get(0).getOid());
-        assertEquals(expectedItems1.get(0).getNimi(), items1.get(0).getNimi());
-        assertEquals(expectedItems1.get(1).getOid(), items1.get(1).getOid());
-        assertEquals(expectedItems1.get(1).getNimi(), items1.get(1).getNimi());
-        assertEquals(expectedItems2.get(0).getOid(), items2.get(0).getOid());
-        assertEquals(expectedItems2.get(0).getNimi(), items2.get(0).getNimi());
+        assertEquals(expectedForLomake1.getAvain(), resultForLomake1.getAvain());
+        assertEquals(expectedForLomake2.getAvain(), resultForLomake2.getAvain());
+        assertEquals(expectedForLomake1.getHaut().size(), resultForLomake1.getHaut().size());
+        assertEquals(expectedForLomake2.getHaut().size(), resultForLomake2.getHaut().size());
+        assertEquals(expectedForLomake1.getHaut().get(0).getOid(), resultForLomake1.getHaut().get(0).getOid());
+        assertEquals(expectedForLomake1.getHaut().get(0).getNimi(), resultForLomake1.getHaut().get(0).getNimi());
+        assertEquals(expectedForLomake1.getHaut().get(1).getOid(), resultForLomake1.getHaut().get(1).getOid());
+        assertEquals(expectedForLomake1.getHaut().get(1).getNimi(), resultForLomake1.getHaut().get(1).getNimi());
+        assertEquals(expectedForLomake2.getHaut().get(0).getOid(), resultForLomake2.getHaut().get(0).getOid());
+        assertEquals(expectedForLomake2.getHaut().get(0).getNimi(), resultForLomake2.getHaut().get(0).getNimi());
     }
 
     private ResultV1RDTO<HakuV1RDTO> createHakuWithAtaruLomakeAvain(String ataruLomakeAvain) {
@@ -431,6 +421,28 @@ public class HakuResourceImplV1Test extends TestMockBase {
 
         ResultV1RDTO<HakuV1RDTO> result = hakuResource.createHaku(hakuDTO);
         return result;
+    }
+
+    private Haku createHakuWithName(String oid, MonikielinenTeksti nimi, String key) {
+        Haku haku = new Haku();
+        haku.setOid(oid);
+        haku.setNimi(nimi);
+        haku.setAtaruLomakeAvain(key);
+        return haku;
+    }
+
+    private AtaruLomakeHakuV1RDTO createAtaruLomakeItem(String oid, MonikielinenTeksti nimi) {
+        AtaruLomakeHakuV1RDTO item = new AtaruLomakeHakuV1RDTO();
+        item.setOid(oid);
+        item.setNimi(nimi.asMap());
+        return item;
+    }
+
+    private AtaruLomakkeetV1RDTO createAtaruLomakkeet(String key, List<AtaruLomakeHakuV1RDTO> items) {
+        AtaruLomakkeetV1RDTO usage = new AtaruLomakkeetV1RDTO();
+        usage.setAvain(key);
+        usage.setHaut(items);
+        return usage;
     }
 
     private HakuaikaV1RDTO createHakuaika(Date start, Date end) {
