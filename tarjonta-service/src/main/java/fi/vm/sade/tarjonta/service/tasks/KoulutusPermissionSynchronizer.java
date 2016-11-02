@@ -146,7 +146,7 @@ public class KoulutusPermissionSynchronizer {
 
             for (KoulutusPermissionException exception : entry.getValue()) {
                 KoulutusmoduuliToteutus komoto = exception.getKomoto();
-                body += "\t" + urlConfiguration.url("tarjonta-service.koulutus") + " (" + komoto.getTila().toString()
+                body += "\t" + urlConfiguration.url("tarjonta-app.koulutus", komoto.getOid()) + " (" + komoto.getTila().toString()
                         + ") (ei oikeutta koodiin \"" + exception.getPuuttuvaKoodi() + "\")\n";
             }
         }
