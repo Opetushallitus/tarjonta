@@ -507,11 +507,11 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         AuthService
             .crudOrg(AuthService.getUserDefaultOid(), 'APP_HAKULOMAKKEENHALLINTA')
             .then(function(authorised) {
+                $scope.model.isAtaruRole = (authorised) ? true : false;
                 return (authorised) ? authorised : $q.reject('Unauthorised');
             })
             .then(AtaruService.getForms)
             .then(function(forms) {
-                $scope.model.isAtaruRole = true;
                 $scope.model.ataruForms = forms;
             });
     };
