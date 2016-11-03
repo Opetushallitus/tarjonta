@@ -504,16 +504,9 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             label: LocalisationService.t('haku.edit.koulutuksenTyyppi.opintokokonaisuusOpintojakso')});
     };
     $scope.initAtaruForms = function() {
-        AuthService
-            .crudOrg(AuthService.getUserDefaultOid(), 'APP_HAKULOMAKKEENHALLINTA')
-            .then(function(authorised) {
-                $scope.model.isAtaruRole = (authorised) ? true : false;
-                return (authorised) ? authorised : $q.reject('Unauthorised');
-            })
-            .then(AtaruService.getForms)
-            .then(function(forms) {
-                $scope.model.ataruForms = forms;
-            });
+        AtaruService.getForms().then(function(forms) {
+            $scope.model.ataruForms = forms;
+        });
     };
     $scope.init = function() {
         var model = {
@@ -532,7 +525,6 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             parameter: {},
             selectedOrganisations: [],
             selectedTarjoajaOrganisations: [],
-            isAtaruRole: false,
             ataruForms: [],
             config: Config.env
         };
