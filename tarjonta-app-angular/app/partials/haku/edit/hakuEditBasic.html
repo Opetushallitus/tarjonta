@@ -294,7 +294,7 @@
                     ng-selected="model.hakux.result.ataruLomakeAvain"
                     ng-disabled="model.haku.hakulomake != 'ATARU'"
                     ng-required="model.haku.hakulomake == 'ATARU'"/>
-            <a href="{{url('ataru-app-web.hakemus', model.hakux.result.ataruLomakeAvain)}}" target="_blank">Näytä lomake</a>
+            <a href="{{url('ataru-app-web.hakemus', model.hakux.result.ataruLomakeAvain)}}" ng-if="model.hakux.result.ataruLomakeAvain" target="_blank">Näytä lomake</a>
             <a href="{{url('ataru-service.hakemukset')}}" target="_blank">Muokkaa lomakkeita</a>
         </td>
     </tr>
