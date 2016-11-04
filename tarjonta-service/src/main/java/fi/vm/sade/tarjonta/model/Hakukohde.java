@@ -51,6 +51,7 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "hakukohde", orphanRemoval = true)
+    @OrderBy("id ASC")
     private Set<Valintakoe> valintakoes = new HashSet<Valintakoe>();
 
     /**
