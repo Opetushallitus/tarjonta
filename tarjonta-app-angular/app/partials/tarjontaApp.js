@@ -254,7 +254,8 @@ angular.module('app').config([
                     yhteystiedot: [],
                     pohjakoulutusliitteet: [],
                     isNew: true,
-                    overridesHaunHakulomakeUrl: false
+                    overridesHaunHakulomakeUrl: false,
+                    tunnistusKaytossa: false
                 });
                 var koulutus = SharedStateService.getFromState('firstSelectedKoulutus');
                 SharedStateService.removeState('firstSelectedKoulutus');

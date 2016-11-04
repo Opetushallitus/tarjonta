@@ -100,6 +100,9 @@ public class Haku extends TarjontaBaseEntity {
     @Column(name = "sijoittelu")
     private boolean sijoittelu;
 
+    @Column(name = "tunnistuskaytossa")
+    private boolean tunnistusKaytossa;
+
     @Column(name = "jarjestelmanHakulomake")
     private boolean jarjestelmanHakulomake;
 
@@ -293,6 +296,14 @@ public class Haku extends TarjontaBaseEntity {
 
     public void setSijoittelu(boolean sijoittelu) {
         this.sijoittelu = sijoittelu;
+    }
+
+    public boolean isTunnistusKaytossa() {
+        return tunnistusKaytossa;
+    }
+
+    public void setTunnistusKaytossa(boolean tunnistusKaytossa) {
+        this.tunnistusKaytossa = tunnistusKaytossa;
     }
 
     public String getHakulomakeUrl() {

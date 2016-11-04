@@ -38,6 +38,7 @@ public class HakuDTO extends BaseRDTO {
     private String _tila;
     private boolean _sijoittelu;
     private int maxHakukohdes = 0;
+    private boolean tunnistusKaytossa;
 
     private List<HakuaikaRDTO> _hakuaikas;
 
@@ -147,6 +148,14 @@ public class HakuDTO extends BaseRDTO {
 
     public boolean isSijoittelu() {
         return _sijoittelu;
+    }
+
+    public void setTunnistusKaytossa(boolean tunnistusKaytossa) {
+        this.tunnistusKaytossa = tunnistusKaytossa;
+    }
+
+    public boolean isTunnistusKaytossa() {
+        return tunnistusKaytossa;
     }
 
     public List<HakuaikaRDTO> getHakuaikas() {

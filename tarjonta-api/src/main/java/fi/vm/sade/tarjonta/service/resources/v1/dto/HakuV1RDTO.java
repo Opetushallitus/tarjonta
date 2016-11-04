@@ -117,6 +117,9 @@ public class HakuV1RDTO extends BaseV1RDTO {
     @ApiModelProperty(value = "Maksumuuri käytössä", required = false)
     private boolean maksumuuriKaytossa = false;
 
+    @ApiModelProperty(value = "Tunnistus käytössä", required = false)
+    private boolean tunnistusKaytossa = false;
+
     @ApiModelProperty(value = "Onko yhden paikan sääntö voimassa haulle ja miksi", required = true)
     private YhdenPaikanSaanto yhdenPaikanSaanto;
 
@@ -375,13 +378,14 @@ public class HakuV1RDTO extends BaseV1RDTO {
         return isKorkeakouluHaku()
                 && KoulutusmoduuliTyyppi.TUTKINTO.equals(getKoulutusmoduuliTyyppi())
                 && StringUtils.isEmpty(getKohdejoukonTarkenne())
-                && (
-                    getKoulutuksenAlkamisVuosi() > 2016
-                    || (
-                        getKoulutuksenAlkamisVuosi() == 2016
-                        && StringUtils.defaultString(getKoulutuksenAlkamiskausiUri()).startsWith("kausi_s#")
-                    )
-                );
+                && ( (getKoulutuksenAlkamisVuosi() == 2016 && StringUtils.defaultString(getKoulutuksenAlkamiskausiUri()).startsWith("kausi_s#"))
+                    || (getKoulutuksenAlkamisVuosi() == 2017 && StringUtils.defaultString(getKoulutuksenAlkamiskausiUri()).startsWith("kausi_k#")) );
+    }
+
+    public boolean isTunnistusKaytossa() { return tunnistusKaytossa; }
+
+    public void setTunnistusKaytossa(boolean tunnistusKaytossa) {
+        this.tunnistusKaytossa = tunnistusKaytossa;
     }
 
     public boolean isKorkeakouluHaku() {
