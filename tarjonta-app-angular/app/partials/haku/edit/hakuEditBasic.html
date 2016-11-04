@@ -301,7 +301,7 @@
 
     <!-- tunnistusKaytossa - minilomaketta -->
 
-    <tr>
+    <tr ng-if="showMinilomake()">
         <th data-tt='haku.edit.tunnistusKaytossa'>Tunnistus käytössä</th>
         <td>
             <input id="tunnistusKaytossa" type="checkbox" ng-model="model.hakux.result.tunnistusKaytossa" ng-chage="checkKaytaTunnistusta()"">

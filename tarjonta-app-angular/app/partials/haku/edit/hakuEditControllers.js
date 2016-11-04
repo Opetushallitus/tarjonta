@@ -649,6 +649,16 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
     $scope.isKorkeakouluhaku = function() {
         return $scope.model.hakux.result.kohdejoukkoUri.indexOf('haunkohdejoukko_12#') !== -1;
     };
+    $scope.showMinilomake = function() {
+        if($scope.model.hakux.result.kohdejoukkoUri.indexOf('haunkohdejoukko_12#') !== -1 && $scope.model.hakux.result.koulutusmoduuliTyyppi !== undefined && $scope.model.hakux.result.koulutusmoduuliTyyppi === 'TUTKINTO'){
+            return true;
+        } else {
+            // set also tunnistusKaytossa to false
+            $scope.model.hakux.result.tunnistusKaytossa = false;
+            return false;
+        }
+
+    };
     $scope.isErillishaku = function() {
         return $scope.model.hakux.result.hakutapaUri.indexOf('hakutapa_02#') !== -1;
     };
