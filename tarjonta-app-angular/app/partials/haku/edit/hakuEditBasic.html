@@ -296,6 +296,7 @@
                     ng-required="model.haku.hakulomake == 'ATARU'"/>
             <a href="{{url('ataru-app-web.hakemus', model.hakux.result.ataruLomakeAvain)}}" ng-if="model.hakux.result.ataruLomakeAvain" target="_blank">Näytä lomake</a>
             <a href="{{url('ataru-service.hakemukset')}}" target="_blank">Muokkaa lomakkeita</a>
+            <p class="error" ng-if="model.haku.hakulomake == 'ATARU' && isSelectedAtaruFormDefinedAndUnvailable()" tt="haku.review.ataru.lomake.poistettu">Lomaketta ei enää ole Lomake-editorissa.</p>
         </td>
     </tr>
 
