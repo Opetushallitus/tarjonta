@@ -1,12 +1,6 @@
 package fi.vm.sade.tarjonta.service.impl.resources;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.*;
@@ -221,7 +215,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
             return result;
         }
 
-        Set<Valintakoe> valintakoes = hakukohde.getValintakoes();
+        SortedSet<Valintakoe> valintakoes = hakukohde.getValintakoes();
         for (Valintakoe valintakoe : valintakoes) {
             LOG.debug("  process: vk.id = {}", valintakoe.getId());
 

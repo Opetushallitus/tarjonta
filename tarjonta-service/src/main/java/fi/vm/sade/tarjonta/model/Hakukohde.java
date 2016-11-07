@@ -20,6 +20,8 @@ import com.google.common.collect.Iterables;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonManagedReference;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
@@ -52,7 +54,8 @@ public class Hakukohde extends TarjontaBaseEntity {
     @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "hakukohde", orphanRemoval = true)
     @OrderBy("id ASC")
-    private Set<Valintakoe> valintakoes = new HashSet<Valintakoe>();
+    @Sort(type = SortType.NATURAL)
+    private SortedSet<Valintakoe> valintakoes = new TreeSet<>();
 
     /**
      * The koodisto uri of the name of this hakukohde object.
@@ -337,13 +340,12 @@ public class Hakukohde extends TarjontaBaseEntity {
     /**
      * @return the valintakoes
      */
-    public Set<Valintakoe> getValintakoes() {
+    public SortedSet<Valintakoe> getValintakoes() {
         if (valintakoes == null) {
-            valintakoes = new HashSet<Valintakoe>();
+            valintakoes = new TreeSet<>();
         }
 
         return valintakoes;
-
     }
 
     public void addValintakoe(Valintakoe valintakoe) {
