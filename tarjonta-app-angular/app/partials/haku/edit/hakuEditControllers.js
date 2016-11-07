@@ -508,6 +508,12 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             $scope.model.ataruForms = forms;
         });
     };
+    $scope.isSelectedAtaruFormDefinedAndUnvailable = function() {
+        var key = $scope.model.hakux.result.ataruLomakeAvain;
+        var form = _.findWhere($scope.model.ataruForms, {'key': key});
+        var result = (key && !form) ? true : false;
+        return result;
+    };
     $scope.init = function() {
         var model = {
             formControls: {},
