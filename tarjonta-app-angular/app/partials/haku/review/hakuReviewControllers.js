@@ -141,9 +141,7 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
     $scope.initAtaruForm = function(ataruLomakeAvain) {
         AtaruService.getForms().then(function(forms) {
             var form = _.findWhere(forms, {'key': ataruLomakeAvain});
-            if (form) {
-                $scope.model.ataruFormName = form.name;
-            }
+            $scope.model.ataruFormName = (form) ? form.name : '';
         });
     };
     $scope.init = function() {
