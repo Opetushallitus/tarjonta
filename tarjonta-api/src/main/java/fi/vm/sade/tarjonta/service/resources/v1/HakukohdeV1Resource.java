@@ -229,6 +229,7 @@ public interface HakukohdeV1Resource {
     @ApiOperation(value = "Palauttaa listan hakukohteista annetuilla parametreilla", notes = "Palauttaa listan hakukohteista annetuilla parametreilla.", response = HakukohdeHakutulosV1RDTO.class)
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(
             @ApiParam(value = "Hakutermit", required = false) @QueryParam("searchTerms") String searchTerms,
+            @ApiParam(value = "Koodiston hakukohteet koodi URI", required = false) @QueryParam("hakukohteenNimiUri") String hakukohteenNimiUri,
             @ApiParam(value = "Lista organisaatioiden oid:tä", required = false) @QueryParam("organisationOid") List<String> organisationOids,
             @ApiParam(value = "Lista hakukohteen tiloja", required = false) @QueryParam("tila") List<String> hakukohdeTilas,
             @ApiParam(value = "Alkamiskausi", required = false) @QueryParam("alkamisKausi") String alkamisKausi,
