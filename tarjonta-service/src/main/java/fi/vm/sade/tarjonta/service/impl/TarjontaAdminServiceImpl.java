@@ -17,14 +17,7 @@
 package fi.vm.sade.tarjonta.service.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 import javax.annotation.Nullable;
 import javax.jws.WebParam;
@@ -280,7 +273,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         return hakukohdeLiites;
     }
 
-    private List<ValintakoeTyyppi> convertValintakoeTyyppis(Set<Valintakoe> valintakoes) {
+    private List<ValintakoeTyyppi> convertValintakoeTyyppis(SortedSet<Valintakoe> valintakoes) {
         ArrayList<ValintakoeTyyppi> valintakoeTyyppis = new ArrayList<ValintakoeTyyppi>();
 
         for (Valintakoe valintakoe : valintakoes) {
