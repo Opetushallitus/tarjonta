@@ -31,7 +31,7 @@ import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 @Entity
 @Table(name = "valintakoe")
 @JsonIgnoreProperties({"id","version"})
-public class Valintakoe extends TarjontaBaseEntity {
+public class Valintakoe extends TarjontaBaseEntity implements Comparable<Valintakoe> {
 
     private static final long serialVersionUID = 7092585555234995829L;
 
@@ -159,6 +159,21 @@ public class Valintakoe extends TarjontaBaseEntity {
         int result = super.hashCode();
         result = 31 * result + (getId() != null ? getId().hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public int compareTo(Valintakoe valintakoe) {
+        if (this.getId() == null && valintakoe.getId() == null) {
+            // Some arbitrary ordering
+            return Integer.compare(this.hashCode(), valintakoe.hashCode());
+        }
+        if (this.getId() == null) {
+            return 1;
+        }
+        if (valintakoe.getId() == null) {
+            return -1;
+        }
+        return this.getId().compareTo(valintakoe.getId());
     }
 
     public Hakukohde getHakukohde() {
