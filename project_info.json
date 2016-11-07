@@ -5,5 +5,7 @@
 
   "velka": "oph-configuration + erilliset postgres-käynnistysasetukset, js-riipuvuudet git-repossa (packages.json käyttöön)",
 
-  "csrf": "OK: tarjonta-angular-app ok, backend tekee vain GET rest-kutsuja"
+  "csrf": "OK: tarjonta-angular-app ok, backend tekee vain GET rest-kutsuja",
+
+  "includes": ["koodisto-client"]
 }
