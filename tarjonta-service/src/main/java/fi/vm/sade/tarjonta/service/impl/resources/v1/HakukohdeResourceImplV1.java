@@ -135,6 +135,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(String searchTerms,
+                                                                             String hakukohteenNimiUri,
                                                                              List<String> organisationOids,
                                                                              List<String> hakukohdeTilas,
                                                                              String alkamisKausi,
@@ -162,6 +163,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         HakukohteetKysely q = new HakukohteetKysely();
         q.setNimi(searchTerms);
+        q.setNimiKoodiUri(hakukohteenNimiUri);
         q.setKoulutuksenAlkamiskausi(alkamisKausi);
         q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
         q.getTarjoajaOids().addAll(organisationOids);

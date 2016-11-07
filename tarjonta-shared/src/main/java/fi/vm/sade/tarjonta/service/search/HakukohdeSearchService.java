@@ -101,6 +101,7 @@ public class HakukohdeSearchService extends SearchService {
         final SolrQuery q = new SolrQuery(QUERY_ALL);
 
         addFilterForHakukohdeNimi(nimi, queryParts, q);
+        addFilterForHakukohdeNimiUri(kysely, q);
         addFilterForHakukohdeTila(tilat, q);
         addFilterForHakuOid(kysely, q);
         addFilterForVuosiKausi(kausi, vuosi, queryParts, q);
@@ -174,6 +175,12 @@ public class HakukohdeSearchService extends SearchService {
             addQuery(nimi, queryParts, TEKSTIHAKU_TEMPLATE, TEKSTIHAKU, nimi);
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
             queryParts.clear();
+        }
+    }
+
+    private void addFilterForHakukohdeNimiUri(HakukohteetKysely kysely, SolrQuery q) {
+        if (kysely.getNimiKoodiUri() != null) {
+            q.addFilterQuery(getFilterQueryForUri(HAKUKOHTEEN_NIMI_URI, kysely.getNimiKoodiUri()));
         }
     }
 
