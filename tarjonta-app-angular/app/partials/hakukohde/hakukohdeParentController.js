@@ -1266,7 +1266,7 @@ app.controller('HakukohdeParentController', [
                 $scope.checkIfSavingCopy($scope.model.hakukohde);
             }
             else {
-                $scope.showError(repsonse.errors);
+                $scope.showError(response.errors);
             }
             $scope.canEdit = true;
             $scope.model.continueToReviewEnabled = true;
