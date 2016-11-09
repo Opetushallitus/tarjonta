@@ -24,6 +24,7 @@ import fi.vm.sade.tarjonta.publication.model.RestParam;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusImplicitDataPopulator;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.util.YhdenPaikanSaantoBuilder;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OppiaineV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
@@ -70,6 +71,9 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
     KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
     @Autowired
     private KoulutusImplicitDataPopulator dataPopulator;
+    @Autowired
+    private YhdenPaikanSaantoBuilder yhdenPaikanSaantoBuilder;
+
 
     public TYPE convert(Class<TYPE> clazz, final KoulutusmoduuliToteutus komoto, final RestParam param) {
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", komoto);
@@ -174,6 +178,12 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
                 for (Map.Entry<String, BinaryData> e : komoto.getKuvat().entrySet()) {
                     kkDto.getOpintojenRakenneKuvas().put(e.getKey(), new KuvaV1RDTO(e.getValue().getFilename(), e.getValue().getMimeType(), e.getKey(), Base64.encodeBase64String(e.getValue().getData())));
                 }
+            }
+            try {
+                kkDto.setJohtaaTutkintoon(yhdenPaikanSaantoBuilder.koulutusJohtaaTutkintoon(komoto));
+            } catch (IllegalStateException e) {
+                LOG.error("Failed to determine tutkintoonjohtavuus for koulutus {} due to missing code relation. This will affect valintas!", kkDto.getOid(), e);
+                kkDto.setJohtaaTutkintoon(false);
             }
 
         }
