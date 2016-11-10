@@ -53,6 +53,7 @@ import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -646,9 +647,36 @@ public class ConverterV1 {
         convertPainotettavatOppianeetToDTO(hakukohde, hakukohdeRDTO);
         convertKoulutusmoduuliTyyppiToDTO(hakukohde, hakukohdeRDTO);
         convertRyhmaliitoksetToDTO(hakukohde, hakukohdeRDTO);
-
+        convertKomotoFields(hakukohde, hakukohdeRDTO);
 
         return hakukohdeRDTO;
+    }
+
+    private void convertKomotoFields(Hakukohde h, HakukohdeV1RDTO dto) {
+        try {
+            Set<Triple<Boolean, Integer, String>> komotoInfos = new HashSet();
+            for (KoulutusmoduuliToteutus komoto : h.getKoulutusmoduuliToteutuses()) {
+                if(TarjontaTila.POISTETTU.equals(komoto.getTila())) continue;
+
+                boolean tutkintoonjohtava = yhdenPaikanSaantoBuilder.koulutusJohtaaTutkintoon(komoto);
+                Integer alkamisvuosi = komoto.getUniqueAlkamisVuosi();
+                String alkamiskausi = komoto.getUniqueAlkamiskausiUri();
+                komotoInfos.add(Triple.of(tutkintoonjohtava, alkamisvuosi, alkamiskausi));
+            }
+
+            if (komotoInfos.size() > 1) {
+                throw new IllegalStateException(String.format(
+                        "Hakukohteeseen %s liittyvien koulutusten tiedot ovat ristiriitaiset: %s", h.getOid(), komotoInfos
+                ));
+            }
+
+            Triple<Boolean, Integer, String> ki = komotoInfos.iterator().next();
+            dto.setTutkintoonJohtava(ki.getLeft());
+            dto.setKoulutuksenAlkamisvuosi(ki.getMiddle());
+            dto.setKoulutuksenAlkamiskausiUri(ki.getRight());
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to convert hakukohde " + h.getOid() + " to DTO due to error in linked komotos", e);
+        }
     }
 
     private void convertKoulutukset(Hakukohde hakukohde, HakukohdeV1RDTO dto) {
