@@ -281,6 +281,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     private void addAloituspaikkatiedot(SolrInputDocument doc, Hakukohde hakukohde) {
         add(doc, ALOITUSPAIKAT, hakukohde.getAloituspaikatLkm());
         add(doc, ENSIKERTALAISTEN_ALOITUSPAIKAT, hakukohde.getEnsikertalaistenAloituspaikat());
+        add(doc, VALINTOJEN_ALOITUSPAIKAT, hakukohde.getValintojenAloituspaikatLkm());
 
         MonikielinenTeksti aloituspaikatKuvaus = hakukohde.getAloituspaikatKuvaus();
 

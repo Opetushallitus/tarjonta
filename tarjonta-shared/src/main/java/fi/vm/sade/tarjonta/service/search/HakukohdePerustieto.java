@@ -16,6 +16,7 @@ public class HakukohdePerustieto implements Serializable {
     private String koodistoNimi;
     private TarjontaTila tila;
     private Integer aloituspaikat;
+    private Integer valintojenAloituspaikat;
     private KoodistoKoodi koulutuksenAlkamiskausi;
     private Integer koulutuksenAlkamisvuosi;
     private KoodistoKoodi hakutapakoodi;
@@ -283,5 +284,13 @@ public class HakukohdePerustieto implements Serializable {
 
     public void setEnsikertalaistenAloituspaikat(Integer ensikertalaistenAloituspaikat) {
         this.ensikertalaistenAloituspaikat = ensikertalaistenAloituspaikat;
+    }
+
+    public Integer getValintojenAloituspaikat() {
+        return valintojenAloituspaikat;
+    }
+
+    public void setValintojenAloituspaikat(Integer valintojenAloituspaikat) {
+        this.valintojenAloituspaikat = valintojenAloituspaikat;
     }
 }

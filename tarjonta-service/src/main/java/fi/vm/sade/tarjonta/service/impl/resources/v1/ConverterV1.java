@@ -1862,6 +1862,7 @@ public class ConverterV1 {
         dto.setHakuOid(hakukohdePerustieto.getHakuOid());
         dto.setHakutapa(hakukohdePerustieto.getHakutapaNimi());
         dto.setAloituspaikat(Integer.valueOf(hakukohdePerustieto.getAloituspaikat()));
+        dto.setValintojenAloituspaikat(hakukohdePerustieto.getValintojenAloituspaikat());
         dto.setKoulutuslaji(hakukohdePerustieto.getKoulutuslaji() == null ? null : hakukohdePerustieto
                 .getKoulutuslaji().getNimi());
         dto.setTila(TarjontaTila.valueOf(hakukohdePerustieto.getTila()));
