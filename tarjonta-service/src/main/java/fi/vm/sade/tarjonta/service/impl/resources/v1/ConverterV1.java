@@ -523,8 +523,11 @@ public class ConverterV1 {
             throw new RuntimeException(e);
         }
     }
-
     public HakukohdeV1RDTO toHakukohdeRDTO(Hakukohde hakukohde) {
+        return toHakukohdeRDTO(hakukohde, false);
+    }
+
+    public HakukohdeV1RDTO toHakukohdeRDTO(Hakukohde hakukohde, boolean populateKomotoFields) {
         HakukohdeV1RDTO hakukohdeRDTO = new HakukohdeV1RDTO();
 
         hakukohdeRDTO = setDefaultValues(hakukohdeRDTO);
@@ -647,7 +650,9 @@ public class ConverterV1 {
         convertPainotettavatOppianeetToDTO(hakukohde, hakukohdeRDTO);
         convertKoulutusmoduuliTyyppiToDTO(hakukohde, hakukohdeRDTO);
         convertRyhmaliitoksetToDTO(hakukohde, hakukohdeRDTO);
-        convertKomotoFields(hakukohde, hakukohdeRDTO);
+        if(populateKomotoFields){
+            convertKomotoFields(hakukohde, hakukohdeRDTO);
+        }
 
         return hakukohdeRDTO;
     }
