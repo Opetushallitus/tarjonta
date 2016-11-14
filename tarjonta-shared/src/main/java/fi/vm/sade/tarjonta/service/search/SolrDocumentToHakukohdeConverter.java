@@ -38,6 +38,9 @@ public class SolrDocumentToHakukohdeConverter {
         if (hakukohdeDoc.getFieldValue(ALOITUSPAIKAT) != null) {
             hakukohde.setAloituspaikat(Integer.parseInt((String) hakukohdeDoc.getFieldValue(ALOITUSPAIKAT)));
         }
+        if(hakukohdeDoc.getFieldValue(VALINTOJEN_ALOITUSPAIKAT) != null) {
+            hakukohde.setValintojenAloituspaikat(Integer.parseInt((String) hakukohdeDoc.getFieldValue(VALINTOJEN_ALOITUSPAIKAT)));
+        }
         hakukohde.setHakuAlkamisPvm(parseDate(hakukohdeDoc, HAUN_ALKAMISPVM));
         hakukohde.setHakuPaattymisPvm(parseDate(hakukohdeDoc, HAUN_PAATTYMISPVM));
 

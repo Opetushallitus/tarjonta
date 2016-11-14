@@ -15,6 +15,7 @@ public class HakukohdeHakutulosV1RDTO extends KoulutusHakutulosV1RDTO {
     private String hakuaikaString;
     private String hakuaikaRyhma;
     private Integer aloituspaikat;
+    private Integer valintojenAloituspaikat;
     private String hakuOid;
     private List<RyhmaliitosV1RDTO> ryhmaliitokset = new ArrayList<RyhmaliitosV1RDTO>();
     private Integer ensikertalaistenAloituspaikat;
@@ -81,5 +82,13 @@ public class HakukohdeHakutulosV1RDTO extends KoulutusHakutulosV1RDTO {
 
     public void setEnsikertalaistenAloituspaikat(Integer ensikertalaistenAloituspaikat) {
         this.ensikertalaistenAloituspaikat = ensikertalaistenAloituspaikat;
+    }
+
+    public Integer getValintojenAloituspaikat() {
+        return valintojenAloituspaikat;
+    }
+
+    public void setValintojenAloituspaikat(Integer valintojenAloituspaikat) {
+        this.valintojenAloituspaikat = valintojenAloituspaikat;
     }
 }
