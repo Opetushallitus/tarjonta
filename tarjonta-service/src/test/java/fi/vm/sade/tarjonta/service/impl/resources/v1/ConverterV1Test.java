@@ -673,7 +673,7 @@ public class ConverterV1Test extends TestMockBase {
 
         Hakukohde hakukohde = getHakukohde();
         setKomotoForHakukohde(hakukohde);
-        HakukohdeV1RDTO h = converter.toHakukohdeRDTO(hakukohde);
+        HakukohdeV1RDTO h = converter.toHakukohdeRDTO(hakukohde, true);
         assertThat(h, notNullValue());
         assertThat(h.getKoulutuksenAlkamiskausiUri(), is(equalTo(ALKAMISKAUSI)));
         assertThat(h.getKoulutuksenAlkamisvuosi(), is(equalTo(ALKAMISVUOSI)));
@@ -686,7 +686,7 @@ public class ConverterV1Test extends TestMockBase {
 
         Hakukohde hakukohde = getHakukohde();
         setKomotoForHakukohde(hakukohde);
-        HakukohdeV1RDTO h = converter.toHakukohdeRDTO(hakukohde);
+        HakukohdeV1RDTO h = converter.toHakukohdeRDTO(hakukohde, true);
         assertThat(h, notNullValue());
         assertThat(h.getKoulutuksenAlkamiskausiUri(), is(equalTo(ALKAMISKAUSI)));
         assertThat(h.getKoulutuksenAlkamisvuosi(), is(equalTo(ALKAMISVUOSI)));
@@ -715,7 +715,7 @@ public class ConverterV1Test extends TestMockBase {
 
         hakukohde.setKoulutusmoduuliToteutuses(Sets.newHashSet(komoto, komotoPoistettu));
 
-        HakukohdeV1RDTO h = converter.toHakukohdeRDTO(hakukohde);
+        HakukohdeV1RDTO h = converter.toHakukohdeRDTO(hakukohde, true);
         assertThat(h, notNullValue());
         assertThat(h.getKoulutuksenAlkamiskausiUri(), is(equalTo(ALKAMISKAUSI)));
         assertThat(h.getKoulutuksenAlkamisvuosi(), is(equalTo(ALKAMISVUOSI)));
@@ -750,7 +750,7 @@ public class ConverterV1Test extends TestMockBase {
 
         hakukohde.setKoulutusmoduuliToteutuses(Sets.newHashSet(komoto, komotoPoistettu, komotoVaaraKausi));
 
-        HakukohdeV1RDTO h = converter.toHakukohdeRDTO(hakukohde);
+        HakukohdeV1RDTO h = converter.toHakukohdeRDTO(hakukohde, true);
         assertThat(h, notNullValue());
         assertThat(h.getKoulutuksenAlkamiskausiUri(), is(equalTo(ALKAMISKAUSI)));
         assertThat(h.getKoulutuksenAlkamisvuosi(), is(equalTo(ALKAMISVUOSI)));
