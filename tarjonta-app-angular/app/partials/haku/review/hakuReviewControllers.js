@@ -219,7 +219,7 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
                         H1: {t: 's', v: 'Tila'},
                         I1: {t: 's', v: 'Hakutapa'},
                         J1: {t: 's', v: 'Aloituspaikat'},
-                        K1: {t: 's', v: 'Valintaojen aloituspaikat'},
+                        K1: {t: 's', v: 'Valintojen aloituspaikat'},
                         L1: {t: 's', v: 'Ensikertalaisten aloituspaikat'},
                         M1: {t: 's', v: 'Koulutustyyppi'},
                         N1: {t: 's', v: 'Opetuskielet'}
