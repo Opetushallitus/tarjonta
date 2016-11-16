@@ -25,11 +25,6 @@ app.factory('AtaruService', function($resource, $http, AuthService) {
         headers: { 'Content-Type': 'application/json; charset=UTF-8' }
     };
     return {
-        init: function() {
-            return $http.get(window.url('ataru-service.editor'), config).then(function(response) {
-                return response;
-            })
-        },
         getAtaruAuthorisation: function() {
             return AuthService.crudOrg(AuthService.getUserDefaultOid(), ataruRole).then(function(authorised) {
                 return authorised;
