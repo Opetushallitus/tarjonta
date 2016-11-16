@@ -11,7 +11,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     var koulutusHaku = $resource(window.url("tarjonta-service.koulutus.haku"));
 
     function initCas() {
-        var services = [window.url('ataru-service.buildversion')];
+        var services = [window.url('ataru-service.editor')];
         return $q.all(services.map(loadBuildversion));
     }
     function loadBuildversion(serviceUrl) {
