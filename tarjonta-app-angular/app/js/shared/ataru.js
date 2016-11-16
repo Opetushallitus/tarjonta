@@ -14,31 +14,30 @@
  */
 var app = angular.module('ataru', [
     'ngResource',
-    'config',
     'Logging'
 ]);
 
-app.factory('Ataru', function($resource, Config) {
+app.factory('AtaruService', function($resource, $http, AuthService) {
     'use strict';
-    var serviceUrl = Config.env.ataruRestUrl;
-    return $resource(serviceUrl, {}, {
-        getForms: {
-            url: '/lomake-editori/api/forms',
-            method: 'GET',
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'application/json; charset=UTF-8'
-            }
-        }
-    });
-});
-
-app.factory('AtaruService', function(Ataru) {
-    'use strict';
+    var ataruRole = 'APP_HAKULOMAKKEENHALLINTA';
+    var config = {
+        withCredentials: true,
+        headers: { 'Content-Type': 'application/json; charset=UTF-8' }
+    };
     return {
+        init: function() {
+            return $http.get(window.url('ataru-service.editor'), config).then(function(response) {
+                return response;
+            })
+        },
+        getAtaruAuthorisation: function() {
+            return AuthService.crudOrg(AuthService.getUserDefaultOid(), ataruRole).then(function(authorised) {
+                return authorised;
+            });
+        },
         getForms: function() {
-            return Ataru.getForms().$promise.then(function(response) {
-                return response.forms;
+            return $http.get(window.url('ataru-service.rest.forms'), config).then(function(response) {
+                return (response.data.forms) ? response.data.forms : [];
             });
         }
     };
