@@ -80,7 +80,6 @@ window.urls.properties = {
 
     "organisaatio-ui.linkToOrganisaatio":"/organisaatio-ui/html/organisaatiot/$1",
 
-    "ataru-service.buildversion":"/lomake-editori/buildversion.txt",
     "ataru-service.editor":"/lomake-editori/",
     "ataru-service.rest.forms":"/lomake-editori/api/forms",
     "ataru-app-web.form":"/hakemus/hakukohde/$1",
