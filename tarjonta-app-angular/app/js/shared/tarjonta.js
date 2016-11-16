@@ -4,11 +4,13 @@ var app = angular.module('Tarjonta', [
     'Logging'
 ]);
 app.factory('TarjontaService', function($resource, $http, Config, LocalisationService, Koodisto,
-                                        CacheService, $q, $log, OrganisaatioService, AuthService, dialogService) {
+                                        CacheService, $q, $log, OrganisaatioService, AuthService, dialogService, AtaruService) {
     var plainUrls = window.urls().noEncode();
     $log = $log.getInstance('TarjontaService');
     var hakukohdeHaku = $resource(window.url("tarjonta-service.hakukohde.haku"));
     var koulutusHaku = $resource(window.url("tarjonta-service.koulutus.haku"));
+
+    AtaruService.init();
 
     function localize(txt, opetuskielet) {
         if (txt === undefined || txt === null) {
