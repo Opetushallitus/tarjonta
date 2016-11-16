@@ -138,11 +138,21 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
             });
         });
     };
-    $scope.initAtaruForm = function(ataruLomakeAvain) {
-        AtaruService.getForms().then(function(forms) {
-            var form = _.findWhere(forms, {'key': ataruLomakeAvain});
-            $scope.model.ataruFormName = (form) ? form.name : '';
-        });
+    $scope.isAtaruRole = function() {
+        return $scope.model.isAtaruRole;
+    };
+    $scope.initAtaruFormName = function(ataruLomakeAvain) {
+        AtaruService
+            .getAtaruAuthorisation()
+            .then(function(authorised) {
+                $scope.model.isAtaruRole = (authorised) ? true : false;
+                return (authorised) ? authorised : $q.reject('Unauthorised');
+            })
+            .then(AtaruService.getForms)
+            .then(function(forms) {
+                var form = _.findWhere(forms, {'key': ataruLomakeAvain});
+                $scope.model.ataruFormName = (form) ? form.name : '';
+            });
     };
     $scope.init = function() {
         $log.info('HakuReviewController.init()...');
@@ -171,6 +181,7 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
             hakukohdeOrganisations: [],
             // { organisaatioOids : [...] }
             place: 'holder',
+            isAtaruRole: false,
             ataruFormName: ''
         });
         //
@@ -192,7 +203,9 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
             hakuaika.nimi = HakuV1Service.resolveLocalizedValue(hakuaika.nimet);
         });
         $scope.getHakukohteet();
-        $scope.initAtaruForm($scope.model.hakux.result.ataruLomakeAvain);
+        if ($scope.model.hakux.result.ataruLomakeAvain) {
+            $scope.initAtaruFormName($scope.model.hakux.result.ataruLomakeAvain);
+        }
     };
     $scope.downloadHakukohteetExcel = function() {
         Koodisto.getAllKoodisWithKoodiUri('koulutustyyppi', AuthService.getLanguage().toLowerCase())

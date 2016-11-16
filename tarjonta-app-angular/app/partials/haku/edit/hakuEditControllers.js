@@ -503,9 +503,12 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         $scope.koulutuksienTyypit.push({key: 'OPINTOKOKONAISUUS',
             label: LocalisationService.t('haku.edit.koulutuksenTyyppi.opintokokonaisuusOpintojakso')});
     };
+    $scope.isAtaruRole = function() {
+        return $scope.model.isAtaruRole;
+    };
     $scope.initAtaruForms = function() {
-        AuthService
-            .crudOrg(AuthService.getUserDefaultOid(), 'APP_HAKULOMAKKEENHALLINTA')
+        AtaruService
+            .getAtaruAuthorisation()
             .then(function(authorised) {
                 $scope.model.isAtaruRole = (authorised) ? true : false;
                 return (authorised) ? authorised : $q.reject('Unauthorised');
