@@ -83,7 +83,7 @@ window.urls.properties = {
     "ataru-service.buildversion":"/lomake-editori/buildversion.txt",
     "ataru-service.editor":"/lomake-editori/",
     "ataru-service.rest.forms":"/lomake-editori/api/forms",
-    "ataru-app-web.form":"/hakemus/$1",
+    "ataru-app-web.form":"/hakemus/hakukohde/$1",
 
     "authentication-service.henkilo":"/authentication-service/resources/henkilo",
     "authentication-service.henkilotypes":"/authentication-service/resources/henkilo/henkilotypes",
