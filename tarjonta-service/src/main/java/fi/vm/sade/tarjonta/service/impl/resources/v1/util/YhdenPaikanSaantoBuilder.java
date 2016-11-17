@@ -96,7 +96,7 @@ public class YhdenPaikanSaantoBuilder {
         return false;
     }
 
-    public boolean koulutusJohtaaTutkintoon(KoulutusmoduuliToteutus koulutus) {
+    public boolean koulutusJohtaaTutkintoon(KoulutusmoduuliToteutus koulutus) throws IllegalStateException {
         if (koulutus.getKoulutusUri() == null) {
             return false;
         }
