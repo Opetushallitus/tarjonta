@@ -657,13 +657,13 @@ public class ConverterV1 {
         return hakukohdeRDTO;
     }
 
-    private void convertKomotoFields(Hakukohde h, HakukohdeV1RDTO dto) {
+    private void convertKomotoFields(Hakukohde h, HakukohdeV1RDTO dto) throws IllegalStateException {
         try {
-            Set<Triple<Boolean, Integer, String>> komotoInfos = new HashSet();
+            Set<Triple<Boolean, Integer, String>> komotoInfos = new HashSet<>();
             for (KoulutusmoduuliToteutus komoto : h.getKoulutusmoduuliToteutuses()) {
-                if(TarjontaTila.POISTETTU.equals(komoto.getTila())) continue;
+                if (TarjontaTila.POISTETTU.equals(komoto.getTila())) continue;
 
-                boolean tutkintoonjohtava = yhdenPaikanSaantoBuilder.koulutusJohtaaTutkintoon(komoto);
+                boolean tutkintoonjohtava = yhdenPaikanSaantoBuilder.koulutusJohtaaTutkintoon(komoto); // Heittää IllegalStateExceptionin, jos koodirelaatio puuttuu
                 Integer alkamisvuosi = komoto.getUniqueAlkamisVuosi();
                 String alkamiskausi = komoto.getUniqueAlkamiskausiUri();
                 komotoInfos.add(Triple.of(tutkintoonjohtava, alkamisvuosi, alkamiskausi));
