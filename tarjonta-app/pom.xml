@@ -4,7 +4,7 @@
     <parent>
         <artifactId>tarjonta</artifactId>
         <groupId>fi.vm.sade.tarjonta</groupId>
-        <version>2016-07-SNAPSHOT</version>
+        <version>2016-07_editori_integraatio-SNAPSHOT</version>
     </parent>
     <artifactId>tarjonta-app</artifactId>
     <packaging>war</packaging>
