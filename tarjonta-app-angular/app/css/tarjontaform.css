@@ -210,3 +210,13 @@ table.tarjontaForm .ataru a + a:before {
     content: '|';
     padding-right: 5px;
 }
+
+table.tarjontaForm .pilotti {
+    background: #99D740;
+    border-radius: 2px;
+    color: #FFFFFF;
+    font-size: 12px;
+    letter-spacing: 0;
+    padding: 3px 5px;
+    text-transform: uppercase;
+}
