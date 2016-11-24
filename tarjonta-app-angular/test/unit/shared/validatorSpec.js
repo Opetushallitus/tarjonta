@@ -80,6 +80,14 @@ describe('Validator', function() {
             expect(firstErrorMessage(errors)).toBe('hakukohde.edit.lisatietoja-hakemisesta.required');
         });
 
+        it('should be valid with empty lisatiedot for atarulomakeavain', function() {
+            model.hakukohde.hakuOid = '1.2.3';
+            haku.jarjestelmanHakulomake = false;
+            haku.ataruLomakeAvain = '1.2.3.4';
+            var errors = validatorService.hakukohde.validate(model, haku);
+            expect(errors.length).toBe(0);
+        });
+
         it('should be valid', function() {
             model.hakukohde.hakukohteenNimiUri = 'hakukohteenNimiUri';
             model.hakukohde.hakuOid = '1.2.3';

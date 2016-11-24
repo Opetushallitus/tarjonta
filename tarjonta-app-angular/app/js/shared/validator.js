@@ -14,7 +14,7 @@ angular.module('Validator', [])
             return pattern.test(email);
         }
         function isValidLisatiedot(hakukohde, haku) {
-            if (haku && !haku.jarjestelmanHakulomake &&
+            if (haku && !haku.jarjestelmanHakulomake && !haku.ataruLomakeAvain &&
                 (!haku.hakulomakeUri || haku.hakulomakeUri.trim().length === 0)) {
                 var empty = true;
                 angular.forEach(hakukohde.lisatiedot, function(val) {
