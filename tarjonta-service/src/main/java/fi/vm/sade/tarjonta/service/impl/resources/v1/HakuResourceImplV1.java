@@ -821,47 +821,57 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 }
             });
         }
+        
+        sortHakukohdeTulokset((List<HakukohdePerustieto>) tulokset);
 
-        Ordering<HakukohdePerustieto> ordering = Ordering.natural().nullsFirst().onResultOf(new Function<HakukohdePerustieto, Comparable>() {
-            public Comparable apply(HakukohdePerustieto input) {
-                String tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain);
-                if (tarjoajaNimi == null) {
-                    tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain_fi);
-                    if (tarjoajaNimi == null) {
-                        tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain_sv);
-                        if (tarjoajaNimi == null) {
-                            tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain_en);
-                        }
-                    }
-                }
-                return tarjoajaNimi;
-            }
-        });
-
-        List<HakukohdePerustieto> sortattuLista = ordering.immutableSortedCopy(tulokset);
-
-        int size = sortattuLista.size();
+        int size = tulokset.size();
         List<HakukohdeNimiV1RDTO> results = new ArrayList<HakukohdeNimiV1RDTO>();
         int index = 0;
 
-        for (HakukohdePerustieto tulos : sortattuLista) {
+        for (HakukohdePerustieto tulos : tulokset) {
             if (index >= startIndex + count) {
                 break;
             }
             if (index >= startIndex) {
-                HakukohdePerustieto hakukohde = tulos;
-                HakukohdeNimiV1RDTO rdto = new HakukohdeNimiV1RDTO();
-                rdto.setTarjoajaOid(hakukohde.getTarjoajaOid());
-                rdto.setHakukohdeNimi(hakukohde.getNimi());
-                rdto.setTarjoajaNimi(hakukohde.getTarjoajaNimi());
-                rdto.setHakukohdeOid(hakukohde.getOid());
-                rdto.setHakukohdeTila(hakukohde.getTila() != null ? hakukohde.getTila().name() : null);
-                rdto.setOpetuskielet(tulos.getOpetuskielet());
-                results.add(rdto);
+                createHakukohdeNimiV1RDTO(results, tulos);
             }
             ++index;
         }
         return new HakukohdeTulosV1RDTO(size, results);
+    }
+
+    private void createHakukohdeNimiV1RDTO(List<HakukohdeNimiV1RDTO> results, HakukohdePerustieto tulos) {
+        HakukohdePerustieto hakukohde = tulos;
+        HakukohdeNimiV1RDTO rdto = new HakukohdeNimiV1RDTO();
+        rdto.setTarjoajaOid(hakukohde.getTarjoajaOid());
+        rdto.setHakukohdeNimi(hakukohde.getNimi());
+        rdto.setTarjoajaNimi(hakukohde.getTarjoajaNimi());
+        rdto.setHakukohdeOid(hakukohde.getOid());
+        rdto.setHakukohdeTila(hakukohde.getTila() != null ? hakukohde.getTila().name() : null);
+        rdto.setOpetuskielet(tulos.getOpetuskielet());
+        results.add(rdto);
+    }
+
+    private void sortHakukohdeTulokset(List<HakukohdePerustieto> tulokset) {
+        Collections.sort(tulokset, new Comparator<HakukohdePerustieto>() {
+            @Override
+            public int compare(HakukohdePerustieto h1, HakukohdePerustieto h2) {
+                int i = nullSafeStringComparator(h1.getTarjoajaNimi().get("fi"), h2.getTarjoajaNimi().get("fi"));
+                return (i == 0) ? nullSafeStringComparator(h1.getNimi().get("fi"), h2.getNimi().get("fi")) : i;
+            }
+
+            private int nullSafeStringComparator(final String one, final String two) {
+                if (one == null ^ two == null) {
+                    return (one == null) ? -1 : 1;
+                }
+
+                if (one == null && two == null) {
+                    return 0;
+                }
+
+                return one.compareToIgnoreCase(two);
+            }
+        });
     }
 
     @Override
