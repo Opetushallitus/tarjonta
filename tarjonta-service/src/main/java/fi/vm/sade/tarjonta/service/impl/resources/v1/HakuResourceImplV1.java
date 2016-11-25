@@ -864,11 +864,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 if (one == null ^ two == null) {
                     return (one == null) ? -1 : 1;
                 }
-
                 if (one == null && two == null) {
                     return 0;
                 }
-
                 return one.compareToIgnoreCase(two);
             }
         });
