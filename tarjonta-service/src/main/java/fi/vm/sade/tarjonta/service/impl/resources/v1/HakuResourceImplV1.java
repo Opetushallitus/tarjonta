@@ -14,13 +14,11 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
 import fi.vm.sade.auditlog.tarjonta.LogMessage;
 import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
 import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
@@ -822,13 +820,14 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             });
         }
 
-        sortHakukohdeTulokset((List<HakukohdePerustieto>) tulokset);
+        List<HakukohdePerustieto> tulosList = new ArrayList<>(tulokset);
+        sortHakukohdeTulokset(tulosList);
 
-        int size = tulokset.size();
+        int size = tulosList.size();
         List<HakukohdeNimiV1RDTO> results = new ArrayList<HakukohdeNimiV1RDTO>();
         int index = 0;
 
-        for (HakukohdePerustieto tulos : tulokset) {
+        for (HakukohdePerustieto tulos : tulosList) {
             if (index >= startIndex + count) {
                 break;
             }
@@ -853,23 +852,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     private void sortHakukohdeTulokset(List<HakukohdePerustieto> tulokset) {
-        Collections.sort(tulokset, new Comparator<HakukohdePerustieto>() {
-            @Override
-            public int compare(HakukohdePerustieto h1, HakukohdePerustieto h2) {
-                int i = nullSafeStringComparator(h1.getAnyTarjoajaNimi(), h2.getAnyTarjoajaNimi());
-                return (i == 0) ? nullSafeStringComparator(h1.getAnyNimi(), h2.getAnyNimi()) : i;
-            }
-
-            private int nullSafeStringComparator(final String one, final String two) {
-                if (one == null ^ two == null) {
-                    return (one == null) ? -1 : 1;
-                }
-                if (one == null && two == null) {
-                    return 0;
-                }
-                return one.compareToIgnoreCase(two);
-            }
-        });
+        Collections.sort(tulokset, new OrderByTarjoajaAndHakukohdeName());
     }
 
     @Override
@@ -977,5 +960,23 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             createSystemErrorFromException(ex, result);
         }
         return result;
+    }
+
+    private static class OrderByTarjoajaAndHakukohdeName implements Comparator<HakukohdePerustieto> {
+        @Override
+        public int compare(HakukohdePerustieto h1, HakukohdePerustieto h2) {
+            int i = nullSafeStringComparator(h1.getAnyTarjoajaNimi(), h2.getAnyTarjoajaNimi());
+            return (i == 0) ? nullSafeStringComparator(h1.getAnyNimi(), h2.getAnyNimi()) : i;
+        }
+
+        private int nullSafeStringComparator(final String one, final String two) {
+            if (one == null ^ two == null) {
+                return (one == null) ? -1 : 1;
+            }
+            if (one == null && two == null) {
+                return 0;
+            }
+            return one.compareToIgnoreCase(two);
+        }
     }
 }
