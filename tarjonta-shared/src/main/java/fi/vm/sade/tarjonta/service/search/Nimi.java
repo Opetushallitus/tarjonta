@@ -31,15 +31,11 @@ public class Nimi extends HashMap<String, String> {
      */
     @Override
     public String put(String locale, String value) {
-//        if ((limitLocales && locales.contains(locale)) || !limitLocales) {
-            if (value != null) {
-                return super.put(locale, value);
-            } else {
-                throw new IllegalArgumentException("null arvo ei ole sallittu!");
-            }
-//        } else {
-//            throw new IllegalArgumentException("Laiton locale:" + locale);
-//        }
+        if (value != null) {
+            return super.put(locale, value);
+        } else {
+            throw new IllegalArgumentException("null arvo ei ole sallittu!");
+        }
     }
 
     public String get(String locale) {

@@ -116,6 +116,20 @@ public class HakukohdePerustieto implements Serializable {
         return nimi.get(locale);
     }
 
+    public String getAnyNimi() {
+        if (nimi.get("fi") != null) return nimi.get("fi");
+        else if (nimi.get("sv") != null) return nimi.get("ev");
+        else if (nimi.get("en") != null) return nimi.get("en");
+        else return null;
+    }
+
+    public String getAnyTarjoajaNimi() {
+        if (tarjoajaNimi.get("fi") != null) return tarjoajaNimi.get("fi");
+        else if (tarjoajaNimi.get("sv") != null) return tarjoajaNimi.get("ev");
+        else if (tarjoajaNimi.get("en") != null) return tarjoajaNimi.get("en");
+        else return null;
+    }
+
     /**
      * Palauta kaiki nimet
      */

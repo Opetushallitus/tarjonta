@@ -821,7 +821,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 }
             });
         }
-        
+
         sortHakukohdeTulokset((List<HakukohdePerustieto>) tulokset);
 
         int size = tulokset.size();
@@ -856,8 +856,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         Collections.sort(tulokset, new Comparator<HakukohdePerustieto>() {
             @Override
             public int compare(HakukohdePerustieto h1, HakukohdePerustieto h2) {
-                int i = nullSafeStringComparator(h1.getTarjoajaNimi().get("fi"), h2.getTarjoajaNimi().get("fi"));
-                return (i == 0) ? nullSafeStringComparator(h1.getNimi().get("fi"), h2.getNimi().get("fi")) : i;
+                int i = nullSafeStringComparator(h1.getAnyTarjoajaNimi(), h2.getAnyTarjoajaNimi());
+                return (i == 0) ? nullSafeStringComparator(h1.getAnyNimi(), h2.getAnyNimi()) : i;
             }
 
             private int nullSafeStringComparator(final String one, final String two) {
