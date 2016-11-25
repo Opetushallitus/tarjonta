@@ -118,16 +118,16 @@ public class HakukohdePerustieto implements Serializable {
     }
 
     public String getAnyNimi() {
-        if (StringUtils.isEmpty(nimi.get("fi"))) return nimi.get("fi");
-        else if (StringUtils.isEmpty(nimi.get("sv"))) return nimi.get("ev");
-        else if (StringUtils.isEmpty(nimi.get("en"))) return nimi.get("en");
+        if (!StringUtils.isEmpty(nimi.get("fi"))) return nimi.get("fi");
+        else if (!StringUtils.isEmpty(nimi.get("sv"))) return nimi.get("ev");
+        else if (!StringUtils.isEmpty(nimi.get("en"))) return nimi.get("en");
         else return null;
     }
 
     public String getAnyTarjoajaNimi() {
-        if (StringUtils.isEmpty(tarjoajaNimi.get("fi"))) return tarjoajaNimi.get("fi");
-        else if (StringUtils.isEmpty(tarjoajaNimi.get("sv"))) return tarjoajaNimi.get("ev");
-        else if (StringUtils.isEmpty(tarjoajaNimi.get("en"))) return tarjoajaNimi.get("en");
+        if (!StringUtils.isEmpty(tarjoajaNimi.get("fi"))) return tarjoajaNimi.get("fi");
+        else if (!StringUtils.isEmpty(tarjoajaNimi.get("sv"))) return tarjoajaNimi.get("ev");
+        else if (!StringUtils.isEmpty(tarjoajaNimi.get("en"))) return tarjoajaNimi.get("en");
         else return null;
     }
 
