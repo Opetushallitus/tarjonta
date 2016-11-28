@@ -117,8 +117,10 @@ public interface HakuV1Resource {
     @Path("{oid}/hakukohdeTulos")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public HakukohdeTulosV1RDTO getHakukohdeTulos(@PathParam("oid") String oid,
-                                                  @QueryParam("searchTerms") String searchTerms, @QueryParam("count") int count,
-                                                  @QueryParam("startIndex") int startIndex, @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
+                                                  @QueryParam("searchTerms") String searchTerms,
+                                                  @QueryParam("count") int count,
+                                                  @QueryParam("startIndex") int startIndex,
+                                                  @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
                                                   @QueryParam("lastModifiedSince") Date lastModifiedSince,
                                                   @QueryParam("organisationOids") String organisationOidsStr,
                                                   @QueryParam("hakukohdeTilas") String hakukohdeTilasStr,

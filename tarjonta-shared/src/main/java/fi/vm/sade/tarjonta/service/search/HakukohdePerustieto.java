@@ -7,6 +7,7 @@ import java.util.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import org.apache.commons.lang3.StringUtils;
 
 public class HakukohdePerustieto implements Serializable {
 
@@ -114,6 +115,32 @@ public class HakukohdePerustieto implements Serializable {
      */
     public String getNimi(String locale) {
         return nimi.get(locale);
+    }
+
+    public String getAnyNimi() {
+        if (!StringUtils.isEmpty(nimi.get("fi"))) {
+            return nimi.get("fi");
+        }
+        else if (!StringUtils.isEmpty(nimi.get("sv"))) {
+            return nimi.get("sv");
+        }
+        else if (!StringUtils.isEmpty(nimi.get("en"))) {
+            return nimi.get("en");
+        }
+        else return null;
+    }
+
+    public String getAnyTarjoajaNimi() {
+        if (!StringUtils.isEmpty(tarjoajaNimi.get("fi"))) {
+            return tarjoajaNimi.get("fi");
+        }
+        else if (!StringUtils.isEmpty(tarjoajaNimi.get("sv"))) {
+            return tarjoajaNimi.get("sv");
+        }
+        else if (!StringUtils.isEmpty(tarjoajaNimi.get("en"))) {
+            return tarjoajaNimi.get("en");
+        }
+        else return null;
     }
 
     /**
