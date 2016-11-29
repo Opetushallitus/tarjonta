@@ -17,6 +17,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -600,12 +601,30 @@ public class ConverterV1Test extends TestMockBase {
         haku.setOid(oid);
         haku.setNimi(TarjontaFixtures.createText(nimiFi, nimiSv, nimiEn));
 
+        MonikielinenTeksti hakuaikaNimi = new MonikielinenTeksti();
+        hakuaikaNimi.addTekstiKaannos("kieli_fi", "Testihakuaika");
+        Hakuaika hakuaika = new Hakuaika();
+        hakuaika.setId(new Long(1));
+        hakuaika.setAlkamisPvm(new DateTime().withYear(2016).withMonthOfYear(10).toDate());
+        hakuaika.setPaattymisPvm(new DateTime().withYear(2016).withMonthOfYear(11).toDate());
+        hakuaika.setNimi(hakuaikaNimi);
+        haku.addHakuaika(hakuaika);
+
         AtaruLomakeHakuV1RDTO result = converter.fromHakuToAtaruLomakeHakuRDTO(haku);
 
         assertEquals(oid, result.getOid());
         assertEquals(nimiFi, result.getNimi().get("kieli_fi"));
         assertEquals(nimiSv, result.getNimi().get("kieli_sv"));
         assertEquals(nimiEn, result.getNimi().get("kieli_en"));
+
+        List<HakuaikaV1RDTO> hakuaikas = result.getHakuaikas();
+        assertEquals(1, hakuaikas.size());
+        assertEquals(hakuaika.getId().toString(), hakuaikas.get(0).getHakuaikaId());
+        assertEquals(hakuaika.getAlkamisPvm(), hakuaikas.get(0).getAlkuPvm());
+        assertEquals(hakuaika.getPaattymisPvm(), hakuaikas.get(0).getLoppuPvm());
+        assertEquals(hakuaika.getNimi().getTekstiForKieliKoodi("kieli_fi"), hakuaikas.get(0).getNimet().get("kieli_fi"));
+        assertEquals(hakuaika.getNimi().getTekstiForKieliKoodi("kieli_sv"), hakuaikas.get(0).getNimet().get("kieli_sv"));
+        assertEquals(hakuaika.getNimi().getTekstiForKieliKoodi("kieli_en"), hakuaikas.get(0).getNimet().get("kieli_en"));
     }
 
     @Test

@@ -2058,6 +2058,7 @@ public class ConverterV1 {
         AtaruLomakeHakuV1RDTO dto = new AtaruLomakeHakuV1RDTO();
         dto.setOid(haku.getOid());
         dto.setNimi(convertMonikielinenTekstiToMap(haku.getNimi(), true));
+        dto.setHakuaikas(convertHakuaikaListToV1RDTO(haku.getHakuaikas()));
         return dto;
     }
 }
