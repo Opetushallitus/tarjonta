@@ -152,7 +152,8 @@
                         {{ model.hakux.result.usePriority ? t("yes") : t("no") }}
                     </div>
                     <div ng-if="model.hakux.result.ataruLomakeAvain && isAtaruRole()">
-                        <span tt="haku.edit.hakulomake.ataruLomake">Käytetään Lomake-editorin lomaketta: {{ model.ataruFormName }}</span>
+                        <span tt="haku.edit.hakulomake.ataruLomake">Käytetään Lomake-editorin lomaketta:</span>
+                        <span>{{ model.ataruFormName }}</span>
                         <span class="pilotti" tt="haku.ataruLomake.pilotti">Pilotti</span>
                         <p class="error" ng-if="model.ataruFormName.length == 0" tt="haku.review.ataru.lomake.virhe">Tapahtui virhe. Tarkista valittu lomake.</p>
                     </div>
