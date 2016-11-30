@@ -4,6 +4,7 @@ module.exports = function(config) {
         basePath: '../app',
         files: [
             'lib/jquery-1.10.2.min.js',
+            'lib/oph_urls.js/index.js',
             'lib/underscore/underscore.js',
             'lib/angular/angular.js',
             'lib/angular/angular-resource.js',
