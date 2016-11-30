@@ -1,4 +1,4 @@
-window.urls.properties = {
+window.urls.addProperties( {
     "koulutusinformaatio-app-web.preview":"/app/preview.html#!/$1/$2?lang=$3",
 
     "tarjonta-service.togglePublished":"/tarjonta-service/rest/v1/$1/$2/tila?state=$3",
@@ -88,5 +88,4 @@ window.urls.properties = {
     "authentication-service.henkilotypes":"/authentication-service/resources/henkilo/henkilotypes",
     "authentication-service.urlHaeTiedot":"/authentication-service/resources/henkilo/$1",
     "authentication-service.organisaatiohenkilo":"/authentication-service/resources/henkilo/$1/organisaatiohenkilo"
-
-};
+})
