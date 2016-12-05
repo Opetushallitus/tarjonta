@@ -1322,8 +1322,8 @@ app.controller('HakukohdeParentController', [
                         });
                     });
                     $scope.checkIsCopy($scope.luonnosVal, true);
-                    // BUG-1108
-                    ['hakuaikaAlkuPvm', 'hakuaikaLoppuPvm', 'aloituspaikatLkm'].map(function(field) {
+                    // BUG-1108, BUG-1213
+                    ['hakuaikaAlkuPvm', 'hakuaikaLoppuPvm', 'aloituspaikatLkm', 'ensikertalaistenAloituspaikat'].map(function(field) {
                         nullAsZero($scope.model.hakukohde, field);
                     });
                     angular.forEach($scope.model.hakukohde.valintakokeet, function(koe) {
