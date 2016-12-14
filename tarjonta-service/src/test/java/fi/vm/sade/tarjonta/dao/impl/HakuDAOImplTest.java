@@ -397,9 +397,9 @@ public class HakuDAOImplTest extends TestData {
         Haku haku3 = createHaku(HAKU_OID3);
         Haku haku4 = createHaku(HAKU_OID4); // No ataru lomake for this haku
 
-        haku1.setOrganisationOids(organisaatioOids1);
-        haku2.setOrganisationOids(organisaatioOids2);
-        haku3.setOrganisationOids(organisaatioOids3);
+        haku1.setTarjoajaOids(organisaatioOids1);
+        haku2.setTarjoajaOids(organisaatioOids2);
+        haku3.setTarjoajaOids(organisaatioOids3);
 
         haku1.setAtaruLomakeAvain(ataruLomakeAvain1);
         haku2.setAtaruLomakeAvain(ataruLomakeAvain1);
