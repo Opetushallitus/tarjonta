@@ -89,14 +89,14 @@ public class YhdenPaikanSaantoBuilder {
 
     private boolean tutkintoonJohtavaHakukohde(Hakukohde hakukohde) {
         for (KoulutusmoduuliToteutus koulutus : hakukohde.getKoulutusmoduuliToteutuses()) {
-            if (koulutus.getTila() != TarjontaTila.POISTETTU && tutkintoonJohtavaKoulutus(koulutus)) {
+            if (koulutus.getTila() != TarjontaTila.POISTETTU && koulutusJohtaaTutkintoon(koulutus)) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean tutkintoonJohtavaKoulutus(KoulutusmoduuliToteutus koulutus) {
+    public boolean koulutusJohtaaTutkintoon(KoulutusmoduuliToteutus koulutus) throws IllegalStateException {
         if (koulutus.getKoulutusUri() == null) {
             return false;
         }

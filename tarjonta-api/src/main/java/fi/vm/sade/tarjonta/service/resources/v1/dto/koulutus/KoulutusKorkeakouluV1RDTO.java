@@ -52,6 +52,9 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "tunniste, joka yksilöi KK-koulutuksen (aiemmin tähän käytettiin komonOidia, katso KJOH-973)")
     private String koulutuksenTunnisteOid;
 
+    @ApiModelProperty(value = "Johtaa korkekoulututkintoon.")
+    private boolean johtaaTutkintoon;
+
     /**
      * @return the tutkintonimike
      */
@@ -146,5 +149,13 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
 
     public void setKoulutuksenTunnisteOid(String koulutuksenTunnisteOid) {
         this.koulutuksenTunnisteOid = koulutuksenTunnisteOid;
+    }
+
+    public boolean isJohtaaTutkintoon() {
+        return johtaaTutkintoon;
+    }
+
+    public void setJohtaaTutkintoon(boolean johtaaTutkintoon) {
+        this.johtaaTutkintoon = johtaaTutkintoon;
     }
 }

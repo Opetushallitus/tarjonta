@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>tarjonta</artifactId>
@@ -78,24 +79,17 @@
             <version>${authentication.api.version}</version>
         </dependency>
 
-        <!--
-        FIXME WHAT IS THIS tarjonta-ui-widgets?
-                <dependency>
-                    <groupId>fi.vm.sade.tarjonta</groupId>
-                    <artifactId>tarjonta-ui-widgets</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-        -->
-
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-common</artifactId>
         </dependency>
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>fi.vm.sade.oid</groupId>
             <artifactId>oid-api</artifactId>
@@ -149,6 +143,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
@@ -161,6 +156,7 @@
             <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-easymock</artifactId>
@@ -174,7 +170,6 @@
             <version>3.1</version>
             <scope>test</scope>
         </dependency>
-
 
         <dependency>
             <groupId>joda-time</groupId>
@@ -204,24 +199,18 @@
             <artifactId>ehcache-jgroupsreplication</artifactId>
             <version>1.5</version>
         </dependency>
+
         <dependency>
             <groupId>org.jgroups</groupId>
             <artifactId>jgroups</artifactId>
             <version>2.10.0.GA</version>
         </dependency>
 
-        <!--
-                <dependency>
-                    <groupId>org.jasig.cas</groupId>
-                    <artifactId>cas-client-core</artifactId>
-                    <version>3.1.10</version>
-                </dependency>
-        -->
-
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
@@ -229,18 +218,7 @@
 
     </dependencies>
 
-
-
     <build>
-        <!--
-        poistettu koska se poistaa kaiken myos development-profiilia kaytettaessa.
-                <resources>
-                    <resource>
-                        <directory>src/main/resources</directory>
-                        <filtering>true</filtering>
-                    </resource>
-                </resources>
-        -->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

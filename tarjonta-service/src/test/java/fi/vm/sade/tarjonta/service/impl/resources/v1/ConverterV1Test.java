@@ -27,11 +27,8 @@ import org.mockito.internal.util.reflection.Whitebox;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static junit.framework.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -41,19 +38,30 @@ public class ConverterV1Test extends TestMockBase {
 
     private String ataruLomakeAvain = "01234567-89ab-cdef-0123-4567890abcdef";
 
+    private static final String ALKAMISKAUSI = "kausi_S";
+    private static final Integer ALKAMISVUOSI = 1999;
     @InjectMocks
     private ConverterV1 converter;
+
+    YhdenPaikanSaantoBuilder yhdenPaikanSaantoBuilder = mock(YhdenPaikanSaantoBuilder.class);
 
     @Before
     public void init() {
         Whitebox.setInternalState(tarjontaKoodistoHelper, "koodiService", koodiService);
         Whitebox.setInternalState(tarjontaKoodistoHelper, "koodistoProactiveCaching", mock(KoodistoProactiveCaching.class));
         Whitebox.setInternalState(converter, "tarjontaKoodistoHelper", tarjontaKoodistoHelper);
-        Whitebox.setInternalState(converter, "yhdenPaikanSaantoBuilder", mock(YhdenPaikanSaantoBuilder.class));
+        Whitebox.setInternalState(converter, "yhdenPaikanSaantoBuilder", yhdenPaikanSaantoBuilder);
+    }
+
+    private KoulutusmoduuliToteutus initKomoto() {
+        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
+        komoto.setAlkamiskausiUri(ALKAMISKAUSI);
+        komoto.setAlkamisVuosi(ALKAMISVUOSI);
+        return komoto;
     }
 
     private void setKomotoForHakukohde(Hakukohde hakukohde) {
-        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
+        KoulutusmoduuliToteutus komoto = initKomoto();
         komoto.setToteutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS);
         Koulutusmoduuli komo = new Koulutusmoduuli();
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
@@ -230,16 +238,16 @@ public class ConverterV1Test extends TestMockBase {
 
         Koulutusmoduuli komo = new Koulutusmoduuli();
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
+        KoulutusmoduuliToteutus komoto = initKomoto();
         komoto.setKoulutusmoduuli(komo);
         komoto.setOid("1.2.3");
 
-        KoulutusmoduuliToteutus komotoPoistettu = new KoulutusmoduuliToteutus();
+        KoulutusmoduuliToteutus komotoPoistettu = initKomoto();
         komotoPoistettu.setTila(TarjontaTila.POISTETTU);
         komotoPoistettu.setKoulutusmoduuli(komo);
         komotoPoistettu.setOid("5.5.5.5.5");
 
-        KoulutusmoduuliToteutus komotoPeruttu = new KoulutusmoduuliToteutus();
+        KoulutusmoduuliToteutus komotoPeruttu = initKomoto();
         komotoPeruttu.setTila(TarjontaTila.PERUTTU);
         komotoPeruttu.setKoulutusmoduuli(komo);
         komotoPeruttu.setOid("5.5.5.5.5.8");
@@ -272,7 +280,7 @@ public class ConverterV1Test extends TestMockBase {
         when(organisaatioService.findByOid("4.5.6")).thenReturn(null);
 
         Hakukohde hakukohde = getHakukohde();
-        KoulutusmoduuliToteutus koulutusmoduuliToteutus = new KoulutusmoduuliToteutus();
+        KoulutusmoduuliToteutus koulutusmoduuliToteutus = initKomoto();
         koulutusmoduuliToteutus.setOid("1.2.3");
         koulutusmoduuliToteutus.setTarjoaja("4.5.6");
 
@@ -654,5 +662,95 @@ public class ConverterV1Test extends TestMockBase {
             public void describeTo(Description description) {
             }
         };
+    }
+
+    @Test
+    public void testThatKomotoDependantFieldsAreConverted(){
+        when(yhdenPaikanSaantoBuilder.koulutusJohtaaTutkintoon(Matchers.any(KoulutusmoduuliToteutus.class))).thenReturn(true);
+
+        Hakukohde hakukohde = getHakukohde();
+        setKomotoForHakukohde(hakukohde);
+        HakukohdeV1RDTO h = converter.toHakukohdeRDTO(hakukohde, true);
+        assertThat(h, notNullValue());
+        assertThat(h.getKoulutuksenAlkamiskausiUri(), is(equalTo(ALKAMISKAUSI)));
+        assertThat(h.getKoulutuksenAlkamisvuosi(), is(equalTo(ALKAMISVUOSI)));
+        assertThat(h.isTutkintoonJohtava(), is(true));
+    }
+
+    @Test
+    public void testThatKomotoDependantFieldsAreConvertedForNonTutkintoonJohtava(){
+        when(yhdenPaikanSaantoBuilder.koulutusJohtaaTutkintoon(Matchers.any(KoulutusmoduuliToteutus.class))).thenReturn(false);
+
+        Hakukohde hakukohde = getHakukohde();
+        setKomotoForHakukohde(hakukohde);
+        HakukohdeV1RDTO h = converter.toHakukohdeRDTO(hakukohde, true);
+        assertThat(h, notNullValue());
+        assertThat(h.getKoulutuksenAlkamiskausiUri(), is(equalTo(ALKAMISKAUSI)));
+        assertThat(h.getKoulutuksenAlkamisvuosi(), is(equalTo(ALKAMISVUOSI)));
+        assertThat(h.isTutkintoonJohtava(), is(false));
+    }
+
+    @Test
+    public void testThatKomotoDependantFieldsAreConvertedForPoistettu(){
+        when(yhdenPaikanSaantoBuilder.koulutusJohtaaTutkintoon(Matchers.any(KoulutusmoduuliToteutus.class))).thenReturn(false);
+
+        Hakukohde hakukohde = getHakukohde();
+
+        Koulutusmoduuli komo = new Koulutusmoduuli();
+        komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+
+
+        KoulutusmoduuliToteutus komoto = initKomoto();
+        komoto.setOid("1.2.3");
+        komoto.setKoulutusmoduuli(komo);
+
+        KoulutusmoduuliToteutus komotoPoistettu = initKomoto();
+        komotoPoistettu.setTila(TarjontaTila.POISTETTU);
+        komotoPoistettu.setAlkamisVuosi(2014);
+        komotoPoistettu.setOid("5.5.5.5.5");
+        komotoPoistettu.setKoulutusmoduuli(komo);
+
+        hakukohde.setKoulutusmoduuliToteutuses(Sets.newHashSet(komoto, komotoPoistettu));
+
+        HakukohdeV1RDTO h = converter.toHakukohdeRDTO(hakukohde, true);
+        assertThat(h, notNullValue());
+        assertThat(h.getKoulutuksenAlkamiskausiUri(), is(equalTo(ALKAMISKAUSI)));
+        assertThat(h.getKoulutuksenAlkamisvuosi(), is(equalTo(ALKAMISVUOSI)));
+        assertThat(h.isTutkintoonJohtava(), is(false));
+    }
+
+    @Test(expected=IllegalStateException.class)
+    public void testThatKomotoDependantFieldThrowsException(){
+        when(yhdenPaikanSaantoBuilder.koulutusJohtaaTutkintoon(Matchers.any(KoulutusmoduuliToteutus.class))).thenReturn(false);
+
+        Hakukohde hakukohde = getHakukohde();
+
+        Koulutusmoduuli komo = new Koulutusmoduuli();
+        komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+
+
+        KoulutusmoduuliToteutus komoto = initKomoto();
+        komoto.setOid("1.2.3");
+        komoto.setKoulutusmoduuli(komo);
+
+        KoulutusmoduuliToteutus komotoPoistettu = initKomoto();
+        komotoPoistettu.setTila(TarjontaTila.POISTETTU);
+        komotoPoistettu.setAlkamisVuosi(2014);
+        komotoPoistettu.setOid("5.5.5.5.5");
+        komotoPoistettu.setKoulutusmoduuli(komo);
+
+        KoulutusmoduuliToteutus komotoVaaraKausi = initKomoto();
+        komotoVaaraKausi.setTila(TarjontaTila.PERUTTU);
+        komotoVaaraKausi.setAlkamiskausiUri("Täysin väärä");
+        komotoVaaraKausi.setOid("5.5.5.5.5.9");
+        komotoVaaraKausi.setKoulutusmoduuli(komo);
+
+        hakukohde.setKoulutusmoduuliToteutuses(Sets.newHashSet(komoto, komotoPoistettu, komotoVaaraKausi));
+
+        HakukohdeV1RDTO h = converter.toHakukohdeRDTO(hakukohde, true);
+        assertThat(h, notNullValue());
+        assertThat(h.getKoulutuksenAlkamiskausiUri(), is(equalTo(ALKAMISKAUSI)));
+        assertThat(h.getKoulutuksenAlkamisvuosi(), is(equalTo(ALKAMISVUOSI)));
+        assertThat(h.isTutkintoonJohtava(), is(false));
     }
 }

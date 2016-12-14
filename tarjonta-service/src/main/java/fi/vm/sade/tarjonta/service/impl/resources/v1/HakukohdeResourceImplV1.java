@@ -260,7 +260,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Transactional(readOnly = true)
     public ResultV1RDTO<HakukohdeV1RDTO> findByUlkoinenTunniste(String tarjoajaOid, String ulkoinenTunniste) {
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByUlkoinenTunniste(ulkoinenTunniste, tarjoajaOid);
-        return findByOid(hakukohde == null ? null : hakukohde.getOid());
+        return findByOid(hakukohde == null ? null : hakukohde.getOid(), false);
     }
 
     @Override
@@ -365,13 +365,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     @Transactional(readOnly = true)
-    public ResultV1RDTO<HakukohdeV1RDTO> findByOid(String oid) {
+    public ResultV1RDTO<HakukohdeV1RDTO> findByOid(String oid, boolean populate) {
 
         LOG.debug("HAKUKOHDE-REST V1 findByOid : ", oid);
         if (oid != null && oid.trim().length() > 0) {
             Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
             if (hakukohde != null) {
-                HakukohdeV1RDTO hakukohdeRDTO = converterV1.toHakukohdeRDTO(hakukohde);
+                HakukohdeV1RDTO hakukohdeRDTO = converterV1.toHakukohdeRDTO(hakukohde, populate);
 
                 updateKoulutusTypesToHakukohdeDto(hakukohdeRDTO);
                 ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
