@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.service.resources.v1;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
@@ -142,6 +143,8 @@ public interface HakuV1Resource {
     @GET
     @Path("/ataru/all")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "Hakee listauksen käytössäolevista Lomake-editorin (Ataru) lomakkeista ja niihin liittyvät haut.", notes = "Hakee listauksen käytössäolevista Lomake-editorin (Ataru) lomakkeista ja niihin liittyvät haut.", response = AtaruLomakkeetV1RDTO.class)
-    public ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> findAtaruFormUsage();
+    @ApiOperation(value = "Hakee listauksen käytössäolevista Lomake-editorin lomakkeista ja niihin liittyvät haut.", notes = "Hakee listauksen käytössäolevista Lomake-editorin lomakkeista ja niihin liittyvät haut.", response = AtaruLomakkeetV1RDTO.class)
+    public ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> findAtaruFormUsage(
+      @ApiParam(value = "Organisaation oid:t listauksen rajaamiseksi organisaatioiden lomakkeisiin. Jos parametri puuttuu, palautetaan kaikkien organisaatioiden tiedot.", required = false) @QueryParam("oid") final List<String> organisationOids
+    );
 }
