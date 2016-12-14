@@ -388,9 +388,13 @@ public class HakuDAOImplTest extends TestData {
         String ataruLomakeAvain2 = "ffffffff-ffff-ffff-ffff-fffffffffffff";
         String HAKU_OID3 = "hakuoid3";
         String HAKU_OID4 = "hakuoid4";
-        String[] organisaatioOids1 = {"foo1", "foo4"};
-        String[] organisaatioOids2 = {"foo2"};
-        String[] organisaatioOids3 = {"foo3"};
+        String organisaatioOid1 = "foo1";
+        String organisaatioOid2 = "foo2";
+        String organisaatioOid3 = "foo3";
+        String organisaatioOid4 = "foo4";
+        String[] organisaatioOids1 = {organisaatioOid1, organisaatioOid4};
+        String[] organisaatioOids2 = {organisaatioOid2};
+        String[] organisaatioOids3 = {organisaatioOid3};
 
         Haku haku1 = createHaku(HAKU_OID1);
         Haku haku2 = createHaku(HAKU_OID2);
@@ -410,42 +414,58 @@ public class HakuDAOImplTest extends TestData {
         hakuDAO.insert(haku3);
         hakuDAO.insert(haku4);
 
-        List<String> organisationOidsEmpty = new ArrayList<>();
+        List<String> emptyOids = new ArrayList<>();
+        List<Haku> resultAll = hakuDAO.findHakusWithAtaruFormKeys(emptyOids);
+        assertTrue(resultAll.size() == 3);
+        List<String> allOids = getHakuOids(resultAll);
+        assertEquals(allOids.contains(HAKU_OID1), true);
+        assertEquals(allOids.contains(HAKU_OID2), true);
+        assertEquals(allOids.contains(HAKU_OID3), true);
+        assertEquals(allOids.contains(HAKU_OID4), false);
 
-        List<String> organisationOidsFoobar = new ArrayList<>();
-        organisationOidsFoobar.add("foobar");
+        List<String> unknownOids = new ArrayList<>();
+        unknownOids.add("foobar");
+        List<Haku> resultUnknown = hakuDAO.findHakusWithAtaruFormKeys(unknownOids);
+        assertTrue(resultUnknown.size() == 0);
 
-        List<String> organisationOids1 = new ArrayList<>();
-        organisationOids1.add("foo1");
-        organisationOids1.add("foo3");
+        List<String> filterOids1 = new ArrayList<>();
+        filterOids1.add(organisaatioOid1);
+        filterOids1.add(organisaatioOid3);
+        List<Haku> result1 = hakuDAO.findHakusWithAtaruFormKeys(filterOids1);
+        assertTrue(result1.size() == 2);
+        List<String> resultOids1 = getHakuOids(result1);
+        assertEquals(resultOids1.contains(HAKU_OID1), true);
+        assertEquals(resultOids1.contains(HAKU_OID2), false);
+        assertEquals(resultOids1.contains(HAKU_OID3), true);
+        assertEquals(resultOids1.contains(HAKU_OID4), false);
 
-        List<String> organisationOids2 = new ArrayList<>();
-        organisationOids2.add("foo2");
+        List<String> filterOids2 = new ArrayList<>();
+        filterOids2.add(organisaatioOid2);
+        List<Haku> result2 = hakuDAO.findHakusWithAtaruFormKeys(filterOids2);
+        assertTrue(result2.size() == 1);
+        List<String> resultOids2 = getHakuOids(result2);
+        assertEquals(resultOids2.contains(HAKU_OID1), false);
+        assertEquals(resultOids2.contains(HAKU_OID2), true);
+        assertEquals(resultOids2.contains(HAKU_OID3), false);
+        assertEquals(resultOids2.contains(HAKU_OID4), false);
 
-        List<String> organisationOids3 = new ArrayList<>();
-        organisationOids3.add("foo4");
+        List<String> filterOids3 = new ArrayList<>();
+        filterOids3.add(organisaatioOid4);
+        List<Haku> result3 = hakuDAO.findHakusWithAtaruFormKeys(filterOids3);
+        assertTrue(result3.size() == 1);
+        List<String> resultOids3 = getHakuOids(result3);
+        assertEquals(resultOids3.contains(HAKU_OID1), true);
+        assertEquals(resultOids3.contains(HAKU_OID2), false);
+        assertEquals(resultOids3.contains(HAKU_OID3), false);
+        assertEquals(resultOids3.contains(HAKU_OID4), false);
+    }
 
-        List<Haku> ataruFormKeysAll = hakuDAO.findHakusWithAtaruFormKeys(organisationOidsEmpty);
-        assertTrue(ataruFormKeysAll.size() == 3);
-        assertEquals(ataruFormKeysAll.get(0).getOid(), HAKU_OID1);
-        assertEquals(ataruFormKeysAll.get(1).getOid(), HAKU_OID2);
-        assertEquals(ataruFormKeysAll.get(2).getOid(), HAKU_OID3);
-
-        List<Haku> ataruFormKeysNone = hakuDAO.findHakusWithAtaruFormKeys(organisationOidsFoobar);
-        assertTrue(ataruFormKeysNone.size() == 0);
-
-        List<Haku> ataruFormKeys1 = hakuDAO.findHakusWithAtaruFormKeys(organisationOids1);
-        assertTrue(ataruFormKeys1.size() == 2);
-        assertEquals(ataruFormKeys1.get(0).getOid(), HAKU_OID1);
-        assertEquals(ataruFormKeys1.get(1).getOid(), HAKU_OID3);
-
-        List<Haku> ataruFormKeys2 = hakuDAO.findHakusWithAtaruFormKeys(organisationOids2);
-        assertTrue(ataruFormKeys2.size() == 1);
-        assertEquals(ataruFormKeys2.get(0).getOid(), HAKU_OID2);
-
-        List<Haku> ataruFormKeys3 = hakuDAO.findHakusWithAtaruFormKeys(organisationOids3);
-        assertTrue(ataruFormKeys3.size() == 1);
-        assertEquals(ataruFormKeys3.get(0).getOid(), HAKU_OID1);
+    private List<String> getHakuOids(List<Haku> hakus) {
+        List<String> result = new ArrayList<>();
+        for(Haku haku : hakus) {
+            result.add(haku.getOid());
+        }
+        return result;
     }
 
     private void createHakuWithMontaTarjoajaa() {
