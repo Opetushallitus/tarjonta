@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
@@ -348,9 +349,19 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     }
 
     @Override
-    public List<Haku> findHakusWithAtaruFormKeys() {
-        String hql = "select h from Haku h where h.ataruLomakeAvain is not null";
-        Query query = getEntityManager().createQuery(hql);
-        return query.getResultList();
+    public List<Haku> findHakusWithAtaruFormKeys(List<String> organisationOids) {
+        QHaku qHaku = QHaku.haku;
+
+        BooleanBuilder orgExpr = new BooleanBuilder();
+        if (organisationOids != null) {
+            for (String organisationOid : organisationOids) {
+                orgExpr.or(qHaku.tarjoajaOidString.contains(organisationOid));
+            }
+        }
+
+        return from(qHaku)
+          .where(qHaku.ataruLomakeAvain.isNotNull())
+          .where(orgExpr)
+          .list(qHaku);
     }
 }

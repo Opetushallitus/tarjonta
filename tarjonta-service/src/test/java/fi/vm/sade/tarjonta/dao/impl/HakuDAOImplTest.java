@@ -378,8 +378,74 @@ public class HakuDAOImplTest extends TestData {
         hakuDAO.insert(haku3);
         hakuDAO.insert(haku4);
 
-        List<Haku> ataruFormKeys = hakuDAO.findHakusWithAtaruFormKeys();
+        List<Haku> ataruFormKeys = hakuDAO.findHakusWithAtaruFormKeys(Collections.EMPTY_LIST);
         assertTrue(ataruFormKeys.size() == 3);
+    }
+
+    @Test
+    public void thatHakusWithAtaruFormsAreFilteredForOrganisation() {
+        String ataruLomakeAvain1 = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeeee";
+        String ataruLomakeAvain2 = "ffffffff-ffff-ffff-ffff-fffffffffffff";
+        String HAKU_OID3 = "hakuoid3";
+        String HAKU_OID4 = "hakuoid4";
+        String[] organisaatioOids1 = {"foo1", "foo4"};
+        String[] organisaatioOids2 = {"foo2"};
+        String[] organisaatioOids3 = {"foo3"};
+
+        Haku haku1 = createHaku(HAKU_OID1);
+        Haku haku2 = createHaku(HAKU_OID2);
+        Haku haku3 = createHaku(HAKU_OID3);
+        Haku haku4 = createHaku(HAKU_OID4); // No ataru lomake for this haku
+
+        haku1.setOrganisationOids(organisaatioOids1);
+        haku2.setOrganisationOids(organisaatioOids2);
+        haku3.setOrganisationOids(organisaatioOids3);
+
+        haku1.setAtaruLomakeAvain(ataruLomakeAvain1);
+        haku2.setAtaruLomakeAvain(ataruLomakeAvain1);
+        haku3.setAtaruLomakeAvain(ataruLomakeAvain2);
+
+        hakuDAO.insert(haku1);
+        hakuDAO.insert(haku2);
+        hakuDAO.insert(haku3);
+        hakuDAO.insert(haku4);
+
+        List<String> organisationOidsEmpty = new ArrayList<>();
+
+        List<String> organisationOidsFoobar = new ArrayList<>();
+        organisationOidsFoobar.add("foobar");
+
+        List<String> organisationOids1 = new ArrayList<>();
+        organisationOids1.add("foo1");
+        organisationOids1.add("foo3");
+
+        List<String> organisationOids2 = new ArrayList<>();
+        organisationOids2.add("foo2");
+
+        List<String> organisationOids3 = new ArrayList<>();
+        organisationOids3.add("foo4");
+
+        List<Haku> ataruFormKeysAll = hakuDAO.findHakusWithAtaruFormKeys(organisationOidsEmpty);
+        assertTrue(ataruFormKeysAll.size() == 3);
+        assertEquals(ataruFormKeysAll.get(0).getOid(), HAKU_OID1);
+        assertEquals(ataruFormKeysAll.get(1).getOid(), HAKU_OID2);
+        assertEquals(ataruFormKeysAll.get(2).getOid(), HAKU_OID3);
+
+        List<Haku> ataruFormKeysNone = hakuDAO.findHakusWithAtaruFormKeys(organisationOidsFoobar);
+        assertTrue(ataruFormKeysNone.size() == 0);
+
+        List<Haku> ataruFormKeys1 = hakuDAO.findHakusWithAtaruFormKeys(organisationOids1);
+        assertTrue(ataruFormKeys1.size() == 2);
+        assertEquals(ataruFormKeys1.get(0).getOid(), HAKU_OID1);
+        assertEquals(ataruFormKeys1.get(1).getOid(), HAKU_OID3);
+
+        List<Haku> ataruFormKeys2 = hakuDAO.findHakusWithAtaruFormKeys(organisationOids2);
+        assertTrue(ataruFormKeys2.size() == 1);
+        assertEquals(ataruFormKeys2.get(0).getOid(), HAKU_OID2);
+
+        List<Haku> ataruFormKeys3 = hakuDAO.findHakusWithAtaruFormKeys(organisationOids3);
+        assertTrue(ataruFormKeys3.size() == 1);
+        assertEquals(ataruFormKeys3.get(0).getOid(), HAKU_OID1);
     }
 
     private void createHakuWithMontaTarjoajaa() {

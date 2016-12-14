@@ -31,6 +31,7 @@ import org.mockito.Matchers;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -347,9 +348,9 @@ public class HakuResourceImplV1Test extends TestMockBase {
     @Test
     public void thatHakusWithoutAtaruFormsReturnsEmpty() {
         List<Haku> empty = new ArrayList<>();
-        when(hakuDAO.findHakusWithAtaruFormKeys()).thenReturn(empty);
+        when(hakuDAO.findHakusWithAtaruFormKeys(Collections.EMPTY_LIST)).thenReturn(empty);
 
-        ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> result = hakuResource.findAtaruFormUsage();
+        ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> result = hakuResource.findAtaruFormUsage(Collections.EMPTY_LIST);
 
         assertNotNull(result);
         assertNotNull(result.getStatus());
@@ -372,7 +373,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
         Haku mockHaku2 = createHakuWithName(oid2, nimi2, lomakeKey1);
         Haku mockHaku3 = createHakuWithName(oid3, nimi3, lomakeKey2);
         List<Haku> mockHaut = new ArrayList<>(Arrays.asList(mockHaku1, mockHaku2, mockHaku3));
-        when(hakuDAO.findHakusWithAtaruFormKeys()).thenReturn(mockHaut);
+        when(hakuDAO.findHakusWithAtaruFormKeys(Collections.EMPTY_LIST)).thenReturn(mockHaut);
 
         AtaruLomakeHakuV1RDTO mockItem1 = createAtaruLomakeItem(oid1, nimi1);
         AtaruLomakeHakuV1RDTO mockItem2 = createAtaruLomakeItem(oid2, nimi2);
@@ -384,7 +385,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
         AtaruLomakkeetV1RDTO expectedForLomake1 = createAtaruLomakkeet(lomakeKey1, new ArrayList<>(Arrays.asList(mockItem1, mockItem2)));
         AtaruLomakkeetV1RDTO expectedForLomake2 = createAtaruLomakkeet(lomakeKey2, new ArrayList<>(Arrays.asList(mockItem3)));
 
-        ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> result = hakuResource.findAtaruFormUsage();
+        ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> result = hakuResource.findAtaruFormUsage(Collections.EMPTY_LIST);
 
         assertNotNull(result);
         assertNotNull(result.getStatus());
