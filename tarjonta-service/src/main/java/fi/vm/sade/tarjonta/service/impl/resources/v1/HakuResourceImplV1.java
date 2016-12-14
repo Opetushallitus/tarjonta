@@ -990,8 +990,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> findAtaruFormUsage() {
-        List<Haku> hakus = hakuDAO.findHakusWithAtaruFormKeys();
+    public ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> findAtaruFormUsage(List<String> organisationOids) {
+        List<Haku> hakus = hakuDAO.findHakusWithAtaruFormKeys(organisationOids);
         Map<String, List<AtaruLomakeHakuV1RDTO>> grouped = new HashMap<>();
         List<AtaruLomakkeetV1RDTO> result = new ArrayList<>();
 
