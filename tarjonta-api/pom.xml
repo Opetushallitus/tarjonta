@@ -20,7 +20,7 @@
     <parent>
         <artifactId>tarjonta</artifactId>
         <groupId>fi.vm.sade.tarjonta</groupId>
-        <version>2016-07_editori_integraatio-SNAPSHOT</version>
+        <version>2016-07-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tarjonta-api</artifactId>
