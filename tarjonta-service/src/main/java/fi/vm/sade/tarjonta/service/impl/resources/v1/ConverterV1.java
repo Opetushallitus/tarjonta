@@ -2086,7 +2086,7 @@ public class ConverterV1 {
 
     public AtaruLomakeHakuV1RDTO fromHakuToAtaruLomakeHakuRDTO(Haku haku) {
         if (haku == null) {
-            return null;
+            throw new IllegalArgumentException(String.format("Haku was null"));
         }
         AtaruLomakeHakuV1RDTO dto = new AtaruLomakeHakuV1RDTO();
         dto.setOid(haku.getOid());
