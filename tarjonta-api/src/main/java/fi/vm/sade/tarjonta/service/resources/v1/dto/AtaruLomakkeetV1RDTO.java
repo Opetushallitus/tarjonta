@@ -33,7 +33,7 @@ public class AtaruLomakkeetV1RDTO implements Serializable {
 
   public List<AtaruLomakeHakuV1RDTO> getHaut() {
     if (haut == null) {
-      haut = new ArrayList<AtaruLomakeHakuV1RDTO>();
+      haut = new ArrayList<>();
     }
     return haut;
   }

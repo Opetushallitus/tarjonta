@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class AtaruLomakeHakuV1RDTO implements Serializable {
   private String oid;
-  private Map<String, String> nimi = new HashMap<String, String>();
+  private Map<String, String> nimi = new HashMap<>();
   private List<HakuaikaV1RDTO> hakuaikas;
 
   public String getOid() {
@@ -43,7 +43,7 @@ public class AtaruLomakeHakuV1RDTO implements Serializable {
 
   public List<HakuaikaV1RDTO> getHakuaikas() {
     if (hakuaikas == null) {
-      hakuaikas = new ArrayList<HakuaikaV1RDTO>();
+      hakuaikas = new ArrayList<>();
     }
     return hakuaikas;
   }
