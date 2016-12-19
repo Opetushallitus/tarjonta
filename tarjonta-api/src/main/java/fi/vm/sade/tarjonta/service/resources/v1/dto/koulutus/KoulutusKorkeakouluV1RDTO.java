@@ -55,6 +55,9 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Johtaa korkekoulututkintoon.")
     private boolean johtaaTutkintoon;
 
+    @ApiModelProperty(value = "korkeakoulutuksen laajuus koulutustyyppifasetti koodi")
+    private KoodiV1RDTO korkeakoulutuksenLaajuusKoodi;
+
     /**
      * @return the tutkintonimike
      */
@@ -157,5 +160,11 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
 
     public void setJohtaaTutkintoon(boolean johtaaTutkintoon) {
         this.johtaaTutkintoon = johtaaTutkintoon;
+    public KoodiV1RDTO getKorkeakoulutuksenLaajuusKoodi() {
+        return korkeakoulutuksenLaajuusKoodi;
+    }
+
+    public void setKorkeakoulutuksenLaajuusKoodi(KoodiV1RDTO korkeakoulutuksenLaajuusKoodi) {
+        this.korkeakoulutuksenLaajuusKoodi = korkeakoulutuksenLaajuusKoodi;
     }
 }
