@@ -589,6 +589,15 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             }
         }
 
+        // Ataru form key
+        if (!isEmpty(haku.getAtaruLomakeAvain())) {
+            try {
+                UUID uuid = UUID.fromString(haku.getAtaruLomakeAvain());
+            } catch (IllegalArgumentException ex) {
+                result.addError(ErrorV1RDTO.createValidationError("ataruLomakeAvain", "haku.validation.ataruLomakeAvain.invalid"));
+            }
+        }
+
         // Must have at least one hakuaika
         if (haku.getHakuaikas() == null || haku.getHakuaikas().isEmpty()) {
             result.addError(ErrorV1RDTO.createValidationError("hakuaikas", "haku.validation.hakuaikas.empty"));
@@ -978,5 +987,34 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             }
             return one.compareToIgnoreCase(two);
         }
+    }
+
+    @Override
+    public ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> findAtaruFormUsage(List<String> organisationOids) {
+        List<Haku> hakus = hakuDAO.findHakusWithAtaruFormKeys(organisationOids);
+        Map<String, List<AtaruLomakeHakuV1RDTO>> grouped = new HashMap<>();
+        List<AtaruLomakkeetV1RDTO> result = new ArrayList<>();
+
+        for (Haku haku : hakus) {
+            AtaruLomakeHakuV1RDTO dto = converterV1.fromHakuToAtaruLomakeHakuRDTO(haku);
+            String key = haku.getAtaruLomakeAvain();
+            if (!grouped.containsKey(key)) {
+                grouped.put(key, new ArrayList<AtaruLomakeHakuV1RDTO>());
+            }
+            grouped.get(key).add(dto);
+        }
+
+        for (Map.Entry<String, List<AtaruLomakeHakuV1RDTO>> entry : grouped.entrySet()) {
+            AtaruLomakkeetV1RDTO dto = new AtaruLomakkeetV1RDTO();
+            dto.setAvain(entry.getKey());
+            dto.setHaut(entry.getValue());
+            result.add(dto);
+        }
+
+        ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
+        resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+        resultV1RDTO.setResult(result);
+
+        return resultV1RDTO;
     }
 }

@@ -151,7 +151,16 @@
                         <span tt="haku.review.haunTiedot.hakulomake.priorisointi">Haussa käytetään priorisointia: </span>
                         {{ model.hakux.result.usePriority ? t("yes") : t("no") }}
                     </div>
-                    <div ng-show="!model.hakux.result.jarjestelmanHakulomake">
+                    <div ng-if="model.hakux.result.ataruLomakeAvain && isAtaruRole()">
+                        <span tt="haku.edit.hakulomake.ataruLomake">Käytetään Lomake-editorin lomaketta:</span>
+                        <span>{{ model.ataruFormName }}</span>
+                        <span class="pilotti" tt="haku.ataruLomake.pilotti">Pilotti</span>
+                        <p class="error" ng-if="model.ataruFormName.length == 0" tt="haku.review.ataru.lomake.virhe">Tapahtui virhe. Tarkista valittu lomake.</p>
+                    </div>
+                    <div ng-if="model.hakux.result.ataruLomakeAvain && !isAtaruRole()">
+                        <span tt="haku.review.haunTiedot.hakulomake.ataru">Käytetään Lomake-editorin lomaketta.</span>
+                    </div>
+                    <div ng-if="model.hakux.result.hakulomakeUri">
                         <span tt="haku.review.haunTiedot.hakulomake.oma">Käytetään omaa hakulomaketta: </span>
                         <a href="{{model.hakux.result.hakulomakeUri}}" target="_blank">{{ model.hakux.result.hakulomakeUri }}</a>
                     </div>

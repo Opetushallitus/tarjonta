@@ -152,6 +152,7 @@ public class ConverterV1 {
         }
 
         hakuDTO.setHakulomakeUri(haku.getHakulomakeUrl());
+        hakuDTO.setAtaruLomakeAvain(haku.getAtaruLomakeAvain());
         hakuDTO.setHakutapaUri(haku.getHakutapaUri());
         hakuDTO.setHakutyyppiUri(haku.getHakutyyppiUri());
         hakuDTO.setHaunTunniste(haku.getHaunTunniste());
@@ -236,6 +237,7 @@ public class ConverterV1 {
         haku.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
         haku.setOid(hakuV1RDTO.getOid());
         haku.setHakulomakeUrl(hakuV1RDTO.getHakulomakeUri());
+        haku.setAtaruLomakeAvain(hakuV1RDTO.getAtaruLomakeAvain());
         haku.setHaunTunniste(hakuV1RDTO.getHaunTunniste());
         haku.setHakutyyppiUri(hakuV1RDTO.getHakutyyppiUri());
         haku.setHakutapaUri(hakuV1RDTO.getHakutapaUri());
@@ -629,6 +631,7 @@ public class ConverterV1 {
                         ? hakukohde.getHakulomakeUrl()
                         : hakukohde.getHaku().getHakulomakeUrl()
         );
+        hakukohdeRDTO.setAtaruLomakeAvain(hakukohde.getHaku().getAtaruLomakeAvain());
         hakukohdeRDTO.setOverridesHaunHakulomakeUrl(hakukohde.getHakulomakeUrl() != null);
         hakukohdeRDTO.setOhjeetUudelleOpiskelijalle(hakukohde.getOhjeetUudelleOpiskelijalle());
         hakukohdeRDTO.setYhdenPaikanSaanto(yhdenPaikanSaantoBuilder.from(hakukohde));
@@ -2046,5 +2049,16 @@ public class ConverterV1 {
             }
         }
         return kuvaukset;
+    }
+
+    public AtaruLomakeHakuV1RDTO fromHakuToAtaruLomakeHakuRDTO(Haku haku) {
+        if (haku == null) {
+            throw new IllegalArgumentException(String.format("Haku was null"));
+        }
+        AtaruLomakeHakuV1RDTO dto = new AtaruLomakeHakuV1RDTO();
+        dto.setOid(haku.getOid());
+        dto.setNimi(convertMonikielinenTekstiToMap(haku.getNimi(), true));
+        dto.setHakuaikas(convertHakuaikaListToV1RDTO(haku.getHakuaikas()));
+        return dto;
     }
 }

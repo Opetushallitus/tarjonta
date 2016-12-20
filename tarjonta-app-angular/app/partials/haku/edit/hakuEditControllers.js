@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-var app = angular.module('app.haku.edit.ctrl', []);
+var app = angular.module('app.haku.edit.ctrl', ['ataru']);
 /**
  * Haku edit controllers.
  * Note: current haku is preloaded in "tarjontaApp.js" route definitions. Extracted in "init()"-method.
@@ -20,7 +20,7 @@ var app = angular.module('app.haku.edit.ctrl', []);
 app.controller('HakuEditController', function HakuEditController($q, $route, $scope, $location,
      $log, $modal, LocalisationService, HakuV1, ParameterService, Config, OrganisaatioService,
      AuthService, dialogService, KoodistoURI, PermissionService, HakuV1Service, HAKUTAPA,
-     HAKUTYYPPI, Koodisto, TarjontaService) {
+     HAKUTYYPPI, Koodisto, TarjontaService, AtaruService) {
 
     $log = $log.getInstance('HakuEditController');
     $log.debug('initializing (scope, route)', $scope, $route);
@@ -410,7 +410,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
     /**
                * This method is called when halulomake selection changes.
                *
-               * Accepted states are: SYSTEM, OTHER, NONE
+               * Accepted states are: SYSTEM, OTHER, ATARU, NONE
                *
                * @returns {undefined}
                */
@@ -421,17 +421,26 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
                 $log.info('  handle system.');
                 $scope.model.hakux.result.jarjestelmanHakulomake = true;
                 $scope.model.hakux.result.hakulomakeUri = null;
+                $scope.model.hakux.result.ataruLomakeAvain = null;
                 break;
             case 'OTHER':
                 $log.info('  handle other.');
                 $scope.model.hakux.result.jarjestelmanHakulomake = false;
                 $scope.model.hakux.result.maxHakukohdes = 0;
+                $scope.model.hakux.result.ataruLomakeAvain = null;
+                break;
+            case 'ATARU':
+                $log.info('  handle ataru.');
+                $scope.model.hakux.result.jarjestelmanHakulomake = false;
+                $scope.model.hakux.result.maxHakukohdes = 0;
+                $scope.model.hakux.result.hakulomakeUri = null;
                 break;
             case 'NONE':
                 $log.info('  handle none.');
                 $scope.model.hakux.result.jarjestelmanHakulomake = false;
                 $scope.model.hakux.result.maxHakukohdes = 0;
                 $scope.model.hakux.result.hakulomakeUri = null;
+                $scope.model.hakux.result.ataruLomakeAvain = null;
                 break;
             default:
                 $log.info('  handle WTF?.');
@@ -453,6 +462,9 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         else {
             if ($scope.model.hakux.result.hakulomakeUri) {
                 $scope.model.haku.hakulomake = 'OTHER';
+            }
+            else if ($scope.model.hakux.result.ataruLomakeAvain) {
+                $scope.model.haku.hakulomake = 'ATARU';
             }
             else {
                 $scope.model.haku.hakulomake = 'NONE';
@@ -491,6 +503,27 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         $scope.koulutuksienTyypit.push({key: 'OPINTOKOKONAISUUS',
             label: LocalisationService.t('haku.edit.koulutuksenTyyppi.opintokokonaisuusOpintojakso')});
     };
+    $scope.isAtaruRole = function() {
+        return $scope.model.isAtaruRole;
+    };
+    $scope.initAtaruForms = function() {
+        AtaruService
+            .getAtaruAuthorisation()
+            .then(function(authorised) {
+                $scope.model.isAtaruRole = (authorised) ? true : false;
+                return (authorised) ? authorised : $q.reject('Unauthorised');
+            })
+            .then(AtaruService.getForms)
+            .then(function(forms) {
+                $scope.model.ataruForms = forms;
+            });
+    };
+    $scope.isSelectedAtaruFormDefinedAndUnvailable = function() {
+        var key = $scope.model.hakux.result.ataruLomakeAvain;
+        var form = _.findWhere($scope.model.ataruForms, {'key': key});
+        var result = (key && !form) ? true : false;
+        return result;
+    };
     $scope.init = function() {
         var model = {
             formControls: {},
@@ -503,11 +536,13 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             hakux: $route.current.locals.hakux,
             haku: {
                 // Possible UI state for Haku
-                hakulomake: 'SYSTEM' // Possible values SYSTEM, OTHER, NONE
+                hakulomake: 'SYSTEM' // Possible values SYSTEM, OTHER, ATARU, NONE
             },
             parameter: {},
             selectedOrganisations: [],
             selectedTarjoajaOrganisations: [],
+            isAtaruRole: false,
+            ataruForms: [],
             config: Config.env
         };
         $scope.model = model;
@@ -533,6 +568,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         }
         $scope.setDirtyListener();
         $scope.initKoulutuksienTyypit();
+        $scope.initAtaruForms();
     };
     $scope.isLuonnosOrNew = function() {
         return $scope.isNewHaku() || $scope.model.hakux.result.tila === 'LUONNOS';
@@ -663,10 +699,11 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         return $scope.model.hakux.result.hakutapaUri.indexOf('hakutapa_02#') !== -1;
     };
     $scope.isKoulutuksetChecked = function() {
-        if(_.isUndefined($scope.model.parameter.PH_KVT)) {
+        if (_.isUndefined($scope.model.parameter.PH_KVT)) {
             return true;
         } else {
             return $scope.model.parameter.PH_KVT.booleanValue;
         }
     };
+    $scope.url = window.url;
 });

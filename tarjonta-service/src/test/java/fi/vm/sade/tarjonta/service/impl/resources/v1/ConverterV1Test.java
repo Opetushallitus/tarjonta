@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
@@ -16,6 +17,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -29,12 +31,15 @@ import static junit.framework.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ConverterV1Test extends TestMockBase {
+
+    private String ataruLomakeAvain = "01234567-89ab-cdef-0123-4567890abcdef";
 
     @InjectMocks
     private ConverterV1 converter;
@@ -555,6 +560,80 @@ public class ConverterV1Test extends TestMockBase {
         haku.setHakukausiVuosi(2000);
         HakuV1RDTO dto = converter.fromHakuToHakuRDTO(haku, true);
         assertEquals(dto.getHakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden().size(), 2);
+    }
+
+    @Test
+    public void thatAtaruLomakeAvainInHakuIsConvertedToHakuDTO() {
+        Haku haku = createValidHaku();
+        haku.setAtaruLomakeAvain(ataruLomakeAvain);
+
+        HakuV1RDTO hakuDTO = converter.fromHakuToHakuRDTO(haku, false);
+        assertEquals(hakuDTO.getAtaruLomakeAvain(), ataruLomakeAvain);
+    }
+
+    @Test
+    public void thatAtaruLomakeAvainInHakuDTOIsConvertedToHakuEntity() throws OIDCreationException {
+        HakuV1RDTO hakuDTO = new HakuV1RDTO();
+        hakuDTO.setAtaruLomakeAvain(ataruLomakeAvain);
+
+        Haku haku = converter.convertHakuV1DRDTOToHaku(hakuDTO, new Haku());
+        assertEquals(haku.getAtaruLomakeAvain(), ataruLomakeAvain);
+    }
+
+    @Test
+    public void thatAtaruLomakeAvainFromHakuIsConvertedToHakukohdeDTO() {
+        Haku haku = new Haku();
+        haku.setAtaruLomakeAvain(ataruLomakeAvain);
+        Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setHaku(haku);
+
+        HakukohdeV1RDTO hakukohdeV1RDTO = converter.toHakukohdeRDTO(hakukohde);
+        assertEquals(ataruLomakeAvain, hakukohdeV1RDTO.getAtaruLomakeAvain());
+    }
+
+    @Test
+    public void thatHakuIsConvertedToAtaruLomakeDTO() {
+        String oid = "haku";
+        String nimiFi = "haku (fi)";
+        String nimiSv = "haku (sv)";
+        String nimiEn = "haku (en)";
+        Haku haku = new Haku();
+        haku.setOid(oid);
+        haku.setNimi(TarjontaFixtures.createText(nimiFi, nimiSv, nimiEn));
+
+        MonikielinenTeksti hakuaikaNimi = new MonikielinenTeksti();
+        hakuaikaNimi.addTekstiKaannos("kieli_fi", "Testihakuaika");
+        Hakuaika hakuaika = new Hakuaika();
+        hakuaika.setId(new Long(1));
+        hakuaika.setAlkamisPvm(new DateTime().withYear(2016).withMonthOfYear(10).toDate());
+        hakuaika.setPaattymisPvm(new DateTime().withYear(2016).withMonthOfYear(11).toDate());
+        hakuaika.setNimi(hakuaikaNimi);
+        haku.addHakuaika(hakuaika);
+
+        AtaruLomakeHakuV1RDTO result = converter.fromHakuToAtaruLomakeHakuRDTO(haku);
+
+        assertEquals(oid, result.getOid());
+        assertEquals(nimiFi, result.getNimi().get("kieli_fi"));
+        assertEquals(nimiSv, result.getNimi().get("kieli_sv"));
+        assertEquals(nimiEn, result.getNimi().get("kieli_en"));
+
+        List<HakuaikaV1RDTO> hakuaikas = result.getHakuaikas();
+        assertEquals(1, hakuaikas.size());
+        assertEquals(hakuaika.getId().toString(), hakuaikas.get(0).getHakuaikaId());
+        assertEquals(hakuaika.getAlkamisPvm(), hakuaikas.get(0).getAlkuPvm());
+        assertEquals(hakuaika.getPaattymisPvm(), hakuaikas.get(0).getLoppuPvm());
+        assertEquals(hakuaika.getNimi().getTekstiForKieliKoodi("kieli_fi"), hakuaikas.get(0).getNimet().get("kieli_fi"));
+        assertEquals(hakuaika.getNimi().getTekstiForKieliKoodi("kieli_sv"), hakuaikas.get(0).getNimet().get("kieli_sv"));
+        assertEquals(hakuaika.getNimi().getTekstiForKieliKoodi("kieli_en"), hakuaikas.get(0).getNimet().get("kieli_en"));
+    }
+
+    @Test
+    public void thatHakukohdeDTOWithAtaruLomakeAvainConvertsToHakukohdeEntity() {
+        HakukohdeV1RDTO hakukohdeDTO = getHakukohdeDTO();
+        hakukohdeDTO.setAtaruLomakeAvain(ataruLomakeAvain);
+
+        Hakukohde hakukohde = converter.toHakukohde(hakukohdeDTO);
+        assertNotNull(hakukohde);
     }
 
     private BaseMatcher<RyhmaliitosV1RDTO> getRyhmaliitosElementMatcher(final String ryhmaOid,

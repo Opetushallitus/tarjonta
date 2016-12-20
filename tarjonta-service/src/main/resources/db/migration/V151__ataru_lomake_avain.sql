@@ -1,0 +1,1 @@
+alter table haku add column ataru_lomake_avain varchar(255);

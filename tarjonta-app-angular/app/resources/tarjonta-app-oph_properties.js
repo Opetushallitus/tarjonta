@@ -80,6 +80,10 @@ window.urls.addProperties( {
 
     "organisaatio-ui.linkToOrganisaatio":"/organisaatio-ui/html/organisaatiot/$1",
 
+    "ataru-service.editor":"/lomake-editori/",
+    "ataru-service.rest.forms":"/lomake-editori/api/forms",
+    "ataru-app-web.form":"/hakemus/$1",
+
     "authentication-service.henkilo":"/authentication-service/resources/henkilo",
     "authentication-service.henkilotypes":"/authentication-service/resources/henkilo/henkilotypes",
     "authentication-service.urlHaeTiedot":"/authentication-service/resources/henkilo/$1",

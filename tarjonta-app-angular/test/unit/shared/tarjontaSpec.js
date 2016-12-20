@@ -100,6 +100,7 @@ describe('Tarjonta', function() {
         };
 
         $httpBackend.whenGET('/ohjausparametrit-service/api/v1/rest/parametri/ALL').respond(parameterResponse);
+        $httpBackend.whenGET('/lomake-editori/').respond('OK');
     };
 
     beforeEach(function() {
