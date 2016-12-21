@@ -15,13 +15,10 @@
  */
 package fi.vm.sade.tarjonta.rest.bean;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.rest.dto.JsonConfigObject;
 import fi.vm.sade.tarjonta.rest.helper.PropertyPlaceholder;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,12 +29,96 @@ import java.util.*;
 @Controller
 @RequestMapping("/")
 public class JsonConfiguration {
-
-    @Value("${importAllKeys.startsWith}")
-    private String keysStartWith;
-    @Value("${importAllKeys.contains}")
-    private String keysContains;
     private static String configurationJson;
+
+    private static final List<String> WHITELIST = Arrays.asList(
+            "authentication-service.henkilo.rest.url",
+            "authentication-service.rest.url",
+            "callerid.tarjonta.tarjonta-app.frontend",
+            "callerid.tarjonta.tarjonta-service.backend",
+            "casUrl",
+            "koodi-uri.koulutuslaji.nuortenKoulutus",
+            "koodi-uri.lukio.pohjakoulutusvaatimus",
+            "koodi-uri.ontutkinto",
+            "koodisto-uris.aiheet",
+            "koodisto-uris.alkamiskausi",
+            "koodisto-uris.ammatillinenLukio",
+            "koodisto-uris.ammattinimikkeet",
+            "koodisto-uris.eqf-luokitus",
+            "koodisto-uris.erillishaku",
+            "koodisto-uris.hakukausi",
+            "koodisto-uris.hakukelpoisuusvaatimus",
+            "koodisto-uris.hakukohde",
+            "koodisto-uris.hakutapa",
+            "koodisto-uris.hakutyyppi",
+            "koodisto-uris.haunKohdejoukko",
+            "koodisto-uris.jatkuvahaku",
+            "koodisto-uris.kieli",
+            "koodisto-uris.kohdejoukkoErityisopetus",
+            "koodisto-uris.koulutuksenAlkamisvuosi",
+            "koodisto-uris.koulutus",
+            "koodisto-uris.koulutusala",
+            "koodisto-uris.koulutusaste",
+            "koodisto-uris.koulutuslaji",
+            "koodisto-uris.koulutusohjelma",
+            "koodisto-uris.liiteTodistukset",
+            "koodisto-uris.liitteentyyppi",
+            "koodisto-uris.lisahaku",
+            "koodisto-uris.lukiodiplomit",
+            "koodisto-uris.lukiolinja",
+            "koodisto-uris.opetusaika",
+            "koodisto-uris.opetusmuoto",
+            "koodisto-uris.opetusmuotokk",
+            "koodisto-uris.opetuspaikka",
+            "koodisto-uris.opintoala",
+            "koodisto-uris.opintojenLaajuusarvo",
+            "koodisto-uris.opintojenLaajuusyksikko",
+            "koodisto-uris.oppiaineet",
+            "koodisto-uris.oppilaitostyyppi",
+            "koodisto-uris.osaamisala",
+            "koodisto-uris.pohjakoulutusPeruskoulu",
+            "koodisto-uris.pohjakoulutusvaatimus",
+            "koodisto-uris.pohjakoulutusvaatimus_er",
+            "koodisto-uris.pohjakoulutusvaatimus_kk",
+            "koodisto-uris.postinumero",
+            "koodisto-uris.sorakuvausryhma",
+            "koodisto-uris.suunniteltuKesto",
+            "koodisto-uris.tarjontakoulutustyyppi",
+            "koodisto-uris.teemat",
+            "koodisto-uris.tutkinto",
+            "koodisto-uris.tutkintonimike",
+            "koodisto-uris.tutkintonimike_kk",
+            "koodisto-uris.tutkintoonjohtavakoulutus",
+            "koodisto-uris.valintakoeHaastattelu",
+            "koodisto-uris.valintakokeentyyppi",
+            "koodisto-uris.valintaperustekuvausryhma",
+            "koodisto-uris.valmentavaKuntouttava",
+            "koodisto-uris.valmistavaOpetus",
+            "koodisto-uris.vapaaSivistys",
+            "koodisto-uris.yhteishaku",
+            "koodisto.hakutapa.jatkuvaHaku.uri",
+            "koodisto.lang.en.uri",
+            "koodisto.lang.fi.uri",
+            "koodisto.lang.sv.uri",
+            "koodisto.public.webservice.url.backend",
+            "koodisto.suomi.uri",
+            "oid.rest.url.backend",
+            "organisaatio.api.rest.url",
+            "root.organisaatio.oid",
+            "tarjonta-app.identifier",
+            "tarjonta.admin.webservice.url.backend",
+            "tarjonta.koulutusaste.korkeakoulut",
+            "tarjonta.public.webservice.url.backend",
+            "tarjonta.showUnderConstruction",
+            "tarjonta.solr.baseurl",
+            "tarjontaKoodistoRestUrlPrefix",
+            "tarjontaLocalisationRestUrl",
+            "tarjontaOhjausparametritRestUrlPrefix",
+            "tarjontaRestUrlPrefix",
+            "ui.timeout.long",
+            "ui.timeout.short",
+            "web.url.oppija",
+            "web.url.oppija.preview");
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
@@ -71,10 +152,8 @@ public class JsonConfiguration {
     }
 
     private String createJsonConfiguration(Properties properties) {
-        Set<String> visibleKeys = searchAllRequiredPropertyKeys(properties);
-
         List<JsonConfigObject> jsons = Lists.<JsonConfigObject>newLinkedList();
-        for (final String key : visibleKeys) {
+        for (final String key : whitelistedKeys(properties)) {
             jsons.add(new JsonConfigObject(key, PropertyPlaceholder.getProperty(key)));
         }
 
@@ -93,37 +172,14 @@ public class JsonConfiguration {
         return outputJson.toString();
     }
 
-    private Set<String> searchAllRequiredPropertyKeys(Properties propertyes) {
-        Preconditions.checkNotNull(propertyes, "System properties object cannot be null.");
-        final String[] arrKeysStartWith = keysStartWith.split(",");
-        final String[] arrKeysContains = keysContains.split(",");
-
-        Set<String> keysNeeded = Sets.<String>newHashSet();
-
-        if ((arrKeysStartWith == null && arrKeysStartWith == null) || (arrKeysStartWith.length == 0 && arrKeysContains.length == 0)) {
-            return keysNeeded;
-        }
-
-        for (Object keyObj : propertyes.keySet()) {
-            final String realKey = (String) keyObj;
-
-            //start with
-            for (String k : arrKeysStartWith) {
-                final String filter = k.trim();
-                if (filter != null && realKey.startsWith(filter)) {
-                    keysNeeded.add(realKey);
-                }
-            }
-
-            //contains
-            for (String k : arrKeysContains) {
-                final String filter = k.trim();
-                if (filter != null && realKey.contains(filter)) {
-                    keysNeeded.add(realKey);
-                }
+    private Set<String> whitelistedKeys(Properties propertyes) {
+        Set<String> keysNeeded = new HashSet<>();
+        for (Object o : propertyes.keySet()) {
+            String key = (String) o;
+            if (WHITELIST.contains(key)) {
+                keysNeeded.add(key);
             }
         }
-
         return keysNeeded;
     }
 }
