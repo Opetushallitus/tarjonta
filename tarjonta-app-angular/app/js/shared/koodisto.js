@@ -555,6 +555,7 @@ app.factory('KoodistoURI', function($log, Config) {
         KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI: getConfigWithDefault('koodisto-uris.opintojenLaajuusyksikko', ''),
         KOODISTO_OPINTOJEN_LAAJUUSARVO_URI: getConfigWithDefault('koodisto-uris.opintojenLaajuusarvo', ''),
         KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI: getConfigWithDefault('koodisto-uris.pohjakoulutusvaatimus', ''),
+        KOODISTO_KOULUTUSLAAJUUS_URI: getConfigWithDefault('koodisto-uris.koulutustyyppifasetti', ''),
         KOODISTO_EQF_LUOKITUS_URI: getConfigWithDefault('koodisto-uris.eqf-luokitus', ''),
         /*
          * KOMOTO URIs

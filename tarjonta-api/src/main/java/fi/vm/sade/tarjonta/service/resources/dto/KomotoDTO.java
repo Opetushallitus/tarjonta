@@ -76,6 +76,7 @@ public class KomotoDTO extends BaseRDTO {
     private List<String> _opetusmuotokk;
     private List<String> _opetusaikakk;
     private List<String> _opetuspaikkakk;
+    private List<String> _koulutuksenlaajuus;
 
     private String koulutuksenAlkamiskausi;
     private Integer koulutuksenAlkamisvuosi;
@@ -314,6 +315,14 @@ public class KomotoDTO extends BaseRDTO {
 
     public void setOpetusaikakk(List<String> opetusaikakk) {
         this._opetusaikakk = opetusaikakk;
+    }
+
+    public List<String> getKoulutuksenlaajuus() {
+        return _koulutuksenlaajuus;
+    }
+
+    public void setKoulutuksenlaajuus(List<String> koulutuksenlaajuus) {
+        this._koulutuksenlaajuus = koulutuksenlaajuus;
     }
 
     public List<String> getOpetuspaikkakk() {

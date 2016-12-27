@@ -111,6 +111,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     private Set<KoodistoUri> opetusmuotos = new HashSet<KoodistoUri>();
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = TABLE_NAME + "_koulutuksenlaajuus", joinColumns
+            = @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<KoodistoUri> koulutuksenlaajuus = new HashSet<KoodistoUri>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_opetusaika", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> opetusAikas = new HashSet<KoodistoUri>();
@@ -523,6 +528,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void removeAmmattinimike(KoodistoUri ammattinimike) {
         ammattinimikes.remove(ammattinimike);
     }
+
+    public Set<KoodistoUri> getKoulutuksenlaajuus(){ return koulutuksenlaajuus; }
+
+    public void addKoulutuksenlaajuus(KoodistoUri laajuus) { koulutuksenlaajuus.add(laajuus); }
+
+    public void removeKoulutuksenlaajuus(KoodistoUri laajuus) { koulutuksenlaajuus.remove(laajuus); }
+
+    public void setKoulutuksenlaajuus(Set<KoodistoUri> uris) { this.koulutuksenlaajuus = uris; }
 
     public Set<KoodistoUri> getOpetusmuotos() {
         return opetusmuotos;
