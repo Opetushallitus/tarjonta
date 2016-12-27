@@ -114,6 +114,7 @@ public class KoodistoURI {
     public static String KOODISTO_HAKUKELPOISUUSVAATIMUS_URI;
     public static String KOODISTO_POHJAKOULUTUSVAATIMUKSET_KORKEAKOULU_URI;
     public static String KOODISTO_TUTKINTONIMIKE_KORKEAKOULU_URI;
+    public static String KOODISTO_KOULUTUSLAAJUUS_URI;
     /*
      * For tutkinto dialog
      */
@@ -384,6 +385,11 @@ public class KoodistoURI {
     @Value("${koodi-uri.ontutkinto}")
     public void setKoodiOnTutkintoUri(String uri) {
         KOODI_ON_TUTKINTO_URI = uri;
+    }
+
+    @Value("${koodisto-uris.koulutustyyppifasetti}")
+    public void setKoodistoKoulutuslaajuusUri(String uri) {
+        KOODISTO_KOULUTUSLAAJUUS_URI = uri;
     }
 
     /*

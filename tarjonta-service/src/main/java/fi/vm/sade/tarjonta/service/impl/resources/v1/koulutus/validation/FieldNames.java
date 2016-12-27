@@ -47,6 +47,7 @@ public enum FieldNames {
     KOULUTUSTYYPPI,
     TUNNISTE,
     TARKENNE, //uses same db field as the name
+    KOULUTUKSENLAAJUUS,
     //Lukio:
     KOULUTUSLAJI,
     LUKIODIPLOMI,

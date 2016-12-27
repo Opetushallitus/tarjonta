@@ -161,6 +161,8 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         t.setOpetusaikakk(convertKoodistoUrisToList(komoto.getOpetusAikas()));
         t.setOpetuspaikkakk(convertKoodistoUrisToList(komoto.getOpetusPaikkas()));
 
+//        t.setKoulutuksenlaajuus(convertKoodistoUrisToList(komoto.getKoulutuksenlaajuus()));
+
         if (komoto.getKoulutuksenAlkamisPvms() == null || komoto.getKoulutuksenAlkamisPvms().isEmpty()) {
             t.setKoulutuksenAlkamiskausi(komoto.getAlkamiskausiUri());
             t.setKoulutuksenAlkamisvuosi(komoto.getAlkamisVuosi());

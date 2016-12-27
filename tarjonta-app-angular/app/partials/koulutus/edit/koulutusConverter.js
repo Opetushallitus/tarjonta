@@ -455,6 +455,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             },
             opetusPaikkas: {
                 koodisto: 'koodisto-uris.opetuspaikka'
+            },
+            koulutuksenLaajuusKoodi: {
+                koodisto: 'koodisto-uris.koulutustyyppifasetti'
             }
         },
         STR: {
@@ -919,6 +922,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 opetuskielis: {
                     koodisto: 'koodisto-uris.kieli'
                 },
+                koulutuksenLaajuusKoodi: {
+                    koodisto: 'koodisto-uris.koulutustyyppifasetti'
+                },
                 aihees: {
                     koodisto: 'koodisto-uris.aiheet'
                 },
@@ -1031,7 +1037,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
                 opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
                 opetuskielis: {koodisto: 'koodisto-uris.kieli'},
-                aihees: {koodisto: 'koodisto-uris.aiheet'}
+                aihees: {koodisto: 'koodisto-uris.aiheet'},
+                // tarviikohan?
+                koulutuksenLaajuusKoodi: { koodisto: 'koodisto-uris.koulutustyyppifasetti' }
             },
             STR: {
                 koulutuksenAlkamisvuosi: {'default': ''},

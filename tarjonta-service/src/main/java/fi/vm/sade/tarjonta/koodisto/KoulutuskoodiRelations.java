@@ -56,6 +56,7 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
         KoodistoURI.KOODISTO_KOULUTUSASTE_URI,
         KoodistoURI.KOODISTO_EQF_LUOKITUS_URI,
         KoodistoURI.KOODISTO_KOULUTUSALA_URI,
+        KoodistoURI.KOODISTO_KOULUTUSLAAJUUS_URI,
         KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI
     };
 
@@ -213,6 +214,9 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
                 }
             } else if (hasRelationToKoodisto(type, KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI)) {
                 dto.setOpintojenLaajuusyksikko(singleKoodi(type.getKoodiUri(), FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, restParam));
+
+            } else if (hasRelationToKoodisto(type, KoodistoURI.KOODISTO_KOULUTUSLAAJUUS_URI)) {
+                // dto.setKoulutuksenlaajuus(singleKoodi(type.getKoodiUri(), FieldNames.KOULUTUKSENLAAJUUS, restParam));
 
             } else if (hasRelationToKoodisto(type, KoodistoURI.KOODISTO_OPINTOALA_URI)) {
                 dto.setOpintoala(singleKoodi(type.getKoodiUri(), FieldNames.OPINTOALA, restParam));
