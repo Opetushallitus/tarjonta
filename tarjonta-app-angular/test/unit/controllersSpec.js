@@ -252,7 +252,8 @@ describe('Edit koulutus insert/edit/load', function() {
                     "koodisto-uris.opetusaika": "",
                     "koodisto-uris.opetuspaikka": "",
                     "koodisto-uris.kieli": "",
-                    "koodisto-uris.ammattinimikkeet": ""
+                    "koodisto-uris.ammattinimikkeet": "",
+                    "koodisto-uris.koulutustyyppifasetti": ""
 
                 },
                 app: {"userLanguages": ['kieli_fi', 'kieli_sv', 'kieli_en']}});
