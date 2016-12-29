@@ -20,7 +20,7 @@
     <parent>
         <artifactId>tarjonta</artifactId>
         <groupId>fi.vm.sade.tarjonta</groupId>
-        <version>2016-07-SNAPSHOT</version>
+        <version>2016-07-BUG_1158_korkeakoulutuksen_tyyppi-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tarjonta-api</artifactId>
