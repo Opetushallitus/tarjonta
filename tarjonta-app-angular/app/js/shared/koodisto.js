@@ -356,7 +356,13 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, Auth
                 }
                 var passiivinenTila = 'PASSIIVINEN';
                 var returnKoodis = [];
-                $resource(plainUrls.url("koodisto-service.koodi",":koodistoUri"), {
+                var useUrl = plainUrls.url("koodisto-service.koodi",":koodistoUri");
+                // haetaan kk:lle rajattu fasetti koodistosta eikä kaikkia
+                if(koodistoUriParam == "koulutustyyppifasetti"){
+                    useUrl = plainUrls.url("koodisto-service.koulutustyyppifasetti");
+                }
+
+                $resource(useUrl, {
                     koodistoUri: '@koodistoUri'
                 }, {
                         cache: true
