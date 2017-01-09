@@ -517,13 +517,13 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             .then(AtaruService.getForms)
             .then(function(forms) {
                 $scope.model.ataruForms = forms;
+                var key = $scope.model.hakux.result.ataruLomakeAvain;
+                var form = _.findWhere(forms, {'key': key});
+                $scope.model.ataruFormError = (key && !form) ? true : false;
+            })
+            .catch(function(error) {
+                $scope.model.ataruFormError = true;
             });
-    };
-    $scope.isSelectedAtaruFormDefinedAndUnvailable = function() {
-        var key = $scope.model.hakux.result.ataruLomakeAvain;
-        var form = _.findWhere($scope.model.ataruForms, {'key': key});
-        var result = (key && !form) ? true : false;
-        return result;
     };
     $scope.init = function() {
         var model = {
@@ -544,6 +544,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             selectedTarjoajaOrganisations: [],
             isAtaruRole: false,
             ataruForms: [],
+            ataruFormError: false,
             config: Config.env
         };
         $scope.model = model;
