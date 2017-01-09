@@ -10,6 +10,7 @@ import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.SecurityAwareTestBase;
@@ -61,6 +62,7 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
 
 
 @TestExecutionListeners(listeners = {
@@ -148,6 +150,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         }};
         kausiK.getMetadata().add(metadata);
         Mockito.when(tarjontaKoodistoHelper.getKoodiByUri("kausi_k#1")).thenReturn(kausiK);
+        Mockito.when(tarjontaKoodistoHelper.getUniqueKoodistoRelation(any(String.class), any(String.class), any(SuhteenTyyppiType.class), any(Boolean.class))).thenReturn("tutkintoonjohtavakoulutus_1");
 
         KoodiType kieliFi = new KoodiType();
         kieliFi.setKoodiArvo("fi");

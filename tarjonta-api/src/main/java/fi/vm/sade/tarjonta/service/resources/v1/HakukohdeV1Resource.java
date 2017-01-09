@@ -72,7 +72,9 @@ public interface HakukohdeV1Resource {
     @Path("/{oid}")
     @ApiOperation(value = "Palauttaa hakukohteen oid:lla", notes = "Operaatio palauttaa versio 1 mukaisen hakukohteen", response = HakukohdeV1RDTO.class)
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public ResultV1RDTO<HakukohdeV1RDTO> findByOid(@ApiParam(value = "Hakukohteen oid", required = true) @PathParam("oid") String oid);
+    public ResultV1RDTO<HakukohdeV1RDTO> findByOid(
+            @ApiParam(value = "Hakukohteen oid", required = true) @PathParam("oid") String oid,
+            @ApiParam(value = "Lisää hakukohteelle koulutuksen tutkintoonjohtavuuden, alkamiskauden ja -vuoden") @QueryParam("populateAdditionalKomotoFields") boolean populate);
 
     @GET
     @Path("/{oid}/valintaperusteet")

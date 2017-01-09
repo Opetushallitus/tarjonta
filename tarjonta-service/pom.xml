@@ -25,7 +25,6 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
         </dependency>
-        <!-- Postgresql -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -41,7 +40,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -62,34 +60,27 @@
                     <artifactId>log4j</artifactId>
                 </exclusion>
             </exclusions>
-
         </dependency>
-
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
         </dependency>
-
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-
         <dependency>
             <groupId>com.wordnik</groupId>
             <artifactId>swagger-jaxrs_2.10</artifactId>
             <version>1.3.0</version>
         </dependency>
-
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>1.9.2</version>
         </dependency>
-
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -114,8 +105,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-shared</artifactId>
@@ -130,69 +119,12 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
-
         </dependency>
-
-        <!--
-                <dependency>
-                    <groupId>fi.vm.sade.tarjonta</groupId>
-                    <artifactId>tarjonta-publication-api</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-        -->
-
-        <!--
-                <dependency>
-                    <groupId>fi.vm.sade.tarjonta</groupId>
-                    <artifactId>tarjonta-enricher</artifactId>
-                    <version>${project.version}</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.slf4j</groupId>
-                            <artifactId>slf4j-log4j12</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>org.slf4j</groupId>
-                            <artifactId>slf4j-api</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-        -->
-
-        <!--        <dependency>
-                <groupId>fi.vm.sade.generic</groupId>
-                <artifactId>generic-test-support</artifactId>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>slf4j-log4j12</artifactId>
-                        <groupId>org.slf4j</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-        -->
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-common</artifactId>
             <version>${generic.version}</version>
         </dependency>
-        <!--         <dependency>
-                    <groupId>fi.vm.sade.generic</groupId>
-                    <artifactId>dependencies-service</artifactId>
-                    <version>${generic.version}</version>
-                    <type>pom</type>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.slf4j</groupId>
-                            <artifactId>slf4j-log4j12</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>org.slf4j</groupId>
-                            <artifactId>slf4j-api</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-         -->
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
@@ -268,7 +200,6 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
-
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -278,30 +209,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-expression</artifactId>
-            <!--<scope>test</scope>-->
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--        <dependency>
-                    <groupId>fi.vm.sade.generic</groupId>
-                    <artifactId>dbunit-support</artifactId>
-                    <scope>test</scope>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.slf4j</groupId>
-                            <artifactId>slf4j-api</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>org.slf4j</groupId>
-                            <artifactId>slf4j-jdk14</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-        -->
         <dependency>
             <groupId>fi.vm.sade.oid</groupId>
             <artifactId>oid-service</artifactId>
@@ -319,28 +232,22 @@
             <artifactId>oid-api</artifactId>
             <version>${oid.version}</version>
         </dependency>
-
-        <!-- used by koodisto sync service -->
         <dependency>
             <groupId>fi.vm.sade.koodisto</groupId>
             <artifactId>koodisto-api</artifactId>
             <version>${koodisto.api.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
             <version>${antisamy.version}</version>
-            <!-- autentikaatiossa excludaavat xerceksen, pitäisikö tässäkin? -->
         </dependency>
-
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <type>jar</type>
             <version>2.3</version>
         </dependency>
-
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
@@ -353,14 +260,12 @@
             <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
             <version>3.1</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-events</artifactId>
@@ -372,19 +277,16 @@
             <version>1.0.4</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>fi.vm.sade</groupId>
             <artifactId>auditlogger</artifactId>
             <version>5.0.0-SNAPSHOT</version>
         </dependency>
-
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-jdk1.5</artifactId>
             <version>0.7.3</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-core</artifactId>
@@ -404,14 +306,12 @@
                     <artifactId>slf4j-jdk14</artifactId>
                 </exclusion>
             </exclusions>
-
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.flipkart.zjsonpatch</groupId>
             <artifactId>zjsonpatch</artifactId>
@@ -431,7 +331,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <!-- Spring AOP dependency -->
             <!-- A quick fix for :
@@ -482,16 +381,6 @@
             <artifactId>authentication-api</artifactId>
             <version>${authentication.api.version}</version>
         </dependency>
-
-        <!-- for image resize
-        <dependency>
-            <groupId>org.imgscalr</groupId>
-            <artifactId>imgscalr-lib</artifactId>
-            <version>4.2</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-        -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -518,13 +407,6 @@
             <artifactId>jgroups</artifactId>
             <version>2.10.0.GA</version>
         </dependency>
-        <!--
-                <dependency>
-                        <groupId>org.jasig.cas</groupId>
-                        <artifactId>cas-client-core</artifactId>
-                        <version>3.1.10</version>
-                </dependency>
-        -->
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
@@ -566,9 +448,6 @@
 
     <build>
         <finalName>tarjonta-service</finalName>
-        <!--<filters>
-            <filter>src/main/filter/filter-${env}.properties</filter>
-        </filters>-->
 
         <plugins>
             <plugin>

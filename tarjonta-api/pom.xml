@@ -14,7 +14,8 @@
   ~ European Union Public Licence for more details.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>tarjonta</artifactId>
@@ -25,15 +26,8 @@
     <artifactId>tarjonta-api</artifactId>
     <name>Tarjonta :: API</name>
     <packaging>jar</packaging>
-    <!--    <packaging>jar</packaging>-->
 
     <dependencies>
-<!--         <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-         -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -64,12 +58,11 @@
             <artifactId>slf4j-log4j12</artifactId>
             <scope>test</scope>
         </dependency>
-
- 		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>jsr311-api</artifactId>
-			<version>1.1.1</version>
-		</dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>jsr311-api</artifactId>
+            <version>1.1.1</version>
+        </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -84,27 +77,26 @@
             <version>2.5.1</version>
             <type>jar</type>
         </dependency>
-
         <dependency>
             <groupId>com.wordnik</groupId>
             <artifactId>swagger-annotations_2.10</artifactId>
             <version>1.3.0</version>
         </dependency>
-        		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>2.7.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-json-provider</artifactId>
-			<version>2.7.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-			<version>2.7.1</version>
-		</dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <version>2.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.7.1</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
@@ -116,52 +108,46 @@
         <plugins>
 
             <plugin>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>2.6.2</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.jvnet.jaxb2_commons</groupId>
-						<artifactId>jaxb2-value-constructor</artifactId>
-						<version>3.0</version>
-					</dependency>
-					<dependency>
-						<groupId>org.jvnet.jaxb2_commons</groupId>
-						<artifactId>jaxb2-basics</artifactId>
-						<version>0.6.2</version>
-					</dependency>
-				</dependencies>
-				<executions>
-					<execution>
-						<id>generate-tarjonta-api</id>
-						<phase>generate-sources</phase>
-						<configuration>
-							<sourceRoot>${project.build.directory}/generated-sources</sourceRoot>
-							<defaultOptions>
-								<bindingFiles>
-									<bindingFile>${basedir}/src/main/resources/wsdl/binding.xjb</bindingFile>
-								</bindingFiles>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <version>2.6.2</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jvnet.jaxb2_commons</groupId>
+                        <artifactId>jaxb2-value-constructor</artifactId>
+                        <version>3.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jvnet.jaxb2_commons</groupId>
+                        <artifactId>jaxb2-basics</artifactId>
+                        <version>0.6.2</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>generate-tarjonta-api</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <sourceRoot>${project.build.directory}/generated-sources</sourceRoot>
+                            <defaultOptions>
+                                <bindingFiles>
+                                    <bindingFile>${basedir}/src/main/resources/wsdl/binding.xjb</bindingFile>
+                                </bindingFiles>
                                 <exceptionSuper>java.lang.RuntimeException</exceptionSuper>
 
-								<extraargs>
-									<extraarg>-frontend</extraarg>
-									<extraarg>jaxws21</extraarg>
-									<extraarg>-xjc-Xvalue-constructor</extraarg>
-								</extraargs>
-							</defaultOptions>
-							<wsdlOption>
-			                        <wsdl>${basedir}src/main/resources/wsdl/tarjontaAdminService.wsdl</wsdl>
-							</wsdlOption>
-							<wsdlOption>
-								<wsdl>${basedir}/src/main/resources/wsdl/tarjontaPublicService.wsdl</wsdl>
-							</wsdlOption>
-						</configuration>
-						<goals>
-							<goal>wsdl2java</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+                                <extraargs>
+                                    <extraarg>-frontend</extraarg>
+                                    <extraarg>jaxws21</extraarg>
+                                    <extraarg>-xjc-Xvalue-constructor</extraarg>
+                                </extraargs>
+                            </defaultOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -182,7 +168,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 
