@@ -513,6 +513,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
                 $scope.model.isAtaruRole = (authorised) ? true : false;
                 return (authorised) ? authorised : $q.reject('Unauthorised');
             })
+            .then(AtaruService.preWarming)
             .then(AtaruService.getForms)
             .then(function(forms) {
                 $scope.model.ataruForms = forms;

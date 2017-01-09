@@ -30,6 +30,9 @@ app.factory('AtaruService', function($resource, $http, AuthService) {
                 return authorised;
             });
         },
+        preWarming: function() {
+            return $http.get(window.url('ataru-service.editor'));
+        },
         getForms: function() {
             return $http.get(window.url('ataru-service.rest.forms'), config).then(function(response) {
                 return (response.data.forms) ? response.data.forms : [];

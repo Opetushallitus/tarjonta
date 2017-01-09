@@ -10,19 +10,6 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     var hakukohdeHaku = $resource(window.url("tarjonta-service.hakukohde.haku"));
     var koulutusHaku = $resource(window.url("tarjonta-service.koulutus.haku"));
 
-    function initCas() {
-        var services = [window.url('ataru-service.editor')];
-        return $q.all(services.map(loadBuildversion));
-    }
-    function loadBuildversion(serviceUrl) {
-        return $http.get(serviceUrl);
-    }
-    function warming() {
-        $log.info('service warm-up');
-    }
-
-    initCas().then(warming, warming);
-
     function localize(txt, opetuskielet) {
         if (txt === undefined || txt === null) {
             return txt;
