@@ -148,6 +148,7 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
                 $scope.model.isAtaruRole = (authorised) ? true : false;
                 return (authorised) ? authorised : $q.reject('Unauthorised');
             })
+            .then(AtaruService.preWarming)
             .then(AtaruService.getForms)
             .then(function(forms) {
                 var form = _.findWhere(forms, {'key': ataruLomakeAvain});
