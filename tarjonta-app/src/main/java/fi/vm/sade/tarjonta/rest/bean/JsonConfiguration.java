@@ -61,6 +61,7 @@ public class JsonConfiguration {
             "koodisto-uris.koulutusaste",
             "koodisto-uris.koulutuslaji",
             "koodisto-uris.koulutusohjelma",
+            "koodisto-uris.koulutustyyppifasetti",
             "koodisto-uris.liiteTodistukset",
             "koodisto-uris.liitteentyyppi",
             "koodisto-uris.lisahaku",
