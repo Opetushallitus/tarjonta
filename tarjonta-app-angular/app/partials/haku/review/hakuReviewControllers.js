@@ -148,10 +148,15 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
                 $scope.model.isAtaruRole = (authorised) ? true : false;
                 return (authorised) ? authorised : $q.reject('Unauthorised');
             })
+            .then(AtaruService.preWarming)
             .then(AtaruService.getForms)
             .then(function(forms) {
                 var form = _.findWhere(forms, {'key': ataruLomakeAvain});
                 $scope.model.ataruFormName = (form) ? form.name : '';
+                $scope.model.ataruFormError = (form) ? false : true;
+            })
+            .catch(function(error) {
+                $scope.model.ataruFormError = true;
             });
     };
     $scope.init = function() {
@@ -182,7 +187,8 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
             // { organisaatioOids : [...] }
             place: 'holder',
             isAtaruRole: false,
-            ataruFormName: ''
+            ataruFormName: '',
+            ataruFormError: false
         });
         //
         // Get organisation information
