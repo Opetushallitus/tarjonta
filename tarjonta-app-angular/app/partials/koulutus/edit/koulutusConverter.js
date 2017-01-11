@@ -1270,6 +1270,17 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 tutkintonimikes: {}
             }
         }),
+        /*******************************************/
+        /* PELASTUSALAN_KOULUTUS INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        PELASTUSALAN_KOULUTUS: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE, {
+            koulutustyyppiKoodiUri: 'koulutustyyppi_24',
+            STR: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE.STR, {
+                toteutustyyppi: {
+                    'default': 'PELASTUSALAN_KOULUTUS'
+                }
+            })
+        }),
         /**
              * Tämä ei itsesään ole koulutustyyppi, vaan sitä käytetään "lapsikoulutuksena"
              * esim. näyttötutkinnoille.
