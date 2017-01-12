@@ -57,7 +57,8 @@ import java.util.Set;
     @Type(value = KoulutusPerusopetuksenLisaopetusV1RDTO.class, name = "PERUSOPETUKSEN_LISAOPETUS"),
     @Type(value = KoulutusValmentavaJaKuntouttavaV1RDTO.class, name = "VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS"),
     @Type(value = KoulutusVapaanSivistystyonV1RDTO.class, name = "VAPAAN_SIVISTYSTYON_KOULUTUS"),
-    @Type(value = KoulutusAikuistenPerusopetusV1RDTO.class, name = "AIKUISTEN_PERUSOPETUS")
+    @Type(value = KoulutusAikuistenPerusopetusV1RDTO.class, name = "AIKUISTEN_PERUSOPETUS"),
+    @Type(value = PelastusalanKoulutusV1RDTO.class, name = "PELASTUSALAN_KOULUTUS"),
 })
 public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
 
