@@ -118,6 +118,8 @@ public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements 
     @Column(name = "opintojen_laajuusyksikko_uri")
     private String opintojenLaajuusyksikkoUri;
 
+
+
     /**
      * Koodisto uri. See accessors for more info.
      */

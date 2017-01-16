@@ -8,6 +8,11 @@ app.controller('EditKorkeakouluOpintoController', function EditKorkeakouluOpinto
             uiModel.opinnonTyypit = tyypit;
         });
     };
+    $scope.loadKoulutuksenLaajuudet = function(apiModel, uiModel) {
+        Koodisto.getAllKoodisWithKoodiUri('koulutustyyppifasetti', $scope.koodistoLocale, false).then(function(tyypit) {
+            uiModel.koulutuksenLaajuudet = tyypit;
+        });
+    };
 
     /**
      * Save koulutus data to tarjonta-service database.
@@ -33,6 +38,7 @@ app.controller('EditKorkeakouluOpintoController', function EditKorkeakouluOpinto
         childScope: $scope
     }, function() {
         $scope.loadOpinnonTyypit($scope.model, $scope.uiModel);
+        $scope.loadKoulutuksenLaajuudet($scope.model, $scope.uiModel);
 
         // lisätietokielivalinnat
         $scope.getLisatietoKielet($scope.model, $scope.uiModel, true);

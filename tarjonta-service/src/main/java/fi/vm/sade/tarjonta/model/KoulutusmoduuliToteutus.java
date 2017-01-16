@@ -21,6 +21,7 @@ import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.AutowireHelper;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.OpintopolkuAlkamiskausi;
@@ -109,11 +110,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @CollectionTable(name = TABLE_NAME + "_opetusmuoto", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> opetusmuotos = new HashSet<KoodistoUri>();
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = TABLE_NAME + "_koulutuksenlaajuus", joinColumns
-            = @JoinColumn(name = TABLE_NAME + "_id"))
-    private Set<KoodistoUri> koulutuksenlaajuus = new HashSet<KoodistoUri>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_opetusaika", joinColumns
@@ -292,6 +288,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "opintopolku_alkamiskausi")
     @Enumerated(EnumType.STRING)
     private OpintopolkuAlkamiskausi.KaudetEnum opintopolkuAlkamiskausi;
+
+    @Column(name = "koulutuksenlaajuus_uri")
+    private String koulutuksenlaajuusUri;
 
     public String getOpintojenLaajuusArvo() {
         return opintojenLaajuusarvo;
@@ -528,14 +527,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void removeAmmattinimike(KoodistoUri ammattinimike) {
         ammattinimikes.remove(ammattinimike);
     }
-
-    public Set<KoodistoUri> getKoulutuksenlaajuus(){ return koulutuksenlaajuus; }
-
-    public void addKoulutuksenlaajuus(KoodistoUri laajuus) { koulutuksenlaajuus.add(laajuus); }
-
-    public void removeKoulutuksenlaajuus(KoodistoUri laajuus) { koulutuksenlaajuus.remove(laajuus); }
-
-    public void setKoulutuksenlaajuus(Set<KoodistoUri> uris) { this.koulutuksenlaajuus = uris; }
 
     public Set<KoodistoUri> getOpetusmuotos() {
         return opetusmuotos;
@@ -1409,4 +1400,20 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void setUniqueExternalId(String uniqueExternalId) {
         this.uniqueExternalId = uniqueExternalId;
     }
+
+    /**
+     * @return the koulutuksenlaajuusUri
+     */
+    public String getKoulutuksenlaajuusUri() {
+        return koulutuksenlaajuusUri;
+    }
+
+
+    /**
+     * @param koulutuksenlaajuusUri the koulutuksenlaajuusUri to set
+     */
+    public void setKoulutuksenlaajuusUri(String koulutuksenlaajuusUri) {
+        this.koulutuksenlaajuusUri = koulutuksenlaajuusUri;
+    }
+
 }

@@ -70,7 +70,8 @@ window.urls.addProperties( {
     "koodisto-service.ylakoodi":"/koodisto-service/rest/json/relaatio/sisaltyy-ylakoodit/$1",
     "koodisto-service.alakoodi":"/koodisto-service/rest/json/relaatio/sisaltyy-alakoodit/$1",
     "koodisto-service.koodi":"/koodisto-service/rest/json/$1/koodi",
-    "koodisto-service.koulutustyyppifasetti":"/koodisto-service/rest/json/koulutustyyppifasetti/koodi/arvo/et01.05",
+    "koodisto-service.arvo":"/koodisto-service/rest/json/$1/koodi/arvo/$2",
+
     "koodisto-service.koodiInKoodisto":"/koodisto-service/rest/json/$1/koodi/$2",
     "koodisto-service.search":"/koodisto-service/rest/json/searchKoodis",
 

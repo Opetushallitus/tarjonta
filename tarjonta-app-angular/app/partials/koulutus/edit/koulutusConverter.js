@@ -438,6 +438,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             },
             suunniteltuKestoTyyppi: {
                 koodisto: 'koodisto-uris.suunniteltuKesto'
+            },
+            koulutuksenLaajuusKoodi: {
+                koodisto: 'koodisto-uris.arvo'
             }
         },
         MCOMBO: {
@@ -455,9 +458,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             },
             opetusPaikkas: {
                 koodisto: 'koodisto-uris.opetuspaikka'
-            },
-            koulutuksenLaajuusKoodi: {
-                koodisto: 'koodisto-uris.koulutustyyppifasetti'
             }
         },
         STR: {
@@ -905,6 +905,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                     nullable: true,
                     koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'
                 },
+                koulutuksenLaajuusKoodi: {
+                    koodisto: 'koodisto-uris.arvo'
+                },
                 opintojenLaajuusarvo: {
                     skipUiModel: true
                 } //waiting for missing koodisto relations, when the relations are created, move the fields to RELATION object.
@@ -921,9 +924,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 },
                 opetuskielis: {
                     koodisto: 'koodisto-uris.kieli'
-                },
-                koulutuksenLaajuusKoodi: {
-                    koodisto: 'koodisto-uris.koulutustyyppifasetti'
                 },
                 aihees: {
                     koodisto: 'koodisto-uris.aiheet'
@@ -1030,16 +1030,15 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 koulutuksenAlkamiskausi: {
                     nullable: true,
                     koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'
-                }
+                },
+                koulutuksenLaajuusKoodi: { koodisto: 'koodisto-uris.arvo' }
             },
             MCOMBO: {
                 opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
                 opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
                 opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
                 opetuskielis: {koodisto: 'koodisto-uris.kieli'},
-                aihees: {koodisto: 'koodisto-uris.aiheet'},
-                // tarviikohan?
-                koulutuksenLaajuusKoodi: { koodisto: 'koodisto-uris.koulutustyyppifasetti' }
+                aihees: {koodisto: 'koodisto-uris.aiheet'}
             },
             STR: {
                 koulutuksenAlkamisvuosi: {'default': ''},
