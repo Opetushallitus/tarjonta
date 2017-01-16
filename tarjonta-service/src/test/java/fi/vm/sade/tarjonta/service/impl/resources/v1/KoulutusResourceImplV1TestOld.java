@@ -100,6 +100,7 @@ public class KoulutusResourceImplV1TestOld extends KoulutusBase {
         dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], null, HenkiloTyyppi.YHTEYSHENKILO));
         dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
+        dto.setKoulutuksenLaajuusKoodi(toKoodiUri(KOULUTUKSENLAAJUUS));
 
         dto.setOppiaineet(getOppiaineet());
 

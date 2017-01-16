@@ -602,7 +602,6 @@ public class KoulutusDTOConverterToEntity {
         }
 
         if (dto.getKoulutuksenLaajuusKoodi() != null) {
-            System.out.println(dto.getKoulutuksenLaajuusKoodi());
             komoto.setKoulutuksenlaajuusUri(commonConverter.convertToUri(dto.getKoulutuksenLaajuusKoodi(), FieldNames.KOULUTUKSENLAAJUUS, ALLOW_NULL_KOODI_URI));
         }
     }

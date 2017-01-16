@@ -357,27 +357,56 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, Auth
                 var passiivinenTila = 'PASSIIVINEN';
                 var returnKoodis = [];
                 var useUrl = plainUrls.url("koodisto-service.koodi",":koodistoUri");
-                var koodistoArvo = "";
                 var prms = {
                     koodistoUri: '@koodistoUri'
-                    // ,      koodistoArvo: '@koodistoArvo'
                 };
 
-                // haetaan kk:lle rajattu fasetti koodistosta eikä kaikkia
-                if(koodistoUriParam == "koulutustyyppifasetti"){
-                    useUrl = plainUrls.url("koodisto-service.arvo", ":koodistoUri", ":koodistoArvo");
-                    koodistoArvo = "et01.05";
-                    prms = {
-                        koodistoUri: '@koodistoUri',
-                        koodistoArvo: '@koodistoArvo'
-                    };
+                $resource(useUrl, prms, {
+                    cache: true
+                }).query({
+                    koodistoUri: koodistoUriParam
+                }, function(koodis) {
+                    koodis = rejectOldKoodis(koodis);
+                    angular.forEach(koodis, function(koodi) {
+                        if (includePassive) {
+                            returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+                        }
+                        else {
+                            if (koodi.tila !== passiivinenTila) {
+                                returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+                            }
+                        }
+                    });
+                    returnKoodisPromise.resolve(returnKoodis);
+                });
+            });
+        },
+        /*
+         @param {string} koodistouri from which koodis should be retrieved
+         @param {string} locale in which koodi name should be shown
+         @returns {promise} return promise which contains array of koodi view models
+         */
+        getSubKoodiValuesWithKoodiUri: function(koodistoUriParam, koodiArvo, locale, includePassiivises) {
+            $log.info('getAllKoodisWithKoodiUri called with ' + koodistoUriParam + ' ' + koodiArvo + ' ' + locale);
+            locale = getLocale(locale);
+            return CacheService.lookup('koodisto/' + koodistoUriParam + '/' + koodiArvo + '/' + locale, function(returnKoodisPromise) {
+                var includePassive = false;
+                if (includePassiivises !== undefined) {
+                    includePassive = includePassiivises;
                 }
+                var passiivinenTila = 'PASSIIVINEN';
+                var returnKoodis = [];
+                var useUrl = plainUrls.url("koodisto-service.arvo",":koodistoUri", ":koodiArvo");
+                var prms = {
+                    koodistoUri: '@koodistoUri',
+                    koodiArvo: '@koodiArvo'
+                };
 
                 $resource(useUrl, prms, {
                     cache: true
                 }).query({
                     koodistoUri: koodistoUriParam,
-                    koodistoArvo: koodistoArvo
+                    koodiArvo: koodiArvo
                 }, function(koodis) {
                     koodis = rejectOldKoodis(koodis);
                     angular.forEach(koodis, function(koodi) {

@@ -154,7 +154,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         t.setTutkintonimikes(Sets.newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE))));
         t.setKoulutusmoduuli(m);
         t.setToteutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS);
- 
+        t.setKoulutuksenlaajuusUri("koulutustyyppifasetti_et010205#1");
         final Type returnKomoto = Type.KOMOTO;
 
         expectKorkeakoulutusNotTestedCalls();
@@ -171,6 +171,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect_null_komo_x(returnKomoto, returnKomoto, FieldNames.NQF, YES);
         expect_koulutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS, returnKomoto, FieldNames.KOULUTUSTYYPPI, NO);
         //expectNull(returnKomoto, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);  //correct as the tyyppi is only in komoto
+        expect(commonConverterMock.convertToKoodiDTO("koulutustyyppifasetti_et010205#1", "koulutustyyppifasetti_et010205#1", FieldNames.KOULUTUKSENLAAJUUS, YES, PARAM)).andReturn(toKoodiUri("koulutustyyppifasetti_et010205"));
 
         EasyMock.replay(komoKuvausConvertersMock);
         EasyMock.replay(komotoKuvausConvertersMock);
@@ -208,7 +209,6 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect_komo_x(returnKomo, NO_URI, FieldNames.EQF, YES);
         expect_komo_x(returnKomo, NO_URI, FieldNames.NQF, YES);
         expect_koulutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS, returnKomo, FieldNames.KOULUTUSTYYPPI, NO);
-        // expectNull(Type.RETURN_NULL, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);  //correct as the tyyppi is only in komoto
 
         EasyMock.replay(komoKuvausConvertersMock);
         EasyMock.replay(komotoKuvausConvertersMock);
@@ -419,7 +419,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect(commonConverterMock.convertToKoodiUrisDTO(Sets.<KoodistoUri>newHashSet(), FieldNames.OPETUSMUODOS, PARAM)).andReturn(toKoodiUris(Type.NOT_TESTED));
         expect(commonConverterMock.convertToKoodiUrisDTO(Sets.<KoodistoUri>newHashSet(), FieldNames.OPETUSPAIKKAS, PARAM)).andReturn(toKoodiUris(Type.NOT_TESTED));
         expect(commonConverterMock.convertToKoodiUrisDTO(Sets.<KoodistoUri>newHashSet(), FieldNames.OPETUSAIKAS, PARAM)).andReturn(toKoodiUris(Type.NOT_TESTED));
-        expect(commonConverterMock.convertToKoodiUrisDTO(Sets.<KoodistoUri>newHashSet(), FieldNames.KOULUTUKSENLAAJUUS, PARAM)).andReturn(toKoodiUris(Type.NOT_TESTED));
+
     }
 
     private void expectLukioNotTestedCalls() {
