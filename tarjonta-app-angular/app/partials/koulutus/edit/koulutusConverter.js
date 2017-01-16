@@ -1279,6 +1279,14 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 toteutustyyppi: {
                     'default': 'PELASTUSALAN_KOULUTUS'
                 }
+            }),
+            RELATION: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE.RELATION, {
+                opintojenLaajuusyksikko: {
+                    module: 'TUTKINTO'
+                },
+                opintojenLaajuusarvo: {
+                    module: 'TUTKINTO'
+                }
             })
         }),
         /**
