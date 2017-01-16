@@ -187,8 +187,8 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             }
 
             // tämä on nyt vain korkeakoulutuksessa, voidaan yleistää jos tarpeen
-            if (komoto.getKoulutuksenlaajuus() != null) {
-                kkDto.setKoulutuksenLaajuusKoodi(commonConverter.convertToKoodiUrisDTO(komoto.getKoulutuksenlaajuus(), FieldNames.KOULUTUKSENLAAJUUS, param));
+            if (komoto.getKoulutuksenlaajuusUri() != null) {
+                kkDto.setKoulutuksenLaajuusKoodi(commonConverter.convertToKoodiDTO(komoto.getKoulutuksenlaajuusUri(), komoto.getKoulutuksenlaajuusUri(), FieldNames.KOULUTUKSENLAAJUUS, NO, param));
             }
 
         }

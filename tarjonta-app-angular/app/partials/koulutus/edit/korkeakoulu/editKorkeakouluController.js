@@ -13,6 +13,12 @@ var app = angular.module('app.edit.ctrl.kk', [
 app.controller('EditKorkeakouluController', function EditKorkeakouluController($scope, Config, $modal, $q,
                                             AuthService, OrganisaatioService, Koodisto) {
 
+    $scope.loadKoulutuksenLaajuudet = function(apiModel, uiModel) {
+        Koodisto.getAllKoodisWithKoodiUri('koulutustyyppifasetti', $scope.koodistoLocale, false).then(function(tyypit) {
+            uiModel.koulutuksenLaajuudet = tyypit;
+        });
+    };
+
     $scope.tutkintoDialogModel = {};
     /**
      * Save koulutus data to tarjonta-service database.
@@ -104,5 +110,7 @@ app.controller('EditKorkeakouluController', function EditKorkeakouluController($
     };
     $scope.init({
         childScope: $scope
+    }, function (){
+        $scope.loadKoulutuksenLaajuudet($scope.model, $scope.uiModel);
     });
 });

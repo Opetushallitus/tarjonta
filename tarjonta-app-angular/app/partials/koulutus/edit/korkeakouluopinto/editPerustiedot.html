@@ -221,11 +221,9 @@
        <tr>
            <th tt="koulutus.edit.koulutuksenLaajuusKoodi">Koulutuksen laajuus</th>
            <td>
-               <multi-select
-                   model="uiModel.tmp"
-                   selection="uiModel.koulutuksenLaajuusKoodi.uris"
-                   promise="uiModel.koulutuksenLaajuusKoodi.promise"
-                   columns="2"
+               <select
+                   ng-model="model.koulutuksenLaajuusKoodi.uri"
+                   ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.koulutuksenLaajuudet | orderBy:'koodiNimi'"
                    name="koulutuksenLaajuusKoodi"
                    ng-required="false" />
            </td>

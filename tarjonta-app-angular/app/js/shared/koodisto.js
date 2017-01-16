@@ -357,17 +357,27 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, Auth
                 var passiivinenTila = 'PASSIIVINEN';
                 var returnKoodis = [];
                 var useUrl = plainUrls.url("koodisto-service.koodi",":koodistoUri");
+                var koodistoArvo = "";
+                var prms = {
+                    koodistoUri: '@koodistoUri'
+                    // ,      koodistoArvo: '@koodistoArvo'
+                };
+
                 // haetaan kk:lle rajattu fasetti koodistosta eikä kaikkia
                 if(koodistoUriParam == "koulutustyyppifasetti"){
-                    useUrl = plainUrls.url("koodisto-service.koulutustyyppifasetti");
+                    useUrl = plainUrls.url("koodisto-service.arvo", ":koodistoUri", ":koodistoArvo");
+                    koodistoArvo = "et01.05";
+                    prms = {
+                        koodistoUri: '@koodistoUri',
+                        koodistoArvo: '@koodistoArvo'
+                    };
                 }
 
-                $resource(useUrl, {
-                    koodistoUri: '@koodistoUri'
-                }, {
-                        cache: true
-                    }).query({
-                    koodistoUri: koodistoUriParam
+                $resource(useUrl, prms, {
+                    cache: true
+                }).query({
+                    koodistoUri: koodistoUriParam,
+                    koodistoArvo: koodistoArvo
                 }, function(koodis) {
                     koodis = rejectOldKoodis(koodis);
                     angular.forEach(koodis, function(koodi) {
@@ -561,7 +571,7 @@ app.factory('KoodistoURI', function($log, Config) {
         KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI: getConfigWithDefault('koodisto-uris.opintojenLaajuusyksikko', ''),
         KOODISTO_OPINTOJEN_LAAJUUSARVO_URI: getConfigWithDefault('koodisto-uris.opintojenLaajuusarvo', ''),
         KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI: getConfigWithDefault('koodisto-uris.pohjakoulutusvaatimus', ''),
-        KOODISTO_KOULUTUSLAAJUUS_URI: getConfigWithDefault('koodisto-uris.koulutustyyppifasetti', ''),
+        KOODISTO_KOULUTUKSENLAAJUUS_URI: getConfigWithDefault('koodisto-uris.arvo', ''),
         KOODISTO_EQF_LUOKITUS_URI: getConfigWithDefault('koodisto-uris.eqf-luokitus', ''),
         /*
          * KOMOTO URIs
