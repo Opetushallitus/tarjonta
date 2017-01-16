@@ -118,7 +118,11 @@ public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements 
     @Column(name = "opintojen_laajuusyksikko_uri")
     private String opintojenLaajuusyksikkoUri;
 
-
+    /**
+     * Koodisto uri. See accessors for more info.
+     */
+    @Column(name = "koulutuksenlaajuus_uri")
+    private String koulutuksenlaajuusUri;
 
     /**
      * Koodisto uri. See accessors for more info.
@@ -431,6 +435,21 @@ public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements 
      */
     public void setOpintojenLaajuusarvoUri(String opintojenLaajuusarvoUri) {
         this.opintojenLaajuusarvoUri = opintojenLaajuusarvoUri;
+    }
+
+    /**
+     * @return the koulutuksenlaajuusUri
+     */
+    public String getKoulutuksenlaajuusUri() {
+        return koulutuksenlaajuusUri;
+    }
+
+
+    /**
+     * @param koulutuksenlaajuusUri the koulutuksenlaajuusUri to set
+     */
+    public void setKoulutuksenlaajuusUri(String koulutuksenlaajuusUri) {
+        this.koulutuksenlaajuusUri = koulutuksenlaajuusUri;
     }
 
     /**
