@@ -171,7 +171,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect_null_komo_x(returnKomoto, returnKomoto, FieldNames.NQF, YES);
         expect_koulutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS, returnKomoto, FieldNames.KOULUTUSTYYPPI, NO);
         //expectNull(returnKomoto, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);  //correct as the tyyppi is only in komoto
-        expect(commonConverterMock.convertToKoodiDTO("koulutustyyppifasetti_et010205#1", "koulutustyyppifasetti_et010205#1", FieldNames.KOULUTUKSENLAAJUUS, NO, PARAM)).andReturn(toKoodiUri("koulutustyyppifasetti_et010205"));
+        expect(commonConverterMock.convertToKoodiDTO("koulutustyyppifasetti_et010205#1", "koulutustyyppifasetti_et010205#1", FieldNames.KOULUTUKSENLAAJUUS, YES, PARAM)).andReturn(toKoodiUri("koulutustyyppifasetti_et010205"));
 
         EasyMock.replay(komoKuvausConvertersMock);
         EasyMock.replay(komotoKuvausConvertersMock);
