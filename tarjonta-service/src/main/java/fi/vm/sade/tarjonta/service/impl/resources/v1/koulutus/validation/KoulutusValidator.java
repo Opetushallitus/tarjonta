@@ -369,8 +369,7 @@ public class KoulutusValidator {
         if (!(dto instanceof KoulutusAmmatillinenPerustutkintoV1RDTO
                 || dto instanceof KoulutusAmmatilliseenPeruskoulutukseenValmentavaV1RDTO
                 || dto instanceof KoulutusAmmatilliseenPeruskoulutukseenValmentavaERV1RDTO
-                || dto instanceof KoulutusValmentavaJaKuntouttavaV1RDTO
-                || dto instanceof PelastusalanKoulutusV1RDTO)) {
+                || dto instanceof KoulutusValmentavaJaKuntouttavaV1RDTO)) {
             validateKoodi(
                 result,
                 dto.getKoulutusohjelma(),
