@@ -135,7 +135,8 @@ angular.module('Validator', [])
                 'AMMATILLINEN_PERUSTUTKINTO',
                 'KORKEAKOULUOPINTO',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
-                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER',
+                'PELASTUSALAN_KOULUTUS'
             ], toteutusTyyppi);
         }
         function needsLiitteidenToimitustiedot(toteutusTyyppi) {
