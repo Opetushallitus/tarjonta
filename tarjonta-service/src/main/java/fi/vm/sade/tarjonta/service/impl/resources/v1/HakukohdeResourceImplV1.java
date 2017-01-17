@@ -540,32 +540,15 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 break;
             case AMMATILLINEN_PERUSTUTKINTO:
             case LUKIOKOULUTUS:
-                validationMessageses.addAll(hakukohdeValidator
-                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
-                break;
             case PERUSOPETUKSEN_LISAOPETUS:
-                validationMessageses.addAll(hakukohdeValidator
-                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
-                break;
             case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
             case AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA:
             case AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER:
-                validationMessageses.addAll(hakukohdeValidator
-                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
-                break;
             case MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
-                validationMessageses.addAll(hakukohdeValidator
-                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
-                break;
             case MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
-                validationMessageses.addAll(hakukohdeValidator
-                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
-                break;
             case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS:
-                validationMessageses.addAll(hakukohdeValidator
-                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
-                break;
             case VAPAAN_SIVISTYSTYON_KOULUTUS:
+            case PELASTUSALAN_KOULUTUS:
                 validationMessageses.addAll(hakukohdeValidator
                         .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
                 break;
