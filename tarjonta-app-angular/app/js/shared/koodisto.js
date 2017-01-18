@@ -386,7 +386,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, Auth
          @param {string} locale in which koodi name should be shown
          @returns {promise} return promise which contains array of koodi view models
          */
-        getSubKoodiValuesWithKoodiUri: function(koodistoUriParam, koodiArvo, locale, includePassiivises) {
+        getSubKoodiValuesWithKoodiUri: function(koodistoUriParam, koodiArvo, locale, includePassiivises, exclude) {
             $log.info('getAllKoodisWithKoodiUri called with ' + koodistoUriParam + ' ' + koodiArvo + ' ' + locale);
             locale = getLocale(locale);
             return CacheService.lookup('koodisto/' + koodistoUriParam + '/' + koodiArvo + '/' + locale, function(returnKoodisPromise) {
@@ -410,12 +410,14 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, Auth
                 }, function(koodis) {
                     koodis = rejectOldKoodis(koodis);
                     angular.forEach(koodis, function(koodi) {
-                        if (includePassive) {
-                            returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
-                        }
-                        else {
-                            if (koodi.tila !== passiivinenTila) {
+                        if (exclude.indexOf(koodi.koodiArvo) == -1) {
+                            if (includePassive) {
                                 returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+                            }
+                            else {
+                                if (koodi.tila !== passiivinenTila) {
+                                    returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+                                }
                             }
                         }
                     });
