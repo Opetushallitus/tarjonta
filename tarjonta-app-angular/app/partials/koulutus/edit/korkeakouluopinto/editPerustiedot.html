@@ -58,7 +58,7 @@
 
         <!-- väli -->
         <tr class="padding"><td colspan="3"></td></tr>
-
+ndexin
         <!-- tutkinto-ohjelman tunniste -->
         <tr>
             <th tt="koulutus.edit.tunniste">Tunniste</th>
@@ -95,21 +95,6 @@
                 <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opintopisteet.$error.required" tt="koulutus.edit.opintojenLaajuus.required">Opintojen laajuus vaaditaan</p>
             </td>
         </tr>
-
-       <!-- koulutuksen laajuus -->
-       <tr>
-           <th tt="koulutus.edit.koulutuksenLaajuusKoodi">Koulutuksen laajuus</th>
-           <td>
-               <select
-                   ng-model="model.koulutuksenLaajuusKoodi.uri"
-                   ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.koulutuksenLaajuudet | orderBy:'koodiNimi'"
-                   name="koulutuksenLaajuusKoodi"
-                   ng-required="false" />
-           </td>
-           <td>
-               <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.koulutuksenLaajuusKoodi.$error.required" tt="koulutus.edit.koulutuksenLaajuusKoodi.required">Opetusmuodot vaaditaan</p>
-           </td>
-       </tr>
 
         <!-- väli -->
         <tr class="padding"><td colspan="3"><hr/></td></tr>
