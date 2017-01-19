@@ -440,6 +440,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 koodisto: 'koodisto-uris.suunniteltuKesto'
             },
             koulutuksenLaajuusKoodi: {
+                nullable: true,
                 koodisto: 'koodisto-uris.arvo'
             }
         },
@@ -906,6 +907,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                     koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'
                 },
                 koulutuksenLaajuusKoodi: {
+                    nullable: true,
                     koodisto: 'koodisto-uris.arvo'
                 },
                 opintojenLaajuusarvo: {
@@ -1031,7 +1033,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                     nullable: true,
                     koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'
                 },
-                koulutuksenLaajuusKoodi: { koodisto: 'koodisto-uris.arvo' }
+                koulutuksenLaajuusKoodi: {
+                    nullable: true,
+                    koodisto: 'koodisto-uris.arvo' }
             },
             MCOMBO: {
                 opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},

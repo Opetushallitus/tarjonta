@@ -14,8 +14,13 @@ app.controller('EditKorkeakouluController', function EditKorkeakouluController($
                                             AuthService, OrganisaatioService, Koodisto) {
 
     $scope.loadKoulutuksenLaajuudet = function(apiModel, uiModel) {
-        Koodisto.getSubKoodiValuesWithKoodiUri('koulutustyyppifasetti', 'et01.05', $scope.koodistoLocale, false, ['et01.05', 'et01.05.03']).then(function(tyypit) {
-            uiModel.koulutuksenLaajuudet = tyypit;
+        // rajoitettu nyt vain tuohon yhteen. Alkuperaisessa oli 4 vaihtoehtoa
+        Koodisto.getSubKoodiValuesWithKoodiUri('koulutustyyppifasetti', 'et01.05', $scope.koodistoLocale, false, ['et01.05', 'et01.05.01', 'et01.05.02', 'et01.05.03', 'et01.05.04']).then(function(tyypit) {
+            uiModel.koulutuksenLaajuudet = [{
+                koodiArvo: "",
+                koodiNimi: "",
+                koodiUri: ""
+            }].concat(tyypit);
         });
     };
 
