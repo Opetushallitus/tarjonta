@@ -301,6 +301,7 @@ app.factory('HakukohdeService', function($resource, $http, $rootScope, KoulutusC
                 'PERUSOPETUKSEN_LISAOPETUS',
                 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
                 'VAPAAN_SIVISTYSTYON_KOULUTUS',
+                'PELASTUSALAN_KOULUTUS',
                 'AIKUISTEN_PERUSOPETUS'
             ], toteutustyyppi || this.toteutustyyppi);
         },
