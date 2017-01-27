@@ -1188,7 +1188,7 @@ angular.module('app.komo.ctrl', [
                             if (!col.langs[langKeyIndex]) {
                                 throw new Error('Column index missing! Index : ' + langKeyIndex);
                             }
-                            if (headerRow.rowdata[c].trim() === keyPrefix + col.langs[langKeyIndex].key) {
+                            if (headerRow.rowdata[c] && headerRow.rowdata[c].trim() === keyPrefix + col.langs[langKeyIndex].key) {
                                 col.langs[langKeyIndex].index = c;
                             }
                         }
@@ -1196,7 +1196,7 @@ angular.module('app.komo.ctrl', [
                 }
                 else {
                     for (c = 0; c < headerRow.rowdata.length; c++) {
-                        if (headerRow.rowdata[c].trim() === keyPrefix) {
+                        if (headerRow.rowdata[c] && headerRow.rowdata[c].trim() === keyPrefix) {
                             col.index = c;
                         }
                     }
@@ -1358,7 +1358,7 @@ angular.module('app.komo.ctrl', [
                             if (!col.langs[langKeyIndex]) {
                                 throw new Error('Column index missing! Index : ' + langKeyIndex);
                             }
-                            if (headerRow.rowdata[c].trim() === keyPrefix + col.langs[langKeyIndex].key) {
+                            if (headerRow.rowdata[c] && headerRow.rowdata[c].trim() === keyPrefix + col.langs[langKeyIndex].key) {
                                 col.langs[langKeyIndex].index = c;
                                 break;
                             }
@@ -1367,7 +1367,7 @@ angular.module('app.komo.ctrl', [
                 }
                 else {
                     for (c = 0; c < headerRow.rowdata.length; c++) {
-                        if (headerRow.rowdata[c].trim() === keyPrefix) {
+                        if (headerRow.rowdata[c] && headerRow.rowdata[c].trim() === keyPrefix) {
                             col.index = c;
                             break;
                         }
