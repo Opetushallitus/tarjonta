@@ -21,6 +21,7 @@ import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.AutowireHelper;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.OpintopolkuAlkamiskausi;
@@ -287,6 +288,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "opintopolku_alkamiskausi")
     @Enumerated(EnumType.STRING)
     private OpintopolkuAlkamiskausi.KaudetEnum opintopolkuAlkamiskausi;
+
+    @Column(name = "koulutuksenlaajuus_uri")
+    private String koulutuksenlaajuusUri;
 
     public String getOpintojenLaajuusArvo() {
         return opintojenLaajuusarvo;
@@ -1396,4 +1400,20 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void setUniqueExternalId(String uniqueExternalId) {
         this.uniqueExternalId = uniqueExternalId;
     }
+
+    /**
+     * @return the koulutuksenlaajuusUri
+     */
+    public String getKoulutuksenlaajuusUri() {
+        return koulutuksenlaajuusUri;
+    }
+
+
+    /**
+     * @param koulutuksenlaajuusUri the koulutuksenlaajuusUri to set
+     */
+    public void setKoulutuksenlaajuusUri(String koulutuksenlaajuusUri) {
+        this.koulutuksenlaajuusUri = koulutuksenlaajuusUri;
+    }
+
 }

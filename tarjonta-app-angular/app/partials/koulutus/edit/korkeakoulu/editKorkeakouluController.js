@@ -13,6 +13,17 @@ var app = angular.module('app.edit.ctrl.kk', [
 app.controller('EditKorkeakouluController', function EditKorkeakouluController($scope, Config, $modal, $q,
                                             AuthService, OrganisaatioService, Koodisto) {
 
+    $scope.loadKoulutuksenLaajuudet = function(apiModel, uiModel) {
+        // rajoitettu nyt vain tuohon yhteen. Alkuperaisessa oli 4 vaihtoehtoa
+        Koodisto.getSubKoodiValuesWithKoodiUri('koulutustyyppifasetti', 'et01.05', $scope.koodistoLocale, false, ['et01.05', 'et01.05.01', 'et01.05.02', 'et01.05.03', 'et01.05.04']).then(function(tyypit) {
+            uiModel.koulutuksenLaajuudet = [{
+                koodiArvo: "",
+                koodiNimi: "",
+                koodiUri: ""
+            }].concat(tyypit);
+        });
+    };
+
     $scope.tutkintoDialogModel = {};
     /**
      * Save koulutus data to tarjonta-service database.
@@ -104,5 +115,7 @@ app.controller('EditKorkeakouluController', function EditKorkeakouluController($
     };
     $scope.init({
         childScope: $scope
+    }, function (){
+        $scope.loadKoulutuksenLaajuudet($scope.model, $scope.uiModel);
     });
 });

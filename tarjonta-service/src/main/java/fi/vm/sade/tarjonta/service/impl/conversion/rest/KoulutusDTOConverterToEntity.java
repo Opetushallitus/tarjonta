@@ -600,6 +600,10 @@ public class KoulutusDTOConverterToEntity {
             komoto.getOpetusPaikkas().clear();
             komoto.setOpetusPaikkas(commonConverter.convertToUris(dto.getOpetusPaikkas(), komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS));
         }
+
+        if (dto.getKoulutuksenLaajuusKoodi() != null) {
+            komoto.setKoulutuksenlaajuusUri(commonConverter.convertToUri(dto.getKoulutuksenLaajuusKoodi(), FieldNames.KOULUTUKSENLAAJUUS, ALLOW_NULL_KOODI_URI));
+        }
     }
 
     /**

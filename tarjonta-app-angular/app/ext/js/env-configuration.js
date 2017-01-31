@@ -61,6 +61,7 @@ window.CONFIG = {
         "koodisto-uris.pohjakoulutusvaatimus_kk": "pohjakoulutusvaatimuskorkeakoulut",
         "koodisto-uris.eqf-luokitus": "eqf",
         "koodisto-uris.yhteishaku": "hakutapa_01#1",
+        "koodisto-uris.arvo": "koulutustyyppifasetti",
         "koodisto.lang.en.uri": "kieli_en",
         "koodisto.lang.fi.uri": "kieli_fi",
         "koodisto.lang.sv.uri": "kieli_sv",

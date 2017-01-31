@@ -119,6 +119,7 @@ abstract class KoulutusBase extends TestUtilityBase {
     protected static final String SUUNNITELTU_KESTO_VALUE = "10";
     protected static final String SUUNNITELTU_KESTO_TYYPPI = "suunnteltu_kesto";
     protected static final String[] PERSON = {"henkilo_oid", "Etunimi Etunimi Sukunimi Sukunimi", "Mr.", "oph@oph.fi", "12345678"};
+    protected static final String KOULUTUKSENLAAJUUS = "koulutuksenlaajuus";
 
     protected KoulutusResourceImplV1 instance;
     protected final DateTime DATE = new DateTime(VUOSI, 1, 1, 1, 1);

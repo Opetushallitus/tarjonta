@@ -438,6 +438,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             },
             suunniteltuKestoTyyppi: {
                 koodisto: 'koodisto-uris.suunniteltuKesto'
+            },
+            koulutuksenLaajuusKoodi: {
+                nullable: true,
+                koodisto: 'koodisto-uris.arvo'
             }
         },
         MCOMBO: {
@@ -902,6 +906,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                     nullable: true,
                     koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'
                 },
+                koulutuksenLaajuusKoodi: {
+                    nullable: true,
+                    koodisto: 'koodisto-uris.arvo'
+                },
                 opintojenLaajuusarvo: {
                     skipUiModel: true
                 } //waiting for missing koodisto relations, when the relations are created, move the fields to RELATION object.
@@ -1024,7 +1032,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 koulutuksenAlkamiskausi: {
                     nullable: true,
                     koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'
-                }
+                },
+                koulutuksenLaajuusKoodi: {
+                    nullable: true,
+                    koodisto: 'koodisto-uris.arvo' }
             },
             MCOMBO: {
                 opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},

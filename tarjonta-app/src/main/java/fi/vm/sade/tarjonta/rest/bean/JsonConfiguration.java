@@ -44,6 +44,7 @@ public class JsonConfiguration {
             "koodisto-uris.alkamiskausi",
             "koodisto-uris.ammatillinenLukio",
             "koodisto-uris.ammattinimikkeet",
+            "koodisto-uris.arvo",
             "koodisto-uris.eqf-luokitus",
             "koodisto-uris.erillishaku",
             "koodisto-uris.hakukausi",

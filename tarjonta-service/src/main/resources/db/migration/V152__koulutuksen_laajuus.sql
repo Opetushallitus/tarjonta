@@ -1,0 +1,1 @@
+ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN koulutuksenlaajuus_uri varchar(255);

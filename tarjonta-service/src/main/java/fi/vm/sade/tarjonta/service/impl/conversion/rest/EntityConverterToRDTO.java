@@ -186,6 +186,11 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
                 kkDto.setJohtaaTutkintoon(false);
             }
 
+            // tämä on nyt vain korkeakoulutuksessa, voidaan yleistää jos tarpeen
+            if (komoto.getKoulutuksenlaajuusUri() != null) {
+                kkDto.setKoulutuksenLaajuusKoodi(commonConverter.convertToKoodiDTO(komoto.getKoulutuksenlaajuusUri(), komoto.getKoulutuksenlaajuusUri(), FieldNames.KOULUTUKSENLAAJUUS, YES, param));
+            }
+
         }
 
         else if (dto instanceof TutkintoonJohtamatonKoulutusV1RDTO) {
@@ -460,7 +465,6 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         if (komoto.getOpetusPaikkas() != null) {
             dto.setOpetusPaikkas(commonConverter.convertToKoodiUrisDTO(komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS, param));
         }
-
         if (komoto.getSuunniteltukestoYksikkoUri() != null) {
             dto.setSuunniteltuKestoTyyppi(commonConverter.convertToKoodiDTO(komoto.getSuunniteltukestoYksikkoUri(), NO_OVERRIDE_URI, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES, param));
         }

@@ -356,11 +356,14 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, Auth
                 }
                 var passiivinenTila = 'PASSIIVINEN';
                 var returnKoodis = [];
-                $resource(plainUrls.url("koodisto-service.koodi",":koodistoUri"), {
+                var useUrl = plainUrls.url("koodisto-service.koodi",":koodistoUri");
+                var prms = {
                     koodistoUri: '@koodistoUri'
-                }, {
-                        cache: true
-                    }).query({
+                };
+
+                $resource(useUrl, prms, {
+                    cache: true
+                }).query({
                     koodistoUri: koodistoUriParam
                 }, function(koodis) {
                     koodis = rejectOldKoodis(koodis);
@@ -371,6 +374,50 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService, Auth
                         else {
                             if (koodi.tila !== passiivinenTila) {
                                 returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+                            }
+                        }
+                    });
+                    returnKoodisPromise.resolve(returnKoodis);
+                });
+            });
+        },
+        /*
+         @param {string} koodistouri from which koodis should be retrieved
+         @param {string} locale in which koodi name should be shown
+         @returns {promise} return promise which contains array of koodi view models
+         */
+        getSubKoodiValuesWithKoodiUri: function(koodistoUriParam, koodiArvo, locale, includePassiivises, exclude) {
+            $log.info('getAllKoodisWithKoodiUri called with ' + koodistoUriParam + ' ' + koodiArvo + ' ' + locale);
+            locale = getLocale(locale);
+            return CacheService.lookup('koodisto/' + koodistoUriParam + '/' + koodiArvo + '/' + locale, function(returnKoodisPromise) {
+                var includePassive = false;
+                if (includePassiivises !== undefined) {
+                    includePassive = includePassiivises;
+                }
+                var passiivinenTila = 'PASSIIVINEN';
+                var returnKoodis = [];
+                var useUrl = plainUrls.url("koodisto-service.arvo",":koodistoUri", ":koodiArvo");
+                var prms = {
+                    koodistoUri: '@koodistoUri',
+                    koodiArvo: '@koodiArvo'
+                };
+
+                $resource(useUrl, prms, {
+                    cache: true
+                }).query({
+                    koodistoUri: koodistoUriParam,
+                    koodiArvo: koodiArvo
+                }, function(koodis) {
+                    koodis = rejectOldKoodis(koodis);
+                    angular.forEach(koodis, function(koodi) {
+                        if (exclude.indexOf(koodi.koodiArvo) == -1) {
+                            if (includePassive) {
+                                returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+                            }
+                            else {
+                                if (koodi.tila !== passiivinenTila) {
+                                    returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+                                }
                             }
                         }
                     });
@@ -555,6 +602,7 @@ app.factory('KoodistoURI', function($log, Config) {
         KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI: getConfigWithDefault('koodisto-uris.opintojenLaajuusyksikko', ''),
         KOODISTO_OPINTOJEN_LAAJUUSARVO_URI: getConfigWithDefault('koodisto-uris.opintojenLaajuusarvo', ''),
         KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI: getConfigWithDefault('koodisto-uris.pohjakoulutusvaatimus', ''),
+        KOODISTO_KOULUTUKSENLAAJUUS_URI: getConfigWithDefault('koodisto-uris.arvo', ''),
         KOODISTO_EQF_LUOKITUS_URI: getConfigWithDefault('koodisto-uris.eqf-luokitus', ''),
         /*
          * KOMOTO URIs
