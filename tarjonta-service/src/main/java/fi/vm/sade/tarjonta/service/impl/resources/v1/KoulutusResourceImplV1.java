@@ -274,6 +274,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         komoto,
                         restParam));
                 break;
+            case PELASTUSALAN_KOULUTUS:
+                result.setResult(converterToRDTO.convert(PelastusalanKoulutusV1RDTO.class, komoto, restParam));
+                break;
         }
 
         return result;

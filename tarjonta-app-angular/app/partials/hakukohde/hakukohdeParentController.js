@@ -57,7 +57,8 @@ app.controller('HakukohdeParentController', [
             'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA': toinenAsteHakukohdePartialUri,
             AIKUISTEN_PERUSOPETUS: aikuLukioHakukohdePartialUri,
             AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA: toinenAsteHakukohdePartialUri,
-            AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER: toinenAsteHakukohdePartialUri
+            AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER: toinenAsteHakukohdePartialUri,
+            PELASTUSALAN_KOULUTUS: toinenAsteHakukohdePartialUri
         };
 
         $scope.config = HakukohdeService.config;
@@ -92,6 +93,7 @@ app.controller('HakukohdeParentController', [
                 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
                 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
                 'VAPAAN_SIVISTYSTYON_KOULUTUS',
+                'PELASTUSALAN_KOULUTUS',
                 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'

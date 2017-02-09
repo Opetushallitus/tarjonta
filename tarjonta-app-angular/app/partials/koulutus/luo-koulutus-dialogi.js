@@ -285,7 +285,8 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
                 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA',
                 'ERIKOISAMMATTITUTKINTO',
                 'AMMATTITUTKINTO',
-                'AIKUISTEN_PERUSOPETUS'
+                'AIKUISTEN_PERUSOPETUS',
+                'PELASTUSALAN_KOULUTUS'
             ].indexOf(toteutustyyppi) !== -1) {
             var promise = Koodisto.getAlapuolisetKoodit($scope.model.koulutustyyppi.koodiUri);
             promise.then(function(koodis) {

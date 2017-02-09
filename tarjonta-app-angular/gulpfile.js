@@ -82,6 +82,10 @@ gulp.task('build:prod', function(cb) {
     );
 });
 
+gulp.task('watch-dev', ['build:dev'], function () {
+    gulp.watch(jsFiles, ['build:dev']);
+});
+
 gulp.task('build:dev', function(cb) {
     runSequence(
         'clean',
