@@ -5,7 +5,7 @@
     <parent>
         <artifactId>tarjonta</artifactId>
         <groupId>fi.vm.sade.tarjonta</groupId>
-        <version>2016-07_pelastusalan_koulutus-SNAPSHOT</version>
+        <version>2017-06</version>
     </parent>
     <artifactId>tarjonta-app</artifactId>
     <packaging>war</packaging>
