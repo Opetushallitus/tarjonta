@@ -17,17 +17,24 @@ var app = angular.module('ataru', [
     'Logging'
 ]);
 
-app.factory('AtaruService', function($resource, $http, AuthService) {
+app.factory('AtaruService', function($resource, $q, $http, AuthService) {
     'use strict';
-    var ataruRole = 'APP_HAKULOMAKKEENHALLINTA';
+    var ataruRoles = [
+        'APP_HAKULOMAKKEENHALLINTA',
+        'APP_ATARU_EDITORI'
+    ];
     var config = {
         withCredentials: true,
         headers: { 'Content-Type': 'application/json; charset=UTF-8' }
     };
     return {
         getAtaruAuthorisation: function() {
-            return AuthService.crudOrg(AuthService.getUserDefaultOid(), ataruRole).then(function(authorised) {
-                return authorised;
+            var oid = AuthService.getUserDefaultOid();
+            return $q.all(ataruRoles.map(function(role) {
+                return AuthService.crudOrg(oid, role);
+            })).then(function(authorised) {
+                var isAuthorized = authorised.indexOf(true) > -1;
+                return isAuthorized;
             });
         },
         preWarming: function() {
