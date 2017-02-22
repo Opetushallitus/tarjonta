@@ -391,7 +391,8 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         // Haetaan kaikkien hakujen hakukohde oidit yhdellä kyselyllä.
         // Tämä on tehty suorituskyvyn parantamiseksi haku/findAll Rest-kyselyyn.
         log.debug("findAllHakuToHakukohde");
-        String q = "SELECT h.oid, hk.oid FROM Haku h JOIN h.hakukohdes hk WHERE hk.tila not in :poistettu";
+        String q = "SELECT h.oid, hk.oid FROM Haku h JOIN h.hakukohdes hk WHERE hk.tila not in :poistettu AND EXISTS" +
+                "(SELECT k.oid FROM hk.koulutusmoduuliToteutuses k WHERE k.tila not in :poistettu)";
         Query query = getEntityManager().createQuery(q);
         query.setParameter("poistettu", poistettuTila);
         Map<String, List<String>> map = new HashMap<String, List<String>>();
