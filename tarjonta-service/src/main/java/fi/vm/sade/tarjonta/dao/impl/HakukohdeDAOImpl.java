@@ -391,17 +391,21 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         // Haetaan kaikkien hakujen hakukohde oidit yhdellä kyselyllä.
         // Tämä on tehty suorituskyvyn parantamiseksi haku/findAll Rest-kyselyyn.
         log.debug("findAllHakuToHakukohde");
-        String q = "SELECT h.oid, hk.oid FROM Haku h JOIN h.hakukohdes hk WHERE hk.tila not in :poistettu";
-        Query query = getEntityManager().createQuery(q);
-        query.setParameter("poistettu", poistettuTila);
-        Map<String, List<String>> map = new HashMap<String, List<String>>();
-        List<Object[]> result = query.getResultList();
-        for (Object[] tuple : result) {
-            String hakuOid = (String) tuple[0];
-            String kohdeOid = (String) tuple[1];
+        String q = "SELECT h.oid, hk.oid " +
+                "FROM Haku h JOIN h.hakukohdes hk " +
+                "WHERE hk.tila NOT IN :poistettu AND EXISTS(SELECT k.oid " +
+                "                                           FROM hk.koulutusmoduuliToteutuses k " +
+                "                                           WHERE k.tila NOT IN :poistettu)";
+        Query query = getEntityManager().createQuery(q).setParameter("poistettu", poistettuTila);
+        Map<String, List<String>> map = new HashMap<>();
+        List result = query.getResultList();
+        for (Object row : result) {
+            String[] tuple = (String[]) row;
+            String hakuOid = tuple[0];
+            String kohdeOid = tuple[1];
             List<String> hakukohdes = map.get(hakuOid);
             if (hakukohdes == null) {
-                hakukohdes = new ArrayList<String>();
+                hakukohdes = new ArrayList<>();
                 map.put(hakuOid, hakukohdes);
             }
             hakukohdes.add(kohdeOid);
@@ -411,27 +415,20 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
     @Override
     public List<String> findByHakuOid(String hakuOid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
-
-        QHakukohde hakukohde = QHakukohde.hakukohde;
-
-        // Select by haku OID
-        BooleanExpression whereExpr = hakukohde.haku.oid.eq(hakuOid);
-        whereExpr = whereExpr.and(hakukohde.tila.notIn(poistettuTila));
-
-        // Result selection
-        Expression<?>[] projectionExpr = new Expression<?>[]{hakukohde.oid};
-
-        if (lastModifiedBefore != null) {
-            whereExpr = whereExpr.and(hakukohde.lastUpdateDate.before(lastModifiedBefore));
+        String q = "SELECT hk.oid " +
+                "FROM Haku h JOIN h.hakukohdes hk " +
+                "WHERE h.oid = :oid AND hk.tila NOT IN :poistettu AND EXISTS(SELECT k.oid " +
+                "                                                            FROM hk.koulutusmoduuliToteutuses k " +
+                "                                                            WHERE k.tila NOT IN :poistettu)";
+        Query query = getEntityManager()
+                .createQuery(q)
+                .setParameter("poistettu", poistettuTila)
+                .setParameter("oid", hakuOid);
+        List<String> result = new ArrayList<>();
+        for (Object s : query.getResultList()) {
+            result.add((String) s);
         }
-        if (lastModifiedSince != null) {
-            whereExpr = whereExpr.and(hakukohde.lastUpdateDate.after(lastModifiedSince));
-        }
-
-
-        List<Object[]> tmp = findScalars(whereExpr, count, startIndex, projectionExpr);
-
-        return convertToSingleStringList(tmp);
+        return result;
     }
 
     @Override
