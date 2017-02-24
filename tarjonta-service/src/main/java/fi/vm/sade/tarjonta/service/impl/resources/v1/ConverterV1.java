@@ -660,7 +660,7 @@ public class ConverterV1 {
         return hakukohdeRDTO;
     }
 
-    private static final Set<TarjontaTila> invalidTilas = Sets.newHashSet(TarjontaTila.POISTETTU, TarjontaTila.KOPIOITU);
+    private static final Set<TarjontaTila> invalidTilas = Sets.newHashSet(TarjontaTila.POISTETTU);
     private void convertKomotoFields(Hakukohde h, HakukohdeV1RDTO dto) throws IllegalStateException {
         try {
             Set<Triple<Boolean, Integer, String>> komotoInfos = new HashSet<>();
@@ -673,16 +673,17 @@ public class ConverterV1 {
                 komotoInfos.add(Triple.of(tutkintoonjohtava, alkamisvuosi, alkamiskausi));
             }
 
-            if (komotoInfos.size() > 1) {
+            if (komotoInfos.size() == 1) {
+                Triple<Boolean, Integer, String> ki = komotoInfos.iterator().next();
+                dto.setTutkintoonJohtava(ki.getLeft());
+                dto.setKoulutuksenAlkamisvuosi(ki.getMiddle());
+                dto.setKoulutuksenAlkamiskausiUri(ki.getRight());
+            } else if(komotoInfos.size() > 1){
                 throw new IllegalStateException(String.format(
-                        "Hakukohteeseen %s liittyvien koulutusten tiedot ovat ristiriitaiset [johtaaTutkintoon, vuosi, kausi]: %s", h.getOid(), komotoInfos
-                ));
+                        "Hakukohteeseen %s liittyvien koulutusten tiedot ovat ristiriitaiset [johtaaTutkintoon, vuosi, kausi]: %s", h.getOid(), komotoInfos));
+            } else {
+                throw new IllegalStateException(String.format("Hakukohteella %s ei ole koulutuksia", h.getOid()));
             }
-
-            Triple<Boolean, Integer, String> ki = komotoInfos.iterator().next();
-            dto.setTutkintoonJohtava(ki.getLeft());
-            dto.setKoulutuksenAlkamisvuosi(ki.getMiddle());
-            dto.setKoulutuksenAlkamiskausiUri(ki.getRight());
         } catch (Exception e) {
             throw new IllegalStateException("Failed to convert hakukohde " + h.getOid() + " to DTO due to error in linked komotos", e);
         }

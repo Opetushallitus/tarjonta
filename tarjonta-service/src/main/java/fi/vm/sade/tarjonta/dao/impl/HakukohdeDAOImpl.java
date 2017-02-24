@@ -392,12 +392,8 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         // Tämä on tehty suorituskyvyn parantamiseksi haku/findAll Rest-kyselyyn.
         log.debug("findAllHakuToHakukohde");
         // Native query to avoid automatic join to koulutusmoduuli_toteutus table
-        String q = "SELECT h.oid, hk.oid " +
-                   "FROM haku h INNER JOIN hakukohde hk ON h.id = hk.haku_id " +
-                   "WHERE hk.tila NOT IN ('POISTETTU', 'KOPIOITU') AND (EXISTS (SELECT 1 " +
-                   "                                                    FROM koulutus_hakukohde kh " +
-                   "                                                    WHERE hk.id = kh.hakukohde_id));";
-        Query query = getEntityManager().createNativeQuery(q);
+        String q = "SELECT h.oid, hk.oid FROM Haku h JOIN h.hakukohdes hk WHERE hk.tila NOT IN :poistettu AND EXISTS(SELECT k.oid FROM hk.koulutusmoduuliToteutuses k WHERE k.tila NOT IN :poistettu)";
+        Query query = getEntityManager().createQuery(q).setParameter("poistettu", poistettuTila);
         Map<String, List<String>> map = new HashMap<>();
         List result = query.getResultList();
         for (Object row : result) {
@@ -416,13 +412,10 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
     @Override
     public List<String> findByHakuOid(String hakuOid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
-        String q = "SELECT hk.oid " +
-                   "FROM haku h INNER JOIN hakukohde hk ON h.id = hk.haku_id " +
-                   "WHERE h.oid = :oid AND hk.tila NOT IN ('POISTETTU', 'KOPIOITU') AND (EXISTS (SELECT 1 " +
-                   "                                                                     FROM koulutus_hakukohde kh " +
-                   "                                                                     WHERE hk.id = kh.hakukohde_id));";
+        String q = "SELECT hk.oid FROM Haku h JOIN h.hakukohdes hk WHERE h.oid = :oid AND hk.tila NOT IN :poistettu AND EXISTS(SELECT k.oid FROM hk.koulutusmoduuliToteutuses k WHERE k.tila NOT IN :poistettu)";
         Query query = getEntityManager()
-                .createNativeQuery(q)
+                .createQuery(q)
+                .setParameter("poistettu", poistettuTila)
                 .setParameter("oid", hakuOid);
         List<String> result = new ArrayList<>();
         for (Object s : query.getResultList()) {
