@@ -660,11 +660,12 @@ public class ConverterV1 {
         return hakukohdeRDTO;
     }
 
+    private static final Set<TarjontaTila> invalidTilas = Sets.newHashSet(TarjontaTila.POISTETTU, TarjontaTila.KOPIOITU);
     private void convertKomotoFields(Hakukohde h, HakukohdeV1RDTO dto) throws IllegalStateException {
         try {
             Set<Triple<Boolean, Integer, String>> komotoInfos = new HashSet<>();
             for (KoulutusmoduuliToteutus komoto : h.getKoulutusmoduuliToteutuses()) {
-                if (TarjontaTila.POISTETTU.equals(komoto.getTila())) continue;
+                if (invalidTilas.contains(komoto.getTila())) continue;
 
                 boolean tutkintoonjohtava = yhdenPaikanSaantoBuilder.koulutusJohtaaTutkintoon(komoto); // Heittää IllegalStateExceptionin, jos koodirelaatio puuttuu
                 Integer alkamisvuosi = komoto.getUniqueAlkamisVuosi();
@@ -674,7 +675,7 @@ public class ConverterV1 {
 
             if (komotoInfos.size() > 1) {
                 throw new IllegalStateException(String.format(
-                        "Hakukohteeseen %s liittyvien koulutusten tiedot ovat ristiriitaiset: %s", h.getOid(), komotoInfos
+                        "Hakukohteeseen %s liittyvien koulutusten tiedot ovat ristiriitaiset [johtaaTutkintoon, vuosi, kausi]: %s", h.getOid(), komotoInfos
                 ));
             }
 
