@@ -394,11 +394,11 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         // Native query to avoid automatic join to koulutusmoduuli_toteutus table
         String q = "SELECT h.oid, hk.oid " +
                    "FROM haku h INNER JOIN hakukohde hk ON h.id = hk.haku_id " +
-                   "WHERE hk.tila <> 'POISTETTU' AND (EXISTS (SELECT 1 " +
-                   "                                          FROM koulutus_hakukohde kh " +
-                   "                                          WHERE hk.id = kh.hakukohde_id));";
+                   "WHERE hk.tila NOT IN ('POISTETTU', 'KOPIOITU') AND (EXISTS (SELECT 1 " +
+                   "                                                    FROM koulutus_hakukohde kh " +
+                   "                                                    WHERE hk.id = kh.hakukohde_id));";
         Query query = getEntityManager().createNativeQuery(q);
-        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        Map<String, List<String>> map = new HashMap<>();
         List result = query.getResultList();
         for (Object row : result) {
             String[] tuple = (String[]) row;
@@ -418,9 +418,9 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     public List<String> findByHakuOid(String hakuOid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
         String q = "SELECT hk.oid " +
                    "FROM haku h INNER JOIN hakukohde hk ON h.id = hk.haku_id " +
-                   "WHERE h.oid = :oid AND hk.tila <> 'POISTETTU' AND (EXISTS (SELECT 1 " +
-                   "                                                           FROM koulutus_hakukohde kh " +
-                   "                                                           WHERE hk.id = kh.hakukohde_id));";
+                   "WHERE h.oid = :oid AND hk.tila NOT IN ('POISTETTU', 'KOPIOITU') AND (EXISTS (SELECT 1 " +
+                   "                                                                     FROM koulutus_hakukohde kh " +
+                   "                                                                     WHERE hk.id = kh.hakukohde_id));";
         Query query = getEntityManager()
                 .createNativeQuery(q)
                 .setParameter("oid", hakuOid);
