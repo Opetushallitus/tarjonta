@@ -65,7 +65,8 @@
 
             angular.forEach(workbook.SheetNames, function(sheetName) {
                 var sheet = workbook.Sheets[sheetName];
-                sheets[sheetName] = XLSXReader.utils.parseSheet(sheet, readCells);
+                if(sheet['!ref'])
+                    sheets[sheetName] = XLSXReader.utils.parseSheet(sheet, readCells);
             });
 
             return sheets;
