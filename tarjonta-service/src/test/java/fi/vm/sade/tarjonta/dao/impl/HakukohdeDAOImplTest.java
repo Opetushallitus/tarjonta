@@ -149,11 +149,11 @@ public class HakukohdeDAOImplTest extends TestData {
     public void testFindByHakuOid() {
         {
             List<String> result = instance.findByHakuOid(HAKU_OID1, null, 100, 0, null, null);
-            assertEquals(result.size(), 3);
+            assertEquals(1, result.size());
         }
         {
             List<String> result = instance.findByHakuOid(HAKU_OID2, null, 100, 0, null, null);
-            assertEquals(result.size(), 0);
+            assertEquals(0, result.size(), 0);
         }
     }
 
