@@ -392,10 +392,11 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         // Tämä on tehty suorituskyvyn parantamiseksi haku/findAll Rest-kyselyyn.
         log.debug("findAllHakuToHakukohde");
         String q = "SELECT h.oid, hk.oid " +
-                "FROM Haku h JOIN h.hakukohdes hk " +
-                "WHERE hk.tila NOT IN :poistettu AND EXISTS(SELECT k.oid " +
-                "                                           FROM hk.koulutusmoduuliToteutuses k " +
-                "                                           WHERE k.tila NOT IN :poistettu)";
+                   "FROM Hakukohde hk " +
+                   "JOIN hk.haku " +
+                   "JOIN hk.koulutusmoduuliToteutuses k " +
+                   "WHERE hk.tila NOT IN :poistettu " +
+                   "    AND k.tila NOT IN :poistettu";
         Query query = getEntityManager().createQuery(q).setParameter("poistettu", poistettuTila);
         Map<String, List<String>> map = new HashMap<>();
         List result = query.getResultList();
@@ -416,10 +417,12 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     @Override
     public List<String> findByHakuOid(String hakuOid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
         String q = "SELECT hk.oid " +
-                "FROM Haku h JOIN h.hakukohdes hk " +
-                "WHERE h.oid = :oid AND hk.tila NOT IN :poistettu AND EXISTS(SELECT k.oid " +
-                "                                                            FROM hk.koulutusmoduuliToteutuses k " +
-                "                                                            WHERE k.tila NOT IN :poistettu)";
+                   "FROM Hakukohde hk " +
+                   "JOIN hk.haku h " +
+                   "JOIN hk.koulutusmoduuliToteutuses k " +
+                   "WHERE h.oid = :oid " +
+                   "    AND hk.tila NOT IN :poistettu " +
+                   "    AND k.tila NOT IN :poistettu";
         Query query = getEntityManager()
                 .createQuery(q)
                 .setParameter("poistettu", poistettuTila)
