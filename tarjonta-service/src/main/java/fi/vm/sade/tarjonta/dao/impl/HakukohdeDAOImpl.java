@@ -393,7 +393,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         log.debug("findAllHakuToHakukohde");
         String q = "SELECT h.oid, hk.oid " +
                    "FROM Hakukohde hk " +
-                   "JOIN hk.haku " +
+                   "JOIN hk.haku h " +
                    "JOIN hk.koulutusmoduuliToteutuses k " +
                    "WHERE hk.tila NOT IN :poistettu " +
                    "    AND k.tila NOT IN :poistettu";
