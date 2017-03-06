@@ -1,5 +1,5 @@
 DROP INDEX IF EXISTS "koulutusmoduuli_toteutus_siblings";
-CREATE INDEX CONCURRENTLY "koulutusmoduuli_toteutus_siblings"
+CREATE INDEX "koulutusmoduuli_toteutus_siblings"
   ON "koulutusmoduuli_toteutus" ("tarjoaja",
                                  "toteutustyyppi",
                                  "alkamisvuosi",
