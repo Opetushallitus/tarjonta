@@ -41,6 +41,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -257,18 +259,19 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
 
     @Override
     public Koulutusmoduuli findParentKomo(Koulutusmoduuli komo) {
-        QKoulutusSisaltyvyys sisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
-
-        List<KoulutusSisaltyvyys> parents = from(sisaltyvyys).
-                where(sisaltyvyys.alamoduuliList.contains(komo)).
-                list(sisaltyvyys);
-
-        if (parents == null || parents.isEmpty()) {
+        if (komo == null) return null;
+        Query query = getEntityManager().createQuery(""
+                + "SELECT y FROM KoulutusSisaltyvyys k "
+                + "JOIN k.alamoduuliList a "
+                + "JOIN k.ylamoduuli y "
+                + "WHERE a.id = :id"
+        );
+        query.setParameter("id", komo.getId());
+        try {
+            return (Koulutusmoduuli) query.getSingleResult();
+        } catch (NoResultException irrelevant) {
             return null;
         }
-
-        String oid = parents.get(0).getYlamoduuli().getOid();
-        return findByOid(oid);
     }
 
     @Override
