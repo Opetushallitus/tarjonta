@@ -268,8 +268,8 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         );
         query.setParameter("id", komo.getId());
         try {
-            return (Koulutusmoduuli) query.getSingleResult();
-        } catch (NoResultException irrelevant) {
+            return (Koulutusmoduuli) query.getResultList().get(0);
+        } catch (Exception irrelevant) {
             return null;
         }
     }
