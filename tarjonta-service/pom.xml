@@ -554,7 +554,7 @@
                                 <schema>public</schema>
                             </schemas>
                             <driver>org.postgresql.Driver</driver>
-                            <url>jdbc:postgresql://127.0.0.1:5432/tarjonta</url>
+                            <url>jdbc:postgresql://127.0.0.1:5432/tarjonta?ApplicationName=tarjonta-flyway</url>
                         </configuration>
                     </plugin>
                 </plugins>

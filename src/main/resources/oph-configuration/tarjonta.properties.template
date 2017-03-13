@@ -86,7 +86,7 @@ web.url.cas=https://${host.cas}/cas
 organisaatio.api.rest.url=https://${host.virkailija}/organisaatio-service/rest/
 callerid.tarjonta.tarjonta-app.frontend=tarjonta.tarjonta-app.frontend
 callerid.tarjonta.tarjonta-service.backend=tarjonta.tarjonta-service.backend
-tarjonta-service.postgresql.url=jdbc:postgresql://{{host_postgresql_tarjonta}}:{{port_postgresql}}/tarjonta
+tarjonta-service.postgresql.url=jdbc:postgresql://{{host_postgresql_tarjonta}}:{{port_postgresql}}/tarjonta?ApplicationName=tarjonta-service
 tarjonta-service.postgresql.user={{host_postgresql_tarjonta_user}}
 tarjonta-service.postgresql.password={{host_postgresql_tarjonta_password}}
 tarjonta-service.postgresql.maxactive={{host_postgresql_tarjonta_max_active}}

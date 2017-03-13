@@ -66,7 +66,7 @@ Windowsissa: set "JAVA.... "
               username="oph" 
               password="oph" 
               driverClassName="org.postgresql.Driver" 
-              url="jdbc:postgresql://localhost:5432/tarjonta" 
+              url="jdbc:postgresql://localhost:5432/tarjonta?ApplicationName=tarjonta-service"
               maxActive="150"
               maxIdle="4"/>
 
