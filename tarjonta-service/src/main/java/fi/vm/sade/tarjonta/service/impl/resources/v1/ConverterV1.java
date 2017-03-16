@@ -660,17 +660,12 @@ public class ConverterV1 {
         return hakukohdeRDTO;
     }
 
-    private static final Set<TarjontaTila> invalidTilas = Sets.newHashSet(TarjontaTila.POISTETTU);
+    private static final Set<TarjontaTila> validTilas = Sets.newHashSet(TarjontaTila.VALMIS, TarjontaTila.JULKAISTU);
     private void convertKomotoFields(Hakukohde h, HakukohdeV1RDTO dto) throws IllegalStateException {
         try {
-            Set<Triple<Boolean, Integer, String>> komotoInfos = new HashSet<>();
-            for (KoulutusmoduuliToteutus komoto : h.getKoulutusmoduuliToteutuses()) {
-                if (invalidTilas.contains(komoto.getTila())) continue;
-
-                boolean tutkintoonjohtava = yhdenPaikanSaantoBuilder.koulutusJohtaaTutkintoon(komoto); // Heittää IllegalStateExceptionin, jos koodirelaatio puuttuu
-                Integer alkamisvuosi = komoto.getUniqueAlkamisVuosi();
-                String alkamiskausi = komoto.getUniqueAlkamiskausiUri();
-                komotoInfos.add(Triple.of(tutkintoonjohtava, alkamisvuosi, alkamiskausi));
+            Set<Triple<Boolean, Integer, String>> komotoInfos = getKomotoInfos(h, validTilas); // Preferoi VALMIS ja JULKAISTU tiloja
+            if(komotoInfos.size() == 0){ // Jos ei julkaistuja koulutuksia, käytä mitä hyvänsä.
+                komotoInfos = getKomotoInfos(h, Sets.newHashSet(TarjontaTila.values()));
             }
 
             if (komotoInfos.size() == 1) {
@@ -687,6 +682,19 @@ public class ConverterV1 {
         } catch (Exception e) {
             throw new IllegalStateException("Failed to convert hakukohde " + h.getOid() + " to DTO due to error in linked komotos", e);
         }
+    }
+
+    private Set<Triple<Boolean, Integer, String>> getKomotoInfos(Hakukohde h, Set<TarjontaTila> validTilas) {
+        Set<Triple<Boolean, Integer, String>> komotoInfos = Sets.newHashSet();
+        for (KoulutusmoduuliToteutus komoto : h.getKoulutusmoduuliToteutuses()) {
+            if (TarjontaTila.POISTETTU.equals(komoto.getTila()) || !validTilas.contains(komoto.getTila())) continue;
+
+            boolean tutkintoonjohtava = yhdenPaikanSaantoBuilder.koulutusJohtaaTutkintoon(komoto); // Heittää IllegalStateExceptionin, jos koodirelaatio puuttuu
+            Integer alkamisvuosi = komoto.getUniqueAlkamisVuosi();
+            String alkamiskausi = komoto.getUniqueAlkamiskausiUri();
+            komotoInfos.add(Triple.of(tutkintoonjohtava, alkamisvuosi, alkamiskausi));
+        }
+        return komotoInfos;
     }
 
     private void convertKoulutukset(Hakukohde hakukohde, HakukohdeV1RDTO dto) {
