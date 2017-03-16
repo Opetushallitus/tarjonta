@@ -97,11 +97,15 @@ public class YhdenPaikanSaantoBuilder {
     }
 
     public boolean koulutusJohtaaTutkintoon(KoulutusmoduuliToteutus koulutus) throws IllegalStateException {
-        if (koulutus.getKoulutusUri() == null) {
+        String koulutusUri = koulutus.getKoulutusUri();
+        if(koulutusUri == null || koulutus.getKoulutusmoduuli() != null){
+            koulutusUri = koulutus.getKoulutusmoduuli().getKoulutusUri();
+        }
+        if (koulutusUri == null) {
             return false;
         }
         String tutkintoonjohtavuus = tarjontaKoodistoHelper.getUniqueKoodistoRelation(
-                koulutus.getKoulutusUri().split("#")[0],
+                koulutusUri.split("#")[0],
                 KoodistoURI.KOODISTO_TUTKINTOON_JOHTAVA_KOULUTUS_URI,
                 SuhteenTyyppiType.SISALTYY,
                 false
