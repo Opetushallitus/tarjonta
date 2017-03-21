@@ -138,11 +138,13 @@ public class MassCommitProcess {
             setIndexedDatesToNull();
 
             getState().getParameters().put("result", "success");
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             LOG.error("Copy failed", ex);
 
             getState().setMessageKey("my.test.process.error");
             getState().getParameters().put("result", ex.getMessage());
+
+            throw new RuntimeException(ex);
         } finally {
             completed = true;
         }
