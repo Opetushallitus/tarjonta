@@ -150,6 +150,8 @@ public class MassPepareProcess {
 
             getState().setMessageKey("my.test.process.error");
             getState().getParameters().put("result", ex.getMessage());
+
+            throw new RuntimeException(ex);
         } finally {
             completed = true;
         }

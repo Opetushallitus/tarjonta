@@ -2,7 +2,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1.process;
 
 public class MassCopyBatchSizeCalculator {
 
-    private static final int BATCH_SIZE = 25;
+    private static final int BATCH_SIZE = 10;
 
     public static boolean shouldStartNewBatch(long currentCount) {
         return currentCount > 0 && currentCount % BATCH_SIZE == 0;

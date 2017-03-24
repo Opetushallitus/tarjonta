@@ -49,6 +49,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public static final String UNIQUE_EXTERNAL_ID_COLUMN_NAME = "uniqueExternalId";
 
+
     @Autowired
     @Transient
     KoulutusmoduuliDAO koulutusmoduuliDAO;
@@ -182,7 +183,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "alkamispvm")
     private Set<Date> koulutuksenAlkamisPvms = new HashSet<Date>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_tutkintonimike", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> tutkintonimikes = new HashSet<KoodistoUri>();
