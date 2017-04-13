@@ -401,9 +401,9 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         Map<String, List<String>> map = new HashMap<>();
         List result = query.getResultList();
         for (Object row : result) {
-            String[] tuple = (String[]) row;
-            String hakuOid = tuple[0];
-            String kohdeOid = tuple[1];
+            Object[] tuple = (Object[]) row;
+            String hakuOid = (String) tuple[0];
+            String kohdeOid = (String) tuple[1];
             List<String> hakukohdes = map.get(hakuOid);
             if (hakukohdes == null) {
                 hakukohdes = new ArrayList<>();
