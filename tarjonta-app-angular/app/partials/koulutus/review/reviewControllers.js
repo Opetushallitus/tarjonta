@@ -29,9 +29,11 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
 
     // Onko "Poista"-painike aktiivinen
     var checkIsJarjestettyKoulutusJulkaistu = function () {
-        for(var koulutus in $scope.model.koulutus.jarjestettavatKoulutukset.koulutukset){
-            if(koulutus.tila === "JULKAISTU"){
-                return false;
+        var koulutus = $scope.model.koulutus;
+
+        if(koulutus && koulutus.jarjestettavatKoulutukset && koulutus.jarjestettavatKoulutukset.koulutukset) {
+            for (var o in $scope.model.koulutus.jarjestettavatKoulutukset.koulutukset) {
+                return o.tila === 'JULKAISTU';
             }
         }
     };
