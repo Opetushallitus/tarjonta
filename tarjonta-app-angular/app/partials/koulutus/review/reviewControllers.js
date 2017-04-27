@@ -23,12 +23,12 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         $scope.isRemovable = tila.removable && data;
 
         if($scope.isRemovable){
-            $scope.isRemovable = checkIsKoulutusJulkaistu();
+            $scope.isRemovable = checkIsJarjestettyKoulutusJulkaistu();
         }
     });
 
     // Onko "Poista"-painike aktiivinen
-    var checkIsKoulutusJulkaistu = function () {
+    var checkIsJarjestettyKoulutusJulkaistu = function () {
         for(var koulutus in $scope.model.koulutus.jarjestettavatKoulutukset.koulutukset){
             if(koulutus.tila === "JULKAISTU"){
                 return false;
