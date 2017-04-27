@@ -21,7 +21,21 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         var tila = TarjontaService.getTilat()[koulutusModel.tila];
         $scope.isMutable = tila.mutable && data;
         $scope.isRemovable = tila.removable && data;
+
+        if($scope.isRemovable){
+            $scope.isRemovable = checkIsKoulutusJulkaistu();
+        }
     });
+
+    // Onko "Poista"-painike aktiivinen
+    var checkIsKoulutusJulkaistu = function () {
+        for(var koulutus in $scope.model.koulutus.jarjestettavatKoulutukset.koulutukset){
+            if(koulutus.tila === "JULKAISTU"){
+                return false;
+            }
+        }
+    };
+
     $scope.formControls = {};
     $scope.model = {
         header: {},
