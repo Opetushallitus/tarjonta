@@ -96,29 +96,59 @@ angular.module('TarjontaPermissions', [
         });
         return defer.promise;
     };
+
     var _canDeleteKoulutus = function(koulutusOid) {
         $log.debug('can delete');
         var defer = $q.defer();
-        //hae koulutus
-        var result = TarjontaService.haeKoulutukset({
-            koulutusOid: koulutusOid
+        var deferJarjestetyt = $q.defer();
+        var deferOrganisaatio = $q.defer();
+
+        // Tarkista että koulutuksella ei ole järjestettyjä alikoulutuksia
+        TarjontaService.getJarjestettavatKoulutuksetPromise(koulutusOid).then(function (response) {
+            deferJarjestetyt.resolve(noneOfJarjestettyKoulutusIsJulkaistu(response.result));
         });
+
         //tarkista permissio tarjoajaoidilla
-        result = result.then(function(hakutulos) {
-            //			$log.debug("hakutulos:", hakutulos);
-            if (hakutulos.tulokset !== undefined && hakutulos.tulokset.length == 1) {
+        TarjontaService.haeKoulutukset({
+            koulutusOid: koulutusOid
+        }).then(function(hakutulos) {
+            if (hakutulos.tulokset !== undefined && hakutulos.tulokset.length === 1) {
                 AuthService.crudOrg(hakutulos.tulokset[0].oid).then(function(result) {
-                    defer.resolve(result);
+                    deferOrganisaatio.resolve(result);
                 }, function() {
-                        defer.resolve(false);
-                    });
+                    deferOrganisaatio.resolve(false);
+                });
             }
             else {
-                defer.resolve(false);
+                deferOrganisaatio.resolve(false);
             }
         });
+
+        // Poistaminen onnistuu vain jos molemmat kutsut palauttavat true
+        $q.all([deferJarjestetyt.promise, deferOrganisaatio.promise])
+            .then(function (results) {
+                defer.resolve(results[0] && results[1]);
+            });
+
         return defer.promise;
     };
+
+    var julkaistutTilat = ['JULKAISTU', 'VALMIS', 'LUONNOS', 'PERUTTU'];
+    function noneOfJarjestettyKoulutusIsJulkaistu(jarjestettavatKoulutukset) {
+        if (jarjestettavatKoulutukset) {
+            for (var i = 0; i < jarjestettavatKoulutukset.length; i++) {
+                var jarjestettyKoulutus = jarjestettavatKoulutukset[i];
+                if (jarjestettyKoulutus && julkaistutTilat.indexOf(jarjestettyKoulutus.tila) > -1) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+
+
     var _canDeleteKoulutusMulti = function(koulutusOids) {
         var deferred = $q.defer();
         promises = [];

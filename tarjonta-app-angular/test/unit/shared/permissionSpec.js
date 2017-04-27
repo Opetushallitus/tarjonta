@@ -71,7 +71,18 @@ describe('TarjontaPermissions', function() {
     	     |-1.2.5  (read)
     	*/
 
-    	var koulutushaku=function(oid){
+        var koulutusJarjestettavat=function(tila){
+            return {
+                "result": [
+                    {
+                        "tila": tila
+                    }
+                ]
+            };
+        };
+
+
+        var koulutushaku=function(oid){
     		return {
           	  "result" : {
           		    "tulokset" : [ {
@@ -148,7 +159,14 @@ describe('TarjontaPermissions', function() {
     				};
     	};
 
+        $httpBackend.whenGET('/tarjonta-service/rest/v1/koulutus/koulutus.1.2.3/jarjestettavatKoulutukset').respond(koulutusJarjestettavat("POISTETTU"));
+        $httpBackend.whenGET('/tarjonta-service/rest/v1/koulutus/koulutus.1.2.4/jarjestettavatKoulutukset').respond(koulutusJarjestettavat("POISTETTU"));
+        $httpBackend.whenGET('/tarjonta-service/rest/v1/koulutus/koulutus.1.2.5/jarjestettavatKoulutukset').respond(koulutusJarjestettavat("POISTETTU"));
+        $httpBackend.whenGET('/tarjonta-service/rest/v1/koulutus/koulutus.1.2.3.4/jarjestettavatKoulutukset').respond(koulutusJarjestettavat("POISTETTU"));
+        $httpBackend.whenGET('/tarjonta-service/rest/v1/koulutus/koulutus.1.2.3.5/jarjestettavatKoulutukset').respond(koulutusJarjestettavat("JULKAISTU"));
+
         $httpBackend.whenGET('/organisaatio-service/rest/organisaatio/1.2.3/parentoids').respond("1/1.2/1.2.3");
+        $httpBackend.whenGET('/organisaatio-service/rest/organisaatio/1.2.3.5/parentoids').respond("1/1.2/1.2.3");
         $httpBackend.whenGET('/organisaatio-service/rest/organisaatio/1.2.3.4/parentoids').respond("1/1.2/1.2.3/1.2.3.4");
         $httpBackend.whenGET('/organisaatio-service/rest/organisaatio/1.2.4/parentoids').respond("1/1.2/1.2.4");
         $httpBackend.whenGET('/organisaatio-service/rest/organisaatio/1.2.5/parentoids').respond("1/1.2/1.2.5");
@@ -161,6 +179,7 @@ describe('TarjontaPermissions', function() {
         $httpBackend.whenGET('/tarjonta-service/rest/v1/hakukohde/search?hakukohdeOid=hakukohde.1.2.4').respond(hakukohdehaku('1.2.4'));
         $httpBackend.whenGET('/tarjonta-service/rest/v1/hakukohde/search?hakukohdeOid=hakukohde.1.2.3').respond(hakukohdehaku('1.2.3'));
         $httpBackend.whenGET('/tarjonta-service/rest/v1/hakukohde/search?hakukohdeOid=hakukohde.1.2.3.4').respond(hakukohdehaku('1.2.3'));
+        $httpBackend.whenGET('/tarjonta-service/rest/v1/koulutus/search?koulutusOid=koulutus.1.2.3.5').respond(koulutushaku('1.2.3.5'));
 
         // Parameters
         var parameterResponse = {
@@ -240,7 +259,9 @@ describe('TarjontaPermissions', function() {
     	test(false, " for delete koulutus when user has R permission (multi)", ["koulutus.1.2.5","koulutus.1.2.4"], testFn);
     	test(true, " for delete koulutus when user has R permission (multi)", ["koulutus.1.2.3","koulutus.1.2.3.4"], testFn);
 
-    	//create hakukohde
+        test(false, " for delete koulutus when koulutus has jarjestetty koulutus", "koulutus.1.2.3.5", testFn);
+
+        //create hakukohde
     	var testFn=function(PermissionService, orgOid){
     		return PermissionService.hakukohde.canCreate(orgOid);
     	};
