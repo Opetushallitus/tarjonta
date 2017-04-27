@@ -460,11 +460,15 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return deferred.promise;
     }
 
+    dataFactory.getJarjestettavatKoulutuksetPromise = function(tarjoajanKoulutusOid) {
+        return $resource(window.url("tarjonta-service.koulutus.jarjestettavatKoulutukset", tarjoajanKoulutusOid)).get().$promise;
+    };
+
     dataFactory.getJarjestettavatKoulutukset = function(tarjoajanKoulutusOid, jarjestajat) {
         var deferred = $q.defer();
-        var jarjestettavatKoulutukset = $resource(window.url("tarjonta-service.koulutus.jarjestettavatKoulutukset", tarjoajanKoulutusOid));
+        var jarjestettavatKoulutukset = dataFactory.getJarjestettavatKoulutuksetPromise(tarjoajanKoulutusOid);
 
-        jarjestettavatKoulutukset.get().$promise.then(function(data) {
+        jarjestettavatKoulutukset.then(function(data) {
             var koulutukset = data.result;
             var orgPromises = _.map(koulutukset, function(koulutus) {
                 return OrganisaatioService.byOid(koulutus.tarjoajat[0]);

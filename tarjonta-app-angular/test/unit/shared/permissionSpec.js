@@ -71,7 +71,18 @@ describe('TarjontaPermissions', function() {
     	     |-1.2.5  (read)
     	*/
 
-    	var koulutushaku=function(oid){
+        var koulutusJarjestettavat=function(tila){
+            return {
+                "result": [
+                    {
+                        "tila": tila
+                    }
+                ]
+            };
+        };
+
+
+        var koulutushaku=function(oid){
     		return {
           	  "result" : {
           		    "tulokset" : [ {
@@ -147,6 +158,11 @@ describe('TarjontaPermissions', function() {
     			  },
     				};
     	};
+
+        $httpBackend.whenGET('/tarjonta-service/rest/v1/koulutus/koulutus.1.2.3/jarjestettavatKoulutukset').respond(koulutusJarjestettavat("POISTETTU"));
+        $httpBackend.whenGET('/tarjonta-service/rest/v1/koulutus/koulutus.1.2.4/jarjestettavatKoulutukset').respond(koulutusJarjestettavat("POISTETTU"));
+        $httpBackend.whenGET('/tarjonta-service/rest/v1/koulutus/koulutus.1.2.5/jarjestettavatKoulutukset').respond(koulutusJarjestettavat("POISTETTU"));
+        $httpBackend.whenGET('/tarjonta-service/rest/v1/koulutus/koulutus.1.2.3.4/jarjestettavatKoulutukset').respond(koulutusJarjestettavat("POISTETTU"));
 
         $httpBackend.whenGET('/organisaatio-service/rest/organisaatio/1.2.3/parentoids').respond("1/1.2/1.2.3");
         $httpBackend.whenGET('/organisaatio-service/rest/organisaatio/1.2.3.4/parentoids').respond("1/1.2/1.2.3/1.2.3.4");
