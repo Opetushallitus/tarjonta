@@ -42,7 +42,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakoulu
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
-import fi.vm.sade.tarjonta.shared.KoulutusasteResolver;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
@@ -1089,7 +1088,7 @@ public class ConverterV1 {
         hakukohde.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
         hakukohde.setLastUpdateDate(new Date());
 
-        if (KoulutusasteResolver.isToisenAsteenKoulutus(hakukohdeRDTO.getToteutusTyyppi())) {
+        if (hakukohdeRDTO.getToteutusTyyppi().isToisenAsteenKoulutus()) {
             hakukohde.setHakuaikaAlkuPvm(hakukohdeRDTO.getHakuaikaAlkuPvm());
             hakukohde.setHakuaikaLoppuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
         }
@@ -1108,7 +1107,7 @@ public class ConverterV1 {
         hakukohde.setSoraKuvausKoodiUri(hakukohdeRDTO.getSoraKuvausKoodiUri());
         hakukohde.setValintaperustekuvausKoodiUri(hakukohdeRDTO.getValintaperustekuvausKoodiUri());
 
-        if (KoulutusasteResolver.isToisenAsteenKoulutus(hakukohdeRDTO.getToteutusTyyppi())) {
+        if (hakukohdeRDTO.getToteutusTyyppi().isToisenAsteenKoulutus()) {
             hakukohde.setKaytetaanJarjestelmanValintapalvelua(true);
         } else {
             hakukohde.setKaytetaanJarjestelmanValintapalvelua(hakukohdeRDTO.getKaytetaanJarjestelmanValintaPalvelua());
