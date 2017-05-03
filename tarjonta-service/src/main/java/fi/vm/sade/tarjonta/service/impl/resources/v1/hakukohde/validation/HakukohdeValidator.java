@@ -21,7 +21,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentificat
 import fi.vm.sade.tarjonta.service.search.KoodistoKoodi;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
-import fi.vm.sade.tarjonta.shared.KoulutusasteResolver;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -624,9 +623,9 @@ public class HakukohdeValidator {
                 } else if (!isEqualKoodistoKoodiUri(kp.getKoulutuksenAlkamiskausi(), o.getKoulutuksenAlkamiskausi())) {
                     //koulutus koodi must be same
                     createError(kp.getKomotoOid(), o.getKomotoOid(), mapSelectedKomos, map, HakukohdeValidationMessages.KOMOTO_KAUSI_URI);
-                } else if (KoulutusasteResolver.isToisenAsteenKoulutus(kp.getToteutustyyppi()) && !kp.getTarjoaja().getOid().equals(o.getTarjoaja().getOid())) {
+                } else if (kp.getToteutustyyppi().isToisenAsteenKoulutus() && !kp.getTarjoaja().getOid().equals(o.getTarjoaja().getOid())) {
                     createError(kp.getKomotoOid(), o.getKomotoOid(), mapSelectedKomos, map, HakukohdeValidationMessages.KOMOTO_ERI_TARJOAJAT);
-                } else if (KoulutusasteResolver.isToisenAsteenKoulutus(kp.getToteutustyyppi()) && !isEqualKoodistoKoodiUri(kp.getPohjakoulutusvaatimus(), o.getPohjakoulutusvaatimus())) {
+                } else if (kp.getToteutustyyppi().isToisenAsteenKoulutus() && !isEqualKoodistoKoodiUri(kp.getPohjakoulutusvaatimus(), o.getPohjakoulutusvaatimus())) {
                     createError(kp.getKomotoOid(), o.getKomotoOid(), mapSelectedKomos, map, HakukohdeValidationMessages.KOMOTO_ERI_POHJAKOULUTUSVAATIMUKSET);
                 }
             }
