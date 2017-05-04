@@ -29,7 +29,7 @@ public class HakuSearchCriteria {
         }
     }
 
-    public static enum Field {
+    public enum Field {
         TILA,
         HAKUKAUSI,
         HAKUVUOSI,
@@ -39,14 +39,14 @@ public class HakuSearchCriteria {
         HAKUTYYPPI,
         KOHDEJOUKKO,
         HAKUSANA,
-        TARJOAJAOID;
+        TARJOAJAOID
     }
 
-    public static enum Match {
+    public enum Match {
         MUST_MATCH,
         MUST_NOT,
         LIKE,
-        LIKE_OR;
+        LIKE_OR
     }
 
     @Override

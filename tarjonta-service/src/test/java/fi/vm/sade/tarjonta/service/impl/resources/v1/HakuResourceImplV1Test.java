@@ -12,9 +12,11 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.YhdenPaikanSaantoBuilder;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.AtaruLomakeHakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.AtaruLomakkeetV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuSearchParamsV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
@@ -37,6 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 
+import static fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1.getCriteriaListFromParams;
 import static org.junit.Assert.*;
 import static org.junit.internal.matchers.StringContains.containsString;
 import static org.mockito.Matchers.any;
@@ -406,6 +409,31 @@ public class HakuResourceImplV1Test extends TestMockBase {
         assertEquals(expectedForLomake1.getHaut().get(1).getNimi(), resultForLomake1.getHaut().get(1).getNimi());
         assertEquals(expectedForLomake2.getHaut().get(0).getOid(), resultForLomake2.getHaut().get(0).getOid());
         assertEquals(expectedForLomake2.getHaut().get(0).getNimi(), resultForLomake2.getHaut().get(0).getNimi());
+    }
+
+    @Test
+    public void expandsVirkailijaTyyppiToCriterionWithExpectedKohdejoukkoIds() throws Exception {
+        HakuSearchParamsV1RDTO params = new HakuSearchParamsV1RDTO();
+        params.virkailijaTyyppi = null;
+        assertTrue("null virkailijaTyyppi should not be converted to criterion", getCriteriaListFromParams(params).isEmpty());
+
+        params.virkailijaTyyppi = "";
+        assertTrue("non-null empty virkailijaTyyppi should not be converted to criterion", getCriteriaListFromParams(params).isEmpty());
+
+        params.virkailijaTyyppi = HakuResourceImplV1.KORKEAKOULUVIRKAILIJA;
+        assertKohdejoukot(params, "haunkohdejoukko_12");
+
+        params.virkailijaTyyppi = HakuResourceImplV1.TOISEN_ASTEEN_VIRKAILIJA;
+        assertKohdejoukot(params, "haunkohdejoukko_11,haunkohdejoukko_17,haunkohdejoukko_20");
+    }
+
+    private static void assertKohdejoukot(HakuSearchParamsV1RDTO params, String expectedValue) {
+        List<HakuSearchCriteria> criteria = getCriteriaListFromParams(params);
+        assertEquals("Well-defined virkailijaTyyppi should result in exactly one criterion", 1, criteria.size());
+        HakuSearchCriteria virkailijaCriterion = criteria.get(0);
+
+        assertEquals("Valid match value is comma separated list; LIKE_OR is required", HakuSearchCriteria.Match.LIKE_OR, virkailijaCriterion.getMatch());
+        assertEquals(expectedValue, virkailijaCriterion.getValue());
     }
 
     private ResultV1RDTO<HakuV1RDTO> createHakuWithAtaruLomakeAvain(String ataruLomakeAvain) {
