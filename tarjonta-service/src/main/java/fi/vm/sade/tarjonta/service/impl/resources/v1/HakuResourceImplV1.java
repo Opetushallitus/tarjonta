@@ -40,7 +40,18 @@ import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Match;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.ProcessResourceV1;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.AtaruLomakeHakuV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.AtaruLomakkeetV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuSearchParamsV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeNimiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeTulosV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohdeSearchService;
@@ -62,12 +73,26 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import static fi.vm.sade.tarjonta.service.AuditHelper.*;
+import static fi.vm.sade.tarjonta.service.AuditHelper.AUDIT;
+import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
+import static fi.vm.sade.tarjonta.service.AuditHelper.getHakuDelta;
+import static fi.vm.sade.tarjonta.service.AuditHelper.getUsernameFromSession;
 
 /**
  * REST API V1 implementation for Haku.
