@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Collections2;
@@ -102,8 +103,20 @@ import static fi.vm.sade.tarjonta.service.AuditHelper.getUsernameFromSession;
 @Transactional(readOnly = false)
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public class HakuResourceImplV1 implements HakuV1Resource {
+    // generic field names of different type of specific virkailijas, also used by UI
+    public static final String KORKEAKOULUVIRKAILIJA = "kkUser";
+    public static final String TOISEN_ASTEEN_VIRKAILIJA = "toinenAsteUser";
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImplV1.class);
+
+    /**
+     * List of kohdejoukko id:s that match {@link HakuResourceImplV1#KORKEAKOULUVIRKAILIJA}
+     */
+    private final static String KK_VIRKAILIJAN_KOHDEJOUKOT = "haunkohdejoukko_12";
+    /**
+     * List of kohdejoukko id:s that match {@link HakuResourceImplV1#TOISEN_ASTEEN_VIRKAILIJAN_KOHDEJOUKOT}
+     */
+    private final static String TOISEN_ASTEEN_VIRKAILIJAN_KOHDEJOUKOT = "haunkohdejoukko_11,haunkohdejoukko_17,haunkohdejoukko_20";
 
     @Autowired
     private HakuDAO hakuDAO;
@@ -138,8 +151,11 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Autowired
     private HakukohdeSearchService hakukohdeSearchService;
 
-    private final String FIND_ALL_CACHE_KEY = "findAll";
+    private final String FIND_ALL_CACHE_KEY_PREFIX = "find-";
 
+    /**
+     * Cache for search results, keyed by virkailijaTyyppi. This is not the optimal solution at the time of writing but it is the fastest one to implement.
+     */
     private final Cache<String, List<Haku>> hakuCache = CacheBuilder
             .newBuilder().expireAfterWrite(5, TimeUnit.MINUTES).build();
 
@@ -185,6 +201,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Override
     public ResultV1RDTO<List<HakuV1RDTO>> find(HakuSearchParamsV1RDTO params, UriInfo uriInfo) {
         List<HakuSearchCriteria> criteriaList = getCriteriaListFromUri(uriInfo, null);
+        criteriaList.addAll(getCriteriaListFromParams(params));
 
         if (criteriaList.isEmpty()) {
             return findAllHakus(params);
@@ -208,12 +225,15 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     private ResultV1RDTO<List<HakuV1RDTO>> findAllHakus(HakuSearchParamsV1RDTO params) {
         List<Haku> hakus;
+
+        final String cacheKey = resolveCacheKey(params);
+
         try {
-            hakus = hakuCache.get(FIND_ALL_CACHE_KEY, new Callable<List<Haku>>() {
+            hakus = hakuCache.get(cacheKey, new Callable<List<Haku>>() {
                 @Override
                 public List<Haku> call() {
                     List<Haku> all = hakuDAO.findAll();
-                    hakuCache.put(FIND_ALL_CACHE_KEY, all);
+                    hakuCache.put(cacheKey, all);
                     return all;
                 }
             });
@@ -232,6 +252,16 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
         }
         return resultV1RDTO;
+    }
+
+    private String resolveCacheKey(HakuSearchParamsV1RDTO params) {
+        final String cacheKey;
+        if (!Strings.isNullOrEmpty(params.virkailijaTyyppi)) {
+            cacheKey = FIND_ALL_CACHE_KEY_PREFIX + params.virkailijaTyyppi;
+        } else {
+            cacheKey = FIND_ALL_CACHE_KEY_PREFIX + "all";
+        }
+        return cacheKey;
     }
 
     private List<HakuV1RDTO> hakusToHakuRDTO(List<Haku> hakus, HakuSearchParamsV1RDTO params) {
@@ -390,7 +420,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         LOG.debug("RETURN RESULT: " + result);
 
-        hakuCache.invalidate(FIND_ALL_CACHE_KEY);
+        hakuCache.invalidateAll();
 
         return result;
     }
@@ -436,7 +466,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             result.addError(ErrorV1RDTO.createValidationError(null, "haku.delete.error.notFound"));
         }
 
-        hakuCache.invalidate(FIND_ALL_CACHE_KEY);
+        hakuCache.invalidateAll();
 
         return result;
     }
@@ -548,9 +578,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             return r;
         }
 
-        hakuCache.invalidate(FIND_ALL_CACHE_KEY);
+        hakuCache.invalidateAll();
 
-        return new ResultV1RDTO<Tilamuutokset>(tm);
+        return new ResultV1RDTO<>(tm);
     }
 
     /**
@@ -892,7 +922,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Override
     public ResultV1RDTO<Set<String>> getHakukohteidenOrganisaatioOids(String oid) {
         Set<String> oids = hakuDAO.findOrganisaatioOidsFromHakukohteetByHakuOid(oid);
-        return new ResultV1RDTO<Set<String>>(oids);
+        return new ResultV1RDTO<>(oids);
     }
 
     private List<String> splitToList(String input, String separator) {
@@ -918,7 +948,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     private List<HakuSearchCriteria> getCriteriaListFromUri(UriInfo uriInfo, List<HakuSearchCriteria> criteriaList) {
         if (criteriaList == null) {
-            criteriaList = new ArrayList<HakuSearchCriteria>();
+            criteriaList = new ArrayList<>();
         }
 
         MultivaluedMap<String, String> queryParameters = uriInfo.getQueryParameters(true);
@@ -979,6 +1009,22 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         }
 
         return criteriaList;
+    }
+
+    protected static List<HakuSearchCriteria> getCriteriaListFromParams(HakuSearchParamsV1RDTO params) {
+        HakuSearchCriteria.Builder criteria = new HakuSearchCriteria.Builder();
+        if (params.virkailijaTyyppi != null) {
+            switch (params.virkailijaTyyppi) {
+                case KORKEAKOULUVIRKAILIJA:
+                    criteria.add(Field.KOHDEJOUKKO, KK_VIRKAILIJAN_KOHDEJOUKOT, Match.LIKE_OR);
+                    break;
+                case TOISEN_ASTEEN_VIRKAILIJA:
+                    criteria.add(Field.KOHDEJOUKKO, TOISEN_ASTEEN_VIRKAILIJAN_KOHDEJOUKOT, Match.LIKE_OR);
+                    break;
+                // also valid value is "all" for 'rekisterinpitäjä' which is default behaviour so it doesn't need its own criterion
+            }
+        }
+        return criteria.build();
     }
 
     @Override
