@@ -199,16 +199,13 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Override
     public ResultV1RDTO<List<HakuV1RDTO>> find(final HakuSearchParamsV1RDTO params, UriInfo uriInfo) {
-        List<HakuSearchCriteria> uriInfoCriteria = getCriteriaListFromUri(uriInfo, null);
-        List<HakuSearchCriteria> paramsCriteria = getCriteriaListFromParams(params, uriInfo);
+        final List<HakuSearchCriteria> criteriaList = new ArrayList<>();
+        criteriaList.addAll(getCriteriaListFromUri(uriInfo, null));
+        criteriaList.addAll(getCriteriaListFromParams(params, uriInfo));
 
-        if (uriInfoCriteria.isEmpty()) {
+        if (criteriaList.isEmpty()) {
             return findAllHakus(params);
         } else {
-            final List<HakuSearchCriteria> criteriaList = new ArrayList<>();
-            criteriaList.addAll(uriInfoCriteria);
-            criteriaList.addAll(paramsCriteria);
-
             List<Haku> hakus;
             if (params.cache) {
                 String cacheKey = resolveComplexCacheKey(criteriaList, params);
