@@ -31,7 +31,8 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
     var checkIfAnyJarjestettyKoulutusJulkaistu = function () {
         if(koulutusModel && koulutusModel.jarjestettavatKoulutukset && koulutusModel.jarjestettavatKoulutukset.koulutukset) {
             for (var o in koulutusModel.jarjestettavatKoulutukset.koulutukset) {
-                if(koulutusModel.jarjestettavatKoulutukset.koulutukset[o].tila === 'JULKAISTU' || koulutusModel.jarjestettavatKoulutukset.koulutukset[o].tila === 'VALMIS') {
+                if(koulutusModel.jarjestettavatKoulutukset.koulutukset[o].tila === 'JULKAISTU' || koulutusModel.jarjestettavatKoulutukset.koulutukset[o].tila === 'VALMIS'
+                    || koulutusModel.jarjestettavatKoulutukset.koulutukset[o].tila === 'LUONNOS') {
                     return true;
                 }
             }
