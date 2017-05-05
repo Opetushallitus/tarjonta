@@ -452,14 +452,11 @@ public class HakuResourceImplV1Test extends TestMockBase {
 
     private static void assertKohdejoukot(HakuSearchParamsV1RDTO params, UriInfo uriInfo, String expectedValue) {
         List<HakuSearchCriteria> criteria = getCriteriaListFromParams(params, uriInfo);
-        assertEquals("Well-defined virkailijaTyyppi should result in exactly one criterion", 2, criteria.size());
+        assertEquals("Well-defined virkailijaTyyppi should result in exactly one criterion", 1, criteria.size());
         HakuSearchCriteria virkailijaCriterion = criteria.get(0);
-        HakuSearchCriteria stateCriterion = criteria.get(1);
 
         assertEquals("Valid match value is comma separated list; LIKE_OR is required", HakuSearchCriteria.Match.LIKE_OR, virkailijaCriterion.getMatch());
         assertEquals(expectedValue, virkailijaCriterion.getValue());
-
-        assertEquals("JULKAISTU,VALMIS", stateCriterion.getValue());
     }
 
     private ResultV1RDTO<HakuV1RDTO> createHakuWithAtaruLomakeAvain(String ataruLomakeAvain) {
