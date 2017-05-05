@@ -15,7 +15,6 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Collections2;
@@ -151,7 +150,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Autowired
     private HakukohdeSearchService hakukohdeSearchService;
 
-    private final String FIND_ALL_CACHE_KEY_PREFIX = "find-";
+    private final String FIND_ALL_CACHE_KEY = "findAll";
 
     /**
      * Cache for search results, keyed by virkailijaTyyppi. This is not the optimal solution at the time of writing but it is the fastest one to implement.
@@ -246,18 +245,15 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     private ResultV1RDTO<List<HakuV1RDTO>> findAllHakus(HakuSearchParamsV1RDTO params) {
         List<Haku> hakus;
-
-        final String cacheKey = resolveCacheKey(params);
-
         try {
-            hakus = hakuCache.get(cacheKey, new Callable<List<Haku>>() {
+            hakus = hakuCache.get(FIND_ALL_CACHE_KEY, new Callable<List<Haku>>() {
                 @Override
                 public List<Haku> call() {
                     return hakuDAO.findAll();
                 }
             });
         } catch (ExecutionException e) {
-            LOG.warn("Failed to cache result for key '" + cacheKey + "', fetching hakus as is", e);
+            LOG.warn("Failed to cache result for key '" + FIND_ALL_CACHE_KEY + "', fetching all hakus as is", e);
             hakus = hakuDAO.findAll();
         }
 
@@ -271,16 +267,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
         }
         return resultV1RDTO;
-    }
-
-    private String resolveCacheKey(HakuSearchParamsV1RDTO params) {
-        final String cacheKey;
-        if (!Strings.isNullOrEmpty(params.virkailijaTyyppi)) {
-            cacheKey = FIND_ALL_CACHE_KEY_PREFIX + params.virkailijaTyyppi;
-        } else {
-            cacheKey = FIND_ALL_CACHE_KEY_PREFIX + "all";
-        }
-        return cacheKey;
     }
 
     private String resolveComplexCacheKey(List<HakuSearchCriteria> criteriaList, HakuSearchParamsV1RDTO params) {
