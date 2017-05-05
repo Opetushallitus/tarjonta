@@ -4,5 +4,6 @@ public class HakuSearchParamsV1RDTO extends GenericSearchParamsV1RDTO {
 
     public boolean addHakukohdes = true;
     public String virkailijaTyyppi = null;
+    public boolean cache = false;
 
 }
