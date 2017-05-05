@@ -199,22 +199,43 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<List<HakuV1RDTO>> find(HakuSearchParamsV1RDTO params, UriInfo uriInfo) {
-        List<HakuSearchCriteria> criteriaList = getCriteriaListFromUri(uriInfo, null);
-        criteriaList.addAll(getCriteriaListFromParams(params));
+    public ResultV1RDTO<List<HakuV1RDTO>> find(final HakuSearchParamsV1RDTO params, UriInfo uriInfo) {
+        List<HakuSearchCriteria> uriInfoCriteria = getCriteriaListFromUri(uriInfo, null);
+        List<HakuSearchCriteria> paramsCriteria = getCriteriaListFromParams(params, uriInfo);
 
-        if (criteriaList.isEmpty()) {
+        if (uriInfoCriteria.isEmpty()) {
             return findAllHakus(params);
         } else {
-            List<Haku> hakus = hakuDAO.findHakuByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
+            final List<HakuSearchCriteria> criteriaList = new ArrayList<>();
+            criteriaList.addAll(uriInfoCriteria);
+            criteriaList.addAll(paramsCriteria);
 
-            ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
+            List<Haku> hakus;
+            if (params.cache) {
+                String cacheKey = resolveComplexCacheKey(criteriaList, params);
+                try {
+                    hakus = hakuCache.get(cacheKey, new Callable<List<Haku>>() {
+                        @Override
+                        public List<Haku> call() throws Exception {
+                            return hakuDAO.findHakuByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
+                        }
+                    });
+                } catch (ExecutionException e) {
+                    LOG.warn("Failed to cache result for key '" + cacheKey + "', fetching hakus as is", e);
+                    hakus = hakuDAO.findHakuByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
+                }
+            } else {
+                hakus = hakuDAO.findHakuByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
+            }
+
+            ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
             resultV1RDTO.setResult(hakusToHakuRDTO(hakus, params));
 
             return resultV1RDTO;
         }
     }
+
 
     @Override
     public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus() {
@@ -232,19 +253,17 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             hakus = hakuCache.get(cacheKey, new Callable<List<Haku>>() {
                 @Override
                 public List<Haku> call() {
-                    List<Haku> all = hakuDAO.findAll();
-                    hakuCache.put(cacheKey, all);
-                    return all;
+                    return hakuDAO.findAll();
                 }
             });
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            LOG.warn("Failed to cache result for key '" + cacheKey + "', fetching hakus as is", e);
             hakus = hakuDAO.findAll();
         }
 
 
-        LOG.debug("FOUND  : {} hakus", hakus.size());
-        ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
+        LOG.debug("FOUND : {} hakus", hakus.size());
+        ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
         if (hakus.size() > 0) {
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
             resultV1RDTO.setResult(hakusToHakuRDTO(hakus, params));
@@ -262,6 +281,26 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             cacheKey = FIND_ALL_CACHE_KEY_PREFIX + "all";
         }
         return cacheKey;
+    }
+
+    private String resolveComplexCacheKey(List<HakuSearchCriteria> criteriaList, HakuSearchParamsV1RDTO params) {
+        List<HakuSearchCriteria> normalized = new ArrayList<>(criteriaList);
+        Collections.sort(normalized, new Comparator<HakuSearchCriteria>() {
+            @Override
+            public int compare(HakuSearchCriteria left, HakuSearchCriteria right) {
+                return left.getField().compareTo(right.getField());
+            }
+        });
+
+        StringBuilder cacheKey = new StringBuilder()
+                .append("addHakukohdes=").append(params.addHakukohdes)
+                .append(", startIndex=").append(params.getStartIndex())
+                .append(", count=").append(params.getCount());
+
+        for (HakuSearchCriteria c : normalized) {
+            cacheKey.append(", ").append(c.getField()).append("=").append(c.getValue());
+        }
+        return cacheKey.toString();
     }
 
     private List<HakuV1RDTO> hakusToHakuRDTO(List<Haku> hakus, HakuSearchParamsV1RDTO params) {
@@ -1011,19 +1050,29 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         return criteriaList;
     }
 
-    protected static List<HakuSearchCriteria> getCriteriaListFromParams(HakuSearchParamsV1RDTO params) {
+    protected static List<HakuSearchCriteria> getCriteriaListFromParams(HakuSearchParamsV1RDTO params, UriInfo uriInfo) {
         HakuSearchCriteria.Builder criteria = new HakuSearchCriteria.Builder();
-        if (params.virkailijaTyyppi != null) {
-            switch (params.virkailijaTyyppi) {
+
+        // limit results only if virkailijaTyyppi parameter is present at all
+        if (uriInfo.getQueryParameters().containsKey("virkailijaTyyppi")) {
+            String virkailijaTyyppi = (params.virkailijaTyyppi != null) ? params.virkailijaTyyppi : "";
+
+            switch (virkailijaTyyppi) {
                 case KORKEAKOULUVIRKAILIJA:
                     criteria.add(Field.KOHDEJOUKKO, KK_VIRKAILIJAN_KOHDEJOUKOT, Match.LIKE_OR);
                     break;
                 case TOISEN_ASTEEN_VIRKAILIJA:
                     criteria.add(Field.KOHDEJOUKKO, TOISEN_ASTEEN_VIRKAILIJAN_KOHDEJOUKOT, Match.LIKE_OR);
                     break;
-                // also valid value is "all" for 'rekisterinpitäjä' which is default behaviour so it doesn't need its own criterion
+                default:
+                    // show all by default
+                    criteria.add(Field.KOHDEJOUKKO, TOISEN_ASTEEN_VIRKAILIJAN_KOHDEJOUKOT + "," + KK_VIRKAILIJAN_KOHDEJOUKOT, Match.LIKE_OR);
             }
+            // only list Hakus in ready state:
+            criteria.add(Field.TILA, "JULKAISTU,VALMIS", Match.LIKE_OR);
         }
+
+
         return criteria.build();
     }
 
