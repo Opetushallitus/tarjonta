@@ -30,17 +30,24 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
 
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.ArrayList;
 
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1.getCriteriaListFromParams;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.internal.matchers.StringContains.containsString;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -61,6 +68,10 @@ public class HakuResourceImplV1Test extends TestMockBase {
 
     @Rule
     public ExpectedException nonUniqueKoulutuksenAlkamiskaudet = ExpectedException.none();
+
+    @Mock
+    private UriInfo uriInfo;
+    private MultivaluedMap<String, String> queryParams = new MultivaluedHashMap();
 
     @Before
     public void setUp() throws Exception {
@@ -85,6 +96,8 @@ public class HakuResourceImplV1Test extends TestMockBase {
         when(tarjontaKoodistoHelper.getUniqueKoodistoRelation("koulutusUri3", KoodistoURI.KOODISTO_TUTKINTOON_JOHTAVA_KOULUTUS_URI, SuhteenTyyppiType.SISALTYY, false))
                 .thenReturn("jotain-muuta");
         Whitebox.setInternalState(yhdenPaikanSaantoBuilder, "tarjontaKoodistoHelper", tarjontaKoodistoHelper);
+
+        when(uriInfo.getQueryParameters()).thenReturn(queryParams);
     }
 
     @Test(expected = NullPointerException.class)
@@ -413,27 +426,40 @@ public class HakuResourceImplV1Test extends TestMockBase {
 
     @Test
     public void expandsVirkailijaTyyppiToCriterionWithExpectedKohdejoukkoIds() throws Exception {
+        // enable limiting logic
+        queryParams.putSingle("virkailijaTyyppi", null);
         HakuSearchParamsV1RDTO params = new HakuSearchParamsV1RDTO();
+
         params.virkailijaTyyppi = null;
-        assertTrue("null virkailijaTyyppi should not be converted to criterion", getCriteriaListFromParams(params).isEmpty());
+        assertKohdejoukot(params, uriInfo, "haunkohdejoukko_11,haunkohdejoukko_17,haunkohdejoukko_20,haunkohdejoukko_12");
 
         params.virkailijaTyyppi = "";
-        assertTrue("non-null empty virkailijaTyyppi should not be converted to criterion", getCriteriaListFromParams(params).isEmpty());
+        assertKohdejoukot(params, uriInfo, "haunkohdejoukko_11,haunkohdejoukko_17,haunkohdejoukko_20,haunkohdejoukko_12");
 
         params.virkailijaTyyppi = HakuResourceImplV1.KORKEAKOULUVIRKAILIJA;
-        assertKohdejoukot(params, "haunkohdejoukko_12");
+        assertKohdejoukot(params, uriInfo, "haunkohdejoukko_12");
 
         params.virkailijaTyyppi = HakuResourceImplV1.TOISEN_ASTEEN_VIRKAILIJA;
-        assertKohdejoukot(params, "haunkohdejoukko_11,haunkohdejoukko_17,haunkohdejoukko_20");
+        assertKohdejoukot(params, uriInfo, "haunkohdejoukko_11,haunkohdejoukko_17,haunkohdejoukko_20");
+
+        params.virkailijaTyyppi = "all";
+        assertKohdejoukot(params, uriInfo, "haunkohdejoukko_11,haunkohdejoukko_17,haunkohdejoukko_20,haunkohdejoukko_12");
+
+        // disable limiting logic
+        queryParams.remove("virkailijaTyyppi");
+        assertTrue("non-existent virkailijaTyyppi should not produce any criteria", getCriteriaListFromParams(params, uriInfo).isEmpty());
     }
 
-    private static void assertKohdejoukot(HakuSearchParamsV1RDTO params, String expectedValue) {
-        List<HakuSearchCriteria> criteria = getCriteriaListFromParams(params);
-        assertEquals("Well-defined virkailijaTyyppi should result in exactly one criterion", 1, criteria.size());
+    private static void assertKohdejoukot(HakuSearchParamsV1RDTO params, UriInfo uriInfo, String expectedValue) {
+        List<HakuSearchCriteria> criteria = getCriteriaListFromParams(params, uriInfo);
+        assertEquals("Well-defined virkailijaTyyppi should result in exactly one criterion", 2, criteria.size());
         HakuSearchCriteria virkailijaCriterion = criteria.get(0);
+        HakuSearchCriteria stateCriterion = criteria.get(1);
 
         assertEquals("Valid match value is comma separated list; LIKE_OR is required", HakuSearchCriteria.Match.LIKE_OR, virkailijaCriterion.getMatch());
         assertEquals(expectedValue, virkailijaCriterion.getValue());
+
+        assertEquals("JULKAISTU,VALMIS", stateCriterion.getValue());
     }
 
     private ResultV1RDTO<HakuV1RDTO> createHakuWithAtaruLomakeAvain(String ataruLomakeAvain) {
