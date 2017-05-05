@@ -29,7 +29,7 @@ import java.util.Date;
 public class GenericSearchParamsV1RDTO implements Serializable {
 
     private int _startIndex = 0;
-    private int _count = 100;
+    private int _count = 10_000;
     private long _modifiedBefore = 0;
     private long _modifiedAfter = 0;
 
