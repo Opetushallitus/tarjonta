@@ -1051,8 +1051,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                     // show all by default
                     criteria.add(Field.KOHDEJOUKKO, TOISEN_ASTEEN_VIRKAILIJAN_KOHDEJOUKOT + "," + KK_VIRKAILIJAN_KOHDEJOUKOT, Match.LIKE_OR);
             }
-            // only list Hakus in ready state:
-            criteria.add(Field.TILA, "JULKAISTU,VALMIS", Match.LIKE_OR);
         }
 
 
