@@ -32,7 +32,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         if(koulutusModel && koulutusModel.jarjestettavatKoulutukset && koulutusModel.jarjestettavatKoulutukset.koulutukset) {
             for (var o in koulutusModel.jarjestettavatKoulutukset.koulutukset) {
                 if(koulutusModel.jarjestettavatKoulutukset.koulutukset[o].tila === 'JULKAISTU' || koulutusModel.jarjestettavatKoulutukset.koulutukset[o].tila === 'VALMIS'
-                    || koulutusModel.jarjestettavatKoulutukset.koulutukset[o].tila === 'LUONNOS') {
+                    || koulutusModel.jarjestettavatKoulutukset.koulutukset[o].tila === 'LUONNOS' || koulutusModel.jarjestettavatKoulutukset.koulutukset[o].tila === 'PERUTTU') {
                     return true;
                 }
             }

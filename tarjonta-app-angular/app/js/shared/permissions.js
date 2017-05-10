@@ -99,24 +99,23 @@ angular.module('TarjontaPermissions', [
     var _canDeleteKoulutus = function(koulutusOid) {
         $log.debug('can delete');
         var defer = $q.defer();
+
         //hae koulutus
-        var result = TarjontaService.haeKoulutukset({
-            koulutusOid: koulutusOid
-        });
-        //tarkista permissio tarjoajaoidilla
-        result = result.then(function(hakutulos) {
-            //			$log.debug("hakutulos:", hakutulos);
-            if (hakutulos.tulokset !== undefined && hakutulos.tulokset.length == 1) {
-                AuthService.crudOrg(hakutulos.tulokset[0].oid).then(function(result) {
+        TarjontaService.getKoulutusPromise(koulutusOid).then(function(response){
+            var koulutus = response.result;
+
+            if (koulutus && koulutus.oid) {
+                AuthService.crudOrg(koulutus.oid).then(function(result) {
                     defer.resolve(result);
                 }, function() {
-                        defer.resolve(false);
-                    });
+                    defer.resolve(false);
+                });
             }
             else {
                 defer.resolve(false);
             }
         });
+
         return defer.promise;
     };
     var _canDeleteKoulutusMulti = function(koulutusOids) {
