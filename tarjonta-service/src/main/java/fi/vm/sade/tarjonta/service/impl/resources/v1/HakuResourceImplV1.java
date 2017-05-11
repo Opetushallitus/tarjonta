@@ -116,6 +116,10 @@ public class HakuResourceImplV1 implements HakuV1Resource {
      * List of kohdejoukko id:s that match {@link HakuResourceImplV1#TOISEN_ASTEEN_VIRKAILIJAN_KOHDEJOUKOT}
      */
     private final static String TOISEN_ASTEEN_VIRKAILIJAN_KOHDEJOUKOT = "haunkohdejoukko_11,haunkohdejoukko_17,haunkohdejoukko_20";
+    /**
+     * /haku/find API specific override for maximum amount of results to return
+     */
+    private static final int FIND_MAX_RESULTS = 10_000;
 
     @Autowired
     private HakuDAO hakuDAO;
@@ -202,6 +206,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         final List<HakuSearchCriteria> criteriaList = new ArrayList<>();
         criteriaList.addAll(getCriteriaListFromUri(uriInfo, null));
         criteriaList.addAll(getCriteriaListFromParams(params, uriInfo));
+
+        params.setCount(FIND_MAX_RESULTS);
 
         if (criteriaList.isEmpty()) {
             return findAllHakus(params);
