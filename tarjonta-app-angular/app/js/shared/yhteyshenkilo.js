@@ -7,21 +7,21 @@ angular.module('Yhteyshenkilo', [
         var plainUrls = window.urls().noEncode();
 
         $log = $log.getInstance('YhteyshenkiloService');
-        var henkHaku = $resource(plainUrls.url("authentication-service.henkilo", {count:2000, index:0, ht:"VIRKAILIJA"}), {}, {
+        var henkHaku = $resource(plainUrls.url("oppijanumerorekisteri-service.henkilo", {count:2000, passivoitu:false, duplikaatti:false, tyyppi:"VIRKAILIJA"}), {}, {
             cache: true,
             get: {
                 method: 'GET',
                 withCredentials: true
             }
         });
-        var henkilo = $resource(plainUrls.url("authentication-service.urlHaeTiedot", ":oid"), {}, {
+        var henkilo = $resource(plainUrls.url("oppijanumerorekisteri-service.urlHaeTiedot", ":oid"), {}, {
             cache: true,
             get: {
                 method: 'GET',
                 withCredentials: true
             }
         });
-        var organisaatioHenkilo = $resource(plainUrls.url("authentication-service.organisaatiohenkilo", ":oid"), {}, {
+        var organisaatioHenkilo = $resource(plainUrls.url("kayttooikeus-service.organisaatiohenkilo", ":oid"), {}, {
             cache: true,
             get: {
                 isArray: true,

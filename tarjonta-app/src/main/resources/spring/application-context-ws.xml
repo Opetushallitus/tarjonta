@@ -23,9 +23,5 @@
     <jaxws:client id="tarjontaPublicService"
                   serviceClass="fi.vm.sade.tarjonta.service.TarjontaPublicService"
                   address="${tarjonta.public.webservice.url.backend}"/>
-                  
-    <jaxws:client id="userService"
-                  serviceClass="fi.vm.sade.authentication.service.UserService"
-                  address="${user.webservice.url.backend}"/>
 
 </beans>

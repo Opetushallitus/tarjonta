@@ -21,8 +21,6 @@ describe('Edit koulutus testeja', function() {
     beforeEach(module('ngGrid'));
     var CONFIG_ENV_MOCK = {
         "env": {
-            "authentication-service.henkilo.rest.url": "https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo",
-            "authentication-service.henkilo.search.params": "?count=2000&index=0&ht=VIRKAILIJA",
             "tarjontaOhjausparametritRestUrlPrefix": "PARAMETRIT",
         }, "app": {
             "key-app-1": "mock-value-app-1",
@@ -120,7 +118,7 @@ describe('Edit koulutus testeja', function() {
             "sukunimi": "1194-Kuormitus"
         };
 
-        var response = {
+/*        var response = {
             "totalCount": 5,
             "results": [henkilo1, {
                     "etunimet": "Testeri",
@@ -128,8 +126,24 @@ describe('Edit koulutus testeja', function() {
                     "sukunimi": "1194-Kuormitus"
                 }]
         };
+*/
+        var response = {
+            "last": true,
+            "number": 0,
+            "numberOfElements": 1,
+            "results": [henkilo1,
+                {
+                    "etunimet": "Testeri",
+                    "hetu": "010101-1234",
+                    "kutsumanimi": "Testeri",
+                    "oidHenkilo": "1.2.246.562.24.91121139885",
+                    "sukunimi": "1194-Kuormitus"
+                }
+            ],
+            "size": 1
+        };
 
-        var henkilo = {
+/*        var henkilo = {
             "id": 29256,
             "etunimet": "Testeri",
             "syntymaaika": null,
@@ -190,6 +204,81 @@ describe('Edit koulutus testeja', function() {
                         }]
                 }]
         };
+*/
+        var henkilo = {
+            "oidHenkilo": "1.2.246.562.24.91121139885",
+            "hetu": "260610-6151",
+            "passivoitu": false,
+            "henkiloTyyppi": "VIRKAILIJA",
+            "etunimet": "Testeri",
+            "kutsumanimi": "Testeri",
+            "sukunimi": "1194-Kuormitus",
+            "aidinkieli": null,
+            "asiointiKieli": {
+                "kieliKoodi": "fi",
+                "kieliTyyppi": "suomi"
+            },
+            "kielisyys": [
+                {
+                    "kieliKoodi": "fi",
+                    "kieliTyyppi": "suomi"
+                }
+            ],
+            "kansalaisuus": [
+                {
+                    "kansalaisuusKoodi": "246"
+                }
+            ],
+            "kasittelijaOid": null,
+            "syntymaaika": "1910-06-26",
+            "sukupuoli": "1",
+            "passinnumero": null,
+            "oppijanumero": null,
+            "turvakielto": false,
+            "eiSuomalaistaHetua": false,
+            "yksiloity": false,
+            "yksiloityVTJ": true,
+            "yksilointiYritetty": false,
+            "duplicate": false,
+            "created": -7200000,
+            "modified": null,
+            "vtjsynced": null,
+            "huoltaja": null,
+            "yhteystiedotRyhma": [
+                {
+                    "id": 92137,
+                    "ryhmaKuvaus": "yhteystietotyyppi7",
+                    "ryhmaAlkuperaTieto": null,
+                    "readOnly": false,
+                    "yhteystieto": [
+                        {
+                            "yhteystietoTyyppi": "YHTEYSTIETO_PUHELINNUMERO",
+                            "yhteystietoArvo": "012343"
+                        },
+                        {
+                            "yhteystietoTyyppi": "YHTEYSTIETO_POSTINUMERO",
+                            "yhteystietoArvo": "00001"
+                        },
+                        {
+                            "yhteystietoTyyppi": "YHTEYSTIETO_KATUOSOITE",
+                            "yhteystietoArvo": "jokukatu 1"
+                        },
+                        {
+                            "yhteystietoTyyppi": "YHTEYSTIETO_KUNTA",
+                            "yhteystietoArvo": "Helsinki"
+                        },
+                        {
+                            "yhteystietoTyyppi": "YHTEYSTIETO_KAUPUNKI",
+                            "yhteystietoArvo": "Helsinki"
+                        },
+                        {
+                            "yhteystietoTyyppi": "YHTEYSTIETO_SAHKOPOSTI",
+                            "yhteystietoArvo": "email@foo.bar"
+                        }
+                    ]
+                }
+            ]
+        }
 
         var organisaatiohenkilo = [{
                 "id": 29258,
@@ -198,9 +287,9 @@ describe('Edit koulutus testeja', function() {
                 "passivoitu": false
             }];
 
-        $httpBackend.whenGET('/authentication-service/resources/henkilo?count=2000&index=0&ht=VIRKAILIJA&org=org-oid-1.2.3.4').respond(response);
-        $httpBackend.whenGET('/authentication-service/resources/henkilo/1.2.246.562.24.91121139885').respond(henkilo);
-        $httpBackend.whenGET('/authentication-service/resources/henkilo/1.2.246.562.24.91121139885/organisaatiohenkilo').respond(organisaatiohenkilo);
+        $httpBackend.whenGET('/oppijanumerorekisteri-service/henkilo?count=2000&passivoitu=false&duplikaatti=false&tyyppi=VIRKAILIJA&org=org-oid-1.2.3.4').respond(response);
+        $httpBackend.whenGET('/oppijanumerorekisteri-service/henkilo/1.2.246.562.24.91121139885').respond(henkilo);
+        $httpBackend.whenGET('/kayttooikeus-service/henkilo/1.2.246.562.24.91121139885/organisaatiohenkilo').respond(organisaatiohenkilo);
 
         $scope.uiModel = {};
         $scope.init($scope.uiModel);

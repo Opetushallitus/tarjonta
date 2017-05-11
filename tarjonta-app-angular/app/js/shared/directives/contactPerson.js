@@ -39,8 +39,8 @@ app.directive('contactPerson', function(YhteyshenkiloService) {
                 var yhteystiedotRyhma = data.yhteystiedotRyhma;
                 if (yhteystiedotRyhma.length > 0) {
                     for (var r = 0; r < yhteystiedotRyhma.length; r++) {
-                        for (var i = 0; i < yhteystiedotRyhma[r].yhteystiedot.length; i++) {
-                            var yt = yhteystiedotRyhma[r].yhteystiedot[i];
+                        for (var i = 0; i < yhteystiedotRyhma[r].yhteystieto.length; i++) {
+                            var yt = yhteystiedotRyhma[r].yhteystieto[i];
                             if ('YHTEYSTIETO_PUHELINNUMERO' == yt.yhteystietoTyyppi && yt.yhteystietoArvo) {
                                 to.puhelin = yt.yhteystietoArvo;
                             }

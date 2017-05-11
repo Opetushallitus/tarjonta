@@ -86,8 +86,10 @@ window.urls.addProperties( {
     "ataru-service.rest.forms":"/lomake-editori/api/forms",
     "ataru-app-web.form":"/hakemus/$1",
 
-    "authentication-service.henkilo":"/authentication-service/resources/henkilo",
-    "authentication-service.henkilotypes":"/authentication-service/resources/henkilo/henkilotypes",
-    "authentication-service.urlHaeTiedot":"/authentication-service/resources/henkilo/$1",
-    "authentication-service.organisaatiohenkilo":"/authentication-service/resources/henkilo/$1/organisaatiohenkilo"
+
+    "oppijanumerorekisteri-service.henkilo":"/oppijanumerorekisteri-service/henkilo",
+    "oppijanumerorekisteri-service.henkilotypes":"/oppijanumerorekisteri-service/henkilo/henkilotypes",
+    "oppijanumerorekisteri-service.urlHaeTiedot":"/oppijanumerorekisteri-service/henkilo/$1",
+    "kayttooikeus-service.organisaatiohenkilo":"/kayttooikeus-service/henkilo/$1/organisaatiohenkilo",
+    "kayttooikeus-service.prequel":"/kayttooikeus-service/cas/prequel"
 })

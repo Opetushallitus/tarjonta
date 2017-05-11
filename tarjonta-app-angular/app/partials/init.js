@@ -78,6 +78,7 @@ function tarjontaInit() {
         }
     });
 
-    // Init authentication-service session
-    jQuery.get(window.url("authentication-service.henkilotypes"));
+    // Init onr&ko sessions
+    jQuery.get(window.url("oppijanumerorekisteri-service.henkilotypes"));
+    jQuery.get(window.url("kayttooikeus-service.prequel"));
 }
