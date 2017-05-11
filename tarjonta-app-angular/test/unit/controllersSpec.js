@@ -118,15 +118,6 @@ describe('Edit koulutus testeja', function() {
             "sukunimi": "1194-Kuormitus"
         };
 
-/*        var response = {
-            "totalCount": 5,
-            "results": [henkilo1, {
-                    "etunimet": "Testeri",
-                    "oidHenkilo": "1.2.246.562.24.91121139885",
-                    "sukunimi": "1194-Kuormitus"
-                }]
-        };
-*/
         var response = {
             "last": true,
             "number": 0,
@@ -143,68 +134,6 @@ describe('Edit koulutus testeja', function() {
             "size": 1
         };
 
-/*        var henkilo = {
-            "id": 29256,
-            "etunimet": "Testeri",
-            "syntymaaika": null,
-            "passinnumero": null,
-            "hetu": null,
-            "kutsumanimi": "Testeri",
-            "oidHenkilo": "1.2.246.562.24.91121139885",
-            "oppijanumero": null,
-            "sukunimi": "1194-Kuormitus",
-            "sukupuoli": "MIES",
-            "turvakielto": false,
-            "henkiloTyyppi": "VIRKAILIJA",
-            "eiSuomalaistaHetua": false,
-            "passivoitu": false,
-            "yksiloity": false,
-            "asiointiKieli": {
-                "kieliKoodi": "fi",
-                "kieliTyyppi": "suomi"
-            },
-            "yksilointitieto": null,
-            "kayttajatiedot": {
-                "username": "tes1194k"
-            },
-            "kielisyys": [{
-                    "kieliKoodi": "fi",
-                    "kieliTyyppi": "suomi"
-                }],
-            "kansalaisuus": [{
-                    "kansalaisuusKoodi": "Suomi"
-                }],
-            "yhteystiedotRyhma": [{
-                    "id": 92137,
-                    "ryhmaKuvaus": "a",
-                    "yhteystiedot": [{
-                            "id": 92142,
-                            "yhteystietoTyyppi": "YHTEYSTIETO_KATUOSOITE",
-                            "yhteystietoArvo": "jokukatu 1"
-                        }, {
-                            "id": 92143,
-                            "yhteystietoTyyppi": "YHTEYSTIETO_KAUPUNKI",
-                            "yhteystietoArvo": "Helsinki"
-                        }, {
-                            "id": 92140,
-                            "yhteystietoTyyppi": "YHTEYSTIETO_POSTINUMERO",
-                            "yhteystietoArvo": "00001"
-                        }, {
-                            "id": 92141,
-                            "yhteystietoTyyppi": "YHTEYSTIETO_PUHELINNUMERO",
-                            "yhteystietoArvo": "012343"
-                        }, {
-                            "id": 92138,
-                            "yhteystietoTyyppi": "YHTEYSTIETO_KUNTA",
-                            "yhteystietoArvo": "Helsinki"
-                        }, {
-                            "id": 92139,
-                            "yhteystietoTyyppi": "YHTEYSTIETO_SAHKOPOSTI",
-                            "yhteystietoArvo": "email@foo.bar"
-                        }]
-                }]
-        };
-*/
         var henkilo = {
             "oidHenkilo": "1.2.246.562.24.91121139885",
             "hetu": "260610-6151",
