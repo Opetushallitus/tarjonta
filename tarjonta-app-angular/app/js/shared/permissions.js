@@ -96,28 +96,46 @@ angular.module('TarjontaPermissions', [
         });
         return defer.promise;
     };
-    var _canDeleteKoulutus = function(koulutusOid) {
+
+    var _canDeleteKoulutus = function (koulutusOid) {
         $log.debug('can delete');
         var defer = $q.defer();
 
         //hae koulutus
-        TarjontaService.getKoulutusPromise(koulutusOid).then(function(response){
+        TarjontaService.getKoulutusPromise(koulutusOid).then(function (response) {
             var koulutus = response.result;
-
-            if (koulutus && koulutus.oid) {
-                AuthService.crudOrg(koulutus.oid).then(function(result) {
+            if (checkIfAnyJarjestettyKoulutusIsJulkaistu(koulutus)) {
+                defer.resolve(false);
+            } else if (koulutus && koulutus.organisaatio && koulutus.organisaatio.oid) {
+                AuthService.crudOrg(koulutus.organisaatio.oid).then(function (result) {
                     defer.resolve(result);
-                }, function() {
+                }, function () {
                     defer.resolve(false);
                 });
-            }
-            else {
+            } else {
                 defer.resolve(false);
             }
         });
-
         return defer.promise;
     };
+
+    var julkaistutTilat = ['JULKAISTU', 'VALMIS', 'LUONNOS', 'PERUTTU'];
+
+    function checkIfAnyJarjestettyKoulutusIsJulkaistu(koulutus) {
+        if (koulutus && koulutus.jarjestettavatKoulutukset && koulutus.jarjestettavatKoulutukset.koulutukset) {
+            for (var i = 0; i < koulutus.jarjestettavatKoulutukset.koulutukset.length; i++) {
+                var jarjestettyKoulutus = koulutus.jarjestettavatKoulutukset.koulutukset[i];
+                if (jarjestettyKoulutus && julkaistutTilat.indexOf(jarjestettyKoulutus.tila) > -1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+
+
     var _canDeleteKoulutusMulti = function(koulutusOids) {
         var deferred = $q.defer();
         promises = [];

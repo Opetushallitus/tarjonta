@@ -23,16 +23,18 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         $scope.isRemovable = tila.removable && data;
 
         if($scope.isRemovable){
-            $scope.isRemovable = !checkIfAnyJarjestettyKoulutusJulkaistu();
+            $scope.isRemovable = !checkIfAnyJarjestettyKoulutusIsJulkaistu();
         }
     });
 
+
+    var julkaistutTilat = ['JULKAISTU', 'VALMIS', 'LUONNOS', 'PERUTTU'];
     // Onko "Poista"-painike aktiivinen
-    var checkIfAnyJarjestettyKoulutusJulkaistu = function () {
-        if(koulutusModel && koulutusModel.jarjestettavatKoulutukset && koulutusModel.jarjestettavatKoulutukset.koulutukset) {
-            for (var o in koulutusModel.jarjestettavatKoulutukset.koulutukset) {
-                if(koulutusModel.jarjestettavatKoulutukset.koulutukset[o].tila === 'JULKAISTU' || koulutusModel.jarjestettavatKoulutukset.koulutukset[o].tila === 'VALMIS'
-                    || koulutusModel.jarjestettavatKoulutukset.koulutukset[o].tila === 'LUONNOS' || koulutusModel.jarjestettavatKoulutukset.koulutukset[o].tila === 'PERUTTU') {
+    var checkIfAnyJarjestettyKoulutusIsJulkaistu = function () {
+        if (koulutusModel && koulutusModel.jarjestettavatKoulutukset && koulutusModel.jarjestettavatKoulutukset.koulutukset) {
+            for (var i = 0; i < koulutusModel.jarjestettavatKoulutukset.koulutukset.length; i++) {
+                var koulutus = koulutusModel.jarjestettavatKoulutukset.koulutukset[i];
+                if (koulutus && julkaistutTilat.indexOf(koulutus.tila) > -1) {
                     return true;
                 }
             }
