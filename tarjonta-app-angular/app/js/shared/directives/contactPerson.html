@@ -1,6 +1,6 @@
 <tr class="primary">
     <th tt="koulutus.edit.yhteyshenkilo.name">Koulutuksen yhteyshenkilö</th>
-    <td><input class="wide" type="text" ng-model="model.contactPerson.nimet" typeahead-wait-ms="300" typeahead-on-select="editYhModel.selectHenkilo($item)" typeahead="henkilo.sukunimi for henkilo in yhteyshenkilot | filter:$viewValue"></td>
+    <td><input class="wide" type="text" ng-model="model.contactPerson.nimet" typeahead-wait-ms="300" typeahead-on-select="editYhModel.selectHenkilo($item)" typeahead="(henkilo.kutsumanimi + ' ' + henkilo.sukunimi) for henkilo in yhteyshenkilot | filter:$viewValue"></td>
     <td><a href ng-click="editYhModel.clearYh()"><span tt='koulutus.edit.tyhjenna'>Tyhjennä</span></a>
     </td>
 </tr>

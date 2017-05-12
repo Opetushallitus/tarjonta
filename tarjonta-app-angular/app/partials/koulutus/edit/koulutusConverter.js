@@ -145,7 +145,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             if (angular.isUndefined(henkilo.henkiloTyyppi)) {
                 throw 'Unknown henkilo tyyppi';
             }
-            if (!angular.isUndefined(henkilo) && !angular.isUndefined(henkilo.sukunimi) && henkilo.sukunimi.length > 0) {
+            if (!angular.isUndefined(henkilo) && !angular.isUndefined(henkilo.nimi) && henkilo.nimi.length > 0) {
                 arrOutputPersons.push(henkilo);
             }
         }
