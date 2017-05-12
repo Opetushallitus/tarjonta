@@ -5,40 +5,46 @@ import java.util.Set;
 
 public enum ToteutustyyppiEnum {
 
-    AMMATILLINEN_PERUSTUTKINTO("koulutustyyppi_1"),
-    LUKIOKOULUTUS("koulutustyyppi_2"),
-    KORKEAKOULUTUS("koulutustyyppi_3"),
-    AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA("koulutustyyppi_4"),
-    VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS("koulutustyyppi_5"),
-    PERUSOPETUKSEN_LISAOPETUS("koulutustyyppi_6"),
-    KORKEAKOULUOPINTO("koulutustyyppi_3"),  // opintokokonaisuus or opintojakso
-    AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS("koulutustyyppi_7"),
-    AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA("koulutustyyppi_18"),
-    AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER("koulutustyyppi_19"),
-    MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS("koulutustyyppi_8"),
-    MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS("koulutustyyppi_9"),
-    VAPAAN_SIVISTYSTYON_KOULUTUS("koulutustyyppi_10"),
-    AMMATTITUTKINTO("koulutustyyppi_11"),
-    ERIKOISAMMATTITUTKINTO("koulutustyyppi_12"),
-    AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA("koulutustyyppi_13"),
-    LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA("koulutustyyppi_14"),
-    EB_RP_ISH("koulutustyyppi_21"),
-    ESIOPETUS("koulutustyyppi_15"),
-    PERUSOPETUS("koulutustyyppi_16"),
-    AIKUISTEN_PERUSOPETUS("koulutustyyppi_17"),
-    PELASTUSALAN_KOULUTUS("koulutustyyppi_24"),
-    ERIKOISAMMATTITUTKINTO_VALMISTAVA(null),
-    AMMATTITUTKINTO_VALMISTAVA(null),
-    AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA(null);
+    AMMATILLINEN_PERUSTUTKINTO("koulutustyyppi_1", true),
+    LUKIOKOULUTUS("koulutustyyppi_2", true),
+    KORKEAKOULUTUS("koulutustyyppi_3", false),
+    AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA("koulutustyyppi_4", true),
+    VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS("koulutustyyppi_5", true),
+    PERUSOPETUKSEN_LISAOPETUS("koulutustyyppi_6", true),
+    KORKEAKOULUOPINTO("koulutustyyppi_3", false),  // opintokokonaisuus or opintojakso
+    AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS("koulutustyyppi_7", true),
+    AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA("koulutustyyppi_18", false),
+    AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER("koulutustyyppi_19", false),
+    MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS("koulutustyyppi_8", true),
+    MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS("koulutustyyppi_9", true),
+    VAPAAN_SIVISTYSTYON_KOULUTUS("koulutustyyppi_10", true),
+    AMMATTITUTKINTO("koulutustyyppi_11", false),
+    ERIKOISAMMATTITUTKINTO("koulutustyyppi_12", false),
+    AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA("koulutustyyppi_13", false),
+    LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA("koulutustyyppi_14", false),
+    EB_RP_ISH("koulutustyyppi_21", false),
+    ESIOPETUS("koulutustyyppi_15", false),
+    PERUSOPETUS("koulutustyyppi_16", false),
+    AIKUISTEN_PERUSOPETUS("koulutustyyppi_17", false),
+    PELASTUSALAN_KOULUTUS("koulutustyyppi_24", false),
+    ERIKOISAMMATTITUTKINTO_VALMISTAVA(null, false),
+    AMMATTITUTKINTO_VALMISTAVA(null, false),
+    AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA(null, false);
 
-    final private String koulutustyyppiUri;
+    private final String koulutustyyppiUri;
+    private final boolean toisenAsteenKoulutus;
 
-    private ToteutustyyppiEnum(String koulutustyyppiUri) {
+    ToteutustyyppiEnum(String koulutustyyppiUri, boolean toisenAsteenKoulutus) {
         this.koulutustyyppiUri = koulutustyyppiUri;
+        this.toisenAsteenKoulutus = toisenAsteenKoulutus;
     }
 
     public String uri() {
         return this.koulutustyyppiUri;
+    }
+
+    public boolean isToisenAsteenKoulutus() {
+        return toisenAsteenKoulutus;
     }
 
     /**

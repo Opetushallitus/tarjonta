@@ -40,7 +40,18 @@ import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Match;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.ProcessResourceV1;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.AtaruLomakeHakuV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.AtaruLomakkeetV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuSearchParamsV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeNimiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeTulosV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohdeSearchService;
@@ -62,12 +73,26 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import static fi.vm.sade.tarjonta.service.AuditHelper.*;
+import static fi.vm.sade.tarjonta.service.AuditHelper.AUDIT;
+import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
+import static fi.vm.sade.tarjonta.service.AuditHelper.getHakuDelta;
+import static fi.vm.sade.tarjonta.service.AuditHelper.getUsernameFromSession;
 
 /**
  * REST API V1 implementation for Haku.
@@ -77,8 +102,24 @@ import static fi.vm.sade.tarjonta.service.AuditHelper.*;
 @Transactional(readOnly = false)
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public class HakuResourceImplV1 implements HakuV1Resource {
+    // generic field names of different type of specific virkailijas, also used by UI
+    public static final String KORKEAKOULUVIRKAILIJA = "kkUser";
+    public static final String TOISEN_ASTEEN_VIRKAILIJA = "toinenAsteUser";
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImplV1.class);
+
+    /**
+     * List of kohdejoukko id:s that match {@link HakuResourceImplV1#KORKEAKOULUVIRKAILIJA}
+     */
+    private final static String KK_VIRKAILIJAN_KOHDEJOUKOT = "haunkohdejoukko_12";
+    /**
+     * List of kohdejoukko id:s that match {@link HakuResourceImplV1#TOISEN_ASTEEN_VIRKAILIJAN_KOHDEJOUKOT}
+     */
+    private final static String TOISEN_ASTEEN_VIRKAILIJAN_KOHDEJOUKOT = "haunkohdejoukko_11,haunkohdejoukko_17,haunkohdejoukko_20";
+    /**
+     * /haku/find API specific override for maximum amount of results to return
+     */
+    private static final int FIND_MAX_RESULTS = 10_000;
 
     @Autowired
     private HakuDAO hakuDAO;
@@ -115,6 +156,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     private final String FIND_ALL_CACHE_KEY = "findAll";
 
+    /**
+     * Cache for search results, keyed by virkailijaTyyppi. This is not the optimal solution at the time of writing but it is the fastest one to implement.
+     */
     private final Cache<String, List<Haku>> hakuCache = CacheBuilder
             .newBuilder().expireAfterWrite(5, TimeUnit.MINUTES).build();
 
@@ -158,21 +202,42 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<List<HakuV1RDTO>> find(HakuSearchParamsV1RDTO params, UriInfo uriInfo) {
-        List<HakuSearchCriteria> criteriaList = getCriteriaListFromUri(uriInfo, null);
+    public ResultV1RDTO<List<HakuV1RDTO>> find(final HakuSearchParamsV1RDTO params, UriInfo uriInfo) {
+        final List<HakuSearchCriteria> criteriaList = new ArrayList<>();
+        criteriaList.addAll(getCriteriaListFromUri(uriInfo, null));
+        criteriaList.addAll(getCriteriaListFromParams(params, uriInfo));
+
+        params.setCount(FIND_MAX_RESULTS);
 
         if (criteriaList.isEmpty()) {
             return findAllHakus(params);
         } else {
-            List<Haku> hakus = hakuDAO.findHakuByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
+            List<Haku> hakus;
+            if (params.cache) {
+                String cacheKey = resolveComplexCacheKey(criteriaList, params);
+                try {
+                    hakus = hakuCache.get(cacheKey, new Callable<List<Haku>>() {
+                        @Override
+                        public List<Haku> call() throws Exception {
+                            return hakuDAO.findHakuByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
+                        }
+                    });
+                } catch (ExecutionException e) {
+                    LOG.warn("Failed to cache result for key '" + cacheKey + "', fetching hakus as is", e);
+                    hakus = hakuDAO.findHakuByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
+                }
+            } else {
+                hakus = hakuDAO.findHakuByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
+            }
 
-            ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
+            ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
             resultV1RDTO.setResult(hakusToHakuRDTO(hakus, params));
 
             return resultV1RDTO;
         }
     }
+
 
     @Override
     public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus() {
@@ -187,19 +252,17 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             hakus = hakuCache.get(FIND_ALL_CACHE_KEY, new Callable<List<Haku>>() {
                 @Override
                 public List<Haku> call() {
-                    List<Haku> all = hakuDAO.findAll();
-                    hakuCache.put(FIND_ALL_CACHE_KEY, all);
-                    return all;
+                    return hakuDAO.findAll();
                 }
             });
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            LOG.warn("Failed to cache result for key '" + FIND_ALL_CACHE_KEY + "', fetching all hakus as is", e);
             hakus = hakuDAO.findAll();
         }
 
 
-        LOG.debug("FOUND  : {} hakus", hakus.size());
-        ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
+        LOG.debug("FOUND : {} hakus", hakus.size());
+        ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
         if (hakus.size() > 0) {
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
             resultV1RDTO.setResult(hakusToHakuRDTO(hakus, params));
@@ -207,6 +270,26 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
         }
         return resultV1RDTO;
+    }
+
+    private String resolveComplexCacheKey(List<HakuSearchCriteria> criteriaList, HakuSearchParamsV1RDTO params) {
+        List<HakuSearchCriteria> normalized = new ArrayList<>(criteriaList);
+        Collections.sort(normalized, new Comparator<HakuSearchCriteria>() {
+            @Override
+            public int compare(HakuSearchCriteria left, HakuSearchCriteria right) {
+                return left.getField().compareTo(right.getField());
+            }
+        });
+
+        StringBuilder cacheKey = new StringBuilder()
+                .append("addHakukohdes=").append(params.addHakukohdes)
+                .append(", startIndex=").append(params.getStartIndex())
+                .append(", count=").append(params.getCount());
+
+        for (HakuSearchCriteria c : normalized) {
+            cacheKey.append(", ").append(c.getField()).append("=").append(c.getValue());
+        }
+        return cacheKey.toString();
     }
 
     private List<HakuV1RDTO> hakusToHakuRDTO(List<Haku> hakus, HakuSearchParamsV1RDTO params) {
@@ -365,7 +448,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         LOG.debug("RETURN RESULT: " + result);
 
-        hakuCache.invalidate(FIND_ALL_CACHE_KEY);
+        hakuCache.invalidateAll();
 
         return result;
     }
@@ -411,7 +494,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             result.addError(ErrorV1RDTO.createValidationError(null, "haku.delete.error.notFound"));
         }
 
-        hakuCache.invalidate(FIND_ALL_CACHE_KEY);
+        hakuCache.invalidateAll();
 
         return result;
     }
@@ -523,9 +606,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             return r;
         }
 
-        hakuCache.invalidate(FIND_ALL_CACHE_KEY);
+        hakuCache.invalidateAll();
 
-        return new ResultV1RDTO<Tilamuutokset>(tm);
+        return new ResultV1RDTO<>(tm);
     }
 
     /**
@@ -867,7 +950,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Override
     public ResultV1RDTO<Set<String>> getHakukohteidenOrganisaatioOids(String oid) {
         Set<String> oids = hakuDAO.findOrganisaatioOidsFromHakukohteetByHakuOid(oid);
-        return new ResultV1RDTO<Set<String>>(oids);
+        return new ResultV1RDTO<>(oids);
     }
 
     private List<String> splitToList(String input, String separator) {
@@ -893,7 +976,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     private List<HakuSearchCriteria> getCriteriaListFromUri(UriInfo uriInfo, List<HakuSearchCriteria> criteriaList) {
         if (criteriaList == null) {
-            criteriaList = new ArrayList<HakuSearchCriteria>();
+            criteriaList = new ArrayList<>();
         }
 
         MultivaluedMap<String, String> queryParameters = uriInfo.getQueryParameters(true);
@@ -954,6 +1037,30 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         }
 
         return criteriaList;
+    }
+
+    protected static List<HakuSearchCriteria> getCriteriaListFromParams(HakuSearchParamsV1RDTO params, UriInfo uriInfo) {
+        HakuSearchCriteria.Builder criteria = new HakuSearchCriteria.Builder();
+
+        // limit results only if virkailijaTyyppi parameter is present at all
+        if (uriInfo.getQueryParameters().containsKey("virkailijaTyyppi")) {
+            String virkailijaTyyppi = (params.virkailijaTyyppi != null) ? params.virkailijaTyyppi : "";
+
+            switch (virkailijaTyyppi) {
+                case KORKEAKOULUVIRKAILIJA:
+                    criteria.add(Field.KOHDEJOUKKO, KK_VIRKAILIJAN_KOHDEJOUKOT, Match.LIKE_OR);
+                    break;
+                case TOISEN_ASTEEN_VIRKAILIJA:
+                    criteria.add(Field.KOHDEJOUKKO, TOISEN_ASTEEN_VIRKAILIJAN_KOHDEJOUKOT, Match.LIKE_OR);
+                    break;
+                default:
+                    // show all by default
+                    criteria.add(Field.KOHDEJOUKKO, TOISEN_ASTEEN_VIRKAILIJAN_KOHDEJOUKOT + "," + KK_VIRKAILIJAN_KOHDEJOUKOT, Match.LIKE_OR);
+            }
+        }
+
+
+        return criteria.build();
     }
 
     @Override
