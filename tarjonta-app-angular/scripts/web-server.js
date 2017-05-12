@@ -1,12 +1,9 @@
 var http=require("https");
 var express = require('express');
-var server = express(); 
+var server = express();
 var request = require('request');
 
 var luokka="https://itest-virkailija.oph.ware.fi"
-var reppu="https://test-virkailija.oph.ware.fi"
-
-
 
 var USE_ENV=luokka;
 var port = 8888;
@@ -17,7 +14,7 @@ var env={
 user:'ophadmin',
 pass:'ilonkautta!'
 }
-var ticketUrl = env.remote + "/service-access/accessTicket?client_id=" + env.user + "&client_secret=" + env.pass + "&service_url=" + env.remote + "/authentication-service";
+var ticketUrl = env.remote + "/service-access/accessTicket?client_id=" + env.user + "&client_secret=" + env.pass + "&service_url=" + env.remote + "/oppijanumerorekisteri-service";
 var orgTicketUrl = env.remote + "/service-access/accessTicket?client_id=" + env.user + "&client_secret=" + env.pass + "&service_url=" + env.remote + "/organisaatio-service";
 
 function proxy(server, prefix, ticket) {
@@ -53,7 +50,7 @@ http.get(ticketUrl,function(res){
 
   res.on("data", function(ticket) {
 	console.log("auth-ticket:", ticket);
-    proxy(server, "/authentication-service", ticket);
+    proxy(server, "/oppijanumerorekisteri-service", ticket);
 
   });
 

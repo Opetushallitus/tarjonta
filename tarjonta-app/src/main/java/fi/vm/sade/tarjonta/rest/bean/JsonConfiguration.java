@@ -32,8 +32,6 @@ public class JsonConfiguration {
     private static String configurationJson;
 
     private static final List<String> WHITELIST = Arrays.asList(
-            "authentication-service.henkilo.rest.url",
-            "authentication-service.rest.url",
             "callerid.tarjonta.tarjonta-app.frontend",
             "callerid.tarjonta.tarjonta-service.backend",
             "casUrl",

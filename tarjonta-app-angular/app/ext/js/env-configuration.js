@@ -129,12 +129,6 @@ window.CONFIG = {
         //"casUrl": "cas_me_juomas.json",
         // "casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
 
-        // "authentication-service.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/",
-         "authentication-service.rest.url":"http://localhost:8308/authentication-service/resources/",
-        // henkilöhaku - CORS ongelma, siksi ohjattu tarjontaan - toimii "oikeassa" ympäristössä
-       //"authentication-service.henkilo.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/henkilo",
-        "authentication-service.henkilo.rest.url": "http://localhost:8308/authentication-service/resources/henkilo",
-
         // Ohjausparametrit
         "tarjontaOhjausparametritRestUrlPrefix":"https://itest-virkailija.oph.ware.fi/ohjausparametrit-service",
         // "tarjontaOhjausparametritRestUrlPrefix":"http://localhost:8085/ohjausparametrit-service",

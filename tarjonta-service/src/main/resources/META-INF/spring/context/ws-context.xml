@@ -36,14 +36,6 @@
         </jaxws:outInterceptors>
     </jaxws:client>
 
-    <jaxws:client id="userService"
-                  serviceClass="fi.vm.sade.authentication.service.UserService"
-                  address="${user.webservice.url.backend}">
-        <jaxws:outInterceptors>
-            <ref bean="callerIdInterceptor"></ref>
-        </jaxws:outInterceptors>
-    </jaxws:client>
-
     <bean id="callerIdInterceptor" class="fi.vm.sade.generic.rest.CallerIdCxfInterceptor">
         <property name="headerValue" value="${callerid.tarjonta.tarjonta-service.backend}"/>
     </bean>
