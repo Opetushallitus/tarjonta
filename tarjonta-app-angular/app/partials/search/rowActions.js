@@ -83,19 +83,6 @@ angular.module('search.hakutulokset.rows', [])
                 TarjontaService.parameterCanEditHakukohde(hakukohde.hakuOid);
         }
 
-        // Onko "Poista"-painike aktiivinen
-        var checkIfAnyJarjestettyKoulutusJulkaistu = function () {
-            if(koulutusModuuli.jarjestettavatKoulutukset && jkoulutusModuuli.arjestettavatKoulutukset.koulutukset) {
-                for (var o in koulutusModuuli.jarjestettavatKoulutukset.koulutukset) {
-                    if(koulutusModuuli.jarjestettavatKoulutukset.koulutukset[o].tila === 'JULKAISTU' || koulutusModuuli.jarjestettavatKoulutukset.koulutukset[o].tila === 'VALMIS'
-                        || koulutusModuuli.jarjestettavatKoulutukset.koulutukset[o].tila === 'LUONNOS' || koulutusModuuli.jarjestettavatKoulutukset.koulutukset[o].tila === 'PERUTTU') {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
-
         function rowActions(prefix, row, actions, $scope) {
             var oid = row.oid;
             var tila = row.tila;
@@ -202,18 +189,16 @@ angular.module('search.hakutulokset.rows', [])
                     break;
             }
             if (tt.removable) {
-                if(!checkIfAnyJarjestettyKoulutusJulkaistu()){
-                    PermissionService[prefix].canDelete(oid).then(function(canDelete) {
-                        if (canDelete) {
-                            ret.push({
-                                title: LocalisationService.t('tarjonta.toiminnot.poista'),
-                                action: function() {
-                                    openDeleteDialog(prefix, oid, nimi, actions.delete, $scope);
-                                }
-                            });
-                        }
-                    });
-                }
+                PermissionService[prefix].canDelete(oid).then(function(canDelete) {
+                    if (canDelete) {
+                        ret.push({
+                            title: LocalisationService.t('tarjonta.toiminnot.poista'),
+                            action: function() {
+                                openDeleteDialog(prefix, oid, nimi, actions.delete, $scope);
+                            }
+                        });
+                    }
+                });
             }
             return ret;
         }
