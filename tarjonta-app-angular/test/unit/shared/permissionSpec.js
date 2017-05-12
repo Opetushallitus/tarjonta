@@ -71,7 +71,20 @@ describe('TarjontaPermissions', function() {
     	     |-1.2.5  (read)
     	*/
 
-    	var koulutushaku=function(oid){
+        var koulutusKoulutus=function(oid){
+            return {
+                "result" : {
+                    "organisaatio" : {
+                        "oid" : oid
+                    } ,
+                    "tuloksia" : 1
+                },
+                "status" : "OK"
+            };
+        };
+
+
+        var koulutushaku=function(oid){
     		return {
           	  "result" : {
           		    "tulokset" : [ {
@@ -147,6 +160,11 @@ describe('TarjontaPermissions', function() {
     			  },
     				};
     	};
+
+        $httpBackend.whenGET('/tarjonta-service/rest/v1/koulutus/koulutus.1.2.3?img=true').respond(koulutusKoulutus('1.2.3'));
+        $httpBackend.whenGET('/tarjonta-service/rest/v1/koulutus/koulutus.1.2.4?img=true').respond(koulutusKoulutus('1.2.4'));
+        $httpBackend.whenGET('/tarjonta-service/rest/v1/koulutus/koulutus.1.2.5?img=true').respond(koulutusKoulutus('1.2.5'));
+        $httpBackend.whenGET('/tarjonta-service/rest/v1/koulutus/koulutus.1.2.3.4?img=true').respond(koulutusKoulutus('1.2.3.4'));
 
         $httpBackend.whenGET('/organisaatio-service/rest/organisaatio/1.2.3/parentoids').respond("1/1.2/1.2.3");
         $httpBackend.whenGET('/organisaatio-service/rest/organisaatio/1.2.3.4/parentoids').respond("1/1.2/1.2.3/1.2.3.4");
