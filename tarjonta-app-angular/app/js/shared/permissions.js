@@ -24,19 +24,17 @@ angular.module('TarjontaPermissions', [
             });
     };
     var _canCreate = function(orgOid) {
-        //		$log.debug("can create:", orgOid);
         var oidArray = angular.isArray(orgOid) ? orgOid : [orgOid];
         var deferred = $q.defer();
         var promises = [];
         for (var i = 0; i < oidArray.length; i++) {
             var result = AuthService.crudOrg(oidArray[i]);
-            resolveData(result);
             promises.push(result);
+            resolveData(result);
         }
         $q.all(promises).then(function() {
             var result = true;
             for (var i = 0; i < promises.length; i++) {
-                //				$log.debug("processing promise", i, "result:", promises[i].data);
                 result = result && promises[i].data;
             }
             deferred.resolve(result);
@@ -52,13 +50,11 @@ angular.module('TarjontaPermissions', [
             promises.push(promise);
             resolveData(promise);
         }
-        var result = true;
         $q.all(promises).then(function() {
+            var result = true;
             for (var i = 0; i < promises.length; i++) {
-                //				$log.debug("processing list:", promises[i].data);
                 result = result && promises[i].data;
             }
-            //			$log.debug("final result:", result);
             deferred.resolve(result);
         });
         return deferred.promise;
@@ -79,7 +75,6 @@ angular.module('TarjontaPermissions', [
                 defer.resolve(false);
                 return;
             }
-            //$log.debug("hakutulos:", hakutulos);
             resolveData(defer.promise);
             if (hakutulos.tulokset !== undefined && hakutulos.tulokset.length == 1) {
                 var koulutuksetByOrg = hakutulos.tulokset[0];
@@ -157,13 +152,11 @@ angular.module('TarjontaPermissions', [
             promises.push(promise);
             resolveData(promise);
         }
-        var result = true;
         $q.all(promises).then(function() {
+            var result = true;
             for (var i = 0; i < promises.length; i++) {
-                //				$log.debug("processing list:", promises[i].data);
                 result = result && promises[i].data;
             }
-            //			$log.debug("final result:", result);
             deferred.resolve(result);
         });
         return deferred.promise;
@@ -198,13 +191,11 @@ angular.module('TarjontaPermissions', [
             promises.push(promise);
             resolveData(promise);
         }
-        var result = true;
         $q.all(promises).then(function() {
+            var result = true;
             for (var i = 0; i < promises.length; i++) {
-                //				$log.debug("processing list:", promises[i].data);
                 result = result && promises[i].data;
             }
-            //			$log.debug("final result:", result);
             deferred.resolve(result);
         });
         return deferred.promise;
@@ -239,13 +230,11 @@ angular.module('TarjontaPermissions', [
             promises.push(promise);
             resolveData(promise);
         }
-        var result = true;
         $q.all(promises).then(function() {
+            var result = true;
             for (var i = 0; i < promises.length; i++) {
-                //				$log.debug("processing list:", promises[i].data);
                 result = result && promises[i].data;
             }
-            //			$log.debug("final result:", result);
             deferred.resolve(result);
         });
         return deferred.promise;
