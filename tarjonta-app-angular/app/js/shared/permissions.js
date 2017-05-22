@@ -24,7 +24,6 @@ angular.module('TarjontaPermissions', [
             });
     };
     var _canCreate = function(orgOid) {
-        //		$log.debug("can create:", orgOid);
         var oidArray = angular.isArray(orgOid) ? orgOid : [orgOid];
         var deferred = $q.defer();
         var promises = [];
@@ -33,11 +32,10 @@ angular.module('TarjontaPermissions', [
             resolveData(result);
             promises.push(result);
         }
-        $q.all(promises).then(function() {
+        $q.all(promises).then(function(results) {
             var result = true;
-            for (var i = 0; i < promises.length; i++) {
-                //				$log.debug("processing promise", i, "result:", promises[i].data);
-                result = result && promises[i].data;
+            for (var i = 0; i < results.length; i++) {
+                result = result && results[i];
             }
             deferred.resolve(result);
         });
@@ -49,39 +47,32 @@ angular.module('TarjontaPermissions', [
         promises = [];
         for (var i = 0; i < koulutusOid.length; i++) {
             var promise = _canEditKoulutus(koulutusOid[i], searchParams);
-            promises.push(promise);
             resolveData(promise);
+            promises.push(promise);
         }
-        var result = true;
-        $q.all(promises).then(function() {
-            for (var i = 0; i < promises.length; i++) {
-                //				$log.debug("processing list:", promises[i].data);
-                result = result && promises[i].data;
+        $q.all(promises).then(function(results) {
+            var result = true;
+            for (var i = 0; i < results.length; i++) {
+                result = result && results[i];
             }
-            //			$log.debug("final result:", result);
             deferred.resolve(result);
         });
         return deferred.promise;
     };
-    var _canEditKoulutus = function(koulutusOid, searchParams, extraParams) {
+    var _canEditKoulutus = function(koulutusOid, searchParams) {
         var defer = $q.defer();
         //hae koulutus
         searchParams = searchParams || {};
-        extraParams = extraParams || {};
         angular.extend(searchParams, {
             koulutusOid: koulutusOid
         });
-        var result = TarjontaService.haeKoulutukset(searchParams);
-        //tarkista permissio tarjoajaoidilla
-        result.then(function(hakutulos) {
-            if (hakutulos.tuloksia === 0 || hakutulos.tulokset[0].tulokset[0].tila === 'POISTETTU') {
-                //do not show buttons, if koulutus status is removed
-                defer.resolve(false);
-                return;
-            }
-            //$log.debug("hakutulos:", hakutulos);
-            resolveData(defer.promise);
-            if (hakutulos.tulokset !== undefined && hakutulos.tulokset.length == 1) {
+        TarjontaService.haeKoulutukset(searchParams).then(function(hakutulos) {
+            if (hakutulos.tulokset
+                && hakutulos.tulokset.length === 1
+                && hakutulos.tulokset[0].tulokset[0]
+                && hakutulos.tulokset[0].tulokset[0]
+                && hakutulos.tulokset[0].tulokset.length === 1
+                && hakutulos.tulokset[0].tulokset[0].tila !== 'POISTETTU') {
                 var koulutuksetByOrg = hakutulos.tulokset[0];
 
                 AuthService.updateOrg(koulutuksetByOrg.oid).then(function(result) {
@@ -154,16 +145,14 @@ angular.module('TarjontaPermissions', [
         promises = [];
         for (var i = 0; i < koulutusOids.length; i++) {
             var promise = _canDeleteKoulutus(koulutusOids[i]);
-            promises.push(promise);
             resolveData(promise);
+            promises.push(promise);
         }
-        var result = true;
-        $q.all(promises).then(function() {
-            for (var i = 0; i < promises.length; i++) {
-                //				$log.debug("processing list:", promises[i].data);
-                result = result && promises[i].data;
+        $q.all(promises).then(function(results) {
+            var result = true;
+            for (var i = 0; i < results.length; i++) {
+                result = result && results[i];
             }
-            //			$log.debug("final result:", result);
             deferred.resolve(result);
         });
         return deferred.promise;
@@ -177,7 +166,7 @@ angular.module('TarjontaPermissions', [
         //tarkista permissio tarjoajaoidilla
         result = result.then(function(hakutulos) {
             //			$log.debug("hakutulos:", hakutulos);
-            if (hakutulos.tulokset !== undefined && hakutulos.tulokset.length == 1) {
+            if (hakutulos.tulokset !== undefined && hakutulos.tulokset.length === 1) {
                 AuthService.updateOrg(hakutulos.tulokset[0].oid).then(function(result) {
                     defer.resolve(result);
                 }, function() {
@@ -195,16 +184,14 @@ angular.module('TarjontaPermissions', [
         promises = [];
         for (var i = 0; i < hakukohdeOids.length; i++) {
             var promise = _canEditHakukohde(hakukohdeOids[i]);
-            promises.push(promise);
             resolveData(promise);
+            promises.push(promise);
         }
-        var result = true;
-        $q.all(promises).then(function() {
-            for (var i = 0; i < promises.length; i++) {
-                //				$log.debug("processing list:", promises[i].data);
-                result = result && promises[i].data;
+        $q.all(promises).then(function(results) {
+            var result = true;
+            for (var i = 0; i < results.length; i++) {
+                result = result && results[i];
             }
-            //			$log.debug("final result:", result);
             deferred.resolve(result);
         });
         return deferred.promise;
@@ -218,7 +205,7 @@ angular.module('TarjontaPermissions', [
         //tarkista permissio tarjoajaoidilla
         result = result.then(function(hakutulos) {
             //			$log.debug("hakutulos:", hakutulos);
-            if (hakutulos.tulokset !== undefined && hakutulos.tulokset.length == 1) {
+            if (hakutulos.tulokset !== undefined && hakutulos.tulokset.length === 1) {
                 AuthService.crudOrg(hakutulos.tulokset[0].oid).then(function(result) {
                     defer.resolve(result);
                 }, function() {
@@ -236,16 +223,14 @@ angular.module('TarjontaPermissions', [
         promises = [];
         for (var i = 0; i < hakukohdeOids.length; i++) {
             var promise = _canDeleteHakukohde(hakukohdeOids[i]);
-            promises.push(promise);
             resolveData(promise);
+            promises.push(promise);
         }
-        var result = true;
-        $q.all(promises).then(function() {
-            for (var i = 0; i < promises.length; i++) {
-                //				$log.debug("processing list:", promises[i].data);
-                result = result && promises[i].data;
+        $q.all(promises).then(function(results) {
+            var result = true;
+            for (var i = 0; i < results.length; i++) {
+                result = result && results[i];
             }
-            //			$log.debug("final result:", result);
             deferred.resolve(result);
         });
         return deferred.promise;
