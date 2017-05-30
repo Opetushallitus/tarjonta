@@ -47,11 +47,11 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "teksti", fetch = FetchType.LAZY, orphanRemoval = true)
     @MapKey(name = "kieliKoodi")
-    private Map<String, TekstiKaannos> tekstis = new HashMap<String, TekstiKaannos>();
+    private Map<String, TekstiKaannos> tekstis = new HashMap<>();
 
-    public void setTekstis(Map<String, TekstiKaannos> tekstis){
+    public void setTekstis(Map<String, TekstiKaannos> tekstis) {
         this.tekstis.clear();
-        for(TekstiKaannos k:tekstis.values()){
+        for (TekstiKaannos k : tekstis.values()) {
             addTekstiKaannos(k.getKieliKoodi(), k.getArvo());
         }
     }
@@ -74,7 +74,6 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
             addTekstiKaannos(kieliKoodi, teksti);
         } else {
             kaannos.setArvo(teksti);
-            //kaannos.setVersion(null);
         }
     }
 
@@ -196,7 +195,7 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
     }
 
     public String getFirstNonEmptyKaannos() {
-        // Prefer finnish
+        // Prefer Finnish
         if (tekstis.get("kieli_fi") != null && !tekstis.get("kieli_fi").getArvo().isEmpty()) {
             return tekstis.get("kieli_fi").getArvo();
         }
