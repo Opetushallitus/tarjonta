@@ -32,6 +32,7 @@ import javax.persistence.Table;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.hibernate.Hibernate;
 
 /**
  * Translatable texts with modest "metadata" properties.
@@ -56,7 +57,7 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
     }
 
     public Collection<TekstiKaannos> getTekstiKaannos() {
-        return Collections.unmodifiableCollection(tekstis.values());
+        return Collections.unmodifiableCollection(lataaKaannostekstit());
     }
 
     public void addTekstiKaannos(String kieliKoodi, String teksti) {
@@ -143,14 +144,14 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
             return null;
         }
 
-        // retainAll ei toiminut hibernaten lazy-collectionin kanssa - hibernaten bugi?
+        Hibernate.initialize(old.tekstis);
         for (Iterator<String> ki = old.tekstis.keySet().iterator(); ki.hasNext();) {
             if (!uus.tekstis.containsKey(ki.next())) {
                 ki.remove();
             }
         }
 
-        for (TekstiKaannos tk : uus.tekstis.values()) {
+        for (TekstiKaannos tk : uus.lataaKaannostekstit()) {
             old.setTekstiKaannos(tk.getKieliKoodi(), tk.getArvo());
         }
 
@@ -175,12 +176,12 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
     }
 
     public List<TekstiKaannos> getKaannoksetAsList() {
-        return Lists.newArrayList(tekstis.values());
+        return Lists.newArrayList(lataaKaannostekstit());
     }
 
     public Map<String, String> asMap() {
         Map<String, String> tekstit = Maps.newHashMap();
-        for (TekstiKaannos tk : tekstis.values()) {
+        for (TekstiKaannos tk : lataaKaannostekstit()) {
             tekstit.put(tk.getKieliKoodi(), tk.getArvo());
         }
         return tekstit;
@@ -188,7 +189,7 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
 
     public Map<String, String> asMapWithoutVersions() {
         Map<String, String> tekstit = Maps.newHashMap();
-        for (TekstiKaannos tk : tekstis.values()) {
+        for (TekstiKaannos tk : lataaKaannostekstit()) {
             tekstit.put(tk.getKieliKoodi().split("#")[0], tk.getArvo());
         }
         return tekstit;
@@ -205,6 +206,11 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
             }
         }
         return null;
+    }
+
+    private Collection<TekstiKaannos> lataaKaannostekstit() {
+        Hibernate.initialize(tekstis);
+        return tekstis.values();
     }
 
 }
