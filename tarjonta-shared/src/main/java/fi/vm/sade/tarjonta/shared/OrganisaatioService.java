@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.shared;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
@@ -26,6 +27,12 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class OrganisaatioService {
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper ignoreFieldsObjectMapper = createIgnoreFieldsObjectMapper();
+    private static ObjectMapper createIgnoreFieldsObjectMapper() {
+        ObjectMapper m = new ObjectMapper();
+        m.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return m;
+    }
     private static final Logger LOG = LoggerFactory.getLogger(OrganisaatioService.class);
 
     private final TarjontaKoodistoHelper tarjontaKoodistoHelper;
@@ -107,7 +114,7 @@ public class OrganisaatioService {
     }
     private OrganisaatioResultDTO fetchOrganisationWithHaeAPI(String oid) {
         try {
-            return objectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.organisaatio.hae", oid)), OrganisaatioResultDTO.class);
+            return ignoreFieldsObjectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.organisaatio.hae", oid)), OrganisaatioResultDTO.class);
         } catch (Exception e) {
             final String msg = "Could not fetch organization with oid " + oid;
             LOG.error(msg);
