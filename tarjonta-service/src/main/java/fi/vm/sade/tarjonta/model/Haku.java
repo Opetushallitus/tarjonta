@@ -170,7 +170,7 @@ public class Haku extends TarjontaBaseEntity {
     private Haku parentHaku;
 
     @OneToMany(mappedBy = "parentHaku", cascade = CascadeType.ALL)
-    private Set<Haku> sisaltyvatHaut = new HashSet<Haku>();
+    private Set<Haku> sisaltyvatHaut = new HashSet<>();
 
     @Column(name = "autosync_tarjonta")
     private boolean autosyncTarjonta = false;
@@ -525,10 +525,6 @@ public class Haku extends TarjontaBaseEntity {
 
     public Set<Haku> getSisaltyvatHaut() {
         return sisaltyvatHaut;
-    }
-
-    public void setSisaltyvatHaut(Set<Haku> sisaltyvatHaut) {
-        this.sisaltyvatHaut = sisaltyvatHaut;
     }
 
     public Haku getParentHaku() {

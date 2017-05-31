@@ -53,6 +53,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -190,6 +191,7 @@ public class ConverterV1 {
         hakuDTO.setOpintopolunNayttaminenLoppuu(haku.getOpintopolunNayttaminenLoppuu());
         hakuDTO.setTunnistusKaytossa(haku.isTunnistusKaytossa());
 
+        Hibernate.initialize(haku.getSisaltyvatHaut());
         for (Haku sisaltyvaHaku : haku.getSisaltyvatHaut()) {
             hakuDTO.getSisaltyvatHaut().add(sisaltyvaHaku.getOid());
         }
