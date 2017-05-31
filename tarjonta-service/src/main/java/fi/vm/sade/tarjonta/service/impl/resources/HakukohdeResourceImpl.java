@@ -3,6 +3,7 @@ package fi.vm.sade.tarjonta.service.impl.resources;
 import java.util.*;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
@@ -86,17 +87,23 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
         HakukohdeKelaDTO kelaDTO = new HakukohdeKelaDTO();
         kelaDTO.setHakukohdeOid(hakukohde.getOid());
-        kelaDTO.setTarjoajaOid(findTarjoajaOid(hakukohde));
-        OrganisaatioResultDTO result = organisaatioService.findByOidWithHaeAPI(kelaDTO.getTarjoajaOid());
-        String oppilaitosKoodi = findOppilaitosKoodi(result.getOrganisaatiot());
-        if(oppilaitosKoodi == null) {
-            throw new RuntimeException("Organisaatiolla " + kelaDTO.getTarjoajaOid() + " ei ole oppilaitoskoodia!");
-        }
-        kelaDTO.setOppilaitosKoodi(oppilaitosKoodi);
+        Set<String> tarjoajaOids = findTarjoajaOids(hakukohde);
         ImmutablePair<String, Integer> alkamiskausi = findAlkamiskausi(hakukohde);
         kelaDTO.setKoulutuksenAlkamiskausiUri(alkamiskausi.getLeft());
         kelaDTO.setKoulutuksenAlkamisVuosi(alkamiskausi.getRight());
         kelaDTO.setKoulutusLaajuusarvos(findKomotosAndKomos(hakukohde));
+        try {
+            OrganisaatioResultDTO result = organisaatioService.findByOidWithHaeAPI(kelaDTO.getTarjoajaOid());
+            String oppilaitosKoodi = findOppilaitosKoodi(result.getOrganisaatiot());
+            if (oppilaitosKoodi == null) {
+                throw new RuntimeException("Organisaatiolla " + kelaDTO.getTarjoajaOid() + " ei ole oppilaitoskoodia!");
+            }
+            kelaDTO.setOppilaitosKoodi(oppilaitosKoodi);
+        } catch (Exception e) {
+            kelaDTO.setOppilaitosKoodi("xxxxxx");
+        }
+        kelaDTO.setTarjoajaOid(tarjoajaOids.iterator().next());
+
         return kelaDTO;
     }
     private ImmutablePair<String,Integer> findAlkamiskausi(Hakukohde hakukohde) {
@@ -170,13 +177,14 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
             return findOppilaitosKoodi(organisaatio.getChildren());
         }
     }
-    private String findTarjoajaOid(Hakukohde hakukohde) {
+    private Set<String> findTarjoajaOids(Hakukohde hakukohde) {
+        Set<String> s = Sets.newHashSet();
         for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
             if (koulutusmoduuliToteutus.getTarjoaja() != null) {
-                return koulutusmoduuliToteutus.getTarjoaja();
+                s.add(koulutusmoduuliToteutus.getTarjoaja());
             }
         }
-        throw new RuntimeException("Hakukohteella " + hakukohde.getOid() + " ei ole tarjoajaa!");
+        return s;
     }
 
     // /hakukohde/OID
