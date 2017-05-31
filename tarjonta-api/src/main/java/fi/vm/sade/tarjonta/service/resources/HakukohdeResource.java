@@ -35,7 +35,7 @@ public interface HakukohdeResource {
     @GET
     @Path("{oid}/kela")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    HakukohdeKelaDTO getHakukohdeKelaByOID(String oid);
+    HakukohdeKelaDTO getHakukohdeKelaByOID(@PathParam("oid") String oid);
 
     /**
      * /hakukohde?searchTerms=xxx&count=10&startIndex=100&lastModifiedBefore=X&lastModifiedSince=XX
