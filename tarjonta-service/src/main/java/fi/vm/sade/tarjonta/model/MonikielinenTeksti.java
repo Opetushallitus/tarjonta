@@ -32,6 +32,7 @@ import javax.persistence.Table;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.hibernate.Hibernate;
 
 /**
  * Translatable texts with modest "metadata" properties.
@@ -46,17 +47,17 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "teksti", fetch = FetchType.LAZY, orphanRemoval = true)
     @MapKey(name = "kieliKoodi")
-    private Map<String, TekstiKaannos> tekstis = new HashMap<String, TekstiKaannos>();
+    private Map<String, TekstiKaannos> tekstis = new HashMap<>();
 
-    public void setTekstis(Map<String, TekstiKaannos> tekstis){
+    public void setTekstis(Map<String, TekstiKaannos> tekstis) {
         this.tekstis.clear();
-        for(TekstiKaannos k:tekstis.values()){
+        for (TekstiKaannos k : tekstis.values()) {
             addTekstiKaannos(k.getKieliKoodi(), k.getArvo());
         }
     }
 
     public Collection<TekstiKaannos> getTekstiKaannos() {
-        return Collections.unmodifiableCollection(tekstis.values());
+        return Collections.unmodifiableCollection(lataaKaannostekstit());
     }
 
     public void addTekstiKaannos(String kieliKoodi, String teksti) {
@@ -73,7 +74,6 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
             addTekstiKaannos(kieliKoodi, teksti);
         } else {
             kaannos.setArvo(teksti);
-            //kaannos.setVersion(null);
         }
     }
 
@@ -143,14 +143,14 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
             return null;
         }
 
-        // retainAll ei toiminut hibernaten lazy-collectionin kanssa - hibernaten bugi?
+        Hibernate.initialize(old.tekstis);
         for (Iterator<String> ki = old.tekstis.keySet().iterator(); ki.hasNext();) {
             if (!uus.tekstis.containsKey(ki.next())) {
                 ki.remove();
             }
         }
 
-        for (TekstiKaannos tk : uus.tekstis.values()) {
+        for (TekstiKaannos tk : uus.lataaKaannostekstit()) {
             old.setTekstiKaannos(tk.getKieliKoodi(), tk.getArvo());
         }
 
@@ -175,12 +175,12 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
     }
 
     public List<TekstiKaannos> getKaannoksetAsList() {
-        return Lists.newArrayList(tekstis.values());
+        return Lists.newArrayList(lataaKaannostekstit());
     }
 
     public Map<String, String> asMap() {
         Map<String, String> tekstit = Maps.newHashMap();
-        for (TekstiKaannos tk : tekstis.values()) {
+        for (TekstiKaannos tk : lataaKaannostekstit()) {
             tekstit.put(tk.getKieliKoodi(), tk.getArvo());
         }
         return tekstit;
@@ -188,14 +188,14 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
 
     public Map<String, String> asMapWithoutVersions() {
         Map<String, String> tekstit = Maps.newHashMap();
-        for (TekstiKaannos tk : tekstis.values()) {
+        for (TekstiKaannos tk : lataaKaannostekstit()) {
             tekstit.put(tk.getKieliKoodi().split("#")[0], tk.getArvo());
         }
         return tekstit;
     }
 
     public String getFirstNonEmptyKaannos() {
-        // Prefer finnish
+        // Prefer Finnish
         if (tekstis.get("kieli_fi") != null && !tekstis.get("kieli_fi").getArvo().isEmpty()) {
             return tekstis.get("kieli_fi").getArvo();
         }
@@ -205,6 +205,11 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
             }
         }
         return null;
+    }
+
+    private Collection<TekstiKaannos> lataaKaannostekstit() {
+        Hibernate.initialize(tekstis);
+        return tekstis.values();
     }
 
 }

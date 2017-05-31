@@ -1667,6 +1667,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
+    @Transactional
     public ResultV1RDTO copyOrMoveMultiple(KoulutusMultiCopyV1RDTO koulutusMultiCopy) {
         ResultV1RDTO result = new ResultV1RDTO();
         result.setErrors(Lists.<ErrorV1RDTO>newArrayList());
