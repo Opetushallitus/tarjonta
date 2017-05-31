@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.*;
@@ -124,14 +125,20 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     private KoulutusLaajuusarvoDTO convert(KoulutusmoduuliToteutus m) {
         KoulutusLaajuusarvoDTO k = new KoulutusLaajuusarvoDTO();
         k.setOpintojenLaajuusarvo(m.getOpintojenLaajuusArvo());
-        k.setKoulutuskoodi(m.getKoulutusUri().replace("koulutus_", ""));
+        if (m.getKoulutusUri() != null) {
+            final KoodiType koodiByUri = tarjontaKoodistoHelper.getKoodiByUri(m.getKoulutusUri());
+            k.setKoulutuskoodi(koodiByUri != null ? koodiByUri.getKoodiArvo() : null);
+        }
         return k;
     }
     private KoulutusLaajuusarvoDTO convert(Koulutusmoduuli koulutusmoduuli) {
         KoulutusLaajuusarvoDTO k = new KoulutusLaajuusarvoDTO();
         k.setKoulutuskoodi(koulutusmoduuli.getKoulutusUri());
         k.setOid(koulutusmoduuli.getOid());
-        k.setOpintojenLaajuusarvo(koulutusmoduuli.getOpintojenLaajuusarvoUri());
+        if (koulutusmoduuli.getOpintojenLaajuusarvoUri() != null) {
+            final KoodiType koodiByUri = tarjontaKoodistoHelper.getKoodiByUri(koulutusmoduuli.getOpintojenLaajuusarvoUri());
+            k.setOpintojenLaajuusarvo(koodiByUri != null ? koodiByUri.getKoodiArvo() : null);
+        }
         return k;
     }
     private List<KoulutusLaajuusarvoDTO> flatMapAndConvert(Koulutusmoduuli koulutusmoduuli) {
