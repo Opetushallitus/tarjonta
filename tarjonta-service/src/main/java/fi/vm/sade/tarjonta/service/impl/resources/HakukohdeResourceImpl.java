@@ -158,7 +158,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     private KoulutusLaajuusarvoDTO convert(KoodistoUri uri) {
         KoulutusLaajuusarvoDTO k = new KoulutusLaajuusarvoDTO();
         k.setOpintojenLaajuusarvo(null);
-        k.setKoulutuskoodi(uri.getKoodiUri().replace("koulutus_", ""));
+        k.setKoulutuskoodi(uriToArvo(uri.getKoodiUri()));
         return k;
     }
     private List<KoulutusLaajuusarvoDTO> findKomotosAndKomos(Hakukohde hakukohde) {
