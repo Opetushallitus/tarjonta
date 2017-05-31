@@ -84,8 +84,6 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     @Override
     public HakukohdeKelaDTO getHakukohdeKelaByOID(String oid) {
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
-
-        hakukohde.getHakuaikaAlkuPvm();
         HakukohdeKelaDTO kelaDTO = new HakukohdeKelaDTO();
         kelaDTO.setHakukohdeOid(hakukohde.getOid());
         kelaDTO.setTarjoajaOid(findTarjoajaOid(hakukohde));
