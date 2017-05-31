@@ -10,7 +10,6 @@ import com.google.common.collect.FluentIterable;
 import fi.vm.sade.organisaatio.dto.v2.OrganisaatioHakutulosSuppeaDTOV2;
 import fi.vm.sade.organisaatio.dto.v2.OrganisaatioPerustietoSuppea;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
-import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioResultDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

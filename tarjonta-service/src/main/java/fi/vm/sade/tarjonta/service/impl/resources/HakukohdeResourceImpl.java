@@ -4,11 +4,12 @@ import java.util.*;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.util.OrganisaatioUtil;
 import fi.vm.sade.tarjonta.service.resources.dto.*;
+import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioKelaDTO;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioResultDTO;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
@@ -19,8 +20,6 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -93,19 +92,26 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         kelaDTO.setKoulutuksenAlkamisVuosi(alkamiskausi.getRight());
         kelaDTO.setKoulutusLaajuusarvos(findKomotosAndKomos(hakukohde));
         try {
-            OrganisaatioResultDTO result = organisaatioService.findByOidWithHaeAPI(kelaDTO.getTarjoajaOid());
-            String oppilaitosKoodi = findOppilaitosKoodi(result.getOrganisaatiot());
-            if (oppilaitosKoodi == null) {
-                throw new RuntimeException("Organisaatiolla " + kelaDTO.getTarjoajaOid() + " ei ole oppilaitoskoodia!");
-            }
-            kelaDTO.setOppilaitosKoodi(oppilaitosKoodi);
+            ImmutablePair<String, OrganisaatioKelaDTO> oppilaitosKoodi = findOppilaitosKoodi(tarjoajaOids);
+            kelaDTO.setTarjoajaOid(oppilaitosKoodi.getLeft());
+            kelaDTO.setOppilaitosKoodi(oppilaitosKoodi.getRight().getOppilaitosKoodi());
         } catch (Exception e) {
-            kelaDTO.setOppilaitosKoodi("xxxxxx");
+            throw new RuntimeException("Tarjoajille " + tarjoajaOids + " ei löytynyt oppilaitoskoodia!", e);
         }
-        kelaDTO.setTarjoajaOid(tarjoajaOids.iterator().next());
-
         return kelaDTO;
     }
+    private ImmutablePair<String, OrganisaatioKelaDTO> findOppilaitosKoodi(Set<String> tarjoajaOids) {
+        for(String tarjoajaOid: tarjoajaOids) {
+            OrganisaatioResultDTO organisaatiot = organisaatioService.findByOidWithHaeAPI(tarjoajaOid);
+            List<OrganisaatioKelaDTO> os = organisaatiot != null ? organisaatiot.getOrganisaatiot() : Collections.<OrganisaatioKelaDTO>emptyList();
+            OrganisaatioKelaDTO closestParentOrChildOrganizationWithOppilaitoskoodi = OrganisaatioUtil.findOrganisaatioWithOppilaitosStartingFrom(os, tarjoajaOid);
+            if(closestParentOrChildOrganizationWithOppilaitoskoodi != null) {
+                return ImmutablePair.of(tarjoajaOid, closestParentOrChildOrganizationWithOppilaitoskoodi);
+            }
+        }
+        throw new RuntimeException("Oppilaitosta ei löytynyt tarjoajaOideille " + tarjoajaOids);
+    }
+
     private ImmutablePair<String,Integer> findAlkamiskausi(Hakukohde hakukohde) {
         ImmutablePair<String, Integer> hkAlkamis = ImmutablePair.of(hakukohde.getUniqueAlkamiskausiUri(), hakukohde.getUniqueAlkamisVuosi());
         if(hkAlkamis.getLeft() == null || hkAlkamis.getRight() == null) {
@@ -160,8 +166,8 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         return kl;
     }
 
-    private String findOppilaitosKoodi(List<fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioDTO> organisaatiot) {
-        for(fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioDTO o: organisaatiot) {
+    private String findOppilaitosKoodi(List<OrganisaatioKelaDTO> organisaatiot) {
+        for(OrganisaatioKelaDTO o: organisaatiot) {
             String oppilaitoskoodi = findOppilaitosKoodi(o);
             if(oppilaitoskoodi != null) {
                 return oppilaitoskoodi;
@@ -170,7 +176,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         return null;
     }
 
-    private String findOppilaitosKoodi(fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioDTO organisaatio) {
+    private String findOppilaitosKoodi(OrganisaatioKelaDTO organisaatio) {
         if(organisaatio.getOppilaitosKoodi() != null) {
             return organisaatio.getOppilaitosKoodi();
         } else {
