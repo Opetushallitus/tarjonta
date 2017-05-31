@@ -32,6 +32,11 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 @Path("/hakukohde")
 public interface HakukohdeResource {
 
+    @GET
+    @Path("{oid}/kela")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    HakukohdeKelaDTO getHakukohdeKelaByOID(String oid);
+
     /**
      * /hakukohde?searchTerms=xxx&count=10&startIndex=100&lastModifiedBefore=X&lastModifiedSince=XX
      *

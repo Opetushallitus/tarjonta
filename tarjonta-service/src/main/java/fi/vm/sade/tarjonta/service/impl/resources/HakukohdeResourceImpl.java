@@ -2,8 +2,14 @@ package fi.vm.sade.tarjonta.service.impl.resources;
 
 import java.util.*;
 
+import com.google.common.collect.Lists;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.resources.dto.*;
+import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioResultDTO;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +21,6 @@ import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -44,7 +46,10 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     @Autowired
     private OrganisaatioService organisaatioService;
-
+    @Autowired
+    KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
+    @Autowired
+    private KoulutusmoduuliDAO koulutusmoduuliDAO;
     // /hakukohde?...
     @Override
     public List<OidRDTO> search(String searchTerms,
@@ -74,6 +79,106 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         List<OidRDTO> result = HakuResourceImpl.convertOidList(hakukohdeDAO.findOIDsBy(tarjontaTila != null ? tarjontaTila.asDto() : null, count, startIndex, lastModifiedBefore, lastModifiedSince,false));
         LOG.debug("  result count ={}", result.size());
         return result;
+    }
+
+    @Override
+    public HakukohdeKelaDTO getHakukohdeKelaByOID(String oid) {
+        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
+
+        hakukohde.getHakuaikaAlkuPvm();
+        HakukohdeKelaDTO kelaDTO = new HakukohdeKelaDTO();
+        kelaDTO.setHakukohdeOid(hakukohde.getOid());
+        kelaDTO.setTarjoajaOid(findTarjoajaOid(hakukohde));
+        OrganisaatioResultDTO result = organisaatioService.findByOidWithHaeAPI(kelaDTO.getTarjoajaOid());
+        String oppilaitosKoodi = findOppilaitosKoodi(result.getOrganisaatiot());
+        if(oppilaitosKoodi == null) {
+            throw new RuntimeException("Organisaatiolla " + kelaDTO.getTarjoajaOid() + " ei ole oppilaitoskoodia!");
+        }
+        kelaDTO.setOppilaitosKoodi(oppilaitosKoodi);
+        ImmutablePair<String, Integer> alkamiskausi = findAlkamiskausi(hakukohde);
+        kelaDTO.setKoulutuksenAlkamiskausiUri(alkamiskausi.getLeft());
+        kelaDTO.setKoulutuksenAlkamisVuosi(alkamiskausi.getRight());
+        kelaDTO.setKoulutusLaajuusarvos(findKomotosAndKomos(hakukohde));
+        return kelaDTO;
+    }
+    private ImmutablePair<String,Integer> findAlkamiskausi(Hakukohde hakukohde) {
+        ImmutablePair<String, Integer> hkAlkamis = ImmutablePair.of(hakukohde.getUniqueAlkamiskausiUri(), hakukohde.getUniqueAlkamisVuosi());
+        if(hkAlkamis.getLeft() == null || hkAlkamis.getRight() == null) {
+            Haku haku = hakukohde.getHaku();
+            return ImmutablePair.of(haku.getKoulutuksenAlkamiskausiUri(), haku.getKoulutuksenAlkamisVuosi());
+        } else {
+            return hkAlkamis;
+        }
+    }
+    private KoulutusLaajuusarvoDTO convert(KoulutusmoduuliToteutus m) {
+        KoulutusLaajuusarvoDTO k = new KoulutusLaajuusarvoDTO();
+        k.setOpintojenLaajuusarvo(m.getOpintojenLaajuusArvo());
+        k.setKoulutuskoodi(m.getKoulutusUri().replace("koulutus_", ""));
+        return k;
+    }
+    private KoulutusLaajuusarvoDTO convert(Koulutusmoduuli koulutusmoduuli) {
+        KoulutusLaajuusarvoDTO k = new KoulutusLaajuusarvoDTO();
+        k.setKoulutuskoodi(koulutusmoduuli.getKoulutusUri());
+        k.setOid(koulutusmoduuli.getOid());
+        k.setOpintojenLaajuusarvo(koulutusmoduuli.getOpintojenLaajuusarvoUri());
+        return k;
+    }
+    private List<KoulutusLaajuusarvoDTO> flatMapAndConvert(Koulutusmoduuli koulutusmoduuli) {
+        if(koulutusmoduuli == null) {
+            return Collections.emptyList();
+        } else {
+            List<KoulutusLaajuusarvoDTO> komotos = Lists.newArrayList();
+            komotos.add(convert(koulutusmoduuli));
+            for(Koulutusmoduuli alamoduuli : koulutusmoduuli.getAlamoduuliList()) {
+                komotos.add(convert(alamoduuli));
+            }
+            return komotos;
+        }
+    }
+    private KoulutusLaajuusarvoDTO convert(KoodistoUri uri) {
+        KoulutusLaajuusarvoDTO k = new KoulutusLaajuusarvoDTO();
+        k.setOpintojenLaajuusarvo(null);
+        k.setKoulutuskoodi(uri.getKoodiUri().replace("koulutus_", ""));
+        return k;
+    }
+    private List<KoulutusLaajuusarvoDTO> findKomotosAndKomos(Hakukohde hakukohde) {
+        List<KoulutusLaajuusarvoDTO> kl = Lists.newArrayList();
+        for(KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
+            kl.addAll(flatMapAndConvert(komoto.getKoulutusmoduuli()));
+            Set<KoodistoUri> sisaltyvatKoulutuskoodit = komoto.getSisaltyvatKoulutuskoodit();
+            for(KoodistoUri uri : sisaltyvatKoulutuskoodit) {
+                kl.add(convert(uri));
+            }
+            kl.add(convert(komoto));
+
+        }
+        return kl;
+    }
+
+    private String findOppilaitosKoodi(List<fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioDTO> organisaatiot) {
+        for(fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioDTO o: organisaatiot) {
+            String oppilaitoskoodi = findOppilaitosKoodi(o);
+            if(oppilaitoskoodi != null) {
+                return oppilaitoskoodi;
+            }
+        }
+        return null;
+    }
+
+    private String findOppilaitosKoodi(fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioDTO organisaatio) {
+        if(organisaatio.getOppilaitosKoodi() != null) {
+            return organisaatio.getOppilaitosKoodi();
+        } else {
+            return findOppilaitosKoodi(organisaatio.getChildren());
+        }
+    }
+    private String findTarjoajaOid(Hakukohde hakukohde) {
+        for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
+            if (koulutusmoduuliToteutus.getTarjoaja() != null) {
+                return koulutusmoduuliToteutus.getTarjoaja();
+            }
+        }
+        throw new RuntimeException("Hakukohteella " + hakukohde.getOid() + " ei ole tarjoajaa!");
     }
 
     // /hakukohde/OID
