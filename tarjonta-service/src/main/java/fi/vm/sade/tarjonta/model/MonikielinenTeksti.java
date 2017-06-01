@@ -208,7 +208,7 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
     }
 
     private Collection<TekstiKaannos> lataaKaannostekstit() {
-        Hibernate.initialize(tekstis);
+       // Hibernate.initialize(tekstis);
         return tekstis.values();
     }
 
