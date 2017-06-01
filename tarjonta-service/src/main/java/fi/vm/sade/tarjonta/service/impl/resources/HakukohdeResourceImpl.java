@@ -85,21 +85,25 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     @Override
     public HakukohdeKelaDTO getHakukohdeKelaByOID(String oid) {
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
-        HakukohdeKelaDTO kelaDTO = new HakukohdeKelaDTO();
-        kelaDTO.setHakukohdeOid(hakukohde.getOid());
-        Set<String> tarjoajaOids = findTarjoajaOids(hakukohde);
-        ImmutablePair<String, Integer> alkamiskausi = findAlkamiskausi(hakukohde);
-        kelaDTO.setKoulutuksenAlkamiskausiUri(alkamiskausi.getLeft());
-        kelaDTO.setKoulutuksenAlkamisVuosi(alkamiskausi.getRight());
-        kelaDTO.setKoulutusLaajuusarvos(findKomotosAndKomos(hakukohde));
-        try {
-            ImmutablePair<String, OrganisaatioKelaDTO> oppilaitosKoodi = findOppilaitosKoodi(tarjoajaOids);
-            kelaDTO.setTarjoajaOid(oppilaitosKoodi.getLeft());
-            kelaDTO.setOppilaitosKoodi(oppilaitosKoodi.getRight().getOppilaitosKoodi());
-        } catch (Exception e) {
-            throw new RuntimeException("Tarjoajille " + tarjoajaOids + " ei löytynyt oppilaitoskoodia!", e);
+        if(hakukohde == null) {
+            return null;
+        } else {
+            HakukohdeKelaDTO kelaDTO = new HakukohdeKelaDTO();
+            kelaDTO.setHakukohdeOid(hakukohde.getOid());
+            Set<String> tarjoajaOids = findTarjoajaOids(hakukohde);
+            ImmutablePair<String, Integer> alkamiskausi = findAlkamiskausi(hakukohde);
+            kelaDTO.setKoulutuksenAlkamiskausiUri(alkamiskausi.getLeft());
+            kelaDTO.setKoulutuksenAlkamisVuosi(alkamiskausi.getRight());
+            kelaDTO.setKoulutusLaajuusarvos(findKomotosAndKomos(hakukohde));
+            try {
+                ImmutablePair<String, OrganisaatioKelaDTO> oppilaitosKoodi = findOppilaitosKoodi(tarjoajaOids);
+                kelaDTO.setTarjoajaOid(oppilaitosKoodi.getLeft());
+                kelaDTO.setOppilaitosKoodi(oppilaitosKoodi.getRight().getOppilaitosKoodi());
+            } catch (Exception e) {
+                throw new RuntimeException("Tarjoajille " + tarjoajaOids + " ei löytynyt oppilaitoskoodia!", e);
+            }
+            return kelaDTO;
         }
-        return kelaDTO;
     }
     private ImmutablePair<String, OrganisaatioKelaDTO> findOppilaitosKoodi(Set<String> tarjoajaOids) {
         for(String tarjoajaOid: tarjoajaOids) {
@@ -124,7 +128,8 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     }
     private KoulutusLaajuusarvoDTO convert(KoulutusmoduuliToteutus m) {
         KoulutusLaajuusarvoDTO k = new KoulutusLaajuusarvoDTO();
-        k.setOpintojenLaajuusarvo(m.getOpintojenLaajuusArvo());
+        k.setOpintojenLaajuusarvo(k.getOid());
+        k.setOpintojenLaajuusarvo(uriToArvo(m.getOpintojenLaajuusarvoUri()));
         k.setKoulutuskoodi(uriToArvo(m.getKoulutusUri()));
         return k;
     }
