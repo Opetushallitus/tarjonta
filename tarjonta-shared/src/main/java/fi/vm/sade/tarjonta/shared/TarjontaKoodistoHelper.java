@@ -230,7 +230,7 @@ public class TarjontaKoodistoHelper {
             return result;
         }
         else {
-            LOG.info("Koodi not in preloaded cache: {}", koodiUriWithPossibleVersionInformation);
+            LOG.debug("Koodi not in preloaded cache: {}", koodiUriWithPossibleVersionInformation);
         }
 
         try {
