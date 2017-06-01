@@ -159,7 +159,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     /**
      * Cache for search results, keyed by virkailijaTyyppi. This is not the optimal solution at the time of writing but it is the fastest one to implement.
      */
-    private final Cache<String, List<Haku>> hakuCache = CacheBuilder
+    private final Cache<String, ResultV1RDTO<List<HakuV1RDTO>>> hakuCache = CacheBuilder
             .newBuilder().expireAfterWrite(5, TimeUnit.MINUTES).build();
 
     @Override
@@ -212,29 +212,24 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         if (criteriaList.isEmpty()) {
             return findAllHakus(params);
         } else {
-            List<Haku> hakus;
             if (params.cache) {
                 String cacheKey = resolveComplexCacheKey(criteriaList, params);
                 try {
-                    hakus = hakuCache.get(cacheKey, new Callable<List<Haku>>() {
+                    return hakuCache.get(cacheKey, new Callable<ResultV1RDTO<List<HakuV1RDTO>>>() {
                         @Override
-                        public List<Haku> call() throws Exception {
-                            return hakuDAO.findHakuByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
+                        public ResultV1RDTO<List<HakuV1RDTO>> call() throws Exception {
+                            return findHakuResultByCriteriaOrAllIfNull(params, criteriaList);
                         }
                     });
                 } catch (ExecutionException e) {
-                    LOG.warn("Failed to cache result for key '" + cacheKey + "', fetching hakus as is", e);
-                    hakus = hakuDAO.findHakuByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
+                    LOG.error("Failed to cache result for key '" + FIND_ALL_CACHE_KEY + "', fetching all hakus as is", e);
+                    ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
+                    createSystemErrorFromException(e, resultV1RDTO);
+                    return resultV1RDTO;
                 }
-            } else {
-                hakus = hakuDAO.findHakuByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
             }
 
-            ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
-            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
-            resultV1RDTO.setResult(hakusToHakuRDTO(hakus, params));
-
-            return resultV1RDTO;
+            return findHakuResultByCriteriaOrAllIfNull(params, criteriaList);
         }
     }
 
@@ -246,31 +241,38 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         return findAllHakus(params);
     }
 
-    private ResultV1RDTO<List<HakuV1RDTO>> findAllHakus(HakuSearchParamsV1RDTO params) {
-        List<Haku> hakus;
+    private ResultV1RDTO<List<HakuV1RDTO>> findAllHakus(final HakuSearchParamsV1RDTO params) {
         try {
-            hakus = hakuCache.get(FIND_ALL_CACHE_KEY, new Callable<List<Haku>>() {
+            return hakuCache.get(FIND_ALL_CACHE_KEY, new Callable<ResultV1RDTO<List<HakuV1RDTO>>>() {
                 @Override
-                public List<Haku> call() {
-                    return hakuDAO.findAll();
+                public ResultV1RDTO<List<HakuV1RDTO>> call() {
+                    return findHakuResultByCriteriaOrAllIfNull(params, null);
+
                 }
             });
         } catch (ExecutionException e) {
-            LOG.warn("Failed to cache result for key '" + FIND_ALL_CACHE_KEY + "', fetching all hakus as is", e);
+            LOG.error("Failed to cache result for key '" + FIND_ALL_CACHE_KEY + "', fetching all hakus as is", e);
+            ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
+            createSystemErrorFromException(e, resultV1RDTO);
+            return resultV1RDTO;
+        }
+    }
+
+    private ResultV1RDTO<List<HakuV1RDTO>> findHakuResultByCriteriaOrAllIfNull(HakuSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList) {
+        List<Haku> hakus;
+        if(criteriaList == null) {
             hakus = hakuDAO.findAll();
+        }else {
+            hakus = hakuDAO.findHakuByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
         }
 
-
-        LOG.debug("FOUND : {} hakus", hakus.size());
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
-        if (hakus.size() > 0) {
-            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
-            resultV1RDTO.setResult(hakusToHakuRDTO(hakus, params));
-        } else {
-            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
-        }
+        resultV1RDTO.setStatus(ResultStatus.OK);
+        resultV1RDTO.setResult(hakusToHakuRDTO(hakus, params));
         return resultV1RDTO;
     }
+
+
 
     private String resolveComplexCacheKey(List<HakuSearchCriteria> criteriaList, HakuSearchParamsV1RDTO params) {
         List<HakuSearchCriteria> normalized = new ArrayList<>(criteriaList);
