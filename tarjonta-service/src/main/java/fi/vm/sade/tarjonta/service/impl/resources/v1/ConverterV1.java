@@ -191,7 +191,6 @@ public class ConverterV1 {
         hakuDTO.setOpintopolunNayttaminenLoppuu(haku.getOpintopolunNayttaminenLoppuu());
         hakuDTO.setTunnistusKaytossa(haku.isTunnistusKaytossa());
 
-        Hibernate.initialize(haku.getSisaltyvatHaut());
         for (Haku sisaltyvaHaku : haku.getSisaltyvatHaut()) {
             hakuDTO.getSisaltyvatHaut().add(sisaltyvaHaku.getOid());
         }
