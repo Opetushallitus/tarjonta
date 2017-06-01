@@ -261,10 +261,13 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private ResultV1RDTO<List<HakuV1RDTO>> findHakuResultByCriteriaOrAllIfNull(HakuSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList) {
         List<Haku> hakus;
         if(criteriaList == null) {
+            LOG.info("Reloading all hakus to cache.");
             hakus = hakuDAO.findAll();
-        }else {
+        } else {
+            LOG.info("Reloading all hakus to cache for keyword {}.", resolveComplexCacheKey(criteriaList, params));
             hakus = hakuDAO.findHakuByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
         }
+        LOG.info("Reloading {} hakus to cache.", hakus.size());
 
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
         resultV1RDTO.setStatus(ResultStatus.OK);
