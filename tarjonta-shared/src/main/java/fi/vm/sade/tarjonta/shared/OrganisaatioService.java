@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.shared;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
@@ -10,6 +11,7 @@ import com.google.common.collect.FluentIterable;
 import fi.vm.sade.organisaatio.dto.v2.OrganisaatioHakutulosSuppeaDTOV2;
 import fi.vm.sade.organisaatio.dto.v2.OrganisaatioPerustietoSuppea;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioResultDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,12 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class OrganisaatioService {
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper ignoreFieldsObjectMapper = createIgnoreFieldsObjectMapper();
+    private static ObjectMapper createIgnoreFieldsObjectMapper() {
+        ObjectMapper m = new ObjectMapper();
+        m.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return m;
+    }
     private static final Logger LOG = LoggerFactory.getLogger(OrganisaatioService.class);
 
     private final TarjontaKoodistoHelper tarjontaKoodistoHelper;
@@ -37,6 +45,15 @@ public class OrganisaatioService {
             .build(new CacheLoader<String, OrganisaatioRDTO>() {
                 public OrganisaatioRDTO load(String oid) {
                     return fetchOrganisation(oid);
+                }
+            });
+
+    private final LoadingCache<String, OrganisaatioResultDTO> orgHaeCache = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .expireAfterWrite(30, TimeUnit.MINUTES)
+            .build(new CacheLoader<String, OrganisaatioResultDTO>() {
+                public OrganisaatioResultDTO load(String oid) {
+                    return fetchOrganisationWithHaeAPI(oid);
                 }
             });
 
@@ -82,6 +99,24 @@ public class OrganisaatioService {
             return orgCache.get(oid);
         } catch (ExecutionException e) {
             final String msg = "Getting organization from Guava cache failed. Org oid: " + oid;
+            LOG.error(msg);
+            throw new RuntimeException(msg);
+        }
+    }
+    public OrganisaatioResultDTO findByOidWithHaeAPI(String oid) {
+        try {
+            return orgHaeCache.get(oid);
+        } catch (ExecutionException e) {
+            final String msg = "Getting organization from Guava cache failed for hae API. Org oid: " + oid;
+            LOG.error(msg);
+            throw new RuntimeException(msg);
+        }
+    }
+    private OrganisaatioResultDTO fetchOrganisationWithHaeAPI(String oid) {
+        try {
+            return ignoreFieldsObjectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.organisaatio.hae", oid)), OrganisaatioResultDTO.class);
+        } catch (Exception e) {
+            final String msg = "Could not fetch organization with oid " + oid;
             LOG.error(msg);
             throw new RuntimeException(msg);
         }
