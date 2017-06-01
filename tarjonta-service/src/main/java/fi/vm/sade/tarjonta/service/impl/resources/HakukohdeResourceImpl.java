@@ -8,8 +8,12 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.publication.model.RestParam;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusResourceImplV1;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.OrganisaatioUtil;
 import fi.vm.sade.tarjonta.service.resources.dto.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioKelaDTO;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioResultDTO;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -48,9 +52,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     @Autowired
     private OrganisaatioService organisaatioService;
     @Autowired
-    KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
-    @Autowired
-    private KoulutusmoduuliDAO koulutusmoduuliDAO;
+    private EntityConverterToRDTO converterToRDTO;
     // /hakukohde?...
     @Override
     public List<OidRDTO> search(String searchTerms,
@@ -126,11 +128,11 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
             return hkAlkamis;
         }
     }
-    private KoulutusLaajuusarvoDTO convert(KoulutusmoduuliToteutus m) {
+    private KoulutusLaajuusarvoDTO convert(KoulutusV1RDTO m) {
         KoulutusLaajuusarvoDTO k = new KoulutusLaajuusarvoDTO();
-        k.setOpintojenLaajuusarvo(k.getOid());
-        k.setOpintojenLaajuusarvo(uriToArvo(m.getOpintojenLaajuusarvoUri()));
-        k.setKoulutuskoodi(uriToArvo(m.getKoulutusUri()));
+        k.setOid(m.getOid());
+        k.setOpintojenLaajuusarvo(uriToArvo(m.getOpintojenLaajuusarvo().getUri()));
+        k.setKoulutuskoodi(uriToArvo(m.getKoulutuskoodi().getUri()));
         return k;
     }
     private String uriToArvo(String uri) {
@@ -143,8 +145,8 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     }
     private KoulutusLaajuusarvoDTO convert(Koulutusmoduuli koulutusmoduuli) {
         KoulutusLaajuusarvoDTO k = new KoulutusLaajuusarvoDTO();
-        k.setKoulutuskoodi(uriToArvo(koulutusmoduuli.getKoulutusUri()));
         k.setOid(koulutusmoduuli.getOid());
+        k.setKoulutuskoodi(uriToArvo(koulutusmoduuli.getKoulutusUri()));
         k.setOpintojenLaajuusarvo(uriToArvo(koulutusmoduuli.getOpintojenLaajuusarvoUri()));
         return k;
     }
@@ -169,12 +171,14 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     private List<KoulutusLaajuusarvoDTO> findKomotosAndKomos(Hakukohde hakukohde) {
         List<KoulutusLaajuusarvoDTO> kl = Lists.newArrayList();
         for(KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
+            KoulutusV1RDTO koulutus = KoulutusResourceImplV1.convert(converterToRDTO, komoto, RestParam.noImage(false, null));
+
             kl.addAll(flatMapAndConvert(komoto.getKoulutusmoduuli()));
             Set<KoodistoUri> sisaltyvatKoulutuskoodit = komoto.getSisaltyvatKoulutuskoodit();
             for(KoodistoUri uri : sisaltyvatKoulutuskoodit) {
                 kl.add(convert(uri));
             }
-            kl.add(convert(komoto));
+            kl.add(convert(koulutus));
 
         }
         return kl;

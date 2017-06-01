@@ -201,84 +201,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             final RestParam restParam = RestParam.byUserRequest(showMeta, showImg, userLang);
 
             //convert required komoto to dto rest format.
-            switch (getType(komoto)) {
-                case KORKEAKOULUTUS:
-                    result.setResult(converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class, komoto, restParam));
-                    break;
-                case KORKEAKOULUOPINTO:
-                    result.setResult(converterToRDTO.convert(KorkeakouluOpintoV1RDTO.class, komoto, restParam));
-                    break;
-                case LUKIOKOULUTUS:
-                    result.setResult(converterToRDTO.convert(KoulutusLukioV1RDTO.class, komoto, restParam));
-                    break;
-                case EB_RP_ISH:
-                    result.setResult(converterToRDTO.convert(KoulutusEbRpIshV1RDTO.class, komoto, restParam));
-                    break;
-                case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
-                    result.setResult(converterToRDTO.convert(KoulutusLukioAikuistenOppimaaraV1RDTO.class, komoto, restParam));
-                    break;
-                case AMMATILLINEN_PERUSTUTKINTO:
-                    result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPerustutkintoV1RDTO.class, komoto, restParam));
-                    break;
-                case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS:
-                    result.setResult(converterToRDTO.convert(KoulutusValmentavaJaKuntouttavaV1RDTO.class, komoto, restParam));
-                    break;
-                case PERUSOPETUKSEN_LISAOPETUS:
-                    result.setResult(converterToRDTO.convert(KoulutusPerusopetuksenLisaopetusV1RDTO.class, komoto, restParam));
-                    break;
-                case AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA:
-                    result.setResult(converterToRDTO.convert(KoulutusAmmatilliseenPeruskoulutukseenValmentavaV1RDTO.class, komoto, restParam));
-                    break;
-                case AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER:
-                    result.setResult(converterToRDTO.convert(KoulutusAmmatilliseenPeruskoulutukseenValmentavaERV1RDTO.class, komoto, restParam));
-                    break;
-                case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
-                    result.setResult(converterToRDTO.convert(KoulutusAmmatilliseenPeruskoulutukseenOhjaavaJaValmistavaV1RDTO.class, komoto, restParam));
-                    break;
-                case MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
-                    result.setResult(converterToRDTO.convert(KoulutusMaahanmuuttajienAmmatilliseenPeruskoulutukseenValmistavaV1RDTO.class, komoto, restParam));
-                    break;
-                case MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
-                    result.setResult(converterToRDTO.convert(KoulutusMaahanmuuttajienJaVieraskielistenLukiokoulutukseenValmistavaV1RDTO.class, komoto, restParam));
-                    break;
-                case VAPAAN_SIVISTYSTYON_KOULUTUS:
-                    result.setResult(converterToRDTO.convert(KoulutusVapaanSivistystyonV1RDTO.class, komoto, restParam));
-                    break;
-                case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
-                    result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPeruskoulutusErityisopetuksenaV1RDTO.class, komoto, restParam));
-                    break;
-                case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
-                    //very special case: may have a double komoto structure
-                    result.setResult(converterToRDTO.convert(
-                            KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class,
-                            komoto,
-                            restParam));
-                    break;
-                case AMMATTITUTKINTO:
-                    result.setResult(converterToRDTO.convert(
-                            AmmattitutkintoV1RDTO.class,
-                            komoto,
-                            restParam));
-                    break;
-                case ERIKOISAMMATTITUTKINTO:
-                    result.setResult(converterToRDTO.convert(
-                            ErikoisammattitutkintoV1RDTO.class,
-                            komoto,
-                            restParam));
-                    break;
-                case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA:
-                    result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, komoto, restParam));
-                    break;
-                case AIKUISTEN_PERUSOPETUS:
-                    result.setResult(converterToRDTO.convert(
-                            KoulutusAikuistenPerusopetusV1RDTO.class,
-                            komoto,
-                            restParam));
-                    break;
-                case PELASTUSALAN_KOULUTUS:
-                    result.setResult(converterToRDTO.convert(PelastusalanKoulutusV1RDTO.class, komoto, restParam));
-                    break;
-            }
+            result.setResult(convert(converterToRDTO, komoto, restParam));
 
             return result;
         } catch (Exception e) {
@@ -286,6 +209,66 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             result.setStatus(NOT_FOUND);
             return result;
         }
+    }
+    public static KoulutusV1RDTO convert(EntityConverterToRDTO converterToRDTO, KoulutusmoduuliToteutus komoto, RestParam restParam) {
+        switch (getType(komoto)) {
+            case KORKEAKOULUTUS:
+                return converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class, komoto, restParam);
+            case KORKEAKOULUOPINTO:
+                return converterToRDTO.convert(KorkeakouluOpintoV1RDTO.class, komoto, restParam);
+            case LUKIOKOULUTUS:
+                return converterToRDTO.convert(KoulutusLukioV1RDTO.class, komoto, restParam);
+            case EB_RP_ISH:
+                return converterToRDTO.convert(KoulutusEbRpIshV1RDTO.class, komoto, restParam);
+            case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
+                return converterToRDTO.convert(KoulutusLukioAikuistenOppimaaraV1RDTO.class, komoto, restParam);
+            case AMMATILLINEN_PERUSTUTKINTO:
+                return converterToRDTO.convert(KoulutusAmmatillinenPerustutkintoV1RDTO.class, komoto, restParam);
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS:
+                return converterToRDTO.convert(KoulutusValmentavaJaKuntouttavaV1RDTO.class, komoto, restParam);
+            case PERUSOPETUKSEN_LISAOPETUS:
+                return converterToRDTO.convert(KoulutusPerusopetuksenLisaopetusV1RDTO.class, komoto, restParam);
+            case AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA:
+                return converterToRDTO.convert(KoulutusAmmatilliseenPeruskoulutukseenValmentavaV1RDTO.class, komoto, restParam);
+            case AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER:
+                return converterToRDTO.convert(KoulutusAmmatilliseenPeruskoulutukseenValmentavaERV1RDTO.class, komoto, restParam);
+            case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+                return converterToRDTO.convert(KoulutusAmmatilliseenPeruskoulutukseenOhjaavaJaValmistavaV1RDTO.class, komoto, restParam);
+            case MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
+                return converterToRDTO.convert(KoulutusMaahanmuuttajienAmmatilliseenPeruskoulutukseenValmistavaV1RDTO.class, komoto, restParam);
+            case MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
+                return converterToRDTO.convert(KoulutusMaahanmuuttajienJaVieraskielistenLukiokoulutukseenValmistavaV1RDTO.class, komoto, restParam);
+            case VAPAAN_SIVISTYSTYON_KOULUTUS:
+                return converterToRDTO.convert(KoulutusVapaanSivistystyonV1RDTO.class, komoto, restParam);
+            case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
+                return converterToRDTO.convert(KoulutusAmmatillinenPeruskoulutusErityisopetuksenaV1RDTO.class, komoto, restParam);
+            case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
+                //very special case: may have a double komoto structure
+                return converterToRDTO.convert(
+                        KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class,
+                        komoto,
+                        restParam);
+            case AMMATTITUTKINTO:
+                return converterToRDTO.convert(
+                        AmmattitutkintoV1RDTO.class,
+                        komoto,
+                        restParam);
+            case ERIKOISAMMATTITUTKINTO:
+                return converterToRDTO.convert(
+                        ErikoisammattitutkintoV1RDTO.class,
+                        komoto,
+                        restParam);
+            case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA:
+                return converterToRDTO.convert(KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, komoto, restParam);
+            case AIKUISTEN_PERUSOPETUS:
+                return converterToRDTO.convert(
+                        KoulutusAikuistenPerusopetusV1RDTO.class,
+                        komoto,
+                        restParam);
+            case PELASTUSALAN_KOULUTUS:
+                return converterToRDTO.convert(PelastusalanKoulutusV1RDTO.class, komoto, restParam);
+        }
+        return null;
     }
 
     @Override
