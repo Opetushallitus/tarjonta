@@ -15,10 +15,12 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Stopwatch;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import fi.vm.sade.auditlog.tarjonta.LogMessage;
 import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
 import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
@@ -259,9 +261,10 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     private ResultV1RDTO<List<HakuV1RDTO>> findHakuResultByCriteriaOrAllIfNull(HakuSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList) {
+        Stopwatch timer = Stopwatch.createStarted();
         List<Haku> hakus;
         if(criteriaList == null) {
-            LOG.info("Loading all hakus from DB. This is slow and usually cached.");
+            LOG.info("Loading all hakus from DB.");
             hakus = hakuDAO.findAll();
         } else {
             LOG.debug("Loading hakus from DB for keyword {}.", resolveComplexCacheKey(criteriaList, params));
@@ -272,6 +275,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
         resultV1RDTO.setStatus(ResultStatus.OK);
         resultV1RDTO.setResult(hakusToHakuRDTO(hakus, params));
+
+        timer.stop();
+        if(timer.elapsed(TimeUnit.SECONDS) > 10) LOG.info("Fetched hakus in {}", timer);
         return resultV1RDTO;
     }
 
@@ -298,20 +304,22 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     private List<HakuV1RDTO> hakusToHakuRDTO(List<Haku> hakus, HakuSearchParamsV1RDTO params) {
-        Map<String, List<String>> hakukohdeMap = null;
-        List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
+        Map<String, List<String>> hakukohdeMap = Maps.newHashMap();
+        List<HakuV1RDTO> hakuDtos = new ArrayList<>();
         if (params.addHakukohdes) {
+            Stopwatch timer = Stopwatch.createStarted();
             hakukohdeMap = hakukohdeDAO.findAllHakuToHakukohde();
+            timer.stop();
+            LOG.info("Fetched haku to hakukohde map in {}", timer);
         }
+        Stopwatch timer = Stopwatch.createStarted();
+        Map<Long, List<String>> hakuToYOAHKMap = hakukohdeDAO.findAllHakuToHakukohdeWhereYlioppilastutkintoAntaaHakukelpoisuuden(hakus);
+        timer.stop();
+        LOG.info("Fetched findAllHakuToHakukohdeWhereYlioppilastutkintoAntaaHakukelpoisuuden for {} hakus in {}", hakuToYOAHKMap.size(), timer);
+
         for (Haku haku : hakus) {
-            List<String> hakukohteet = null;
-            if (params.addHakukohdes && hakukohdeMap != null) {
-                hakukohteet = hakukohdeMap.get(haku.getOid());
-                if (hakukohteet == null) {
-                    hakukohteet = Collections.emptyList();
-                }
-            }
-            HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, params.addHakukohdes, hakukohteet);
+            List<String> hakukohteet = hakukohdeMap.containsKey(haku.getOid()) ? hakukohdeMap.get(haku.getOid()) : Lists.<String>newArrayList();
+            HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, params.addHakukohdes, hakukohteet, hakuToYOAHKMap);
             hakuDtos.add(hakuV1RDTO);
         }
         return hakuDtos;
