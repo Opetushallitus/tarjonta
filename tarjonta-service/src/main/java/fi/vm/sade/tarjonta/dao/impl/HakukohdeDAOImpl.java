@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.Tuple;
 import com.mysema.query.jpa.impl.JPAQuery;
@@ -451,6 +452,41 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         where.and(hakukohde.tila.notIn(poistettuTila));
 
         return from(hakukohde).where(where).list(hakukohde.oid);
+    }
+
+    @Override
+    public Map<Long, List<String>> findAllHakuToHakukohdeWhereYlioppilastutkintoAntaaHakukelpoisuuden(List<Haku> hakus){
+        List<Long> hasHakuValue = Lists.newArrayList();
+        List<Long> hasNoHakuValue = Lists.newArrayList();
+
+        for(Haku haku : hakus) {
+            if(haku.getYlioppilastutkintoAntaaHakukelpoisuuden()){
+                hasHakuValue.add(haku.getId());
+            } else {
+                hasNoHakuValue.add(haku.getId());
+            }
+        }
+
+        QHakukohde hakukohde = QHakukohde.hakukohde;
+
+        BooleanExpression hasHakuValueExpr = hakukohde.haku.id.in(hasHakuValue).and(hakukohde.ylioppilastutkintoAntaaHakukelpoisuuden.eq(true));
+        BooleanExpression hasNoHakuValueExpr = hakukohde.haku.id.in(hasNoHakuValue).and(hakukohde.ylioppilastutkintoAntaaHakukelpoisuuden.eq(true)
+                                                                                        .or(hakukohde.ylioppilastutkintoAntaaHakukelpoisuuden.isNull()));
+
+        BooleanExpression where = hakukohde.tila.notIn(poistettuTila).and(hasNoHakuValueExpr.or(hasHakuValueExpr));
+
+        List<Tuple> rawRes = from(hakukohde).where(where).list(hakukohde.haku.id, hakukohde.oid);
+
+        Map<Long, List<String>> result = Maps.newHashMap();
+        for(Tuple tuple : rawRes) {
+            Long hakuId = tuple.get(0, Long.class);
+            String hk = tuple.get(1, String.class);
+            List<String> hakukohdeList = result.containsKey(hakuId) ? result.get(hakuId) : Lists.<String>newArrayList();
+            hakukohdeList.add(hk);
+            result.put(hakuId, hakukohdeList);
+        }
+
+        return result;
     }
 
     /**
