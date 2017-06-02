@@ -57,7 +57,7 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
     }
 
     public Collection<TekstiKaannos> getTekstiKaannos() {
-        return Collections.unmodifiableCollection(lataaKaannostekstit());
+        return Collections.unmodifiableCollection(tekstis.values());
     }
 
     public void addTekstiKaannos(String kieliKoodi, String teksti) {
@@ -150,7 +150,7 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
             }
         }
 
-        for (TekstiKaannos tk : uus.lataaKaannostekstit()) {
+        for (TekstiKaannos tk : uus.tekstis.values()) {
             old.setTekstiKaannos(tk.getKieliKoodi(), tk.getArvo());
         }
 
@@ -175,12 +175,12 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
     }
 
     public List<TekstiKaannos> getKaannoksetAsList() {
-        return Lists.newArrayList(lataaKaannostekstit());
+        return Lists.newArrayList(tekstis.values());
     }
 
     public Map<String, String> asMap() {
         Map<String, String> tekstit = Maps.newHashMap();
-        for (TekstiKaannos tk : lataaKaannostekstit()) {
+        for (TekstiKaannos tk : tekstis.values()) {
             tekstit.put(tk.getKieliKoodi(), tk.getArvo());
         }
         return tekstit;
@@ -188,7 +188,7 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
 
     public Map<String, String> asMapWithoutVersions() {
         Map<String, String> tekstit = Maps.newHashMap();
-        for (TekstiKaannos tk : lataaKaannostekstit()) {
+        for (TekstiKaannos tk : tekstis.values()) {
             tekstit.put(tk.getKieliKoodi().split("#")[0], tk.getArvo());
         }
         return tekstit;
@@ -205,11 +205,6 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
             }
         }
         return null;
-    }
-
-    private Collection<TekstiKaannos> lataaKaannostekstit() {
-        Hibernate.initialize(tekstis);
-        return tekstis.values();
     }
 
 }

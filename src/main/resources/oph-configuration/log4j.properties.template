@@ -14,7 +14,8 @@ log4j.appender.FILE.MaxBackupIndex=20
 {% endraw %}
 # By default hide these spammers by default
 log4j.logger.fi.vm.sade.security=WARN
-log4j.logger.org.apache.cxf=ERROR
+log4j.logger.org.apache=ERROR
+log4j.logger.org.hibernate=ERROR
 log4j.logger.org.springframework=ERROR
 log4j.logger.org.vaadin=ERROR
 log4j.logger.javax.sql=ERROR
@@ -22,6 +23,8 @@ log4j.logger.org.apache.activemq=INFO
 log4j.logger.org.apache.activemq.spring={{env_loglevel}}
 # cas session + singlelogout tracing
 log4j.logger.org.jasig.cas.client.session=INFO
+# Not helpful 'interceptor.Fault: Access is denied' stacktrace
+log4j.logger.org.apache.cxf.interceptor.AbstractFaultChainInitiatorObserver=NONE
 
 log4j.additivity.fi.vm.sade.auditlog.Audit=false
 log4j.logger.fi.vm.sade.auditlog.Audit=INFO, AUDIT

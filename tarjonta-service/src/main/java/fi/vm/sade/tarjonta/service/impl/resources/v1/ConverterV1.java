@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -53,7 +54,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
-import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,10 +128,10 @@ public class ConverterV1 {
     }
 
     public HakuV1RDTO fromHakuToHakuRDTO(Haku haku, boolean addHakukohdes) {
-        return fromHakuToHakuRDTO(haku, addHakukohdes, null);
+        return fromHakuToHakuRDTO(haku, addHakukohdes, null, null);
     }
 
-    public HakuV1RDTO fromHakuToHakuRDTO(Haku haku, boolean addHakukohdes, List<String> hakukohteet) {
+    public HakuV1RDTO fromHakuToHakuRDTO(Haku haku, boolean addHakukohdes, List<String> hakukohteet, Map<Long, List<String>> hakukohdeWhereYlioppilastutkintoAntaaHakukelpoisuuden) {
         if (haku == null) {
             return null;
         }
@@ -170,14 +170,25 @@ public class ConverterV1 {
             if (hakukohteet != null) {
                 hakuDTO.setHakukohdeOids(hakukohteet);
             } else {
+                Stopwatch timer = Stopwatch.createStarted();
                 List<String> tmp = hakukohdeDao.findByHakuOid(hakuDTO.getOid(), null, 0, 0, null, null);
                 hakuDTO.setHakukohdeOids(tmp);
+                timer.stop();
+                LOG.info("Fetched {} hakukohdes for haku {} in {}", tmp.size(), haku.getOid(), timer);
             }
-            hakuDTO.setHakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden(
-                    hakukohdeDao.findHakukohteetWithYlioppilastutkintoAntaaHakukelpoisuuden(
-                            haku.getId(), haku.getYlioppilastutkintoAntaaHakukelpoisuuden()
-                    )
-            );
+
+            if(hakukohdeWhereYlioppilastutkintoAntaaHakukelpoisuuden != null){ //Preloaded for multiple hakus.
+                hakuDTO.setHakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden(hakukohdeWhereYlioppilastutkintoAntaaHakukelpoisuuden.get(haku.getId()));
+            } else {
+                Stopwatch timer = Stopwatch.createStarted();
+                hakuDTO.setHakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden(
+                        hakukohdeDao.findHakukohteetWithYlioppilastutkintoAntaaHakukelpoisuuden(
+                                haku.getId(), haku.getYlioppilastutkintoAntaaHakukelpoisuuden()
+                        )
+                );
+                timer.stop();
+                LOG.info("Ylioppilastutkinto antaa hakukelpoisuuden calculated in {}", timer);
+            }
         }
 
         hakuDTO.setYhdenPaikanSaanto(yhdenPaikanSaantoBuilder.from(haku));
@@ -191,7 +202,6 @@ public class ConverterV1 {
         hakuDTO.setOpintopolunNayttaminenLoppuu(haku.getOpintopolunNayttaminenLoppuu());
         hakuDTO.setTunnistusKaytossa(haku.isTunnistusKaytossa());
 
-        Hibernate.initialize(haku.getSisaltyvatHaut());
         for (Haku sisaltyvaHaku : haku.getSisaltyvatHaut()) {
             hakuDTO.getSisaltyvatHaut().add(sisaltyvaHaku.getOid());
         }

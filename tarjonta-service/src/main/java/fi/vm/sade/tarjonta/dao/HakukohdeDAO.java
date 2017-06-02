@@ -16,10 +16,7 @@
 package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.generic.dao.JpaDAO;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.HakukohdeLiite;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
@@ -155,4 +152,5 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
     List<String> findHakukohteetWithYlioppilastutkintoAntaaHakukelpoisuuden(Long hakuId, Boolean hakuValue);
 
+    Map<Long, List<String>> findAllHakuToHakukohdeWhereYlioppilastutkintoAntaaHakukelpoisuuden(List<Haku> hakus);
 }
