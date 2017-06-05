@@ -469,11 +469,21 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         QHakukohde hakukohde = QHakukohde.hakukohde;
 
-        BooleanExpression hasHakuValueExpr = hakukohde.haku.id.in(hasHakuValue).and(hakukohde.ylioppilastutkintoAntaaHakukelpoisuuden.eq(true));
-        BooleanExpression hasNoHakuValueExpr = hakukohde.haku.id.in(hasNoHakuValue).and(hakukohde.ylioppilastutkintoAntaaHakukelpoisuuden.eq(true)
-                                                                                        .or(hakukohde.ylioppilastutkintoAntaaHakukelpoisuuden.isNull()));
+        BooleanExpression hasNoHakuValueExpr = hakukohde.haku.id
+                .in(hasNoHakuValue)
+                .and(hakukohde.ylioppilastutkintoAntaaHakukelpoisuuden.eq(true)
+                .or(hakukohde.ylioppilastutkintoAntaaHakukelpoisuuden.isNull()));
 
-        BooleanExpression where = hakukohde.tila.notIn(poistettuTila).and(hasNoHakuValueExpr.or(hasHakuValueExpr));
+        BooleanExpression hakuValueExpr = hasNoHakuValueExpr;
+
+        if (!hasHakuValue.isEmpty()) {
+            BooleanExpression hasHakuValueExpr = hakukohde.haku.id
+                    .in(hasHakuValue)
+                    .and(hakukohde.ylioppilastutkintoAntaaHakukelpoisuuden.eq(true));
+            hakuValueExpr = hakuValueExpr.or(hasHakuValueExpr);
+        }
+
+        BooleanExpression where = hakukohde.tila.notIn(poistettuTila).and(hakuValueExpr);
 
         List<Tuple> rawRes = from(hakukohde).where(where).list(hakukohde.haku.id, hakukohde.oid);
 
