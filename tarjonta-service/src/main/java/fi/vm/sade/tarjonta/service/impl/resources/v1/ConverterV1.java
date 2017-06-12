@@ -169,7 +169,7 @@ public class ConverterV1 {
 
         if (addHakukohdes) {
             if (hakukohteet != null) {
-                List uniqueHakukohdeOids = new ArrayList(new HashSet(hakukohteet));
+                List<String> uniqueHakukohdeOids = new ArrayList<String>(new HashSet<String>(hakukohteet));
                 hakuDTO.setHakukohdeOids(uniqueHakukohdeOids);
             } else {
                 Stopwatch timer = Stopwatch.createStarted();
