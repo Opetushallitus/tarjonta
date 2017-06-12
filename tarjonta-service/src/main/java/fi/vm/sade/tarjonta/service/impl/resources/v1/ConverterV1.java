@@ -62,6 +62,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ConverterV1 {
@@ -168,7 +169,8 @@ public class ConverterV1 {
 
         if (addHakukohdes) {
             if (hakukohteet != null) {
-                hakuDTO.setHakukohdeOids(hakukohteet);
+                List uniqueHakukohdeOids = new ArrayList(new HashSet(hakukohteet));
+                hakuDTO.setHakukohdeOids(uniqueHakukohdeOids);
             } else {
                 Stopwatch timer = Stopwatch.createStarted();
                 List<String> tmp = hakukohdeDao.findByHakuOid(hakuDTO.getOid(), null, 0, 0, null, null);
