@@ -417,7 +417,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
     @Override
     public List<String> findByHakuOid(String hakuOid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
-        String q = "SELECT hk.oid " +
+        String q = "SELECT DISTINCT hk.oid " +
                    "FROM Hakukohde hk " +
                    "JOIN hk.haku h " +
                    "JOIN hk.koulutusmoduuliToteutuses k " +
