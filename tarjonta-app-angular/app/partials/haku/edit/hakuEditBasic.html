@@ -231,14 +231,7 @@
                    ng-change="updatedHakulomakeSelection()" name="hakulomake">
             <label for="kaytetaanJarjestelmanHakulomaketta" data-tt='haku.edit.hakulomake.jarjestelman'>
                 Käytetään järjestelmän hakulomaketta.
-                Hakutoiveiden enimmäismäärä hakulomakkeella:
             </label>
-            <input type="number"
-                   ng-model="model.hakux.result.maxHakukohdes"
-                   name="maxHakukohdes"
-                   ng-required="model.hakux.result.jarjestelmanHakulomake"
-                   ng-disabled='model.haku.hakulomake != "SYSTEM"'
-                   min="0">
             <ul>
                 <input data-ng-if="isKorkeakouluhaku() && isErillishaku()"
                        type="checkbox"
@@ -323,6 +316,25 @@
         <th></th>
         <td colspan="2" class="help" data-tt='haku.edit.hakulomake.none.help'>
             Opintopolun hakutulos- tai muistilistalla ei tarjota painiketta tai linkkiä hakemiseen.
+        </td>
+    </tr>
+
+    <!-- Hakutoiveiden enimmäismäärä -->
+
+    <tr>
+        <th data-tt="haku.edit.maxHakukohdes">Hakutoiveiden enimmäismäärä</th>
+        <td>
+            <label for="maxHakukohdes" data-tt="haku.edit.maxHakukohdes.label">
+                Hakutoiveiden enimmäismäärä käytettäessä järjestelmän tai Lomake-editorin lomaketta:
+            </label>
+            <br/>
+            <input type="number"
+                   ng-model="model.hakux.result.maxHakukohdes"
+                   id="maxHakukohdes"
+                   name="maxHakukohdes"
+                   ng-required="model.hakux.result.jarjestelmanHakulomake"
+                   ng-disabled='["ATARU", "SYSTEM"].indexOf(model.haku.hakulomake) === -1'
+                   min="0" />
         </td>
     </tr>
 

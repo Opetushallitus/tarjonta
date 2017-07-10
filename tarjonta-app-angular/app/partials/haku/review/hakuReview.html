@@ -156,6 +156,12 @@
                         <span>{{ model.ataruFormName }}</span>
                         <span class="pilotti" tt="haku.ataru.pilotti">Pilotti</span>
                         <p class="error" ng-if="model.ataruFormError" tt="haku.ataru.virhe">Tapahtui virhe. Tarkista valittu lomake.</p>
+                        <br/>
+                        <span tt="haku.review.haunTiedot.hakulomake.maxHakukohdes">Hakukohteiden maksimimäärä: </span>
+                        {{ model.hakux.result.maxHakukohdes }}
+                        <br/>
+                        <span tt="haku.review.haunTiedot.hakulomake.priorisointi">Haussa käytetään priorisointia: </span>
+                        {{ model.hakux.result.usePriority ? t("yes") : t("no") }}
                     </div>
                     <div ng-if="model.hakux.result.ataruLomakeAvain && !isAtaruRole()">
                         <span tt="haku.review.haunTiedot.hakulomake.ataru.ilmanOikeuksia">Käytetään Lomake-editorin lomaketta.</span>
