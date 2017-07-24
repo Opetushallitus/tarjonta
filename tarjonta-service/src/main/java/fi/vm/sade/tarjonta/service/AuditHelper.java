@@ -2,6 +2,9 @@ package fi.vm.sade.tarjonta.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.flipkart.zjsonpatch.JsonDiff;
 import fi.vm.sade.auditlog.ApplicationType;
 import fi.vm.sade.auditlog.Audit;
@@ -14,6 +17,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.security.Principal;
+import java.util.Iterator;
 
 public class AuditHelper {
     public static final Audit AUDIT = new Audit("tarjonta", ApplicationType.VIRKAILIJA);
@@ -61,11 +65,49 @@ public class AuditHelper {
             }
             JsonNode v1Json = mapper.valueToTree(v1);
             JsonNode v2Json = mapper.valueToTree(v2);
+            traverseAndTruncate(v1Json);
+            traverseAndTruncate(v2Json);
             final JsonNode patchNode = JsonDiff.asJson(v2Json, v1Json);
             return patchNode.toString();
         }
         catch (Exception e) {
             return "diff calculation failed: " + e.toString();
+        }
+    }
+
+    static void traverseAndTruncate(JsonNode data) {
+        if (data.isObject()) {
+            ObjectNode object = (ObjectNode) data;
+            Iterator<String> fieldNames = data.fieldNames();
+            while (fieldNames.hasNext()) {
+                String fieldName = fieldNames.next();
+                JsonNode child = object.get(fieldName);
+                if (child.isTextual()) {
+                    object.set(fieldName, truncate((TextNode) child));
+                } else {
+                    traverseAndTruncate(child);
+                }
+            }
+        } else if (data.isArray()) {
+            ArrayNode array = (ArrayNode) data;
+            for (int i = 0; i < array.size(); i++) {
+                JsonNode child = array.get(i);
+                if (child.isTextual()) {
+                    array.set(i, truncate((TextNode) child));
+                } else {
+                    traverseAndTruncate(child);
+                }
+            }
+        }
+    }
+
+    private static TextNode truncate(TextNode data) {
+        int MAX_FIELD_LENGTH = 32766;
+        if (data.textValue().length() <= MAX_FIELD_LENGTH) {
+            return data;
+        } else {
+            String truncated = (new Integer(data.textValue().hashCode())).toString();
+            return TextNode.valueOf(truncated);
         }
     }
 }
