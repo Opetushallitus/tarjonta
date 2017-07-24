@@ -102,8 +102,7 @@ public class AuditHelper {
     }
 
     private static TextNode truncate(TextNode data) {
-        int MAX_FIELD_LENGTH = 32766;
-        if (data.textValue().length() <= MAX_FIELD_LENGTH) {
+        if (data.textValue().length() <= Audit.MAX_FIELD_LENGTH) {
             return data;
         } else {
             String truncated = (new Integer(data.textValue().hashCode())).toString();
