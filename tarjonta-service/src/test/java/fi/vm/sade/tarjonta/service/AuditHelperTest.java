@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vm.sade.auditlog.Audit;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -22,19 +23,27 @@ public class AuditHelperTest {
     @Test
     public void truncatesLongField() throws IOException {
         JsonNode json = mapper.readTree(jsonString);
+        assert(json.toString().length() > Audit.MAX_FIELD_LENGTH);
+
         AuditHelper.traverseAndTruncate(json);
 
         String truncatedString = json.get("longString").textValue();
         assert(truncatedString.length() < longString.length());
+        assert(truncatedString.length() < Audit.MAX_FIELD_LENGTH);
+        assert(json.toString().length() < Audit.MAX_FIELD_LENGTH);
     }
 
     @Test
     public void truncatesLongArrayElement() throws IOException {
         JsonNode json = mapper.readTree(jsonString);
+        assert(json.toString().length() > Audit.MAX_FIELD_LENGTH);
+
         AuditHelper.traverseAndTruncate(json);
 
         String truncatedString = json.get("array").get(0).textValue();
         assert(truncatedString.length() < longString.length());
+        assert(truncatedString.length() < Audit.MAX_FIELD_LENGTH);
+        assert(json.toString().length() < Audit.MAX_FIELD_LENGTH);
     }
 
     @Test

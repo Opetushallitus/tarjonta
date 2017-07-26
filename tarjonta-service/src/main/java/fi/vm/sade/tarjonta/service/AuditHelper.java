@@ -78,9 +78,8 @@ public class AuditHelper {
     static void traverseAndTruncate(JsonNode data) {
         if (data.isObject()) {
             ObjectNode object = (ObjectNode) data;
-            Iterator<String> fieldNames = data.fieldNames();
-            while (fieldNames.hasNext()) {
-                String fieldName = fieldNames.next();
+            for (Iterator<String> it = data.fieldNames(); it.hasNext();) {
+                String fieldName = it.next();
                 JsonNode child = object.get(fieldName);
                 if (child.isTextual()) {
                     object.set(fieldName, truncate((TextNode) child));
@@ -102,7 +101,8 @@ public class AuditHelper {
     }
 
     private static TextNode truncate(TextNode data) {
-        if (data.textValue().length() <= Audit.MAX_FIELD_LENGTH) {
+        int maxLength = Audit.MAX_FIELD_LENGTH/10; // Assume only a small number of fields can be extremely long
+        if (data.textValue().length() <= maxLength) {
             return data;
         } else {
             String truncated = (new Integer(data.textValue().hashCode())).toString();
