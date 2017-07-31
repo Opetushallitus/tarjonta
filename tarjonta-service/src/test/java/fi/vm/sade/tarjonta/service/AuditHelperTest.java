@@ -3,6 +3,9 @@ package fi.vm.sade.tarjonta.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.auditlog.Audit;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -28,22 +31,22 @@ public class AuditHelperTest {
         AuditHelper.traverseAndTruncate(json);
 
         String truncatedString = json.get("longString").textValue();
-        assert(truncatedString.length() < longString.length());
-        assert(truncatedString.length() < Audit.MAX_FIELD_LENGTH);
-        assert(json.toString().length() < Audit.MAX_FIELD_LENGTH);
+        assertTrue(truncatedString.length() < longString.length());
+        assertTrue(truncatedString.length() < Audit.MAX_FIELD_LENGTH);
+        assertTrue(json.toString().length() < Audit.MAX_FIELD_LENGTH);
     }
 
     @Test
     public void truncatesLongArrayElement() throws IOException {
         JsonNode json = mapper.readTree(jsonString);
-        assert(json.toString().length() > Audit.MAX_FIELD_LENGTH);
+        assertTrue(json.toString().length() > Audit.MAX_FIELD_LENGTH);
 
         AuditHelper.traverseAndTruncate(json);
 
         String truncatedString = json.get("array").get(0).textValue();
-        assert(truncatedString.length() < longString.length());
-        assert(truncatedString.length() < Audit.MAX_FIELD_LENGTH);
-        assert(json.toString().length() < Audit.MAX_FIELD_LENGTH);
+        assertTrue(truncatedString.length() < longString.length());
+        assertTrue(truncatedString.length() < Audit.MAX_FIELD_LENGTH);
+        assertTrue(json.toString().length() < Audit.MAX_FIELD_LENGTH);
     }
 
     @Test
@@ -53,7 +56,7 @@ public class AuditHelperTest {
 
         String truncatedString1 = json.get("longString").textValue();
         String truncatedString2 = json.get("array").get(0).textValue();
-        assert(truncatedString1.equals(truncatedString2));
+        assertEquals(truncatedString1, truncatedString2);
     }
 
     @Test
@@ -62,7 +65,7 @@ public class AuditHelperTest {
         AuditHelper.traverseAndTruncate(json);
 
         String shortString = json.get("shortString").textValue();
-        assert(shortString.equals("bee"));
+        assertEquals("bee", shortString);
     }
 
     @Test
@@ -71,7 +74,7 @@ public class AuditHelperTest {
         AuditHelper.traverseAndTruncate(json);
 
         int number = json.get("number").intValue();
-        assert(number == 99);
+        assertEquals(99, number);
     }
 
     private String createLongString() {
