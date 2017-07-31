@@ -35,6 +35,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.junit.Assert.assertTrue;
+
 
 @TestExecutionListeners(listeners = {
         DependencyInjectionTestExecutionListener.class,
@@ -46,9 +48,9 @@ public class HakukohdeResourceV1ImpValintaperusteetlTest extends TestUtilityBase
 
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResourceV1ImpValintaperusteetlTest.class);
 
-    public static final String PAASY_JA_SOVELTUVUUSKOE = "valintakokeentyyppi_1";
-    public static final String LISANAYTTO = "valintakokeentyyppi_2";
-    public static final String LISAPISTE = "valintakokeentyyppi_5";
+    private static final String PAASY_JA_SOVELTUVUUSKOE = "valintakokeentyyppi_1";
+    private static final String LISANAYTTO = "valintakokeentyyppi_2";
+    private static final String LISAPISTE = "valintakokeentyyppi_5";
 
     @Test
     public void testGetHakukohteenValintaperusteet() throws IOException {
@@ -130,7 +132,7 @@ public class HakukohdeResourceV1ImpValintaperusteetlTest extends TestUtilityBase
         fysiikka.setOppiaine("lukionpainottetavaoppiaine_fy#2");
         fysiikka.setPainokerroin(new BigDecimal("3.0"));
 
-        Set<PainotettavaOppiaine> painotukset = new HashSet<PainotettavaOppiaine>();
+        Set<PainotettavaOppiaine> painotukset = new HashSet<>();
         painotukset.add(musiikki);
         painotukset.add(enkku);
         painotukset.add(saksa);
@@ -145,15 +147,15 @@ public class HakukohdeResourceV1ImpValintaperusteetlTest extends TestUtilityBase
         HakukohdeValintaperusteetV1RDTO hd = result.getResult();
         //ObjectMapper mapper = new ObjectMapper();
         //String json = mapper.writeValueAsString(hd);
-        assert(hd.getPainokertoimet().get("MU_painokerroin").equals("15.0"));
-        assert(hd.getPainokertoimet().get("A12_EN_painokerroin").equals("5.0"));
-        assert(hd.getPainokertoimet().get("B33_DE_painokerroin").equals("7.0"));
-        assert(hd.getPainokertoimet().get("FY_painokerroin").equals("3.0"));
+        assertTrue(hd.getPainokertoimet().get("MU_painokerroin").equals("15.0"));
+        assertTrue(hd.getPainokertoimet().get("A12_EN_painokerroin").equals("5.0"));
+        assertTrue(hd.getPainokertoimet().get("B33_DE_painokerroin").equals("7.0"));
+        assertTrue(hd.getPainokertoimet().get("FY_painokerroin").equals("3.0"));
 
-        assert(hd.getPaasykoeHylkaysMax().equals(new BigDecimal("3.0")));
-        assert(hd.getLisapisteMin().equals(new BigDecimal("0.5")));
-        assert(hd.getLisanayttoHylkaysMax().equals(new BigDecimal("8.0")));
-        assert(hd.getHakuKohdejoukkoUri().equals(haku.getKohdejoukkoUri()));
+        assertTrue(hd.getPaasykoeHylkaysMax().equals(new BigDecimal("3.0")));
+        assertTrue(hd.getLisapisteMin().equals(new BigDecimal("0.5")));
+        assertTrue(hd.getLisanayttoHylkaysMax().equals(new BigDecimal("8.0")));
+        assertTrue(hd.getHakuKohdejoukkoUri().equals(haku.getKohdejoukkoUri()));
     }
 
 }
