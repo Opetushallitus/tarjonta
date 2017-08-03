@@ -22,6 +22,6 @@
         <h4>{{t('koulutus.tjkk.edit.' + lisatieto.type + '.title')}}</h4>
         <p>{{t('koulutus.tjkk.edit.' + lisatieto.type + '.help')}}</p>
         <rich-textarea max="{{lisatieto.length}}" model="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, uiModel.selectedKieliUri)[uiModel.selectedKieliUri]"></rich-textarea>
-        <div class="invalidHtml" data-invalid-html="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, uiModel.selectedKieliUri)[uiModel.selectedKieliUri]"></div>
+        <div data-invalid-html="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, uiModel.selectedKieliUri)[uiModel.selectedKieliUri]"></div>
     </div>
 </div>

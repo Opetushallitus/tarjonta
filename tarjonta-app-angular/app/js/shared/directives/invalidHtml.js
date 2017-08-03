@@ -21,8 +21,8 @@ app.directive("invalidHtml", ['$compile', '$sce', '$log', 'LocalisationService',
                     try {
                         $sce.getTrustedHtml(value);
                     } catch (exception) {
-                        $log.error("Passing through invalid html. Url: " + window.location + " html: " + value);
                         element.text(LocalisationService.t('tarjonta.invalid-html.virheilmoitus'));
+                        element.addClass("msgError");
                     }
 
                     $compile(element.contents())(scope);

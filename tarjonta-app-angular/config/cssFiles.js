@@ -15,6 +15,5 @@ module.exports = [
     'css/mktext.css',
     'css/tarjontaform.css',
     'css/dateTime.css',
-    'css/resultsTreeTable.css',
-    'css/invalidHtml.css'
+    'css/resultsTreeTable.css'
 ];
