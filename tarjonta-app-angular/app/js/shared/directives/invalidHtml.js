@@ -1,6 +1,5 @@
 var app = angular.module('TarjontaInvalidHtml', [
     'ngSanitize',
-    'Logging',
     'localisation'
 ]);
 
@@ -8,9 +7,7 @@ var app = angular.module('TarjontaInvalidHtml', [
  * Kuvaukseen voi olla syötettynä rikkinäistä html:ää. Tällöin näytetään ilmoitus "Rikkinäistä HTML:ää".
  * https://github.com/shaunbowe/ngBindHtmlIfSafe
  */
-app.directive("invalidHtml", ['$compile', '$sce', '$log', 'LocalisationService', function ($compile, $sce, $log, LocalisationService) {
-    $log = $log.getInstance('invalidHtml');
-
+app.directive("invalidHtml", ['$compile', '$sce', 'LocalisationService', function ($compile, $sce, LocalisationService) {
     return function (scope, element, attrs) {
         scope.$watch(
             function (scope) {

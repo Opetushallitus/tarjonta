@@ -260,6 +260,7 @@
         <tr ng-repeat="lisatieto in valmistavaLisatiedot">
             <th>{{t('koulutus.review.kuvailevatTiedot.' + lisatieto.type)}}</th>
             <td colspan="2" data-ng-bind-html="getValmistavaKoulutusKuvausApiModelLanguageUri()[lisatieto.type].tekstis[lang.koodi_uri]"></td>
+            <td colspan="2" data-invalid-html="getValmistavaKoulutusKuvausApiModelLanguageUri()[lisatieto.type].tekstis[lang.koodi_uri]"></td>
         </tr>
     </tbody>
 
