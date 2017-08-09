@@ -88,6 +88,7 @@ angular.module('app', [
     'AiheetJaTeematChooser',
     'TarjontaDateTime',
     'TarjontaOsoiteField',
+    'TarjontaInvalidHtml',
     'ExportToParent',
     'debounce',
     'Parameter',

@@ -6,7 +6,7 @@
     selection="uiModel.selectedKieliUri"
     mutable="true"
     ></mk-tabs>
- 
+
 <div class="mkTabsContent" ng-show="uiModel.selectedKieliUri==null">
     <multi-select
         on-change="onValmistavaLisatietoLangSelection(uris)"
@@ -22,5 +22,6 @@
         <h4>{{t('koulutus.edit.' + lisatieto.type + '.title')}}</h4>
         <p>{{t('koulutus.edit.' + lisatieto.type + '.help')}}</p>
         <rich-textarea max="{{lisatieto.length}}" model="getValmistavaKuvausApiModelLanguageUri(lisatieto.type, uiModel.selectedKieliUri)[uiModel.selectedKieliUri]"></rich-textarea>
+        <div data-invalid-html="getValmistavaKuvausApiModelLanguageUri(lisatieto.type, uiModel.selectedKieliUri)[uiModel.selectedKieliUri]"></div>
     </div>
 </div>
