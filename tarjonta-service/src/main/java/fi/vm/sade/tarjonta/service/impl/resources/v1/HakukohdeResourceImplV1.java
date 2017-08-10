@@ -72,6 +72,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import static fi.vm.sade.tarjonta.service.AuditHelper.*;
+import static org.apache.commons.lang.StringUtils.*;
 
 public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
@@ -214,7 +215,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 .filter(new Predicate<String>() {
                     @Override
                     public boolean apply(String input) {
-                        return !StringUtils.isBlank(input);
+                        return !isBlank(input);
                     }
                 })
                 .toList();
@@ -727,6 +728,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             throws InvocationTargetException, IllegalAccessException {
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
         HakukohdeV1RDTO originalDto = converterV1.toHakukohdeRDTO(hakukohde);
+        final String originalHakuOid = trimToEmpty(originalDto.getHakuOid());
+        final boolean isChangingExistingHakuOid = isNotEmpty(originalHakuOid) && !originalHakuOid.equals(dto.getHakuOid());
+        if(isChangingExistingHakuOid) {
+            throw new RuntimeException("Hakukohteen (OID = "+oid+") haku OID:n muuttaminen on kiellettyä. Alkuperäinen haku OID on " + originalHakuOid + " -> " + dto.getHakuOid());
+        }
         beanUtils.copyProperties(originalDto, dto);
 
         return originalDto;
@@ -1733,7 +1739,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         for (TekstiKaannos tekstiKaannos : oldLiite.getKuvaus().getKaannoksetAsList()) {
             HakukohdeLiite liite = new HakukohdeLiite();
             liite.setLiitetyyppi(oldLiite.getLiitetyyppi());
-            liite.setKieli(StringUtils.substringBefore(tekstiKaannos.getKieliKoodi(), "#"));
+            liite.setKieli(substringBefore(tekstiKaannos.getKieliKoodi(), "#"));
             liite.setErapaiva(oldLiite.getErapaiva());
             liite.setHakukohdeLiiteNimi(oldLiite.getHakukohdeLiiteNimi());
             liite.setKuvaus(createKuvaus(tekstiKaannos));
@@ -1776,7 +1782,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         for (TekstiKaannos tekstiKaannos : oldValintakoe.getKuvaus().getKaannoksetAsList()) {
             Valintakoe valintakoe = new Valintakoe();
             valintakoe.setKuvaus(createKuvaus(tekstiKaannos));
-            valintakoe.setKieli(StringUtils.substringBefore(tekstiKaannos.getKieliKoodi(), "#"));
+            valintakoe.setKieli(substringBefore(tekstiKaannos.getKieliKoodi(), "#"));
             valintakoe.setTyyppiUri(oldValintakoe.getTyyppiUri());
             valintakoe.setLastUpdateDate(new Date());
             valintakoe.setLastUpdatedByOid(oldValintakoe.getLastUpdatedByOid());
