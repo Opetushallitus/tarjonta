@@ -205,7 +205,7 @@ app.controller('HakukohdeParentController', [
         $scope.model.isDeEnabled = false;
         $scope.model.isHakuDeEnabled = function() {
             if($scope.hakukohdex && $scope.hakukohdex.result && $scope.hakukohdex.result.hakuOid) {
-                return false;
+                return true;
             } else {
                 return $scope.model.isDeEnabled;
             }
