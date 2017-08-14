@@ -68,6 +68,7 @@ module.exports = [
     'js/shared/directives/showErrors.js',
     'js/shared/directives/dateTime.js',
     'js/shared/directives/osoiteField.js',
+    'js/shared/directives/invalidHtml.js',
     'js/shared/directives/zippy.js',
     'js/shared/directives/resultsTreeTable.js',
     'js/shared/directives/exportToParent.js',
