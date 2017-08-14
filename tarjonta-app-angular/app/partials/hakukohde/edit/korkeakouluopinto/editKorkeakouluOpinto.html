@@ -53,7 +53,7 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.haut">Haut</th>
                         <td>
-                            <select name="hakuselect" class="wide" ng-disabled="model.isDeEnabled" required
+                            <select name="hakuselect" class="wide" ng-disabled="model.isHakuDeEnabled()" required
                                     ng-model="model.hakukohde.hakuOid" ng-change="model.hakuChanged(haku)"
                                     ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus">
                                 <option value="" tt="tarjonta.toiminnot.valitse">Valitse</option>

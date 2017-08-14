@@ -206,7 +206,7 @@ angular.module('Validator', [])
             }
             return errors;
         }
-        function validateHakukohde(model, haku) {
+        function validateHakukohde(model, haku, originalHakukohde) {
             var hakukohde = model.hakukohde;
             var errors = [];
             if (needsOpintoOikeus(haku)) {
@@ -228,6 +228,12 @@ angular.module('Validator', [])
                 errors.push({
                     errorMessageKey: 'hakukohde.edit.haku.missing'
                 });
+            } else if(originalHakukohde && originalHakukohde.hakuOid) {
+                if(originalHakukohde.hakuOid !== hakukohde.hakuOid) {
+                    errors.push({
+                        errorMessageKey: 'hakukohde.edit.haku.unchangeable'
+                    });
+                }
             }
             if (needsLiitteidenToimitustiedot(hakukohde.toteutusTyyppi)) {
                 if (!isValidHakukohdeToimitusOsoite(model)) {
