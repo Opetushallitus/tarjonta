@@ -58,38 +58,38 @@ window.urls.addProperties( {
     "tarjonta-service.link.parents":"/tarjonta-service/rest/v1/link/$1/parents",
     "tarjonta-service.link.remove":"/tarjonta-service/rest/v1/link/$1/$2",
 
-    "ohjausparametrit-service.all":"/ohjausparametrit-service/api/v1/rest/parametri/ALL",
-    "ohjausparametrit-service.parametri":"/ohjausparametrit-service/api/v1/rest/parametri/$1/$2",
+    "ohjausparametrit-service.all":"https://itest-virkailija.oph.ware.fi/ohjausparametrit-service/api/v1/rest/parametri/ALL",
+    "ohjausparametrit-service.parametri":"https://itest-virkailija.oph.ware.fi/ohjausparametrit-service/api/v1/rest/parametri/$1/$2",
 
     "haku-app.pingLomake":"/haku-app/generatelomake/ping/$1",
     "haku-app.generateLomake":"/haku-app/generatelomake/one/$1",
 
-    "lokalisointi.byId":"/lokalisointi/cxf/rest/v1/localisation/$1",
-    "lokalisointi.loadAll":"/lokalisointi/cxf/rest/v1/localisation",
+    "lokalisointi.byId":"https://itest-virkailija.oph.ware.fi/lokalisointi/cxf/rest/v1/localisation/$1",
+    "lokalisointi.loadAll":"https://itest-virkailija.oph.ware.fi/lokalisointi/cxf/rest/v1/localisation",
 
-    "koodisto-service.ylakoodi":"/koodisto-service/rest/json/relaatio/sisaltyy-ylakoodit/$1",
-    "koodisto-service.alakoodi":"/koodisto-service/rest/json/relaatio/sisaltyy-alakoodit/$1",
-    "koodisto-service.koodi":"/koodisto-service/rest/json/$1/koodi",
-    "koodisto-service.arvo":"/koodisto-service/rest/json/$1/koodi/arvo/$2",
+    "koodisto-service.ylakoodi":"https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/relaatio/sisaltyy-ylakoodit/$1",
+    "koodisto-service.alakoodi":"https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/relaatio/sisaltyy-alakoodit/$1",
+    "koodisto-service.koodi":"https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/$1/koodi",
+    "koodisto-service.arvo":"https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/$1/koodi/arvo/$2",
 
-    "koodisto-service.koodiInKoodisto":"/koodisto-service/rest/json/$1/koodi/$2",
-    "koodisto-service.search":"/koodisto-service/rest/json/searchKoodis",
+    "koodisto-service.koodiInKoodisto":"https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/$1/koodi/$2",
+    "koodisto-service.search":"https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/searchKoodis",
 
-    "organisaatio-service.search":"/organisaatio-service/rest/organisaatio/hae",
-    "organisaatio-service.ryhmat":"/organisaatio-service/rest/organisaatio/v2/ryhmat",
-    "organisaatio-service.byOid":"/organisaatio-service/rest/organisaatio/$1",
-    "organisaatio-service.parentOids":"/organisaatio-service/rest/organisaatio/$1/parentoids",
+    "organisaatio-service.search":"https://itest-virkailija.oph.ware.fi/organisaatio-service/rest/organisaatio/hae",
+    "organisaatio-service.ryhmat":"https://itest-virkailija.oph.ware.fi/organisaatio-service/rest/organisaatio/v2/ryhmat",
+    "organisaatio-service.byOid":"https://itest-virkailija.oph.ware.fi/organisaatio-service/rest/organisaatio/$1",
+    "organisaatio-service.parentOids":"https://itest-virkailija.oph.ware.fi/organisaatio-service/rest/organisaatio/$1/parentoids",
 
-    "organisaatio-ui.linkToOrganisaatio":"/organisaatio-ui/html/organisaatiot/$1",
+    "organisaatio-ui.linkToOrganisaatio":"https://itest-virkailija.oph.ware.fi/organisaatio-ui/html/organisaatiot/$1",
 
     "ataru-service.editor":"/lomake-editori/",
     "ataru-service.rest.forms":"/lomake-editori/api/forms",
     "ataru-app-web.form":"/hakemus/$1",
 
 
-    "oppijanumerorekisteri-service.henkilo":"/oppijanumerorekisteri-service/henkilo",
-    "oppijanumerorekisteri-service.henkilotypes":"/oppijanumerorekisteri-service/henkilo/henkilotypes",
-    "oppijanumerorekisteri-service.urlHaeTiedot":"/oppijanumerorekisteri-service/henkilo/$1",
-    "kayttooikeus-service.organisaatiohenkilo":"/kayttooikeus-service/henkilo/$1/organisaatiohenkilo",
-    "kayttooikeus-service.prequel":"/kayttooikeus-service/cas/prequel"
+    "oppijanumerorekisteri-service.henkilo":"https://itest-virkailija.oph.ware.fi/oppijanumerorekisteri-service/henkilo",
+    "oppijanumerorekisteri-service.henkilotypes":"https://itest-virkailija.oph.ware.fi/oppijanumerorekisteri-service/henkilo/henkilotypes",
+    "oppijanumerorekisteri-service.urlHaeTiedot":"https://itest-virkailija.oph.ware.fi/oppijanumerorekisteri-service/henkilo/$1",
+    "kayttooikeus-service.organisaatiohenkilo":"https://itest-virkailija.oph.ware.fi/kayttooikeus-service/henkilo/$1/organisaatiohenkilo",
+    "kayttooikeus-service.prequel":"https://itest-virkailija.oph.ware.fi/kayttooikeus-service/cas/prequel"
 })

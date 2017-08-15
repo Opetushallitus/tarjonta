@@ -27,6 +27,7 @@ public enum ToteutustyyppiEnum {
     PERUSOPETUS("koulutustyyppi_16", false),
     AIKUISTEN_PERUSOPETUS("koulutustyyppi_17", false),
     PELASTUSALAN_KOULUTUS("koulutustyyppi_24", false),
+    AMMATILLINEN_PERUSTUTKINTO_ALK_2018("koulutustyyppi_26", true),
     ERIKOISAMMATTITUTKINTO_VALMISTAVA(null, false),
     AMMATTITUTKINTO_VALMISTAVA(null, false),
     AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA(null, false);

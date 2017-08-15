@@ -11,7 +11,9 @@ public enum ModuulityyppiEnum {
             //subtypes of ammatillinen komo
             ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA,
             ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO,
+            ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018,
             ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA),
+
     LUKIOKOULUTUS(KoulutusasteTyyppi.LUKIOKOULUTUS,
             //subtypes of lukio komo
             ToteutustyyppiEnum.LUKIOKOULUTUS,

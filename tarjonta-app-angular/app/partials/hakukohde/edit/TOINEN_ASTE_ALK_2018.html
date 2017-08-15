@@ -1,0 +1,264 @@
+<div id="editHakukohde" ng-controller="HakukohdeEditController">
+
+    <controls-model
+            model="formControls"
+            tt-create="hakukohde.create.header.title"
+            tt-edit="hakukohde.edit.header.title"
+            title="model.hakukohde.tekstis"
+            dto="model.hakukohde">
+
+        <controls-button tt-key="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
+        <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="model.saveLuonnos()" primary="true" disabled="!model.canSaveAsLuonnos()"></controls-button>
+        <controls-button tt-key="koulutus.edit.tallenna.valmis" action="model.saveValmis()" disabled="model.canSaveAsValmis()" primary="true"></controls-button>
+        <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="model.tarkastele()" disabled="model.hakukohdeTabsDisabled"></controls-button>
+
+        <controls-notify type="message" tt-expr="getKoulutustenNimetKey()" tt-params="[ getKoulutustenNimet() ]"></controls-notify>
+        <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="model.showSuccess"></controls-notify>
+        <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="model.showError"></controls-notify>
+        <controls-notify ng-repeat="e in model.validationmsgs track by $index" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
+
+    </controls-model>
+
+    <display-controls model="formControls" display="header" command="controlModelCommandApi"></display-controls>
+
+    <tabset>
+        <tab heading="{{t('kk.hakukohde.perustiedot')}}">
+
+            <form name="editHakukohdeForm" novalidate>
+                <export-to-parent model="editHakukohdeForm" name="editHakukohdeForm" condition="isHakukohdeRootScope"></export-to-parent>
+
+                <table class="tarjontaForm">
+                    <!-- haku -->
+                    <tr class="required">
+                        <th tt="kk.hakukohde.haut">Haut</th>
+                        <td>
+                            <select name="hakuselect" class="wide" ng-disabled="model.isDeEnabled" required
+                                    ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged()"
+                                    ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus
+                                                  | orderBy: 'lokalisoituNimi'">
+                                <option value="" tt="tarjonta.toiminnot.valitse">Valitse</option>
+                            </select>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && editHakukohdeForm.hakuselect.$invalid" tt="hakukohde.edit.haku.missing">Haku on pakollinen tieto</p>
+                        </td>
+                    </tr>
+
+                    <!-- hakukohteen nimi -->
+                    <tr class="required">
+                        <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
+                        <td>
+                            <div ng-show="model.hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
+                                <select name="hakukohteenNimiUri" class="wide" ng-disabled="model.isDeEnabled"
+                                        required ng-model="model.hakukohde.hakukohteenNimiUri"
+                                        ng-options="hakukohteenNimi.uri as hakukohteenNimi.label for
+                                            hakukohteenNimi in model.hakukohteenNimet | orderBy: 'label'">
+                                    <option value="" tt="tarjonta.toiminnot.valitse">Valitse</option>
+                                </select>
+                            </div>
+                            <div ng-show="model.hakukohde.toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
+                                <input name="hakukohteenNimiUri" ng-disabled="model.isPartiallyDeEnabled" type="text"
+                                       ng-model="model.hakukohde.hakukohteenNimiUri" required />
+                            </div>
+                        </td>
+                        <td>
+                            <p class="error" tt="hakukohde.edit.nimi.missing" ng-show="model.showError && editHakukohdeForm.hakukohteenNimiUri.$invalid">Hakukohteen nimi on annettava</p>
+                        </td>
+                    </tr>
+
+                    <tr ng-required="isYhteishaku()">
+                        <th tt="kk.hakukohde.pohjakoulutusvaatimus">Valitse pohjakoulutusvaatimus</th>
+                        <td>
+                            <select ng-model="model.hakukohde.pohjakoulutusvaatimus"
+                                    ng-options="obj.koodiUri as obj.koodiNimi for (key,obj) in model.pohjakoulutusvaatimusOptions|orderBy:'koodiNimi'">
+                                <option value="" tt="tarjonta.toiminnot.valitse">-- valitse --</option>
+                            </select>
+                        </td>
+                        <td></td>
+                    </tr>
+
+                    <tr class="required" data-ng-show="model.showHakuaikas">
+                        <th tt="kk.hakukohde.hakuaikas">Hakuajat</th>
+                        <td>
+                            <select class="wide" name="hakuaikaSelect" ng-disabled="model.isDeEnabled" data-ng-required="model.showHakuaikas" ng-model="model.hakukohde.hakuaikaId"data-ng-options="hakuaika.hakuaikaId as hakuaika.formattedNimi for hakuaika in model.hakuaikas"/>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && editHakukohdeForm.hakuaikaSelect.$invalid" tt="hakukohde.edit.haku.aika.missing">Hakuaika puuttuu</p>
+                        </td>
+                    </tr>
+
+                    <tr data-ng-show="model.configurableHakuaika">
+                        <th tt="ta.hakukohde.hakuaika">Hakuaika</th>
+                        <td>
+                            {{model.hakuaikaMin | date:'dd.MM.yyyy HH:mm '}} - {{ model.hakuaikaMax | date:'dd.MM.yyyy HH:mm '}}
+                        </td>
+                    </tr>
+
+                    <tr data-ng-if="model.configurableHakuaika">
+                        <th tt="ta.hakukohde.hakuaika.valittavat">Valittava hakuaika</th>
+                        <td>
+                            <span class="datetimepicker-label" tt="ta.hakukohde.alkaa">Alkaa</span>
+                            <t-date-time required timestamp="true" type="long" min="model.hakuaikaMin"
+                                max="model.hakukohde.hakuaikaLoppuPvm ? model.hakukohde.hakuaikaLoppuPvm : model.hakuaikaMax" scope-model="model.hakukohde.hakuaikaAlkuPvm"
+                                change="status.dirtify()"></t-date-time>
+
+                            <span class="datetimepicker-label" tt="ta.hakukohde.loppuu">Loppuu</span>
+                            <t-date-time required timestamp="true" type="long" min="model.hakukohde.hakuaikaAlkuPvm ? model.hakukohde.hakuaikaAlkuPvm : model.hakuaikaMin"
+                                max="model.hakuaikaMax" scope-model="model.hakukohde.hakuaikaLoppuPvm"
+                                change="status.dirtify()"></t-date-time>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError &&
+                            ((!model.hakukohde.hakuaikaAlkuPvm && model.hakukohde.hakuaikaLoppuPvm) ||
+                            (model.hakukohde.hakuaikaAlkuPvm && !model.hakukohde.hakuaikaLoppuPvm))" tt="hakukohde.edit.haku.aika.missing">Hakuaika puuttuu</p>
+                        </td>
+                    </tr>
+
+                    <tr class="{{ config.needsValinnoissaKaytettavatAloituspaikat() ? 'required' : ''}}">
+                        <th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat">Hakijoille ilmoitettavat aloituspaikat</th>
+                        <td>
+                            <input ng-if="config.needsValinnoissaKaytettavatAloituspaikat()"
+                                   name="aloituspaikatlkm"
+                                   ng-disabled="model.isDeEnabled"
+                                   class="thin"
+                                   type="number"
+                                   ng-pattern="model.integerval"
+                                   min="1"
+                                   max="999"
+                                   data-ng-model="model.hakukohde.aloituspaikatLkm"
+                                   required />
+                            <input ng-if="!config.needsValinnoissaKaytettavatAloituspaikat()"
+                                   valid-decimal
+                                   name="aloituspaikatlkm"
+                                   ng-disabled="model.isDeEnabled"
+                                   class="thin"
+                                   type="number"
+                                   ng-pattern="model.integerval"
+                                   min="0"
+                                   max="999"
+                                   data-ng-model="model.hakukohde.aloituspaikatLkm" />
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && editHakukohdeForm.aloituspaikatlkm.$invalid" tt="tarjonta.hakukohde.aloituspaikatlkm.validation.failed">Tarkista aloituspaikat</p>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="config.needsValinnoissaKaytettavatAloituspaikat()" class="required">
+                        <th tt="kk.hakukohde.valinnoissakaytettavataloituspaikat">Valinnoissa käytettävät aloituspaikat</th>
+                        <td>
+                            <input name="valintojenaloituspaikatlkm" ng-disabled="model.isDeEnabled"
+                                   class="thin" type="number" ng-pattern="model.integerval" min="1" max="999"
+                                   data-ng-model="model.hakukohde.valintojenAloituspaikatLkm" required />
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && editHakukohdeForm.valintojenaloituspaikatlkm.$invalid" tt="tarjonta.hakukohde.valintojenaloituspaikatlkm.validation.failed">Tarkista valintojen aloituspaikat</p>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS'">
+                        <th tt="hakukohde.review.perustiedot.alinHyvaksyttavaKeskiarvo">Alin hyväksytty keskiarvo</th>
+                        <td>
+                            <input valid-decimal
+                                   show-zero-as-empty ng-trim="false" name="alinHyvaksyttavaKeskiarvo"
+                                   ng-disabled="model.isPartiallyDeEnabled" class="thin" type="text"
+                                   data-ng-model="model.hakukohde.alinHyvaksyttavaKeskiarvo" />
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && editHakukohdeForm.alinHyvaksyttavaKeskiarvo.$invalid" tt="tarjonta.hakukohde.alinHyvaksyttavaKeskiarvo.validation.failed">Tarkista alin hyväksyttävä keskiarvo</p>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS'" class="painotettavatOppiaineet">
+                        <th tt="hakukohde.review.perustiedot.painotettavatOppiaineet">Painotettavat oppiaineet</th>
+                        <td>
+                            <div ng-show="model.hakukohde.painotettavatOppiaineet.length > 0">
+                                <span class="heading" tt="tarjonta.hakukohde.painotettavaOppiaine">Oppiaine</span><span class="heading" tt="tarjonta.hakukohde.painokerroin">Painokerroin</span>
+                            </div>
+
+                            <div ng-repeat="painotettavaOppiaine in model.hakukohde.painotettavatOppiaineet">
+
+                                <select ng-disabled="model.isDeEnabled"
+                                        required ng-model="painotettavaOppiaine.oppiaineUri"
+                                        ng-options="po.oppiaineUri as po.lokalisoituNimi for po in painotettavatOppiaineet | orderBy: 'lokalisoituNimi'">
+                                    <option value=""></option>
+                                </select>
+
+                                <input valid-decimal ng-trim="false" class="input-mini" type="text" ng-model="painotettavaOppiaine.painokerroin" />
+                                <button class="btn top" ng-click="deletePainotettavaOppiaine(painotettavaOppiaine)"><span tt="tarjonta.toiminnot.poista"></span> <span class="icon-remove"></span></button>
+                            </div>
+                            <button class="btn" ng-click="addPainotettavaOppiaine()"><span tt="tarjonta.hakukohde.painotettavaOppiaine.uusi.painotettavaOppiaine"></span> <span class="icon-plus-sign"></span></button>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && model.painotettavatOppiaineetValidationFailed" tt="tarjonta.hakukohde.painotettavatOppiaineet.errors">Tarkista painotettavat oppiaineet.</p>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="needsLiitteidenToimitustiedot(model.hakukohde.toteutusTyyppi)" class="required">
+                        <th tt="tarjonta.hakukohde.liitteet.toimitusosoite">Liitteiden toimitusosoite</th>
+                        <td>
+                            <div><span tt="tarjonta.hakukohde.liitteidenToimitusosoite.ohje">Ilmoita tässä osoite, johon harkinnanvaraisen haun liitteet toimitetaan. Ilmoita tiedot muista mahdollisista liitteistä ja niiden toimitusosoitteista Liitteiden tiedot -välilehdellä.</span></div>
+                            <label><input type="radio" ng-disabled="toimitusosoiteIsEmpty()" ng-model="model.liitteidenMuuOsoiteEnabled" ng-value="false" ng-click="replaceLiitteidenToimitusOsoiteWithDefault()" /><span class="{{model.hakukohde.liitteidenToimitusOsoite ? '' : 'disabled'}}" tt="tarjonta.hakukohde.liitteet.kaytetaanOrganisaationPostiosoitetta">Käytetään oletuksena järjestävän organisaation ensisijaista postiosoitetta</span></label>
+                            <br/>
+
+                            <label><input type="radio" ng-model="model.liitteidenMuuOsoiteEnabled" ng-value="true"/><span tt="tarjonta.hakukohde.liitteet.kaytetaanMuutaOsoitetta">Käytetään muuta osoitetta</span></label>
+                            <br/>
+
+                            <div class="inset">
+                                <osoite-field required model="model.hakukohde.liitteidenToimitusOsoite" ng-disabled="!model.liitteidenMuuOsoiteEnabled"></osoite-field>
+                            </div>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && !isValidHakukohdeToimitusOsoite()" tt="tarjonta.hakukohde.liitteet.errors.toimitusOsoite">Liitteen toimistusosoite on pakollinen mikäli organisaation hakijapalveluiden postiosoitetta ei käytetä tai sitä ei ole määritelty.</p>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="needsLiitteidenToimitustiedot(model.hakukohde.toteutusTyyppi)">
+                        <th></th>
+                        <td>
+                            <label><input type="checkbox" ng-model="model.liitteidenSahkoinenOsoiteEnabled" ng-change="liitteidenSahkoinenOsoiteEnabledChanged()"/> <span tt="tarjonta.hakukohde.liitteet.voidaanToimittaaSahkoisesti">Voidaan toimittaa myös sähköisesti</span></label><br/>
+                            <div class="inset">
+                                <input type="text" placeholder="http://" ng-required="model.hakukohde.liitteidenSahkoinenOsoite" ng-model="model.hakukohde.sahkoinenToimitusOsoite" ng-disabled="!model.liitteidenSahkoinenOsoiteEnabled" ng-change="status.dirtify()"/>
+                            </div>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && !isValidHakukohdeSahkoinenOsoite()" tt="tarjonta.hakukohde.liitteet.errors.sahkoinenOsoite">Tarkista liitteen sähköinen toimitusosoite (osoite voi olla URL- tai sähköpostiosoite).</p>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="model.kaksoistutkintoIsPossible">
+                        <th></th>
+                        <td>
+                            <label>
+                                <input type="checkbox" ng-model="model.hakukohde.kaksoisTutkinto" /> <span tt="tarjonta.hakukohde.mahdollisuusSuorittaaKaksoistutkinto">Mahdollisuus suorittaa ammatillisen perustutkinnon rinnalla lukio ja/tai ylioppilastutkinto</span>
+                            </label>
+                        </td>
+                    </tr>
+
+                    <tr class="hakulomakeUrl" ng-if="showHakulomakeUrl(selectedHaku)" ng-include="'partials/hakukohde/edit/hakulomakkeen_osoite.html'"></tr>
+                </table>
+
+                <h4 tt="kk.hakukohde.lisatietoja.hakemisesta">Lisätietoja hakemisesta</h4>
+                <mk-rich-textarea is-disabled="isHkDeEnabled()" model="model.hakukohde.lisatiedot" max="1500"></mk-rich-textarea>
+
+                <div ng-show="editableValintaperustekuvaus(model.hakukohde.toteutusTyyppi)">
+                    <h4 tt="kk.hakukohde.valintaperusteKuvaukset">Valintaperustekuvaus</h4>
+                    <mk-rich-textarea model="model.hakukohde.valintaperusteKuvaukset" max="1500"></mk-rich-textarea>
+                </div>
+
+            </form>
+        </tab>
+
+        <tab ng-disabled="model.hakukohdeTabsDisabled" disabled="model.hakukohdeTabsDisabled"  heading="{{t('kk.hakukohde.valintakokeet')}}">
+            <div ng-if="model.hakukohde.toteutusTyyppi !== 'LUKIOKOULUTUS'" data-ng-include="'partials/hakukohde/edit/valintakokeetList.html'" data-ng-controller="ValintakokeetController"></div>
+            <div ng-if="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS'" data-ng-include="'partials/hakukohde/edit/valintakokeetLukio.html'" data-ng-controller="ValintakokeetLukioController"></div>
+        </tab>
+
+        <tab ng-disabled="model.hakukohdeTabsDisabled" disabled="model.hakukohdeTabsDisabled" heading="{{t('kk.hakukohde.liitteet')}}">
+            <div data-ng-include="'partials/hakukohde/edit/liitteetList.html'" data-ng-controller="LiitteetListController"></div>
+        </tab>
+
+    </tabset>
+
+    <display-controls model="formControls" display="footer"></display-controls>
+
+</div>
