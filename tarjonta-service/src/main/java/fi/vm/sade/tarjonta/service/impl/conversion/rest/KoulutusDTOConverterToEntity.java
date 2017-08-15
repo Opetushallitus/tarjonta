@@ -311,7 +311,9 @@ public class KoulutusDTOConverterToEntity {
             }
         }
 
-        komoto.setPohjakoulutusvaatimusUri(commonConverter.convertToUri(dto.getPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUS));
+        if(dto.getToteutustyyppi() != ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018) {
+            komoto.setPohjakoulutusvaatimusUri(commonConverter.convertToUri(dto.getPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUS));
+        }
 
         if (dto.getOpetuskielis() != null) {
             komoto.getOpetuskielis().clear();

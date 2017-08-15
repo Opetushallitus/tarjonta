@@ -53,6 +53,17 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             return canSaveAsLuonnosByTila;
         }
     };
+    $scope.isYhteishaku = function(){
+        if ($scope.hakukohde.hakuOid != undefined) {
+            angular.forEach($model.scope.hakus, function (h) {
+                // yhteushaku valittu
+                if (h.oid == hakuOid && h.hakutapaUri.split('#')[0] == 'hakutapa_1') {
+                    return true;
+                }
+            });
+        }
+        return false;
+    };
     $scope.model.canSaveAsValmis = function() {
         return $scope.model.isDeEnabled && $scope.model.isPartiallyDeEnabled;
     };
@@ -181,7 +192,9 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
                             Koodisto.getYlapuolisetKoodit(koulutusohjelmanKoodi.koodiUri, AuthService.getLanguage())
                                 .then(function(hakukohteenYlapuolisetKoodit) {
                                     angular.forEach(hakukohteenYlapuolisetKoodit, function(hakukohteenYlapuolinenKoodi) {
-                                        if (hakukohteenYlapuolinenKoodi.koodiUri === pohjakoulutusvaatimus.uri) {
+                                        if (pohjakoulutusvaatimus !== undefined && hakukohteenYlapuolinenKoodi.koodiUri === pohjakoulutusvaatimus.uri) {
+                                            appendOrReplaceHakukohteenNimi(currentUri, koulutusohjelmanKoodi);
+                                        } else {
                                             appendOrReplaceHakukohteenNimi(currentUri, koulutusohjelmanKoodi);
                                         }
                                     });

@@ -318,6 +318,52 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
             mergeParentAndChildDataToRDTO(dto, parentKomo, komo, komoto, param);
         }
+        else if (dto instanceof KoulutusAmmatillinenPerustutkintoAlk2018V1RDTO) {
+            /**
+             * 2ASTE : AMMATILLINEN_PERUSTUTKINTO ALK 2018
+             */
+            KoulutusAmmatillinenPerustutkintoAlk2018V1RDTO amisAlk2018Dto = (KoulutusAmmatillinenPerustutkintoAlk2018V1RDTO) dto;
+
+            NimiV1RDTO koulutusohjelmaOrOsaamisala = getKoulutusohjelmaOrOsaamisala(komo, komoto, param);
+            if (koulutusohjelmaOrOsaamisala != null) {
+                amisAlk2018Dto.setKoulutusohjelma(koulutusohjelmaOrOsaamisala);
+            }
+            amisAlk2018Dto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(
+                getTutkintonimikes(komoto, komo),
+                FieldNames.TUTKINTONIMIKE,
+                param
+            ));
+            // Aseta myös yksittäinen "tutkintonimike"-kenttä, jotta vanha rajapinta ei hajoa
+            amisAlk2018Dto.setTutkintonimike(commonConverter.convertToKoodiDTO(
+                komo.getTutkintonimikeUri(),
+                komoto.getTutkintonimikes().isEmpty() ? null : komoto.getTutkintonimikes().iterator().next().getKoodiUri(),
+                FieldNames.TUTKINTONIMIKE,
+                NO,
+                param
+            ));
+            // tässä vapaaehtoinen
+            if(komoto.getPohjakoulutusvaatimusUri() != null) {
+                amisAlk2018Dto.setPohjakoulutusvaatimus(commonConverter.convertToKoodiDTO(komoto.getPohjakoulutusvaatimusUri(), NO_OVERRIDE_URI, FieldNames.POHJALKOULUTUSVAATIMUS, NO, param));
+            }
+            amisAlk2018Dto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
+            amisAlk2018Dto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
+
+            for (Map.Entry<KomoTeksti, MonikielinenTeksti> teksti : komo.getTekstit().entrySet()) {
+                if (KomoTeksti.TAVOITTEET.equals(teksti.getKey())) {
+                    amisAlk2018Dto.setKoulutuksenTavoitteet(CommonRestConverters.toStringMap(teksti.getValue()));
+                    break;
+                }
+            }
+
+            // Tutke 2 muutoksen myötä koulutuksella ei aina ole koulutusohjelmaa, joten ei myöskään aina
+            // ole parent komoa
+            Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
+            if (parentKomo == null) {
+                parentKomo = komo;
+            }
+
+            mergeParentAndChildDataToRDTO(dto, parentKomo, komo, komoto, param);
+        }
 
         else if (dto instanceof ValmistavaKoulutusV1RDTO) {
             /**
@@ -487,6 +533,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
          */
         switch (komoto.getToteutustyyppi()) {
             case AMMATILLINEN_PERUSTUTKINTO:
+            case AMMATILLINEN_PERUSTUTKINTO_ALK_2018:
             case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
             case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
                 if (komoto.isSyksy2015OrLater()

@@ -540,6 +540,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                         .validateAikuLukioHakukohde(hakukohdeV1RDTO));
                 break;
             case AMMATILLINEN_PERUSTUTKINTO:
+            case AMMATILLINEN_PERUSTUTKINTO_ALK_2018:
             case LUKIOKOULUTUS:
             case PERUSOPETUKSEN_LISAOPETUS:
             case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:

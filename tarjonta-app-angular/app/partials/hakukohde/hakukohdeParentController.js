@@ -37,6 +37,7 @@ app.controller('HakukohdeParentController', [
         var aikuLukioHakukohdePartialUri = 'partials/hakukohde/edit/aiku/lukio/editAiku.html';
         var aikuNayttoHakukohdePartialUri = 'partials/hakukohde/edit/aiku/naytto/editAmmatillinenNaytto.html';
         var toinenAsteHakukohdePartialUri = 'partials/hakukohde/edit/TOINEN_ASTE.html';
+        var toinenAsteHakukohdeAlk2018PartialUri = 'partials/hakukohde/edit/TOINEN_ASTE_ALK_2018.html';
         var routing = {
             'KORKEAKOULUTUS': korkeakoulutusHakukohdePartialUri,
             KORKEAKOULUOPINTO: korkeakouluOpintoHakukohdePartialUri,
@@ -47,6 +48,7 @@ app.controller('HakukohdeParentController', [
             'ERIKOISAMMATTITUTKINTO': aikuNayttoHakukohdePartialUri,
             'AMMATTITUTKINTO': aikuNayttoHakukohdePartialUri,
             'AMMATILLINEN_PERUSTUTKINTO': toinenAsteHakukohdePartialUri,
+            'AMMATILLINEN_PERUSTUTKINTO_ALK_2018': toinenAsteHakukohdeAlk2018PartialUri,
             'LUKIOKOULUTUS': toinenAsteHakukohdePartialUri,
             'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS': toinenAsteHakukohdePartialUri,
             'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS': toinenAsteHakukohdePartialUri,
@@ -76,7 +78,8 @@ app.controller('HakukohdeParentController', [
                 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
                 'VAPAAN_SIVISTYSTYON_KOULUTUS',
                 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA',
-                'AMMATILLINEN_PERUSTUTKINTO'
+                'AMMATILLINEN_PERUSTUTKINTO',
+                'AMMATILLINEN_PERUSTUTKINTO_ALK_2018'
             ], toteutusTyyppi);
         };
         $scope.needsLiitteidenToimitustiedot = function(toteutusTyyppi) {
@@ -234,6 +237,7 @@ app.controller('HakukohdeParentController', [
         $scope.luonnosVal = 'LUONNOS';
         $scope.valmisVal = 'VALMIS';
         $scope.peruttuVal = 'PERUTTU';
+        $scope.pohjakoulutusvaatimusOptions = [];
         $scope.showSuccess = function() {
             $scope.model.showSuccess = true;
             $scope.model.showError = false;
@@ -323,6 +327,20 @@ app.controller('HakukohdeParentController', [
                 }
             }
         };
+
+        $scope.loadPohjakoulutusvaatimuksetToiselleAsteelle = function(){
+            // Hae pohjakoulutusvaatimus koodistosta
+            Koodisto.getAlapuolisetKoodiUrit(['koulutustyyppi_26'], 'pohjakoulutusvaatimustoinenaste').then(function(res) {
+                $scope.pohjakoulutusvaatimusOptions = res.map;
+                var keys = _.keys(res.map);
+                if (keys.length === 1) {
+                    $scope.model.pohjakoulutusvaatimus = res.map[keys[0]].koodiUri;
+                } else {
+                    $scope.model.pohjakoulutusvaatimus = null;
+                }
+            });
+        }
+        $scope.loadPohjakoulutusvaatimuksetToiselleAsteelle();
 
         function resetObj(obj) {
             delete obj.oid;

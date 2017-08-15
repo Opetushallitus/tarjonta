@@ -751,6 +751,7 @@ angular.module('app.komo.ctrl', [
             case 'koulutustyyppi_1':
             case 'koulutustyyppi_13':
             case 'koulutustyyppi_4':
+            case 'koulutustyyppi_26':
                 asteEnum = 'AMMATILLINEN_PERUSKOULUTUS';
                 break;
             case 'koulutustyyppi_2':

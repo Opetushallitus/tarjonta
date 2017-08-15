@@ -5,15 +5,7 @@ import org.junit.Test;
 import java.util.EnumSet;
 import java.util.Set;
 
-import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA;
-import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO;
-import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS;
-import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.LUKIOKOULUTUS;
-import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS;
-import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS;
-import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.PERUSOPETUKSEN_LISAOPETUS;
-import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS;
-import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.VAPAAN_SIVISTYSTYON_KOULUTUS;
+import static fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -23,6 +15,7 @@ public class ToteutustyyppiEnumTest {
     public void containsCorrectEntriesForSecondarySchoolTypes() throws Exception {
         Set<ToteutustyyppiEnum> secondarySchoolTypes = EnumSet.of(
                 AMMATILLINEN_PERUSTUTKINTO,
+                AMMATILLINEN_PERUSTUTKINTO_ALK_2018,
                 LUKIOKOULUTUS,
                 PERUSOPETUKSEN_LISAOPETUS,
                 AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS,
