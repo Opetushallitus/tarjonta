@@ -267,6 +267,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         restParam);
             case PELASTUSALAN_KOULUTUS:
                 return converterToRDTO.convert(PelastusalanKoulutusV1RDTO.class, komoto, restParam);
+            case AMMATILLINEN_PERUSTUTKINTO_ALK_2018:
+                return converterToRDTO.convert(KoulutusAmmatillinenPerustutkintoAlk2018V1RDTO.class, komoto, restParam);
         }
         return null;
     }

@@ -226,8 +226,12 @@ public class KoulutusValidator {
             //a major validation error, validation must stop now!
             return result;
         }
+        boolean validatePohjakoulutus = true;
+        if(dto.getToteutustyyppi() == ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018){
+            validatePohjakoulutus = false;
+        }
 
-        validateKoodistoRelationsGeneric(dto, result);
+        validateKoodistoRelationsGeneric(dto, result, validatePohjakoulutus);
         validateAlkamisPvms(result, dto);
 
         if (TarjontaTila.PUUTTEELLINEN.equals(dto.getTila())) {
@@ -365,7 +369,7 @@ public class KoulutusValidator {
         }
     }
 
-    private static void validateKoodistoRelationsGeneric(KoulutusGenericV1RDTO dto, ResultV1RDTO result) {
+    private static void validateKoodistoRelationsGeneric(KoulutusGenericV1RDTO dto, ResultV1RDTO result, boolean validatePohjakoulutus) {
         if (!(dto instanceof KoulutusAmmatillinenPerustutkintoV1RDTO
                 || dto instanceof KoulutusAmmatilliseenPeruskoulutukseenValmentavaV1RDTO
                 || dto instanceof KoulutusAmmatilliseenPeruskoulutukseenValmentavaERV1RDTO
@@ -386,8 +390,10 @@ public class KoulutusValidator {
                 validateKoodi(result, dto.getOpintojenLaajuusyksikko(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_INVALID);
             }
             validateKoodi(result, dto.getKoulutuslaji(), KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_INVALID);
-            validateKoodi(result, dto.getPohjakoulutusvaatimus(), KoulutusValidationMessages.KOULUTUS_POHJAKOULUTUSVAATIMUS_MISSING, KoulutusValidationMessages.KOULUTUS_POHJAKOULUTUSVAATIMUS_INVALID);
-            validateKoodiUris(result, dto.getOpetusmuodos(), KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_INVALID, DEFAULT_MIN);
+            if (validatePohjakoulutus) {
+                validateKoodi(result, dto.getPohjakoulutusvaatimus(), KoulutusValidationMessages.KOULUTUS_POHJAKOULUTUSVAATIMUS_MISSING, KoulutusValidationMessages.KOULUTUS_POHJAKOULUTUSVAATIMUS_INVALID);
+            }
+                validateKoodiUris(result, dto.getOpetusmuodos(), KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_INVALID, DEFAULT_MIN);
             validateKoodiUris(result, dto.getOpetusAikas(), KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_INVALID, DEFAULT_MIN);
             validateKoodiUris(result, dto.getOpetusPaikkas(), KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_INVALID, DEFAULT_MIN);
             validateKoodiUris(result, dto.getOpetuskielis(), KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_INVALID, DEFAULT_MIN);

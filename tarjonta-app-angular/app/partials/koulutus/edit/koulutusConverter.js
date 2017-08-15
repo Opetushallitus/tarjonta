@@ -542,6 +542,47 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             onlyOneOpetuskieli: true
         }
     });
+    var AMMATILLINEN_PERUSTUTKINTO_ALK_2018_STRUCTURE = angular.extend({}, GENERIC_STRUCTURE, {
+        KUVAUS_ORDER: [
+            {
+                type: 'KOULUTUSOHJELMAN_VALINTA',
+                isKomo: false,
+                length: 2000
+            },
+            {
+                type: 'SISALTO',
+                isKomo: false,
+                length: 2000
+            },
+            {
+                type: 'SIJOITTUMINEN_TYOELAMAAN',
+                isKomo: false,
+                length: 2000
+            },
+            {
+                type: 'KANSAINVALISTYMINEN',
+                isKomo: false,
+                length: 2000
+            },
+            {
+                type: 'YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA',
+                isKomo: false,
+                length: 2000
+            }
+        ],
+        templates: {
+            edit: 'AMMATILLINEN_PERUSTUTKINTO_ALK_2018',
+            review: 'GENERIC'
+        },
+        RELATIONS: {
+            tutkintonimikes: {}
+        },
+        reviewFields: DEFAULT_REVIEW_FIELDS,
+        params: {
+            reviewOhjelmaLabel: 'koulutus.review.perustiedot.osaamisala',
+            onlyOneOpetuskieli: true
+        }
+    });
     var NAYTTOTUTKINTO_STRUCTURE = angular.extend({}, GENERIC_STRUCTURE, {
         koodistoDefaults: {
             tutkintonimike: 'tutkintonimikkeet_00000'
@@ -1123,6 +1164,23 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         AMMATILLINEN_PERUSTUTKINTO: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE, {
             koulutustyyppiKoodiUri: 'koulutustyyppi_1',
             RELATION: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE.RELATION, {
+                opintojenLaajuusyksikko: {
+                    module: 'TUTKINTO'
+                },
+                opintojenLaajuusarvo: {
+                    module: 'TUTKINTO'
+                },
+                pohjakoulutusvaatimus: {
+                    module: 'TUTKINTO'
+                }
+            })
+        }),
+        /*******************************************/
+        /* AMMATILLINEN_PERUSTUTKINTO_ALK_2018 INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        AMMATILLINEN_PERUSTUTKINTO_ALK_2018: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_ALK_2018_STRUCTURE, {
+            koulutustyyppiKoodiUri: 'koulutustyyppi_26',
+            RELATION: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_ALK_2018_STRUCTURE.RELATION, {
                 opintojenLaajuusyksikko: {
                     module: 'TUTKINTO'
                 },

@@ -50,9 +50,9 @@ app.controller('BaseEditController', [
         $log = $log.getInstance('BaseEditController');
         var ENUMS = KoulutusConverterFactory.ENUMS;
         /*
-             * ALL ABSTRACT DATA MODELS FOR KOULUTUS EDIT PAGES
-             * LUKIO, KORKEAKOULU etc.
-             */
+         * ALL ABSTRACT DATA MODELS FOR KOULUTUS EDIT PAGES
+         * LUKIO, KORKEAKOULU etc.
+         */
         $scope.koodistoLocale = LocalisationService.getLocale();
         //"FI";
         $scope.userLanguages = Config.app.userLanguages;
