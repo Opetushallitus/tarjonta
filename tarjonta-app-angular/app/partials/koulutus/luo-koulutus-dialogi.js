@@ -273,6 +273,7 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
                 'EB_RP_ISH',
                 'LUKIOKOULUTUS',
                 'AMMATILLINEN_PERUSTUTKINTO',
+                'AMMATILLINEN_PERUSTUTKINTO_ALK_2018',
                 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
@@ -341,7 +342,7 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
        */
     $scope.jatkaDisabled = function() {
         var jatkaEnabled = $scope.organisaatioValittu() && $scope.koulutustyyppiValidi() // pohjakoulutus pitää olla valittuna osalle koulutuksista
-            && !($scope.showPohjakoulutusvaatimus && !$scope.model.pohjakoulutusvaatimus);
+            && !($scope.showPohjakoulutusvaatimus && !$scope.model.pohjakoulutusvaatimus && $scope.model.koulutustyyppi.koodiUri != 'koulutustyyppi_26');
         if ($scope.model.koulutustyyppi && $scope.model.koulutustyyppi.koodiUri === 'koulutustyyppi_3') {
             jatkaEnabled &= ($scope.model.koulutusmoduuliTyyppi !== undefined);
         }
