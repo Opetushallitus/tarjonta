@@ -52,7 +52,7 @@
                                 <select name="hakukohteenNimiUri" class="wide" ng-disabled="model.isDeEnabled"
                                         required ng-model="model.hakukohde.hakukohteenNimiUri"
                                         ng-options="hakukohteenNimi.uri as hakukohteenNimi.label for
-                                            hakukohteenNimi in model.hakukohteenNimet | orderBy: 'label'">
+                                            hakukohteenNimi in model.hakukohteenNimetAlk2018 | orderBy: 'label'">
                                     <option value="" tt="tarjonta.toiminnot.valitse">Valitse</option>
                                 </select>
                             </div>
@@ -66,7 +66,7 @@
                         </td>
                     </tr>
 
-                    <tr ng-required="isYhteishaku()">
+                    <tr>
                         <th tt="kk.hakukohde.pohjakoulutusvaatimus">Valitse pohjakoulutusvaatimus</th>
                         <td>
                             <select ng-model="model.hakukohde.pohjakoulutusvaatimus"

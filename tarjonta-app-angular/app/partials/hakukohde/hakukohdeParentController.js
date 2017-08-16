@@ -237,7 +237,7 @@ app.controller('HakukohdeParentController', [
         $scope.luonnosVal = 'LUONNOS';
         $scope.valmisVal = 'VALMIS';
         $scope.peruttuVal = 'PERUTTU';
-        $scope.pohjakoulutusvaatimusOptions = [];
+        $scope.model.pohjakoulutusvaatimusOptions = [];
         $scope.showSuccess = function() {
             $scope.model.showSuccess = true;
             $scope.model.showError = false;
@@ -331,13 +331,7 @@ app.controller('HakukohdeParentController', [
         $scope.loadPohjakoulutusvaatimuksetToiselleAsteelle = function(){
             // Hae pohjakoulutusvaatimus koodistosta
             Koodisto.getAlapuolisetKoodiUrit(['koulutustyyppi_26'], 'pohjakoulutusvaatimustoinenaste').then(function(res) {
-                $scope.pohjakoulutusvaatimusOptions = res.map;
-                var keys = _.keys(res.map);
-                if (keys.length === 1) {
-                    $scope.model.pohjakoulutusvaatimus = res.map[keys[0]].koodiUri;
-                } else {
-                    $scope.model.pohjakoulutusvaatimus = null;
-                }
+                $scope.model.pohjakoulutusvaatimusOptions = res.map;
             });
         }
         $scope.loadPohjakoulutusvaatimuksetToiselleAsteelle();
@@ -688,6 +682,9 @@ app.controller('HakukohdeParentController', [
                 if (!$scope.model.hakukohde.oid && !$scope.model.yoHakukelpoisuusDirty) {
                     $scope.model.hakukohde.ylioppilastutkintoAntaaHakukelpoisuuden =
                         haku.ylioppilastutkintoAntaaHakukelpoisuuden;
+                }
+                if($scope.model.hakukohde.toteutusTyyppi == 'AMMATILLINEN_PERUSTUTKINTO_ALK_2018'){
+                    $scope.model.populateHakukohteenNimetByHaku();
                 }
             }
         };
