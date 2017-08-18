@@ -1092,7 +1092,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         try {
             Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
 
-            List<HakukohdeValidationMessages> validationMessageses = hakukohdeValidator.validateLiite(liiteV1RDTO);
+            List<HakukohdeValidationMessages> validationMessageses = hakukohdeValidator.validateLiite(liiteV1RDTO, !hakukohde.getHaku().isJatkuva());
             if (validationMessageses.size() > 0) {
                 return populateValidationErrors(liiteV1RDTO, validationMessageses);
             }
@@ -1122,7 +1122,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         try {
             Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
 
-            List<HakukohdeValidationMessages> validationMessageses = hakukohdeValidator.validateLiite(liiteV1RDTO);
+            List<HakukohdeValidationMessages> validationMessageses = hakukohdeValidator.validateLiite(liiteV1RDTO, !hakukohde.getHaku().isJatkuva());
             if (validationMessageses.size() > 0) {
                 return populateValidationErrors(liiteV1RDTO, validationMessageses);
             }
