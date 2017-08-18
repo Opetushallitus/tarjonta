@@ -40,7 +40,7 @@
                 </td>
             </tr>
 
-            <tr class="required">
+            <tr ng-required="!isJatkuvaHaku()">
                 <th tt="tarjonta.hakukohde.liite.modal.toimitettavaMennessa"></th>
                 <td>
                     <t-date-time required min="liiteWithKieliVersiot.isNew ? model.today : ''"
