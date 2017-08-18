@@ -54,7 +54,7 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
     private String kieli;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="erapaiva", nullable=false)
+    @Column(name="erapaiva")
     private Date erapaiva;
 
     @Column(name="sahkoinenToimitusosoite")

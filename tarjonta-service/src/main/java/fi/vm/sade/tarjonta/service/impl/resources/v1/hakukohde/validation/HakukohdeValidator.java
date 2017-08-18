@@ -162,7 +162,7 @@ public class HakukohdeValidator {
 
         if (hakukohdeRDTO.getHakukohteenLiitteet() != null && hakukohdeRDTO.getHakukohteenLiitteet().size() > 0) {
             for (HakukohdeLiiteV1RDTO liite : hakukohdeRDTO.getHakukohteenLiitteet()) {
-                validationMessages.addAll(validateLiite(liite));
+                validationMessages.addAll(validateLiite(liite, true));
             }
         }
 
@@ -290,7 +290,7 @@ public class HakukohdeValidator {
         return Collections.EMPTY_LIST;
     }
 
-    public List<HakukohdeValidationMessages> validateLiite(HakukohdeLiiteV1RDTO liite) {
+    public List<HakukohdeValidationMessages> validateLiite(HakukohdeLiiteV1RDTO liite, boolean validateToimitettavaMennessa) {
 
         Set<HakukohdeValidationMessages> liiteValidationMsgs = new HashSet<HakukohdeValidationMessages>();
 
@@ -306,7 +306,7 @@ public class HakukohdeValidator {
             liiteValidationMsgs.add(HakukohdeValidationMessages.HAKUKOHDE_LIITE_OSOITE_MISSING);
         }
 
-        if (liite.getToimitettavaMennessa() == null) {
+        if (liite.getToimitettavaMennessa() == null && validateToimitettavaMennessa) {
 
             liiteValidationMsgs.add(HakukohdeValidationMessages.HAKUKOHDE_LIITE_TOIMITETTAVA_MENNESSA_MISSING);
 
