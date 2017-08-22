@@ -313,8 +313,6 @@ public class KoulutusDTOConverterToEntity {
 
         if(dto.getToteutustyyppi() != ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018) {
             komoto.setPohjakoulutusvaatimusUri(commonConverter.convertToUri(dto.getPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUS));
-        } else if(dto.getPohjakoulutusvaatimus().getUri() != null){
-            komoto.setPohjakoulutusvaatimusUri(commonConverter.convertToUri(dto.getPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUS));
         }
 
         if (dto.getOpetuskielis() != null) {
@@ -378,7 +376,7 @@ public class KoulutusDTOConverterToEntity {
                             komoto.getLinkkis()));
         }
 
-        if (dto.getKoulutuslaji() != null) {
+        if (dto.getKoulutuslaji() != null && !dto.getToteutustyyppi().equals(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018)) {
             komoto.getKoulutuslajis().clear();
             komoto.setKoulutuslajis(commonConverter.convertToUris(dto.getKoulutuslaji(), komoto.getKoulutuslajis(), FieldNames.KOULUTUSLAJI));
         }

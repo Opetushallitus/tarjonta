@@ -373,7 +373,8 @@ public class KoulutusValidator {
         if (!(dto instanceof KoulutusAmmatillinenPerustutkintoV1RDTO
                 || dto instanceof KoulutusAmmatilliseenPeruskoulutukseenValmentavaV1RDTO
                 || dto instanceof KoulutusAmmatilliseenPeruskoulutukseenValmentavaERV1RDTO
-                || dto instanceof KoulutusValmentavaJaKuntouttavaV1RDTO)) {
+                || dto instanceof KoulutusValmentavaJaKuntouttavaV1RDTO
+                || dto instanceof KoulutusAmmatillinenPerustutkintoAlk2018V1RDTO)) {
             validateKoodi(
                 result,
                 dto.getKoulutusohjelma(),
@@ -389,7 +390,9 @@ public class KoulutusValidator {
             if (mustValidateLaajuus(dto)) {
                 validateKoodi(result, dto.getOpintojenLaajuusyksikko(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_INVALID);
             }
-            validateKoodi(result, dto.getKoulutuslaji(), KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_INVALID);
+            if (mustValidateKoulutuslaji(dto)) {
+                validateKoodi(result, dto.getKoulutuslaji(), KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_INVALID);
+            }
             if (validatePohjakoulutus) {
                 validateKoodi(result, dto.getPohjakoulutusvaatimus(), KoulutusValidationMessages.KOULUTUS_POHJAKOULUTUSVAATIMUS_MISSING, KoulutusValidationMessages.KOULUTUS_POHJAKOULUTUSVAATIMUS_INVALID);
             }
@@ -427,6 +430,14 @@ public class KoulutusValidator {
         );
         return !toteutustyypitWithoutLaajuusValidation.contains(dto.getToteutustyyppi());
     }
+
+    private static boolean mustValidateKoulutuslaji(KoulutusV1RDTO dto) {
+        Set<ToteutustyyppiEnum> toteutustyypitWithoutLaajuusValidation = Sets.newHashSet(
+                ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018
+        );
+        return !toteutustyypitWithoutLaajuusValidation.contains(dto.getToteutustyyppi());
+    }
+
 
     /**
      * True when valid string.
