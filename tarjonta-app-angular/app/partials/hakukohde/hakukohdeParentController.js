@@ -351,8 +351,8 @@ app.controller('HakukohdeParentController', [
                     $scope.model.hakukohde.hakuaikaId = undefined;
                     $scope.model.hakukohde.hakuaikaLoppuPvm = undefined;
                 }
-            }
             $scope.model.isCopy = true;
+            }
         };
         $scope.createFormattedDateString = function(date) {
             return moment(date).format('DD.MM.YYYY HH:mm');
