@@ -203,13 +203,21 @@ app.controller('HakukohdeParentController', [
         $scope.model.liitteidenSahkoinenOsoiteEnabled = $scope.model.hakukohde.sahkoinenToimitusOsoite !== undefined
             && $scope.model.hakukohde.sahkoinenToimitusOsoite.length > 0;
         $scope.model.isDeEnabled = false;
+
         $scope.model.isHakuDeEnabled = function() {
-            if($scope.hakukohdex && $scope.hakukohdex.result && $scope.hakukohdex.result.hakuOid) {
-                return true;
-            } else {
-                return $scope.model.isDeEnabled;
+            if(AuthService.isUserOph()) {
+                $log.info('HAUN MUOKKAAMINEN SALLITTU : user OPH');
+                return false;
             }
+            if($scope.model.isCopy) {
+                $log.info('HAUN MUOKKAAMINEN SALLITTU : haun asettaminen hakukohteen kopiolle');
+                return false;
+            }
+            //if($scope.hakukohdex && $scope.hakukohdex.result && $scope.hakukohdex.result.hakuOid)
+            //    return true;
+            return $scope.model.isDeEnabled;
         }
+
         $scope.model.isPartiallyDeEnabled = false;
         var parentOrgOids = new buckets.Set();
         var orgSet = new buckets.Set();
