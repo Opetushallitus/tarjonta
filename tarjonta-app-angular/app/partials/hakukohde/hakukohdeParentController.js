@@ -213,8 +213,7 @@ app.controller('HakukohdeParentController', [
                 $log.info('HAUN MUOKKAAMINEN SALLITTU : haun asettaminen hakukohteen kopiolle');
                 return false;
             }
-            //if($scope.hakukohdex && $scope.hakukohdex.result && $scope.hakukohdex.result.hakuOid)
-            //    return true;
+            $log.info('Ei-erikoistapaus, käytetään normaalia de-enabledia : ',  $scope.model.isDeEnabled);
             return $scope.model.isDeEnabled;
         }
 
