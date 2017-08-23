@@ -213,8 +213,8 @@ app.controller('HakukohdeParentController', [
                 $log.info('HAUN MUOKKAAMINEN SALLITTU : haun asettaminen hakukohteen kopiolle');
                 return false;
             }
-            $log.info('Ei-erikoistapaus, käytetään normaalia de-enabledia : ',  $scope.model.isDeEnabled);
-            return $scope.model.isDeEnabled;
+            $log.info('Ei-erikoistapaus, hakukohteeseen liittyvän haun muokkaaminen ei sallittu.');
+            return true;
         }
 
         $scope.model.isPartiallyDeEnabled = false;
