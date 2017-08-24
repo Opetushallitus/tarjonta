@@ -213,8 +213,13 @@ app.controller('HakukohdeParentController', [
                 $log.info('HAUN MUOKKAAMINEN SALLITTU : haun asettaminen hakukohteen kopiolle');
                 return false;
             }
-            $log.info('Ei-erikoistapaus, hakukohteeseen liittyvän haun muokkaaminen ei sallittu.');
-            return true;
+            if($scope.hakukohdex && $scope.hakukohdex.result && $scope.hakukohdex.result.hakuOid) {
+                $log.info('HAUN MUOKKAAMINEN ESTETTY : hakukohteelle on jo asetettu haku aiemmin');
+                return true;
+            } else {
+                $log.info('HAUN MUOKKAAMINEN SALLITTU : hakukohteelle ei ole vielä asetettu hakua')
+                return false;
+            }
         }
 
         $scope.model.isPartiallyDeEnabled = false;
