@@ -45,7 +45,7 @@
                     </tr>
 
                     <tr>
-                        <th tt="kk.hakukohde.pohjakoulutusvaatimus">Valitse pohjakoulutusvaatimus</th>
+                        <th tt="kk.hakukohde.pohjakoulutusvaatimus" ng-required="model.hakutapaYhteishaku">Valitse pohjakoulutusvaatimus</th>
                         <td>
                             <select ng-model="model.hakukohde.pohjakoulutusvaatimus"
                                     ng-options="obj.koodiUri as obj.koodiNimi for (key,obj) in model.pohjakoulutusvaatimusOptions|orderBy:'koodiNimi'" data-ng-change="model.hakuChanged()">
@@ -114,10 +114,10 @@
                         </td>
                     </tr>
 
-                    <tr class="{{ config.needsValinnoissaKaytettavatAloituspaikat() ? 'required' : ''}}">
+                    <tr class="{{ "model.hakutapaYhteishaku ? 'required' : ''}}">
                         <th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat">Hakijoille ilmoitettavat aloituspaikat</th>
                         <td>
-                            <input ng-if="config.needsValinnoissaKaytettavatAloituspaikat()"
+                            <input ng-if="model.hakutapaYhteishaku"
                                    name="aloituspaikatlkm"
                                    ng-disabled="model.isDeEnabled"
                                    class="thin"
@@ -127,7 +127,7 @@
                                    max="999"
                                    data-ng-model="model.hakukohde.aloituspaikatLkm"
                                    required />
-                            <input ng-if="!config.needsValinnoissaKaytettavatAloituspaikat()"
+                            <input ng-if="!model.hakutapaYhteishaku"
                                    valid-decimal
                                    name="aloituspaikatlkm"
                                    ng-disabled="model.isDeEnabled"
@@ -143,7 +143,7 @@
                         </td>
                     </tr>
 
-                    <tr ng-if="config.needsValinnoissaKaytettavatAloituspaikat()" class="required">
+                    <tr ng-if="model.hakutapaYhteishaku" class="required">
                         <th tt="kk.hakukohde.valinnoissakaytettavataloituspaikat">Valinnoissa käytettävät aloituspaikat</th>
                         <td>
                             <input name="valintojenaloituspaikatlkm" ng-disabled="model.isDeEnabled"
@@ -155,45 +155,7 @@
                         </td>
                     </tr>
 
-                    <tr ng-if="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS'">
-                        <th tt="hakukohde.review.perustiedot.alinHyvaksyttavaKeskiarvo">Alin hyväksytty keskiarvo</th>
-                        <td>
-                            <input valid-decimal
-                                   show-zero-as-empty ng-trim="false" name="alinHyvaksyttavaKeskiarvo"
-                                   ng-disabled="model.isPartiallyDeEnabled" class="thin" type="text"
-                                   data-ng-model="model.hakukohde.alinHyvaksyttavaKeskiarvo" />
-                        </td>
-                        <td>
-                            <p class="error" ng-show="model.showError && editHakukohdeForm.alinHyvaksyttavaKeskiarvo.$invalid" tt="tarjonta.hakukohde.alinHyvaksyttavaKeskiarvo.validation.failed">Tarkista alin hyväksyttävä keskiarvo</p>
-                        </td>
-                    </tr>
-
-                    <tr ng-if="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS'" class="painotettavatOppiaineet">
-                        <th tt="hakukohde.review.perustiedot.painotettavatOppiaineet">Painotettavat oppiaineet</th>
-                        <td>
-                            <div ng-show="model.hakukohde.painotettavatOppiaineet.length > 0">
-                                <span class="heading" tt="tarjonta.hakukohde.painotettavaOppiaine">Oppiaine</span><span class="heading" tt="tarjonta.hakukohde.painokerroin">Painokerroin</span>
-                            </div>
-
-                            <div ng-repeat="painotettavaOppiaine in model.hakukohde.painotettavatOppiaineet">
-
-                                <select ng-disabled="model.isDeEnabled"
-                                        required ng-model="painotettavaOppiaine.oppiaineUri"
-                                        ng-options="po.oppiaineUri as po.lokalisoituNimi for po in painotettavatOppiaineet | orderBy: 'lokalisoituNimi'">
-                                    <option value=""></option>
-                                </select>
-
-                                <input valid-decimal ng-trim="false" class="input-mini" type="text" ng-model="painotettavaOppiaine.painokerroin" />
-                                <button class="btn top" ng-click="deletePainotettavaOppiaine(painotettavaOppiaine)"><span tt="tarjonta.toiminnot.poista"></span> <span class="icon-remove"></span></button>
-                            </div>
-                            <button class="btn" ng-click="addPainotettavaOppiaine()"><span tt="tarjonta.hakukohde.painotettavaOppiaine.uusi.painotettavaOppiaine"></span> <span class="icon-plus-sign"></span></button>
-                        </td>
-                        <td>
-                            <p class="error" ng-show="model.showError && model.painotettavatOppiaineetValidationFailed" tt="tarjonta.hakukohde.painotettavatOppiaineet.errors">Tarkista painotettavat oppiaineet.</p>
-                        </td>
-                    </tr>
-
-                    <tr ng-if="needsLiitteidenToimitustiedot(model.hakukohde.toteutusTyyppi)" class="required">
+                    <tr ng-if="model.hakutapaYhteishaku">
                         <th tt="tarjonta.hakukohde.liitteet.toimitusosoite">Liitteiden toimitusosoite</th>
                         <td>
                             <div><span tt="tarjonta.hakukohde.liitteidenToimitusosoite.ohje">Ilmoita tässä osoite, johon harkinnanvaraisen haun liitteet toimitetaan. Ilmoita tiedot muista mahdollisista liitteistä ja niiden toimitusosoitteista Liitteiden tiedot -välilehdellä.</span></div>
@@ -207,12 +169,9 @@
                                 <osoite-field required model="model.hakukohde.liitteidenToimitusOsoite" ng-disabled="!model.liitteidenMuuOsoiteEnabled"></osoite-field>
                             </div>
                         </td>
-                        <td>
-                            <p class="error" ng-show="model.showError && !isValidHakukohdeToimitusOsoite()" tt="tarjonta.hakukohde.liitteet.errors.toimitusOsoite">Liitteen toimistusosoite on pakollinen mikäli organisaation hakijapalveluiden postiosoitetta ei käytetä tai sitä ei ole määritelty.</p>
-                        </td>
                     </tr>
 
-                    <tr ng-if="needsLiitteidenToimitustiedot(model.hakukohde.toteutusTyyppi)">
+                    <tr ng-if="model.hakutapaYhteishaku">
                         <th></th>
                         <td>
                             <label><input type="checkbox" ng-model="model.liitteidenSahkoinenOsoiteEnabled" ng-change="liitteidenSahkoinenOsoiteEnabledChanged()"/> <span tt="tarjonta.hakukohde.liitteet.voidaanToimittaaSahkoisesti">Voidaan toimittaa myös sähköisesti</span></label><br/>
@@ -254,7 +213,7 @@
         </tab>
 
         <tab ng-disabled="model.hakukohdeTabsDisabled" disabled="model.hakukohdeTabsDisabled" heading="{{t('kk.hakukohde.liitteet')}}">
-            <div data-ng-include="'partials/hakukohde/edit/liitteetList.html'" data-ng-controller="LiitteetListController"></div>
+            <div data-ng-include="'partials/hakukohde/edit/liitteetListAlk2018.html'" data-ng-controller="LiitteetListController"></div>
         </tab>
 
     </tabset>
