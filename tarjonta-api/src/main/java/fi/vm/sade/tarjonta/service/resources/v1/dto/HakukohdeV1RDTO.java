@@ -97,7 +97,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private String ohjeetUudelleOpiskelijalle;
     @ApiModelProperty(value = "Onko yhden paikan sääntö voimassa hakukohteelle ja miksi", required = true)
     private HakuV1RDTO.YhdenPaikanSaanto yhdenPaikanSaanto;
-    private boolean tutkintoonJohtava;
+    private Boolean tutkintoonJohtava;
     private String koulutuksenAlkamiskausiUri;
     private Integer koulutuksenAlkamisvuosi;
 
@@ -663,11 +663,11 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         return dto;
     }
 
-    public boolean isTutkintoonJohtava() {
+    public Boolean isTutkintoonJohtava() {
         return tutkintoonJohtava;
     }
 
-    public void setTutkintoonJohtava(boolean tutkintoonJohtava) {
+    public void setTutkintoonJohtava(Boolean tutkintoonJohtava) {
         this.tutkintoonJohtava = tutkintoonJohtava;
     }
 
