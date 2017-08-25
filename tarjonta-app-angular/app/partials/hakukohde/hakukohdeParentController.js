@@ -330,8 +330,13 @@ app.controller('HakukohdeParentController', [
 
         $scope.loadPohjakoulutusvaatimuksetToiselleAsteelle = function(){
             // Hae pohjakoulutusvaatimus koodistosta
-            Koodisto.getAllKoodisWithKoodiUri(['pohjakoulutustoinenaste']).then(function(res) {
-                $scope.model.pohjakoulutusvaatimusOptions = res;
+            Koodisto.getAllKoodisWithKoodiUri(['pohjakoulutusvaatimustoinenaste']).then(function(res) {
+                $scope.model.pohjakoulutusvaatimusOptions = [];
+                angular.forEach(res, function(pkv) {
+                    if (_.contains(['pohjakoulutusvaatimustoinenaste_yo', 'pohjakoulutusvaatimustoinenaste_pk'], pkv.koodiUri)) {
+                        $scope.model.pohjakoulutusvaatimusOptions.push(pkv);
+                    }
+                });
             });
         }
         $scope.loadPohjakoulutusvaatimuksetToiselleAsteelle();
@@ -685,6 +690,7 @@ app.controller('HakukohdeParentController', [
                 }
                 if($scope.model.hakukohde.toteutusTyyppi == 'AMMATILLINEN_PERUSTUTKINTO_ALK_2018'){
                     $scope.model.populateHakukohteenNimetByHaku();
+                    $scope.model.isYhteishaku();
                 }
             }
         };

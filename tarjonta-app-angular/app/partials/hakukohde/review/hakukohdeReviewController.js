@@ -221,7 +221,8 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
             EB_RP_ISH: 'hakukelpoisuusvaatimusta',
             KORKEAKOULUTUS: 'pohjakoulutusvaatimuskorkeakoulut',
             LUKIOKOULUTUS: 'hakukelpoisuusvaatimusta',
-            AMMATILLINEN_PERUSTUTKINTO: 'hakukelpoisuusvaatimusta'
+            AMMATILLINEN_PERUSTUTKINTO: 'hakukelpoisuusvaatimusta',
+            AMMATILLINEN_PERUSTUTKINTO_ALK_2018: 'hakukelpoisuusvaatimusta'
         };
         var koodisto = koodistot[$scope.model.hakukohde.toteutusTyyppi];
         if (!koodisto) {
