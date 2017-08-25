@@ -255,7 +255,7 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
     $scope.model.loadPohjakoulutusvaatimus();
 
     $scope.model.populateHakukohteenNimetByHaku = function() {
-        var pohjakoulutusvaatimus = $scope.model.pohjakoulutusvaatimusByKoulutus;
+        var pohjakoulutusvaatimus = $scope.model.hakukohde.pohjakoulutusvaatimus;
         var promises = [HakuService.getAllHakus()];
         $q.all(promises).then(function(resolved) {
             var hakuDatas = resolved[0];

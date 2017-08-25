@@ -44,6 +44,17 @@
                         </td>
                     </tr>
 
+                    <tr>
+                        <th tt="kk.hakukohde.pohjakoulutusvaatimus">Valitse pohjakoulutusvaatimus</th>
+                        <td>
+                            <select ng-model="model.hakukohde.pohjakoulutusvaatimus"
+                                    ng-options="obj.koodiUri as obj.koodiNimi for (key,obj) in model.pohjakoulutusvaatimusOptions|orderBy:'koodiNimi'" data-ng-change="model.hakuChanged()">
+                                <option value="" tt="tarjonta.toiminnot.valitse">-- valitse --</option>
+                            </select>
+                        </td>
+                        <td></td>
+                    </tr>
+
                     <!-- hakukohteen nimi -->
                     <tr class="required">
                         <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
@@ -64,17 +75,6 @@
                         <td>
                             <p class="error" tt="hakukohde.edit.nimi.missing" ng-show="model.showError && editHakukohdeForm.hakukohteenNimiUri.$invalid">Hakukohteen nimi on annettava</p>
                         </td>
-                    </tr>
-
-                    <tr>
-                        <th tt="kk.hakukohde.pohjakoulutusvaatimus">Valitse pohjakoulutusvaatimus</th>
-                        <td>
-                            <select ng-model="model.hakukohde.pohjakoulutusvaatimus"
-                                    ng-options="obj.koodiUri as obj.koodiNimi for (key,obj) in model.pohjakoulutusvaatimusOptions|orderBy:'koodiNimi'">
-                                <option value="" tt="tarjonta.toiminnot.valitse">-- valitse --</option>
-                            </select>
-                        </td>
-                        <td></td>
                     </tr>
 
                     <tr class="required" data-ng-show="model.showHakuaikas">
