@@ -292,7 +292,7 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
             var promise = Koodisto.getAlapuolisetKoodit($scope.model.koulutustyyppi.koodiUri);
             promise.then(function(koodis) {
                 var koulutuslajiKoodis = _.where(koodis, {koodiKoodisto:CONFIG.env['koodisto-uris.koulutuslaji']});
-                if (koulutuslajiKoodis && koulutuslajiKoodis.length === 1) {
+                if (koulutuslajiKoodis && koulutuslajiKoodis.length === 1 && toteutustyyppi != "AMMATILLINEN_PERUSTUTKINTO_ALK_2018") {
                     $location.path('/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri +
                     '/' + koulutuslajiKoodis[0].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid);
                 }
