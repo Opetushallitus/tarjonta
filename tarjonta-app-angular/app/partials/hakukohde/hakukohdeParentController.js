@@ -330,8 +330,8 @@ app.controller('HakukohdeParentController', [
 
         $scope.loadPohjakoulutusvaatimuksetToiselleAsteelle = function(){
             // Hae pohjakoulutusvaatimus koodistosta
-            Koodisto.getAlapuolisetKoodiUrit(['koulutustyyppi_26'], 'pohjakoulutusvaatimustoinenaste').then(function(res) {
-                $scope.model.pohjakoulutusvaatimusOptions = res.map;
+            Koodisto.getAllKoodisWithKoodiUri(['pohjakoulutustoinenaste']).then(function(res) {
+                $scope.model.pohjakoulutusvaatimusOptions = res;
             });
         }
         $scope.loadPohjakoulutusvaatimuksetToiselleAsteelle();
