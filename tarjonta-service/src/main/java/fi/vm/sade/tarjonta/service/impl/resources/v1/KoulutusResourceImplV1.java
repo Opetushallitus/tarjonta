@@ -748,6 +748,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         switch (dto.getToteutustyyppi()) {
             case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
             case AMMATILLINEN_PERUSTUTKINTO:
+            case AMMATILLINEN_PERUSTUTKINTO_ALK_2018:
                 if (komo.getModuuliTyyppi().equals(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.TUTKINTO)) {
 
                     // Tarkista, jos virtuaalinen komo on jo luotu
