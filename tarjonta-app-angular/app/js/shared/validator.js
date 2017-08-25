@@ -206,7 +206,7 @@ angular.module('Validator', [])
             }
             return errors;
         }
-        function validateHakukohde(model, haku) {
+        function validateHakukohde(model, haku, originalHakukohde) {
             var hakukohde = model.hakukohde;
             var errors = [];
             if (needsOpintoOikeus(haku)) {

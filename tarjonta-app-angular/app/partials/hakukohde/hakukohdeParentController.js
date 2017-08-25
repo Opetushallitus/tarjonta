@@ -203,6 +203,25 @@ app.controller('HakukohdeParentController', [
         $scope.model.liitteidenSahkoinenOsoiteEnabled = $scope.model.hakukohde.sahkoinenToimitusOsoite !== undefined
             && $scope.model.hakukohde.sahkoinenToimitusOsoite.length > 0;
         $scope.model.isDeEnabled = false;
+
+        $scope.model.isHakuDeEnabled = function() {
+            if(AuthService.isUserOph()) {
+                $log.info('HAUN MUOKKAAMINEN SALLITTU : user OPH');
+                return false;
+            }
+            if($scope.model.isCopy) {
+                $log.info('HAUN MUOKKAAMINEN SALLITTU : haun asettaminen hakukohteen kopiolle');
+                return false;
+            }
+            if($scope.hakukohdex && $scope.hakukohdex.result && $scope.hakukohdex.result.hakuOid) {
+                $log.info('HAUN MUOKKAAMINEN ESTETTY : hakukohteelle on jo asetettu haku aiemmin');
+                return true;
+            } else {
+                $log.info('HAUN MUOKKAAMINEN SALLITTU : hakukohteelle ei ole vielä asetettu hakua')
+                return false;
+            }
+        }
+
         $scope.model.isPartiallyDeEnabled = false;
         var parentOrgOids = new buckets.Set();
         var orgSet = new buckets.Set();
@@ -336,8 +355,8 @@ app.controller('HakukohdeParentController', [
                     $scope.model.hakukohde.hakuaikaId = undefined;
                     $scope.model.hakukohde.hakuaikaLoppuPvm = undefined;
                 }
-            }
             $scope.model.isCopy = true;
+            }
         };
         $scope.createFormattedDateString = function(date) {
             return moment(date).format('DD.MM.YYYY HH:mm');
@@ -1307,7 +1326,8 @@ app.controller('HakukohdeParentController', [
                 $scope.emptyErrorMessages();
                 var errors = ValidatorService.hakukohde.validate(
                     $scope.model,
-                    $scope.getHakuByOid($scope.model.hakukohde.hakuOid));
+                    $scope.getHakuByOid($scope.model.hakukohde.hakuOid),
+                    $scope.hakukohdex.result);
                 if (errors.length === 0 && $scope.editHakukohdeForm.$valid) {
 
                     if ($scope.model.yhteystiedotKaytaOrganisaatioOsoitetta) {
