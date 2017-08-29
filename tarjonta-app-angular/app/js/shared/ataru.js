@@ -17,7 +17,7 @@ var app = angular.module('ataru', [
     'Logging'
 ]);
 
-app.factory('AtaruService', function($resource, $q, $http, AuthService) {
+app.factory('AtaruService', function($resource, $q, $http, AuthService, loadingService) {
     'use strict';
     var ataruRoles = [
         'APP_HAKULOMAKKEENHALLINTA',
@@ -38,12 +38,35 @@ app.factory('AtaruService', function($resource, $q, $http, AuthService) {
             });
         },
         preWarming: function() {
-            return $http.get(window.url('ataru-service.editor'));
+            var d = $q.defer();
+            $http.get(window.url('ataru-service.editor')).then(
+                function(r) {
+                    d.resolve(r);
+                    return r;
+                },
+                function(e) {
+                    d.reject(e);
+                    loadingService.onErrorHandled();
+                    return e;
+                }
+            );
+            return d.promise;
         },
         getForms: function() {
-            return $http.get(window.url('ataru-service.rest.forms'), config).then(function(response) {
-                return (response.data.forms) ? response.data.forms : [];
-            });
+            var d = $q.defer();
+            $http.get(window.url('ataru-service.rest.forms'), config).then(
+                function(response) {
+                    var r = (response.data.forms) ? response.data.forms : [];
+                    d.resolve(r);
+                    return r;
+                },
+                function(e) {
+                    d.reject(e);
+                    loadingService.onErrorHandled();
+                    return e;
+                }
+            );
+            return d.promise;
         }
     };
 });
