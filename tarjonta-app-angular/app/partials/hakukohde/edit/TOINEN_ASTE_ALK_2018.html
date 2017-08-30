@@ -114,7 +114,7 @@
                         </td>
                     </tr>
 
-                    <tr class="{{ "model.hakutapaYhteishaku ? 'required' : ''}}">
+                    <tr class="{{ config.needsValinnoissaKaytettavatAloituspaikat() ? 'required' : ''}}">
                         <th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat">Hakijoille ilmoitettavat aloituspaikat</th>
                         <td>
                             <input ng-if="model.hakutapaYhteishaku"
@@ -127,7 +127,7 @@
                                    max="999"
                                    data-ng-model="model.hakukohde.aloituspaikatLkm"
                                    required />
-                            <input ng-if="!model.hakutapaYhteishaku"
+                            <input ng-if="!config.needsValinnoissaKaytettavatAloituspaikat()"
                                    valid-decimal
                                    name="aloituspaikatlkm"
                                    ng-disabled="model.isDeEnabled"
