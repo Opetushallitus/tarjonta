@@ -606,6 +606,10 @@ public class ConverterV1 {
             );
         }
 
+        if (hakukohde.getPohjakoulutusvaatimusKoodiUri() != null) {
+            hakukohdeRDTO.setPohjakoulutusvaatimus(hakukohde.getPohjakoulutusvaatimusKoodiUri());
+        }
+
         hakukohdeRDTO.setHakukohteenNimiUri(hakukohde.getHakukohdeNimi());
         hakukohdeRDTO.setVersion(hakukohde.getVersion());
         hakukohdeRDTO.setOid(hakukohde.getOid());
@@ -1187,6 +1191,9 @@ public class ConverterV1 {
         }
         if (hakukohdeRDTO.getPeruutusEhdotKuvaukset() != null) {
             hakukohde.setPeruutusEhdotKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getPeruutusEhdotKuvaukset()));
+        }
+        if(hakukohdeRDTO.getPohjakoulutusvaatimus() != null){
+            hakukohde.setPohjakoulutusvaatimusKoodiUri(hakukohdeRDTO.getPohjakoulutusvaatimus());
         }
 
         hakukohde.setKelaLinjaKoodi(StringUtils.stripToNull(hakukohdeRDTO.getKelaLinjaKoodi()));
@@ -1933,6 +1940,9 @@ public class ConverterV1 {
         dto.setHakuaikaString(hakukohdePerustieto.getHakuaikaString());
         dto.setHakuaikaRyhma(hakukohdePerustieto.getHakuaikaRyhma());
         dto.setEnsikertalaistenAloituspaikat(hakukohdePerustieto.getEnsikertalaistenAloituspaikat());
+        if (hakukohdePerustieto.getPohjakoulutusvaatimus() != null) {
+            dto.setPohjakoulutusvaatimus(hakukohdePerustieto.getPohjakoulutusvaatimus().getNimi());
+        }
         return dto;
     }
 

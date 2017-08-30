@@ -333,7 +333,7 @@ app.controller('HakukohdeParentController', [
             Koodisto.getAllKoodisWithKoodiUri(['pohjakoulutusvaatimustoinenaste']).then(function(res) {
                 $scope.model.pohjakoulutusvaatimusOptions = [];
                 angular.forEach(res, function(pkv) {
-                    if (_.contains(['pohjakoulutusvaatimustoinenaste_yo', 'pohjakoulutusvaatimustoinenaste_pk'], pkv.koodiUri)) {
+                    if (_.contains(['pohjakoulutusvaatimustoinenaste_yo', 'pohjakoulutusvaatimustoinenaste_pk', 'pohjakoulutusvaatimustoinenaste_er'], pkv.koodiUri)) {
                         $scope.model.pohjakoulutusvaatimusOptions.push(pkv);
                     }
                 });

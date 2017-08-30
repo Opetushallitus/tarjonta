@@ -105,6 +105,8 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
         addTekstihaku(hakukohdeDoc);
         addHakuaika(hakukohdeDoc, hakukohde);
 
+        addPohjakoulutusvaatimusFromHakukohde(hakukohdeDoc, hakukohde);
+
         docs.add(hakukohdeDoc);
 
         return docs;
@@ -324,6 +326,18 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     private void addPohjakoulutusvaatimus(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
         for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
             IndexDataUtils.addKoodiLyhytnimiTiedot(hakukohdeDoc, komoto.getPohjakoulutusvaatimusUri(),
+                    koodistoHelper,
+                    POHJAKOULUTUSVAATIMUS_URI,
+                    POHJAKOULUTUSVAATIMUS_FI,
+                    POHJAKOULUTUSVAATIMUS_SV,
+                    POHJAKOULUTUSVAATIMUS_EN);
+            return;
+        }
+    }
+
+    private void addPohjakoulutusvaatimusFromHakukohde(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
+        if(hakukohde.getPohjakoulutusvaatimusKoodiUri() != null){
+            IndexDataUtils.addKoodiLyhytnimiTiedot(hakukohdeDoc, hakukohde.getPohjakoulutusvaatimusKoodiUri(),
                     koodistoHelper,
                     POHJAKOULUTUSVAATIMUS_URI,
                     POHJAKOULUTUSVAATIMUS_FI,
