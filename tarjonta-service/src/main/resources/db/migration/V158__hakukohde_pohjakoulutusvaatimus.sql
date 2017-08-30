@@ -1,0 +1,1 @@
+ALTER TABLE "hakukohde" ADD COLUMN pohjakoulutusvaatimus_koodi_uri character varying(255);

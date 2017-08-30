@@ -147,6 +147,8 @@ public class Hakukohde extends TarjontaBaseEntity {
     @JoinColumn(name = "peruutusehdot_teksti_id")
     private MonikielinenTeksti peruutusEhdotKuvaus;
 
+    @Column(name = "pohjakoulutusvaatimus_koodi_uri")
+    private String pohjakoulutusvaatimusKoodiUri;
     @Column(name = "valintaperustekuvaus_koodi_uri")
     private String valintaperustekuvausKoodiUri; //the koodi uri points to metadata
     @Column(name = "sora_kuvaus_koodi_uri")
@@ -656,6 +658,14 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void setOpintoOikeudet(Set<String> opintoOikeudet) {
         this.opintoOikeudet = opintoOikeudet;
+    }
+
+    public String getPohjakoulutusvaatimusKoodiUri() {
+        return pohjakoulutusvaatimusKoodiUri;
+    }
+
+    public void setPohjakoulutusvaatimusKoodiUri(String pohjakoulutusvaatimusKoodiUri) {
+        this.pohjakoulutusvaatimusKoodiUri = pohjakoulutusvaatimusKoodiUri;
     }
 
     public boolean isKaytetaanJarjestelmanValintapalvelua() {
