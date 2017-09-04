@@ -547,6 +547,10 @@ public class Haku extends TarjontaBaseEntity {
         return StringUtils.contains(getHakutapaUri(), "hakutapa_03");
     }
 
+    public boolean isYhteishaku() {
+        return StringUtils.contains(getHakutapaUri(), "hakutapa_01");
+    }
+
     public Boolean getYlioppilastutkintoAntaaHakukelpoisuuden() {
         return ylioppilastutkintoAntaaHakukelpoisuuden;
     }
