@@ -121,11 +121,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-common</artifactId>
-            <version>${generic.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>

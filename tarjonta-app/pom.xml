@@ -80,11 +80,6 @@
         </dependency>
 
         <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-common</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
@@ -181,6 +176,21 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.6.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.6.3</version>
+        </dependency>
 
         <dependency>
             <groupId>log4j</groupId>
@@ -195,7 +205,6 @@
             <artifactId>commons-fileupload</artifactId>
             <version>1.3.2</version>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -242,9 +251,9 @@
                             <artifactId>spring-aspects</artifactId>
                         </aspectLibrary>
                     </aspectLibraries>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                    <complianceLevel>1.7</complianceLevel>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <complianceLevel>1.8</complianceLevel>
                 </configuration>
             </plugin>
 
