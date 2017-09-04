@@ -494,8 +494,8 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     }
 
     @JsonIgnore
-    public boolean isAmmatillinenPerustutkinto() {
-        return ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO.equals(getToteutusTyyppi());
+    public boolean  isAmmatillinenPerustutkinto() {
+        return ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO.equals(getToteutusTyyppi()) || ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018.equals(getToteutusTyyppi());
     }
 
     public String getKoulutusmoduuliTyyppi() {
