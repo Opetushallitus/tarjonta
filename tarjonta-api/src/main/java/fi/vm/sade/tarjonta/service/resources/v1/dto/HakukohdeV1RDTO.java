@@ -498,6 +498,10 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         return ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO.equals(getToteutusTyyppi());
     }
 
+    public boolean isAmmatillinenPerustutkintoAlk2018(){
+        return ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018.equals(getToteutusTyyppi());
+    }
+
     public String getKoulutusmoduuliTyyppi() {
         return koulutusmoduuliTyyppi;
     }
