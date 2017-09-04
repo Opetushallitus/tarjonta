@@ -311,7 +311,6 @@ app.factory('HakukohdeService', function($resource, $http, $rootScope, KoulutusC
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER',
                 'AMMATILLINEN_PERUSTUTKINTO',
-                'AMMATILLINEN_PERUSTUTKINTO_ALK_2018',
                 'LUKIOKOULUTUS',
                 'PERUSOPETUKSEN_LISAOPETUS',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS',

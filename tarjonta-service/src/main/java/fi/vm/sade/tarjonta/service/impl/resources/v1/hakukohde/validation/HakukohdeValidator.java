@@ -186,7 +186,8 @@ public class HakukohdeValidator {
             return messages;
         }
 
-        if (hakukohdeRDTO.isLukioKoulutus() || hakukohdeRDTO.isAmmatillinenPerustutkinto()) {
+        if (hakukohdeRDTO.isLukioKoulutus() || hakukohdeRDTO.isAmmatillinenPerustutkinto() ||
+                (isYhteishaku(hakukohdeRDTO.getHakuOid()) && hakukohdeRDTO.isAmmatillinenPerustutkintoAlk2018()) ) {
             List<String> koulutusOids = hakukohdeRDTO.getHakukohdeKoulutusOids();
             for (String koulutusOid : koulutusOids) {
                 KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
@@ -199,6 +200,15 @@ public class HakukohdeValidator {
             }
         }
         return messages;
+    }
+
+    private boolean isYhteishaku(String hakuOid){
+        Haku haku = hakuDAO.findByOid(hakuOid);
+        if(haku.isYhteishaku()){
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private boolean isDuplicateHakukohdeForHakuAndTarjoaja(HakukohdeV1RDTO hakukohde) {
