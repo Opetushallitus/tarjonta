@@ -504,7 +504,7 @@
             <plugin>
                 <groupId>de.smartics.maven.plugin</groupId>
                 <artifactId>hibernate4-maven-plugin</artifactId>
-                <version>0.1.1</version>
+                <version>0.2.0</version>
                 <executions>
                     <execution>
                         <id>export</id>
