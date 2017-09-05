@@ -110,36 +110,36 @@ public class HakukohdeDAOImplTest extends TestData {
         {
             // TILA
             List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 100, 0, null, null,true);
-            assertEquals(result.size(), 3);
+            assertEquals(4, result.size());
         }
         {
             // TILA
             List<String> result = instance.findOIDsBy(TarjontaTila.LUONNOS, 100, 0, null, null,true);
-            assertEquals(result.size(), 0);
+            assertEquals(0, result.size());
         }
 
 
         {
             // TILA
             List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 2, 0, null, null,true);
-            assertEquals(result.size(), 2);
+            assertEquals(2, result.size());
         }
         {
             // TILA
             List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 100, 1, null, null,true);
-            assertEquals(result.size(), 2);
+            assertEquals(3, result.size());
         }
 
         Date d = new Date();
         {
             // TILA + date before
             List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 100, 0, d, null,true);
-            assertEquals(result.size(), 3);
+            assertEquals(4, result.size());
         }
         {
             // TILA + date after
             List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 100, 0, null, d,true);
-            assertEquals(result.size(), 0);
+            assertEquals(0, result.size());
         }
 
 
@@ -166,7 +166,7 @@ public class HakukohdeDAOImplTest extends TestData {
 
         // Kun haun asetus = true, mutta yhdellä hakukohteella = false
         hakukohdeOids = instance.findHakukohteetWithYlioppilastutkintoAntaaHakukelpoisuuden(haku1.getId(), true);
-        assertEquals(hakukohdeOids.size(), 2);
+        assertEquals(hakukohdeOids.size(), 3);
     }
     
     @Test
@@ -188,4 +188,13 @@ public class HakukohdeDAOImplTest extends TestData {
         Assert.assertEquals("joku &amp; merkki", values.get("en"));
     }
 
+
+    @Test
+    public void testFindHakukohdeWithPohjakoulutusvaatimus(){
+        Hakukohde hakukohde = instance.findHakukohdeByOid(HAKUKOHDE_OID4);
+        assertNotNull(hakukohde);
+        assertEquals(HAKUKOHDE_OID4, hakukohde.getOid());
+        assertEquals(HAKU_OID1, hakukohde.getHaku().getOid());
+        assertEquals("pohjakoulutusvaatimus_pk", hakukohde.getPohjakoulutusvaatimusKoodiUri());
+    }
 }
