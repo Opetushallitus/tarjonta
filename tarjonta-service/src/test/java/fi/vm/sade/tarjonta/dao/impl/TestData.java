@@ -19,6 +19,7 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,7 @@ abstract public class TestData extends TestUtilityBase {
     public static final String KOMOTO_OID_2 = "komoto_oid2";
     public static final String KOMOTO_OID_3 = "komoto_oid3";
     public static final String KOMOTO_OID_4 = "komoto_oid4";
+    public static final String KOMOTO_OID_5 = "komoto_oid5";
 
     public static final String ORG_OID_1 = "organisation_oid1";
     public static final String KAUSI = "kausi_uri";
@@ -49,9 +51,10 @@ abstract public class TestData extends TestUtilityBase {
     public static final String HAKUKOHDE_OID1 = "hakukohde_oid_1";
     public static final String HAKUKOHDE_OID2 = "hakukohde_oid_2";
     public static final String HAKUKOHDE_OID3 = "hakukohde_oid_3";
+    public static final String HAKUKOHDE_OID4 = "hakukohde_oid_4";
     public static final String HUMAN_READABLE_NAME_1 = "human_readable_name";
     public static final String KOODISTO_URI_1 = "koodisto_uri";
-    protected Hakukohde kohde1, kohde2, kohde3;
+    protected Hakukohde kohde1, kohde2, kohde3, kohde4;
     protected Valintakoe koe1, koe2, koe3, koe4;
     protected Haku haku1, haku2;
     protected Calendar cal2, cal3;
@@ -59,7 +62,7 @@ abstract public class TestData extends TestUtilityBase {
 
     private EntityManager em;
 
-    private KoulutusmoduuliToteutus komoto1, komoto2, komoto3, komoto4;
+    private KoulutusmoduuliToteutus komoto1, komoto2, komoto3, komoto4, komoto5;
 
     private Koulutusmoduuli komo;
 
@@ -78,6 +81,8 @@ abstract public class TestData extends TestUtilityBase {
     public KoulutusmoduuliToteutus getPersistedKomoto4() {
         return komoto4;
     }
+
+    public KoulutusmoduuliToteutus getPersistedKomoto5() { return komoto5; }
 
     public Haku getHaku1() {
         return haku1;
@@ -121,6 +126,10 @@ abstract public class TestData extends TestUtilityBase {
 
         komoto4 = addKomoto(t4WithDates, null);
 
+        KoulutusmoduuliToteutus t5Normal = createKomoto(KOMOTO_OID_5);
+        t5Normal.setToteutustyyppi(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018);
+        komoto5 = addKomoto(t5Normal, KOULUTUS_START_DATE);
+
         haku1 = fixtures.createHaku();
         haku1.setOid(HAKU_OID1);
         persist(haku1);
@@ -148,6 +157,9 @@ abstract public class TestData extends TestUtilityBase {
 
         kohde3 = createHakukohde(HAKUKOHDE_OID3);//no exams
 
+        kohde4 = createHakukohde(HAKUKOHDE_OID4); //pohjakoulutusvaatimus
+        kohde4.setPohjakoulutusvaatimusKoodiUri("pohjakoulutusvaatimus_pk");
+
         koe1 = fixtures.createValintakoe();
         koe2 = fixtures.createValintakoe();
         koe3 = fixtures.createValintakoe();
@@ -162,10 +174,12 @@ abstract public class TestData extends TestUtilityBase {
         kohde1.setHaku(haku1);
         kohde2.setHaku(haku1);
         kohde3.setHaku(haku1);
+        kohde4.setHaku(haku1);
 
         haku1.addHakukohde(kohde1);
         haku1.addHakukohde(kohde2);
         haku1.addHakukohde(kohde3);
+        haku1.addHakukohde(kohde4);
 
         /* 
          * PERSIST ALL OBJECTS 
@@ -181,10 +195,12 @@ abstract public class TestData extends TestUtilityBase {
         persist(kohde1);
         persist(kohde2);
         persist(kohde3);
+        persist(kohde4);
 
         check(3, kohde1);
         check(1, kohde2);
         check(0, kohde3);
+        check(0, kohde4);
     }
 
     private void check(int items, Hakukohde kohde) {
@@ -204,7 +220,9 @@ abstract public class TestData extends TestUtilityBase {
         assertEquals(1, k.getKoulutuslajis().size());
         assertEquals(TarjontaTila.VALMIS, k.getTila());
         assertEquals(ORG_OID_1, k.getTarjoaja());
-        assertEquals("pohjakoulutusvaatimus_uri", k.getPohjakoulutusvaatimusUri());
+        if(k.getToteutustyyppi() == null || k.getToteutustyyppi().equals(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018)) {
+            assertEquals("pohjakoulutusvaatimus_uri", k.getPohjakoulutusvaatimusUri());
+        }
         assertEquals("100000000", k.getSuunniteltukestoArvo());
         assertEquals("suuniteltu_kesto_uri", k.getSuunniteltukestoYksikkoUri());
 
@@ -274,6 +292,7 @@ abstract public class TestData extends TestUtilityBase {
         remove(kohde1);
         remove(kohde2);
         remove(kohde3);
+        remove(kohde4);
 
         remove(haku1);
         remove(haku2);
