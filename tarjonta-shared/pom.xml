@@ -19,7 +19,7 @@
         <dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-solrj</artifactId>
-            <version>4.2.0</version>
+            <version>${solr.version}</version>
         </dependency>
 
         <dependency>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.2.4</version>
+            <version>${gson.version}</version>
         </dependency>
 
         <dependency>
@@ -71,19 +71,19 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>14.0.1</version>
+            <version>${guava.version}</version>
         </dependency>
 
         <dependency>
             <groupId>fi.vm.sade.koodisto</groupId>
             <artifactId>koodisto-api</artifactId>
-            <version>${koodisto.api.version}</version>
+            <version>${koodisto.version}</version>
         </dependency>
 
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
+            <version>${commons-httpclient.version}</version>
         </dependency>
 
         <dependency>
@@ -114,18 +114,18 @@
         <dependency>
             <groupId>fi.vm.sade.java-utils</groupId>
             <artifactId>java-properties</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>${java-utils.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>1.9.1</version>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>fi.vm.sade.java-utils</groupId>
             <artifactId>java-cas</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>${java-utils.version}</version>
         </dependency>
     </dependencies>
 </project>
