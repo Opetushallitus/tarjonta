@@ -25,22 +25,17 @@ public interface ProcessDefinition extends Runnable {
         /**
          * @return state as ProcessV1RDTO
          */
-        public ProcessV1RDTO getState();
+        ProcessV1RDTO getState();
 
         /**
          * @param state initial state and parameters to the process
          */
-        public void setState(ProcessV1RDTO state);
-
-        /**
-         * @return true if user has permission to stop this process
-         */
-        public boolean canStop();
+        void setState(ProcessV1RDTO state);
 
         /**
          * Return true is process has been completed and can be removed from "active" process list.
          *
          * @return
          */
-        public boolean isCompleted();
+        boolean isCompleted();
 }
