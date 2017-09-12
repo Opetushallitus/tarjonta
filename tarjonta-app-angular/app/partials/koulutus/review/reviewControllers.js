@@ -517,4 +517,8 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
     $scope.getMonikielinenNimi = function(field) {
         return field.kieli_fi || field.kieli_sv || field.kieli_en;
     };
+    $scope.getTranslatedName = function(obj) {
+        var correctMeta = _.findWhere(obj.meta, {kieliArvo: $scope.getDefaultLang()});
+        return correctMeta ? correctMeta.nimi : obj.nimi;
+    }
 });
