@@ -29,8 +29,8 @@
 
         <!-- koulutus -->
         <tr>
-            <th ng-if="!(koulutusStructure.params.isLukio || koulutusStructure.params.isPerusopetus)">{ t('koulutus.review.perustiedot.tutkinto') }}</th>
-            <th ng-if="koulutusStructure.params.isLukio || koulutusStructure.params.isPerusopetus">{ t('koulutus.review.perustiedot.koulutus') }}</th>
+            <th ng-if="!(koulutusStructure.params.isLukio || koulutusStructure.params.isPerusopetus)">{{ t('koulutus.review.perustiedot.tutkinto') }}</th>
+            <th ng-if="koulutusStructure.params.isLukio || koulutusStructure.params.isPerusopetus">{{ t('koulutus.review.perustiedot.koulutus') }}</th>
             <td colspan="2">
                 {{model.koulutus.koulutuskoodi.meta[lang.koodi_uri].nimi}}
                 <i>{{model.koulutus.koulutuskoodi.arvo}}</i>
