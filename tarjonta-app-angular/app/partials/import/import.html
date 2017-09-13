@@ -1,7 +1,7 @@
-<h2>Koulutusten ja hakukohteiden tuonti</h2>
+<h2>{{ t('tarjonta.import.header') || 'Koulutusten ja hakukohteiden tuonti' }}</h2>
 
 <div ng-hide="selected.education">
-    <h3>Valitse tuotava koulutustyyppi</h3>
+    <h3>{{ t('tarjonta.import.selectType') || 'Valitse tuotava koulutustyyppi' }}</h3>
     <form>
         <div ng-repeat="educationType in importableEducationTypes">
             <label>
