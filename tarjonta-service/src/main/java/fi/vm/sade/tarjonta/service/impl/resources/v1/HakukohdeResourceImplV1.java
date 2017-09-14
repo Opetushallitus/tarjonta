@@ -730,7 +730,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         HakukohdeV1RDTO originalDto = converterV1.toHakukohdeRDTO(hakukohde);
         final String originalHakuOid = trimToEmpty(originalDto.getHakuOid());
         final boolean isChangingExistingHakuOid = isNotEmpty(originalHakuOid) && isNotEmpty(dto.getHakuOid()) && !originalHakuOid.equals(dto.getHakuOid());
-        if(isChangingExistingHakuOid) {
+        if(isChangingExistingHakuOid && !permissionChecker.isOphCrud()) {
             throw new RuntimeException("Hakukohteen (OID = "+oid+") haku OID:n muuttaminen on kiellettyä. Alkuperäinen haku OID on " + originalHakuOid + " -> " + dto.getHakuOid());
         }
         beanUtils.copyProperties(originalDto, dto);
