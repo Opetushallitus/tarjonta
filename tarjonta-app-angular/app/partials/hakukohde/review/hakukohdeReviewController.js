@@ -761,6 +761,7 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
             $scope.model.spec.season = koulutus.kausiUri;
             $scope.model.spec.year = koulutus.vuosi;
             var hakukohteenPohjakoulutusvaatimus = koulutus.pohjakoulutusvaatimus;
+            var hakukohteenToteutustyyppiEnum = koulutus.toteutustyyppiEnum;
             var hakukohteenKoulutuskoodi = koulutus.koulutuskoodi && koulutus.koulutuskoodi.split('#')[0].split('_')[1];
 
             if (_.contains(['KORKEAKOULUOPINTO', 'KORKEAKOULUTUS'], koulutus.toteutustyyppiEnum)) {
@@ -796,6 +797,7 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
                                 tarjoaja: _.findWhere(organizations, {oid: tarjoaja}).nimi,
                                 tarjoajaOid: tarjoaja,
                                 oid: koulutus.oid,
+                                toteutustyyppiEnum: koulutus.toteutustyyppiEnum,
                                 pohjakoulutusvaatimus: koulutus.pohjakoulutusvaatimus
                             });
                         });
@@ -807,7 +809,12 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
                             tarjoajaOid: koulutus.tarjoajaOid
                         });
                         if (!foundKoulutusInHakukohde) {
-                            if (toisenAsteenKoulutus) {
+                            if(hakukohteenToteutustyyppiEnum == 'AMMATILLINEN_PERUSTUTKINTO_ALK_2018' &&
+                                koulutus.toteutustyyppiEnum == 'AMMATILLINEN_PERUSTUTKINTO_ALK_2018' &&
+                                koulutus.koulutuskoodi === hakukohteenKoulutuskoodi &&
+                                koulutus.pohjakoulutusvaatimus == undefined && hakukohteenPohjakoulutusvaatimus == undefined){
+                                return true;
+                            } else if (toisenAsteenKoulutus) {
                                 return koulutus.koulutuskoodi === hakukohteenKoulutuskoodi &&
                                     koulutus.pohjakoulutusvaatimus &&
                                     koulutus.pohjakoulutusvaatimus.fi === hakukohteenPohjakoulutusvaatimus.fi;
