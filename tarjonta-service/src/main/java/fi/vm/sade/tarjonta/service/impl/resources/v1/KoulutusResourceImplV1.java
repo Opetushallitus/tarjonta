@@ -1499,6 +1499,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         case AMMATILLINEN_PERUSTUTKINTO:
                             persisted = insertKoulutusGeneric((KoulutusAmmatillinenPerustutkintoV1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPerustutkintoV1RDTO.class, komoto, orgOid));
                             break;
+                        case AMMATILLINEN_PERUSTUTKINTO_ALK_2018:
+                            persisted = insertKoulutusGeneric((KoulutusAmmatillinenPerustutkintoAlk2018V1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPerustutkintoAlk2018V1RDTO.class, komoto, orgOid));
+                            break;
                         case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
                             persisted = insertKoulutusGeneric((KoulutusAmmatillinenPeruskoulutusErityisopetuksenaV1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPeruskoulutusErityisopetuksenaV1RDTO.class, komoto, orgOid));
                             break;
