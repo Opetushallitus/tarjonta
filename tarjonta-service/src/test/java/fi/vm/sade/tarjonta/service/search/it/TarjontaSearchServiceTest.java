@@ -38,6 +38,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
@@ -63,7 +64,6 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
-
 
 @TestExecutionListeners(listeners = {
         DependencyInjectionTestExecutionListener.class,
@@ -489,8 +489,8 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         return type;
     }
 
-    public static class KoodistoCriteriaMatcher implements
-            Matcher<SearchKoodisCriteriaType> {
+    public static class KoodistoCriteriaMatcher extends
+            BaseMatcher<SearchKoodisCriteriaType> {
 
         private String uri;
 
@@ -505,11 +505,8 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         }
 
         @Override
-        public void describeTo(Description arg0) {
-        }
+        public void describeTo(Description description) {
 
-        @Override
-        public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {
         }
     }
 

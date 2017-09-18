@@ -61,6 +61,7 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
+            <version>${spring-security.version}</version>
         </dependency>
 
         <dependency>
@@ -107,7 +108,7 @@
 
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -126,6 +127,11 @@
             <groupId>fi.vm.sade.java-utils</groupId>
             <artifactId>java-cas</artifactId>
             <version>${java-utils.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
         </dependency>
     </dependencies>
 </project>
