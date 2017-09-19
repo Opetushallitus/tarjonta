@@ -140,8 +140,8 @@ public class Haku extends TarjontaBaseEntity {
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
 
     /**
-     * KoulutusInformation service uses this to "know" how many hakukohdes can
-     * be added to "muistilista" (application list?)
+     * How many hakukohdes can be added to "muistilista" (application list?)
+     * and to how many hakukohde can be applied to in a single application.
      */
     @Column(name = "max_hakukohdes")
     private int maxHakukohdes = 0;
