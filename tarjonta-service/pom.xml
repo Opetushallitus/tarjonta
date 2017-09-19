@@ -225,8 +225,8 @@
                     <artifactId>postgresql</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>cxf-rt-core</artifactId>
                     <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-common-utilities</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
