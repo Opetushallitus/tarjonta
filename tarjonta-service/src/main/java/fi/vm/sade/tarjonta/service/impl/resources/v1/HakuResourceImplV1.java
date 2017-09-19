@@ -59,6 +59,7 @@ import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohdeSearchService;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
@@ -82,6 +83,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -642,6 +644,20 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         LOG.error("Haku - operation failed! ERROR_ID=" + errorId, ex);
     }
 
+    private boolean isVarsinainenHaku(HakuV1RDTO haku) {
+        return KoodistoURI.KOODI_VARSINAINEN_HAKU_URI.equals(haku.getHakutyyppiUri());
+    }
+
+    private boolean isErillishaku(HakuV1RDTO haku) {
+        return KoodistoURI.KOODI_ERILLISHAKU_URI.equals(haku.getHakutapaUri());
+    }
+
+    private boolean isToisenAsteenHaku(HakuV1RDTO haku) {
+        return (KoodistoURI.KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI.equals(haku.getKohdejoukkoUri()) ||
+                KoodistoURI.KOODI_KOHDEJOUKKO_VALMISTAVA_URI.equals(haku.getKohdejoukkoUri()) ||
+                KoodistoURI.KOODI_KOHDEJOUKKO_ERITYISOPETUKSENA_URI.equals(haku.getKohdejoukkoUri()));
+    }
+
     /**
      * Simple validations for Haku.
      *
@@ -688,7 +704,11 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             }
         }
 
-        // Ataru form key
+        if (isEmpty(haku.getAtaruLomakeAvain()) &&
+                haku.getCanSubmitMultipleApplications() != (!isVarsinainenHaku(haku) || (isToisenAsteenHaku(haku) && isErillishaku(haku)))) {
+            result.addError(ErrorV1RDTO.createValidationError("canSubmitMultipleApplications", "haku.validation.canSubmitMultipleApplications.invalid"));
+        }
+
         if (!isEmpty(haku.getAtaruLomakeAvain())) {
             try {
                 UUID uuid = UUID.fromString(haku.getAtaruLomakeAvain());

@@ -289,6 +289,16 @@
             <a href="{{url('ataru-app-web.form', model.hakux.result.ataruLomakeAvain)}}" ng-if="model.hakux.result.ataruLomakeAvain" target="_blank" tt="haku.edit.hakulomake.ataru.naytaLomake">Näytä lomake</a>
             <a href="{{url('ataru-service.editor')}}" target="_blank" tt="haku.edit.hakulomake.ataru.muokkaaLomakkeita">Muokkaa lomakkeita</a>
             <p class="error" ng-if="model.haku.hakulomake == 'ATARU' && model.ataruFormError" tt="haku.ataru.virhe.lomakePoistettu">Lomaketta ei enää ole Lomake-editorissa.</p>
+            <br />
+            <input id="canSubmitMultipleApplications"
+                   style="margin-left: 18px;"
+                   type="checkbox"
+                   ng-model="model.hakux.result.canSubmitMultipleApplications"
+                   ng-disabled='"ATARU" !== model.haku.hakulomake' />
+            <label for="canSubmitMultipleApplications"
+                   data-tt="haku.edit.canSubmitMultipleApplications">
+                Hakija voi jättää useita hakemuksia
+            </label>
         </td>
     </tr>
     <tr class="ataru" ng-show="model.hakux.result.ataruLomakeAvain && !isAtaruRole()">

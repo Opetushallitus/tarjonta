@@ -119,6 +119,7 @@ public class KoodistoURI {
      * For tutkinto dialog
      */
     public static String KOODISTO_TARJONTA_KOULUTUSTYYPPI;
+    public static String KOODI_VARSINAINEN_HAKU_URI;
     public static String KOODI_LISAHAKU_URI;
 
     public static String KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI;
@@ -128,6 +129,7 @@ public class KoodistoURI {
     public static String KOODI_TODISTUKSET_URI;
 
     public static String KOODI_KOHDEJOUKKO_ERITYISOPETUS_URI;
+    public static String KOODI_KOHDEJOUKKO_ERITYISOPETUKSENA_URI;
     public static String KOODI_KOHDEJOUKKO_VALMENTAVA_URI;
     public static String KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI; //
     public static String KOODI_POHJAKOULUTUS_PERUSKOULU_URI;
@@ -263,6 +265,11 @@ public class KoodistoURI {
         KOODI_KOHDEJOUKKO_ERITYISOPETUS_URI = uri;
     }
 
+    @Value("${koodisto-uris.kohdejoukko-erityisopetuksena:haunkohdejoukko_20#1}")
+    public void setKoodiKohdejoukkoErityisopetuksenaUri(String uri) {
+        KOODI_KOHDEJOUKKO_ERITYISOPETUKSENA_URI = uri;
+    }
+
     @Value("${koodisto-uris.valmentavaKuntouttava:haunkohdejoukko_16#1}")
     public void setKoodiKohdejoukkoValmentavaUri(String uri) {
         KOODI_KOHDEJOUKKO_VALMENTAVA_URI = uri;
@@ -291,6 +298,11 @@ public class KoodistoURI {
     @Value("${kodisto-uris.yksilollistettyPerusopetus:pohjakoulutusvaatimustoinenaste_er}")
     public void setKoodiYksilollistettyPerusopetusUri(String uri) {
         KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI = uri;
+    }
+
+    @Value("${koodisto-uris.varsinainen-haku:hakutyyppi_01#1}")
+    public void setKoodiVarsinainenHakuUri(String uri) {
+        KOODI_VARSINAINEN_HAKU_URI = uri;
     }
 
     @Value("${koodisto-uris.lisahaku:hakutyyppi_03#1}")

@@ -162,6 +162,9 @@
                         <br/>
                         <span tt="haku.review.haunTiedot.hakulomake.priorisointi">Haussa käytetään priorisointia: </span>
                         {{ model.hakux.result.usePriority ? t("yes") : t("no") }}
+                        <br />
+                        <span tt="haku.review.haunTiedot.hakulomake.canSubmitMultipleApplications">Hakija voi jättää useita hakemuksia: </span>
+                        {{ model.hakux.result.canSubmitMultipleApplications ? t("yes") : t("no") }}
                     </div>
                     <div ng-if="model.hakux.result.ataruLomakeAvain && !isAtaruRole()">
                         <span tt="haku.review.haunTiedot.hakulomake.ataru.ilmanOikeuksia">Käytetään Lomake-editorin lomaketta.</span>
