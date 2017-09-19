@@ -80,7 +80,7 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-            <version>${cxf-rt.version}</version>
+            <version>${cxf.version}</version>
         </dependency>
         <dependency>
             <groupId>com.wordnik</groupId>

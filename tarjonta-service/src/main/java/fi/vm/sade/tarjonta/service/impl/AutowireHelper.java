@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
  * .springframework.context.ApplicationContext}.
  */
 @Service
-public final class AutowireHelper implements ApplicationContextAware {
+public class AutowireHelper implements ApplicationContextAware {
 
     private static final AutowireHelper INSTANCE = new AutowireHelper();
     private static ApplicationContext applicationContext;
 
-    private AutowireHelper() {
+    public AutowireHelper() {
     }
 
     /**
