@@ -15,7 +15,7 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.*;
 import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +28,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Ordering;
 
-import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.dao.HakuaikaDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
@@ -39,7 +37,6 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
-import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 @Transactional(readOnly = true, rollbackFor = Throwable.class)

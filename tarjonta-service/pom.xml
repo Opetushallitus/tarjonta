@@ -166,6 +166,16 @@
             <version>${spring-security.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
             <version>${aspectj.version}</version>
@@ -214,6 +224,10 @@
                     <groupId>postgresql</groupId>
                     <artifactId>postgresql</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-core</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -254,11 +268,6 @@
             <artifactId>easymock</artifactId>
             <version>${easymock.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-events</artifactId>
-            <version>${generic.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kubek2k</groupId>
@@ -362,8 +371,18 @@
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-core</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-security-cors</artifactId>
-            <version>${cxf-rt-rs-security-cors.version}</version>
+            <version>${cxf-rt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <version>${cxf-rt.version}</version>
         </dependency>
         <dependency>
             <groupId>fi.vm.sade.authentication</groupId>

@@ -73,9 +73,14 @@
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-bundle</artifactId>
+            <artifactId>cxf-core</artifactId>
             <version>${cxf.version}</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <version>${cxf-rt.version}</version>
         </dependency>
         <dependency>
             <groupId>com.wordnik</groupId>

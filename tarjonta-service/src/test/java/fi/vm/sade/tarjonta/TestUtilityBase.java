@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta;
 
 import fi.vm.sade.koodisto.service.KoodiService;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.util.YhdenPaikanSaantoBuilder;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.security.OrganisationHierarchyAuthorizer;
@@ -161,4 +162,7 @@ abstract public class TestUtilityBase {
 
     @Autowired
     protected ParameterServices parameterServices;
+
+    @Autowired
+    protected YhdenPaikanSaantoBuilder yhdenPaikanSaantoBuilder;
 }

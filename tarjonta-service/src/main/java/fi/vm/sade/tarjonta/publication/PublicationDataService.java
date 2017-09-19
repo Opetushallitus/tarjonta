@@ -34,12 +34,12 @@ import java.util.List;
  */
 public interface PublicationDataService {
 
-    public static final String ACTION_INSERT = "INSERT";
-    public static final String ACTION_UPDATE = "UPDATE";
-    public static final String ACTION_CANCEL = "CANCEL";
-    public static final String DATA_TYPE_KOMOTO = "LOI";
-    public static final String DATA_TYPE_HAKU = "AS";
-    public static final String DATA_TYPE_HAKUKOHDE = "AO";
+    String ACTION_INSERT = "INSERT";
+    String ACTION_UPDATE = "UPDATE";
+    String ACTION_CANCEL = "CANCEL";
+    String DATA_TYPE_KOMOTO = "LOI";
+    String DATA_TYPE_HAKU = "AS";
+    String DATA_TYPE_HAKUKOHDE = "AO";
 
     /**
      * Returns a list of KoulutusmoduuliToteutus where: <ul>
@@ -48,7 +48,7 @@ public interface PublicationDataService {
      *
      * @return
      */
-    public List<KoulutusmoduuliToteutus> listKoulutusmoduuliToteutus();
+    List<KoulutusmoduuliToteutus> listKoulutusmoduuliToteutus();
 
     /**
      * Returns a list of Hakukohde where: <ul> <li>{@link Hakukohde#getTila() }
@@ -56,7 +56,7 @@ public interface PublicationDataService {
      *
      * @return
      */
-    public List<Hakukohde> listHakukohde();
+    List<Hakukohde> listHakukohde();
 
     /**
      * Return a list of Haku objects ready to be published, i.e: <ul>
@@ -66,20 +66,18 @@ public interface PublicationDataService {
      *
      * @return
      */
-    public List<Haku> listHaku();
+    List<Haku> listHaku();
 
     /**
      * Throes IllegalArgumentException when an illegal state transfer is attempted.
      * @param tilaChanges
      * @return
      */
-    public Tilamuutokset updatePublicationStatus(List<Tila> tilaChanges);
+    Tilamuutokset updatePublicationStatus(List<Tila> tilaChanges);
 
-    public boolean isValidStatusChange(Tila tyyppi);
+    boolean isValidStatusChange(Tila tyyppi);
 
-    public void sendEvent(final fi.vm.sade.tarjonta.shared.types.TarjontaTila tila, final String oid, final String dataType, final String action);
+    List<Hakukohde> searchHakukohteetByKomotoOid(final Collection<String> komotoOids, final TarjontaTila hakuRequiredStatus, final TarjontaTila... hakukohdeRequiredStatus);
 
-    public List<Hakukohde> searchHakukohteetByKomotoOid(final Collection<String> komotoOids, final TarjontaTila hakuRequiredStatus, final TarjontaTila... hakukohdeRequiredStatus);
-
-    public List<MonikielinenMetadata> searchMetaData(final String key, final MetaCategory category);
+    List<MonikielinenMetadata> searchMetaData(final String key, final MetaCategory category);
 }

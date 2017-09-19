@@ -17,7 +17,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioKelaDTO;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioResultDTO;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

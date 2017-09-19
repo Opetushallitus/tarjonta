@@ -29,8 +29,6 @@ import java.util.Map.Entry;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.xpath.operations.Bool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +40,6 @@ import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
 
-import fi.vm.sade.events.Event;
-import fi.vm.sade.events.EventSender;
 import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.security.SadeUserDetailsWrapper;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -69,11 +65,9 @@ import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
-import javax.persistence.Query;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -87,8 +81,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class PublicationDataServiceImpl implements PublicationDataService {
 
     private static final Logger log = LoggerFactory.getLogger(PublicationDataServiceImpl.class);
-    @Autowired
-    private EventSender eventSender;
     @Autowired
     private KoulutusmoduuliToteutusDAO komotoDAO;
     @Autowired
@@ -290,34 +282,6 @@ public class PublicationDataServiceImpl implements PublicationDataService {
 
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(em).from(o);
-    }
-
-    /**
-     * Send an event for Oppijan Verkkopalvelu.
-     *
-     * @param tila
-     * @param oid
-     * @param dataType
-     * @param action
-     */
-    @Override
-    public void sendEvent(final fi.vm.sade.tarjonta.shared.types.TarjontaTila tila, final String oid, final String dataType, final String action) {
-        log.debug("In sendEvent, tila:{}, oid : {}", tila, oid);
-
-        /*
-         * Filter all unpublished (delete, insert and update) actions. 
-         */
-        if (eventSender != null && tila.isPublic()) {
-            /*
-             * TODO: Add more information for Oppijan Verkkopalvelu event.
-             */
-            Event e = new Event("Tarjonta");
-            e.setValue("oid", oid)
-                    .setValue("dataType", dataType)
-                    .setValue("eventType", action)
-                    .setValue("date", DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(new Date()));
-            eventSender.sendEvent(e);
-        }
     }
 
     @Transactional
