@@ -47,7 +47,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j-api.version}</version>
+            <version>${slf4j.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>log4j</groupId>
@@ -420,7 +420,7 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
-            <version>${jersey-client.version}</version>
+            <version>${jersey.version}</version>
             <scope>test</scope>
             <type>jar</type>
         </dependency>
