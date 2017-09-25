@@ -26,7 +26,7 @@ app.directive('fileSelect', function() {
     $scope.selected = {};
     $scope.file = null;
     $scope.importableEducationTypes = [
-        {name: 'Tutkintoon johtamaton korkeakoulutus', id: 'KORKEAKOULUOPINTO', sampleFile: 'korkeakouluopinto.xlsx'}
+        {name: $scope.t('tarjonta.import.korkeakouluopinto'), id: 'KORKEAKOULUOPINTO', sampleFile: 'korkeakouluopinto.xlsx'}
     ];
 
     var aoId2Row = {},
