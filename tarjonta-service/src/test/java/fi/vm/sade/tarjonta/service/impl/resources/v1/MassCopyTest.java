@@ -1,7 +1,5 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Longs;
@@ -33,8 +31,6 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.text.ParseException;
@@ -110,7 +106,7 @@ public class MassCopyTest extends TestUtilityBase {
         KoulutusmoduuliToteutus komoto = KoulutusResourceImplV1CopyTest.getKorkeakoulutusKomoto(fixtures, komo);
         komoto.setTila(TarjontaTila.JULKAISTU);
         komoto.setOid(oid);
-        Oppiaine suomi = oppiaineDAO.findOneByOppiaineKieliKoodi("suomi", "fi");;
+        Oppiaine suomi = oppiaineDAO.findOneByOppiaineKieliKoodi("suomi", "fi");
         if(suomi == null) {
             suomi = new Oppiaine();
             suomi.setOppiaine("suomi");
@@ -222,7 +218,7 @@ public class MassCopyTest extends TestUtilityBase {
         for (int i = 0; i < limit; i ++) {
             for (TarjontaOidType type : TarjontaOidType.values()) {
                 if (!oidMap.containsKey(type)) {
-                    oidMap.put(type, new LinkedList<String>());
+                    oidMap.put(type, new LinkedList<>());
                 }
                 oidMap.get(type).add(prefix + "-" + type.name() + "-" + i);
             }
@@ -238,19 +234,16 @@ public class MassCopyTest extends TestUtilityBase {
     }
 
     private void createHakuWithHakukohdesAndKomotos(final String hakuOid, final int numberOfHakukohdes) {
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
-                Haku haku = fixtures.createHaku();
-                haku.setOid(hakuOid);
-                haku.setHaunTunniste(hakuOid);
-                haku.setTarjoajaOids(new String[]{ophOid});
-                haku.setTila(TarjontaTila.JULKAISTU);
-                hakuDAO.insert(haku);
+        executeInTransaction(() -> {
+            Haku haku = fixtures.createHaku();
+            haku.setOid(hakuOid);
+            haku.setHaunTunniste(hakuOid);
+            haku.setTarjoajaOids(new String[]{ophOid});
+            haku.setTila(TarjontaTila.JULKAISTU);
+            hakuDAO.insert(haku);
 
-                for (int i = 0; i < numberOfHakukohdes; i ++) {
-                    createKoulutusAndHakukohde(hakuOid + String.valueOf(i), haku);
-                }
+            for (int i = 0; i < numberOfHakukohdes; i ++) {
+                createKoulutusAndHakukohde(hakuOid + String.valueOf(i), haku);
             }
         });
     }
@@ -266,12 +259,9 @@ public class MassCopyTest extends TestUtilityBase {
         final String processId2 = copyHaku("race-condition-2");
         Thread.sleep(6000);
 
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
-                assertHaku("race-condition-1", processId1, 4);
-                assertHaku("race-condition-2", processId2, 3);
-            }
+        executeInTransaction(() -> {
+            assertHaku("race-condition-1", processId1, 4);
+            assertHaku("race-condition-2", processId2, 3);
         });
     }
 
@@ -318,12 +308,7 @@ public class MassCopyTest extends TestUtilityBase {
     @Test
     public void testKorkeakoulutusCopy() {
         mockOids(10, "korkeakoulutus");
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
-                testKorkeakoulutusCopyTransactional();
-            }
-        });
+        executeInTransaction(() -> testKorkeakoulutusCopyTransactional());
     }
 
     private void testKorkeakoulutusCopyTransactional() {
@@ -431,25 +416,16 @@ public class MassCopyTest extends TestUtilityBase {
 
     private void executeInTransaction(final Runnable runnable) {
         TransactionTemplate tt = new TransactionTemplate(tm);
-        tt.execute(new TransactionCallback<Object>() {
-
-            @Override
-            public Object doInTransaction(TransactionStatus status) {
-                runnable.run();
-                return null;
-            }
+        tt.execute(status -> {
+            runnable.run();
+            return null;
         });
     }
 
     @Test
     public void testTutkintoonJohtamatonCopy() {
         mockOids(10, "korkeakouluopinto");
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
-                testTutkintoonJohtamatonCopyTransactional();
-            }
-        });
+        executeInTransaction(() -> testTutkintoonJohtamatonCopyTransactional());
     }
 
     private void testTutkintoonJohtamatonCopyTransactional() {
@@ -505,7 +481,7 @@ public class MassCopyTest extends TestUtilityBase {
 
     private List<Haku> getLatestHakus() {
         List<Haku> hakus = hakuDAO.findAll();
-        Collections.sort(hakus, new Ordering<Haku>() {
+        hakus.sort(new Ordering<Haku>() {
             @Override
             public int compare(Haku h1, Haku h2) {
                 return Longs.compare(h2.getId(), h1.getId());
@@ -515,12 +491,7 @@ public class MassCopyTest extends TestUtilityBase {
     }
 
     private Haku getLatestHakuByUlkoinenTunniste(final String tunniste) {
-        return Iterables.find(getLatestHakus(), new Predicate<Haku>() {
-            @Override
-            public boolean apply(Haku haku) {
-                return tunniste.equals(haku.getHaunTunniste());
-            }
-        });
+        return getLatestHakus().stream().filter(haku -> tunniste.equals(haku.getHaunTunniste())).findFirst().orElse(null);
     }
 
     private KoulutusmoduuliToteutus getKorkeakouluopinto(String oid) {

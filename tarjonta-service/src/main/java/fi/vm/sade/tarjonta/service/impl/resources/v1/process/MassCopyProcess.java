@@ -18,10 +18,11 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.security.Principal;
 import java.util.Map;
-
-import static fi.vm.sade.tarjonta.service.AuditHelper.getUsernameFromSession;
 
 public class MassCopyProcess implements ProcessDefinition {
 
@@ -141,5 +142,16 @@ public class MassCopyProcess implements ProcessDefinition {
         processV1RDTO.getParameters().put(MassCopyProcess.PROCESS_SKIP_STEP, step);
         processV1RDTO.getParameters().put(MassCopyProcess.USER_OID, getUsernameFromSession());
         return processV1RDTO;
+    }
+
+    private static String getUsernameFromSession() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (context != null) {
+            Principal p = context.getAuthentication();
+            if (p != null) {
+                return p.getName();
+            }
+        }
+        return "Anonymous user";
     }
 }
