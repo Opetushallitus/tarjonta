@@ -21,6 +21,8 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.auditlog.AuditHelper;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.ErrorCode;
@@ -46,6 +48,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.stub;
 import static org.mockito.Mockito.when;
 
@@ -75,6 +78,10 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         hakukohde.setHakukohdeKoodistoNimi("hakukohde name");
         hakukohde.setHakukohdeNimi("hakukohde_koodi_uri");
         hakukohde.setOid("hakukohde_oid"); //three exams
+        converterToRDTO = mock(EntityConverterToRDTO.class);
+        Whitebox.setInternalState(instance, "converterToRDTO", converterToRDTO);
+        auditHelper = mock(AuditHelper.class);
+        Whitebox.setInternalState(instance, "auditHelper", auditHelper);
     }
 
     @Test

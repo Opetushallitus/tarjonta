@@ -31,6 +31,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.auditlog.AuditHelper;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.impl.ContextDataServiceImpl;
@@ -142,6 +143,7 @@ abstract class KoulutusBase extends TestUtilityBase {
     protected OppilaitosKoodiRelations oppilaitosKoodiRelations;
     protected LinkingV1Resource linkingV1Resource;
     protected PublicationDataService publicationDataService;
+    protected AuditHelper auditHelper;
 
     public void reload() throws OIDCreationException {
 
@@ -195,8 +197,10 @@ abstract class KoulutusBase extends TestUtilityBase {
         Whitebox.setInternalState(instance, "koulutusPermissionService", koulutusPermissionServiceMock);
         Whitebox.setInternalState(instance, "publicationDataService", publicationDataService);
         Whitebox.setInternalState(instance, "koulutusImplicitDataPopulator", dataPopulator);
+        Whitebox.setInternalState(instance, "auditHelper", auditHelper);
 
         Whitebox.setInternalState(converterToRDTO, "commonConverter", commonConverter);
+        Whitebox.setInternalState(converterToRDTO, "yhdenPaikanSaantoBuilder", yhdenPaikanSaantoBuilder);
         Whitebox.setInternalState(commonConverter, "organisaatioService", organisaatioServiceMock);
         Whitebox.setInternalState(commonConverter, "tarjontaKoodistoHelper", tarjontaKoodistoHelperMock);
 
