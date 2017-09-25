@@ -18,15 +18,16 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mysema.commons.lang.Pair;
-import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
-import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.auditlog.AuditLog;
 import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
 import fi.vm.sade.tarjonta.service.copy.MetaObject;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.ConverterV1;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusUtilService;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KorkeakouluOpintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
@@ -41,16 +42,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static fi.vm.sade.tarjonta.service.AuditHelper.AUDIT;
-import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
+import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.*;
 
 @Component
 @Scope("prototype")
@@ -87,6 +85,10 @@ public class MassCommitProcess {
     @Autowired
     private OidService oidService;
 
+    @Autowired
+    private ConverterV1 converterV1;
+
+
     private int countHakukohde = 0;
     private int countKomoto = 0;
     private int countTotalHakukohde = 0;
@@ -112,6 +114,7 @@ public class MassCommitProcess {
         this.state = state;
     }
 
+    @Transactional
     public void run() {
         countHakukohde = 0;
         countKomoto = 0;
@@ -150,7 +153,6 @@ public class MassCommitProcess {
         }
     }
 
-    @Transactional(readOnly = false)
     private void handleSisaltyvyydet(String processId, List<String> oldKomoOids) {
         for (String komoParts : oldKomoOids) {
             String[] oids = komoParts.split("_");
@@ -170,12 +172,7 @@ public class MassCommitProcess {
             }
 
             if (!copy.getAlamoduuliList().isEmpty()) {
-                executeInTransaction(new Runnable() {
-                    @Override
-                    public void run() {
-                        koulutusSisaltyvyysDAO.insert(copy);
-                    }
-                });
+                executeInTransaction(() -> koulutusSisaltyvyysDAO.insert(copy));
             }
         }
     }
@@ -187,23 +184,13 @@ public class MassCommitProcess {
 
     private void setHakukohdeIndexedDateToNull(Set<Long> hakukohdeIds) {
         for (final Long hakukohdeId : hakukohdeIds) {
-            executeInTransaction(new Runnable() {
-                @Override
-                public void run() {
-                    hakukohdeDAO.setViimIndeksointiPvmToNull(hakukohdeId);
-                }
-            });
+            executeInTransaction(() -> hakukohdeDAO.setViimIndeksointiPvmToNull(hakukohdeId));
         }
     }
 
     private void setKomotoIndexedDateToNull(Set<Long> komotoIds) {
         for (final Long komotoId : komotoIds) {
-            executeInTransaction(new Runnable() {
-                @Override
-                public void run() {
-                    koulutusmoduuliToteutusDAO.setViimIndeksointiPvmToNull(komotoId);
-                }
-            });
+            executeInTransaction(() -> koulutusmoduuliToteutusDAO.setViimIndeksointiPvmToNull(komotoId));
         }
     }
 
@@ -260,110 +247,83 @@ public class MassCommitProcess {
     @Autowired
     private PlatformTransactionManager tm;
 
-    @Transactional(readOnly = false)
     private void insertHaku(final String oldHakuOid) {
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
-                final Haku sourceHaku = hakuDAO.findByOid(oldHakuOid);
-                String hakuJson = EntityToJsonHelper.convertToJson(sourceHaku);
+        executeInTransaction(() -> {
+            final Haku sourceHaku = hakuDAO.findByOid(oldHakuOid);
+            String hakuJson = EntityToJsonHelper.convertToJson(sourceHaku);
 
-                final Haku haku = (Haku) EntityToJsonHelper.convertToEntity(hakuJson, Haku.class);
-                haku.setTila(TarjontaTila.KOPIOITU);
-                try {
-                    haku.setOid(oidService.get(TarjontaOidType.HAKU));
-                } catch (OIDCreationException ex) {
-                    LOG.error("OidService failed", ex);
-                }
-
-
-                for (Hakuaika hakuaika : haku.getHakuaikas()) {
-                    hakuaikas.put(hakuaika.getId(), hakuaika);
-                    hakuaika.setId(null);
-                    hakuaika.setHaku(haku);
-                    if (hakuaika.getPaattymisPvm() != null) {
-                        hakuaika.setPaattymisPvm(dateToNextYear(hakuaika.getPaattymisPvm()));
-                    }
-
-                    if (hakuaika.getAlkamisPvm() != null) {
-                        hakuaika.setAlkamisPvm(dateToNextYear(hakuaika.getAlkamisPvm()));
-                    }
-                }
-
-                if (haku.getKoulutuksenAlkamisVuosi() != null) {
-                    haku.setKoulutuksenAlkamisVuosi(haku.getKoulutuksenAlkamisVuosi() + 1);
-                }
-
-                if (haku.getHakukausiVuosi() != null) {
-                    haku.setHakukausiVuosi(haku.getHakukausiVuosi() + 1);
-                }
-
-                targetHakuoid = haku.getOid();
-                getState().getParameters().put(MassCopyProcess.TO_HAKU_OID, targetHakuoid);
-                Date d = new Date();
-
-                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-                for (TekstiKaannos k : sourceHaku.getNimi().getKaannoksetAsList()) {
-                    if (k.getArvo() != null) {
-                        haku.getNimi().addTekstiKaannos(k.getKieliKoodi(), k.getArvo().concat(" (Kopioitu ").concat(sdf.format(d)).concat(")"));
-                    }
-                }
-                hakuDAO.insert(haku);
-
-                String userOid = state.getParameters().get(MassCopyProcess.USER_OID);
-                AUDIT.log(builder(userOid)
-                            .setOperation(TarjontaOperation.COPY)
-                            .setResource(TarjontaResource.HAKU)
-                            .setResourceOid(haku.getOid())
-                            .add("sourceHaku", oldHakuOid).build());
+            final Haku haku = (Haku) EntityToJsonHelper.convertToEntity(hakuJson, Haku.class);
+            haku.setTila(TarjontaTila.KOPIOITU);
+            try {
+                haku.setOid(oidService.get(TarjontaOidType.HAKU));
+            } catch (OIDCreationException ex) {
+                LOG.error("OidService failed", ex);
             }
+
+
+            for (Hakuaika hakuaika : haku.getHakuaikas()) {
+                hakuaikas.put(hakuaika.getId(), hakuaika);
+                hakuaika.setId(null);
+                hakuaika.setHaku(haku);
+                if (hakuaika.getPaattymisPvm() != null) {
+                    hakuaika.setPaattymisPvm(dateToNextYear(hakuaika.getPaattymisPvm()));
+                }
+
+                if (hakuaika.getAlkamisPvm() != null) {
+                    hakuaika.setAlkamisPvm(dateToNextYear(hakuaika.getAlkamisPvm()));
+                }
+            }
+
+            if (haku.getKoulutuksenAlkamisVuosi() != null) {
+                haku.setKoulutuksenAlkamisVuosi(haku.getKoulutuksenAlkamisVuosi() + 1);
+            }
+
+            if (haku.getHakukausiVuosi() != null) {
+                haku.setHakukausiVuosi(haku.getHakukausiVuosi() + 1);
+            }
+
+            targetHakuoid = haku.getOid();
+            getState().getParameters().put(MassCopyProcess.TO_HAKU_OID, targetHakuoid);
+            Date d = new Date();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+            for (TekstiKaannos k : sourceHaku.getNimi().getKaannoksetAsList()) {
+                if (k.getArvo() != null) {
+                    haku.getNimi().addTekstiKaannos(k.getKieliKoodi(), k.getArvo().concat(" (Kopioitu ").concat(sdf.format(d)).concat(")"));
+                }
+            }
+            hakuDAO.insert(haku);
+
+            String userOid = state.getParameters().get(MassCopyProcess.USER_OID);
+            HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, true);
+            AuditLog.massCopy(hakuV1RDTO, oldHakuOid, userOid);
         });
     }
 
-    @Transactional(readOnly = false)
     private void insertKomotoBatch(final String processId, final Set<String> oldOids) {
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
-                insertKomotos(oldOids, processId);
-            }
-        });
+        executeInTransaction(() -> insertKomotos(oldOids, processId));
     }
 
-    @Transactional(readOnly = false)
     private void removeBatch(final String processId, final String hakuOid) {
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
-                long rowCount = massakopiointi.rowCount(processId, hakuOid);
-                LOG.info("items found {}", rowCount);
-                if (rowCount > 0) {
-                    LOG.info("change status of all objects to copied. haku oid {}, process id : {}", hakuOid, processId);
-                    massakopiointi.updateTila(processId, hakuOid, Massakopiointi.KopioinninTila.COPIED, new Date());
-                }
+        executeInTransaction(() -> {
+            long rowCount = massakopiointi.rowCount(processId, hakuOid);
+            LOG.info("items found {}", rowCount);
+            if (rowCount > 0) {
+                LOG.info("change status of all objects to copied. haku oid {}, process id : {}", hakuOid, processId);
+                massakopiointi.updateTila(processId, hakuOid, Massakopiointi.KopioinninTila.COPIED, new Date());
             }
         });
     }
 
-    @Transactional(readOnly = false)
     private void insertHakukohdeBatch(final String processId, final String targetHakuOid, final Set<String> oldOids) {
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
-                insertHakukohdes(oldOids, processId, targetHakuOid);
-            }
-        });
+        executeInTransaction(() -> insertHakukohdes(oldOids, processId, targetHakuOid));
     }
 
     private void executeInTransaction(final Runnable runnable) {
         TransactionTemplate tt = new TransactionTemplate(tm);
-        tt.execute(new TransactionCallback<Object>() {
-
-            @Override
-            public Object doInTransaction(TransactionStatus status) {
-                runnable.run();
-                return null;
-            }
+        tt.execute(status -> {
+            runnable.run();
+            return null;
         });
     }
 

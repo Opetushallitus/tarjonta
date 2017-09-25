@@ -7,6 +7,7 @@ import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
 import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.auditlog.AuditHelper;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.YhdenPaikanSaantoBuilder;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
@@ -31,6 +32,7 @@ import java.util.*;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1.getCriteriaListFromParams;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.core.StringContains.*;
@@ -54,6 +56,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
     @Mock
     private UriInfo uriInfo;
     private MultivaluedMap<String, String> queryParams = new MultivaluedHashMap();
+    private AuditHelper audithelper = mock(AuditHelper.class);
 
     @Before
     public void setUp() throws Exception {
@@ -68,6 +71,10 @@ public class HakuResourceImplV1Test extends TestMockBase {
         Haku haku = new Haku();
         haku.setOid("haku1");
         when(converterV1.convertHakuV1DRDTOToHaku(any(HakuV1RDTO.class), any(Haku.class))).thenReturn(haku);
+        HakuV1RDTO hakuV1RDTO = new HakuV1RDTO();
+        hakuV1RDTO.setOid("haku1");
+        when(audithelper.getHakuAsDto(any(Haku.class))).thenReturn(hakuV1RDTO);
+        Whitebox.setInternalState(hakuResource, "auditHelper", audithelper);
 
         KoodistoURI.KOODISTO_TUTKINTOON_JOHTAVA_KOULUTUS_URI = "tutkintoonjohtava";
         KoodistoURI.KOODI_ON_TUTKINTO_URI = "tutkintoonjohtava_1";

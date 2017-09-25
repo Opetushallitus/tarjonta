@@ -10,14 +10,17 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.auditlog.AuditHelper;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.it.TarjontaSearchServiceTest;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
@@ -28,6 +31,8 @@ import org.mockito.stubbing.Answer;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests for api, does not persist any data. all related services are mocked.
@@ -50,6 +55,8 @@ public class KoulutusResourceTest {
             .mock(KoulutusmoduuliToteutusDAO.class);
 
     private ConverterV1 converterV1 = Mockito.mock(ConverterV1.class);
+
+    private EntityConverterToRDTO converterToRDTO = Mockito.mock(EntityConverterToRDTO.class);
 
     private ContextDataService contextDataService = Mockito
             .mock(ContextDataService.class);
@@ -82,6 +89,8 @@ public class KoulutusResourceTest {
         // Stub koodisto values
         TarjontaSearchServiceTest.stubKoodi(koodiService, "kieli_fi", "FI");
 
+        AuditHelper auditHelper = mock(AuditHelper.class);
+        Whitebox.setInternalState(koulutusResource, "auditHelper", auditHelper);
 
         komo = new Koulutusmoduuli();
         komo.setKoulutustyyppiEnum(ModuulityyppiEnum.KORKEAKOULUTUS);
@@ -94,6 +103,7 @@ public class KoulutusResourceTest {
         komoto1.setAlkamisVuosi(2005);
         komoto1.setKoulutusmoduuli(komo);
         komoto1.addHakukohde(hk1);
+        komoto1.setToteutustyyppi(ToteutustyyppiEnum.AMMATTITUTKINTO);
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-1"))
                 .toReturn(komoto1);
         komo.setKoulutustyyppiEnum(ModuulityyppiEnum.KORKEAKOULUTUS);
@@ -103,6 +113,7 @@ public class KoulutusResourceTest {
         komoto2.setAlkamisVuosi(2006);
         komoto2.setKoulutusmoduuli(komo);
         komoto2.addHakukohde(hk1);
+        komoto2.setToteutustyyppi(ToteutustyyppiEnum.AMMATTITUTKINTO);
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-2"))
                 .toReturn(komoto2);
 
@@ -118,6 +129,7 @@ public class KoulutusResourceTest {
         komoto3.setAlkamisVuosi(2005);
         komoto3.setKoulutusmoduuli(komo);
         komoto3.addHakukohde(hk2);
+        komoto3.setToteutustyyppi(ToteutustyyppiEnum.AMMATTITUTKINTO);
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-3"))
                 .toReturn(komoto3);
 
@@ -131,6 +143,7 @@ public class KoulutusResourceTest {
                 permissionChecker);
 
         Whitebox.setInternalState(koulutusResource, "converterV1", converterV1);
+        Whitebox.setInternalState(koulutusResource, "converterToRDTO", converterToRDTO);
         Whitebox.setInternalState(koulutusResource, "contextDataService",
                 contextDataService);
 

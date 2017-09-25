@@ -1,14 +1,14 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
-import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.service.auditlog.AuditLog;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.linking.validation.LinkingValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.v1.LinkingV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
@@ -29,8 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import static fi.vm.sade.tarjonta.service.AuditHelper.AUDIT;
-import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
+import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.*;
 
 /**
  * TODO, authorization!!
@@ -146,12 +145,9 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
                         logger.info("remove link by komo oid {}", childKomoOid);
                         removeAlamoduulitByKomoOid(childKomoOid, parentKomo.getSisaltyvyysList());
                     }
-                    AUDIT.log(builder()
-                            .setOperation(TarjontaOperation.UNLINK_KOULUTUS)
-                            .setResource(TarjontaResource.KOULUTUS)
-                            .setResourceOid(parentKomoOid)
-                            .add("unlinkOids", paramChildOids.toString())
-                            .build());
+
+                    AuditLog.log(UNLINK_KOULUTUS, KOULUTUS, parentKomoOid, null, null,
+                            ImmutableMap.of("linkOids", paramChildOids.toString()));
                 }
             }
         } else {
@@ -229,12 +225,8 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
                         parentKomo, komo, ValintaTyyppi.ALL_OFF);
                 koulutusSisaltyvyysDAO.insert(sisaltyvyys);
             }
-            AUDIT.log(builder()
-                    .setOperation(TarjontaOperation.LINK_KOULUTUS)
-                    .setResource(TarjontaResource.KOULUTUS)
-                    .setResourceOid(parent)
-                    .add("linkOids", children.toString())
-                    .build());
+            AuditLog.log(LINK_KOULUTUS, KOULUTUS, parent, null, null,
+                    ImmutableMap.of("linkOids", children.toString()));
         }
         return result;
     }
