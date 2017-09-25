@@ -36,23 +36,23 @@ public interface ProcessResourceV1 {
     @POST
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Prosessin käynnistäminen", notes = "Prosessin käynnistäminen")
-    public ProcessV1RDTO start(ProcessV1RDTO processDefinition);
+    ProcessV1RDTO start(ProcessV1RDTO processDefinition);
 
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Prosessien listaaminen", notes = "Prosessien listaaminen")
-    public List<ProcessV1RDTO> list();
+    List<ProcessV1RDTO> list();
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Prosessin tilan lataaminen", notes = "Prosessin tilan lataaminen")
-    public ProcessV1RDTO get(@PathParam("id") String id);
+    ProcessV1RDTO get(@PathParam("id") String id);
 
     @GET
     @Path("/{id}/stop")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Prosessin keskeyttäminen", notes = "Prosessin keskeyttäminen")
-    public ProcessV1RDTO stop(@PathParam("id") String id);
+    ProcessV1RDTO stop(@PathParam("id") String id);
 
 }

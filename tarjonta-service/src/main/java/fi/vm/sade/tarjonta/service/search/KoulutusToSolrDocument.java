@@ -478,8 +478,8 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
 
         KoodiType koodi = koodistoHelper.getKoodiByUri(koulutusUri);
 
-        if (koodi != null) {
-            KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+        KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+        if (metadata != null) {
             add(doc, KOULUTUSKOODI_FI, metadata.getNimi());
             metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
             add(doc, KOULUTUSKOODI_SV, metadata.getNimi());

@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -28,9 +29,10 @@ public class ProcessV1RDTO implements Serializable {
     private String id;
     private String process;
     private double state = 0.0;
+    private final long started = System.currentTimeMillis();
 
     private String messageKey = "progress.message.default";
-    private Map<String, String> parameters = new HashMap<String, String>();
+    private Map<String, String> parameters = new HashMap<>();
 
     public String getId() {
         return id;
@@ -72,6 +74,10 @@ public class ProcessV1RDTO implements Serializable {
         this.parameters = parameters;
     }
 
+    public long getStarted() {
+        return started;
+    }
+
     private ProcessV1RDTO() {
     }
     
@@ -81,5 +87,4 @@ public class ProcessV1RDTO implements Serializable {
         p.setId("" + new Random().nextLong());
         return p;
     }
-    
 }

@@ -50,9 +50,6 @@ public class V1TestHelper {
     KoulutusV1Resource koulutusResourceV1;
 
     @Autowired
-    V1TestHelper helper;
-
-    @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
     public final static String TARJOAJA1 = "1.2.3";

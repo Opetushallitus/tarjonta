@@ -40,9 +40,6 @@ public class TestProcess implements ProcessDefinition {
 
     private ProcessV1RDTO state;
 
-    long startTs = 0L;
-    int howManySecondsToRun = 0;
-
     @Autowired
     private HakuDAO hakuDao;
 
@@ -66,12 +63,12 @@ public class TestProcess implements ProcessDefinition {
         LOG.info("run()...");
 
         try {
-            startTs = System.currentTimeMillis();
+            long startTs = System.currentTimeMillis();
+            int howManySecondsToRun = Integer.parseInt(getState().getParameters().get("time"));
 
             getState().setMessageKey("my.test.process.starting");
             getState().getParameters().put("test", "Value!");
 
-            howManySecondsToRun = Integer.parseInt(getState().getParameters().get("time"));
 
             while (System.currentTimeMillis() < (startTs + howManySecondsToRun * 1000)) {
                 // Update state
@@ -101,11 +98,6 @@ public class TestProcess implements ProcessDefinition {
         }
 
         LOG.info("run()... done.");
-    }
-
-    @Override
-    public boolean canStop() {
-        return true;
     }
 
     @Override

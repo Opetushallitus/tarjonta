@@ -41,14 +41,10 @@
 
     <bean id="auditLogAspect" class="fi.vm.sade.tarjonta.service.impl.aspects.AuditLogAspect"/>
 
-    <!-- Get configuration for generic/generic-events system -->
-    <import resource="classpath:META-INF/spring/events-context.xml" />
-
     <!-- service configuration -->
     <import resource="classpath:META-INF/spring/context/service-context.xml"/>
     <import resource="classpath:META-INF/spring/context/dao-context.xml"/>
     <import resource="classpath:META-INF/spring/context/ws-context.xml" />
-    <import resource="classpath:META-INF/spring/context/publication-context.xml" />
 
     <!-- cache -->
     <import resource="classpath:META-INF/spring/context/tarjonta-service-cache-context.xml" />
@@ -56,7 +52,7 @@
     <!--
       #### Audit logger configuration
     -->
-    <import resource="classpath:/META-INF/spring/logger-context.xml" />
+    <import resource="classpath:/META-INF/spring/context/logger-context.xml" />
     <!-- <bean id="auditLogger" class="fi.vm.sade.log.client.LoggerMock"/>  -->
 
 </beans>

@@ -112,8 +112,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(TarjontaAdminServiceImpl.class);
     @Autowired
-    private HakuService hakuBusinessService;
-    @Autowired
     private KoulutusBusinessService koulutusBusinessService;
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
@@ -339,7 +337,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
 
     @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
-    private boolean checkHakukohdeExists(String hakukohdeNimi, String term, Integer year, String providerOid, String hakuOid) {
+    boolean checkHakukohdeExists(String hakukohdeNimi, String term, Integer year, String providerOid, String hakuOid) {
 
 
 
@@ -359,7 +357,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
            return false;
     }
     @Transactional(rollbackFor = Throwable.class, readOnly = true, propagation = Propagation.NOT_SUPPORTED)
-    private boolean doesHakukohdeExistAllready(final String hakukohdeName, String koulutusOid, String hakuOid)  {
+    boolean doesHakukohdeExistAllready(final String hakukohdeName, String koulutusOid, String hakuOid)  {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
         if (komoto != null )  {
 
@@ -428,8 +426,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                 return arg0.getId();
             }
         })));
-
-        publication.sendEvent(hakuk.getTila(), hakuk.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
 
         //return fresh copy (that has fresh versions so that optimistic locking works)
         LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
@@ -575,7 +571,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         newHakukohde.setViimIndeksointiPvm(newHakukohde.getLastUpdateDate());
         hakukohdeDAO.update(newHakukohde);
         solrIndexer.indexHakukohteet(Lists.newArrayList(newHakukohde.getId()));
-        publication.sendEvent(newHakukohde.getTila(), newHakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);
 
         //return fresh copy (that has fresh version so that optimistic locking works)
         LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi(hakukohdePaivitys.getOid());
@@ -595,7 +590,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         final KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
         solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
 
-        publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
 
         final LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
         vastaus.setVersion(toteutus.getVersion()); //optimistic locking
@@ -611,10 +605,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         checkOrganisationExists(koulutus.getTarjoaja());
         final KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
 
-        publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
         try {
             solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
         } catch (Throwable t) {
+            log.warn("Koulutusten indeksointi epäonnistui", t);
         }
         final Set<Hakukohde> hakukohteet = toteutus.getHakukohdes();
         final Set<Long> hakukohteenidt = Sets.newHashSet();
@@ -847,48 +841,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         return parent;
     }
 
-    /**
-     * @return the businessService
-     */
-    public HakuService getBusinessService() {
-        return hakuBusinessService;
-    }
-
-    /**
-     * @param businessService the businessService to set
-     */
-    public void setBusinessService(HakuService businessService) {
-        this.hakuBusinessService = businessService;
-    }
-
-    /**
-     * @return the conversionService
-     */
-    public ConversionService getConversionService() {
-        return conversionService;
-    }
-
-    /**
-     * @param conversionService the conversionService to set
-     */
-    public void setConversionService(ConversionService conversionService) {
-        this.conversionService = conversionService;
-    }
-
-    /**
-     * @return the hakuDao
-     */
-    public HakuDAO getHakuDao() {
-        return hakuDAO;
-    }
-
-    /**
-     * @param hakuDao the hakuDao to set
-     */
-    public void setHakuDao(HakuDAO hakuDao) {
-        this.hakuDAO = hakuDao;
-    }
-
     private void mergeHaku(Haku source, Haku target) {
         target.setNimi(null);
         target.setNimi(source.getNimi());
@@ -933,35 +885,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
     }
 
-    /**
-     * @return the hakukohdeDAO
-     */
-    public HakukohdeDAO getHakukohdeDAO() {
-        return hakukohdeDAO;
-    }
-
-    /**
-     * @param hakukohdeDAO the hakukohdeDAO to set
-     */
-    public void setHakukohdeDAO(HakukohdeDAO hakukohdeDAO) {
-        this.hakukohdeDAO = hakukohdeDAO;
-    }
-
-    /**
-     * @return the koulutusmoduuliToteutusDAO
-     */
-    public KoulutusmoduuliToteutusDAO getKoulutusmoduuliToteutusDAO() {
-        return koulutusmoduuliToteutusDAO;
-    }
-
-    /**
-     * @param koulutusmoduuliToteutusDAO the koulutusmoduuliToteutusDAO to set
-     */
-    public void setKoulutusmoduuliToteutusDAO(KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO) {
-        this.koulutusmoduuliToteutusDAO = koulutusmoduuliToteutusDAO;
-    }
-
-    
     private GeneerinenTilaTyyppiToTilaFunction gttToT = new GeneerinenTilaTyyppiToTilaFunction();
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)

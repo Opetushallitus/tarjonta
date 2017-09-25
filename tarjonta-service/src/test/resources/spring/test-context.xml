@@ -52,7 +52,5 @@
         Create a dynamic mock class for the jms message sender.
         Read more : https://bitbucket.org/kubek2k/springockito/wiki/Home
     -->
-    <mockito:mock id="eventSender" class="fi.vm.sade.events.EventSender" />
-
     <mockito:mock id="auditLogger" class="fi.vm.sade.log.client.Logger" />
 </beans>
