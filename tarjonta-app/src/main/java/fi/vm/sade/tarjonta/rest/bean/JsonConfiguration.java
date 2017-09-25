@@ -23,9 +23,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.*;
 
+@EnableWebMvc
 @Controller
 @RequestMapping("/")
 public class JsonConfiguration {
@@ -139,7 +141,7 @@ public class JsonConfiguration {
         return configurationJson;
     }
 
-    @RequestMapping(value = "/js/env-configuration.js", method = RequestMethod.GET, produces = "text/javascript")
+    @RequestMapping(value = "/js/env-configuration.js", method = RequestMethod.GET, produces = "application/javascript")
     @ResponseBody
     public String getEnvConfigurationJsFile() {
         if (configurationJson == null) {

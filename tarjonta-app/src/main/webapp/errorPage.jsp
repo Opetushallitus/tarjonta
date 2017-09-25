@@ -7,7 +7,7 @@
     <link type="text/css" rel="stylesheet" href="css/virkailija.css">
 
     <!--Virkailija layout script -->
-    <script type="text/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
+    <script type="application/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <title>Virhe</title>
 </head>
