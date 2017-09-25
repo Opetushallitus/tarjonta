@@ -13,7 +13,6 @@
 
     <properties>
         <timestamp>${maven.build.timestamp}</timestamp>
-        <powermock.version>1.4.12</powermock.version>
     </properties>
 
 
@@ -22,19 +21,13 @@
         <dependency>
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-client-support-distributed-ehcache</artifactId>
-            <version>3.1.10</version>
+            <version>${cas-client-support-distributed-ehcache.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>net.sf.ehcache</groupId>
                     <artifactId>ehcache</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.8.1</version>
         </dependency>
 
         <dependency>
@@ -47,18 +40,7 @@
         <dependency>
             <groupId>fi.vm.sade.koodisto</groupId>
             <artifactId>koodisto-api</artifactId>
-            <version>${koodisto.api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>fi.vm.sade.koodisto</groupId>
-            <artifactId>koodisto-widget</artifactId>
-            <version>${koodisto.widget.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>vaadin</artifactId>
-                    <groupId>com.vaadin</groupId>
-                </exclusion>
-            </exclusions>
+            <version>${koodisto.version}</version>
         </dependency>
 
         <dependency>
@@ -77,11 +59,6 @@
             <groupId>fi.vm.sade.authentication</groupId>
             <artifactId>authentication-api</artifactId>
             <version>${authentication.api.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-common</artifactId>
         </dependency>
 
         <dependency>
@@ -104,38 +81,38 @@
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>2.2.3</version>
+            <version>${jaxb-api.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>2.2.4-1</version>
+            <version>${jaxb-impl.version}</version>
         </dependency>
 
         <dependency>
             <!-- Spring AOP dependency -->
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
-            <version>2.2</version>
+            <version>${cglib.version}</version>
         </dependency>
 
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-            <version>3.2.1</version>
+            <version>${commons-collections.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.8</version>
+            <version>${poi.version}</version>
         </dependency>
 
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
-            <version>1.8.3</version>
+            <version>${commons-beanutils.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -167,7 +144,7 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>3.1</version>
+            <version>${easymock.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -181,6 +158,48 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
+            <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-cas</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-ldap</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>log4j</groupId>
@@ -193,9 +212,43 @@
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.3.2</version>
+            <version>${commons-fileupload.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons-lang.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>generic-common</artifactId>
+            <version>${generic-common.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -203,6 +256,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>${resources.plugin.version}</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <nonFilteredFileExtensions>
@@ -214,17 +268,17 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
-                <version>1.4</version>
+                <version>${aspectj-maven-plugin.version}</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.aspectj</groupId>
                         <artifactId>aspectjrt</artifactId>
-                        <version>1.8.9</version>
+                        <version>${aspectj.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.aspectj</groupId>
                         <artifactId>aspectjtools</artifactId>
-                        <version>1.8.9</version>
+                        <version>${aspectj.version}</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -242,9 +296,9 @@
                             <artifactId>spring-aspects</artifactId>
                         </aspectLibrary>
                     </aspectLibraries>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                    <complianceLevel>1.7</complianceLevel>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <complianceLevel>${java.version}</complianceLevel>
                 </configuration>
             </plugin>
 
@@ -254,7 +308,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
+                <version>${maven-war-plugin.version}</version>
                 <configuration>
                     <webResources>
                         <resource>
@@ -293,7 +347,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>properties-maven-plugin</artifactId>
-                        <version>1.0-alpha-2</version>
+                        <version>${properties-maven-plugin.version}</version>
                         <executions>
                             <execution>
                                 <goals>

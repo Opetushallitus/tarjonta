@@ -46,10 +46,9 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

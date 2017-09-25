@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:amq="http://activemq.apache.org/schema/core"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder
+        location="classpath:log-client.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/log-client.properties"
+        ignore-resource-not-found="true"/>
+
+    <bean id="logJmsFactory" class="org.apache.activemq.pool.PooledConnectionFactory"
+          destroy-method="stop">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL">
+                    <value>${activemq.brokerurl}</value>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="logDestination" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="${activemq.queue.name.log:Sade.Log}" />
+    </bean>
+
+    <bean id="logJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="logJmsFactory"/>
+        <property name="defaultDestination" ref="logDestination" />
+    </bean>
+
+    <bean id="sadeLogger" class="fi.vm.sade.log.client.LoggerJms">
+        <property name="jmsTemplate" ref="logJmsTemplate" />
+    </bean>
+
+</beans>

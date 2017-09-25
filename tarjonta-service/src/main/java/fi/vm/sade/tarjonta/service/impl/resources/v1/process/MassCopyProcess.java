@@ -19,6 +19,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Map;
+
+import static fi.vm.sade.tarjonta.service.AuditHelper.getUsernameFromSession;
+
 public class MassCopyProcess implements ProcessDefinition {
 
     private static final Logger LOG = LoggerFactory.getLogger(MassCopyProcess.class);
@@ -55,16 +59,13 @@ public class MassCopyProcess implements ProcessDefinition {
 
     private boolean isPrepare = true;
 
-    private boolean completed=false;
-
     public MassCopyProcess() {
         super();
     }
-    
+
     @Override
     public ProcessV1RDTO getState() {
-        ProcessV1RDTO state = isPrepare ? prepare.getState() : commit.getState();
-        return state;
+        return isPrepare ? prepare.getState() : commit.getState();
     }
 
     @Override
@@ -87,8 +88,9 @@ public class MassCopyProcess implements ProcessDefinition {
 
     @Override
     public void run() {
-        final String fromOid = getState().getParameters().get(SELECTED_HAKU_OID);
-        final String skipTestparam = getState().getParameters().get(PROCESS_SKIP_STEP);
+        Map<String, String> parameters = getState().getParameters();
+        final String fromOid = parameters.get(SELECTED_HAKU_OID);
+        final String skipTestparam = parameters.get(PROCESS_SKIP_STEP);
         LOG.info("MassCopyProcess.run(), params haku oid : '{}', process id '{}'", fromOid, getState().getId());
 
         try {
@@ -96,30 +98,28 @@ public class MassCopyProcess implements ProcessDefinition {
                 runPrepareProcess();
                 runCommitProcess();
             } else {
-                if (skipTestparam.equals(COMMIT)) {
-                    runCommitProcess();
-                } else if (skipTestparam.equals(PREPARE)) {
-                    runPrepareProcess();
-                } else {
-                    LOG.info("Received an unknown precess step '{}'.", PROCESS_SKIP_STEP);
+                switch(skipTestparam) {
+                    case COMMIT:
+                        runCommitProcess();
+                        break;
+                    case PREPARE:
+                        runPrepareProcess();
+                        break;
+                    default:
+                        LOG.info("Received an unknown precess step '{}'.", PROCESS_SKIP_STEP);
+                        break;
                 }
             }
-            getState().getParameters().put("result", "success");
-        } catch (Throwable ex) {
+            parameters.put("result", "success");
+        } catch(Throwable ex) {
             LOG.error("Copy failed", ex);
             getState().setMessageKey("my.test.process.error");
-            getState().getParameters().put("result", ex.getMessage());
+            parameters.put("result", ex.getMessage());
         } finally {
-            completed=true;
-            getState().getParameters().put(PROCESS_STEP_TYPE, DONE);
+            parameters.put(PROCESS_STEP_TYPE, DONE);
         }
 
         LOG.info("run()... done.");
-    }
-
-    @Override
-    public boolean canStop() {
-        return true;
     }
 
     @Override
@@ -131,7 +131,7 @@ public class MassCopyProcess implements ProcessDefinition {
      * Get process definition that can run this process.
      *
      * @param toOid haku oid to copy to
-     * @param step skip process steps
+     * @param step  skip process steps
      * @return
      */
     public static ProcessV1RDTO getDefinition(final String toOid, final String step) {
@@ -139,6 +139,7 @@ public class MassCopyProcess implements ProcessDefinition {
         processV1RDTO.setProcess("massCopyProcess");
         processV1RDTO.getParameters().put(MassCopyProcess.SELECTED_HAKU_OID, toOid);
         processV1RDTO.getParameters().put(MassCopyProcess.PROCESS_SKIP_STEP, step);
+        processV1RDTO.getParameters().put(MassCopyProcess.USER_OID, getUsernameFromSession());
         return processV1RDTO;
     }
 }
