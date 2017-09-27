@@ -361,6 +361,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
 
         return from(qHaku)
           .where(qHaku.ataruLomakeAvain.isNotNull())
+          .where(qHaku.tila.ne(TarjontaTila.POISTETTU))
           .where(orgExpr)
           .list(qHaku);
     }
