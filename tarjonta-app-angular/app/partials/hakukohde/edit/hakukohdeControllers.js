@@ -59,10 +59,9 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
         if ($scope.model.hakukohde.hakuOid != undefined) {
             angular.forEach($scope.model.hakus, function (h) {
                 // yhteushaku valittu
+                $scope.model.hakutapaYhteishaku = false;
                 if (h.oid == $scope.model.hakukohde.hakuOid && (h.hakutapaUri != undefined && h.hakutapaUri.split('#')[0] == 'hakutapa_01')) {
                     $scope.model.hakutapaYhteishaku = true;
-                } else if (h.oid == $scope.model.hakukohde.hakuOid){
-                    $scope.model.hakutapaYhteishaku = false;
                 }
             });
         }
@@ -196,7 +195,7 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
                             Koodisto.getYlapuolisetKoodit(koulutusohjelmanKoodi.koodiUri, AuthService.getLanguage())
                                 .then(function(hakukohteenYlapuolisetKoodit) {
                                     angular.forEach(hakukohteenYlapuolisetKoodit, function(hakukohteenYlapuolinenKoodi) {
-                                        if (pohjakoulutusvaatimus !== undefined && hakukohteenYlapuolinenKoodi.koodiUri === pohjakoulutusvaatimus.uri) {
+                                        if (pohjakoulutusvaatimus && hakukohteenYlapuolinenKoodi.koodiUri === pohjakoulutusvaatimus.uri) {
                                             appendOrReplaceHakukohteenNimi(currentUri, koulutusohjelmanKoodi);
                                         }
                                     });
