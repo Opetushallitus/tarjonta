@@ -204,11 +204,7 @@ public class HakukohdeValidator {
 
     private boolean isYhteishaku(String hakuOid){
         Haku haku = hakuDAO.findByOid(hakuOid);
-        if(haku.isYhteishaku()){
-            return true;
-        } else {
-            return false;
-        }
+        return haku.isYhteishaku();
     }
 
     private boolean isDuplicateHakukohdeForHakuAndTarjoaja(HakukohdeV1RDTO hakukohde) {
