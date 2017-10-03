@@ -60,6 +60,7 @@ public class KoulutusValidator {
     private static final boolean REQUIRE_KOMO_VALIDATION = true;
     private static final boolean NO_KOMO_VALIDATION = false;
     private static final Date firstOfJanuary2000 = new Date(946738364556L);
+    private static final Date firstOfAugust2018 =  new Date(1533081600000L);
 
     public static final String KOULUTUSOHJELMA = "koulutusohjelma";
     public static final String KOULUTUSMODUULITYYPPI = "koulutusmoduuliTyyppi";
@@ -226,8 +227,11 @@ public class KoulutusValidator {
             //a major validation error, validation must stop now!
             return result;
         }
-
-        validateKoodistoRelationsGeneric(dto, result);
+        boolean validatePohjakoulutus = true;
+        if(dto.getToteutustyyppi() == ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018){
+            validatePohjakoulutus = false;
+        }
+        validateKoodistoRelationsGeneric(dto, result, validatePohjakoulutus);
         validateAlkamisPvms(result, dto);
 
         if (TarjontaTila.PUUTTEELLINEN.equals(dto.getTila())) {
@@ -365,11 +369,12 @@ public class KoulutusValidator {
         }
     }
 
-    private static void validateKoodistoRelationsGeneric(KoulutusGenericV1RDTO dto, ResultV1RDTO result) {
+    private static void validateKoodistoRelationsGeneric(KoulutusGenericV1RDTO dto, ResultV1RDTO result, boolean validatePohjakoulutus) {
         if (!(dto instanceof KoulutusAmmatillinenPerustutkintoV1RDTO
                 || dto instanceof KoulutusAmmatilliseenPeruskoulutukseenValmentavaV1RDTO
                 || dto instanceof KoulutusAmmatilliseenPeruskoulutukseenValmentavaERV1RDTO
-                || dto instanceof KoulutusValmentavaJaKuntouttavaV1RDTO)) {
+                || dto instanceof KoulutusValmentavaJaKuntouttavaV1RDTO
+                || dto instanceof KoulutusAmmatillinenPerustutkintoAlk2018V1RDTO)) {
             validateKoodi(
                 result,
                 dto.getKoulutusohjelma(),
@@ -385,8 +390,12 @@ public class KoulutusValidator {
             if (mustValidateLaajuus(dto)) {
                 validateKoodi(result, dto.getOpintojenLaajuusyksikko(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_INVALID);
             }
-            validateKoodi(result, dto.getKoulutuslaji(), KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_INVALID);
-            validateKoodi(result, dto.getPohjakoulutusvaatimus(), KoulutusValidationMessages.KOULUTUS_POHJAKOULUTUSVAATIMUS_MISSING, KoulutusValidationMessages.KOULUTUS_POHJAKOULUTUSVAATIMUS_INVALID);
+            if (mustValidateKoulutuslaji(dto)) {
+                validateKoodi(result, dto.getKoulutuslaji(), KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSLAJI_INVALID);
+            }
+            if (validatePohjakoulutus) {
+                validateKoodi(result, dto.getPohjakoulutusvaatimus(), KoulutusValidationMessages.KOULUTUS_POHJAKOULUTUSVAATIMUS_MISSING, KoulutusValidationMessages.KOULUTUS_POHJAKOULUTUSVAATIMUS_INVALID);
+            }
             validateKoodiUris(result, dto.getOpetusmuodos(), KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_INVALID, DEFAULT_MIN);
             validateKoodiUris(result, dto.getOpetusAikas(), KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_INVALID, DEFAULT_MIN);
             validateKoodiUris(result, dto.getOpetusPaikkas(), KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_INVALID, DEFAULT_MIN);
@@ -421,6 +430,14 @@ public class KoulutusValidator {
         );
         return !toteutustyypitWithoutLaajuusValidation.contains(dto.getToteutustyyppi());
     }
+
+    private static boolean mustValidateKoulutuslaji(KoulutusV1RDTO dto) {
+        Set<ToteutustyyppiEnum> toteutustyypitWithoutLaajuusValidation = Sets.newHashSet(
+                ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018
+        );
+        return !toteutustyypitWithoutLaajuusValidation.contains(dto.getToteutustyyppi());
+    }
+
 
     /**
      * True when valid string.
@@ -538,8 +555,19 @@ public class KoulutusValidator {
             if (!validateDates.equals(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_SUCCESS)) {
                 result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS, KOULUTUKSEN_ALKAMISPVMS + " contains invalid starting dates"));
             }
+            validateAfterFirstOfAugust2018(result, dto);
         } else {
             checkKausiVuosi(result, dto.getKoulutuksenAlkamiskausi(), dto.getKoulutuksenAlkamisvuosi());
+        }
+    }
+
+    private static void validateAfterFirstOfAugust2018(ResultV1RDTO result, KoulutusV1RDTO dto) {
+        if(dto.getToteutustyyppi() == ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO || dto.getToteutustyyppi() == ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA){
+            for (Date startDate : dto.getKoulutuksenAlkamisPvms()) {
+                if(startDate.after(firstOfAugust2018)){
+                    result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS, KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_WRONGTYPEAFTER182018.getFieldName(), KOULUTUKSEN_ALKAMISPVMS + " cannot be this type after 1.8.2018"));
+                }
+            }
         }
     }
 

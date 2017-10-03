@@ -87,16 +87,17 @@ angular.module('Validator', [])
             return !liite.sahkoinenOsoiteEnabled || notEmpty(liite.sahkoinenToimitusOsoite);
         }
 
-        function isValidLiitteet(liitteet) {
+        function isValidLiitteet(liitteet, jatkuvaHaku) {
             var invalidLiite = _.find(liitteet, function(liiteWithLangs) {
                 var commonFields = liiteWithLangs.commonFields;
                 return _.find(liiteWithLangs, function(liite, lang) {
                     if (typeof(liite) !== 'object' || lang.indexOf('kieli_') === -1 || liite.isEmpty(commonFields)) {
                         return;
                     }
+                    // empty ja empty tai (empty ja eijatkuva) tai eivalidi tai eivalidi
                     if (!notEmpty(liite.liitteenNimi)
                         && !notEmpty(commonFields.liitteenTyyppi)
-                        || !notEmpty(commonFields.toimitettavaMennessa)
+                        || (!notEmpty(commonFields.toimitettavaMennessa) && !jatkuvaHaku)
                         || !isValidSahkoinenOsoite(liite)
                         || !isValidToimitusOsoite(liite)) {
                         return true;
@@ -133,6 +134,7 @@ angular.module('Validator', [])
                 'VAPAAN_SIVISTYSTYON_KOULUTUS',
                 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA',
                 'AMMATILLINEN_PERUSTUTKINTO',
+                'AMMATILLINEN_PERUSTUTKINTO_ALK_2018',
                 'KORKEAKOULUOPINTO',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER',
@@ -194,7 +196,7 @@ angular.module('Validator', [])
                     errorMessageKey: 'hakukohde.edit.valintakokeet.errors'
                 });
             }
-            if (!isValidLiitteet(hakukohde.hakukohteenLiitteet)) {
+            if (!isValidLiitteet(hakukohde.hakukohteenLiitteet, (haku.hakutapaUri !== undefined && haku.hakutapaUri.split('#')[0] !== 'hakutapa_01'))) {
                 errors.push({
                     errorMessageKey: 'hakukohde.edit.liitteet.errors'
                 });
@@ -265,7 +267,7 @@ angular.module('Validator', [])
                     errorMessageKey: 'hakukohde.edit.valintakokeet.errors'
                 });
             }
-            if (!isValidLiitteet(hakukohde.hakukohteenLiitteet)) {
+            if (!isValidLiitteet(hakukohde.hakukohteenLiitteet, (haku.hakutapaUri !== undefined && haku.hakutapaUri.split('#')[0] !== 'hakutapa_01'))) {
                 errors.push({
                     errorMessageKey: 'hakukohde.edit.liitteet.errors'
                 });

@@ -465,6 +465,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
                     'AMMATTITUTKINTO',
                     'ERIKOISAMMATTITUTKINTO',
                     'AMMATILLINEN_PERUSTUTKINTO',
+                    'AMMATILLINEN_PERUSTUTKINTO_ALK_2018',
                     'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA'
                 ])) {
                 if (koulutusohjelma && koulutusohjelma.meta) {

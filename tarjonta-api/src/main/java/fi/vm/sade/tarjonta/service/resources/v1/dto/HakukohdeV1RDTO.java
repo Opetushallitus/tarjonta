@@ -100,6 +100,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private Boolean tutkintoonJohtava;
     private String koulutuksenAlkamiskausiUri;
     private Integer koulutuksenAlkamisvuosi;
+    private String pohjakoulutusvaatimus;
 
     public HakuV1RDTO.YhdenPaikanSaanto getYhdenPaikanSaanto() {
         return yhdenPaikanSaanto;
@@ -497,6 +498,10 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         return ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO.equals(getToteutusTyyppi());
     }
 
+    public boolean isAmmatillinenPerustutkintoAlk2018(){
+        return ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018.equals(getToteutusTyyppi());
+    }
+
     public String getKoulutusmoduuliTyyppi() {
         return koulutusmoduuliTyyppi;
     }
@@ -677,6 +682,14 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setKoulutuksenAlkamiskausiUri(String koulutuksenAlkamiskausiUri) {
         this.koulutuksenAlkamiskausiUri = koulutuksenAlkamiskausiUri;
+    }
+
+    public String getPohjakoulutusvaatimus() {
+        return pohjakoulutusvaatimus;
+    }
+
+    public void setPohjakoulutusvaatimus(String pohjakoulutusvaatimus) {
+        this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
     }
 
     public Integer getKoulutuksenAlkamisvuosi() {

@@ -14,6 +14,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -175,6 +176,50 @@ public class KoulutusValidatorTest {
 
         v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
         org.junit.Assert.assertFalse("not success?", v.hasErrors());
+    }
+
+    @Test
+    public void testStartingDateFirstOfAugust2018(){
+        KoulutusAmmatillinenPerustutkintoV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
+        dto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dataPopulator.defaultValuesForDto(dto);
+         /*
+         * Validation success
+         * ******************************************
+         */
+        dto.setTila(TarjontaTila.VALMIS);
+        dto.getOrganisaatio().setOid("1");
+        dto.setEqf(new KoodiV1RDTO("1", 1, null));
+        dto.setKoulutusala(new KoodiV1RDTO("1", 1, null));
+        dto.setKoulutuskoodi(new KoodiV1RDTO("1", 1, null));
+        dto.getKoulutusohjelma().setUri("1");
+        dto.getKoulutusohjelma().setVersio(1);
+        dto.setOpintojenLaajuusarvo(new KoodiV1RDTO("1", 1, null));
+        dto.setOpintojenLaajuusyksikko(new KoodiV1RDTO("1", 1, null));
+        dto.setKoulutuslaji(new KoodiV1RDTO("1", 1, null));
+        dto.setTutkintonimike(new KoodiV1RDTO("1", 1, null));
+        dto.setPohjakoulutusvaatimus(new KoodiV1RDTO("1", 1, null));
+        dto.setKoulutuksenAlkamiskausi(new KoodiV1RDTO("kausi_s", 1, null)); //must have a real pattern validated koodi uri!!!!
+        dto.setKoulutuksenAlkamisvuosi(2018);
+
+        KoodiUrisV1RDTO koodiUris = new KoodiUrisV1RDTO();
+        koodiUris.setUris(ImmutableMap.of("koodi_uri", 1));
+        dto.setOpetuskielis(koodiUris);
+        dto.setOpetusAikas(koodiUris);
+        dto.setOpetusPaikkas(koodiUris);
+        dto.setOpetusmuodos(koodiUris);
+
+        dto.setSuunniteltuKestoArvo("1");
+        dto.setSuunniteltuKestoTyyppi(new KoodiV1RDTO("1", 1, null));
+
+        dto.setToteutustyyppi(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO);
+        dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(new Date(946738364556L))); // 1.1.2000 ok
+        dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(new Date(1533168000000L))); // 2.8.2018 fail
+
+        ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
+        org.junit.Assert.assertTrue("errors", v.hasErrors());
+        org.junit.Assert.assertEquals("errors count", v.getErrors().size(), 1);
+
+        assertErrorExist(v.getErrors(), KoulutusValidator.KOULUTUKSEN_ALKAMISPVMS);
     }
 
     @Test

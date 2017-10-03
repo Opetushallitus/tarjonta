@@ -84,7 +84,7 @@ public class HakuDAOImplTest extends TestData {
         setUp();
         Haku result = hakuDAO.findByOid(HAKU_OID1);
         assertEquals(haku1, result);
-        assertEquals(3, result.getHakukohdes().size());
+        assertEquals(4, result.getHakukohdes().size());
 
         result = hakuDAO.findByOid("none");
         assertEquals(null, result);
@@ -96,9 +96,8 @@ public class HakuDAOImplTest extends TestData {
         setUp();
         assertEquals(2, hakuDAO.findAll().size());
 
-        //TODO:If I have understood this correctly, it should output 3 items, not 6? 
         List<Haku> findHakukohdeHakus = hakuDAO.findHakukohdeHakus(haku1);
-        assertEquals(3, findHakukohdeHakus.size());
+        assertEquals(4, findHakukohdeHakus.size());
 
         findHakukohdeHakus = hakuDAO.findHakukohdeHakus(haku2);
         assertEquals(0, findHakukohdeHakus.size());

@@ -1,0 +1,166 @@
+<div class="localizedTabs" data-ng-controller="LiitteetListController">
+
+    <div ng-if="model.hakukohde.toteutusTyyppi == 'KORKEAKOULUTUS'">
+        <h3 tt="hakukohde.pohjakoulutusliitteet">Pohjakoulutusliitteet</h3>
+        <div>
+            <multi-select
+                required
+                is-disabled="isHkDeEnabled()"
+                selection="model.hakukohde.pohjakoulutusliitteet"
+                koodisto="pohjakoulutuskklomake" />
+        </div>
+        <div class="well liite">
+            <label>
+                <input type="checkbox" ng-model="model.hakukohde.josYoEiMuitaLiitepyyntoja" />
+                <span tt="hakukohde.josYoEiMuitaLiitepyyntoja">
+                    Jos ylioppilastutkinto tai kansainvälinen ylioppilastutkinto, ei muiden tutkintojen liitepyyntöjä.
+                </span>
+            </label>
+        </div>
+        <hr />
+    </div>
+
+    <tabset ng-repeat="liiteWithKieliVersiot in model.hakukohde.hakukohteenLiitteet">
+
+        <h3><span tt="hakukohde.liite.liiteOtsikko">Liite</span> {{$index + 1}}</h3>
+
+        <!-- liitteen ei-kieliriippuvaiset kentät -->
+        <table class="tarjontaForm" ng-init="commonFields = liiteWithKieliVersiot.commonFields">
+            <tr ng-if="config.isToisenAsteenKoulutus()" class="required">
+                <th tt="tarjonta.hakukohde.liite.modal.tyyppi"></th>
+                <td>
+                    <select name="liitteentyyppiselect" required
+                            ng-model="liiteWithKieliVersiot.commonFields.liitteenTyyppi"
+                            data-ng-options="liitetyyppi.uri as liitetyyppi.nimi for liitetyyppi in liitteetModel.liitetyypit | orderBy: 'nimi'">
+                    </select>
+                </td>
+                <td>
+                    <p class="error" ng-show="model.showError && !liiteWithKieliVersiot.commonFields.liitteenTyyppi"
+                       tt="tarjonta.hakukohde.liite.errors.tyyppi">Liitteen tyyppi on pakollinen.</p>
+                </td>
+            </tr>
+
+            <tr ng-required="$scope.model.isYhteishaku()">
+                <th tt="tarjonta.hakukohde.liite.modal.toimitettavaMennessa"></th>
+                <td>
+                    <t-date-time required min="liiteWithKieliVersiot.isNew ? model.today : ''"
+                                 timestamp="true" type="long"
+                                 scope-model="liiteWithKieliVersiot.commonFields.toimitettavaMennessa"
+                                 change="status.dirtify()">
+                    </t-date-time>
+                </td>
+                <td>
+                    <p class="error" ng-show="model.showError && !liiteWithKieliVersiot.commonFields.toimitettavaMennessa"
+                       tt="tarjonta.hakukohde.liite.errors.toimitusaika">Liitteen toimitusaika on pakollinen.</p>
+                </td>
+            </tr>
+
+            <tr ng-if="CONFIGURATION.LIITE.showKaytetaanHakulomakkeella[model.hakukohde.toteutusTyyppi]">
+                <th></th>
+                <td>
+                    <label>
+                        <input type="checkbox" ng-model="liiteWithKieliVersiot.commonFields.kaytetaanHakulomakkeella" />
+                        <span data-tt="hakukohde.liite.kaytetaanHakulomakkeella">Käytetään myös hakulomakkeella</span>
+                    </label>
+                </td>
+            </tr>
+        </table>
+
+        <tab ng-repeat="kieli in liitteetModel.opetusKielet" heading="{{kieli.koodiNimi}}"
+             ng-init="liite = liiteWithKieliVersiot[kieli.koodiUri] || {}; liite.tabActive = liite.tabActive || $index === 0;"
+             active="liite.tabActive">
+
+                <form>
+
+	            <table class="tarjontaForm">
+	                <tr ng-if="!config.isToisenAsteenKoulutus()" class="required">
+                        <th tt="tarjonta.hakukohde.liite.modal.nimi"></th>
+	                    <td>
+                            <input type="text" ng-model="liite.liitteenNimi" ng-change="status.dirtify()" required />
+                        </td>
+	                    <td>
+                            <p class="error" ng-show="model.showError && !liite.isEmpty(liiteWithKieliVersiot.commonFields) && !liite.liitteenNimi"
+                               tt="tarjonta.hakukohde.liite.errors.nimi">Liitteen nimi on pakollinen.</p>
+                        </td>
+	                </tr>
+
+	                <tr>
+	                    <th tt="tarjonta.hakukohde.liite.modal.kuvaus"></th>
+	                    <td colspan="2">
+	                        <rich-textarea required model="liite.liitteenKuvaukset[kieli.koodiUri]" on-change="status.dirtify()"></rich-textarea>
+	                    </td>
+	                </tr>
+
+	                <tr class="required">
+	                    <th tt="tarjonta.hakukohde.liite.modal.toimitusosoite"></th>
+	                    <td>
+	                        <label>
+                                <input type="radio" ng-model="liite.muuOsoiteEnabled" ng-change="status.dirtify()" ng-value="false" ng-click="resetOsoite(kieli.koodiUri, liite)" ng-disabled="!model.liitteidenToimitusOsoite[kieli.koodiUri]"/>
+                                <span class="{{model.liitteidenToimitusOsoite[kieli.koodiUri] ? '' : 'disabled'}}" tt="tarjonta.hakukohde.liite.modal.kaytetaanOrganisaationPostiosoitetta"></span>
+                            </label>
+                            <br />
+
+                            <label>
+	                            <input type="radio" ng-model="liite.muuOsoiteEnabled" ng-change="status.dirtify()" ng-value="true"/>
+                                <span tt="tarjonta.hakukohde.liite.modal.kaytetaanMuutaOsoitetta"></span><br/>
+                            </label>
+
+	                        <div class="inset">
+                                <input type="text" class="liiteVastaanottaja"
+                                       ng-required="true"
+                                       ng-disabled="!liite.muuOsoiteEnabled"
+                                       placeholder="{{tt.liitteenVastaanottaja}}"
+                                       data-ng-model="liite.liitteenVastaanottaja"
+                                       ng-change="status.dirtify()"
+                                />
+                                <br/>
+	                            <osoite-field required model="liite.liitteenToimitusOsoite" ng-disabled="!liite.muuOsoiteEnabled" on-change="status.dirtify()"></osoite-field>
+	                        </div>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && !liite.isEmpty(liiteWithKieliVersiot.commonFields) && !validator.isValidToimitusOsoite(liite)" tt="tarjonta.hakukohde.liite.errors.toimitusOsoite">Liitteen toimistusosoite on pakollinen mikäli organisaation hakijapalveluiden postiosoitetta ei käytetä tai sitä ei ole määritelty.</p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th></th>
+                        <td>
+	                        <label><input type="checkbox" ng-model="liite.sahkoinenOsoiteEnabled" ng-change="liitteenSahkoinenOsoiteEnabledChanged(liite)"/><span tt="tarjonta.hakukohde.liite.modal.voidaanToimittaaSahkoisesti"></span></label>
+	                        <div class="inset">
+	                            <input type="text" ng-required="liite.sahkoinenOsoiteEnabled" ng-model="liite.sahkoinenToimitusOsoite" ng-disabled="!liite.sahkoinenOsoiteEnabled" ng-change="status.dirtify()"/>
+	                        </div>
+	                    </td>
+	                    <td>
+                            <p class="error" ng-show="model.showError && !liite.isEmpty(liiteWithKieliVersiot.commonFields) && !validator.isValidSahkoinenOsoite(liite)"
+                               tt="tarjonta.hakukohde.liite.errors.sahkoinenOsoite">Liitteen sähköinen toimitusosoite on pakollinen jos liite on toimitettavissa sähköisesti.</p>
+	                    </td>
+	                </tr>
+                </table>
+                </form>
+
+                <p>
+                    <button ng-click="deleteLiite($parent.$index)" class="btn"><span tt="tarjonta.toiminnot.poista"></span> <span class="icon-remove"></span></button>
+                </p>
+
+                <hr/>
+        </tab>
+
+        <tab class="addLangTab">
+            <tab-heading><span class="icon-plus"></span></tab-heading>
+
+            <multi-select
+                on-change="onLangSelection()"
+                order-with="userLangs"
+                model="liitteetModel.langs"
+                selection="liitteetModel.selectedLangs"
+                display="dualpane"></multi-select>
+        </tab>
+
+    </tabset>
+
+    <p>
+        <button class="btn btn-primary"
+                ng-click="createLiite()"><span tt="tarjonta.hakukohde.liite.modal.lisäys"></span> <span class="icon-plus-sign"></span></button>
+    </p>
+
+</div>

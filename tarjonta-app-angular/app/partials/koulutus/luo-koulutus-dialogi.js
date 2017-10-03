@@ -273,6 +273,7 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
                 'EB_RP_ISH',
                 'LUKIOKOULUTUS',
                 'AMMATILLINEN_PERUSTUTKINTO',
+                'AMMATILLINEN_PERUSTUTKINTO_ALK_2018',
                 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
@@ -291,7 +292,7 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
             var promise = Koodisto.getAlapuolisetKoodit($scope.model.koulutustyyppi.koodiUri);
             promise.then(function(koodis) {
                 var koulutuslajiKoodis = _.where(koodis, {koodiKoodisto:CONFIG.env['koodisto-uris.koulutuslaji']});
-                if (koulutuslajiKoodis && koulutuslajiKoodis.length === 1) {
+                if (koulutuslajiKoodis && koulutuslajiKoodis.length === 1 && toteutustyyppi != "AMMATILLINEN_PERUSTUTKINTO_ALK_2018") {
                     $location.path('/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri +
                     '/' + koulutuslajiKoodis[0].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid);
                 }
@@ -341,7 +342,7 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
        */
     $scope.jatkaDisabled = function() {
         var jatkaEnabled = $scope.organisaatioValittu() && $scope.koulutustyyppiValidi() // pohjakoulutus pitää olla valittuna osalle koulutuksista
-            && !($scope.showPohjakoulutusvaatimus && !$scope.model.pohjakoulutusvaatimus);
+            && !($scope.showPohjakoulutusvaatimus && !$scope.model.pohjakoulutusvaatimus && $scope.model.koulutustyyppi.koodiUri != 'koulutustyyppi_26');
         if ($scope.model.koulutustyyppi && $scope.model.koulutustyyppi.koodiUri === 'koulutustyyppi_3') {
             jatkaEnabled &= ($scope.model.koulutusmoduuliTyyppi !== undefined);
         }

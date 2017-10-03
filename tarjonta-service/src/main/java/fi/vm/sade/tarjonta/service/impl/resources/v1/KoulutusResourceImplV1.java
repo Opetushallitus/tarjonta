@@ -267,6 +267,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         restParam);
             case PELASTUSALAN_KOULUTUS:
                 return converterToRDTO.convert(PelastusalanKoulutusV1RDTO.class, komoto, restParam);
+            case AMMATILLINEN_PERUSTUTKINTO_ALK_2018:
+                return converterToRDTO.convert(KoulutusAmmatillinenPerustutkintoAlk2018V1RDTO.class, komoto, restParam);
         }
         return null;
     }
@@ -746,6 +748,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         switch (dto.getToteutustyyppi()) {
             case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
             case AMMATILLINEN_PERUSTUTKINTO:
+            case AMMATILLINEN_PERUSTUTKINTO_ALK_2018:
                 if (komo.getModuuliTyyppi().equals(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.TUTKINTO)) {
 
                     // Tarkista, jos virtuaalinen komo on jo luotu
@@ -1495,6 +1498,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                             break;
                         case AMMATILLINEN_PERUSTUTKINTO:
                             persisted = insertKoulutusGeneric((KoulutusAmmatillinenPerustutkintoV1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPerustutkintoV1RDTO.class, komoto, orgOid));
+                            break;
+                        case AMMATILLINEN_PERUSTUTKINTO_ALK_2018:
+                            persisted = insertKoulutusGeneric((KoulutusAmmatillinenPerustutkintoAlk2018V1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPerustutkintoAlk2018V1RDTO.class, komoto, orgOid));
                             break;
                         case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
                             persisted = insertKoulutusGeneric((KoulutusAmmatillinenPeruskoulutusErityisopetuksenaV1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPeruskoulutusErityisopetuksenaV1RDTO.class, komoto, orgOid));
