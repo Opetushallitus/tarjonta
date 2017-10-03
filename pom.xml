@@ -24,7 +24,7 @@
     <asm.version>5.2</asm.version>
     <aspectj-maven-plugin.version>1.4</aspectj-maven-plugin.version>
     <aspectj.version>1.8.10</aspectj.version>
-    <auditlogger.version>7.2.0-SNAPSHOT</auditlogger.version>
+    <auditlogger.version>8.0.0-SNAPSHOT</auditlogger.version>
     <authentication.api.version>10.0-SNAPSHOT</authentication.api.version>
     <build-helper-maven-plugin.version>1.4</build-helper-maven-plugin.version>
     <cas-client-core.version>3.4.1</cas-client-core.version>
@@ -88,7 +88,7 @@
     <log.version>8.0</log.version>
     <log4j.version>1.2.17</log4j.version>
     <mail.version>1.4</mail.version>
-    <maven-apt-plugin.version>1.0</maven-apt-plugin.version>
+    <apt-maven-plugin.version>1.1.3</apt-maven-plugin.version>
     <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
     <maven-dependency-plugin.version>2.8</maven-dependency-plugin.version>
     <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
