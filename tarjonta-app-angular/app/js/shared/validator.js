@@ -267,7 +267,7 @@ angular.module('Validator', [])
                     errorMessageKey: 'hakukohde.edit.valintakokeet.errors'
                 });
             }
-            if (!isValidLiitteet(hakukohde.hakukohteenLiitteet, (haku.hakutapaUri !== undefined && haku.hakutapaUri.split('#')[0] !== 'hakutapa_01'))) {
+            if (!isValidLiitteet(hakukohde.hakukohteenLiitteet, (haku != null && haku.hakutapaUri !== undefined && haku.hakutapaUri.split('#')[0] !== 'hakutapa_01'))) {
                 errors.push({
                     errorMessageKey: 'hakukohde.edit.liitteet.errors'
                 });
