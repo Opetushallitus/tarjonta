@@ -108,7 +108,7 @@
     <properties-maven-plugin.version>1.0-alpha-2</properties-maven-plugin.version>
     <quartz.version>1.8.6</quartz.version>
     <querydsl.version>3.1.0</querydsl.version>
-    <reflections.version>0.9.10</reflections.version>
+    <reflections.version>0.9.8</reflections.version>
     <resources.plugin.version>2.5</resources.plugin.version>
     <servlet.version>3.0.1</servlet.version>
     <slf4j.version>1.7.5</slf4j.version>
