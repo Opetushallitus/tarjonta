@@ -172,6 +172,7 @@
                 <requireJavaVersion>
                   <version>[${java.version},1.9)</version>
                 </requireJavaVersion>
+                <dependencyConvergence/>
               </rules>
             </configuration>
           </execution>
