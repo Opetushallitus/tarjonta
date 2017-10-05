@@ -524,6 +524,12 @@
         <groupId>fi.vm.sade.organisaatio</groupId>
         <artifactId>organisaatio-api</artifactId>
         <version>${organisaatio.api.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-jaxrs</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>com.thoughtworks.paranamer</groupId>
