@@ -162,6 +162,7 @@ public class ConverterV1 {
         hakuDTO.setTila(haku.getTila().name());
         hakuDTO.setHakukausiVuosi(haku.getHakukausiVuosi());
         hakuDTO.setMaxHakukohdes(haku.getMaxHakukohdes());
+        hakuDTO.setCanSubmitMultipleApplications(haku.getCanSubmitMultipleApplications());
 
         // Assumes translation key is Koodisto kieli uri (has kieli_ prefix)!
         hakuDTO.setNimi(convertMonikielinenTekstiToMap(haku.getNimi(), true));
@@ -264,6 +265,7 @@ public class ConverterV1 {
         haku.setTila(TarjontaTila.valueOf(hakuV1RDTO.getTila()));
         haku.setNimi(convertMapToMonikielinenTeksti(hakuV1RDTO.getNimi()));
         haku.setMaxHakukohdes(hakuV1RDTO.getMaxHakukohdes());
+        haku.setCanSubmitMultipleApplications(hakuV1RDTO.getCanSubmitMultipleApplications());
 
         // Temporary list of hakuaikas to process
         ArrayList<Hakuaika> tmpHakuaikas = new ArrayList<Hakuaika>();

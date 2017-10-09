@@ -653,8 +653,11 @@ app.factory('KoodistoURI', function($log, Config) {
         KOODI_ERILLISHAKU_URI: getConfigWithDefault('koodisto-uris.erillishaku', 'hakutapa_02#1'),
         KOODI_HAASTATTELU_URI: getConfigWithDefault('koodisto-uris.valintakoeHaastattelu', 'valintakokeentyyppi_6#1'),
         KOODI_TODISTUKSET_URI: getConfigWithDefault('koodisto-uris.liiteTodistukset', 'liitetyypitamm_3#1'),
+        KOODI_VARSINAINEN_HAKU_URI: getConfigWithDefault('koodisto-uris.varsinainen-haku', 'hakutyyppi_01#1'),
         KOODI_KOHDEJOUKKO_ERITYISOPETUS_URI:
             getConfigWithDefault('koodisto-uris.kohdejoukkoErityisopetus', 'haunkohdejoukko_15#1'),
+        KOODI_KOHDEJOUKKO_ERITYISOPETUKSENA_URI:
+            getConfigWithDefault('koodisto-uris.kohdejoukko-erityisopetuksena', 'haunkohdejoukko_20#1'),
         KOODI_KOHDEJOUKKO_VALMENTAVA_URI:
             getConfigWithDefault('koodisto-uris.valmentavaKuntouttava', 'haunkohdejoukko_16#1'),
         KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI:

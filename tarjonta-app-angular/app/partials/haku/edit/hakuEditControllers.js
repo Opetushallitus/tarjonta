@@ -407,6 +407,20 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         }
 
     };
+    var updateCanSubmitMultipleApplications = function() {
+        $scope.model.hakux.result.canSubmitMultipleApplications = (
+            'ATARU' === $scope.model.haku.hakulomake ||
+            KoodistoURI.KOODI_VARSINAINEN_HAKU_URI !== $scope.model.hakux.result.hakutyyppiUri || // ei varsinainen haku
+            (
+                KoodistoURI.KOODI_ERILLISHAKU_URI === $scope.model.hakux.result.hakutapaUri && // erillishaku
+                [
+                    KoodistoURI.KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI,
+                    KoodistoURI.KOODI_KOHDEJOUKKO_VALMISTAVA_URI,
+                    KoodistoURI.KOODI_KOHDEJOUKKO_ERITYISOPETUKSENA_URI
+                ].indexOf($scope.model.hakux.result.kohdejoukkoUri) > -1 // toinen aste
+            )
+        );
+    };
     /**
                * This method is called when halulomake selection changes.
                *
@@ -448,6 +462,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         }
         // Update priorisointi information too
         $scope.checkPriorisointi();
+        updateCanSubmitMultipleApplications();
     };
     /**
                * Use this method to sync UI state to model state
@@ -621,15 +636,20 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             $scope.model.hakux.result.koulutusmoduuliTyyppi = undefined;
         }
     };
+    $scope.$watch('model.hakux.result.hakutapaUri', function () {
+        updateCanSubmitMultipleApplications();
+    });
     $scope.$watch('model.hakux.result.hakutyyppiUri', function(nv, old) {
         if (nv !== old) {
             updateParentHakuFields();
         }
+        updateCanSubmitMultipleApplications();
     });
     $scope.$watch('model.hakux.result.kohdejoukkoUri', function(nv, old) {
         if (nv !== old) {
             updateParentHakuFields();
         }
+        updateCanSubmitMultipleApplications();
         updateKoulutusmoduuliTyyppiField();
     });
     $scope.$watch('model.hakux.result.hakukausiUri', function(nv, old) {

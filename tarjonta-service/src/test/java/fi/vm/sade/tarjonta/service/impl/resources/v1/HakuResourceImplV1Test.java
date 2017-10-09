@@ -71,6 +71,11 @@ public class HakuResourceImplV1Test extends TestMockBase {
 
         KoodistoURI.KOODISTO_TUTKINTOON_JOHTAVA_KOULUTUS_URI = "tutkintoonjohtava";
         KoodistoURI.KOODI_ON_TUTKINTO_URI = "tutkintoonjohtava_1";
+        KoodistoURI.KOODI_VARSINAINEN_HAKU_URI = "hakutyyppi_01#1";
+        KoodistoURI.KOODI_ERILLISHAKU_URI = "hakutapa_02#1";
+        KoodistoURI.KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI = "haunkohdejoukko_11#1";
+        KoodistoURI.KOODI_KOHDEJOUKKO_VALMISTAVA_URI = "haunkohdejoukko_17#1";
+        KoodistoURI.KOODI_KOHDEJOUKKO_ERITYISOPETUKSENA_URI = "haunkohdejoukko_20#1";
         when(tarjontaKoodistoHelper.getUniqueKoodistoRelation("koulutusUri1", KoodistoURI.KOODISTO_TUTKINTOON_JOHTAVA_KOULUTUS_URI, SuhteenTyyppiType.SISALTYY, false))
                 .thenReturn(KoodistoURI.KOODI_ON_TUTKINTO_URI);
         when(tarjontaKoodistoHelper.getUniqueKoodistoRelation("koulutusUri2", KoodistoURI.KOODISTO_TUTKINTOON_JOHTAVA_KOULUTUS_URI, SuhteenTyyppiType.SISALTYY, false))
@@ -109,13 +114,14 @@ public class HakuResourceImplV1Test extends TestMockBase {
 
         hakuDTO = new HakuV1RDTO();
         hakuDTO.setHakukausiUri("kausi_k");
-        hakuDTO.setHakutapaUri("hakutapa_01");
-        hakuDTO.setHakutyyppiUri("hakutyyppi_01");
-        hakuDTO.setKohdejoukkoUri("haunkohdejoukko_12");
+        hakuDTO.setHakutapaUri("hakutapa_01#1");
+        hakuDTO.setHakutyyppiUri("hakutyyppi_01#1");
+        hakuDTO.setKohdejoukkoUri("haunkohdejoukko_12#1");
         hakuDTO.setKoulutuksenAlkamiskausiUri("kausi_k");
         hakuDTO.setMaxHakukohdes(42);
         hakuDTO.getNimi().put("kieli_fi", "Nimi suomi");
         hakuDTO.getHakuaikas().add(createHakuaika(new Date(), new Date()));
+        hakuDTO.setCanSubmitMultipleApplications(false);
 
         result = hakuResource.createHaku(hakuDTO);
 
