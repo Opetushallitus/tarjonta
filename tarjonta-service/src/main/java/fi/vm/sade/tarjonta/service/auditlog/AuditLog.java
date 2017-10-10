@@ -3,6 +3,7 @@ package fi.vm.sade.tarjonta.service.auditlog;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.flipkart.zjsonpatch.JsonDiff;
@@ -207,10 +208,10 @@ public final class AuditLog {
                 traverseAndTruncate(afterJson);
                 traverseAndTruncate(beforeJson);
 
-                builder.updated("change", toGson(afterJson), toGson(beforeJson));
+                builder.updated("change", toGson(beforeJson), toGson(afterJson));
 
-                final JsonNode patchNode = JsonDiff.asJson(afterJson, beforeJson);
-                builder.added("diff", toGson(patchNode));
+                final JsonNode patchArray = JsonDiff.asJson(afterJson, beforeJson);
+                builder.added("diff", toGsonArray(patchArray));
             }
         } catch(Exception e) {
             LOG.error("diff calculation failed", e);
@@ -218,8 +219,12 @@ public final class AuditLog {
         return builder;
     }
 
-    private static JsonElement toGson(@NotNull JsonNode json) {
+    private static JsonObject toGson(@NotNull JsonNode json) {
         return parser.parse(json.toString()).getAsJsonObject();
+    }
+
+    private static JsonArray toGsonArray(@NotNull JsonNode json) {
+        return parser.parse(json.toString()).getAsJsonArray();
     }
 
     static void traverseAndTruncate(JsonNode data) {
