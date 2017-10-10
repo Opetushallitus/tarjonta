@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.flipkart.zjsonpatch.JsonDiff;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.gson.*;
 import fi.vm.sade.auditlog.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.BaseV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
@@ -56,6 +57,7 @@ public final class AuditLog {
 
     private static final Audit AUDITLOG = new Audit(new AuditLogger(), "tarjonta", ApplicationType.BACKEND);
     private static final Logger LOG = LoggerFactory.getLogger(AuditLog.class);
+    private static final JsonParser parser = new JsonParser();
     static final int MAX_FIELD_LENGTH = 32766;
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final User ANONYMOUS_USER;
@@ -196,26 +198,28 @@ public final class AuditLog {
         Changes.Builder builder = new Changes.Builder();
         try {
             if (afterOperation == null && beforeOperation != null) {
-                builder.removed("change", mapper.writeValueAsString(beforeOperation));
+                builder.removed("change", toGson(mapper.valueToTree(beforeOperation)));
             } else if (afterOperation != null && beforeOperation == null) {
-                builder.added("change", mapper.writeValueAsString(afterOperation));
+                builder.added("change", toGson(mapper.valueToTree(afterOperation)));
             } else if (afterOperation != null){
                 JsonNode afterJson = mapper.valueToTree(afterOperation);
                 JsonNode beforeJson = mapper.valueToTree(beforeOperation);
                 traverseAndTruncate(afterJson);
                 traverseAndTruncate(beforeJson);
 
-                // Tämän ei ehkä kuuluisi toimia näin, mutta Javassa kenttäkohtaisen diffin laskeminen ja jokaisen
-                // muutoksen puskeminen builderiin ei kyllä ole sen arvoista.
-                builder.updated("change", afterJson.toString(), beforeJson.toString());
+                builder.updated("change", toGson(afterJson), toGson(beforeJson));
 
                 final JsonNode patchNode = JsonDiff.asJson(afterJson, beforeJson);
-                builder.added("diff", patchNode.toString());
+                builder.added("diff", toGson(patchNode));
             }
         } catch(Exception e) {
             LOG.error("diff calculation failed", e);
         }
         return builder;
+    }
+
+    private static JsonElement toGson(@NotNull JsonNode json) {
+        return parser.parse(json.toString()).getAsJsonObject();
     }
 
     static void traverseAndTruncate(JsonNode data) {
