@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Map;
 
@@ -133,14 +134,16 @@ public class MassCopyProcess implements ProcessDefinition {
      *
      * @param toOid haku oid to copy to
      * @param step  skip process steps
+     * @param request
      * @return
      */
-    public static ProcessV1RDTO getDefinition(final String toOid, final String step) {
+    public static ProcessV1RDTO getDefinition(final String toOid, final String step, HttpServletRequest request) {
         ProcessV1RDTO processV1RDTO = ProcessV1RDTO.generate();
         processV1RDTO.setProcess("massCopyProcess");
         processV1RDTO.getParameters().put(MassCopyProcess.SELECTED_HAKU_OID, toOid);
         processV1RDTO.getParameters().put(MassCopyProcess.PROCESS_SKIP_STEP, step);
         processV1RDTO.getParameters().put(MassCopyProcess.USER_OID, getUsernameFromSession());
+        processV1RDTO.setRequest(request);
         return processV1RDTO;
     }
 

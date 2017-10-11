@@ -42,6 +42,7 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -51,6 +52,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -83,7 +85,7 @@ public interface KoulutusV1Resource {
     @ApiOperation(
             value = "Poistaa (passivoi) koulutuksen annetulla koulutuksen oid:lla",
             notes = "Operaatio Poistaa (passivoi) koulutuksen annetulla koulutuksen oid:lla")
-    public ResultV1RDTO deleteByOid(@PathParam("oid") String oid);
+    public ResultV1RDTO deleteByOid(@PathParam("oid") String oid, @Context HttpServletRequest request);
 
     @POST
     @Path("/{oid}/siirra")
@@ -91,7 +93,7 @@ public interface KoulutusV1Resource {
     @ApiOperation(
             value = "Kopioi tai siirtää koulutuksen annetulla koulutuksen oid:lla",
             notes = "Operaatio kopioi tai siirtää koulutuksen annetulla koulutuksen oid:lla")
-    public ResultV1RDTO copyOrMove(@PathParam("oid") String oid, KoulutusCopyV1RDTO koulutusCopy);
+    public ResultV1RDTO copyOrMove(@PathParam("oid") String oid, KoulutusCopyV1RDTO koulutusCopy, @Context HttpServletRequest request);
 
     @POST
     @Path("/siirra")
@@ -99,7 +101,7 @@ public interface KoulutusV1Resource {
     @ApiOperation(
             value = "Kopioi tai siirtää monta koulutusta",
             notes = "Operaatio kopioi tai siirtää monta koulutusta")
-    public ResultV1RDTO copyOrMoveMultiple(KoulutusMultiCopyV1RDTO koulutusMultiCopy);
+    public ResultV1RDTO copyOrMoveMultiple(KoulutusMultiCopyV1RDTO koulutusMultiCopy, @Context HttpServletRequest request);
 
     @POST
     @PreAuthorize("isAuthenticated()")
@@ -115,7 +117,7 @@ public interface KoulutusV1Resource {
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Permission denied")
     })
-    public Response postKoulutus(KoulutusV1RDTO koulutus);
+    public Response postKoulutus(KoulutusV1RDTO koulutus, @Context HttpServletRequest request);
 
     @GET
     @Path("/{oid}/tekstis")
@@ -252,6 +254,7 @@ public interface KoulutusV1Resource {
      *
      * @param oid Koulutuksen oid.
      * @param tila Kohdetila.
+     * @param request
      * @return Tila ( {@link TarjontaTila#toString()} ), jossa koulutus on tämän
      * kutsun jälkeen (eli kohdetila tai edellinen tila, jos siirtymä ei ollut
      * sallittu).
@@ -264,7 +267,7 @@ public interface KoulutusV1Resource {
     @ApiOperation(
             value = "Päivittää koulutuksen tilan",
             notes = "Operaatio päivittää koulutuksen tilan")
-    public ResultV1RDTO<Tilamuutokset> updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
+    public ResultV1RDTO<Tilamuutokset> updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila, @Context HttpServletRequest request);
 
     @GET
     @Path("/search")

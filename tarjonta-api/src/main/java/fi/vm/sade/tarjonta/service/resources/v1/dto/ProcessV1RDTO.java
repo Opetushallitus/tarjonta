@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,6 +34,8 @@ public class ProcessV1RDTO implements Serializable {
 
     private String messageKey = "progress.message.default";
     private Map<String, String> parameters = new HashMap<>();
+
+    private HttpServletRequest request;
 
     public String getId() {
         return id;
@@ -80,7 +83,16 @@ public class ProcessV1RDTO implements Serializable {
 
     private ProcessV1RDTO() {
     }
-    
+    public HttpServletRequest getRequest() {
+        return request;
+    }
+
+    public void setRequest(HttpServletRequest request) {
+        this.request = request;
+    }
+
+
+
     public static ProcessV1RDTO generate(){
         ProcessV1RDTO p = new ProcessV1RDTO();
         // Generate new id for the process

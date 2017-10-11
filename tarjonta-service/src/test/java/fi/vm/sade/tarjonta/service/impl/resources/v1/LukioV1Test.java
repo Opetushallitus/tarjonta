@@ -27,6 +27,7 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ActiveProfiles;
@@ -34,6 +35,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,6 +83,7 @@ public class LukioV1Test {
     private static final String KOULUTUSKOODI = "koulutus_yo";
     private static final String LUKIOLINJA = "lukionlinja_x";
     private static final String KOMO_OID = "lukioKomoOid";
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
     @Before
     public void init() {
@@ -158,7 +161,7 @@ public class LukioV1Test {
         KoulutusLukioV1RDTO dto = baseDto();
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
 
-        ResultV1RDTO<KoulutusLukioV1RDTO> result = (ResultV1RDTO<KoulutusLukioV1RDTO>) koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusLukioV1RDTO> result = (ResultV1RDTO<KoulutusLukioV1RDTO>) koulutusResourceV1.postKoulutus(dto, request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
     }
 

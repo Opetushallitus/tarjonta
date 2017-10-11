@@ -34,6 +34,7 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ActiveProfiles;
@@ -41,6 +42,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,6 +95,7 @@ public class AmmatillinenPerustutkintoV1Test {
     private static final String OSAAMISALA = "osaamisala_x";
     private static final String KOMO_OID = "ammKomoOid";
     private static final String TUTKINTONIMIKE = "tutkintonimike_x";
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
     @Before
     public void init() {
@@ -190,10 +193,10 @@ public class AmmatillinenPerustutkintoV1Test {
                 .thenReturn(komoto1Oid)
                 .thenReturn(oidServiceMock.getOid());
 
-        ResultV1RDTO<KoulutusLukioV1RDTO> result1 = (ResultV1RDTO<KoulutusLukioV1RDTO>) koulutusResourceV1.postKoulutus(dtoForDuplicateTest()).getEntity();
+        ResultV1RDTO<KoulutusLukioV1RDTO> result1 = (ResultV1RDTO<KoulutusLukioV1RDTO>) koulutusResourceV1.postKoulutus(dtoForDuplicateTest(), request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.OK, result1.getStatus());
 
-        ResultV1RDTO<KoulutusLukioV1RDTO> result2 = (ResultV1RDTO<KoulutusLukioV1RDTO>) koulutusResourceV1.postKoulutus(dtoForDuplicateTest()).getEntity();
+        ResultV1RDTO<KoulutusLukioV1RDTO> result2 = (ResultV1RDTO<KoulutusLukioV1RDTO>) koulutusResourceV1.postKoulutus(dtoForDuplicateTest(), request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result2.getStatus());
         List<ErrorV1RDTO> errors = result2.getErrors();
 

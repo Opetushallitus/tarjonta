@@ -8,6 +8,9 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -17,6 +20,8 @@ public class KuvausResourceImplV1Test extends TestMockBase {
 
     @InjectMocks
     private KuvausResourceImplV1 kuvausResource;
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+
 
     private ValintaperusteSoraKuvaus getDummyValintaperustekuvaus() {
         ValintaperusteSoraKuvaus kuvaus = new ValintaperusteSoraKuvaus();
@@ -40,15 +45,15 @@ public class KuvausResourceImplV1Test extends TestMockBase {
         when(converter.toKuvausRDTO(any(ValintaperusteSoraKuvaus.class), anyBoolean())).thenReturn(getDummyValintaperustekuvausDto());
 
         KuvausV1RDTO kuvausDTO = getAmmattikorkeakoulukuvausDTO();
-        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO);
+        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO, request);
         assertEquals(ResultV1RDTO.ResultStatus.OK, resultDTO.getStatus());
 
         kuvausDTO = getYliopistokuvausDTO();
-        resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO);
+        resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO, request);
         assertEquals(ResultV1RDTO.ResultStatus.OK, resultDTO.getStatus());
 
         kuvausDTO = getSotilaskorkeakoulukuvausDTO();
-        resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO);
+        resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO, request);
         assertEquals(ResultV1RDTO.ResultStatus.OK, resultDTO.getStatus());
     }
 
@@ -60,15 +65,15 @@ public class KuvausResourceImplV1Test extends TestMockBase {
         when(kuvausDAO.read(anyLong())).thenReturn(getDummyValintaperustekuvaus());
 
         KuvausV1RDTO kuvausDTO = getAmmattikorkeakoulukuvausDTO();
-        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.updateKuvaus("valintaperustekuvaus", kuvausDTO);
+        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.updateKuvaus("valintaperustekuvaus", kuvausDTO, request);
         assertEquals(ResultV1RDTO.ResultStatus.OK, resultDTO.getStatus());
 
         kuvausDTO = getYliopistokuvausDTO();
-        resultDTO = kuvausResource.updateKuvaus("valintaperustekuvaus", kuvausDTO);
+        resultDTO = kuvausResource.updateKuvaus("valintaperustekuvaus", kuvausDTO, request);
         assertEquals(ResultV1RDTO.ResultStatus.OK, resultDTO.getStatus());
 
         kuvausDTO = getSotilaskorkeakoulukuvausDTO();
-        resultDTO = kuvausResource.updateKuvaus("valintaperustekuvaus", kuvausDTO);
+        resultDTO = kuvausResource.updateKuvaus("valintaperustekuvaus", kuvausDTO, request);
         assertEquals(ResultV1RDTO.ResultStatus.OK, resultDTO.getStatus());
     }
 
@@ -78,19 +83,19 @@ public class KuvausResourceImplV1Test extends TestMockBase {
         doThrow(new NotAuthorizedException("")).when(permissionChecker).checkCreateValintaPerusteKK();
 
         KuvausV1RDTO kuvausDTO = getAmmattikorkeakoulukuvausDTO();
-        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO);
+        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO, request);
         assertEquals(ResultV1RDTO.ResultStatus.ERROR, resultDTO.getStatus());
 
         kuvausDTO = getYliopistokuvausDTO();
-        resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO);
+        resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO, request);
         assertEquals(ResultV1RDTO.ResultStatus.ERROR, resultDTO.getStatus());
 
         kuvausDTO = getSotilaskorkeakoulukuvausDTO();
-        resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO);
+        resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO, request);
         assertEquals(ResultV1RDTO.ResultStatus.ERROR, resultDTO.getStatus());
 
         kuvausDTO = getLukiokuvausDTO();
-        resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO);
+        resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO, request);
         assertEquals(ResultV1RDTO.ResultStatus.ERROR, resultDTO.getStatus());
     }
 
@@ -100,19 +105,19 @@ public class KuvausResourceImplV1Test extends TestMockBase {
         doThrow(new NotAuthorizedException("")).when(permissionChecker).checkUpdateValintaperustekuvausKK();
 
         KuvausV1RDTO kuvausDTO = getAmmattikorkeakoulukuvausDTO();
-        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.updateKuvaus("valintaperustekuvaus", kuvausDTO);
+        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.updateKuvaus("valintaperustekuvaus", kuvausDTO, request);
         assertEquals(ResultV1RDTO.ResultStatus.ERROR, resultDTO.getStatus());
 
         kuvausDTO = getYliopistokuvausDTO();
-        resultDTO = kuvausResource.updateKuvaus("valintaperustekuvaus", kuvausDTO);
+        resultDTO = kuvausResource.updateKuvaus("valintaperustekuvaus", kuvausDTO, request);
         assertEquals(ResultV1RDTO.ResultStatus.ERROR, resultDTO.getStatus());
 
         kuvausDTO = getSotilaskorkeakoulukuvausDTO();
-        resultDTO = kuvausResource.updateKuvaus("valintaperustekuvaus", kuvausDTO);
+        resultDTO = kuvausResource.updateKuvaus("valintaperustekuvaus", kuvausDTO, request);
         assertEquals(ResultV1RDTO.ResultStatus.ERROR, resultDTO.getStatus());
 
         kuvausDTO = getLukiokuvausDTO();
-        resultDTO = kuvausResource.updateKuvaus("valintaperustekuvaus", kuvausDTO);
+        resultDTO = kuvausResource.updateKuvaus("valintaperustekuvaus", kuvausDTO, request);
         assertEquals(ResultV1RDTO.ResultStatus.ERROR, resultDTO.getStatus());
     }
 
@@ -122,19 +127,19 @@ public class KuvausResourceImplV1Test extends TestMockBase {
         doThrow(new NotAuthorizedException("")).when(permissionChecker).checkRemoveValintaPerusteKK();
 
         when(kuvausDAO.read(1234L)).thenReturn(getAmmattikorkeakoulukuvaus());
-        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.removeById("1234");
+        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.removeById("1234", request);
         assertEquals(ResultV1RDTO.ResultStatus.ERROR, resultDTO.getStatus());
 
         when(kuvausDAO.read(1234L)).thenReturn(getYliopistokuvaus());
-        resultDTO = kuvausResource.removeById("1234");
+        resultDTO = kuvausResource.removeById("1234", request);
         assertEquals(ResultV1RDTO.ResultStatus.ERROR, resultDTO.getStatus());
 
         when(kuvausDAO.read(1234L)).thenReturn(getSotilaskorkeakoulukuvaus());
-        resultDTO = kuvausResource.removeById("1234");
+        resultDTO = kuvausResource.removeById("1234", request);
         assertEquals(ResultV1RDTO.ResultStatus.ERROR, resultDTO.getStatus());
 
         when(kuvausDAO.read(1234L)).thenReturn(getLukiokuvaus());
-        resultDTO = kuvausResource.removeById("1234");
+        resultDTO = kuvausResource.removeById("1234", request);
         assertEquals(ResultV1RDTO.ResultStatus.ERROR, resultDTO.getStatus());
     }
 
@@ -144,15 +149,15 @@ public class KuvausResourceImplV1Test extends TestMockBase {
         doNothing().when(permissionChecker).checkRemoveValintaPerusteKK();
 
         when(kuvausDAO.read(1234L)).thenReturn(getAmmattikorkeakoulukuvaus());
-        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.removeById("1234");
+        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.removeById("1234", request);
         assertEquals(ResultV1RDTO.ResultStatus.OK, resultDTO.getStatus());
 
         when(kuvausDAO.read(1234L)).thenReturn(getYliopistokuvaus());
-        resultDTO = kuvausResource.removeById("1234");
+        resultDTO = kuvausResource.removeById("1234", request);
         assertEquals(ResultV1RDTO.ResultStatus.OK, resultDTO.getStatus());
 
         when(kuvausDAO.read(1234L)).thenReturn(getSotilaskorkeakoulukuvaus());
-        resultDTO = kuvausResource.removeById("1234");
+        resultDTO = kuvausResource.removeById("1234", request);
         assertEquals(ResultV1RDTO.ResultStatus.OK, resultDTO.getStatus());
     }
 
@@ -162,7 +167,7 @@ public class KuvausResourceImplV1Test extends TestMockBase {
         doNothing().when(permissionChecker).checkRemoveValintaPeruste();
 
         when(kuvausDAO.read(1234L)).thenReturn(getLukiokuvaus());
-        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.removeById("1234");
+        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.removeById("1234", request);
         assertEquals(ResultV1RDTO.ResultStatus.OK, resultDTO.getStatus());
     }
 
@@ -174,7 +179,7 @@ public class KuvausResourceImplV1Test extends TestMockBase {
         when(converter.toKuvausRDTO(any(ValintaperusteSoraKuvaus.class), anyBoolean())).thenReturn(getDummyValintaperustekuvausDto());
 
         KuvausV1RDTO kuvausDTO = getLukiokuvausDTO();
-        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO);
+        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO, request);
         assertEquals(ResultV1RDTO.ResultStatus.OK, resultDTO.getStatus());
     }
 
@@ -186,7 +191,7 @@ public class KuvausResourceImplV1Test extends TestMockBase {
         when(converter.toKuvausRDTO(any(ValintaperusteSoraKuvaus.class), anyBoolean())).thenReturn(getDummyValintaperustekuvausDto());
 
         KuvausV1RDTO kuvausDTO = getLukiokuvausDTO();
-        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO);
+        ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO, request);
         assertEquals(ResultV1RDTO.ResultStatus.OK, resultDTO.getStatus());
     }
 

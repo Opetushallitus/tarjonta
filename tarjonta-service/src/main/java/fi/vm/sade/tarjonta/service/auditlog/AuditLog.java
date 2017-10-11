@@ -3,7 +3,6 @@ package fi.vm.sade.tarjonta.service.auditlog;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.flipkart.zjsonpatch.JsonDiff;
@@ -21,8 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Nullable;
 import javax.annotation.PreDestroy;
@@ -77,8 +74,8 @@ public final class AuditLog {
         AUDITLOG.logStopped();
     }
 
-    public static <T> void log(Operation operation, TarjontaResource tarjontaResource, String targetOid, T dtoAfterOperation, T dtoBeforeOperation, @NotNull Map<String, String> additionalInfo) {
-        User user = getUser();
+    public static <T> void log(Operation operation, TarjontaResource tarjontaResource, String targetOid, T dtoAfterOperation, T dtoBeforeOperation, HttpServletRequest request, @NotNull Map<String, String> additionalInfo) {
+        User user = getUser(request);
         Target.Builder target = getTarget(tarjontaResource, targetOid);
         additionalInfo.forEach(target::setField);
 
@@ -86,44 +83,44 @@ public final class AuditLog {
         AUDITLOG.log(user, operation, target.build(), changes);
     }
 
-    public static <T> void log(Operation operation, TarjontaResource tarjontaResource, String targetOid, T dtoAfterOperation, T dtoBeforeOperation) {
-        log(operation, tarjontaResource, targetOid, dtoAfterOperation, dtoBeforeOperation, Maps.newHashMap());
+    public static <T> void log(Operation operation, TarjontaResource tarjontaResource, String targetOid, T dtoAfterOperation, T dtoBeforeOperation, HttpServletRequest request) {
+        log(operation, tarjontaResource, targetOid, dtoAfterOperation, dtoBeforeOperation, request, Maps.newHashMap());
     }
 
-    public static <T extends BaseV1RDTO> void create(TarjontaResource resource, String oid, T dtoAfterOperation) {
-        log(CREATE, resource, oid, dtoAfterOperation, null);
+    public static <T extends BaseV1RDTO> void create(TarjontaResource resource, String oid, T dtoAfterOperation, HttpServletRequest request) {
+        log(CREATE, resource, oid, dtoAfterOperation, null, request);
     }
 
-    public static <T extends BaseV1RDTO> void update(TarjontaResource resource, String oid, T dtoAfterOperation, T dtoBeforeOperation) {
-        log(UPDATE, resource, oid, dtoAfterOperation, dtoBeforeOperation);
+    public static <T extends BaseV1RDTO> void update(TarjontaResource resource, String oid, T dtoAfterOperation, T dtoBeforeOperation, HttpServletRequest request) {
+        log(UPDATE, resource, oid, dtoAfterOperation, dtoBeforeOperation, request);
     }
 
-    public static <T extends BaseV1RDTO> void copy(TarjontaResource resource, String oid, T dtoAfterOperation, String copyFromOid) {
-        log(COPY, resource, oid, dtoAfterOperation, null, ImmutableMap.of("copyFromOid", copyFromOid));
+    public static <T extends BaseV1RDTO> void copy(TarjontaResource resource, String oid, T dtoAfterOperation, HttpServletRequest request, String copyFromOid) {
+        log(COPY, resource, oid, dtoAfterOperation, null, request, ImmutableMap.of("copyFromOid", copyFromOid));
     }
 
-    public static <T extends BaseV1RDTO> void delete(TarjontaResource resource,String oid, T dtoBeforeOperation) {
-        log(DELETE, resource, oid, null, dtoBeforeOperation);
+    public static <T extends BaseV1RDTO> void delete(TarjontaResource resource, String oid, T dtoBeforeOperation, HttpServletRequest request) {
+        log(DELETE, resource, oid, null, dtoBeforeOperation, request);
     }
 
-    public static <T extends BaseV1RDTO> void stateChange(TarjontaResource resource, String oid, TarjontaTila tila, T dtoAfterOperation, T dtoBeforeOperation, @Nullable final Map<String, String> additionalInfo) {
+    public static <T extends BaseV1RDTO> void stateChange(TarjontaResource resource, String oid, TarjontaTila tila, T dtoAfterOperation, T dtoBeforeOperation, HttpServletRequest request, @Nullable final Map<String, String> additionalInfo) {
         Map<String, String> _additionalInfo = additionalInfo != null ? Maps.newHashMap(additionalInfo) : Maps.newHashMap();
         switch(tila) {
             case PERUTTU:
-                log(UNPUBLISH, resource, oid, dtoAfterOperation, dtoBeforeOperation, _additionalInfo);
+                log(UNPUBLISH, resource, oid, dtoAfterOperation, dtoBeforeOperation, request, _additionalInfo);
                 break;
             case JULKAISTU:
-                log(PUBLISH, resource, oid, dtoAfterOperation, dtoBeforeOperation, _additionalInfo);
+                log(PUBLISH, resource, oid, dtoAfterOperation, dtoBeforeOperation, request, _additionalInfo);
                 break;
             default:
                 _additionalInfo.put("newTila", tila.name());
-                log(STATE_CHANGE, resource, oid, dtoAfterOperation, dtoBeforeOperation, _additionalInfo);
+                log(STATE_CHANGE, resource, oid, dtoAfterOperation, dtoBeforeOperation, request, _additionalInfo);
                 break;
         }
     }
 
-    public static void massCopy(HakuV1RDTO hakuV1RDTO, String oldHakuOid, String userOid) {
-        User user = getUser();
+    public static void massCopy(HakuV1RDTO hakuV1RDTO, String oldHakuOid, String userOid, HttpServletRequest request) {
+        User user = getUser(request);
         Target.Builder target = getTarget(HAKU, hakuV1RDTO.getOid());
         target.setField("copyFromOid", oldHakuOid);
         target.setField("userOid", userOid);
@@ -137,9 +134,8 @@ public final class AuditLog {
                 .setField("oid", targetOid);
     }
 
-    private static User getUser() {
+    private static User getUser(HttpServletRequest request) {
         try {
-            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
             String userAgent = request.getHeader("User-Agent");
             String session = getSession(request);
             InetAddress ip = getInetAddress(request);

@@ -74,6 +74,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import java.net.MalformedURLException;
@@ -86,7 +87,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -362,7 +362,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     // POST /haku
     @Override
-    public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku) {
+    public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku, HttpServletRequest request) {
         LOG.info("createHaku() - {}", haku);
         if (haku.getOid() != null) {
             ResultV1RDTO<HakuV1RDTO> result = new ResultV1RDTO<HakuV1RDTO>();
@@ -370,12 +370,12 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             return result;
         }
 
-        return updateHaku(haku);
+        return updateHaku(haku, request);
     }
 
     // POST /haku/OID
     @Override
-    public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO hakuDto) {
+    public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO hakuDto, HttpServletRequest request) {
         LOG.info("updateHaku() - {}", hakuDto);
 
         ResultV1RDTO<HakuV1RDTO> result = new ResultV1RDTO<HakuV1RDTO>();
@@ -438,7 +438,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
                 hakuDtoAfterUpdate = auditHelper.getHakuAsDto(hakuToUpdate);
 
-                AuditLog.create(HAKU, hakuDtoAfterUpdate.getOid(), hakuDtoAfterUpdate);
+                AuditLog.create(HAKU, hakuDtoAfterUpdate.getOid(), hakuDtoAfterUpdate, request);
             } else {
                 LOG.debug("updateHaku() - update");
                 hakuDAO.update(hakuToUpdate);
@@ -446,7 +446,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
                 hakuDtoAfterUpdate = auditHelper.getHakuAsDto(hakuToUpdate);
 
-                AuditLog.update(HAKU, hakuToUpdate.getOid(), hakuDtoAfterUpdate, hakuDtoBeforeUpdate);
+                AuditLog.update(HAKU, hakuToUpdate.getOid(), hakuDtoAfterUpdate, hakuDtoBeforeUpdate, request);
             }
 
             LOG.debug("updateHaku() - make whopee!");
@@ -467,7 +467,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<Boolean> deleteHaku(final String oid) {
+    public ResultV1RDTO<Boolean> deleteHaku(final String oid, HttpServletRequest request) {
         LOG.info("deleteHaku() oid={}", oid);
 
         final ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
@@ -498,7 +498,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             result.setResult(true);
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
 
-            AuditLog.delete(HAKU, oid, hakuDtoBeforeUpdate);
+            AuditLog.delete(HAKU, oid, hakuDtoBeforeUpdate, request);
         } else {
             result.setResult(false);
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
@@ -552,7 +552,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<Tilamuutokset> setHakuState(String oid, TarjontaTila tila, boolean onlyHaku) {
+    public ResultV1RDTO<Tilamuutokset> setHakuState(String oid, TarjontaTila tila, boolean onlyHaku, HttpServletRequest request) {
         LOG.debug("setHakuState({}, {})", oid, tila);
 
         final Haku haku = hakuDAO.findByOid(oid);
@@ -567,7 +567,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 hakuDAO.update(haku);
 
                 HakuV1RDTO hakuDtoAfterUpdate = auditHelper.getHakuAsDto(haku);
-                AuditLog.stateChange(HAKU, oid, tila, hakuDtoAfterUpdate, hakuDtoBeforeUpdate, null);
+                AuditLog.stateChange(HAKU, oid, tila, hakuDtoAfterUpdate, hakuDtoBeforeUpdate, request, null);
 
             } else {
                 //siirtymä ei mahdollinen
@@ -582,7 +582,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             tm = publication.updatePublicationStatus(Lists.newArrayList(tilamuutos));
 
             HakuV1RDTO hakuDtoAfterUpdate = auditHelper.getHakuAsDto(haku);
-            AuditLog.stateChange(HAKU, oid, tila, hakuDtoAfterUpdate, hakuDtoBeforeUpdate, ImmutableMap.of("updateStatusForHakukohdeAndKomotosAlso", "true"));
+            AuditLog.stateChange(HAKU, oid, tila, hakuDtoAfterUpdate, hakuDtoBeforeUpdate, request, ImmutableMap.of("updateStatusForHakukohdeAndKomotosAlso", "true"));
 
         } catch (IllegalArgumentException iae) {
             ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<Tilamuutokset>();
@@ -819,13 +819,13 @@ public class HakuResourceImplV1 implements HakuV1Resource {
      * Massakopioinnin metodi, tallentaa kopioitavan datan json-formaatissa valitauluun.
      */
     @Override
-    public ResultV1RDTO<String> copyHaku(final String fromHakuOid, final String step) {
+    public ResultV1RDTO<String> copyHaku(final String fromHakuOid, final String step, HttpServletRequest request) {
         LOG.info("copyHaku");
 
         Haku h = hakuDAO.findByOid(fromHakuOid);
 
         permissionChecker.checkUpdateHaku(h.getTarjoajaOids());
-        ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(fromHakuOid, step);
+        ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(fromHakuOid, step, request);
         processV1RDTO.getParameters().put(MassCopyProcess.PROCESS_SKIP_STEP, step);
         processV1RDTO.getParameters().put(MassCopyProcess.USER_OID, getUsernameFromSession());
 
