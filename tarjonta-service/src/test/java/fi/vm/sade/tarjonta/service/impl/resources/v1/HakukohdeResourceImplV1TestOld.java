@@ -32,6 +32,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Date;
 
@@ -53,6 +54,8 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
 
     @Autowired
     private TarjontaKoodistoHelper koodistoHelper;
+
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
     @Before
     public void setup() throws Exception {
@@ -87,9 +90,9 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
     public void testBlockDuplicatingHakukohdeThatMatchesHakuAndKomoto() {
         HakukohdeV1RDTO hakukohde = mkHakukohde(canAddHakukohde(mkRandomHaku()), mkRandomKomoto());
 
-        assertEquals(200, hakukohdeResource.postHakukohde(hakukohde).getStatus());
+        assertEquals(200, hakukohdeResource.postHakukohde(hakukohde, request).getStatus());
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(hakukohde).getEntity();
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(hakukohde, request).getEntity();
 
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
 
@@ -104,7 +107,7 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
         haku.setHakulomakeUrl("http://haunUrl.com");
         HakukohdeV1RDTO hakukohde = mkHakukohde(canAddHakukohde(haku), mkRandomKomoto());
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(hakukohde).getEntity();
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(hakukohde, request).getEntity();
         assertEquals(OK, result.getStatus());
         HakukohdeV1RDTO hakukohdeRes = result.getResult();
         assertEquals("http://haunUrl.com", hakukohdeRes.getHakulomakeUrl());
@@ -119,7 +122,7 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
         hakukohde.setHakulomakeUrl("http://hakukohdekohtainen.com");
         hakukohde.setOverridesHaunHakulomakeUrl(true);
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(hakukohde).getEntity();
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(hakukohde, request).getEntity();
         assertEquals(OK, result.getStatus());
         HakukohdeV1RDTO hakukohdeRes = result.getResult();
         assertEquals("http://hakukohdekohtainen.com", hakukohdeRes.getHakulomakeUrl());
@@ -130,9 +133,9 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
     public void testBlockDuplicatingHakukohdeThatMatchesHakuButNotKomoto() {
         Haku haku = canAddHakukohde(mkRandomHaku());
 
-        assertEquals(200, hakukohdeResource.postHakukohde(mkHakukohde(haku, mkRandomKomoto())).getStatus());
+        assertEquals(200, hakukohdeResource.postHakukohde(mkHakukohde(haku, mkRandomKomoto()), request).getStatus());
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(mkHakukohde(haku, mkRandomKomoto())).getEntity();
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(mkHakukohde(haku, mkRandomKomoto()), request).getEntity();
 
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
 

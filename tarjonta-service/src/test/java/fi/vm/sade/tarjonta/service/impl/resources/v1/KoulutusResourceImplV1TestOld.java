@@ -31,6 +31,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -38,6 +39,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -55,6 +57,8 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("embedded-solr")
 @Transactional()
 public class KoulutusResourceImplV1TestOld extends KoulutusBase {
+
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
     @Before
     public void setUp() throws OIDCreationException {
@@ -162,7 +166,7 @@ public class KoulutusResourceImplV1TestOld extends KoulutusBase {
         /*
          * INSERT KORKEAKOULU TO DB
          */
-        ResultV1RDTO<KoulutusV1RDTO> v = (ResultV1RDTO<KoulutusV1RDTO>)instance.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> v = (ResultV1RDTO<KoulutusV1RDTO>)instance.postKoulutus(dto, request).getEntity();
         assertEquals("Validation errors", true, v.getErrors() == null || v.getErrors().isEmpty());
 
         /*

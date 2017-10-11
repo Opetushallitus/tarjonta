@@ -45,6 +45,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -63,6 +64,7 @@ public class MassakopiointiTest extends TestData {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MassakopiointiTest.class);
     private static final Date DATE_2014 = (new DateTime(KOULUTUS_START_DATE)).plusYears(1).toDate();
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
     @Autowired
     private HakukohdeDAOImpl hakukohdeDAO;
@@ -199,7 +201,7 @@ public class MassakopiointiTest extends TestData {
             super.persist(hk);
         }
 
-        ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(from.getOid(), null); // null = do not skip process steps
+        ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(from.getOid(), null, request); // null = do not skip process steps
         copyProcess.setState(processV1RDTO);
         copyProcess.run();
         assertEquals("DONE", processV1RDTO.getParameters().get("process_step"));

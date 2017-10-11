@@ -39,6 +39,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 
+import javax.servlet.http.HttpServletRequest;
+
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -60,6 +62,7 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
     private OrganisaatioRDTO organisaatioDTO = new OrganisaatioRDTO();
     private HakukohdeDAO hakukohdeDAO;
     private AuditHelper auditHelper;
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
     @Before
     public void setUp() throws OIDCreationException {
@@ -93,7 +96,7 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
         
         when(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).thenReturn(null);
 
-        ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, dto);
+        ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, dto, request);
         
         validation(copyOrMove, ResultV1RDTO.ResultStatus.NOT_FOUND, "oid", KoulutusValidationMessages.KOULUTUS_KOMOTO_MISSING);
     }
@@ -102,7 +105,7 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
     public void testErrorsMissingRequiredObject() throws ExceptionMessage {
         when(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).thenReturn(komoto);
 
-        ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, null);
+        ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, null, request);
         
         validation(copyOrMove, ResultV1RDTO.ResultStatus.ERROR, null, KoulutusValidationMessages.KOULUTUS_INPUT_OBJECT_MISSING);
     }
@@ -112,7 +115,7 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
         KoulutusCopyV1RDTO dto = new KoulutusCopyV1RDTO();
         when(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).thenReturn(komoto);
 
-        ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, dto);
+        ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, dto, request);
         
         validation(copyOrMove, ResultV1RDTO.ResultStatus.ERROR, "mode", KoulutusValidationMessages.KOULUTUS_INPUT_PARAM_MISSING);
     }
@@ -126,7 +129,7 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
         when(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).thenReturn(komoto);
         when(organisaatioServiceMock.findByOid(ORGANISATION_OID)).thenReturn(null);
         
-        ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, dto);
+        ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, dto, request);
         
         validation(copyOrMove, ResultV1RDTO.ResultStatus.ERROR, "organisationOids[" + ORGANISATION_OID + "]", KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID);
     }
@@ -141,7 +144,7 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
         when(organisaatioServiceMock.findByOid(ORGANISATION_OID)).thenReturn(organisaatioDTO);
         when(oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(ORGANISATION_OID, "kk")).thenReturn(false);
         
-        ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, dto);
+        ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, dto, request);
         
         validation(copyOrMove, ResultV1RDTO.ResultStatus.ERROR, "organisationOids[" + ORGANISATION_OID + "]", KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID);
     }
@@ -159,7 +162,7 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
         when(hakukohdeDAO.findByKoulutusOid(KOMOTO_OID)).thenReturn(Lists.newArrayList());
         when(auditHelper.getKomotoAsDto(any(KoulutusmoduuliToteutus.class))).thenReturn(new KoulutusKorkeakouluV1RDTO());
 
-        ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, dto);
+        ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove = instance.copyOrMove(KOMOTO_OID, dto, request);
         
         assertNotNull("no response object", copyOrMove);
         assertNotNull("no result object", copyOrMove.getResult());

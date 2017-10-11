@@ -39,6 +39,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -46,6 +47,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -64,6 +66,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
 
     private static final String ORGANISATION_JARJESTAJA_OID = "organisaatio_jarjestaja_oid";
     private static final String VALMENTAVA_KOMOTO_OID = "valmentava_komoto_oid";
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
     @Before
     public void setUp() throws OIDCreationException {
@@ -99,7 +102,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         /*
          * INSERT NAYTTO TO DB
          */
-        ResultV1RDTO<KoulutusV1RDTO> v = (ResultV1RDTO<KoulutusV1RDTO>)instance.postKoulutus(createDTO()).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> v = (ResultV1RDTO<KoulutusV1RDTO>)instance.postKoulutus(createDTO(), request).getEntity();
         assertEquals("Validation errors", true, v.getErrors() == null || v.getErrors().isEmpty());
 
         /*
@@ -127,7 +130,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
          * UPDATE NAYTTO AND ADD VALMENTAVA TO DB
          */
         withoutValmentava.setValmistavaKoulutus(createValmentavaDTO());
-        v = (ResultV1RDTO<KoulutusV1RDTO>)instance.postKoulutus(withoutValmentava).getEntity();
+        v = (ResultV1RDTO<KoulutusV1RDTO>)instance.postKoulutus(withoutValmentava, request).getEntity();
 
         printResultErrors(v);
         assertEquals("Validation errors", true, v.getErrors() == null || v.getErrors().isEmpty());

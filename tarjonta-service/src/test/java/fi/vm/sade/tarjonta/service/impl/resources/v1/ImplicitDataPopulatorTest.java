@@ -16,10 +16,12 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +36,8 @@ public class ImplicitDataPopulatorTest extends LukioV1Test {
 
     @Autowired
     KoodiService koodiService;
+
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
     @Before
     public void init() {
@@ -85,7 +89,7 @@ public class ImplicitDataPopulatorTest extends LukioV1Test {
 
         mockLaajuusarvoRelations(dto.getKoulutuskoodi().getUri());
 
-        koulutusResourceV1.postKoulutus(dto);
+        koulutusResourceV1.postKoulutus(dto, request);
 
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
         assertTrue(komoto.getOpintojenLaajuusarvoUri().contains(opintojenLaajuusarvo.getUri() + "#"));

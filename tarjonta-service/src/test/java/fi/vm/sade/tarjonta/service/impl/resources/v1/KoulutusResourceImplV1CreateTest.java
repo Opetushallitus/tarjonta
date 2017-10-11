@@ -23,7 +23,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsNot.not;
@@ -39,6 +42,9 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
     @Mock
     private KoulutusImplicitDataPopulator implicitDataPopulator;
+
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+
 
     @Before
     public void setUp() {
@@ -66,7 +72,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
     public void thatAjankohtaIsValidWithNewKoulutus() {
         KoulutusV1RDTO koulutusDTO = createNewKoulutusDTO();
 
-        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO, request).getEntity();
 
         assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.alkamiskauttamuutettu"))));
     }
@@ -78,7 +84,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
         KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTO();
 
-        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO, request).getEntity();
 
         assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.alkamiskauttamuutettu"))));
     }
@@ -90,7 +96,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
         KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTO();
 
-        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO, request).getEntity();
 
         assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.alkamiskauttamuutettu"))));
     }
@@ -102,7 +108,7 @@ public class KoulutusResourceImplV1CreateTest extends TestMockBase {
 
         KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTO();
 
-        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(koulutusDTO, request).getEntity();
 
         assertThat(resultDTO.getErrors(), hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.alkamiskauttamuutettu")));
     }

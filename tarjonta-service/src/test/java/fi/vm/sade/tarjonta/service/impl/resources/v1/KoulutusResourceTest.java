@@ -32,6 +32,8 @@ import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
+
 import static org.mockito.Mockito.mock;
 
 /**
@@ -77,6 +79,8 @@ public class KoulutusResourceTest {
     
     private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO = Mockito.mock(KoulutusSisaltyvyysDAO.class);
     private KoulutusmoduuliDAO koulutusmoduuliDAO = Mockito.mock(KoulutusmoduuliDAO.class);
+
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
     @Before
     public void setUp() throws Exception {
@@ -185,19 +189,19 @@ public class KoulutusResourceTest {
     @Test
     public void testOVT7518() {
         //hakukohde kiinni
-        ResultV1RDTO result = koulutusResource.deleteByOid("komoto-3");
+        ResultV1RDTO result = koulutusResource.deleteByOid("komoto-3", request);
         System.out.println("result" + result);
         Assert.assertEquals(ResultV1RDTO.ResultStatus.ERROR, result.getStatus());
 
         //poistettu hakukohde kiinni, koulutuksen tila PERUTTU
         hk2.setTila(TarjontaTila.POISTETTU);
         komoto3.setTila(TarjontaTila.PERUTTU);
-        result = koulutusResource.deleteByOid("komoto-3");
+        result = koulutusResource.deleteByOid("komoto-3", request);
         Assert.assertEquals(result.toString(), ResultV1RDTO.ResultStatus.OK, result.getStatus());
 
         //poistettu hakukohde kiinni
         komoto3.getHakukohdes().iterator().next().setTila(TarjontaTila.POISTETTU);
-        result = koulutusResource.deleteByOid("komoto-3");
+        result = koulutusResource.deleteByOid("komoto-3", request);
         Assert.assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
     }
 
@@ -206,14 +210,14 @@ public class KoulutusResourceTest {
         //kaksi koulutusta kiinni hakukohteessa, ensimmäisen voi poistaa
         komo.setTila(TarjontaTila.JULKAISTU);
         komo.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
-        ResultV1RDTO result = koulutusResource.deleteByOid("komoto-1");
+        ResultV1RDTO result = koulutusResource.deleteByOid("komoto-1", request);
         Assert.assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
         komo.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
         komoto1.setTila(TarjontaTila.POISTETTU);
 
 
         //kaksi koulutusta kiinni hakukohteessa, jälkimmäistä ei voi poistaa
-        result = koulutusResource.deleteByOid("komoto-2");
+        result = koulutusResource.deleteByOid("komoto-2", request);
         Assert.assertEquals(ResultV1RDTO.ResultStatus.ERROR, result.getStatus());
 }
 

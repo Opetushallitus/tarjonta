@@ -45,10 +45,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.*;
 
 @Component
 @Scope("prototype")
@@ -122,6 +121,7 @@ public class MassCommitProcess {
         countTotalKomoto = 0;
 
         final String fromHakuOid = getState().getParameters().get(MassCopyProcess.SELECTED_HAKU_OID);
+        final HttpServletRequest request = getState().getRequest();
         final String processId = getState().getId();
 
         try {
@@ -132,7 +132,7 @@ public class MassCommitProcess {
             countTotalKomoto = oldKomotoOids.size();
             countTotalHakukohde = oldHakukohdeOids.size();
 
-            insertHaku(fromHakuOid);
+            insertHaku(fromHakuOid, request);
             handleKomotos(processId, oldKomotoOids);
             handleSisaltyvyydet(processId, oldKomoOids);
             handleHakukohdes(processId, oldHakukohdeOids);
@@ -247,7 +247,7 @@ public class MassCommitProcess {
     @Autowired
     private PlatformTransactionManager tm;
 
-    private void insertHaku(final String oldHakuOid) {
+    private void insertHaku(final String oldHakuOid, HttpServletRequest request) {
         executeInTransaction(() -> {
             final Haku sourceHaku = hakuDAO.findByOid(oldHakuOid);
             String hakuJson = EntityToJsonHelper.convertToJson(sourceHaku);
@@ -296,7 +296,7 @@ public class MassCommitProcess {
 
             String userOid = state.getParameters().get(MassCopyProcess.USER_OID);
             HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, true);
-            AuditLog.massCopy(hakuV1RDTO, oldHakuOid, userOid);
+            AuditLog.massCopy(hakuV1RDTO, oldHakuOid, userOid, request);
         });
     }
 

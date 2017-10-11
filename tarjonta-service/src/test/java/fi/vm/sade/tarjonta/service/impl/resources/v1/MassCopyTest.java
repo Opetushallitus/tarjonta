@@ -33,6 +33,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -65,6 +66,9 @@ public class MassCopyTest extends TestUtilityBase {
 
     @Autowired
     ApplicationContext applicationContext;
+
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+
 
     @Before
     public void before() {
@@ -207,7 +211,7 @@ public class MassCopyTest extends TestUtilityBase {
     }
 
     public String copyHaku(String hakuOid) {
-        ResultV1RDTO<String> result = hakuV1Resource.copyHaku(hakuOid, "");
+        ResultV1RDTO<String> result = hakuV1Resource.copyHaku(hakuOid, "", request);
 
         return result.getResult();
     }

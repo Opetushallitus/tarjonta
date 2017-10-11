@@ -27,6 +27,7 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -36,6 +37,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -53,6 +55,7 @@ public interface HakukohdeV1Resource {
      *
      * @param oid Hakukohteen oid.
      * @param tila Kohdetila.
+     * @param request
      * @return Tila ( {@link TarjontaTila#toString()} ), jossa hakukohde on
      * tämän kutsun jälkeen (eli kohdetila tai edellinen tila, jos siirtymä ei
      * ollut sallittu).
@@ -61,7 +64,7 @@ public interface HakukohdeV1Resource {
     @Path("/{oid}/tila")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Päivittää hakukohteen tilan", notes = "Operaatio päivittää hakukohteen tilan, mikäli kyseinen tilasiirtymä on sallittu.")
-    public ResultV1RDTO<Tilamuutokset> updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
+    public ResultV1RDTO<Tilamuutokset> updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila, @Context HttpServletRequest request);
 
     @GET
     @ApiOperation(value = "Palauttaa kaikki hakukohteiden oid:t", notes = "Listaa kaikki hakukohteiden oidit", response = OidV1RDTO.class)
@@ -99,7 +102,7 @@ public interface HakukohdeV1Resource {
             @ApiResponse(code = 401, message = "Unauthorized request"),
             @ApiResponse(code = 403, message = "Permission denied")
     })
-    public Response postHakukohde(@ApiParam(value = "Luotava hakukohde", required = true) HakukohdeV1RDTO hakukohde);
+    public Response postHakukohde(@ApiParam(value = "Luotava hakukohde", required = true) HakukohdeV1RDTO hakukohde, @Context HttpServletRequest request);
 
     @PUT
     @Path("/{oid}")
@@ -114,13 +117,13 @@ public interface HakukohdeV1Resource {
     })
     public Response updateHakukohde(
             @ApiParam(value = "Päivitettävän hakukohteen oid", required = true) @PathParam("oid") String hakukohdeOid,
-            @ApiParam(value = "Päivitetty hakukohde", required = true) HakukohdeV1RDTO hakukohde);
+            @ApiParam(value = "Päivitetty hakukohde", required = true) HakukohdeV1RDTO hakukohde, @Context HttpServletRequest request);
 
     @DELETE
     @Path("/{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Poistaa hakukohteen", notes = "Operaatio poistaa hakukohteen")
-    public ResultV1RDTO<Boolean> deleteHakukohde(@ApiParam(value = "Poistettavan hakukohteen oid", required = true) @PathParam("oid") String oid);
+    public ResultV1RDTO<Boolean> deleteHakukohde(@ApiParam(value = "Poistettavan hakukohteen oid", required = true) @PathParam("oid") String oid, @Context HttpServletRequest request);
 
     @GET
     @Path("/{oid}/valintakoe")
@@ -272,14 +275,14 @@ public interface HakukohdeV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Poistaa annetun hakukohteen ja koulutusten välisen relaation", notes = "Poistaa annetun hakukohteen ja koulutusten välisen relaation, huom. mikäli hakukohteelle ei jää yhtään koulutusrelaatiota se poistetaan")
     public ResultV1RDTO<List<String>> removeKoulutuksesFromHakukohde(@ApiParam(value = "Hakukohteen oid", required = true) @PathParam("oid") String hakukohdeOid,
-            @ApiParam(value = "Lista hakukohteelta poistettavista koulutuksista") List<KoulutusTarjoajaV1RDTO> koulutukses);
+                                                                     @ApiParam(value = "Lista hakukohteelta poistettavista koulutuksista") List<KoulutusTarjoajaV1RDTO> koulutukses, @Context HttpServletRequest request);
 
     @POST
     @Path("/{oid}/koulutukset/lisaa")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Liittää annetut koulutukset hakukohteelle")
     public ResultV1RDTO<List<String>> lisaaKoulutuksesToHakukohde(@ApiParam(value = "Hakukohteen oid jolle koulutukset liitetään", required = true) @PathParam("oid") String hakukohdeOid,
-            @ApiParam(value = "Koulutusten tiedot jotka liitetään hakukohteelle", required = true) List<KoulutusTarjoajaV1RDTO> koulutukses);
+                                                                  @ApiParam(value = "Koulutusten tiedot jotka liitetään hakukohteelle", required = true) List<KoulutusTarjoajaV1RDTO> koulutukses, HttpServletRequest request);
 
     @GET
     @Path("/{oid}/stateChangeCheck")
@@ -292,7 +295,7 @@ public interface HakukohdeV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Liittää/poistaa annetut ryhmat hakukohteelle, ei muuta olemassaolevia liitoksia")
     public ResultV1RDTO<Boolean> lisaaRyhmatHakukohteille(
-            @ApiParam(value = "Lista hakukohteiden liittamis/poistamis toimintoja", required = true) List<HakukohdeRyhmaV1RDTO> data);
+            @ApiParam(value = "Lista hakukohteiden liittamis/poistamis toimintoja", required = true) List<HakukohdeRyhmaV1RDTO> data, @Context HttpServletRequest request);
 
     @GET
     @Path("/komotoSelectedCheck")

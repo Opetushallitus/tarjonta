@@ -22,12 +22,14 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +66,8 @@ public class KorkeakoulutusV1Test {
     KoodiService koodiService;
 
     private static final String KOULUTUSKOODI = "koulutus_testikoodi";
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+
 
     @Before
     public void init() {
@@ -93,7 +97,7 @@ public class KorkeakoulutusV1Test {
         KoulutusKorkeakouluV1RDTO dto = baseDto();
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
 
-        ResultV1RDTO<KoulutusKorkeakouluV1RDTO> result = (ResultV1RDTO<KoulutusKorkeakouluV1RDTO>) koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusKorkeakouluV1RDTO> result = (ResultV1RDTO<KoulutusKorkeakouluV1RDTO>) koulutusResourceV1.postKoulutus(dto, request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
     }
 
@@ -103,7 +107,7 @@ public class KorkeakoulutusV1Test {
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
         dto.setOrganisaatio(new OrganisaatioV1RDTO(TARJOAJA1));
 
-        ResultV1RDTO<KoulutusKorkeakouluV1RDTO> result = (ResultV1RDTO<KoulutusKorkeakouluV1RDTO>) koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusKorkeakouluV1RDTO> result = (ResultV1RDTO<KoulutusKorkeakouluV1RDTO>) koulutusResourceV1.postKoulutus(dto, request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
         assertEquals(3, result.getErrors().size());
         assertTrue(containsError(result.getErrors(), KoulutusValidator.KOULUTUSOHJELMA));
