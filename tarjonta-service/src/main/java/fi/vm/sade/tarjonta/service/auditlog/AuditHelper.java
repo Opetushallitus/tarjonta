@@ -41,7 +41,7 @@ public class AuditHelper {
     }
 
     public HakuV1RDTO getHakuAsDto(Haku haku) {
-        return converterV1.fromHakuToHakuRDTO(haku, true);
+        return converterV1.fromHakuToHakuRDTO(haku, false);
     }
 
 
