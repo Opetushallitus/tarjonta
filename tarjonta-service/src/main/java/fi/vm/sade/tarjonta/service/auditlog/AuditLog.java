@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.flipkart.zjsonpatch.JsonDiff;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import fi.vm.sade.auditlog.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.BaseV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
@@ -21,10 +23,10 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -58,13 +60,20 @@ public final class AuditLog {
     private static final JsonParser parser = new JsonParser();
     static final int MAX_FIELD_LENGTH = 32766;
     private static final ObjectMapper mapper = new ObjectMapper();
+
+    public static final String UNKNOWN_USER_AGENT = "Unknown user agent";
+    private static final String DUMMYOID_STR = "1.2.999.999.99.99999999999";
+    private static final String UNKNOWN_SESSION = "Unknown session";
     private static final User ANONYMOUS_USER;
+    private static Oid DUMMYOID;
+
     static {
         User anon = null;
         try {
-            anon = new User(new Oid("1.2.999.999.99.99999999999"), InetAddress.getByName(""), null, null);
+            DUMMYOID = new Oid(DUMMYOID_STR);
+            anon = new User(DUMMYOID, InetAddress.getByName(""), null, null);
         } catch(GSSException | UnknownHostException e) {
-           LOG.error("Creating anonymous anon failed", e);
+            LOG.error("Creating anonymous anon failed", e);
         }
         ANONYMOUS_USER = anon;
     }
@@ -119,8 +128,8 @@ public final class AuditLog {
         }
     }
 
-    public static void massCopy(HakuV1RDTO hakuV1RDTO, String oldHakuOid, String userOid, HttpServletRequest request) {
-        User user = getUser(request);
+    public static void massCopy(HakuV1RDTO hakuV1RDTO, String oldHakuOid, String userOid, InetAddress ip, String session, String userAgent) {
+        User user = getUser(userOid, ip, session, userAgent);
         Target.Builder target = getTarget(HAKU, hakuV1RDTO.getOid());
         target.setField("copyFromOid", oldHakuOid);
         target.setField("userOid", userOid);
@@ -134,53 +143,52 @@ public final class AuditLog {
                 .setField("oid", targetOid);
     }
 
-    private static User getUser(HttpServletRequest request) {
+    private static User getUser(@Nonnull HttpServletRequest request) {
         try {
-            String userAgent = request.getHeader("User-Agent");
+            String userAgent = getUserAgentHeader(request);
             String session = getSession(request);
             InetAddress ip = getInetAddress(request);
-            Oid oid = getOid();
-            return new User(oid, ip, session, userAgent);
+            String userOid = getUserOidFromSession();
+            return getUser(userOid, ip, session, userAgent);
         } catch(Exception e) {
-            LOG.error("No RequestContext for audit logging, recording anonymous user", e);
+            LOG.error("Recording anonymous user", e);
             return ANONYMOUS_USER;
         }
 
     }
 
-    private static String getSession(HttpServletRequest request) {
-        HttpSession s = request.getSession(false);
-        if (s != null) {
-            return s.getId();
-        } else {
+    private static String getUserAgentHeader(HttpServletRequest request) {
+        return request.getHeader("User-Agent");
+    }
+
+    public static String getSession(HttpServletRequest request) {
+        try {
+            return request.getSession(false).getId();
+        } catch(Exception e) {
             LOG.error("Couldn't log session for requst {}", request);
             return null;
         }
     }
 
-    private static InetAddress getInetAddress(HttpServletRequest request) {
-        String ipAddr = request.getRemoteAddr();
+    public static InetAddress getInetAddress(HttpServletRequest request) {
         try {
-            return InetAddress.getByName(ipAddr);
-        } catch(UnknownHostException e) {
+            return InetAddress.getByName(request.getRemoteAddr());
+        } catch(Exception e) {
             LOG.error("Couldn't log InetAddress for log entry", e);
             return null;
         }
     }
 
-    private static Oid getOid() {
-        String usernameFromSession = getUsernameFromSession();
+    public static Oid getOid(String usernameFromSession) {
         try {
-            if (usernameFromSession != null) {
-                return new Oid(usernameFromSession);
-            }
-        } catch(GSSException e) {
+            return new Oid(usernameFromSession);
+        } catch(Exception e) {
             LOG.error("Couldn't log oid {} for log entry", usernameFromSession, e);
+            return null;
         }
-        return null;
     }
 
-    private static String getUsernameFromSession() {
+    public static String getUserOidFromSession() {
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null) {
             Principal p = context.getAuthentication();
@@ -188,8 +196,28 @@ public final class AuditLog {
                 return p.getName();
             }
         }
+        LOG.error("Returning null user oid");
         return null;
     }
+
+    private static User getUser(String userOid, InetAddress ip, String session, String userAgent) {
+        Oid oid;
+        try {
+            oid = getOid(userOid);
+        } catch(Exception e) {
+            LOG.error("Recording anonymous user", e);
+            oid = DUMMYOID;
+        }
+        return new User(
+                oid,
+                ip != null ? ip : InetAddress.getLoopbackAddress(),
+                session != null ? session : UNKNOWN_SESSION,
+                userAgent != null ? userAgent : UNKNOWN_USER_AGENT
+        );
+
+    }
+
+
 
     private static <T> Changes.Builder getChanges(@Nullable T afterOperation, @Nullable T beforeOperation) {
         Changes.Builder builder = new Changes.Builder();
@@ -198,7 +226,7 @@ public final class AuditLog {
                 builder.removed("change", toGson(mapper.valueToTree(beforeOperation)));
             } else if (afterOperation != null && beforeOperation == null) {
                 builder.added("change", toGson(mapper.valueToTree(afterOperation)));
-            } else if (afterOperation != null){
+            } else if (afterOperation != null) {
                 JsonNode afterJson = mapper.valueToTree(afterOperation);
                 JsonNode beforeJson = mapper.valueToTree(beforeOperation);
                 traverseAndTruncate(afterJson);

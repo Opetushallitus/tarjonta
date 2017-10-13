@@ -22,8 +22,15 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.Principal;
 import java.util.Map;
+
+import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.getInetAddress;
+import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.getSession;
+import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.getUserOidFromSession;
 
 public class MassCopyProcess implements ProcessDefinition {
 
@@ -142,19 +149,12 @@ public class MassCopyProcess implements ProcessDefinition {
         processV1RDTO.setProcess("massCopyProcess");
         processV1RDTO.getParameters().put(MassCopyProcess.SELECTED_HAKU_OID, toOid);
         processV1RDTO.getParameters().put(MassCopyProcess.PROCESS_SKIP_STEP, step);
-        processV1RDTO.getParameters().put(MassCopyProcess.USER_OID, getUsernameFromSession());
-        processV1RDTO.setRequest(request);
+        processV1RDTO.getParameters().put(MassCopyProcess.USER_OID, getUserOidFromSession());
+        processV1RDTO.setUserAgent(request.getHeader("User-Agent"));
+        processV1RDTO.setSession(getSession(request));
+        processV1RDTO.setIp(getInetAddress(request));
+
         return processV1RDTO;
     }
 
-    private static String getUsernameFromSession() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        if (context != null) {
-            Principal p = context.getAuthentication();
-            if (p != null) {
-                return p.getName();
-            }
-        }
-        return "Anonymous user";
-    }
 }

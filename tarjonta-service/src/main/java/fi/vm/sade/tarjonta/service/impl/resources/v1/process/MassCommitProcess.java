@@ -46,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -121,7 +122,9 @@ public class MassCommitProcess {
         countTotalKomoto = 0;
 
         final String fromHakuOid = getState().getParameters().get(MassCopyProcess.SELECTED_HAKU_OID);
-        final HttpServletRequest request = getState().getRequest();
+        final InetAddress ip = getState().getIp();
+        final String session = getState().getSession();
+        final String userAgent = getState().getUserAgent();
         final String processId = getState().getId();
 
         try {
@@ -132,7 +135,7 @@ public class MassCommitProcess {
             countTotalKomoto = oldKomotoOids.size();
             countTotalHakukohde = oldHakukohdeOids.size();
 
-            insertHaku(fromHakuOid, request);
+            insertHaku(fromHakuOid, ip, session, userAgent);
             handleKomotos(processId, oldKomotoOids);
             handleSisaltyvyydet(processId, oldKomoOids);
             handleHakukohdes(processId, oldHakukohdeOids);
@@ -247,7 +250,7 @@ public class MassCommitProcess {
     @Autowired
     private PlatformTransactionManager tm;
 
-    private void insertHaku(final String oldHakuOid, HttpServletRequest request) {
+    private void insertHaku(final String oldHakuOid, InetAddress ip, String session, String userAgent) {
         executeInTransaction(() -> {
             final Haku sourceHaku = hakuDAO.findByOid(oldHakuOid);
             String hakuJson = EntityToJsonHelper.convertToJson(sourceHaku);
@@ -296,7 +299,7 @@ public class MassCommitProcess {
 
             String userOid = state.getParameters().get(MassCopyProcess.USER_OID);
             HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, true);
-            AuditLog.massCopy(hakuV1RDTO, oldHakuOid, userOid, request);
+            AuditLog.massCopy(hakuV1RDTO, oldHakuOid, userOid, ip, session, userAgent);
         });
     }
 

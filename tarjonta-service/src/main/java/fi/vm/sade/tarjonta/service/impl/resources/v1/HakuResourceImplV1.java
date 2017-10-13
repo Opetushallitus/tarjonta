@@ -830,7 +830,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         processV1RDTO.getParameters().put(MassCopyProcess.USER_OID, getUsernameFromSession());
 
         ProcessV1RDTO result = processResource.start(processV1RDTO);
-        return new ResultV1RDTO<String>(result.getId());
+        return new ResultV1RDTO<>(result.getId());
     }
 
     private static String getUsernameFromSession() {
