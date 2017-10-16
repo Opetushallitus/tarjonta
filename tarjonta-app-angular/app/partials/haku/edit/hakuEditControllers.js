@@ -636,20 +636,22 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             $scope.model.hakux.result.koulutusmoduuliTyyppi = undefined;
         }
     };
-    $scope.$watch('model.hakux.result.hakutapaUri', function () {
-        updateCanSubmitMultipleApplications();
+    $scope.$watch('model.hakux.result.hakutapaUri', function (nv, old) {
+        if (nv !== old) {
+            updateCanSubmitMultipleApplications();
+        }
     });
     $scope.$watch('model.hakux.result.hakutyyppiUri', function(nv, old) {
         if (nv !== old) {
             updateParentHakuFields();
+            updateCanSubmitMultipleApplications();
         }
-        updateCanSubmitMultipleApplications();
     });
     $scope.$watch('model.hakux.result.kohdejoukkoUri', function(nv, old) {
         if (nv !== old) {
             updateParentHakuFields();
+            updateCanSubmitMultipleApplications();
         }
-        updateCanSubmitMultipleApplications();
         updateKoulutusmoduuliTyyppiField();
     });
     $scope.$watch('model.hakux.result.hakukausiUri', function(nv, old) {
