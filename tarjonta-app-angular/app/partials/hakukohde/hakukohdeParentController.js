@@ -1096,6 +1096,12 @@ app.controller('HakukohdeParentController', [
                         $scope.initHakukohdeLiitteidenToimitusOsoite();
                         hakutoimistoFound = true;
                     }
+                    else if (yhteystieto.osoiteTyyppi !== undefined && yhteystieto.osoiteTyyppi === 'ulkomainen_posti') {
+                        $scope.model.liitteidenToimitusOsoite[kieliUri] = {};
+                        $scope.model.liitteidenToimitusOsoite[kieliUri].osoiterivi1 = yhteystieto.osoite;
+                        $scope.initHakukohdeLiitteidenToimitusOsoite();
+                        hakutoimistoFound = true;
+                    }
                 });
             }
             return hakutoimistoFound;
