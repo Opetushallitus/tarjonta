@@ -1,11 +1,10 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Preconditions;
-import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
-import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
 import fi.vm.sade.tarjonta.dao.KuvausDAO;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
+import fi.vm.sade.tarjonta.service.auditlog.AuditLog;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.resources.v1.KuvausV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
@@ -21,12 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import static fi.vm.sade.tarjonta.service.AuditHelper.*;
+import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.VALINTAPERUSTE_SORA_KUVAUS;
 
 /*
 * @author: Tuomas Katva 16/12/13
@@ -323,7 +323,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
     @Override
     @Transactional(readOnly = false)
-    public ResultV1RDTO<KuvausV1RDTO> createNewKuvaus(String tyyppi, KuvausV1RDTO kuvausRDTO) {
+    public ResultV1RDTO<KuvausV1RDTO> createNewKuvaus(String tyyppi, KuvausV1RDTO kuvausRDTO, HttpServletRequest request) {
         ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
         try {
             hasPermissionToCreate(kuvausRDTO);
@@ -344,11 +344,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
                 resultV1RDTO.setResult(kuvaus);
                 resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
-                AUDIT.log(builder()
-                        .setOperation(TarjontaOperation.CREATE)
-                        .setResource(TarjontaResource.VALINTAPERUSTE_SORA_KUVAUS)
-                        .setDelta(getKuvausDelta(kuvaus, null))
-                        .setResourceOid(kuvaus.getKuvauksenTunniste()).build());
+                AuditLog.create(VALINTAPERUSTE_SORA_KUVAUS, kuvaus.getKuvauksenTunniste(), kuvaus, request);
 
             } else {
                 LOG.debug("EXISTING KUVAUS FOUND, REPLYING WITH EXCEPTION");
@@ -383,7 +379,6 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
                 StringUtils.contains(organisaatioTyyppi, "oppilaitostyyppi_43");
     }
 
-    @Transactional
     private boolean checkForExistingKuvaus(ValintaperusteSoraKuvaus kuvaus) {
 
         List<ValintaperusteSoraKuvaus> kuvaukset = null;
@@ -430,7 +425,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
     @Override
     @Transactional(readOnly = false)
-    public ResultV1RDTO<KuvausV1RDTO> updateKuvaus(String tyyppi, KuvausV1RDTO kuvausRDTO) {
+    public ResultV1RDTO<KuvausV1RDTO> updateKuvaus(String tyyppi, KuvausV1RDTO kuvausRDTO, HttpServletRequest request) {
         ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
         try {
             hasPermissionToUpdate(kuvausRDTO);
@@ -462,11 +457,8 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
             resultV1RDTO.setResult(modifiedKuvaus);
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
-            AUDIT.log(builder()
-                    .setOperation(TarjontaOperation.UPDATE)
-                    .setResource(TarjontaResource.VALINTAPERUSTE_SORA_KUVAUS)
-                    .setDelta(getKuvausDelta(modifiedKuvaus, originalKuvaus))
-                    .setResourceOid(Long.toString(oldVps.getId())).build());
+
+            AuditLog.update(VALINTAPERUSTE_SORA_KUVAUS, kuvausRDTO.getKuvauksenTunniste(), modifiedKuvaus, originalKuvaus, request);
 
         } catch (Exception exp) {
 
@@ -488,7 +480,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public ResultV1RDTO<KuvausV1RDTO> removeById(String tunniste) {
+    public ResultV1RDTO<KuvausV1RDTO> removeById(String tunniste, HttpServletRequest request) {
         ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
 
         try {
@@ -498,13 +490,12 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
             valintaperusteSoraKuvaus.setTila(ValintaperusteSoraKuvaus.Tila.POISTETTU);
 
-            resultV1RDTO.setResult(converter.toKuvausRDTO(valintaperusteSoraKuvaus, true));
+            KuvausV1RDTO kuvausV1RDTO = converter.toKuvausRDTO(valintaperusteSoraKuvaus, true);
+            resultV1RDTO.setResult(kuvausV1RDTO);
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
-            AUDIT.log(builder()
-                    .setResource(TarjontaResource.VALINTAPERUSTE_SORA_KUVAUS)
-                    .setResourceOid(tunniste)
-                    .setOperation(TarjontaOperation.DELETE).build());
+
+            AuditLog.delete(VALINTAPERUSTE_SORA_KUVAUS, tunniste, kuvausV1RDTO, request);
 
         } catch (Exception exp) {
             LOG.warn("EXCEPTION REMOVING KUVAUS : " + tunniste + " " + exp.toString());

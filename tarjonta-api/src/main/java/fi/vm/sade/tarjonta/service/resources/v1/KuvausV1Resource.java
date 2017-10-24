@@ -7,7 +7,9 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausSearchV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.util.HashMap;
 import java.util.List;
@@ -100,7 +102,7 @@ public interface KuvausV1Resource {
     @ApiOperation(value = "Poistaa kuvauksen annetulla tunnisteella", response = KuvausV1RDTO.class)
     ResultV1RDTO<KuvausV1RDTO> removeById(
             @ApiParam(value ="kuvauksen tunniste", required =  true)
-            @PathParam("tunniste") String tunniste);
+            @PathParam("tunniste") String tunniste, @Context HttpServletRequest request);
 
     @GET
     @Path("/{tyyppi}/{oppilaitostyyppi}/{nimi}")
@@ -120,8 +122,8 @@ public interface KuvausV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Luo uuden annetulle tyyppille uuden kuvauksen", response = KuvausV1RDTO.class)
-    ResultV1RDTO<KuvausV1RDTO> createNewKuvaus(@ApiParam(value="Kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA") @PathParam("tyyppi") String tyyppi,
-            @ApiParam(value = "Luotava kuvaus", required = true) KuvausV1RDTO kuvausRDTO);
+    ResultV1RDTO<KuvausV1RDTO> createNewKuvaus(@ApiParam(value = "Kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA") @PathParam("tyyppi") String tyyppi,
+                                               @ApiParam(value = "Luotava kuvaus", required = true) KuvausV1RDTO kuvausRDTO, @Context HttpServletRequest request);
 
     @POST
     @Path("/{tyyppi}/search")
@@ -140,5 +142,5 @@ public interface KuvausV1Resource {
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Luo uuden annetulle tyyppille uuden kuvauksen", response = KuvausV1RDTO.class)
     ResultV1RDTO<KuvausV1RDTO> updateKuvaus(@ApiParam(value="Kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA") @PathParam("tyyppi") String tyyppi,
-                                               @ApiParam(value = "Luotava kuvaus", required = true) KuvausV1RDTO kuvausRDTO);
+                                               @ApiParam(value = "Luotava kuvaus", required = true) KuvausV1RDTO kuvausRDTO, @Context HttpServletRequest request);
 }

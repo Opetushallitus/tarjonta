@@ -1,14 +1,14 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
-import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.service.auditlog.AuditLog;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.linking.validation.LinkingValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.v1.LinkingV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
@@ -24,13 +24,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import static fi.vm.sade.tarjonta.service.AuditHelper.AUDIT;
-import static fi.vm.sade.tarjonta.service.AuditHelper.builder;
+import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.*;
 
 /**
  * TODO, authorization!!
@@ -51,16 +51,16 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
      * TODO: tekee aina uuden linkin!
      */
     @Override
-    public ResultV1RDTO link(KomoLink link) {
-        return doLinking(link, false);
+    public ResultV1RDTO link(KomoLink link, HttpServletRequest request) {
+        return doLinking(link, false, request);
     }
 
     /**
      * TODO: tekee aina uuden linkin!
      */
     @Override
-    public ResultV1RDTO test(KomoLink link) {
-        return doLinking(link, true);
+    public ResultV1RDTO test(KomoLink link, HttpServletRequest request) {
+        return doLinking(link, true, request);
     }
 
     private void removeAlamoduulitByKomoOid(String removableKomoOid, Set<KoulutusSisaltyvyys> sisaltyvyydet) {
@@ -89,7 +89,7 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
     }
 
     @Override
-    public ResultV1RDTO multiUnlink(String parentKomoOid, String childOids) {
+    public ResultV1RDTO multiUnlink(String parentKomoOid, String childOids, HttpServletRequest request) {
         logger.debug("unlinking " + parentKomoOid + " from " + childOids);
 
         ResultV1RDTO result = new ResultV1RDTO();
@@ -146,12 +146,9 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
                         logger.info("remove link by komo oid {}", childKomoOid);
                         removeAlamoduulitByKomoOid(childKomoOid, parentKomo.getSisaltyvyysList());
                     }
-                    AUDIT.log(builder()
-                            .setOperation(TarjontaOperation.UNLINK_KOULUTUS)
-                            .setResource(TarjontaResource.KOULUTUS)
-                            .setResourceOid(parentKomoOid)
-                            .add("unlinkOids", paramChildOids.toString())
-                            .build());
+
+                    AuditLog.log(UNLINK_KOULUTUS, KOULUTUS, parentKomoOid, null, null,
+                            request, ImmutableMap.of("linkOids", paramChildOids.toString()));
                 }
             }
         } else {
@@ -166,7 +163,7 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
         return result;
     }
 
-    private ResultV1RDTO doLinking(KomoLink link, boolean dryRun) {
+    private ResultV1RDTO doLinking(KomoLink link, boolean dryRun, HttpServletRequest request) {
 
         String parent = link.getParent();
         List<String> children = link.getChildren();
@@ -229,12 +226,8 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
                         parentKomo, komo, ValintaTyyppi.ALL_OFF);
                 koulutusSisaltyvyysDAO.insert(sisaltyvyys);
             }
-            AUDIT.log(builder()
-                    .setOperation(TarjontaOperation.LINK_KOULUTUS)
-                    .setResource(TarjontaResource.KOULUTUS)
-                    .setResourceOid(parent)
-                    .add("linkOids", children.toString())
-                    .build());
+            AuditLog.log(LINK_KOULUTUS, KOULUTUS, parent, null, null,
+                    request, ImmutableMap.of("linkOids", children.toString()));
         }
         return result;
     }
@@ -288,8 +281,8 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
     }
 
     @Override
-    public ResultV1RDTO unlink(String parent, String child) {
-        return multiUnlink(parent, child);
+    public ResultV1RDTO unlink(String parent, String child, HttpServletRequest request) {
+        return multiUnlink(parent, child, request);
     }
 
     @Override

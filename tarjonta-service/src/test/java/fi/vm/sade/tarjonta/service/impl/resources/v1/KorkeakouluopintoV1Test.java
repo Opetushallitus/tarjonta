@@ -27,12 +27,14 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -70,6 +72,8 @@ public class KorkeakouluopintoV1Test {
     @Autowired
     V1TestHelper helper;
 
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+
     @Before
     public void init() {
         helper.init();
@@ -86,7 +90,7 @@ public class KorkeakouluopintoV1Test {
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
         dto.setTunniste(TUNNISTE);
 
-        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto, request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
         assertEquals(komoOid, result.getResult().getKomoOid());
         assertEquals(komotoOid, result.getResult().getOid());
@@ -106,7 +110,7 @@ public class KorkeakouluopintoV1Test {
         dto.setOpintojenLaajuusPistetta("120");
         dto.setOpetuskielis(koodiUris(Sets.newHashSet("kieli_fi")));
 
-        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto, request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
         assertEquals(komoOid, result.getResult().getKomoOid());
         assertEquals(komotoOid, result.getResult().getOid());
@@ -128,11 +132,11 @@ public class KorkeakouluopintoV1Test {
         dto.setOpetuskielis(koodiUris(Sets.newHashSet("kieli_fi")));
 
         // Save koulutus for the 1st time
-        koulutusResourceV1.postKoulutus(dto);
+        koulutusResourceV1.postKoulutus(dto, request);
 
         // Now modify it
         dto.setOpintojenLaajuusPistetta("140");
-        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto, request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
 
         KorkeakouluOpintoV1RDTO resultDto = (KorkeakouluOpintoV1RDTO) result.getResult();
@@ -154,7 +158,7 @@ public class KorkeakouluopintoV1Test {
         dto.setOpintojenLaajuusPistetta("120");
         dto.setOpetuskielis(koodiUris(Sets.newHashSet("kieli_fi")));
 
-        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto, request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
         assertEquals(komoOid, result.getResult().getKomoOid());
         assertEquals(komotoOid, result.getResult().getOid());
@@ -166,7 +170,7 @@ public class KorkeakouluopintoV1Test {
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
         dto.setOrganisaatio(new OrganisaatioV1RDTO(TARJOAJA1, "", null));
 
-        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto, request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
         assertEquals(3, result.getErrors().size());
         assertAlwaysRequiredFields(result.getErrors());
@@ -193,7 +197,7 @@ public class KorkeakouluopintoV1Test {
         dto.setOrganisaatio(new OrganisaatioV1RDTO(TARJOAJA1, "", null));
         dto.setOpetusJarjestajat(Sets.newHashSet(TARJOAJA1, "invalidOrg"));
 
-        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto, request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
         List<ErrorV1RDTO> errors = result.getErrors();
         assertEquals(7, errors.size());
@@ -208,7 +212,7 @@ public class KorkeakouluopintoV1Test {
         dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(new Date(0L)));
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
 
-        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto, request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
         List<ErrorV1RDTO> errors = result.getErrors();
         assertEquals(1, errors.size());
@@ -234,7 +238,7 @@ public class KorkeakouluopintoV1Test {
                 new KoulutusIdentification(null, parentKoulutus2.getUniqueExternalId())
         ));
 
-        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto, request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
         assertEquals(komoOid, result.getResult().getKomoOid());
         assertEquals(komotoOid, result.getResult().getOid());
@@ -279,7 +283,7 @@ public class KorkeakouluopintoV1Test {
         dto.setTunniste(TUNNISTE);
         dto.setSisaltyyKoulutuksiin(Sets.newHashSet(new KoulutusIdentification(parentKoulutus.getOid(), null)));
 
-        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto, request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
         assertEquals(1, result.getErrors().size());
         assertTrue(containsError(result.getErrors(), SISALTYY_KOULUTUKSIIN));
@@ -298,7 +302,7 @@ public class KorkeakouluopintoV1Test {
         dto.setOrganisaatio(new OrganisaatioV1RDTO(TARJOAJA1, "tarjoaja", null));
         dto.setSisaltyyKoulutuksiin(Sets.newHashSet(new KoulutusIdentification("oid.that.does.not.exist", null)));
 
-        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto, request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.VALIDATION, result.getStatus());
         assertEquals(1, result.getErrors().size());
         assertTrue(containsError(result.getErrors(), SISALTYY_KOULUTUKSIIN));
@@ -464,7 +468,7 @@ public class KorkeakouluopintoV1Test {
         parent = koulutusResourceV1.findByOid(parent.getOid(), false, false, null).getResult();
         assertEquals(2, parent.getChildren().size());
 
-        koulutusResourceV1.postKoulutus(jakso1);
+        koulutusResourceV1.postKoulutus(jakso1, request);
 
         parent = koulutusResourceV1.findByOid(parent.getOid(), false, false, null).getResult();
         assertEquals(2, parent.getChildren().size());
@@ -478,7 +482,7 @@ public class KorkeakouluopintoV1Test {
         jakso2.setSisaltyyKoulutuksiin(Sets.newHashSet(
                 new KoulutusIdentification(parentOid, null)
         ));
-        ResultV1RDTO<KoulutusV1RDTO> res = (ResultV1RDTO<KoulutusV1RDTO>) koulutusResourceV1.postKoulutus(jakso2).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> res = (ResultV1RDTO<KoulutusV1RDTO>) koulutusResourceV1.postKoulutus(jakso2, request).getEntity();
         return res.getResult();
     }
 
@@ -499,7 +503,7 @@ public class KorkeakouluopintoV1Test {
     }
 
     private KorkeakouluOpintoV1RDTO insertKoulutusAndGetDtoResult(KorkeakouluOpintoV1RDTO dto) {
-        ResultV1RDTO<KorkeakouluOpintoV1RDTO> result = (ResultV1RDTO<KorkeakouluOpintoV1RDTO>) koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KorkeakouluOpintoV1RDTO> result = (ResultV1RDTO<KorkeakouluOpintoV1RDTO>) koulutusResourceV1.postKoulutus(dto, request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
         return result.getResult();
     }
@@ -526,7 +530,7 @@ public class KorkeakouluopintoV1Test {
             }});
         }
 
-        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto, request).getEntity();
         return result.getResult();
     }
 
@@ -562,7 +566,7 @@ public class KorkeakouluopintoV1Test {
         dto.setOpintojenLaajuusPistetta("120");
         dto.setOpetuskielis(koodiUris(Sets.newHashSet("kieli_fi")));
 
-        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResourceV1.postKoulutus(dto, request).getEntity();
         return result.getResult();
     }
 
@@ -617,7 +621,7 @@ public class KorkeakouluopintoV1Test {
         }
         dto.setKuvausKomoto(tekstit);
 
-        ResultV1RDTO<KorkeakouluOpintoV1RDTO> result = (ResultV1RDTO<KorkeakouluOpintoV1RDTO>) koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<KorkeakouluOpintoV1RDTO> result = (ResultV1RDTO<KorkeakouluOpintoV1RDTO>) koulutusResourceV1.postKoulutus(dto, request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
         return result.getResult();
     }

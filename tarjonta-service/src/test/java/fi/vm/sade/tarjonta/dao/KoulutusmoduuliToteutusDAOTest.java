@@ -170,7 +170,7 @@ public class KoulutusmoduuliToteutusDAOTest extends TestUtilityBase {
         assertEquals(map.get(URI_FI).getData()[0], 1);
 
         /*
-         * LINK TEST : KOMOTO A TO KOMOTO B
+         * LINK_KOULUTUS TEST : KOMOTO A TO KOMOTO B
          */
         KoulutusmoduuliToteutus linkedKomoto1 = koulutusmoduuliToteutusDAO.findKomotoByOid(komoto1.getOid());
         KoulutusmoduuliToteutus linkedKomoto2 = koulutusmoduuliToteutusDAO.findKomotoByOid(komoto2.getOid());

@@ -21,6 +21,8 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.auditlog.AuditHelper;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.ErrorCode;
@@ -32,6 +34,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
@@ -40,12 +43,13 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.InvocationTargetException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.stub;
 import static org.mockito.Mockito.when;
 
@@ -61,6 +65,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
 
     private static final String KOMO2_OID = "another_komo_oid";
     private static final String KOMOTO2_OID = "another_komoto_oid";
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
     private Hakukohde hakukohde;
     private Haku haku;
@@ -75,6 +80,10 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         hakukohde.setHakukohdeKoodistoNimi("hakukohde name");
         hakukohde.setHakukohdeNimi("hakukohde_koodi_uri");
         hakukohde.setOid("hakukohde_oid"); //three exams
+        converterToRDTO = mock(EntityConverterToRDTO.class);
+        Whitebox.setInternalState(instance, "converterToRDTO", converterToRDTO);
+        auditHelper = mock(AuditHelper.class);
+        Whitebox.setInternalState(instance, "auditHelper", auditHelper);
     }
 
     @Test
@@ -93,7 +102,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
 
         stub(oidService.get(TarjontaOidType.KOMO)).toReturn(KOMO2_OID);
 
-        ResultV1RDTO deleteResult = instance.deleteByOid(null);
+        ResultV1RDTO deleteResult = instance.deleteByOid(null, request);
         assertEquals("No komoto oid", ResultV1RDTO.ResultStatus.NOT_FOUND, deleteResult.getStatus());
 
 
@@ -125,7 +134,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         List<KoulutusPerustieto> perustiedot = Lists.newArrayList();
         kv.setKoulutukset(perustiedot);
 
-        ResultV1RDTO deleteResult = instance.deleteByOid(persistedKomotoOid);
+        ResultV1RDTO deleteResult = instance.deleteByOid(persistedKomotoOid, request);
         assertEquals("validation error", ResultV1RDTO.ResultStatus.OK, deleteResult.getStatus());
         assertEquals("Validation errors delete koulutus", true, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
 
@@ -138,7 +147,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         /* ---------------- NEXT TEST ----------------
          * ERROR : delete will fail as the status of komoto is 'deleted'.
          */
-        deleteResult = instance.deleteByOid(persistedKomotoOid);
+        deleteResult = instance.deleteByOid(persistedKomotoOid, request);
         assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
         assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
         assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
@@ -163,7 +172,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         /* ---------------- NEXT TEST ----------------
          * ERROR IN CHILD
          */
-        ResultV1RDTO deleteResult = instance.deleteByOid(persistedKomotoOid);
+        ResultV1RDTO deleteResult = instance.deleteByOid(persistedKomotoOid, request);
         assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
         assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
         assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
@@ -179,7 +188,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
         when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).thenReturn(parent);
 
-        deleteResult = instance.deleteByOid(persistedKomotoOid);
+        deleteResult = instance.deleteByOid(persistedKomotoOid, request);
         assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
         assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
         assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
@@ -206,7 +215,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
         when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
 
-        deleteResult = instance.deleteByOid(persistedKomotoOid);
+        deleteResult = instance.deleteByOid(persistedKomotoOid, request);
         assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
         assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
         assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
@@ -228,7 +237,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
         when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
 
-        deleteResult = instance.deleteByOid(persistedKomotoOid);
+        deleteResult = instance.deleteByOid(persistedKomotoOid, request);
 
         assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
         assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());

@@ -40,7 +40,6 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
@@ -58,6 +57,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 
@@ -85,6 +85,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     }
 
     private Hakukohde hakukohde;
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
     @Autowired
     private KoulutusImplicitDataPopulator dataPopulator;
@@ -318,7 +319,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
             @Override
             public void run() {
                 KoulutusKorkeakouluV1RDTO kkKoulutus = getKKKoulutus();
-                ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResource.postKoulutus(kkKoulutus).getEntity();
+                ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResource.postKoulutus(kkKoulutus, request).getEntity();
                 assertEquals("errors in koulutus insert", false, result.hasErrors());
             }
         });
@@ -342,9 +343,9 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
             @Override
             public void run() {
                 KoulutusKorkeakouluV1RDTO kk = getKKKoulutus();
-                ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResource.postKoulutus(kk).getEntity();
+                ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResource.postKoulutus(kk, request).getEntity();
                 HakukohdeV1RDTO hakukohde = getKKHakukohde(postKorkeakouluKoulutus.getResult().getOid());
-                ResultV1RDTO<HakukohdeV1RDTO> response = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(hakukohde).getEntity();
+                ResultV1RDTO<HakukohdeV1RDTO> response = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(hakukohde, request).getEntity();
                 assertEquals("errors in koulutus insert", false, response.hasErrors());
             }
         });

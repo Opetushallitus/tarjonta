@@ -22,12 +22,14 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -61,10 +63,12 @@ public class HakukohdeResourceImplV1Test {
     @Autowired
     OidServiceMock oidServiceMock;
 
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+
     @Test
     public void testCreateOpintokokonaisuusHakukohdeFailsWhenMissingRequiredData() throws OIDCreationException {
         HakukohdeV1RDTO hakukohde = baseHakukohde();
-        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde).getEntity();
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde, request).getEntity();
         assertEquals(VALIDATION, result.getStatus());
         assertEquals(2, result.getErrors().size());
         assertTrue(containsError(result.getErrors(), HAKUKOHDE_KOULUTUS_MISSING));
@@ -83,7 +87,7 @@ public class HakukohdeResourceImplV1Test {
         hakukohde.setHakukohteenNimet(ImmutableMap.of("kieli_fi", "hakukohteen nimi"));
         hakukohde.setHakuOid(haku.getOid());
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde).getEntity();
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde, request).getEntity();
         assertEquals(OK, result.getStatus());
     }
 
@@ -102,11 +106,11 @@ public class HakukohdeResourceImplV1Test {
         hakukohde.setUniqueExternalId("someUniqueExternalId");
 
         // Create hakukohde
-        hakukohdeV1Resource.postHakukohde(hakukohde);
+        hakukohdeV1Resource.postHakukohde(hakukohde, request);
 
         // Now modify it
         hakukohde.setAloituspaikatLkm(10);
-        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde).getEntity();
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde, request).getEntity();
         assertEquals(OK, result.getStatus());
         assertEquals(oid, result.getResult().getOid());
         assertEquals(hakukohde.getUniqueExternalId(), result.getResult().getUniqueExternalId());
@@ -128,7 +132,7 @@ public class HakukohdeResourceImplV1Test {
         hakukohde.setHakukohteenNimet(ImmutableMap.of("kieli_fi", "hakukohteen nimi"));
         hakukohde.setHakuOid(haku.getOid());
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde).getEntity();
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde, request).getEntity();
         assertEquals(OK, result.getStatus());
         assertTrue(Iterables.find(result.getResult().getKoulutukset(), new Predicate<KoulutusIdentification>() {
             @Override
@@ -155,14 +159,14 @@ public class HakukohdeResourceImplV1Test {
         hakukohde.setUniqueExternalId("deltaHakukohdeEdit");
         hakukohde.setKelaLinjaKoodi("kelanKoodi");
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde).getEntity();
+        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde, request).getEntity();
         assertEquals(OK, result.getStatus());
 
         HakukohdeV1RDTO deltaDto = new HakukohdeV1RDTO();
         deltaDto.setUniqueExternalId(hakukohde.getUniqueExternalId());
         deltaDto.setAloituspaikatLkm(10);
 
-        result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(deltaDto).getEntity();
+        result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(deltaDto, request).getEntity();
         assertEquals(OK, result.getStatus());
         assertEquals(deltaDto.getAloituspaikatLkm(), result.getResult().getAloituspaikatLkm());
         assertEquals(hakukohde.getKelaLinjaKoodi(), result.getResult().getKelaLinjaKoodi());

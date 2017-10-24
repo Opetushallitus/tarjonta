@@ -10,14 +10,17 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.auditlog.AuditHelper;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.it.TarjontaSearchServiceTest;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
@@ -28,6 +31,10 @@ import org.mockito.stubbing.Answer;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests for api, does not persist any data. all related services are mocked.
@@ -51,6 +58,8 @@ public class KoulutusResourceTest {
 
     private ConverterV1 converterV1 = Mockito.mock(ConverterV1.class);
 
+    private EntityConverterToRDTO converterToRDTO = Mockito.mock(EntityConverterToRDTO.class);
+
     private ContextDataService contextDataService = Mockito
             .mock(ContextDataService.class);
     private HakukohdeDAO hakukohdeDAO = Mockito.mock(HakukohdeDAO.class);
@@ -71,6 +80,8 @@ public class KoulutusResourceTest {
     private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO = Mockito.mock(KoulutusSisaltyvyysDAO.class);
     private KoulutusmoduuliDAO koulutusmoduuliDAO = Mockito.mock(KoulutusmoduuliDAO.class);
 
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+
     @Before
     public void setUp() throws Exception {
         LOG.info("setUp()");
@@ -82,6 +93,8 @@ public class KoulutusResourceTest {
         // Stub koodisto values
         TarjontaSearchServiceTest.stubKoodi(koodiService, "kieli_fi", "FI");
 
+        AuditHelper auditHelper = mock(AuditHelper.class);
+        Whitebox.setInternalState(koulutusResource, "auditHelper", auditHelper);
 
         komo = new Koulutusmoduuli();
         komo.setKoulutustyyppiEnum(ModuulityyppiEnum.KORKEAKOULUTUS);
@@ -94,6 +107,7 @@ public class KoulutusResourceTest {
         komoto1.setAlkamisVuosi(2005);
         komoto1.setKoulutusmoduuli(komo);
         komoto1.addHakukohde(hk1);
+        komoto1.setToteutustyyppi(ToteutustyyppiEnum.AMMATTITUTKINTO);
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-1"))
                 .toReturn(komoto1);
         komo.setKoulutustyyppiEnum(ModuulityyppiEnum.KORKEAKOULUTUS);
@@ -103,6 +117,7 @@ public class KoulutusResourceTest {
         komoto2.setAlkamisVuosi(2006);
         komoto2.setKoulutusmoduuli(komo);
         komoto2.addHakukohde(hk1);
+        komoto2.setToteutustyyppi(ToteutustyyppiEnum.AMMATTITUTKINTO);
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-2"))
                 .toReturn(komoto2);
 
@@ -118,6 +133,7 @@ public class KoulutusResourceTest {
         komoto3.setAlkamisVuosi(2005);
         komoto3.setKoulutusmoduuli(komo);
         komoto3.addHakukohde(hk2);
+        komoto3.setToteutustyyppi(ToteutustyyppiEnum.AMMATTITUTKINTO);
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-3"))
                 .toReturn(komoto3);
 
@@ -131,6 +147,7 @@ public class KoulutusResourceTest {
                 permissionChecker);
 
         Whitebox.setInternalState(koulutusResource, "converterV1", converterV1);
+        Whitebox.setInternalState(koulutusResource, "converterToRDTO", converterToRDTO);
         Whitebox.setInternalState(koulutusResource, "contextDataService",
                 contextDataService);
 
@@ -172,19 +189,19 @@ public class KoulutusResourceTest {
     @Test
     public void testOVT7518() {
         //hakukohde kiinni
-        ResultV1RDTO result = koulutusResource.deleteByOid("komoto-3");
+        ResultV1RDTO result = koulutusResource.deleteByOid("komoto-3", request);
         System.out.println("result" + result);
         Assert.assertEquals(ResultV1RDTO.ResultStatus.ERROR, result.getStatus());
 
         //poistettu hakukohde kiinni, koulutuksen tila PERUTTU
         hk2.setTila(TarjontaTila.POISTETTU);
         komoto3.setTila(TarjontaTila.PERUTTU);
-        result = koulutusResource.deleteByOid("komoto-3");
+        result = koulutusResource.deleteByOid("komoto-3", request);
         Assert.assertEquals(result.toString(), ResultV1RDTO.ResultStatus.OK, result.getStatus());
 
         //poistettu hakukohde kiinni
         komoto3.getHakukohdes().iterator().next().setTila(TarjontaTila.POISTETTU);
-        result = koulutusResource.deleteByOid("komoto-3");
+        result = koulutusResource.deleteByOid("komoto-3", request);
         Assert.assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
     }
 
@@ -193,14 +210,14 @@ public class KoulutusResourceTest {
         //kaksi koulutusta kiinni hakukohteessa, ensimmäisen voi poistaa
         komo.setTila(TarjontaTila.JULKAISTU);
         komo.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
-        ResultV1RDTO result = koulutusResource.deleteByOid("komoto-1");
+        ResultV1RDTO result = koulutusResource.deleteByOid("komoto-1", request);
         Assert.assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
         komo.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
         komoto1.setTila(TarjontaTila.POISTETTU);
 
 
         //kaksi koulutusta kiinni hakukohteessa, jälkimmäistä ei voi poistaa
-        result = koulutusResource.deleteByOid("komoto-2");
+        result = koulutusResource.deleteByOid("komoto-2", request);
         Assert.assertEquals(ResultV1RDTO.ResultStatus.ERROR, result.getStatus());
 }
 

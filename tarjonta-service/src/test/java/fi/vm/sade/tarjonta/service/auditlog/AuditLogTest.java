@@ -1,4 +1,4 @@
-package fi.vm.sade.tarjonta.service;
+package fi.vm.sade.tarjonta.service.auditlog;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,11 +6,13 @@ import fi.vm.sade.auditlog.Audit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import fi.vm.sade.tarjonta.service.auditlog.AuditLog;
 import org.junit.Test;
 
 import java.io.IOException;
 
-public class AuditHelperTest {
+public class AuditLogTest {
     private final static ObjectMapper mapper = new ObjectMapper();
 
     private String longString = createLongString();
@@ -26,33 +28,33 @@ public class AuditHelperTest {
     @Test
     public void truncatesLongField() throws IOException {
         JsonNode json = mapper.readTree(jsonString);
-        assert(json.toString().length() > Audit.MAX_FIELD_LENGTH);
+        assert(json.toString().length() > AuditLog.MAX_FIELD_LENGTH);
 
-        AuditHelper.traverseAndTruncate(json);
+        AuditLog.traverseAndTruncate(json);
 
         String truncatedString = json.get("longString").textValue();
         assertTrue(truncatedString.length() < longString.length());
-        assertTrue(truncatedString.length() < Audit.MAX_FIELD_LENGTH);
-        assertTrue(json.toString().length() < Audit.MAX_FIELD_LENGTH);
+        assertTrue(truncatedString.length() < AuditLog.MAX_FIELD_LENGTH);
+        assertTrue(json.toString().length() < AuditLog.MAX_FIELD_LENGTH);
     }
 
     @Test
     public void truncatesLongArrayElement() throws IOException {
         JsonNode json = mapper.readTree(jsonString);
-        assertTrue(json.toString().length() > Audit.MAX_FIELD_LENGTH);
+        assertTrue(json.toString().length() > AuditLog.MAX_FIELD_LENGTH);
 
-        AuditHelper.traverseAndTruncate(json);
+        AuditLog.traverseAndTruncate(json);
 
         String truncatedString = json.get("array").get(0).textValue();
         assertTrue(truncatedString.length() < longString.length());
-        assertTrue(truncatedString.length() < Audit.MAX_FIELD_LENGTH);
-        assertTrue(json.toString().length() < Audit.MAX_FIELD_LENGTH);
+        assertTrue(truncatedString.length() < AuditLog.MAX_FIELD_LENGTH);
+        assertTrue(json.toString().length() < AuditLog.MAX_FIELD_LENGTH);
     }
 
     @Test
     public void truncatedStringsMatchForIdenticalInputs() throws IOException {
         JsonNode json = mapper.readTree(jsonString);
-        AuditHelper.traverseAndTruncate(json);
+        AuditLog.traverseAndTruncate(json);
 
         String truncatedString1 = json.get("longString").textValue();
         String truncatedString2 = json.get("array").get(0).textValue();
@@ -62,7 +64,7 @@ public class AuditHelperTest {
     @Test
     public void doesNotTruncateShortField() throws IOException {
         JsonNode json = mapper.readTree(jsonString);
-        AuditHelper.traverseAndTruncate(json);
+        AuditLog.traverseAndTruncate(json);
 
         String shortString = json.get("shortString").textValue();
         assertEquals("bee", shortString);
@@ -71,7 +73,7 @@ public class AuditHelperTest {
     @Test
     public void doesNotTruncateNumber() throws IOException {
         JsonNode json = mapper.readTree(jsonString);
-        AuditHelper.traverseAndTruncate(json);
+        AuditLog.traverseAndTruncate(json);
 
         int number = json.get("number").intValue();
         assertEquals(99, number);

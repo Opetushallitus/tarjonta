@@ -7,6 +7,7 @@ import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
 import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.auditlog.AuditHelper;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.YhdenPaikanSaantoBuilder;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
@@ -22,8 +23,10 @@ import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import java.util.*;
@@ -54,6 +57,8 @@ public class HakuResourceImplV1Test extends TestMockBase {
     @Mock
     private UriInfo uriInfo;
     private MultivaluedMap<String, String> queryParams = new MultivaluedHashMap();
+    private AuditHelper audithelper = mock(AuditHelper.class);
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
     @Before
     public void setUp() throws Exception {
@@ -68,6 +73,10 @@ public class HakuResourceImplV1Test extends TestMockBase {
         Haku haku = new Haku();
         haku.setOid("haku1");
         when(converterV1.convertHakuV1DRDTOToHaku(any(HakuV1RDTO.class), any(Haku.class))).thenReturn(haku);
+        HakuV1RDTO hakuV1RDTO = new HakuV1RDTO();
+        hakuV1RDTO.setOid("haku1");
+        when(audithelper.getHakuAsDto(any(Haku.class))).thenReturn(hakuV1RDTO);
+        Whitebox.setInternalState(hakuResource, "auditHelper", audithelper);
 
         KoodistoURI.KOODISTO_TUTKINTOON_JOHTAVA_KOULUTUS_URI = "tutkintoonjohtava";
         KoodistoURI.KOODI_ON_TUTKINTO_URI = "tutkintoonjohtava_1";
@@ -89,7 +98,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
 
     @Test(expected = NullPointerException.class)
     public void thatEmptyHakuIsNotCreated() {
-        hakuResource.createHaku(null);
+        hakuResource.createHaku(null, request);
     }
 
 
@@ -98,7 +107,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
         HakuV1RDTO hakuDTO = new HakuV1RDTO();
         hakuDTO.setOid("1.2.3");
 
-        ResultV1RDTO<HakuV1RDTO> result = hakuResource.createHaku(hakuDTO);
+        ResultV1RDTO<HakuV1RDTO> result = hakuResource.createHaku(hakuDTO, request);
 
         assertTrue(result.hasErrors());
         assertEquals(ResultV1RDTO.ResultStatus.ERROR, result.getStatus());
@@ -107,7 +116,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
     @Test
     public void thatHakuIsCreated() {
         HakuV1RDTO hakuDTO = new HakuV1RDTO();
-        ResultV1RDTO<HakuV1RDTO> result = hakuResource.createHaku(hakuDTO);
+        ResultV1RDTO<HakuV1RDTO> result = hakuResource.createHaku(hakuDTO, request);
         assertNotNull(result);
         assertNotNull(result.getStatus());
         assertEquals(ResultV1RDTO.ResultStatus.ERROR, result.getStatus());
@@ -123,7 +132,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
         hakuDTO.getHakuaikas().add(createHakuaika(new Date(), new Date()));
         hakuDTO.setCanSubmitMultipleApplications(false);
 
-        result = hakuResource.createHaku(hakuDTO);
+        result = hakuResource.createHaku(hakuDTO, request);
 
         assertNotNull(result);
         assertNotNull(result.getStatus());
@@ -459,7 +468,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
         hakuDTO.getHakuaikas().add(createHakuaika(new Date(), new Date()));
         hakuDTO.setAtaruLomakeAvain(ataruLomakeAvain);
 
-        ResultV1RDTO<HakuV1RDTO> result = hakuResource.createHaku(hakuDTO);
+        ResultV1RDTO<HakuV1RDTO> result = hakuResource.createHaku(hakuDTO, request);
         return result;
     }
 

@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -57,14 +58,14 @@ public interface HakuV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Luo haun", notes = "Luo haun", response = HakuV1RDTO.class)
-    public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku);
+    public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku, @Context HttpServletRequest request);
 
     @POST
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Päivittää haun", notes = "Päivittää haun", response = HakuV1RDTO.class)
     @Path("/{oid}")
-    public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO haku);
+    public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO haku, @Context HttpServletRequest request);
 
     @GET
     @Path("/findAll")
@@ -82,7 +83,7 @@ public interface HakuV1Resource {
     @Path("/{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Poistaa haun", notes = "Poistaa haun annettulla oid:lla", response = Boolean.class)
-    public ResultV1RDTO<Boolean> deleteHaku(@PathParam("oid") String oid);
+    public ResultV1RDTO<Boolean> deleteHaku(@PathParam("oid") String oid, @Context HttpServletRequest request);
 
     @GET
     @Path("/{oid}/hakukohde")
@@ -106,13 +107,13 @@ public interface HakuV1Resource {
     @Path("/{oid}/state")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Päivittää haun tilan ja julkaisee samalla siihen liitetyt hakukohteet ja koulutukset jos onlyHaku=false", notes = "Päivittää annetun haun oid:n perusteella haun tilan", response = Tilamuutokset.class)
-    public ResultV1RDTO<Tilamuutokset> setHakuState(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila, @QueryParam("onlyHaku") @DefaultValue("false") boolean onlyHaku);
+    public ResultV1RDTO<Tilamuutokset> setHakuState(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila, @QueryParam("onlyHaku") @DefaultValue("false") boolean onlyHaku, @Context HttpServletRequest request);
 
     @PUT
     @Path("/{oid}/copy")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Hakuun liittyvän tiedon kopiointi seuraavalle kaudelle.", notes = "Kopioi massana hakuun liittyvät hakukohteet ja koulutukset seuraavalle kaudelle.", response = Tilamuutokset.class)
-    public ResultV1RDTO<String> copyHaku(@PathParam("oid") String fromOid, @QueryParam("step") String step);
+    public ResultV1RDTO<String> copyHaku(@PathParam("oid") String fromOid, @QueryParam("step") String step, @Context HttpServletRequest request);
 
     @GET
     @Path("{oid}/hakukohdeTulos")

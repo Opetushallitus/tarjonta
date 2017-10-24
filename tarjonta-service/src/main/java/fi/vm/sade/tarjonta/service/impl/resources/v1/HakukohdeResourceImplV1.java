@@ -14,13 +14,11 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiParam;
-import fi.vm.sade.auditlog.tarjonta.LogMessage;
-import fi.vm.sade.auditlog.tarjonta.TarjontaOperation;
-import fi.vm.sade.auditlog.tarjonta.TarjontaResource;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
@@ -32,6 +30,7 @@ import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.auditlog.AuditLog;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
@@ -52,26 +51,22 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
 import org.apache.commons.beanutils.BeanUtilsBean;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
-import static fi.vm.sade.tarjonta.service.AuditHelper.*;
+import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.*;
 import static org.apache.commons.lang.StringUtils.*;
 
 public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
@@ -160,7 +155,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                                                                              Integer limit) {
 
         organisationOids = removeBlankStrings(organisationOids);
-        hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas : new ArrayList<String>();
+        hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas : new ArrayList<>();
 
         HakukohteetKysely q = new HakukohteetKysely();
         q.setNimi(searchTerms);
@@ -196,7 +191,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         for (String s : hakukohdeTilas) {
             q.getTilat().add(
-                    fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(s));
+                    TarjontaTila.valueOf(s));
         }
 
         for (ToteutustyyppiEnum koulutustyyppi : koulutustyypit) {
@@ -207,23 +202,16 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         r.setHakukohteet(filterRemovedHakukohteet(r.getHakukohteet()));
 
-        return new ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>>(converterV1.fromHakukohteetVastaus(r));
+        return new ResultV1RDTO<>(converterV1.fromHakukohteetVastaus(r));
     }
 
     private static List<String> removeBlankStrings(List<String> list) {
-        return FluentIterable.from(list)
-                .filter(new Predicate<String>() {
-                    @Override
-                    public boolean apply(String input) {
-                        return !isBlank(input);
-                    }
-                })
-                .toList();
+        return list.stream().filter(input -> !isBlank(input)).collect(Collectors.toList());
     }
 
     private List<HakukohdePerustieto> filterRemovedHakukohteet(List<HakukohdePerustieto> perustietosParam) {
 
-        List<HakukohdePerustieto> perustiedot = new ArrayList<HakukohdePerustieto>();
+        List<HakukohdePerustieto> perustiedot = new ArrayList<>();
 
         for (HakukohdePerustieto hkp : perustietosParam) {
             if (hkp.getTila() != fi.vm.sade.tarjonta.service.types.TarjontaTila.POISTETTU) {
@@ -241,7 +229,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
 
         if (hakukohde.getValintaperusteKuvaus() != null && hakukohde.getValintaperusteKuvaus().getTekstiKaannos() != null && hakukohde.getValintaperusteKuvaus().getTekstiKaannos().size() > 0) {
-            ResultV1RDTO<HashMap<String, String>> result = new ResultV1RDTO<HashMap<String, String>>();
+            ResultV1RDTO<HashMap<String, String>> result = new ResultV1RDTO<>();
 
             HashMap<String, String> tekstis = converterV1.convertMonikielinenTekstiToMap(hakukohde.getValintaperusteKuvaus(), false);
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
@@ -250,7 +238,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             return result;
 
         } else {
-            ResultV1RDTO<HashMap<String, String>> result = new ResultV1RDTO<HashMap<String, String>>();
+            ResultV1RDTO<HashMap<String, String>> result = new ResultV1RDTO<>();
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             return result;
         }
@@ -277,12 +265,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
             hakukohdeDAO.update(hakukohde);
 
-            ResultV1RDTO<HashMap<String, String>> result = new ResultV1RDTO<HashMap<String, String>>();
+            ResultV1RDTO<HashMap<String, String>> result = new ResultV1RDTO<>();
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
             result.setResult(valintaPerusteet);
             return result;
         } catch (Exception exp) {
-            ResultV1RDTO<HashMap<String, String>> errorResult = new ResultV1RDTO<HashMap<String, String>>();
+            ResultV1RDTO<HashMap<String, String>> errorResult = new ResultV1RDTO<>();
             errorResult.addTechnicalError(exp);
             return errorResult;
         }
@@ -300,14 +288,14 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
             hakukohdeDAO.update(hakukohde);
 
-            ResultV1RDTO<HashMap<String, String>> result = new ResultV1RDTO<HashMap<String, String>>();
+            ResultV1RDTO<HashMap<String, String>> result = new ResultV1RDTO<>();
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
             result.setResult(sorat);
             return result;
 
         } catch (Exception exp) {
-            ResultV1RDTO<HashMap<String, String>> errorResult = new ResultV1RDTO<HashMap<String, String>>();
-            errorResult.addError(ErrorV1RDTO.createSystemError(exp, null, null));
+            ResultV1RDTO<HashMap<String, String>> errorResult = new ResultV1RDTO<>();
+            errorResult.addError(ErrorV1RDTO.createSystemError(exp, null));
             return errorResult;
         }
     }
@@ -317,12 +305,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     public ResultV1RDTO<HashMap<String, String>> findHakukohdeSoraKuvaukset(String hakukohdeOid) {
         try {
 
-            ResultV1RDTO<HashMap<String, String>> result = new ResultV1RDTO<HashMap<String, String>>();
+            ResultV1RDTO<HashMap<String, String>> result = new ResultV1RDTO<>();
 
             Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
             if (hakukohde.getSoraKuvaus() != null && hakukohde.getSoraKuvaus().getKaannoksetAsList() != null) {
 
-                HashMap<String, String> resultHm = new HashMap<String, String>();
+                HashMap<String, String> resultHm = new HashMap<>();
                 for (TekstiKaannos tekstiKaannos : hakukohde.getSoraKuvaus().getKaannoksetAsList()) {
                     resultHm.put(tekstiKaannos.getKieliKoodi(), tekstiKaannos.getArvo());
                 }
@@ -333,7 +321,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             return result;
 
         } catch (Exception exp) {
-            ResultV1RDTO<HashMap<String, String>> exceptionResult = new ResultV1RDTO<HashMap<String, String>>();
+            ResultV1RDTO<HashMap<String, String>> exceptionResult = new ResultV1RDTO<>();
             exceptionResult.addTechnicalError(exp);
             return exceptionResult;
         }
@@ -343,7 +331,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     public ResultV1RDTO<List<OidV1RDTO>> search() {
         List<String> hakukohdeOids = hakukohdeDAO.findAllOids();
 
-        List<OidV1RDTO> oidList = new ArrayList<OidV1RDTO>();
+        List<OidV1RDTO> oidList = new ArrayList<>();
         if (hakukohdeOids != null && hakukohdeOids.size() > 0) {
 
             for (String hakukohdeOid : hakukohdeOids) {
@@ -352,13 +340,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 oidList.add(oidi);
             }
 
-            ResultV1RDTO<List<OidV1RDTO>> result = new ResultV1RDTO<List<OidV1RDTO>>();
+            ResultV1RDTO<List<OidV1RDTO>> result = new ResultV1RDTO<>();
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
             result.setResult(oidList);
 
             return result;
         } else {
-            ResultV1RDTO<List<OidV1RDTO>> result = new ResultV1RDTO<List<OidV1RDTO>>();
+            ResultV1RDTO<List<OidV1RDTO>> result = new ResultV1RDTO<>();
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             return result;
         }
@@ -375,19 +363,19 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 HakukohdeV1RDTO hakukohdeRDTO = converterV1.toHakukohdeRDTO(hakukohde, populate);
 
                 updateKoulutusTypesToHakukohdeDto(hakukohdeRDTO);
-                ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
+                ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<>();
                 result.setResult(hakukohdeRDTO);
                 result.setStatus(ResultV1RDTO.ResultStatus.OK);
 
                 return result;
             } else {
-                ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
+                ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<>();
                 result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
                 return result;
 
             }
         } else {
-            ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
+            ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<>();
 
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             return result;
@@ -401,7 +389,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
             if (hakukohde != null) {
                 HakukohdeValintaperusteetV1RDTO dto = converterV1.valintaperusteetFromHakukohde(hakukohde);
-                ResultV1RDTO<HakukohdeValintaperusteetV1RDTO> result = new ResultV1RDTO<HakukohdeValintaperusteetV1RDTO>();
+                ResultV1RDTO<HakukohdeValintaperusteetV1RDTO> result = new ResultV1RDTO<>();
                 result.setResult(dto);
                 result.setStatus(ResultV1RDTO.ResultStatus.OK);
                 return result;
@@ -414,14 +402,14 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     private ResultV1RDTO<HakukohdeValintaperusteetV1RDTO> valintaperusteitaEiLoydy() {
-        ResultV1RDTO<HakukohdeValintaperusteetV1RDTO> result = new ResultV1RDTO<HakukohdeValintaperusteetV1RDTO>();
+        ResultV1RDTO<HakukohdeValintaperusteetV1RDTO> result = new ResultV1RDTO<>();
         result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
         return result;
     }
 
     private HashMap<String, String> getKoulutusKoulutusAstetyyppi(String komotoOid) {
         LOG.debug("TRYING TO GET KOULUTUSASTE AND LAJI WITH KOMOTO OID : {}", komotoOid);
-        HashMap<String, String> koulutusAstetyyppi = new HashMap<String, String>();
+        HashMap<String, String> koulutusAstetyyppi = new HashMap<>();
 
         final KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
 
@@ -432,8 +420,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         //TKatva, just get the first koulutuslaji because koulutus cannot have many koulutuslajis (aikuisten,nuorten)
         //or can it ?
         if (komoto.getKoulutuslajis() != null && komoto.getKoulutuslajis().size() > 0) {
-            LOG.debug("KOULUTUSLAJI : {}", new ArrayList<KoodistoUri>(komoto.getKoulutuslajis()).get(0).getKoodiUri());
-            KoodiType koulutuslajiKoodi = tarjontaKoodistoHelper.getKoodiByUri(new ArrayList<KoodistoUri>(komoto.getKoulutuslajis()).get(0).getKoodiUri());
+            LOG.debug("KOULUTUSLAJI : {}", new ArrayList<>(komoto.getKoulutuslajis()).get(0).getKoodiUri());
+            KoodiType koulutuslajiKoodi = tarjontaKoodistoHelper.getKoodiByUri(new ArrayList<>(komoto.getKoulutuslajis()).get(0).getKoodiUri());
             koulutusAstetyyppi.put(KOULUTUSLAJI_KEY, koulutuslajiKoodi.getKoodiArvo());
         } else {
             LOG.debug("KOULUTUSLAJI WAS NULL!!!");
@@ -464,45 +452,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
     }
 
-    private String removeUriVersion(String uri) {
-
-        if (uri.contains("#")) {
-
-            StringTokenizer st = new StringTokenizer(uri, "#");
-
-            return st.nextToken();
-
-        } else {
-            return uri;
-        }
-
-    }
-
-    private boolean doesHakukohdeExist(HakukohdeV1RDTO hakukohdeV1RDTO, Haku haku) {
-
-        List<Hakukohde> hakukohdes = hakukohdeDAO.findByTermYearAndProvider(haku.getHakukausiUri(), haku.getHakukausiVuosi(), hakukohdeV1RDTO.getTarjoajaOids().iterator().next());
-
-        if (hakukohdes != null) {
-            boolean wasFound = false;
-            for (Hakukohde hakukohde : hakukohdes) {
-
-                for (TekstiKaannos tekstiKaannos : hakukohde.getHakukohdeMonikielinenNimi().getKaannoksetAsList()) {
-                    LOG.debug("TRYING TO GET HAKUKOHDE NIMI WITH : {} ", hakukohdeV1RDTO.getHakukohteenNimet().get(removeUriVersion(tekstiKaannos.getKieliKoodi())));
-                    String hakukohdeNimi = hakukohdeV1RDTO.getHakukohteenNimet().get(removeUriVersion(tekstiKaannos.getKieliKoodi()));
-                    LOG.debug("CHECKING HAKUKOHDE NIMI : {}", hakukohdeNimi);
-                    if (hakukohdeNimi != null && hakukohdeNimi.trim().equals(tekstiKaannos.getArvo())) {
-                        LOG.debug("HAKUKOHDE NAME MATCHES : {} TO {}", hakukohdeNimi, tekstiKaannos.getArvo());
-                        wasFound = true;
-                    }
-                }
-            }
-            return wasFound;
-        } else {
-            return false;
-        }
-
-    }
-
     private ToteutustyyppiEnum getToteutustyyppi(HakukohdeV1RDTO dto) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(dto.getHakukohdeKoulutusOids().iterator().next());
         return komoto.getToteutustyyppi();
@@ -510,7 +459,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     private List<HakukohdeValidationMessages> validateHakukohdeAndPopulateImplicitFields(HakukohdeV1RDTO hakukohdeV1RDTO) {
 
-        final List<HakukohdeValidationMessages> validationMessageses = new ArrayList<HakukohdeValidationMessages>();
+        final List<HakukohdeValidationMessages> validationMessageses = new ArrayList<>();
 
         validationMessageses.addAll(hakukohdeValidator.validateCommonProperties(hakukohdeV1RDTO));
 
@@ -566,14 +515,14 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     @Transactional
-    public Response postHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
+    public Response postHakukohde(HakukohdeV1RDTO hakukohdeRDTO, HttpServletRequest request) {
         if (hakukohdeRDTO == null) {
             hakukohdeRDTO = new HakukohdeV1RDTO();
         }
         Hakukohde existingHakukohde = hakukohdeDAO.findExistingHakukohde(hakukohdeRDTO);
         if (existingHakukohde != null) {
             hakukohdeRDTO.setOid(existingHakukohde.getOid());
-            return updateHakukohde(existingHakukohde.getOid(), hakukohdeRDTO);
+            return updateHakukohde(existingHakukohde.getOid(), hakukohdeRDTO, request);
         }
 
         hakukohdeRDTO = converterV1.setDefaultValues(hakukohdeRDTO);
@@ -620,24 +569,15 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         hakukohdeDAO.update(hakukohde);
 
         indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
-        indexerResource.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
-            public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
-                return arg0.getId();
-            }
-        })));
+        indexerResource.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), arg0 -> arg0 != null ? arg0.getId() : null)));
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
+        ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<>();
         result.setStatus(ResultV1RDTO.ResultStatus.OK);
         HakukohdeV1RDTO toHakukohdeRDTO = converterV1.toHakukohdeRDTO(hakukohde);
         updateKoulutusTypesToHakukohdeDto(toHakukohdeRDTO);
         result.setResult(toHakukohdeRDTO);
 
-        AUDIT.log(builder()
-                .setResource(TarjontaResource.HAKUKOHDE)
-                .setResourceOid(hakukohde.getOid())
-                .setOperation(TarjontaOperation.CREATE)
-                .setDelta(getHakukohdeDelta(toHakukohdeRDTO, null))
-                .build());
+        AuditLog.create(HAKUKOHDE, toHakukohdeRDTO.getOid(), toHakukohdeRDTO, request);
 
         return Response.ok(result).build();
     }
@@ -655,7 +595,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     private Map<String, KoulutusmoduuliToteutusTarjoajatiedot> getTarjoajatiedot(HakukohdeV1RDTO hakukohdeRDTO,
                                                                                  Set<KoulutusmoduuliToteutus> komotot) {
-        Map<String, KoulutusmoduuliToteutusTarjoajatiedot> tarjoajatiedot = new HashMap<String, KoulutusmoduuliToteutusTarjoajatiedot>();
+        Map<String, KoulutusmoduuliToteutusTarjoajatiedot> tarjoajatiedot = new HashMap<>();
         String hakukohdeOwner = getHakukohdeOwner(hakukohdeRDTO.getKoulutusmoduuliToteutusTarjoajatiedot());
 
         for (KoulutusmoduuliToteutus komoto : komotot) {
@@ -670,7 +610,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                     continue;
                 }
 
-                ArrayList<String> orgPath = new ArrayList<String>();
+                ArrayList<String> orgPath = new ArrayList<>();
                 orgPath.add(owner.getOwnerOid());
                 if (tmpOrg.getParentOidPath() != null) {
                     orgPath.addAll(Arrays.asList(tmpOrg.getParentOidPath().split("\\|")));
@@ -679,7 +619,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 for (String orgOidCandidate : orgPath) {
                     if (orgOidCandidate.equals(hakukohdeOwner)) {
                         KoulutusmoduuliToteutusTarjoajatiedot tarjojaTiedotKoulutukselle = new KoulutusmoduuliToteutusTarjoajatiedot();
-                        HashSet<String> tarjoajatHashSet = new HashSet<String>();
+                        HashSet<String> tarjoajatHashSet = new HashSet<>();
                         tarjoajatHashSet.add(owner.getOwnerOid());
                         tarjojaTiedotKoulutukselle.setTarjoajaOids(tarjoajatHashSet);
                         tarjoajatiedot.put(komoto.getOid(), tarjojaTiedotKoulutukselle);
@@ -741,7 +681,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     @Transactional
-    public Response updateHakukohde(String hakukohdeOid, HakukohdeV1RDTO hakukohdeRDTO) {
+    public Response updateHakukohde(String hakukohdeOid, HakukohdeV1RDTO hakukohdeRDTO, HttpServletRequest request) {
         if (hakukohdeRDTO == null) {
             hakukohdeRDTO = new HakukohdeV1RDTO();
         }
@@ -811,25 +751,16 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 LOG.debug("Hakukohde.kokeet -> {}", hakukohde.getValintakoes());
                 LOG.debug("Hakukohde", hakukohde);
                 indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
-                indexerResource.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
-                    public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
-                        return arg0.getId();
-                    }
-                })));
+                indexerResource.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), arg0 -> arg0 != null ? arg0.getId() : null)));
 
-                ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
+                ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<>();
                 result.setStatus(ResultV1RDTO.ResultStatus.OK);
 
                 HakukohdeV1RDTO toHakukohdeRDTO = converterV1.toHakukohdeRDTO(hakukohdeDAO.findHakukohdeByOid(hakukohde.getOid()));
                 updateKoulutusTypesToHakukohdeDto(toHakukohdeRDTO);
                 result.setResult(toHakukohdeRDTO);
 
-                AUDIT.log(builder()
-                        .setResource(TarjontaResource.HAKUKOHDE)
-                        .setResourceOid(hakukohdeOid)
-                        .setOperation(TarjontaOperation.UPDATE)
-                        .setDelta(getHakukohdeDelta(toHakukohdeRDTO, originalHakukohde))
-                        .build());
+                AuditLog.update(HAKUKOHDE, originalHakukohde.getOid(), toHakukohdeRDTO, originalHakukohde, request);
 
                 return Response.ok(result).build();
             } else {
@@ -840,7 +771,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             }
         } catch (Exception e) {
             LOG.warn("Exception occured while updating hakukohde " + hakukohdeOid, e);
-            ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
+            ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<>();
             errorResult.addTechnicalError(e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorResult).build();
         }
@@ -862,34 +793,32 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     @Transactional
-    public ResultV1RDTO<Boolean> deleteHakukohde(String oid) {
+    public ResultV1RDTO<Boolean> deleteHakukohde(String oid, HttpServletRequest request) {
         permissionChecker.checkRemoveHakukohde(oid);
         try {
             LOG.debug("REMOVING HAKUKOHDE : " + oid);
             Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
 
-            if (hakukohde != null && !hakukohde.getTila().isRemovable()) {
-                ResultV1RDTO<Boolean> errorResult = new ResultV1RDTO<Boolean>();
+            if (hakukohde == null || !hakukohde.getTila().isRemovable()) {
+                ResultV1RDTO<Boolean> errorResult = new ResultV1RDTO<>();
                 errorResult.addError(ErrorV1RDTO.createValidationError("hakukohde.invalid.transition", HakukohdeValidationMessages.HAKUKOHDE_INVALID_TRANSITION.toString().toLowerCase()));
                 return errorResult;
             }
             hakukohdeDAO.safeDelete(hakukohde.getOid(), contextDataService.getCurrentUserOid());
-            List<Long> hakukohdeIds = new ArrayList<Long>();
+            List<Long> hakukohdeIds = new ArrayList<>();
             hakukohdeIds.add(hakukohde.getId());
             indexerResource.indexHakukohteet(hakukohdeIds);
 
-            AUDIT.log(builder()
-                        .setOperation(TarjontaOperation.DELETE)
-                        .setResource(TarjontaResource.HAKUKOHDE)
-                        .setResourceOid(hakukohde.getOid()).build());
+            HakukohdeV1RDTO originalHakukohdeDTO = converterV1.toHakukohdeRDTO(hakukohde);
+            AuditLog.delete(HAKUKOHDE, oid, originalHakukohdeDTO, request);
 
-            ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
+            ResultV1RDTO<Boolean> result = new ResultV1RDTO<>();
             result.setResult(true);
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
             return result;
         } catch (Exception exp) {
             LOG.warn("Exception occured when removing hakukohde {}, exception : {}", oid, exp.toString());
-            ResultV1RDTO<Boolean> errorResult = new ResultV1RDTO<Boolean>();
+            ResultV1RDTO<Boolean> errorResult = new ResultV1RDTO<>();
             errorResult.addTechnicalError(exp);
             return errorResult;
         }
@@ -920,37 +849,27 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         if (hakukohdeOid != null) {
 
-            ResultV1RDTO<List<ValintakoeV1RDTO>> resultRDTO = new ResultV1RDTO<List<ValintakoeV1RDTO>>();
+            ResultV1RDTO<List<ValintakoeV1RDTO>> resultRDTO = new ResultV1RDTO<>();
 
-            if (hakukohdeOid == null) {
-                resultRDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
-                ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
-                errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
-                errorRDTO.setErrorField("hakukohdeOid");
-                errorRDTO.setErrorTechnicalInformation("Hakukohde oid cannot be null");
-                resultRDTO.addError(errorRDTO);
-                return resultRDTO;
-            } else {
-                try {
+            try {
 
-                    List<ValintakoeV1RDTO> valintakoeV1RDTOs = new ArrayList<ValintakoeV1RDTO>();
-                    List<Valintakoe> valintakokees = hakukohdeDAO.findValintakoeByHakukohdeOid(hakukohdeOid);
-                    for (Valintakoe valintakoe : valintakokees) {
-                        ValintakoeV1RDTO valintakoeV1RDTO = converterV1.fromValintakoe(valintakoe);
+                List<ValintakoeV1RDTO> valintakoeV1RDTOs = new ArrayList<>();
+                List<Valintakoe> valintakokees = hakukohdeDAO.findValintakoeByHakukohdeOid(hakukohdeOid);
+                for (Valintakoe valintakoe : valintakokees) {
+                    ValintakoeV1RDTO valintakoeV1RDTO = converterV1.fromValintakoe(valintakoe);
 
-                        valintakoeV1RDTOs.add(valintakoeV1RDTO);
-                    }
-                    resultRDTO.setResult(valintakoeV1RDTOs);
-                    resultRDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
-
-                } catch (Exception exp) {
-                    resultRDTO.addTechnicalError(exp);
+                    valintakoeV1RDTOs.add(valintakoeV1RDTO);
                 }
-                return resultRDTO;
+                resultRDTO.setResult(valintakoeV1RDTOs);
+                resultRDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
+            } catch (Exception exp) {
+                resultRDTO.addTechnicalError(exp);
             }
+            return resultRDTO;
+
         } else {
-            ResultV1RDTO<List<ValintakoeV1RDTO>> resultRDTO = new ResultV1RDTO<List<ValintakoeV1RDTO>>();
+            ResultV1RDTO<List<ValintakoeV1RDTO>> resultRDTO = new ResultV1RDTO<>();
             resultRDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             return resultRDTO;
         }
@@ -958,7 +877,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     @Override
-    @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    @Transactional(rollbackFor = Throwable.class)
     public ResultV1RDTO<ValintakoeV1RDTO> insertValintakoe(String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO) {
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohdeOid);
         try {
@@ -968,13 +887,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 List<Valintakoe> valintakoes = hakukohdeDAO.findValintakoeByHakukohdeOid(hakukohdeOid);
                 valintakoes.add(valintakoe);
                 hakukohdeDAO.updateValintakoe(valintakoes, hakukohdeOid);
-                ResultV1RDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultV1RDTO<ValintakoeV1RDTO>();
+                ResultV1RDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultV1RDTO<>();
                 ValintakoeV1RDTO result = converterV1.fromValintakoe(valintakoe);
                 rdtoResultRDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
                 rdtoResultRDTO.setResult(result);
                 return rdtoResultRDTO;
             } else {
-                ResultV1RDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultV1RDTO<ValintakoeV1RDTO>();
+                ResultV1RDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultV1RDTO<>();
                 rdtoResultRDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
                 ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
                 errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
@@ -985,7 +904,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             }
 
         } catch (Exception exp) {
-            ResultV1RDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultV1RDTO<ValintakoeV1RDTO>();
+            ResultV1RDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultV1RDTO<>();
             rdtoResultRDTO.addTechnicalError(exp);
             return rdtoResultRDTO;
         }
@@ -993,21 +912,21 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     @Override
-    @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    @Transactional(rollbackFor = Throwable.class)
     public ResultV1RDTO<ValintakoeV1RDTO> updateValintakoe(String hakukohdeOid, ValintakoeV1RDTO valintakoeV1RDTO) {
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohdeOid);
         try {
             Valintakoe valintakoe = converterV1.toValintakoe(valintakoeV1RDTO);
 
-            List<ValintakoeV1RDTO> valintakokees = new ArrayList<ValintakoeV1RDTO>();
+            List<ValintakoeV1RDTO> valintakokees = new ArrayList<>();
             valintakokees.add(valintakoeV1RDTO);
 
             List<HakukohdeValidationMessages> validationMessageses = hakukohdeValidator.validateValintakokees(valintakokees);
             if (validationMessageses.size() > 0) {
-                ResultV1RDTO<ValintakoeV1RDTO> errorResult = new ResultV1RDTO<ValintakoeV1RDTO>();
+                ResultV1RDTO<ValintakoeV1RDTO> errorResult = new ResultV1RDTO<>();
                 errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
                 for (HakukohdeValidationMessages message : validationMessageses) {
-                    errorResult.addError(ErrorV1RDTO.createValidationError(null, message.name(), null));
+                    errorResult.addError(ErrorV1RDTO.createValidationError(null, message.name()));
                 }
                 errorResult.setResult(valintakoeV1RDTO);
                 return errorResult;
@@ -1017,20 +936,20 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
             hakukohdeDAO.updateSingleValintakoe(valintakoe, hakukohdeOid);
             LOG.debug("UPDATED VALINTAKOE");
-            ResultV1RDTO<ValintakoeV1RDTO> valintakoeResult = new ResultV1RDTO<ValintakoeV1RDTO>();
+            ResultV1RDTO<ValintakoeV1RDTO> valintakoeResult = new ResultV1RDTO<>();
             valintakoeResult.setStatus(ResultV1RDTO.ResultStatus.OK);
             valintakoeResult.setResult(valintakoeV1RDTO);
             return valintakoeResult;
 
         } catch (Exception exp) {
-            ResultV1RDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultV1RDTO<ValintakoeV1RDTO>();
+            ResultV1RDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultV1RDTO<>();
             rdtoResultRDTO.addTechnicalError(exp);
             return rdtoResultRDTO;
         }
     }
 
     @Override
-    @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    @Transactional(rollbackFor = Throwable.class)
     public ResultV1RDTO<Boolean> removeValintakoe(String hakukohdeOid, String valintakoeOid) {
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohdeOid);
         try {
@@ -1038,13 +957,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             Valintakoe valintakoe = hakukohdeDAO.findValintaKoeById(valintakoeOid);
             hakukohdeDAO.removeValintakoe(valintakoe);
 
-            ResultV1RDTO<Boolean> resultRDTO = new ResultV1RDTO<Boolean>();
+            ResultV1RDTO<Boolean> resultRDTO = new ResultV1RDTO<>();
             resultRDTO.setResult(true);
             resultRDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
             return resultRDTO;
 
         } catch (Exception exp) {
-            ResultV1RDTO<Boolean> resultRDTO = new ResultV1RDTO<Boolean>();
+            ResultV1RDTO<Boolean> resultRDTO = new ResultV1RDTO<>();
             resultRDTO.setResult(false);
             resultRDTO.addTechnicalError(exp);
             return resultRDTO;
@@ -1052,16 +971,16 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     @Override
-    @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    @Transactional(rollbackFor = Throwable.class)
     public ResultV1RDTO<List<HakukohdeLiiteV1RDTO>> findHakukohdeLiites(String hakukohdeOid) {
 
         if (hakukohdeOid != null) {
             try {
 
-                ResultV1RDTO<List<HakukohdeLiiteV1RDTO>> listResultRDTO = new ResultV1RDTO<List<HakukohdeLiiteV1RDTO>>();
+                ResultV1RDTO<List<HakukohdeLiiteV1RDTO>> listResultRDTO = new ResultV1RDTO<>();
 
                 List<HakukohdeLiite> liites = hakukohdeDAO.findHakukohdeLiitesByHakukohdeOid(hakukohdeOid);
-                List<HakukohdeLiiteV1RDTO> liiteV1RDTOs = new ArrayList<HakukohdeLiiteV1RDTO>();
+                List<HakukohdeLiiteV1RDTO> liiteV1RDTOs = new ArrayList<>();
                 if (liites != null) {
                     LOG.debug("LIITES SIZE : {} ", liites.size());
                     for (HakukohdeLiite liite : liites) {
@@ -1074,19 +993,19 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 return listResultRDTO;
 
             } catch (Exception exp) {
-                ResultV1RDTO<List<HakukohdeLiiteV1RDTO>> errorResult = new ResultV1RDTO<List<HakukohdeLiiteV1RDTO>>();
+                ResultV1RDTO<List<HakukohdeLiiteV1RDTO>> errorResult = new ResultV1RDTO<>();
                 errorResult.addTechnicalError(exp);
                 return errorResult;
             }
         } else {
-            ResultV1RDTO<List<HakukohdeLiiteV1RDTO>> errorResult = new ResultV1RDTO<List<HakukohdeLiiteV1RDTO>>();
+            ResultV1RDTO<List<HakukohdeLiiteV1RDTO>> errorResult = new ResultV1RDTO<>();
             errorResult.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             return errorResult;
         }
     }
 
     @Override
-    @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    @Transactional(rollbackFor = Throwable.class)
     public ResultV1RDTO<HakukohdeLiiteV1RDTO> insertHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohdeOid);
         try {
@@ -1097,7 +1016,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 return populateValidationErrors(liiteV1RDTO, validationMessageses);
             }
 
-            ResultV1RDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
+            ResultV1RDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultV1RDTO<>();
             HakukohdeLiite hakukohdeLiite = converterV1.toHakukohdeLiite(liiteV1RDTO);
             List<HakukohdeLiite> liites = hakukohdeDAO.findHakukohdeLiitesByHakukohdeOid(hakukohdeOid);
             liites.add(hakukohdeLiite);
@@ -1108,14 +1027,14 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             return resultRDTO;
 
         } catch (Exception exp) {
-            ResultV1RDTO<HakukohdeLiiteV1RDTO> errorResult = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
+            ResultV1RDTO<HakukohdeLiiteV1RDTO> errorResult = new ResultV1RDTO<>();
             errorResult.addTechnicalError(exp);
             return errorResult;
         }
     }
 
     @Override
-    @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    @Transactional(rollbackFor = Throwable.class)
     public ResultV1RDTO<HakukohdeLiiteV1RDTO> updateHakukohdeLiite(String hakukohdeOid, HakukohdeLiiteV1RDTO liiteV1RDTO) {
 
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohdeOid);
@@ -1127,7 +1046,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 return populateValidationErrors(liiteV1RDTO, validationMessageses);
             }
 
-            ResultV1RDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
+            ResultV1RDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultV1RDTO<>();
 
             HakukohdeLiite hakukohdeLiite = converterV1.toHakukohdeLiite(liiteV1RDTO);
 
@@ -1139,7 +1058,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             return resultRDTO;
 
         } catch (Exception exp) {
-            ResultV1RDTO<HakukohdeLiiteV1RDTO> errorResultDto = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
+            ResultV1RDTO<HakukohdeLiiteV1RDTO> errorResultDto = new ResultV1RDTO<>();
             errorResultDto.addTechnicalError(exp);
             errorResultDto.setStatus(ResultV1RDTO.ResultStatus.OK); //why oh why?
             return errorResultDto;
@@ -1157,7 +1076,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     private <T> ResultV1RDTO<T> populateValidationErrors(
             T result,
             List<HakukohdeValidationMessages> validationMessageses) {
-        ResultV1RDTO<T> errorResult = new ResultV1RDTO<T>();
+        ResultV1RDTO<T> errorResult = new ResultV1RDTO<>();
         errorResult.setResult(result);
         for (HakukohdeValidationMessages msg : validationMessageses) {
             errorResult.addError(ErrorV1RDTO.createValidationError(msg.name(), msg.name()));
@@ -1167,7 +1086,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     @Override
-    @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    @Transactional(rollbackFor = Throwable.class)
     public ResultV1RDTO<Boolean> deleteHakukohdeLiite(String hakukohdeOid, String liiteId) {
 
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohdeOid);
@@ -1179,19 +1098,19 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
                 hakukohdeDAO.removeHakukohdeLiite(hakukohdeLiite);
 
-                ResultV1RDTO<Boolean> booleanResultRDTO = new ResultV1RDTO<Boolean>();
+                ResultV1RDTO<Boolean> booleanResultRDTO = new ResultV1RDTO<>();
                 booleanResultRDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
                 booleanResultRDTO.setResult(true);
                 return booleanResultRDTO;
             } else {
-                ResultV1RDTO<Boolean> booleanResultRDTO = new ResultV1RDTO<Boolean>();
+                ResultV1RDTO<Boolean> booleanResultRDTO = new ResultV1RDTO<>();
                 booleanResultRDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
                 booleanResultRDTO.setResult(false);
                 return booleanResultRDTO;
             }
 
         } catch (Exception exp) {
-            ResultV1RDTO<Boolean> errorResult = new ResultV1RDTO<Boolean>();
+            ResultV1RDTO<Boolean> errorResult = new ResultV1RDTO<>();
             errorResult.setResult(false);
             errorResult.addTechnicalError(exp);
             return errorResult;
@@ -1207,8 +1126,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     @Override
-    @Transactional(readOnly = false)
-    public ResultV1RDTO<Tilamuutokset> updateTila(String oid, TarjontaTila tila) {
+    @Transactional()
+    public ResultV1RDTO<Tilamuutokset> updateTila(String oid, TarjontaTila tila, HttpServletRequest request) {
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(oid);
 
         if (Sets.newHashSet(TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU).contains(tila)) {
@@ -1216,35 +1135,22 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 permissionChecker.checkPublishOrUnpublishHakukohde(oid);
             }
             catch (NotAuthorizedException e) {
-                ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<Tilamuutokset>();
+                ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<>();
                 r.addError(ErrorV1RDTO.createValidationError(null, e.getMessage()));
                 return r;
             }
         }
 
+
         Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, tila, oid);
-        Tilamuutokset tm = null;
+        Tilamuutokset tm;
         try {
+            HakukohdeV1RDTO originalHakukohdeRDTO = converterV1.toHakukohdeRDTO(hakukohdeDAO.findHakukohdeByOid(oid));
             tm = publicationDataService.updatePublicationStatus(Lists.newArrayList(tilamuutos));
-
-            LogMessage.LogMessageBuilder builder = builder().setResource(TarjontaResource.HAKUKOHDE).setResourceOid(oid);
-
-            switch (tila) {
-                case PERUTTU:
-                    builder.setOperation(TarjontaOperation.UNPUBLISH);
-                    break;
-                case JULKAISTU:
-                    builder.setOperation(TarjontaOperation.PUBLISH);
-                    break;
-                default:
-                    builder.setOperation(TarjontaOperation.CHANGE_STATE);
-                    builder.add("newTila", tila.name());
-                    break;
-            }
-
-            AUDIT.log(builder.build());
+            HakukohdeV1RDTO hakukohdeRDTO = converterV1.toHakukohdeRDTO(hakukohdeDAO.findHakukohdeByOid(oid));
+            AuditLog.stateChange(HAKUKOHDE, oid, tila, hakukohdeRDTO, originalHakukohdeRDTO, request, null);
         } catch (IllegalArgumentException iae) {
-            ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<Tilamuutokset>();
+            ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<>();
             r.addError(ErrorV1RDTO.createValidationError(null, iae.getMessage()));
             return r;
         }
@@ -1252,7 +1158,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         //indeksoi uudelleen muuttunut data
         indexerResource.indexMuutokset(tm);
 
-        return new ResultV1RDTO<Tilamuutokset>(tm);
+        return new ResultV1RDTO<>(tm);
     }
 
     @Override
@@ -1261,20 +1167,20 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         ks.getHakukohdeOids().add(oid);
 
         KoulutuksetVastaus kv = koulutusSearchService.haeKoulutukset(ks);
-        List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
+        List<NimiJaOidRDTO> ret = new ArrayList<>();
         for (KoulutusPerustieto kp : kv.getKoulutukset()) {
             ret.add(new NimiJaOidRDTO(kp.getNimi(), kp.getKomotoOid()));
         }
-        return new ResultV1RDTO<List<NimiJaOidRDTO>>(ret);
+        return new ResultV1RDTO<>(ret);
     }
 
     @Override
-    @Transactional(readOnly = false)
-    public ResultV1RDTO<List<String>> lisaaKoulutuksesToHakukohde(String hakukohdeOid, List<KoulutusTarjoajaV1RDTO> koulutukses) {
+    @Transactional()
+    public ResultV1RDTO<List<String>> lisaaKoulutuksesToHakukohde(String hakukohdeOid, List<KoulutusTarjoajaV1RDTO> koulutukses, HttpServletRequest request) {
 
         LOG.info("lisätään koulutuksia hakukohteelle {}: {}", hakukohdeOid, koulutukses);
 
-        ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
+        ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<>();
 
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
         if (!parameterService.parameterCanAddHakukohdeToHaku(hakukohde.getHaku().getOid())
@@ -1311,15 +1217,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             LOG.info("indexing hakukohde {}", hakukohdeOid);
             indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
 
-            AUDIT.log(builder()
-                    .setResource(TarjontaResource.HAKUKOHDE)
-                    .setResourceOid(hakukohdeOid)
-                    .setOperation(TarjontaOperation.ADD_KOULUTUS_TO_HAKUKOHDE)
-                    .add(
-                            "addedKomotos",
-                            CollectionUtils.collect(liitettavatKomotot, new BeanToPropertyValueTransformer("oid")).toString()
-                    )
-                    .build());
+            AuditLog.log(ADD_KOULUTUS_TO_HAKUKOHDE, HAKUKOHDE, hakukohdeOid, null, null, request,
+                    ImmutableMap.of("addedKomotos", liitettavatKomotot.stream().map(k -> k.getOid()).collect(Collectors.joining(", "))));
 
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
@@ -1362,7 +1261,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     private List<String> getKomotoOids(List<KoulutusTarjoajaV1RDTO> koulutukses) {
-        List<String> oids = new ArrayList<String>();
+        List<String> oids = new ArrayList<>();
         for (KoulutusTarjoajaV1RDTO koulutusTarjoajaV1RDTO : koulutukses) {
             String komotoOid = koulutusTarjoajaV1RDTO.getOid();
             oids.add(komotoOid);
@@ -1371,112 +1270,93 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     @Override
-    @Transactional(readOnly = false)
-    public ResultV1RDTO<List<String>> removeKoulutuksesFromHakukohde(String hakukohdeOid, List<KoulutusTarjoajaV1RDTO> koulutukses) {
+    @Transactional()
+    public ResultV1RDTO<List<String>> removeKoulutuksesFromHakukohde(String hakukohdeOid, List<KoulutusTarjoajaV1RDTO> koulutukses, HttpServletRequest request) {
 
-        ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
+        ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<>();
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
 
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohde.getOid());
-        if (hakukohde != null) {
 
-            List<KoulutusmoduuliToteutus> komotoToRemove = new ArrayList<KoulutusmoduuliToteutus>();
+        Set<KoulutusmoduuliToteutus> komotoToRemove = Sets.newHashSet();
 
-            for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
-                LOG.debug("Looping hakukohde komoto : {}", komoto.getOid());
+        for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
+            LOG.debug("Looping hakukohde komoto : {}", komoto.getOid());
 
-                for (KoulutusTarjoajaV1RDTO koulutusTarjoajaV1RDTO : koulutukses) {
-                    String komotoOid = koulutusTarjoajaV1RDTO.getOid();
-                    String tarjoajaOid = koulutusTarjoajaV1RDTO.getTarjoajaOid();
+            for (KoulutusTarjoajaV1RDTO koulutusTarjoajaV1RDTO : koulutukses) {
+                String komotoOid = koulutusTarjoajaV1RDTO.getOid();
+                String tarjoajaOid = koulutusTarjoajaV1RDTO.getTarjoajaOid();
 
-                    if (komoto.getOid().trim().equals(komotoOid)) {
+                if (komoto.getOid().trim().equals(komotoOid)) {
 
-                        if (!hakukohde.hasTarjoajatiedotForKoulutus(komotoOid)) {
+                    if (!hakukohde.hasTarjoajatiedotForKoulutus(komotoOid)) {
+                        komotoToRemove.add(komoto);
+                    } else {
+                        KoulutusmoduuliToteutusTarjoajatiedot tarjoajatiedotForKoulutus = hakukohde.getTarjoajatiedotForKoulutus(komotoOid);
+                        if (tarjoajatiedotForKoulutus.containsOnlyTarjoaja(tarjoajaOid)) {
                             komotoToRemove.add(komoto);
+                            hakukohde.removeTarjoajatiedotForKoulutus(komoto.getOid());
                         } else {
-                            KoulutusmoduuliToteutusTarjoajatiedot tarjoajatiedotForKoulutus = hakukohde.getTarjoajatiedotForKoulutus(komotoOid);
-                            if (tarjoajatiedotForKoulutus.containsOnlyTarjoaja(tarjoajaOid)) {
-                                komotoToRemove.add(komoto);
-                                hakukohde.removeTarjoajatiedotForKoulutus(komoto.getOid());
-                            } else {
-                                tarjoajatiedotForKoulutus.removeTarjoaja(tarjoajaOid);
-                                hakukohdeDAO.update(hakukohde);
-                                indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
-                            }
+                            tarjoajatiedotForKoulutus.removeTarjoaja(tarjoajaOid);
+                            hakukohdeDAO.update(hakukohde);
+                            indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
                         }
                     }
                 }
             }
+        }
 
-            // Tätä ei suoriteta, jos saman koulutuksen yksittäinen tarjoaja poistetaan
-            if (komotoToRemove.size() > 0) {
-                Collection<KoulutusmoduuliToteutus> remainingKomotos = CollectionUtils.subtract(hakukohde.getKoulutusmoduuliToteutuses(), komotoToRemove);
+        // Tätä ei suoriteta, jos saman koulutuksen yksittäinen tarjoaja poistetaan
+        if (komotoToRemove.size() > 0) {
+            Set<KoulutusmoduuliToteutus> remainingKomotos = Sets.difference(hakukohde.getKoulutusmoduuliToteutuses(), komotoToRemove);
 
-                List<String> remainingOids = Lists.newArrayList(Iterables.transform(remainingKomotos, new Function<KoulutusmoduuliToteutus, String>() {
-                    public String apply(@Nullable KoulutusmoduuliToteutus input) {
-                        return input.getOid();
-                    }
-                }));
+            List<String> remainingOids = remainingKomotos.stream().map(input -> input.getOid()).collect(Collectors.toList());
 
-                permissionChecker.checkUpdateHakukohde(hakukohdeOid, hakukohde.getHaku().getOid(), remainingOids);
+            permissionChecker.checkUpdateHakukohde(hakukohdeOid, hakukohde.getHaku().getOid(), remainingOids);
 
-                LOG.info("Removing {} koulutukses from hakukohde : {}", komotoToRemove.size(), hakukohde.getOid());
-                if (remainingKomotos.size() > 0) {
+            LOG.info("Removing {} koulutukses from hakukohde : {}", komotoToRemove.size(), hakukohde.getOid());
+            if (remainingKomotos.size() > 0) {
 
-                    for (KoulutusmoduuliToteutus komoto : komotoToRemove) {
+                for (KoulutusmoduuliToteutus komoto : komotoToRemove) {
 
-                        komoto.removeHakukohde(hakukohde);
+                    komoto.removeHakukohde(hakukohde);
 
-                        hakukohde.removeKoulutusmoduuliToteutus(komoto);
+                    hakukohde.removeKoulutusmoduuliToteutus(komoto);
 
-                        koulutusmoduuliToteutusDAO.update(komoto);
-                        LOG.info("indexing koulutus removal {} for {}", komoto.getId(), hakukohdeOid);
-                        indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
-                    }
-
-                    LOG.debug("Hakukohde has more koulutukses, updating it");
-                    hakukohdeDAO.update(hakukohde);
-                    LOG.info("indexing hk {}", hakukohdeOid);
-                    indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
-                } else {
-
-                    List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(getKomotoOids(koulutukses));
-
-                    for (KoulutusmoduuliToteutus komoto : komotos) {
-                        komoto.removeHakukohde(hakukohde);
-                        hakukohde.removeKoulutusmoduuliToteutus(komoto);
-                        indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
-                    }
-
-                    LOG.info("Hakukohde {} does not have anymore koulutukses, removing it", hakukohdeOid);
-                    hakukohdeDAO.remove(hakukohde);
-                    try {
-                        indexerResource.deleteHakukohde(Lists.newArrayList(hakukohdeOid));
-                    } catch (IOException ioe) {
-                        throw new RuntimeException(ioe);
-                    }
+                    koulutusmoduuliToteutusDAO.update(komoto);
+                    LOG.info("indexing koulutus removal {} for {}", komoto.getId(), hakukohdeOid);
+                    indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
                 }
 
+                LOG.debug("Hakukohde has more koulutukses, updating it");
+                hakukohdeDAO.update(hakukohde);
+                LOG.info("indexing hk {}", hakukohdeOid);
+                indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+            } else {
+
+                List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(getKomotoOids(koulutukses));
+
+                for (KoulutusmoduuliToteutus komoto : komotos) {
+                    komoto.removeHakukohde(hakukohde);
+                    hakukohde.removeKoulutusmoduuliToteutus(komoto);
+                    indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
+                }
+
+                LOG.info("Hakukohde {} does not have anymore koulutukses, removing it", hakukohdeOid);
+                hakukohdeDAO.remove(hakukohde);
+                try {
+                    indexerResource.deleteHakukohde(Lists.newArrayList(hakukohdeOid));
+                } catch (IOException ioe) {
+                    throw new RuntimeException(ioe);
+                }
             }
-
-            AUDIT.log(builder()
-                    .setResource(TarjontaResource.HAKUKOHDE)
-                    .setResourceOid(hakukohdeOid)
-                    .setOperation(TarjontaOperation.REMOVE_KOULUTUS_FROM_HAKUKOHDE)
-                    .add(
-                            "komotosRemoved",
-                            CollectionUtils.collect(komotoToRemove, new BeanToPropertyValueTransformer("oid")).toString())
-                    .build());
-
-            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
-            resultV1RDTO.setResult(getKomotoOids(koulutukses));
-
-        } else {
-
-            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
-            resultV1RDTO.setResult(getKomotoOids(koulutukses));
-
         }
+
+        AuditLog.log(REMOVE_KOULUTUS_FROM_HAKUKOHDE, HAKUKOHDE, hakukohde.getOid(), null, null,
+                request, ImmutableMap.of("addedKomotos", komotoToRemove.stream().map(k -> k.getOid()).collect(Collectors.joining(", "))));
+
+        resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+        resultV1RDTO.setResult(getKomotoOids(koulutukses));
 
         return resultV1RDTO;
 
@@ -1486,16 +1366,16 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     public ResultV1RDTO<Boolean> isStateChangePossible(String oid,
                                                        TarjontaTila tila) {
         Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, tila, oid);
-        return new ResultV1RDTO<Boolean>(publicationDataService.isValidStatusChange(tilamuutos));
+        return new ResultV1RDTO<>(publicationDataService.isValidStatusChange(tilamuutos));
     }
 
     // POST /hakukohde/ryhmat/lisaa
     @Override
-    @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public ResultV1RDTO<Boolean> lisaaRyhmatHakukohteille(List<HakukohdeRyhmaV1RDTO> data) {
+    @Transactional(rollbackFor = Throwable.class)
+    public ResultV1RDTO<Boolean> lisaaRyhmatHakukohteille(List<HakukohdeRyhmaV1RDTO> data, HttpServletRequest request) {
         LOG.debug("lisaaRyhmatHakukohteille()");
 
-        ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
+        ResultV1RDTO<Boolean> result = new ResultV1RDTO<>();
 
         // By default we fail :)
         result.setResult(Boolean.FALSE);
@@ -1554,12 +1434,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
             }
 
-            AUDIT.log(builder()
-                    .setResource(TarjontaResource.HAKUKOHDE)
-                    .setResourceOid(hakukohde.getOid())
-                    .setOperation(TarjontaOperation.MODIFY_RYHMAT)
-                    .add("ryhmaOperation", operation.toString())
-                    .build());
+            AuditLog.log(MODIFY_RYHMAT, HAKUKOHDE, hakukohde.getOid(), null, null,
+                    request, ImmutableMap.of("ryhmaOperation", operation.toString()));
         }
 
         return result;
@@ -1579,20 +1455,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         hakukohde.addRyhmaliitos(newRyhmaliitos);
     }
 
-    private String[] addToArray(String source[], String newValue) {
-        List<String> tmp = new ArrayList<String>(Arrays.asList(source));
-        if (!tmp.contains(newValue)) {
-            tmp.add(newValue);
-        }
-        return tmp.toArray(new String[tmp.size()]);
-    }
-
-    private String[] removeFromArray(String source[], String newValue) {
-        List<String> tmp = new ArrayList<String>(Arrays.asList(source));
-        tmp.remove(newValue);
-        return tmp.toArray(new String[tmp.size()]);
-    }
-
     private void updateKoulutusTypesToHakukohdeDto(HakukohdeV1RDTO hakukohdeRDTO) {
         HashMap<String, String> koulutusAstetyyppi;
 
@@ -1609,17 +1471,17 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     public ResultV1RDTO<ValitutKoulutuksetV1RDTO> isValidKoulutusSelection(List<String> oids) {
         if (oids == null || oids.isEmpty()) {
-            ResultV1RDTO<ValitutKoulutuksetV1RDTO> resultV1RDTO = new ResultV1RDTO<ValitutKoulutuksetV1RDTO>();
+            ResultV1RDTO<ValitutKoulutuksetV1RDTO> resultV1RDTO = new ResultV1RDTO<>();
             resultV1RDTO.addError(ErrorV1RDTO.createValidationError("INVALID_PARAM_NO_KOMOTO_OIDS", ""));
             return resultV1RDTO;
         }
 
-        Set<String> toteutustyyppis = Sets.<String>newHashSet();
+        Set<String> toteutustyyppis = Sets.newHashSet();
         KoulutuksetKysely ks = new KoulutuksetKysely();
         ks.getKoulutusOids().addAll(oids);
         KoulutuksetVastaus kv = koulutusSearchService.haeKoulutukset(ks);
 
-        List<NimiJaOidRDTO> names = new ArrayList<NimiJaOidRDTO>();
+        List<NimiJaOidRDTO> names = new ArrayList<>();
         for (KoulutusPerustieto kp : kv.getKoulutukset()) {
             toteutustyyppis.add(kp.getToteutustyyppi().name());
             names.add(new NimiJaOidRDTO(kp.getNimi(), kp.getKomotoOid()));
@@ -1637,20 +1499,16 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         for (final String oid : oids) {
 
-            executeInTransaction(new Runnable() {
+            executeInTransaction(() -> {
+                permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(oid);
+                Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
 
-                @Override
-                public void run() {
-                    permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(oid);
-                    Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
+                if (!hakukohde.getKoulutusmoduuliToteutuses().isEmpty()) {
 
-                    if (!hakukohde.getKoulutusmoduuliToteutuses().isEmpty()) {
+                    final KoulutusmoduuliToteutus komoto = hakukohde.getKoulutusmoduuliToteutuses().iterator().next();
 
-                        final KoulutusmoduuliToteutus komoto = hakukohde.getKoulutusmoduuliToteutuses().iterator().next();
-
-                        if (shouldUpdateValintakoeStructure(komoto)) {
-                            updateValintakokeet(hakukohde);
-                        }
+                    if (shouldUpdateValintakoeStructure(komoto)) {
+                        updateValintakokeet(hakukohde);
                     }
                 }
             });
@@ -1663,36 +1521,28 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         for (final String oid : oids) {
 
-            executeInTransaction(new Runnable() {
+            executeInTransaction(() -> {
+                permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(oid);
+                Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
 
-                @Override
-                public void run() {
-                    permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(oid);
-                    Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
+                if (!hakukohde.getKoulutusmoduuliToteutuses().isEmpty()) {
 
-                    if (!hakukohde.getKoulutusmoduuliToteutuses().isEmpty()) {
+                    final KoulutusmoduuliToteutus komoto = hakukohde.getKoulutusmoduuliToteutuses().iterator().next();
 
-                        final KoulutusmoduuliToteutus komoto = hakukohde.getKoulutusmoduuliToteutuses().iterator().next();
-
-                        if (shouldUpdateLiiteStructure(komoto)) {
-                            updateLiitteet(hakukohde);
-                        }
+                    if (shouldUpdateLiiteStructure(komoto)) {
+                        updateLiitteet(hakukohde);
                     }
-
                 }
+
             });
         }
     }
 
     private void executeInTransaction(final Runnable runnable) {
         TransactionTemplate tt = new TransactionTemplate(tm);
-        tt.execute(new TransactionCallback<Object>() {
-
-            @Override
-            public Object doInTransaction(TransactionStatus status) {
-                runnable.run();
-                return null;
-            }
+        tt.execute(status -> {
+            runnable.run();
+            return null;
         });
     }
 
@@ -1712,7 +1562,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     private void updateLiitteet(Hakukohde hakukohde) {
-        List<HakukohdeLiite> liitteet = new ArrayList<HakukohdeLiite>();
+        List<HakukohdeLiite> liitteet = new ArrayList<>();
 
         for (HakukohdeLiite oldLiite : hakukohde.getLiites()) {
             if (oldLiite.getKieli() == null) {
@@ -1735,7 +1585,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     private List<HakukohdeLiite> createLiitteet(HakukohdeLiite oldLiite) {
-        List<HakukohdeLiite> liitteet = new ArrayList<HakukohdeLiite>();
+        List<HakukohdeLiite> liitteet = new ArrayList<>();
 
         for (TekstiKaannos tekstiKaannos : oldLiite.getKuvaus().getKaannoksetAsList()) {
             HakukohdeLiite liite = new HakukohdeLiite();
@@ -1755,7 +1605,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     private void updateValintakokeet(Hakukohde hakukohde) {
-        List<Valintakoe> valintakokeet = new ArrayList<Valintakoe>();
+        List<Valintakoe> valintakokeet = new ArrayList<>();
 
         for (Valintakoe oldValintakoe : hakukohde.getValintakoes()) {
             if (oldValintakoe.getKieli() == null) {
@@ -1778,7 +1628,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     private List<Valintakoe> createValintakokeet(Valintakoe oldValintakoe) {
-        List<Valintakoe> valintakokeet = new ArrayList<Valintakoe>();
+        List<Valintakoe> valintakokeet = new ArrayList<>();
 
         for (TekstiKaannos tekstiKaannos : oldValintakoe.getKuvaus().getKaannoksetAsList()) {
             Valintakoe valintakoe = new Valintakoe();
@@ -1807,7 +1657,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     private Set<ValintakoeAjankohta> createNewAjankohdat(Valintakoe oldValintakoe) {
-        Set<ValintakoeAjankohta> ajankohdat = new HashSet<ValintakoeAjankohta>();
+        Set<ValintakoeAjankohta> ajankohdat = new HashSet<>();
 
         for (ValintakoeAjankohta oldAjankohta : oldValintakoe.getAjankohtas()) {
             ValintakoeAjankohta ajankohta = new ValintakoeAjankohta();
@@ -1823,13 +1673,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     @Transactional(readOnly = true)
     public ResultV1RDTO<List<HakukohdeV1RDTO>> findHakukohdesByKuvausId(Long id) {
-        ResultV1RDTO<List<HakukohdeV1RDTO>> result = new ResultV1RDTO<List<HakukohdeV1RDTO>>();
+        ResultV1RDTO<List<HakukohdeV1RDTO>> result = new ResultV1RDTO<>();
 
-        ArrayList<Hakukohde> hakukohdes = new ArrayList<Hakukohde>();
+        ArrayList<Hakukohde> hakukohdes = new ArrayList<>();
         hakukohdes.addAll(hakukohdeDAO.findBy("valintaPerusteKuvausTunniste", id));
         hakukohdes.addAll(hakukohdeDAO.findBy("soraKuvausTunniste", id));
 
-        ArrayList<HakukohdeV1RDTO> hakukohdeV1RDTOs = new ArrayList<HakukohdeV1RDTO>();
+        ArrayList<HakukohdeV1RDTO> hakukohdeV1RDTOs = new ArrayList<>();
         for (Hakukohde hakukohde : hakukohdes) {
             if (hakukohde.getTila() != TarjontaTila.POISTETTU) {
                 hakukohdeV1RDTOs.add(converterV1.toHakukohdeRDTO(hakukohde));

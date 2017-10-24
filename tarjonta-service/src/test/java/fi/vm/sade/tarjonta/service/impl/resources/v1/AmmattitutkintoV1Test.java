@@ -9,7 +9,6 @@ import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
@@ -27,6 +26,7 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ActiveProfiles;
@@ -34,6 +34,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,6 +81,7 @@ public class AmmattitutkintoV1Test {
 
     private static final String KOULUTUSKOODI = "koulutus_ammattitutkinto";
     private static final String KOMO_OID = "ammattitutkintoKomoOid";
+    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
     @Before
     public void init() {
@@ -142,7 +144,7 @@ public class AmmattitutkintoV1Test {
         AmmattitutkintoV1RDTO dto = baseDto();
         dto.setTila(TarjontaTila.PUUTTEELLINEN);
 
-        ResultV1RDTO<AmmattitutkintoV1RDTO> result = (ResultV1RDTO<AmmattitutkintoV1RDTO>) koulutusResourceV1.postKoulutus(dto).getEntity();
+        ResultV1RDTO<AmmattitutkintoV1RDTO> result = (ResultV1RDTO<AmmattitutkintoV1RDTO>) koulutusResourceV1.postKoulutus(dto, request).getEntity();
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
     }
 

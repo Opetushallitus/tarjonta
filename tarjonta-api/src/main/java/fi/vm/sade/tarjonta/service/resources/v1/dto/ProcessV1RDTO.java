@@ -15,7 +15,7 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -33,6 +33,10 @@ public class ProcessV1RDTO implements Serializable {
 
     private String messageKey = "progress.message.default";
     private Map<String, String> parameters = new HashMap<>();
+
+    InetAddress ip;
+    String session;
+    String userAgent;
 
     public String getId() {
         return id;
@@ -80,7 +84,31 @@ public class ProcessV1RDTO implements Serializable {
 
     private ProcessV1RDTO() {
     }
-    
+
+    public InetAddress getIp() {
+        return ip;
+    }
+
+    public void setIp(InetAddress ip) {
+        this.ip = ip;
+    }
+
+    public String getSession() {
+        return session;
+    }
+
+    public void setSession(String session) {
+        this.session = session;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
     public static ProcessV1RDTO generate(){
         ProcessV1RDTO p = new ProcessV1RDTO();
         // Generate new id for the process
