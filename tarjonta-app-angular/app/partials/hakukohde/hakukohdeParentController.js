@@ -1081,15 +1081,18 @@ app.controller('HakukohdeParentController', [
             var hakutoimistoFound = false;
             if (data.metadata !== undefined && data.metadata.yhteystiedot !== undefined) {
                 angular.forEach(data.metadata.yhteystiedot, function (yhteystieto) {
+                    var kieliUri = yhteystieto.kieli.split('#')[0];
                     if (yhteystieto.osoiteTyyppi !== undefined && yhteystieto.osoiteTyyppi === 'posti') {
-                        var kieliUris = yhteystieto.kieli.split('#');
-                        var kieliUri = kieliUris[0];
-                        var hakutoimistonNimi = data.metadata.hakutoimistonNimi ? data.metadata.hakutoimistonNimi[yhteystieto.kieli] : undefined;
-                        $scope.model.hakutoimistonNimi[kieliUri] = hakutoimistonNimi;
+                        $scope.model.hakutoimistonNimi[kieliUri] = data.metadata.hakutoimistonNimi ? data.metadata.hakutoimistonNimi[yhteystieto.kieli] : undefined;
                         $scope.model.liitteidenToimitusOsoite[kieliUri] = {};
                         $scope.model.liitteidenToimitusOsoite[kieliUri].osoiterivi1 = yhteystieto.osoite;
                         $scope.model.liitteidenToimitusOsoite[kieliUri].postinumero = yhteystieto.postinumeroUri;
                         $scope.model.liitteidenToimitusOsoite[kieliUri].postitoimipaikka = yhteystieto.postitoimipaikka;
+                        $scope.initHakukohdeLiitteidenToimitusOsoite();
+                        hakutoimistoFound = true;
+                    } else if (yhteystieto.osoiteTyyppi !== undefined && yhteystieto.osoiteTyyppi === 'ulkomainen_posti') {
+                        $scope.model.liitteidenToimitusOsoite[kieliUri] = {};
+                        $scope.model.liitteidenToimitusOsoite[kieliUri].osoiterivi1 = yhteystieto.osoite;
                         $scope.initHakukohdeLiitteidenToimitusOsoite();
                         hakutoimistoFound = true;
                     }
