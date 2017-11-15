@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,7 @@ import java.util.Map;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 
 @Transactional
@@ -199,6 +201,12 @@ public class KoulutusPermissionTest extends TestUtilityBase {
         dto.setKoulutusohjelma(createOsaamisalaCode("osaamisala_1"));
 
         koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
+    }
+
+    @Test
+    public void testUpdateFromUrlAndCheck() throws MalformedURLException {
+        koulutusPermissionSynchronizer.runUpdate();
+        assertTrue(koulutusPermissionSynchronizer.getOrgsWithInvalidKomotos().isEmpty());
     }
 
     private KoodiV1RDTO createCode(String uri) {
