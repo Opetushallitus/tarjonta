@@ -316,18 +316,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     .build();
         }
 
-        /** Permission service checks currently fail in 5% of the cases due to data model issues, which is why this is
-         *  not used in production.
-         */
-        if (Lists.newArrayList("itest-virkailija.oph.ware.fi", "testi.virkailija.opintopolku.fi").contains(HOST_VIRKAILIJA)) {
-            try {
-                koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
-            } catch (KoulutusPermissionException e) {
-                return Response
-                        .status(Response.Status.BAD_REQUEST)
-                        .entity(create(ERROR, null, createValidationError("koulutusPermission", "koulutusNotAllowedForOrganization." + e.getKoodisto())))
-                        .build();
-            }
+        try {
+            koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
+        } catch (KoulutusPermissionException e) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity(create(ERROR, null, createValidationError("koulutusPermission", "koulutusNotAllowedForOrganization." + e.getKoodisto())))
+                    .build();
         }
 
         if (dto.getClass() == KoulutusKorkeakouluV1RDTO.class) {
