@@ -22,6 +22,7 @@ public class HakukohdePerustieto implements Serializable {
     private Integer koulutuksenAlkamisvuosi;
     private KoodistoKoodi hakutapakoodi;
     private String tarjoajaOid;
+    private List<String> organisaatioOids;
     private String hakuOid;
     private Nimi tarjoajaNimi = new Nimi();
     private Date hakuAlkamisPvm;
@@ -38,6 +39,14 @@ public class HakukohdePerustieto implements Serializable {
     private String hakuaikaString;
     private String hakuaikaRyhma;
     private Integer ensikertalaistenAloituspaikat;
+
+    public List<String> getOrganisaatioOids() {
+        return organisaatioOids;
+    }
+
+    public void setOrganisaatioOids(List<String> organisaatioOids) {
+        this.organisaatioOids = organisaatioOids;
+    }
 
     public String getToteutustyyppi() {
         return toteutustyyppi;
