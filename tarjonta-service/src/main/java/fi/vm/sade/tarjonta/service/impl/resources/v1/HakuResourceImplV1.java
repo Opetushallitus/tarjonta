@@ -953,6 +953,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         rdto.setHakukohdeOid(hakukohde.getOid());
         rdto.setHakukohdeTila(hakukohde.getTila() != null ? hakukohde.getTila().name() : null);
         rdto.setOpetuskielet(tulos.getOpetuskielet());
+        rdto.setOrganisaatioOids(hakukohde.getOrganisaatioOids());
         results.add(rdto);
     }
 
