@@ -82,7 +82,7 @@ public class SolrDocumentToHakukohdeConverter {
         if (hakukohdeDoc.getFieldValue(SolrFields.Hakukohde.ORG_OID) != null) {
 
             ArrayList<String> orgOidCandidates = (ArrayList<String>) hakukohdeDoc.getFieldValue(SolrFields.Hakukohde.ORG_OID);
-
+            hakukohde.setOrganisaatioOids(orgOidCandidates);
             // If query param for organization -> try to find matching organization in Solr doc
             if (defaultTarjoaja != null) {
                 for (String tmpOrgOid : orgOidCandidates) {
