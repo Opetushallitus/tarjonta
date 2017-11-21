@@ -34,8 +34,16 @@ public class HakukohdeNimiV1RDTO implements Serializable {
 
     private Map<String, String> hakuKausi;
     private Map<String, String> koulutusKausi;
-
+    private List<String> organisaatioOids;
     private List<String> opetuskielet;
+
+    public List<String> getOrganisaatioOids() {
+        return organisaatioOids;
+    }
+
+    public void setOrganisaatioOids(List<String> organisaatioOids) {
+        this.organisaatioOids = organisaatioOids;
+    }
 
     public String getTarjoajaOid() {
         return tarjoajaOid;
