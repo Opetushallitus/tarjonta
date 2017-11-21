@@ -10,8 +10,10 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.service.types.common.KoodistoItemType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
+import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.model.KoulutusPermission;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
@@ -81,6 +83,9 @@ public class AmmatillinenPerustutkintoV1Test {
 
     @Autowired
     KoulutusmoduuliDAO koulutusmoduuliDAO;
+
+    @Autowired
+    protected KoulutusPermissionDAO koulutusPermissionDAO;
 
     @Autowired
     KoodiService koodiService;
@@ -188,6 +193,13 @@ public class AmmatillinenPerustutkintoV1Test {
     @Test
     @Transactional
     public void testCreateFailsWhenDuplicateKomotoExists() throws OIDCreationException {
+        KoulutusPermission koulutusPermission = new KoulutusPermission(TARJOAJA1, "koulutus", "koulutus_x", null, null);
+        koulutusPermissionDAO.insert(koulutusPermission);
+        KoulutusPermission osaamisalaPermission = new KoulutusPermission(TARJOAJA1, "osaamisala", "osaamisala_x", null, null);
+        koulutusPermissionDAO.insert(osaamisalaPermission);
+        KoulutusPermission kieliPermission = new KoulutusPermission(TARJOAJA1, "kieli", "kieli_fi", null, null);
+        koulutusPermissionDAO.insert(kieliPermission);
+
         final String komoto1Oid = oidServiceMock.getOid();
         when(oidService.get(TarjontaOidType.KOMOTO))
                 .thenReturn(komoto1Oid)
