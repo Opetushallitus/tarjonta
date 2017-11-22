@@ -79,6 +79,7 @@ public class SolrDocumentToHakukohdeConverter {
         hakukohde.setHakutyyppiUri("" + hakukohdeDoc.getFieldValue(HAKUTYYPPI_URI));
         hakukohde.setTila(IndexDataUtils.createTila(hakukohdeDoc));
 
+        hakukohde.setKoulutusOids((ArrayList<String>)hakukohdeDoc.getFieldValue(SolrFields.Hakukohde.KOULUTUS_OIDS));
         if (hakukohdeDoc.getFieldValue(SolrFields.Hakukohde.ORG_OID) != null) {
 
             ArrayList<String> orgOidCandidates = (ArrayList<String>) hakukohdeDoc.getFieldValue(SolrFields.Hakukohde.ORG_OID);
