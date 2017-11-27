@@ -17,8 +17,17 @@ public class HakukohdeHakutulosV1RDTO extends KoulutusHakutulosV1RDTO {
     private Integer aloituspaikat;
     private Integer valintojenAloituspaikat;
     private String hakuOid;
+    private String koodistoNimi;
     private List<RyhmaliitosV1RDTO> ryhmaliitokset = new ArrayList<RyhmaliitosV1RDTO>();
     private Integer ensikertalaistenAloituspaikat;
+
+    public String getKoodistoNimi() {
+        return koodistoNimi;
+    }
+
+    public void setKoodistoNimi(String koodistoNimi) {
+        this.koodistoNimi = koodistoNimi;
+    }
 
     public Map<String, String> getHakutapa() {
         return hakutapa;
