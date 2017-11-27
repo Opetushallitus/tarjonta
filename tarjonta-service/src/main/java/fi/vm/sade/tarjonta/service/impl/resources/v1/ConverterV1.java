@@ -1945,6 +1945,7 @@ public class ConverterV1 {
         if (hakukohdePerustieto.getPohjakoulutusvaatimus() != null) {
             dto.setPohjakoulutusvaatimus(hakukohdePerustieto.getPohjakoulutusvaatimus().getNimi());
         }
+        dto.setKoodistoNimi(hakukohdePerustieto.getKoodistoNimi());
         return dto;
     }
 
