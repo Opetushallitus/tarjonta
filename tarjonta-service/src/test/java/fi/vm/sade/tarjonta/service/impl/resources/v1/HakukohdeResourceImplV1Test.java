@@ -6,17 +6,21 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusTarjoajaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KorkeakouluOpintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.shared.ParameterServices;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.StringUtils;
@@ -30,8 +34,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages.HAKUKOHDE_HAKU_MISSING;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_MISSING;
@@ -63,7 +66,15 @@ public class HakukohdeResourceImplV1Test {
     @Autowired
     OidServiceMock oidServiceMock;
 
+    @Autowired
+    private HakukohdeDAO hakukohdeDAO;
+
+    @Autowired
+    private ParameterServices parameterServices;
+
     private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+
+    private String hakukohdeOid = "hakukohde_oid";
 
     @Test
     public void testCreateOpintokokonaisuusHakukohdeFailsWhenMissingRequiredData() throws OIDCreationException {
@@ -115,6 +126,82 @@ public class HakukohdeResourceImplV1Test {
         assertEquals(oid, result.getResult().getOid());
         assertEquals(hakukohde.getUniqueExternalId(), result.getResult().getUniqueExternalId());
         assertEquals(hakukohde.getAloituspaikatLkm(), result.getResult().getAloituspaikatLkm());
+    }
+
+    @Test
+    public void testLisaaKoulutusToHakukohde() throws OIDCreationException {
+        String oid = oidServiceMock.getOid();
+        when(oidService.get(TarjontaOidType.HAKUKOHDE)).thenReturn(oid);
+
+        HakukohdeV1RDTO hakukohdeRdto = mockAndInsertBetterHakukohde();
+        KoulutusV1RDTO koulutus = koulutusResourceTest.insertLuonnosOpintokokonaisuus(null);
+        hakukohdeRdto.setHakukohdeKoulutusOids(Lists.newArrayList(koulutus.getOid()));
+
+        // Now modify it
+        KoulutusTarjoajaV1RDTO koulutusTarjoaja = new KoulutusTarjoajaV1RDTO();
+        koulutusTarjoaja.setOid(koulutus.getOid());
+        String tarjoajaOid = koulutus.getOpetusTarjoajat().iterator().next();
+        koulutusTarjoaja.setTarjoajaOid(tarjoajaOid);
+        ResultV1RDTO<List<String>> result = hakukohdeV1Resource.lisaaKoulutuksesToHakukohde(hakukohdeOid, Arrays.asList(koulutusTarjoaja), request);
+
+        System.out.println(result.toString());
+        assertEquals(OK, result.getStatus());
+    }
+
+    @Test
+    public void testLisaaKoulutusToHakukohdeWithExistingHakukohde() throws OIDCreationException {
+        String oid = oidServiceMock.getOid();
+        when(oidService.get(TarjontaOidType.HAKUKOHDE)).thenReturn(oid);
+
+        HakukohdeV1RDTO hakukohdeRdto = mockAndInsertBetterHakukohde();
+        KoulutusV1RDTO koulutus = koulutusResourceTest.insertLuonnosOpintokokonaisuus(null);
+        hakukohdeRdto.setHakukohdeKoulutusOids(Lists.newArrayList(koulutus.getOid()));
+
+        // Now modify it
+        String tarjoajaOid = koulutus.getOpetusTarjoajat().iterator().next();
+
+        KoulutusTarjoajaV1RDTO koulutusTarjoaja1 = new KoulutusTarjoajaV1RDTO();
+        koulutusTarjoaja1.setOid(koulutus.getOid());
+        koulutusTarjoaja1.setTarjoajaOid(tarjoajaOid);
+        ResultV1RDTO<List<String>> result = hakukohdeV1Resource.lisaaKoulutuksesToHakukohde(hakukohdeOid, Arrays.asList(koulutusTarjoaja1), request);
+
+        assertEquals(OK, result.getStatus());
+
+        // Now modify it again
+        KoulutusTarjoajaV1RDTO koulutusTarjoaja2 = new KoulutusTarjoajaV1RDTO();
+        koulutusTarjoaja2.setOid(koulutus.getOid());
+        koulutusTarjoaja2.setTarjoajaOid(tarjoajaOid);
+        ResultV1RDTO<List<String>> result2 = hakukohdeV1Resource.lisaaKoulutuksesToHakukohde(hakukohdeOid, Arrays.asList(koulutusTarjoaja2), request);
+
+        assertEquals(OK, result2.getStatus());
+    }
+
+    @Test
+    public void testLisaaKoulutusToHakukohdeFailsWhenMultipleTarjoajas() throws OIDCreationException {
+        String oid = oidServiceMock.getOid();
+        when(oidService.get(TarjontaOidType.HAKUKOHDE)).thenReturn(oid);
+
+        HakukohdeV1RDTO hakukohdeRdto = mockAndInsertBetterHakukohde();
+        KoulutusV1RDTO koulutus = koulutusResourceTest.insertLuonnosOpintokokonaisuus(null);
+        hakukohdeRdto.setHakukohdeKoulutusOids(Lists.newArrayList(koulutus.getOid()));
+
+        // Now modify it
+        KoulutusTarjoajaV1RDTO koulutusTarjoaja1 = new KoulutusTarjoajaV1RDTO();
+        koulutusTarjoaja1.setOid(koulutus.getOid());
+        String tarjoajaOid = koulutus.getOpetusTarjoajat().iterator().next();
+        koulutusTarjoaja1.setTarjoajaOid(tarjoajaOid);
+        ResultV1RDTO<List<String>> result = hakukohdeV1Resource.lisaaKoulutuksesToHakukohde(hakukohdeOid, Arrays.asList(koulutusTarjoaja1), request);
+
+        System.out.println(result.toString());
+        assertEquals(OK, result.getStatus());
+
+        // Now modify it again
+        KoulutusTarjoajaV1RDTO koulutusTarjoaja2 = new KoulutusTarjoajaV1RDTO();
+        koulutusTarjoaja2.setOid(koulutus.getOid());
+        koulutusTarjoaja2.setTarjoajaOid("1.2.9");
+        ResultV1RDTO<List<String>> result2 = hakukohdeV1Resource.lisaaKoulutuksesToHakukohde(hakukohdeOid, Arrays.asList(koulutusTarjoaja2), request);
+
+        assertEquals(VALIDATION, result2.getStatus());
     }
 
     @Test
@@ -177,6 +264,29 @@ public class HakukohdeResourceImplV1Test {
         dto.setTila(TarjontaTila.LUONNOS);
         return dto;
     }
+
+    public HakukohdeV1RDTO mockAndInsertBetterHakukohde() {
+        HakukohdeV1RDTO dto = new HakukohdeV1RDTO();
+        dto.setTila(TarjontaTila.LUONNOS);
+        dto.setOid(hakukohdeOid);
+
+        Haku haku = insertHaku();
+        dto.setHakuOid(haku.getOid());
+        Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setOid(hakukohdeOid);
+        hakukohde.setHaku(haku);
+
+        hakukohdeDAO.insert(hakukohde);
+        Mockito.stub(parameterServices.parameterCanAddHakukohdeToHaku(haku.getOid())).toReturn(true);
+
+        // Create hakukohde
+        hakukohdeV1Resource.postHakukohde(dto, request);
+
+        dto.setHakukohteenNimet(ImmutableMap.of("kieli_fi", "hakukohteen nimi"));
+        dto.setUniqueExternalId("someUniqueExternalId");
+        return dto;
+    }
+
 
     private Haku insertHaku() {
         Haku haku = new Haku();
