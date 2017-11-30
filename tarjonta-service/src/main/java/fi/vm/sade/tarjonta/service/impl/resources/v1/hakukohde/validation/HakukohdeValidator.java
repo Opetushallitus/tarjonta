@@ -300,7 +300,16 @@ public class HakukohdeValidator {
         return Lists.newArrayList();
     }
 
-    public List<HakukohdeValidationMessages> checkTarjoajasAllMatch(Hakukohde hakukohde, Collection<KoulutusTarjoajaV1RDTO> koulutusTarjoajas) {
+    public List<HakukohdeValidationMessages> checkTarjoajat(Hakukohde hakukohde, Collection<KoulutusTarjoajaV1RDTO> koulutusTarjoajas) {
+        // tarkistetaan että pyynnössä annetut tarjoajat löytyvät komotolta
+        boolean tarjoajasFoundInKomotos = koulutusTarjoajas.stream().allMatch(komotoTarjoaja -> {
+                Set<String> tarjoajaOidsInKomoto = koulutusmoduuliToteutusDAO.findKomotoByOid(komotoTarjoaja.getOid()).getTarjoajaOids();
+                String tarjoajaOidFromParameter = komotoTarjoaja.getTarjoajaOid();
+                return tarjoajaOidsInKomoto.contains(tarjoajaOidFromParameter);
+        });
+
+        // Tarkistetaan ettei useita eri tarjoajia. Verrataan uusien koulutusten tarjoajia toisiinsa, sekä olemassaolevien
+        // koulutusten tarjoajiin. Ei verrata tässä olemassaolevia toisiinsa, vaan korjataan vanhat datavirheet kantaan.
         List<String> existingOids = hakukohde.getKoulutusmoduuliToteutuses().stream()
                 .map(k -> k.getTarjoaja())
                 .collect(Collectors.toList());
@@ -308,11 +317,9 @@ public class HakukohdeValidator {
                 .map(k -> k.getTarjoajaOid())
                 .collect(Collectors.toList());
 
-        // Verrataan uusien koulutuksen tarjoajia toisiinsa, sekä olemassaolevien koulutusten tarjoajiin.
-        // Ei verrata tässä olemassaolevia toisiinsa, vaan korjataan vanhat datavirheet kantaan.
         boolean newOidsMatchEachOther = newOids.size() == 1;
-        boolean newOidMatchesWithOld = existingOids.isEmpty() || existingOids.contains(newOids.get(0));
-        boolean isValid = newOidsMatchEachOther && newOidMatchesWithOld;
+        boolean newOidsMatchExisting = existingOids.isEmpty() || existingOids.contains(newOids.get(0));
+        boolean isValid = tarjoajasFoundInKomotos && newOidsMatchEachOther && newOidsMatchExisting;
 
         if (!isValid) {
             return Lists.newArrayList(HakukohdeValidationMessages.KOMOTO_ERI_TARJOAJAT);
