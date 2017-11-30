@@ -1190,7 +1190,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohde.getOid());
 
         List<HakukohdeValidationMessages> validationMessages = hakukohdeValidator.checkKoulutukset(getKomotoOids(koulutukses));
-        validationMessages.addAll(hakukohdeValidator.checkTarjoajasAllMatch(hakukohde, koulutukses));
+        validationMessages.addAll(hakukohdeValidator.checkTarjoajat(hakukohde, koulutukses));
 
         if (validationMessages.size() > 0) {
             return populateValidationErrors(null, validationMessages);
