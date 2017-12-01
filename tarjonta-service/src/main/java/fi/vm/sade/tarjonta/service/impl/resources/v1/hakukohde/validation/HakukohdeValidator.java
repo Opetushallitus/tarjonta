@@ -313,15 +313,16 @@ public class HakukohdeValidator {
         List<String> existingOids = hakukohde.getKoulutusmoduuliToteutuses().stream()
                 .map(k -> k.getTarjoaja())
                 .collect(Collectors.toList());
-        List<String> newOids = koulutusTarjoajas.stream()
+        Set<String> newOidsSet = koulutusTarjoajas.stream()
                 .map(k -> k.getTarjoajaOid())
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
-        boolean newOidsMatchEachOther = newOids.size() == 1;
-        boolean newOidsMatchExisting = existingOids.isEmpty() || existingOids.contains(newOids.get(0));
-        boolean isValid = tarjoajasFoundInKomotos && newOidsMatchEachOther && newOidsMatchExisting;
+        boolean newOidsMatchEachOther = newOidsSet.size() == 1;
+        boolean newOidsMatchExisting = existingOids.isEmpty() || existingOids.contains(newOidsSet.iterator().next());
 
-        if (!isValid) {
+        if (!tarjoajasFoundInKomotos) {
+            return Lists.newArrayList(HakukohdeValidationMessages.KOMOTO_VIRHEELLINEN_TARJOAJA);
+        } else if (!newOidsMatchEachOther || !newOidsMatchExisting) {
             return Lists.newArrayList(HakukohdeValidationMessages.KOMOTO_ERI_TARJOAJAT);
         } else {
             return Lists.newArrayList();
