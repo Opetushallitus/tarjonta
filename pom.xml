@@ -102,7 +102,6 @@
     <organisaatio.api.version>2015-13</organisaatio.api.version>
     <organisaatio.solr.version>13.0</organisaatio.solr.version>
     <paranamer.version>2.5.2</paranamer.version>
-    <poi.version>3.8</poi.version>
     <postgresql.version>42.1.4</postgresql.version>
     <powermock.version>1.4.12</powermock.version>
     <properties-maven-plugin.version>1.0-alpha-2</properties-maven-plugin.version>
