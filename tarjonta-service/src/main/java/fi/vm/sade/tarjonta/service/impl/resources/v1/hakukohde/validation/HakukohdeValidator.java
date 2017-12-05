@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class HakukohdeValidator {
@@ -296,7 +297,36 @@ public class HakukohdeValidator {
             }
         }
 
-        return Collections.EMPTY_LIST;
+        return Lists.newArrayList();
+    }
+
+    public List<HakukohdeValidationMessages> checkTarjoajat(Hakukohde hakukohde, Collection<KoulutusTarjoajaV1RDTO> koulutusTarjoajas) {
+        // tarkistetaan että pyynnössä annetut tarjoajat löytyvät komotolta
+        boolean tarjoajasFoundInKomotos = koulutusTarjoajas.stream().allMatch(komotoTarjoaja -> {
+                Set<String> tarjoajaOidsInKomoto = koulutusmoduuliToteutusDAO.findKomotoByOid(komotoTarjoaja.getOid()).getTarjoajaOids();
+                String tarjoajaOidFromParameter = komotoTarjoaja.getTarjoajaOid();
+                return tarjoajaOidsInKomoto.contains(tarjoajaOidFromParameter);
+        });
+
+        // Tarkistetaan ettei useita eri tarjoajia. Verrataan uusien koulutusten tarjoajia toisiinsa, sekä olemassaolevien
+        // koulutusten tarjoajiin. Ei verrata tässä olemassaolevia toisiinsa, vaan korjataan vanhat datavirheet kantaan.
+        List<String> existingOids = hakukohde.getKoulutusmoduuliToteutuses().stream()
+                .map(k -> k.getTarjoaja())
+                .collect(Collectors.toList());
+        Set<String> newOidsSet = koulutusTarjoajas.stream()
+                .map(k -> k.getTarjoajaOid())
+                .collect(Collectors.toSet());
+
+        boolean newOidsMatchEachOther = newOidsSet.size() == 1;
+        boolean newOidsMatchExisting = existingOids.isEmpty() || existingOids.contains(newOidsSet.iterator().next());
+
+        if (!tarjoajasFoundInKomotos) {
+            return Lists.newArrayList(HakukohdeValidationMessages.KOMOTO_VIRHEELLINEN_TARJOAJA);
+        } else if (!newOidsMatchEachOther || !newOidsMatchExisting) {
+            return Lists.newArrayList(HakukohdeValidationMessages.KOMOTO_ERI_TARJOAJAT);
+        } else {
+            return Lists.newArrayList();
+        }
     }
 
     public List<HakukohdeValidationMessages> validateLiite(HakukohdeLiiteV1RDTO liite, boolean validateToimitettavaMennessa) {
