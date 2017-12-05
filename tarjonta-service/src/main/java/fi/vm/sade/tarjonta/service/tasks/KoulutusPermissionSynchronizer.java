@@ -105,6 +105,14 @@ public class KoulutusPermissionSynchronizer {
     public void checkExistingKoulutus() {
         LOG.info("Amkoute: check existing koulutus start");
 
+        Map<String, List<KoulutusPermissionException>> orgsWithInvalidKomotos = getOrgsWithInvalidKomotos();
+
+        if (!orgsWithInvalidKomotos.isEmpty()) {
+            sendMail(orgsWithInvalidKomotos);
+        }
+    }
+
+    public Map<String, List<KoulutusPermissionException>> getOrgsWithInvalidKomotos() {
         List<ToteutustyyppiEnum> tyyppis = KoulutusPermissionService.getToteustustyyppisToCheckPermissionFor();
         List<KoulutusmoduuliToteutus> komotos;
         Map<String, List<KoulutusPermissionException>> orgsWithInvalidKomotos = new HashMap<>();
@@ -130,11 +138,8 @@ public class KoulutusPermissionSynchronizer {
             }
         } while (!komotos.isEmpty());
 
-        if (!orgsWithInvalidKomotos.isEmpty()) {
-            sendMail(orgsWithInvalidKomotos);
-        }
+        return orgsWithInvalidKomotos;
     }
-
     private void sendMail(Map<String, List<KoulutusPermissionException>> orgsWithInvalidKomotos) {
         String subject = "Tarjonnasta löydetty koulutuksia ilman järjestämisoikeutta";
         String body = "Tarjonnasta löytyi seuraavat koulutukset, joilta puuttuu järjestämisoikeus:\n\n";
