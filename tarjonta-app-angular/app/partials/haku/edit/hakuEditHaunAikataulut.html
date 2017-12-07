@@ -91,6 +91,21 @@
             <td colspan="2"><t-show-date value="hakuaika.alkuPvm"></t-show-date> &rarr; <t-show-date value="hakuaika.loppuPvm"></t-show-date></td>
         </tr>
 
+        <tr>
+            <th tt="haku.edit.aikataulut.PH_LMT">Liitteiden muokkauksen takaraja</th>
+            <td>
+                <input id="PH_LMT_input"
+                       type="number"
+                       name="PH_LMT"
+                       class="input-small"
+                       ng-model="model.parameter.PH_LMT.value" />
+                <label for="PH_LMT_input"
+                       tt="haku.edit.aikataulu.PH_LMT.help">
+                    vuorokautta hakuajan päättymisestä
+                </label>
+            </td>
+        </tr>
+
     </table>
 </div><!-- /commmon parameters -->
 

@@ -563,6 +563,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             config: Config.env
         };
         $scope.model = model;
+        $scope.model.parameter.PH_LMT = {value: 14};
         $scope.model.parentHakuCandidates = [];
         // Update UI state for radio buttons on load
         $scope.updatedHakulomakeSelectionFromModelToUI();
