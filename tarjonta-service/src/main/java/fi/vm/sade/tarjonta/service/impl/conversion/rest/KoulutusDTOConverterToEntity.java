@@ -300,7 +300,7 @@ public class KoulutusDTOConverterToEntity {
             komoto.setTutkintonimikeUri(commonConverter.convertToUri(((Koulutus2AsteV1RDTO) dto).getTutkintonimike(), FieldNames.TUTKINTONIMIKE));
         }
 
-        if (dto instanceof KoulutusAmmatillinenPerustutkintoV1RDTO) {
+        if (dto instanceof KoulutusAmmatillinenPerustutkintoV1RDTO || dto instanceof KoulutusAmmatillinenPerustutkintoAlk2018V1RDTO) {
             KoulutusAmmatillinenPerustutkintoV1RDTO amisDto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dto;
             if (amisDto.getTutkintonimikes() != null) {
                 komoto.setTutkintonimikes(commonConverter.convertToUris(
