@@ -300,15 +300,21 @@ public class KoulutusDTOConverterToEntity {
             komoto.setTutkintonimikeUri(commonConverter.convertToUri(((Koulutus2AsteV1RDTO) dto).getTutkintonimike(), FieldNames.TUTKINTONIMIKE));
         }
 
-        if (dto instanceof KoulutusAmmatillinenPerustutkintoV1RDTO || dto instanceof KoulutusAmmatillinenPerustutkintoAlk2018V1RDTO) {
+        KoodiUrisV1RDTO nimikes = null;
+        if (dto instanceof KoulutusAmmatillinenPerustutkintoV1RDTO) {
             KoulutusAmmatillinenPerustutkintoV1RDTO amisDto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dto;
-            if (amisDto.getTutkintonimikes() != null) {
-                komoto.setTutkintonimikes(commonConverter.convertToUris(
-                        amisDto.getTutkintonimikes(),
-                        null,
-                        FieldNames.TUTKINTONIMIKE
-                ));
-            }
+            nimikes = amisDto.getTutkintonimikes();
+        } else if(dto instanceof KoulutusAmmatillinenPerustutkintoAlk2018V1RDTO){
+            KoulutusAmmatillinenPerustutkintoAlk2018V1RDTO amisDto = (KoulutusAmmatillinenPerustutkintoAlk2018V1RDTO) dto;
+            nimikes = amisDto.getTutkintonimikes();
+        }
+
+        if (nimikes != null) {
+            komoto.setTutkintonimikes(commonConverter.convertToUris(
+                    nimikes,
+                    null,
+                    FieldNames.TUTKINTONIMIKE
+            ));
         }
 
         if(!ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018.equals(dto.getToteutustyyppi())) {
