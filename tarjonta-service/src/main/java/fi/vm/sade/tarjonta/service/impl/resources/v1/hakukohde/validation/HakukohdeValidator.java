@@ -603,10 +603,14 @@ public class HakukohdeValidator {
                 } else if (!isEqualKoodistoKoodiUri(kp.getKoulutuksenAlkamiskausi(), o.getKoulutuksenAlkamiskausi())) {
                     //koulutus koodi must be same
                     createError(kp.getKomotoOid(), o.getKomotoOid(), oidToConflictinOidsMap, errorMessageToOidsMap, HakukohdeValidationMessages.KOMOTO_KAUSI_URI);
-                } else if (kp.getToteutustyyppi().isToisenAsteenKoulutus() && !kp.getTarjoaja().getOid().equals(o.getTarjoaja().getOid())) {
-                    createError(kp.getKomotoOid(), o.getKomotoOid(), oidToConflictinOidsMap, errorMessageToOidsMap, HakukohdeValidationMessages.KOMOTO_ERI_TARJOAJAT);
-                } else if (kp.getToteutustyyppi().isToisenAsteenKoulutus() && !isEqualKoodistoKoodiUri(kp.getPohjakoulutusvaatimus(), o.getPohjakoulutusvaatimus())) {
-                    createError(kp.getKomotoOid(), o.getKomotoOid(), oidToConflictinOidsMap, errorMessageToOidsMap, HakukohdeValidationMessages.KOMOTO_ERI_POHJAKOULUTUSVAATIMUKSET);
+                } else if (kp.getToteutustyyppi().isToisenAsteenKoulutus()){
+                    if(!kp.getTarjoaja().getOid().equals(o.getTarjoaja().getOid())) {
+                        createError(kp.getKomotoOid(), o.getKomotoOid(), oidToConflictinOidsMap, errorMessageToOidsMap, HakukohdeValidationMessages.KOMOTO_ERI_TARJOAJAT);
+                    } else if(kp.getToteutustyyppi() != ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018 && !isEqualKoodistoKoodiUri(kp.getPohjakoulutusvaatimus(), o.getPohjakoulutusvaatimus())) {
+                        createError(kp.getKomotoOid(), o.getKomotoOid(), oidToConflictinOidsMap, errorMessageToOidsMap, HakukohdeValidationMessages.KOMOTO_ERI_POHJAKOULUTUSVAATIMUKSET);
+                    } else if (kp.getToteutustyyppi() == ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018 && !isEqualOrNullKoodistoKoodiUri(kp.getPohjakoulutusvaatimus(), o.getPohjakoulutusvaatimus())) {
+                        createError(kp.getKomotoOid(), o.getKomotoOid(), oidToConflictinOidsMap, errorMessageToOidsMap, HakukohdeValidationMessages.KOMOTO_ERI_POHJAKOULUTUSVAATIMUKSET);
+                    }
                 }
             }
         }
@@ -669,6 +673,10 @@ public class HakukohdeValidator {
                 && koodi2.getUri() != null
                 && TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(koodi1.getUri()).equals(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(koodi2.getUri()));
 
+    }
+
+    private boolean isEqualOrNullKoodistoKoodiUri(KoodistoKoodi koodi1, KoodistoKoodi koodi2) {
+        return (koodi1 == null && koodi2 == null) || isEqualKoodistoKoodiUri(koodi1, koodi2);
     }
 
 }

@@ -13,6 +13,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.service.search.KoodistoKoodi;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
+import fi.vm.sade.tarjonta.service.search.Tarjoaja;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.junit.Before;
@@ -114,6 +115,123 @@ public class HakukohdeValidatorTest extends TestMockBase {
         assertEquals("hakukohde.luonti.virhe.koulutus", dto.getErrors().get(0).getErrorMessageKey());
         assertEquals(3, result.size());
         assertEquals(2, result.get(KOMOTO_OID3).size());
+        assertEquals(1, result.get(KOMOTO_OID2).size());
+        assertEquals(1, result.get(KOMOTO_OID1).size());
+
+    }
+
+    @Test
+    public void testIsValidKomotoPohjakoulutusTarjoajaKoulutus() {
+        KoulutuksetVastaus kv = new KoulutuksetVastaus();
+
+        List<KoulutusPerustieto> list = Lists.newArrayList();
+        Tarjoaja tarjoaja = new Tarjoaja();
+        tarjoaja.setOid("t1");
+        Tarjoaja tarjoaja2 = new Tarjoaja();
+        tarjoaja2.setOid("t2");
+
+        KoulutusPerustieto kp1 = perustieto(KOMOTO_OID1, ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018, KOULUTUS_A, VUOSI_2014, KAUSI_K);
+        kp1.setPohjakoulutusvaatimus(null);
+        kp1.setTarjoaja(tarjoaja);
+        list.add(kp1);
+        KoulutusPerustieto kp2 = perustieto(KOMOTO_OID2, ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018, KOULUTUS_A, VUOSI_2014, KAUSI_K);
+        kp2.setPohjakoulutusvaatimus(null);
+        kp2.setTarjoaja(tarjoaja);
+        list.add(kp2);
+        kv.setKoulutukset(list);
+
+        ResultV1RDTO<ValitutKoulutuksetV1RDTO> dto = hakukohdeValidator.getValidKomotoSelection(kv);
+        Map<String, Set<String>> result = dto.getResult().getOidConflictingWithOids();
+
+        assertEquals(null, dto.getErrors());
+        assertEquals(2, result.size());
+        assertEquals(true, result.get(KOMOTO_OID1).isEmpty());
+        assertEquals(true, result.get(KOMOTO_OID2).isEmpty());
+
+        // another success
+        list.clear();
+
+        KoodistoKoodi kk1 = new KoodistoKoodi("yksi");
+        kp1.setPohjakoulutusvaatimus(kk1);
+        KoodistoKoodi kk2 = new KoodistoKoodi("yksi");
+        kp2.setPohjakoulutusvaatimus(kk2);
+
+        list.add(kp1);
+        list.add(kp2);
+
+        kv.setKoulutukset(list);
+        dto = hakukohdeValidator.getValidKomotoSelection(kv);
+        result = dto.getResult().getOidConflictingWithOids();
+
+        assertEquals(null, dto.getErrors());
+        assertEquals(2, result.size());
+        assertEquals(true, result.get(KOMOTO_OID1).isEmpty());
+        assertEquals(true, result.get(KOMOTO_OID2).isEmpty());
+
+        // then error
+        list.clear();
+
+        kp1 = perustieto(KOMOTO_OID1, ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO, KOULUTUS_A, VUOSI_2014, KAUSI_K);
+        kp1.setPohjakoulutusvaatimus(null);
+        kp1.setTarjoaja(tarjoaja);
+        list.add(kp1);
+        kp2 = perustieto(KOMOTO_OID2, ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO, KOULUTUS_A, VUOSI_2014, KAUSI_K);
+        kp2.setPohjakoulutusvaatimus(null);
+        kp2.setTarjoaja(tarjoaja);
+        list.add(kp2);
+
+        kv.setKoulutukset(list);
+        dto = hakukohdeValidator.getValidKomotoSelection(kv);
+        result = dto.getResult().getOidConflictingWithOids();
+
+        assertEquals(ResultStatus.ERROR, dto.getStatus());
+        assertEquals(1, dto.getErrors().size());
+        assertEquals("hakukohde.luonti.virhe.pohjakoulutusvaatimus", dto.getErrors().get(0).getErrorMessageKey());
+        assertEquals(2, result.size());
+        assertEquals(1, result.get(KOMOTO_OID2).size());
+        assertEquals(1, result.get(KOMOTO_OID1).size());
+
+        // then another error
+        list.clear();
+
+        kk1 = new KoodistoKoodi("yksi");
+        kp1.setPohjakoulutusvaatimus(kk1);
+        list.add(kp1);
+        kk2 = new KoodistoKoodi("kaksi");
+        kp2.setPohjakoulutusvaatimus(kk2);
+        list.add(kp2);
+
+        kv.setKoulutukset(list);
+        dto = hakukohdeValidator.getValidKomotoSelection(kv);
+        result = dto.getResult().getOidConflictingWithOids();
+
+        assertEquals(ResultStatus.ERROR, dto.getStatus());
+        assertEquals(1, dto.getErrors().size());
+        assertEquals("hakukohde.luonti.virhe.pohjakoulutusvaatimus", dto.getErrors().get(0).getErrorMessageKey());
+        assertEquals(2, result.size());
+        assertEquals(1, result.get(KOMOTO_OID2).size());
+        assertEquals(1, result.get(KOMOTO_OID1).size());
+
+        // ----------- tarjoaja error
+        list.clear();
+
+        kk1 = new KoodistoKoodi("yksi");
+        kp1.setPohjakoulutusvaatimus(kk1);
+        kp1.setTarjoaja(tarjoaja);
+        list.add(kp1);
+        kk2 = new KoodistoKoodi("yksi");
+        kp2.setPohjakoulutusvaatimus(kk2);
+        kp2.setTarjoaja(tarjoaja2);
+        list.add(kp2);
+
+        kv.setKoulutukset(list);
+        dto = hakukohdeValidator.getValidKomotoSelection(kv);
+        result = dto.getResult().getOidConflictingWithOids();
+
+        assertEquals(ResultStatus.ERROR, dto.getStatus());
+        assertEquals(1, dto.getErrors().size());
+        assertEquals("hakukohde.luonti.virhe.tarjoaja", dto.getErrors().get(0).getErrorMessageKey());
+        assertEquals(2, result.size());
         assertEquals(1, result.get(KOMOTO_OID2).size());
         assertEquals(1, result.get(KOMOTO_OID1).size());
 
