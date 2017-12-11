@@ -1012,7 +1012,7 @@ app.controller('HakukohdeParentController', [
         };
         $scope.setDirtyListener();
         $scope.handleKaksoistutkintoCheckbox = function() {
-            if ($scope.model.hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO') {
+            if ($scope.model.hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO' || $scope.model.hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO_ALK_2018') {
                 if ($scope.model.hakukohde.isNew) {
                     var koulutusOid = _.first($scope.model.hakukohde.hakukohdeKoulutusOids);
                     TarjontaService.getKoulutusPromise(koulutusOid).then(function(response) {
