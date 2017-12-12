@@ -35,6 +35,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -250,7 +251,7 @@ public class KoulutusCommonConverter {
         } catch (Exception e) {
             LOG.error("Koodisto service error.", e);
         }
-        if (koodiType == null) {
+        if (koodiType == null && !StringUtils.isBlank(type.getKoodiUri())){
             LOG.error("No koodisto service koodi URI found by '{}' and version {}.", type.getKoodiUri(), type.getVersio());
         }
         convertKoodistoMetaData(uiDto, type, koodiType != null ? koodiType.getKoodiArvo() : null, locale, showSubMeta);
@@ -314,7 +315,7 @@ public class KoulutusCommonConverter {
                 }
             }
         } else {
-            LOG.error("Unable to show koodisto koodi metadata.");
+            LOG.debug("Unable to show koodisto koodi metadata.");
         }
     }
 
