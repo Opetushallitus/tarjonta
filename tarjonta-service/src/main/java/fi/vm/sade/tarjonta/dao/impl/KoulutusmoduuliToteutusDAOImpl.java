@@ -108,6 +108,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         Set<ToteutustyyppiEnum> siblingToteutustyyppis = new HashSet<ToteutustyyppiEnum>();
 
         siblingToteutustyyppis.add(AMMATILLINEN_PERUSTUTKINTO);
+        siblingToteutustyyppis.add(AMMATILLINEN_PERUSTUTKINTO_ALK_2018);
         siblingToteutustyyppis.add(AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA);
 
         if (!siblingToteutustyyppis.contains(komoto.getToteutustyyppi())) {
