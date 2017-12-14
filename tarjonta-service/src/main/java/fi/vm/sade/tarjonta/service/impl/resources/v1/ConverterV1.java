@@ -1267,7 +1267,7 @@ public class ConverterV1 {
         t.setPainotettuKeskiarvoHylkaysMin(nolla);
 
         // Kokonaishylkäyksen arvoväli
-        t.setHylkaysMax(hakukohde.getAlinValintaPistemaara() != null ? new BigDecimal(String.valueOf(hakukohde.getAlinValintaPistemaara())) : nolla);
+        t.setHylkaysMax(hakukohde.getAlinValintaPistemaara() > 0 ? new BigDecimal(String.valueOf(hakukohde.getAlinValintaPistemaara())) : nolla);
         t.setHylkaysMin(nolla);
 
         // Valintakokeiden arvovälit
