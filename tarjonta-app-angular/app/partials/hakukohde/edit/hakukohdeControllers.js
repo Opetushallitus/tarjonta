@@ -281,7 +281,7 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             var selectedHaku = _.findWhere(hakuDatas, {oid: $scope.model.hakukohde.hakuOid});
             var kaytettavaKoodisto = 'hakukohteet'; // pk/yo
             // jatkuva haku tai pohjakoulutusER
-            if(selectedHaku.hakutapaUri !== 'hakutapa_01#1' || (pohjakoulutusvaatimus !== undefined && pohjakoulutusvaatimus != null && pohjakoulutusvaatimus.uri == 'pohjakoulutusvaatimustoinenaste_er')){
+            if(selectedHaku.hakutapaUri == 'hakutapa_03#1' || (pohjakoulutusvaatimus !== undefined && pohjakoulutusvaatimus != null && pohjakoulutusvaatimus.uri == 'pohjakoulutusvaatimustoinenaste_er')){
                 // aiku
                 kaytettavaKoodisto = 'aikuhakukohteet';
             }
