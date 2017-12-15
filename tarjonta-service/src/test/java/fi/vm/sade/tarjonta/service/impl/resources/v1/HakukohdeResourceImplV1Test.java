@@ -177,34 +177,6 @@ public class HakukohdeResourceImplV1Test {
     }
 
     @Test
-    public void testLisaaKoulutusToHakukohdeFailsWhenMultipleTarjoajas() throws OIDCreationException {
-        String oid = oidServiceMock.getOid();
-        when(oidService.get(TarjontaOidType.HAKUKOHDE)).thenReturn(oid);
-
-        HakukohdeV1RDTO hakukohdeRdto = mockAndInsertBetterHakukohde();
-        KoulutusV1RDTO koulutus = koulutusResourceTest.insertLuonnosOpintokokonaisuus(null);
-        hakukohdeRdto.setHakukohdeKoulutusOids(Lists.newArrayList(koulutus.getOid()));
-
-        // Now modify it
-        KoulutusTarjoajaV1RDTO koulutusTarjoaja1 = new KoulutusTarjoajaV1RDTO();
-        koulutusTarjoaja1.setOid(koulutus.getOid());
-        String tarjoajaOid = koulutus.getOpetusTarjoajat().iterator().next();
-        koulutusTarjoaja1.setTarjoajaOid(tarjoajaOid);
-        ResultV1RDTO<List<String>> result = hakukohdeV1Resource.lisaaKoulutuksesToHakukohde(hakukohdeOid, Arrays.asList(koulutusTarjoaja1), request);
-
-        System.out.println(result.toString());
-        assertEquals(OK, result.getStatus());
-
-        // Now modify it again
-        KoulutusTarjoajaV1RDTO koulutusTarjoaja2 = new KoulutusTarjoajaV1RDTO();
-        koulutusTarjoaja2.setOid(koulutus.getOid());
-        koulutusTarjoaja2.setTarjoajaOid("1.2.9");
-        ResultV1RDTO<List<String>> result2 = hakukohdeV1Resource.lisaaKoulutuksesToHakukohde(hakukohdeOid, Arrays.asList(koulutusTarjoaja2), request);
-
-        assertEquals(VALIDATION, result2.getStatus());
-    }
-
-    @Test
     public void testCreateOpintokokonaisuusHakukohdeUsingKoulutusExternalId() throws OIDCreationException {
         when(oidService.get(TarjontaOidType.HAKUKOHDE)).thenReturn(oidServiceMock.getOid());
 
