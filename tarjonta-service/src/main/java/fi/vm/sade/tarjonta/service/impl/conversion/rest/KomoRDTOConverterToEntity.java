@@ -166,10 +166,10 @@ public class KomoRDTOConverterToEntity {
         Preconditions.checkNotNull(dto.getTekstis(), "Language map objects cannot be null! Error in field : " + msg);
 
         MonikielinenTeksti mt = new MonikielinenTeksti();
-        for (Entry<String, String> kieliAndText : dto.getTekstis().entrySet()) {
-            koodistoUri.validateKieliUri(kieliAndText.getKey());
-            mt.addTekstiKaannos(kieliAndText.getKey(), kieliAndText.getValue());
-        }
+        dto.getTekstis().forEach((key, value) -> {
+            koodistoUri.validateKieliUri(key);
+            mt.addTekstiKaannos(key, value);
+        });
 
         return mt;
     }

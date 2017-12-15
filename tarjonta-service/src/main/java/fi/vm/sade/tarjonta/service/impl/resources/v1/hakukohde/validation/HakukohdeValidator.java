@@ -639,38 +639,38 @@ public class HakukohdeValidator {
                 }
             }
         }
-        for (Map.Entry<HakukohdeValidationMessages, Set<String>> e : errorMessageToOidsMap.entrySet()) {
-            switch (e.getKey()) {
+        errorMessageToOidsMap.forEach((key, value) -> {
+            switch (key) {
                 case KOMOTO_KOULUTUS_URI:
                     result.addError(ErrorV1RDTO.createValidationError("koulutus", "hakukohde.luonti.virhe.koulutus",
-                            e.getValue().toArray(new String[e.getValue().size()])));
+                            value.toArray(new String[value.size()])));
                     break;
                 case KOMOTO_KOULUTUSTYYPPI_URI:
                     result.addError(ErrorV1RDTO.createValidationError("koulutustyyppi", "hakukohde.luonti.virhe.tyyppi",
-                            e.getValue().toArray(new String[e.getValue().size()])));
+                            value.toArray(new String[value.size()])));
                     break;
                 case KOMOTO_KAUSI_URI:
                     result.addError(ErrorV1RDTO.createValidationError("kausi", "hakukohde.luonti.virhe.kausi",
-                            e.getValue().toArray(new String[e.getValue().size()])));
+                            value.toArray(new String[value.size()])));
                     break;
                 case KOMOTO_VUOSI:
                     result.addError(ErrorV1RDTO.createValidationError("vuosi", "hakukohde.luonti.virhe.vuosi",
-                            e.getValue().toArray(new String[e.getValue().size()])));
+                            value.toArray(new String[value.size()])));
                     break;
                 case KOMOTO_TILA:
                     result.addError(ErrorV1RDTO.createValidationError("tila", "hakukohde.luonti.virhe.tila",
-                            e.getValue().toArray(new String[e.getValue().size()])));
+                            value.toArray(new String[value.size()])));
                     break;
                 case KOMOTO_ERI_TARJOAJAT:
                     result.addError(ErrorV1RDTO.createValidationError("tarjoaja", "hakukohde.luonti.virhe.tarjoaja",
-                            e.getValue().toArray(new String[e.getValue().size()])));
+                            value.toArray(new String[value.size()])));
                     break;
                 case KOMOTO_ERI_POHJAKOULUTUSVAATIMUKSET:
                     result.addError(ErrorV1RDTO.createValidationError("pohjakoulutusvaatimus", "hakukohde.luonti.virhe.pohjakoulutusvaatimus",
-                            e.getValue().toArray(new String[e.getValue().size()])));
+                            value.toArray(new String[value.size()])));
                     break;
             }
-        }
+        });
         dto.setOidConflictingWithOids(oidToConflictinOidsMap);
         result.setResult(dto);
         return result;

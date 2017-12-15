@@ -476,9 +476,9 @@ public class KoulutusCommonConverter {
         }
 
         if (dto.getUris() != null) {
-            for (Map.Entry<String, Integer> uriWithVersion : dto.getUris().entrySet()) {
-                modifiedUris.add(new KoodistoUri(convertToKoodiUri(uriWithVersion.getKey(), uriWithVersion.getValue(), msg)));
-            }
+            dto.getUris().forEach((key, value) ->
+                    modifiedUris.add(new KoodistoUri(convertToKoodiUri(key, value, msg)))
+            );
         }
 
         return modifiedUris;
@@ -542,10 +542,10 @@ public class KoulutusCommonConverter {
         Preconditions.checkNotNull(dto.getTekstis(), "Language map objects cannot be null! Error in field : " + msg);
 
         MonikielinenTeksti mt = new MonikielinenTeksti();
-        for (Map.Entry<String, String> kieliAndText : dto.getTekstis().entrySet()) {
-            koodistoUri.validateKieliUri(kieliAndText.getKey());
-            mt.addTekstiKaannos(kieliAndText.getKey(), kieliAndText.getValue());
-        }
+        dto.getTekstis().forEach((key, value) -> {
+            koodistoUri.validateKieliUri(key);
+            mt.addTekstiKaannos(key, value);
+        });
 
         return mt;
     }

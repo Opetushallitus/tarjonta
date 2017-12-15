@@ -61,12 +61,12 @@ public abstract class BaseRDTOConverter<FROM, TO> implements Converter<FROM, TO>
     }
 
     public <T> void convertTekstit(Map<T, Map<String, String>> dst, Map<T, MonikielinenTeksti> src) {
-    	for (Map.Entry<T, MonikielinenTeksti> me : src.entrySet()) {
-    		Map<String,String> mtm = convertMonikielinenTekstiToMap(me.getValue());
-    		if (!mtm.isEmpty()) {
-    			dst.put(me.getKey(), mtm);
-    		}
-        }
+        src.forEach((key, value) -> {
+            Map<String, String> mtm = convertMonikielinenTekstiToMap(value);
+            if (!mtm.isEmpty()) {
+                dst.put(key, mtm);
+            }
+        });
     }
 
     public Map<String, String> convertMonikielinenTekstiToMap(MonikielinenTeksti s) {

@@ -152,9 +152,9 @@ public class OrganisaatioService {
         final OrganisaatioRDTO org = findByOid(orgOid);
         if (org != null) {
             final Map<String, String> map = new HashMap<>();
-            for (Map.Entry<String, String> entry : org.getNimi().entrySet()) {
-                map.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(entry.getKey()), entry.getValue());
-            }
+            org.getNimi().forEach((key, value) ->
+                    map.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(key), value)
+            );
             return map;
         }
         return new HashMap<>();

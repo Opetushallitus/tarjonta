@@ -46,10 +46,10 @@ public class KoulutusKuvausV1RDTO<TYPE extends Enum> {
 
     public KuvausV1RDTO convertMonikielinenTekstiToTekstiDTO(Map<TYPE, MonikielinenTeksti> tekstit, final boolean showMeta) {
         KuvausV1RDTO tekstis = new KuvausV1RDTO();
-        for (Map.Entry<TYPE, MonikielinenTeksti> e : tekstit.entrySet()) {
+        tekstit.forEach((key, value) -> {
             NimiV1RDTO dto = new NimiV1RDTO();
 
-            Collection<TekstiKaannos> tekstis1 = e.getValue().getTekstiKaannos();
+            Collection<TekstiKaannos> tekstis1 = value.getTekstiKaannos();
             for (TekstiKaannos kaannos : tekstis1) {
 
                 if (kaannos.getKieliKoodi() != null && !kaannos.getKieliKoodi().isEmpty()) {
@@ -70,9 +70,9 @@ public class KoulutusKuvausV1RDTO<TYPE extends Enum> {
                     }
                     dto.getTekstis().put(type.getKoodiUri(), kaannos.getArvo());
                 }
-                tekstis.put(e.getKey(), dto);
+                tekstis.put(key, dto);
             }
-        }
+        });
 
         return tekstis;
     }

@@ -816,15 +816,15 @@ public class KoulutusDTOConverterToEntity {
 
     private void addOrRemoveImages(final KoulutusKorkeakouluV1RDTO dto, KoulutusmoduuliToteutus komoto, final String userOid) {
         if (dto.getOpintojenRakenneKuvas() != null && !dto.getOpintojenRakenneKuvas().isEmpty()) {
-            for (Map.Entry<String, KuvaV1RDTO> e : dto.getOpintojenRakenneKuvas().entrySet()) {
-                if (e.getValue() == null && e.getKey() != null && !e.getKey().isEmpty()) {
+            dto.getOpintojenRakenneKuvas().forEach((key, value) -> {
+                if (value == null && key != null && !key.isEmpty()) {
                     //delete image
-                    komoto.getKuvat().remove(e.getKey());
+                    komoto.getKuvat().remove(key);
                 } else {
                     //add or overwrite previous image
-                    addImageToKomoto(komoto, e.getValue(), e.getKey(), userOid);
+                    addImageToKomoto(komoto, value, key, userOid);
                 }
-            }
+            });
         }
     }
 

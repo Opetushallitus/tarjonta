@@ -720,11 +720,11 @@ public class KoulutusValidator {
 
             Set<String> hakukohdeOids = Sets.<String>newHashSet();
 
-            for (Entry<String, Integer> hkKoulutusCount : hkKoulutusMap.entrySet()) {
-                if (hkKoulutusCount.getValue() == 1) {
-                    hakukohdeOids.add(hkKoulutusCount.getKey());
+            hkKoulutusMap.forEach((key, value) -> {
+                if (value == 1) {
+                    hakukohdeOids.add(key);
                 }
-            }
+            });
 
             if (hakukohdeOids.size() > 0) {
                 dto.addError(createValidationError("komoto.hakukohdes", KoulutusValidationMessages.KOULUTUS_RELATION_KOMOTO_HAKUKOHDE_REMOVE_LINK.lower(), hakukohdeOids.toArray(new String[hakukohdeOids.size()])));

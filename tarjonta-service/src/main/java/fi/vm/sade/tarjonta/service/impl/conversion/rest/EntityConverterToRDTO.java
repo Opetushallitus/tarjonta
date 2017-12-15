@@ -173,9 +173,9 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
             //Map<String, BinaryData> findAllImagesByKomotoOid = koulutusmoduuliToteutusDAO.findAllImagesByKomotoOid(komotoOid);
             if (param.getShowImg() && komoto.getKuvat() != null && !komoto.getKuvat().isEmpty()) {
-                for (Map.Entry<String, BinaryData> e : komoto.getKuvat().entrySet()) {
-                    kkDto.getOpintojenRakenneKuvas().put(e.getKey(), new KuvaV1RDTO(e.getValue().getFilename(), e.getValue().getMimeType(), e.getKey(), Base64.encodeBase64String(e.getValue().getData())));
-                }
+                komoto.getKuvat().forEach((key, value) ->
+                        kkDto.getOpintojenRakenneKuvas().put(key, new KuvaV1RDTO(value.getFilename(), value.getMimeType(), key, Base64.encodeBase64String(value.getData())))
+                );
             }
             try {
                 kkDto.setJohtaaTutkintoon(yhdenPaikanSaantoBuilder.koulutusJohtaaTutkintoon(komoto));

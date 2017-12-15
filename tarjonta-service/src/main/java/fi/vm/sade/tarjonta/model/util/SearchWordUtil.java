@@ -43,14 +43,14 @@ public class SearchWordUtil {
 
         Map<String, String> outputLangKeywords = new HashMap<String, String>();
 
-        for (Entry<String, StringBuilder> e : langKeywords.entrySet()) {
-            String str = e.getValue().toString();
+        langKeywords.forEach((key, value) -> {
+            String str = value.toString();
             if (str.length() > MAX_SIZE_CHARACTERS) {
                 //max size of the database column field
                 str = str.substring(0, MAX_SIZE_CHARACTERS);
             }
-            outputLangKeywords.put(e.getKey(), str);
-        }
+            outputLangKeywords.put(key, str);
+        });
 
         return outputLangKeywords;
     }
