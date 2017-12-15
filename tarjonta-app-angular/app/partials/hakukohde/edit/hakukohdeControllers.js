@@ -57,9 +57,9 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
 
     $scope.model.isYhteishaku = function(){
         if ($scope.model.hakukohde.hakuOid != undefined) {
+            $scope.model.hakutapaYhteishaku = false;
             angular.forEach($scope.model.hakus, function (h) {
                 // yhteushaku valittu
-                $scope.model.hakutapaYhteishaku = false;
                 if (h.oid == $scope.model.hakukohde.hakuOid && (h.hakutapaUri != undefined && h.hakutapaUri.split('#')[0] == 'hakutapa_01')) {
                     $scope.model.hakutapaYhteishaku = true;
                 }
