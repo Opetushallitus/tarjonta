@@ -190,12 +190,9 @@ public class KoulutusValidator {
 
     private static boolean isBlank(KoodiUrisV1RDTO koodis) {
         try {
-            Iterables.find(koodis.getUris().keySet(), new Predicate<String>() {
-                @Override
-                public boolean apply(String input) {
-                    return StringUtils.isNotBlank(input);
-                }
-            });
+            Iterables.find(koodis.getUris().keySet(), input ->
+                    StringUtils.isNotBlank(input)
+            );
             return false;
         } catch (Exception e) {
             return true;
@@ -365,12 +362,9 @@ public class KoulutusValidator {
 
     private static void validateKoulutusohjelma(KoulutusV1RDTO dto, ResultV1RDTO result) {
         try {
-            Iterables.find(dto.getKoulutusohjelma().getTekstis().values(), new Predicate<String>() {
-                @Override
-                public boolean apply(String input) {
-                    return StringUtils.isNotBlank(input);
-                }
-            });
+            Iterables.find(dto.getKoulutusohjelma().getTekstis().values(), input ->
+                    StringUtils.isNotBlank(input)
+            );
         } catch (Exception e) {
             result.addError(createValidationError(KOULUTUSOHJELMA, KOULUTUSOHJELMA + ".tekstis cannot be empty!"));
         }

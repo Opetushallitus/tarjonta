@@ -132,12 +132,10 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
         String komoOid = komoto.getKoulutusmoduuli().getOid();
         if (komoOid != null) {
-            Set<String> parents = new HashSet<String>();
-            parents.addAll(koulutusSisaltyvyysDAO.getParents(komoOid));
+            Set<String> parents = new HashSet<String>(koulutusSisaltyvyysDAO.getParents(komoOid));
             dto.setParents(parents);
 
-            Set<String> children = new HashSet<String>();
-            children.addAll(koulutusSisaltyvyysDAO.getChildren(komoOid));
+            Set<String> children = new HashSet<String>(koulutusSisaltyvyysDAO.getChildren(komoOid));
             dto.setChildren(children);
         }
 

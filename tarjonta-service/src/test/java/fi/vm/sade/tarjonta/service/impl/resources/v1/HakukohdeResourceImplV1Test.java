@@ -193,12 +193,9 @@ public class HakukohdeResourceImplV1Test {
 
         ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde, request).getEntity();
         assertEquals(OK, result.getStatus());
-        assertTrue(Iterables.find(result.getResult().getKoulutukset(), new Predicate<KoulutusIdentification>() {
-            @Override
-            public boolean apply(KoulutusIdentification id) {
-                return koulutusDto.getUniqueExternalId().equals(id.getUniqueExternalId());
-            }
-        }, null) != null);
+        assertTrue(Iterables.find(result.getResult().getKoulutukset(), id ->
+                koulutusDto.getUniqueExternalId().equals(id.getUniqueExternalId()), null) != null
+        );
     }
 
     @Test
@@ -273,12 +270,8 @@ public class HakukohdeResourceImplV1Test {
     }
 
     private static boolean containsError(List<ErrorV1RDTO> errors, final HakukohdeValidationMessages msg) {
-        return Iterables.find(errors, new Predicate<ErrorV1RDTO>() {
-            @Override
-            public boolean apply(ErrorV1RDTO error) {
-                return StringUtils.defaultString(error.getErrorMessageKey()).contains(msg.name());
-            }
-        }, null) != null;
+        return Iterables.find(errors, error ->
+                StringUtils.defaultString(error.getErrorMessageKey()).contains(msg.name()), null) != null;
     }
 
 }

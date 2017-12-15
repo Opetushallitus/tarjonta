@@ -54,10 +54,7 @@ public class HakukohdeValidator {
 
     public List<HakukohdeValidationMessages> validateCommonProperties(HakukohdeV1RDTO hakukohdeRDTO) {
 
-        List<HakukohdeValidationMessages> validationMessages = new ArrayList<>();
-
-        Set<String> komotoOids = new HashSet<>();
-        komotoOids.addAll(hakukohdeRDTO.getHakukohdeKoulutusOids());
+        Set<String> komotoOids = new HashSet<>(hakukohdeRDTO.getHakukohdeKoulutusOids());
         try {
             komotoOids.addAll(getKomotoOidsFromKoulutusIds(hakukohdeRDTO));
         } catch (KoulutusNotFoundException e) {
@@ -65,7 +62,7 @@ public class HakukohdeValidator {
         }
         hakukohdeRDTO.setHakukohdeKoulutusOids(Lists.newArrayList(komotoOids));
 
-        validationMessages.addAll(checkKoulutukset(hakukohdeRDTO.getHakukohdeKoulutusOids()));
+        List<HakukohdeValidationMessages> validationMessages = new ArrayList<>(checkKoulutukset(hakukohdeRDTO.getHakukohdeKoulutusOids()));
 
         if (StringUtils.isBlank(hakukohdeRDTO.getHakuOid())) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_HAKU_MISSING);
@@ -108,9 +105,7 @@ public class HakukohdeValidator {
 
     public List<HakukohdeValidationMessages> validateToisenAsteenHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
 
-        List<HakukohdeValidationMessages> validationMessages = new ArrayList<>();
-
-        validationMessages.addAll(validateDuplicateHakukohteet(hakukohdeRDTO));
+        List<HakukohdeValidationMessages> validationMessages = new ArrayList<>(validateDuplicateHakukohteet(hakukohdeRDTO));
 
         if (Strings.isNullOrEmpty(hakukohdeRDTO.getHakukohteenNimiUri())) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_NIMI_MISSING);

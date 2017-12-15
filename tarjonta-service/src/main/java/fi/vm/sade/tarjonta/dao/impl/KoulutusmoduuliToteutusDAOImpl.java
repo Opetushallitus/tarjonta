@@ -165,12 +165,9 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     }
 
     private static List<String> matchWithoutVersion(List<String> koodiList) {
-        return FluentIterable.from(koodiList).transform(new Function<String, String>() {
-            @Override
-            public String apply(String koodi) {
-                return stripVersionFromKoodiUri(koodi);
-            }
-        }).toList();
+        return FluentIterable.from(koodiList).transform(koodi ->
+                stripVersionFromKoodiUri(koodi)
+        ).toList();
     }
 
     @Override

@@ -240,8 +240,7 @@ public class HakuResourceImpl implements HakuResource {
         }
         // sortataan tarjoajanimen mukaan!, testi olis kiva (tm)
 
-        Ordering<HakukohdePerustieto> ordering = Ordering.natural().nullsFirst().onResultOf(new Function<HakukohdePerustieto, Comparable>() {
-            public Comparable apply(HakukohdePerustieto input) {
+        Ordering<HakukohdePerustieto> ordering = Ordering.natural().nullsFirst().onResultOf(input -> {
                 String tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain);
                 // Varajärjestys, jos valitulla kieliavaimella ei löydy tarjoajanimeä
                 if(tarjoajaNimi == null) {
@@ -254,7 +253,6 @@ public class HakuResourceImpl implements HakuResource {
                     }
                 }
                 return tarjoajaNimi;
-            }
         });
 
         List<HakukohdePerustieto> sortattuLista = ordering.immutableSortedCopy(tulokset);

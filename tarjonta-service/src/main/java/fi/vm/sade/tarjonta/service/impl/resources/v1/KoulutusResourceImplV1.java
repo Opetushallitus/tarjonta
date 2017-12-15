@@ -1555,12 +1555,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 }
 
                 //update all hakukohdes
-                indexerResource.indexHakukohteet(Lists.newArrayList(Iterators.transform(hakukohdes.iterator(), new Function<Hakukohde, Long>() {
-                    @Override
-                    public Long apply(@Nullable Hakukohde arg0) {
-                        return arg0.getId();
-                    }
-                })));
+                indexerResource.indexHakukohteet(Lists.newArrayList(Iterators.transform(hakukohdes.iterator(), arg0 -> arg0.getId())));
                 break;
 
             case TEST_COPY:
@@ -1696,8 +1691,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         }
         else {
             List<Oppiaine> oppiaineet = oppiaineDAO.findByOppiaineKieliKoodi(oppiaine, kieliKoodi);
-            Set<Oppiaine> asSet = new HashSet<>();
-            asSet.addAll(oppiaineet);
+            Set<Oppiaine> asSet = new HashSet<>(oppiaineet);
             result.setResult(converterToRDTO.oppiaineetFromEntityToDto(asSet));
         }
 

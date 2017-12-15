@@ -34,14 +34,9 @@ public class KoulutusmoduuliTreeWalkerTest extends TestUtilityBase {
 
         final AtomicInteger counter = new AtomicInteger();
 
-        KoulutusTreeWalker.NodeHandler handler = new NodeHandler() {
-
-            @Override
-            public boolean match(Koulutusmoduuli moduuli) {
-                counter.incrementAndGet();
-                return true;
-            }
-
+        KoulutusTreeWalker.NodeHandler handler = moduuli -> {
+            counter.incrementAndGet();
+            return true;
         };
 
 

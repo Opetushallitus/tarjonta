@@ -268,8 +268,7 @@ public class ConverterV1 {
         haku.setCanSubmitMultipleApplications(hakuV1RDTO.getCanSubmitMultipleApplications());
 
         // Temporary list of hakuaikas to process
-        ArrayList<Hakuaika> tmpHakuaikas = new ArrayList<Hakuaika>();
-        tmpHakuaikas.addAll(haku.getHakuaikas());
+        ArrayList<Hakuaika> tmpHakuaikas = new ArrayList<Hakuaika>(haku.getHakuaikas());
 
         // Process UI hakuaikas.
         for (HakuaikaV1RDTO hakuaikaDTO : hakuV1RDTO.getHakuaikas()) {
@@ -1998,8 +1997,7 @@ public class ConverterV1 {
         hakutulos.setOid(komoto.getOid());
         hakutulos.setNimi(convertMonikielinenTekstiToMap(komoto.getNimi(), true));
 
-        ArrayList<String> tarjoajat = new ArrayList<String>();
-        tarjoajat.addAll(komoto.getTarjoajaOids());
+        ArrayList<String> tarjoajat = new ArrayList<String>(komoto.getTarjoajaOids());
         hakutulos.setTarjoajat(tarjoajat);
 
         return hakutulos;

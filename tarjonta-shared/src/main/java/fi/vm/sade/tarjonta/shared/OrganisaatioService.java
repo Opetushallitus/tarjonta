@@ -138,12 +138,7 @@ public class OrganisaatioService {
                     new URL(urlConfiguration.url("organisaatio-service.findChildrenOidsByOid", oid)), OrganisaatioHakutulosSuppeaDTOV2.class);
             return FluentIterable
                     .from(result.getOrganisaatiot())
-                    .transform(new Function<OrganisaatioPerustietoSuppea, String>() {
-                        @Override
-                        public String apply(OrganisaatioPerustietoSuppea org) {
-                            return org.getOid();
-                        }
-                    })
+                    .transform(org -> org.getOid())
                     .filter(Predicates.not(Predicates.equalTo(oid)))
                     .toSet();
         } catch (Exception e) {

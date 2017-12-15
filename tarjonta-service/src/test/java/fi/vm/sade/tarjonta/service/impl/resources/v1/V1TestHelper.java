@@ -236,12 +236,9 @@ public class V1TestHelper {
     public static boolean datesDiffer(Set<Date> a, Set<Date> b) {
         for (final Date d : b) {
             try {
-                Iterables.find(a, new Predicate<Date>() {
-                    @Override
-                    public boolean apply(Date candidate) {
-                        return candidate.getTime() == d.getTime();
-                    }
-                });
+                Iterables.find(a, candidate ->
+                        candidate.getTime() == d.getTime()
+                );
             } catch (NoSuchElementException e) {
                 return true;
             }
@@ -250,12 +247,7 @@ public class V1TestHelper {
     }
 
     public static boolean containsError(List<ErrorV1RDTO> errors, final String fieldname) {
-        return Iterables.find(errors, new Predicate<ErrorV1RDTO>() {
-            @Override
-            public boolean apply(ErrorV1RDTO error) {
-                return fieldname.equals(error.getErrorField());
-            }
-        }, null) != null;
+        return Iterables.find(errors, error -> fieldname.equals(error.getErrorField()), null) != null;
     }
 
     public static KoodiUrisV1RDTO koodiUris(Set<String> codeUris) {

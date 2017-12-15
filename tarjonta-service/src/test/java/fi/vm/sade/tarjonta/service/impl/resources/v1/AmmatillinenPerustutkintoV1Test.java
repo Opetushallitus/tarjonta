@@ -213,12 +213,9 @@ public class AmmatillinenPerustutkintoV1Test {
 
         assertTrue(errors.size() > 0);
 
-        ErrorV1RDTO duplicateError = Iterables.find(errors, new Predicate<ErrorV1RDTO>() {
-            @Override
-            public boolean apply(ErrorV1RDTO error) {
-                return error.getErrorMessageKey().contains("koulutusOnJoOlemassa");
-            }
-        });
+        ErrorV1RDTO duplicateError = Iterables.find(errors, error ->
+                error.getErrorMessageKey().contains("koulutusOnJoOlemassa")
+        );
 
         assertTrue(duplicateError.getErrorMessageParameters().get(0).contains(komoto1Oid));
     }

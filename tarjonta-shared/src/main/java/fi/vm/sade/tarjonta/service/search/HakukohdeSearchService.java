@@ -92,11 +92,9 @@ public class HakukohdeSearchService extends SearchService {
         final Integer vuosi = kysely.getKoulutuksenAlkamisvuosi();
         final List<String> oids = kysely.getTarjoajaOids();
         final List<String> queryParts = Lists.newArrayList();
-        final List<String> tilat = Lists.newArrayList(Iterables.transform(kysely.getTilat(), new Function<TarjontaTila, String>() {
-            public String apply(TarjontaTila tila) {
-                return tila != null ? tila.name() : null;
-            }
-        }));
+        final List<String> tilat = Lists.newArrayList(Iterables.transform(kysely.getTilat(), tila ->
+                tila != null ? tila.name() : null)
+        );
 
         final SolrQuery q = new SolrQuery(QUERY_ALL);
 
@@ -138,11 +136,9 @@ public class HakukohdeSearchService extends SearchService {
 
     private void addFilterForKoulutusastetyypit(HakukohteetKysely kysely, SolrQuery q) {
         if (kysely.getKoulutusasteTyypit().size() > 0) {
-            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getKoulutusasteTyypit(), new Function<KoulutusasteTyyppi, String>() {
-                public String apply(KoulutusasteTyyppi src) {
-                    return src.value();
-                }
-            }));
+            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getKoulutusasteTyypit(), src ->
+                    src.value())
+            );
             q.addFilterQuery(getFilterQueryForUri(KOULUTUSASTETYYPPI, Joiner.on(" ").join(tyypit)));
         }
     }
@@ -236,12 +232,7 @@ public class HakukohdeSearchService extends SearchService {
 
     private void addFilterForKoulutusmoduuliTyyppi(List<KoulutusmoduuliTyyppi> tyypit, SolrQuery q) {
         if (tyypit.size() > 0) {
-            final ArrayList<String> strings = Lists.newArrayList(Iterables.transform(tyypit, new Function<KoulutusmoduuliTyyppi, String>() {
-                @Override
-                public String apply(KoulutusmoduuliTyyppi src) {
-                    return src.name();
-                }
-            }));
+            final ArrayList<String> strings = Lists.newArrayList(Iterables.transform(tyypit, src -> src.name()));
             q.addFilterQuery(String.format("%s:(%s)", KOULUTUSMODUULITYYPPI_ENUM, Joiner.on(" ").join(strings)));
         }
     }

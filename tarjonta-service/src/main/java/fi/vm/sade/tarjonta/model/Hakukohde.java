@@ -811,12 +811,9 @@ public class Hakukohde extends TarjontaBaseEntity {
     }
 
     public Ryhmaliitos getRyhmaliitosByRyhmaOid(final String ryhmaOid) {
-        return Iterables.tryFind(getRyhmaliitokset(), new Predicate<Ryhmaliitos>() {
-            @Override
-            public boolean apply(Ryhmaliitos ryhmaliitos) {
-                return ryhmaliitos.getRyhmaOid().equals(ryhmaOid);
-            }
-        }).orNull();
+        return Iterables.tryFind(getRyhmaliitokset(), ryhmaliitos ->
+                ryhmaliitos.getRyhmaOid().equals(ryhmaOid)
+        ).orNull();
     }
 
     public void addRyhmaliitos(Ryhmaliitos ryhmaliitos) {

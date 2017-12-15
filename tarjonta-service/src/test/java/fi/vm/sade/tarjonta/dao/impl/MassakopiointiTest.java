@@ -80,14 +80,11 @@ public class MassakopiointiTest extends TestData {
         super.initializeData(em, fixtures);
         Preconditions.checkNotNull(oidService);
         Mockito.reset(oidService);
-        Mockito.stub(oidService.get(Mockito.any(TarjontaOidType.class))).toAnswer(new Answer<String>() {
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                if (invocation.getArguments()[0] == null) {
-                    throw new IllegalArgumentException("type was null???");
-                }
-                return (invocation.getArguments()[0] == null ? "null-type-wtf" : invocation.getArguments()[0].toString()).concat(Long.toString(c.incrementAndGet()));
+        Mockito.stub(oidService.get(Mockito.any(TarjontaOidType.class))).toAnswer((Answer<String>) invocation -> {
+            if (invocation.getArguments()[0] == null) {
+                throw new IllegalArgumentException("type was null???");
             }
+            return (invocation.getArguments()[0] == null ? "null-type-wtf" : invocation.getArguments()[0].toString()).concat(Long.toString(c.incrementAndGet()));
         });
     }
 

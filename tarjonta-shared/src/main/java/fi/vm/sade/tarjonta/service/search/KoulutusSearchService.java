@@ -207,39 +207,21 @@ public class KoulutusSearchService extends SearchService {
 
     private void addFilterForToteutustyypit(KoulutuksetKysely kysely, SolrQuery q) {
         if (kysely.getTotetustyyppi().size() > 0) {
-            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getTotetustyyppi(), new Function<ToteutustyyppiEnum, String>() {
-                @Override
-                public String apply(ToteutustyyppiEnum src) {
-                    return src.name();
-
-                }
-            }));
+            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getTotetustyyppi(), src -> src.name()));
             q.addFilterQuery(String.format(matchFull(), TOTEUTUSTYYPPI_ENUM, Joiner.on(" ").join(tyypit)));
         }
     }
 
     private void addFilterForKoulutusasteTyypit(KoulutuksetKysely kysely, SolrQuery q) {
         if (kysely.getKoulutusasteTyypit().size() > 0) {
-            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getKoulutusasteTyypit(), new Function<KoulutusasteTyyppi, String>() {
-                @Override
-                public String apply(KoulutusasteTyyppi src) {
-                    return src.value();
-
-                }
-            }));
+            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getKoulutusasteTyypit(), src -> src.value()));
             q.addFilterQuery(String.format(matchFull(), KOULUTUSASTETYYPPI_ENUM, Joiner.on(" ").join(tyypit)));
         }
     }
 
     private void addFilterForKoulutustyypit(KoulutuksetKysely kysely, SolrQuery q) {
         if (kysely.getKoulutustyyppi().size() > 0) {
-            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getKoulutustyyppi(), new Function<String, String>() {
-                @Override
-                public String apply(String src) {
-                    return src;
-
-                }
-            }));
+            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getKoulutustyyppi(), src -> src));
             q.addFilterQuery(String.format(matchFull(), KOULUTUSTYYPPI_URI, Joiner.on(" ").join(tyypit)));
         }
     }
@@ -323,12 +305,7 @@ public class KoulutusSearchService extends SearchService {
 
     private void addFilterForKoulutusmoduuliTyyppi(List<KoulutusmoduuliTyyppi> tyypit, SolrQuery q) {
         if (tyypit.size() > 0) {
-            final ArrayList<String> strings = Lists.newArrayList(Iterables.transform(tyypit, new Function<KoulutusmoduuliTyyppi, String>() {
-                @Override
-                public String apply(KoulutusmoduuliTyyppi src) {
-                    return src.name();
-                }
-            }));
+            final ArrayList<String> strings = Lists.newArrayList(Iterables.transform(tyypit, src -> src.name()));
             q.addFilterQuery(String.format("%s:(%s)", KOULUTUSMODUULITYYPPI_ENUM, Joiner.on(" ").join(strings)));
         }
     }

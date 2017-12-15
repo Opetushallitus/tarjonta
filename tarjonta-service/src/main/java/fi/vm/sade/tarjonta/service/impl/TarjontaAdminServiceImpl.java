@@ -421,11 +421,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakuk.setViimIndeksointiPvm(hakuk.getLastUpdateDate());
         hakukohdeDAO.update(hakuk);
         solrIndexer.indexHakukohteet(Lists.newArrayList(hakuk.getId()));
-        solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakuk.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
-            public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
-                return arg0.getId();
-            }
-        })));
+        solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakuk.getKoulutusmoduuliToteutuses().iterator(), arg0 -> arg0.getId())));
 
         //return fresh copy (that has fresh versions so that optimistic locking works)
         LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();

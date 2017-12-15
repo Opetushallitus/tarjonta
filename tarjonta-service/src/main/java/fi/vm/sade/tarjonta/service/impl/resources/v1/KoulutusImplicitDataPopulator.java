@@ -258,12 +258,9 @@ public class KoulutusImplicitDataPopulator {
     private List<KoodiV1RDTO> findCodes(final List<KoodiType> codes, final String koodisto) {
         return FluentIterable.from(codes)
                 .filter(matchKoodisto(koodisto))
-                .transform(new Function<KoodiType, KoodiV1RDTO>() {
-                    @Override
-                    public KoodiV1RDTO apply(KoodiType input) {
-                        return new KoodiV1RDTO(input.getKoodiUri(), input.getVersio(), input.getKoodiArvo());
-                    }
-                }).toList();
+                .transform((Function<KoodiType, KoodiV1RDTO>) input ->
+                        new KoodiV1RDTO(input.getKoodiUri(), input.getVersio(), input.getKoodiArvo())
+                ).toList();
     }
 
     private void setTutkintonimike(List<KoodiType> sisaltaaKoodit, KoulutusV1RDTO dto) {
@@ -283,12 +280,9 @@ public class KoulutusImplicitDataPopulator {
     }
 
     private static Predicate matchKoodisto(final String koodisto) {
-        return new Predicate<KoodiType>() {
-            @Override
-            public boolean apply(KoodiType candidate) {
-                return koodisto.equals(candidate.getKoodisto().getKoodistoUri());
-            }
-        };
+        return (Predicate<KoodiType>) candidate ->
+                koodisto.equals(candidate.getKoodisto().getKoodistoUri()
+                );
     }
 
     private List<KoodiType> getAlapuolisetKoodit(final String koodiUri) {
