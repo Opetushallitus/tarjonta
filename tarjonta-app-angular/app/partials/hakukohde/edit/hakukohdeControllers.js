@@ -57,9 +57,9 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
 
     $scope.model.isYhteishaku = function(){
         if ($scope.model.hakukohde.hakuOid != undefined) {
+            $scope.model.hakutapaYhteishaku = false;
             angular.forEach($scope.model.hakus, function (h) {
                 // yhteushaku valittu
-                $scope.model.hakutapaYhteishaku = false;
                 if (h.oid == $scope.model.hakukohde.hakuOid && (h.hakutapaUri != undefined && h.hakutapaUri.split('#')[0] == 'hakutapa_01')) {
                     $scope.model.hakutapaYhteishaku = true;
                 }
@@ -281,7 +281,7 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             var selectedHaku = _.findWhere(hakuDatas, {oid: $scope.model.hakukohde.hakuOid});
             var kaytettavaKoodisto = 'hakukohteet'; // pk/yo
             // jatkuva haku tai pohjakoulutusER
-            if(selectedHaku.hakutapaUri !== 'hakutapa_01#1' || (pohjakoulutusvaatimus !== undefined && pohjakoulutusvaatimus != null && pohjakoulutusvaatimus.uri == 'pohjakoulutusvaatimustoinenaste_er')){
+            if(selectedHaku.hakutapaUri == 'hakutapa_03#1' || (pohjakoulutusvaatimus !== undefined && pohjakoulutusvaatimus != null && pohjakoulutusvaatimus.uri == 'pohjakoulutusvaatimustoinenaste_er')){
                 // aiku
                 kaytettavaKoodisto = 'aikuhakukohteet';
             }

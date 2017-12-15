@@ -691,6 +691,7 @@ app.controller('HakukohdeParentController', [
                 if($scope.model.hakukohde.toteutusTyyppi == 'AMMATILLINEN_PERUSTUTKINTO_ALK_2018'){
                     $scope.model.populateHakukohteenNimetByHaku();
                     $scope.model.isYhteishaku();
+                    $scope.handleKaksoistutkintoCheckbox();
                 }
             }
         };
@@ -1014,12 +1015,22 @@ app.controller('HakukohdeParentController', [
         $scope.handleKaksoistutkintoCheckbox = function() {
             if ($scope.model.hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO' || $scope.model.hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO_ALK_2018') {
                 if ($scope.model.hakukohde.isNew) {
-                    var koulutusOid = _.first($scope.model.hakukohde.hakukohdeKoulutusOids);
-                    TarjontaService.getKoulutusPromise(koulutusOid).then(function(response) {
-                        var pohjakoulutusvaatimus = response.result.pohjakoulutusvaatimus;
-                        $scope.model.kaksoistutkintoIsPossible =
-                            pohjakoulutusvaatimus.uri === 'pohjakoulutusvaatimustoinenaste_pk';
-                    });
+                    if($scope.model.hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO_ALK_2018' &&
+                        $scope.model.hakukohde.pohjakoulutusvaatimus == 'pohjakoulutusvaatimustoinenaste_pk'){
+                        $scope.model.kaksoistutkintoIsPossible = true;
+                    } else {
+                        var koulutusOid = _.first($scope.model.hakukohde.hakukohdeKoulutusOids);
+                        TarjontaService.getKoulutusPromise(koulutusOid).then(function (response) {
+                            var pohjakoulutusvaatimus = response.result.pohjakoulutusvaatimus;
+                            if(pohjakoulutusvaatimus !== undefined && pohjakoulutusvaatimus.uri !== undefined){
+                                $scope.model.kaksoistutkintoIsPossible =
+                                    pohjakoulutusvaatimus.uri === 'pohjakoulutusvaatimustoinenaste_pk';
+                            } else {
+                                $scope.model.kaksoistutkintoIsPossible = false;
+                            }
+
+                        });
+                    }
                 }
                 else {
                     var pkVaatimus = _.find($scope.model.hakukohde.hakukelpoisuusvaatimusUris, function(vaatimusUri) {

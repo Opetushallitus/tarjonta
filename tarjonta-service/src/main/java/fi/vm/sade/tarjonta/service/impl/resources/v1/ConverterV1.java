@@ -176,7 +176,7 @@ public class ConverterV1 {
                 List<String> tmp = hakukohdeDao.findByHakuOid(hakuDTO.getOid(), null, 0, 0, null, null);
                 hakuDTO.setHakukohdeOids(tmp);
                 timer.stop();
-                LOG.info("Fetched {} hakukohdes for haku {} in {}", tmp.size(), haku.getOid(), timer);
+                LOG.debug("Fetched {} hakukohdes for haku {} in {}", tmp.size(), haku.getOid(), timer);
             }
 
             if(hakukohdeWhereYlioppilastutkintoAntaaHakukelpoisuuden != null){ //Preloaded for multiple hakus.
@@ -189,7 +189,7 @@ public class ConverterV1 {
                         )
                 );
                 timer.stop();
-                LOG.info("Ylioppilastutkinto antaa hakukelpoisuuden calculated in {}", timer);
+                LOG.debug("Ylioppilastutkinto antaa hakukelpoisuuden calculated in {}", timer);
             }
         }
 
