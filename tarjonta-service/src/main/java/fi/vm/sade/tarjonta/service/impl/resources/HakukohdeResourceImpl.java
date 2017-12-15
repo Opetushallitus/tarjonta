@@ -379,24 +379,28 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
                     LOG.debug("  vk - pisteraja: '{}'", pisteraja.getTyyppi());
 
                     // TODO hardocded... :(
-                    if ("Paasykoe".equals(pisteraja.getTyyppi())) {
-                        LOG.debug("    pisteraja: pääsykoe");
-                        vk = (vk == null) ? new ValintakoeRDTO() : vk;
-                        if (vk.getValintakoePisterajas() == null) {
-                            vk.setValintakoePisterajas(new ArrayList<ValintakoePisterajaRDTO>());
-                        }
-                        vk.getValintakoePisterajas().add(pisteraja);
-                    } else if ("Lisapisteet".equals(pisteraja.getTyyppi())) {
-                        LOG.debug("    pisteraja: lisäpisteet");
-                        lt = (lt == null) ? new ValintakoeRDTO() : lt;
-                        if (lt.getValintakoePisterajas() == null) {
-                            lt.setValintakoePisterajas(new ArrayList<ValintakoePisterajaRDTO>());
-                        }
-                        lt.getValintakoePisterajas().add(pisteraja);
-                    } else {
-                        // Anything else, add to both ("Kokonaispisteet")
-                        LOG.debug("    pisteraja: default case, add pisteraja to both");
-                        addToBothVKs.add(pisteraja);
+                    switch (pisteraja.getTyyppi()) {
+                        case "Paasykoe":
+                            LOG.debug("    pisteraja: pääsykoe");
+                            vk = (vk == null) ? new ValintakoeRDTO() : vk;
+                            if (vk.getValintakoePisterajas() == null) {
+                                vk.setValintakoePisterajas(new ArrayList<ValintakoePisterajaRDTO>());
+                            }
+                            vk.getValintakoePisterajas().add(pisteraja);
+                            break;
+                        case "Lisapisteet":
+                            LOG.debug("    pisteraja: lisäpisteet");
+                            lt = (lt == null) ? new ValintakoeRDTO() : lt;
+                            if (lt.getValintakoePisterajas() == null) {
+                                lt.setValintakoePisterajas(new ArrayList<ValintakoePisterajaRDTO>());
+                            }
+                            lt.getValintakoePisterajas().add(pisteraja);
+                            break;
+                        default:
+                            // Anything else, add to both ("Kokonaispisteet")
+                            LOG.debug("    pisteraja: default case, add pisteraja to both");
+                            addToBothVKs.add(pisteraja);
+                            break;
                     }
                 }
 
