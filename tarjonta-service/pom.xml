@@ -602,6 +602,11 @@
             <artifactId>organisaatio-api</artifactId>
             <version>${organisaatio.api.version}</version>
         </dependency>
+        <!-- Without this there are intermittent bugs after rebooting tarjonta. -->
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
