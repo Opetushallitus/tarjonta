@@ -90,6 +90,12 @@
             <version>${jaxb-impl.version}</version>
         </dependency>
 
+        <!-- Without this there are intermittent bugs after rebooting tarjonta. -->
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+        </dependency>
+
         <dependency>
             <!-- Spring AOP dependency -->
             <groupId>cglib</groupId>
