@@ -1191,6 +1191,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         List<HakukohdeValidationMessages> validationMessages = hakukohdeValidator.checkKoulutukset(getKomotoOids(koulutukses));
 
+        boolean isToinenAste = hakukohde.getKoulutusmoduuliToteutuses().stream().anyMatch(komoto -> komoto.getToteutustyyppi().isToisenAsteenKoulutus());
+        if (isToinenAste) {
+            validationMessages.addAll(hakukohdeValidator.checkTarjoajat(hakukohde, koulutukses));
+        }
+
         if (validationMessages.size() > 0) {
             return populateValidationErrors(null, validationMessages);
         }
