@@ -90,6 +90,7 @@ public class KoulutusPermissionService {
 
     public static List<ToteutustyyppiEnum> getToteustustyyppisToCheckPermissionFor() {
         return Lists.newArrayList(
+                ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018,
                 ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO,
                 ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA,
                 ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA,
