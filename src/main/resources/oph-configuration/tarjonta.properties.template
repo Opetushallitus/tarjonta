@@ -92,3 +92,10 @@ tarjonta-service.postgresql.maxwait={{host_postgresql_tarjonta_max_wait}}
 tarjonta-service.postgresql.maxlifetimemillis=60000
 
 invalid.koulutus.report.recipient={{tarjonta_invalid_koulutus_report_recipient}}
+
+smtp.host={{ryhmasahkoposti_smtp_host}}
+smtp.port={{ryhmasahkoposti_smtp_port}}
+smtp.use_tls={{ryhmasahkoposti_smtp_use_tls}}
+smtp.authenticate={{ryhmasahkoposti_smtp_authenticate}}
+smtp.username={{ryhmasahkoposti_smtp_username}}
+smtp.password={{ryhmasahkoposti_smtp_password}}
