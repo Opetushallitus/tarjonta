@@ -55,9 +55,9 @@ public class KoulutusPermissionSynchronizer {
     private String SMTP_PORT;
     @Value("${smtp.sender}")
     private String SMTP_SENDER;
-    @Value("${smtp.use_tls}")
+    @Value("${smtp.use_tls:false}")
     private boolean SMTP_USE_TLS;
-    @Value("${smtp.authenticate}")
+    @Value("${smtp.authenticate:false}")
     private boolean SMTP_AUTHENTICATE;
     @Value("${smtp.username}")
     private String SMTP_USERNAME;
