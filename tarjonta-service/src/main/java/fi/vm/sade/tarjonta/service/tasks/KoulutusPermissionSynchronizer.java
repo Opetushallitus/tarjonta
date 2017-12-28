@@ -21,10 +21,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -54,6 +51,18 @@ public class KoulutusPermissionSynchronizer {
 
     @Value("${smtp.host}")
     private String SMTP_HOST;
+    @Value("${smtp.port}")
+    private String SMTP_PORT;
+    @Value("${smtp.sender}")
+    private String SMTP_SENDER;
+    @Value("${smtp.use_tls}")
+    private boolean SMTP_USE_TLS;
+    @Value("${smtp.authenticate}")
+    private boolean SMTP_AUTHENTICATE;
+    @Value("${smtp.username}")
+    private String SMTP_USERNAME;
+    @Value("${smtp.password}")
+    private String SMTP_PASSWORD;
 
     private static final Map<String, String> opetuskieliKoodiMap;
     private static final int KOMOTO_BATCH_SIZE = 500;
@@ -151,13 +160,11 @@ public class KoulutusPermissionSynchronizer {
             }
         }
 
-        Properties props = new Properties();
-        props.put("mail.smtp.host", SMTP_HOST);
-        Session session = Session.getDefaultInstance(props, null);
+        Session session = createMailSession();
 
         try {
             Message msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress("admin@oph.fi", "admin@oph.fi"));
+            msg.setFrom(new InternetAddress(SMTP_SENDER, SMTP_SENDER));
             msg.addRecipient(Message.RecipientType.TO, new InternetAddress(RECIPIENT, RECIPIENT));
             msg.setSubject(subject);
             msg.setText(body);
@@ -169,6 +176,24 @@ public class KoulutusPermissionSynchronizer {
             LOG.error("AmkouteMail: MessagingException", e);
         } catch (UnsupportedEncodingException e) {
             LOG.error("AmkouteMail: UnsupportedEncodingException", e);
+        }
+    }
+
+    private Session createMailSession() {
+        Properties mailProps = new Properties();
+        mailProps.put("mail.smtp.host", SMTP_HOST);
+        mailProps.put("mail.smtp.port", SMTP_PORT);
+        mailProps.put("mail.smtp.auth", SMTP_AUTHENTICATE);
+        mailProps.put("mail.starttls.enable", SMTP_USE_TLS);
+
+        if (SMTP_AUTHENTICATE) {
+            return Session.getInstance(mailProps, new javax.mail.Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(SMTP_USERNAME, SMTP_PASSWORD);
+                }
+            });
+        } else {
+            return Session.getInstance(mailProps);
         }
     }
 
