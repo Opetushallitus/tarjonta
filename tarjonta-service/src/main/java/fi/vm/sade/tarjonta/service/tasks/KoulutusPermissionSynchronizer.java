@@ -53,6 +53,8 @@ public class KoulutusPermissionSynchronizer {
     private String SMTP_HOST;
     @Value("${smtp.port}")
     private String SMTP_PORT;
+    @Value("${smtp.sender}")
+    private String SMTP_SENDER;
     @Value("${smtp.use_tls}")
     private boolean SMTP_USE_TLS;
     @Value("${smtp.authenticate}")
@@ -162,7 +164,7 @@ public class KoulutusPermissionSynchronizer {
 
         try {
             Message msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress("admin@oph.fi", "admin@oph.fi"));
+            msg.setFrom(new InternetAddress(SMTP_SENDER, SMTP_SENDER));
             msg.addRecipient(Message.RecipientType.TO, new InternetAddress(RECIPIENT, RECIPIENT));
             msg.setSubject(subject);
             msg.setText(body);

@@ -99,3 +99,4 @@ smtp.use_tls={{ryhmasahkoposti_smtp_use_tls}}
 smtp.authenticate={{ryhmasahkoposti_smtp_authenticate}}
 smtp.username={{ryhmasahkoposti_smtp_username}}
 smtp.password={{ryhmasahkoposti_smtp_password}}
+smtp.sender={{ryhmasahkoposti_smtp_sender}}
