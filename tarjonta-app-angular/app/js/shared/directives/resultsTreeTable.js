@@ -155,6 +155,14 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
                 row,
                 selected
             ]);
+            handleSelected(row, selected, true);
+        }
+        function handleSelected(row, selected, doApply) {
+            console.log('ResultsTreeTable.handleSelected()', [
+                row,
+                selected,
+                doApply
+            ]);
             var id = getIdentifier(row);
             var cb = row.$checkbox;
             if (cb) {
@@ -167,21 +175,19 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
                     if (p == -1) {
                         $scope.selection.push(id);
                     }
-                }
-                else {
+                } else {
                     if (p != -1) {
                         $scope.selection.splice(p, 1);
                     }
                 }
-            }
-            else {
+            } else {
                 // delegoi aliriveille
                 var ch = getChildren(row);
                 for (var i in ch) {
-                    setSelected(ch[i], selected);
+                    handleSelected(ch[i], selected, false); //Ei $apply()-kutsua tästä lähtevässä rekursiossa
                 }
             }
-            if (!$scope.$$phase) {
+            if (!$scope.$$phase && doApply) {
                 $scope.$apply();
             }
         }
