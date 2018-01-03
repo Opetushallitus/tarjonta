@@ -279,11 +279,13 @@ angular.module('app.search.controllers', [
             koulutusOid: newObj
         }).then(function(koulutukset) {
             _.each((koulutukset || {}).tulokset, function(tulos) {
+                console.log('Checking permission for oid', tulos.oid);
                 PermissionService.hakukohde.canCreate(tulos.oid).then(function(result) {
                     r.result = r.result && result;
                     $scope.koulutusActions.canCreateHakukohde = r.result;
                 });
             });
+            console.log('Done checking permissions, result: ', r.result);
         });
     }, true);
     $scope.menuOptions = [];
