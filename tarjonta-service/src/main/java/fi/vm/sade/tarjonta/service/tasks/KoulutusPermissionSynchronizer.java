@@ -11,8 +11,6 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionException;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
 import fi.vm.sade.tarjonta.shared.UrlConfiguration;
-import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteKoulutusDTO;
-import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOpetuskieliDTO;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOrgDTO;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,24 +25,16 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
 @Service
 public class KoulutusPermissionSynchronizer {
 
-    @Autowired
-    KoulutusPermissionDAO koulutusPermissionDAO;
-
-    @Autowired
-    KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-
-    @Autowired
-    KoulutusPermissionService koulutusPermissionService;
-
-    @Autowired
-    UrlConfiguration urlConfiguration;
+    private final KoulutusPermissionDAO koulutusPermissionDAO;
+    private final KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+    private final KoulutusPermissionService koulutusPermissionService;
+    private final UrlConfiguration urlConfiguration;
 
     @Value("${invalid.koulutus.report.recipient}")
     private String RECIPIENT;
@@ -64,21 +54,21 @@ public class KoulutusPermissionSynchronizer {
     @Value("${smtp.password}")
     private String SMTP_PASSWORD;
 
-    private static final Map<String, String> opetuskieliKoodiMap;
     private static final int KOMOTO_BATCH_SIZE = 500;
-    static {
-        opetuskieliKoodiMap = new HashMap<>();
-        opetuskieliKoodiMap.put("1", "kieli_fi");
-        opetuskieliKoodiMap.put("2", "kieli_sv");
-        opetuskieliKoodiMap.put("4", "kieli_en");
-        opetuskieliKoodiMap.put("5", "kieli_se");
-    }
 
     final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(KoulutusPermissionSynchronizer.class);
 
+    @Autowired
+    public KoulutusPermissionSynchronizer(KoulutusPermissionDAO koulutusPermissionDAO, KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO, KoulutusPermissionService koulutusPermissionService, UrlConfiguration urlConfiguration) {
+        this.koulutusPermissionDAO = koulutusPermissionDAO;
+        this.koulutusmoduuliToteutusDAO = koulutusmoduuliToteutusDAO;
+        this.koulutusPermissionService = koulutusPermissionService;
+        this.urlConfiguration = urlConfiguration;
+    }
+
     @Scheduled(cron = "0 0 0 * * ?")
     @Transactional
-    public void runUpdate() throws MalformedURLException {
+    public void runUpdate() {
         LOG.info("KoulutusPermissions start update");
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -86,24 +76,20 @@ public class KoulutusPermissionSynchronizer {
 
         try {
             orgs = objectMapper.readValue(
-                    new URL("https://oiva.minedu.fi/api/public/koulutustarjonta"),
+                    new URL("https://oiva.minedu.fi/api/export/jarjestysluvat"),
                     new TypeReference<List<AmkouteOrgDTO>>() {}
             );
-        }
-        catch (JsonParseException e) {
+        } catch(JsonParseException e) {
             LOG.error("KoulutusPermission update failed, JSON parse error", e);
-        }
-        catch (JsonMappingException e) {
+        } catch(JsonMappingException e) {
             LOG.error("KoulutusPermission update failed, JSON mapping error", e);
-        }
-        catch (IOException e) {
+        } catch(IOException e) {
             LOG.error("KoulutusPermission update failed, IOException", e);
         }
 
         if (orgs.size() == 0) {
             LOG.error("KoulutusPermission update failed: no permissions returned in JSON");
-        }
-        else {
+        } else {
             updatePermissionsToDb(orgs);
             LOG.info("KoulutusPermissions updated");
         }
@@ -122,7 +108,7 @@ public class KoulutusPermissionSynchronizer {
     }
 
     public Map<String, List<KoulutusPermissionException>> getOrgsWithInvalidKomotos() {
-        List<ToteutustyyppiEnum> tyyppis = KoulutusPermissionService.getToteustustyyppisToCheckPermissionFor();
+        List<ToteutustyyppiEnum> tyyppis = KoulutusPermissionService.toteustustyyppisToCheckPermissionFor();
         List<KoulutusmoduuliToteutus> komotos;
         Map<String, List<KoulutusPermissionException>> orgsWithInvalidKomotos = new HashMap<>();
         int offset = 0;
@@ -134,8 +120,7 @@ public class KoulutusPermissionSynchronizer {
             for (KoulutusmoduuliToteutus komoto : komotos) {
                 try {
                     koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(komoto);
-                }
-                catch (KoulutusPermissionException e) {
+                } catch(KoulutusPermissionException e) {
                     e.setKomoto(komoto);
                     List<KoulutusPermissionException> invalidKomotos = orgsWithInvalidKomotos.get(e.getOrganisaationOid());
                     if (invalidKomotos == null) {
@@ -145,23 +130,35 @@ public class KoulutusPermissionSynchronizer {
                     orgsWithInvalidKomotos.put(e.getOrganisaationOid(), invalidKomotos);
                 }
             }
-        } while (!komotos.isEmpty());
+        } while(!komotos.isEmpty());
 
         return orgsWithInvalidKomotos;
     }
+
     private void sendMail(Map<String, List<KoulutusPermissionException>> orgsWithInvalidKomotos) {
         String subject = "Tarjonnasta löydetty koulutuksia ilman järjestämisoikeutta";
-        String body = "Tarjonnasta löytyi seuraavat koulutukset, joilta puuttuu järjestämisoikeus:\n\n";
+        StringBuilder body = new StringBuilder("Tarjonnasta löytyi seuraavat koulutukset, joilta puuttuu järjestämisoikeus:\n\n");
 
         for (Map.Entry<String, List<KoulutusPermissionException>> entry : orgsWithInvalidKomotos.entrySet()) {
             KoulutusPermissionException firstException = entry.getValue().iterator().next();
 
-            body += "\n" + firstException.getOrganisaationNimi() + " (" + firstException.getOrganisaationOid() + ")\n";
+            body
+                    .append("\n")
+                    .append(firstException.getOrganisaationNimi())
+                    .append(" (")
+                    .append(firstException.getOrganisaationOid())
+                    .append(")\n");
 
             for (KoulutusPermissionException exception : entry.getValue()) {
                 KoulutusmoduuliToteutus komoto = exception.getKomoto();
-                body += "\t" + urlConfiguration.url("tarjonta-app.koulutus", komoto.getOid()) + " (" + komoto.getTila().toString()
-                        + ") (ei oikeutta koodiin \"" + exception.getPuuttuvaKoodi() + "\")\n";
+                body
+                        .append("\t")
+                        .append(urlConfiguration.url("tarjonta-app.koulutus", komoto.getOid()))
+                        .append(" (")
+                        .append(komoto.getTila().toString())
+                        .append(") (ei oikeutta koodiin \"")
+                        .append(exception.getKohdeKoodi())
+                        .append("\")\n");
             }
         }
 
@@ -172,14 +169,14 @@ public class KoulutusPermissionSynchronizer {
             msg.setFrom(new InternetAddress(SMTP_SENDER, SMTP_SENDER));
             msg.addRecipient(Message.RecipientType.TO, new InternetAddress(RECIPIENT, RECIPIENT));
             msg.setSubject(subject);
-            msg.setText(body);
+            msg.setText(body.toString());
             Transport.send(msg);
             LOG.info("AmkouteMail successfully sent");
-        } catch (AddressException e) {
+        } catch(AddressException e) {
             LOG.error("AmkouteMail: Invalid recipient address", e);
-        } catch (MessagingException e) {
+        } catch(MessagingException e) {
             LOG.error("AmkouteMail: MessagingException", e);
-        } catch (UnsupportedEncodingException e) {
+        } catch(UnsupportedEncodingException e) {
             LOG.error("AmkouteMail: UnsupportedEncodingException", e);
         }
     }
@@ -204,64 +201,8 @@ public class KoulutusPermissionSynchronizer {
 
     public void updatePermissionsToDb(List<AmkouteOrgDTO> orgs) {
         koulutusPermissionDAO.removeAll();
-
-        for (AmkouteOrgDTO org : orgs) {
-            for (KoulutusPermission permission : convertFromDto(org)) {
-                koulutusPermissionDAO.insert(permission);
-            }
+        for (KoulutusPermission permission : KoulutusPermissionCreator.convertFromDto(orgs)) {
+            koulutusPermissionDAO.insert(permission);
         }
     }
-
-    public static <T> Collection<T> nullSafe(Collection<T> c) {
-        return (c == null) ? Collections.<T>emptyList() : c;
-    }
-
-    public static List<KoulutusPermission> convertFromDto(AmkouteOrgDTO org) {
-        List<KoulutusPermission> permissions = new ArrayList<>();
-
-        Map<String, KoulutusPermission> koulutusKoodit = new HashMap<>();
-
-        for (AmkouteKoulutusDTO permissionDto : nullSafe(org.getKoulutukset())) {
-            if (permissionDto.getOsaamisala() != null) {
-                permissions.add(new KoulutusPermission(
-                        org.getOid(),
-                        "osaamisala",
-                        "osaamisala_" + permissionDto.getOsaamisala(),
-                        permissionDto.getAlkupvm(),
-                        permissionDto.getLoppupvm()
-                ));
-            }
-
-            if (permissionDto.getTutkinto() != null) {
-                koulutusKoodit.put(
-                        permissionDto.getTutkinto(),
-                        new KoulutusPermission(
-                                org.getOid(),
-                                "koulutus",
-                                "koulutus_" + permissionDto.getTutkinto(),
-                                permissionDto.getAlkupvm(),
-                                permissionDto.getLoppupvm()
-                        )
-                );
-            }
-        }
-
-        permissions.addAll(koulutusKoodit.values());
-
-        for (AmkouteOpetuskieliDTO permissionDto : nullSafe(org.getOpetuskielet())) {
-            String kielikoodi = opetuskieliKoodiMap.get(permissionDto.getOppilaitoksenopetuskieli());
-            if (kielikoodi != null) {
-                permissions.add(new KoulutusPermission(
-                        org.getOid(),
-                        "kieli",
-                        kielikoodi,
-                        permissionDto.getAlkupvm(),
-                        permissionDto.getLoppupvm()
-                ));
-            }
-        }
-
-        return permissions;
-    }
-
 }
