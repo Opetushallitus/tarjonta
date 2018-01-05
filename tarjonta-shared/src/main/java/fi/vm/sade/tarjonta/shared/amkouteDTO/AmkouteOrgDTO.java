@@ -1,27 +1,25 @@
 package fi.vm.sade.tarjonta.shared.amkouteDTO;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.common.collect.Lists;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AmkouteOrgDTO {
 
-    private String oid;
+    private String jarjestajaOid;
     private Date alkupvm;
     private Date loppupvm;
-    private List<AmkouteKoulutusDTO> koulutukset = new ArrayList<AmkouteKoulutusDTO>();
-    private List<AmkouteJarjestamiskuntaDTO> jarjestamiskunnat = new ArrayList<AmkouteJarjestamiskuntaDTO>();
-    private List<AmkouteOpetuskieliDTO> opetuskielet = new ArrayList<AmkouteOpetuskieliDTO>();
+    private List<AmkouteMaarays> maaraykset = Lists.newArrayList();
 
-    public String getOid() {
-        return oid;
+    public String getJarjestajaOid() {
+        return jarjestajaOid;
     }
 
-    public void setOid(String oid) {
-        this.oid = oid;
+    public void setJarjestajaOid(String oid) {
+        this.jarjestajaOid = oid;
     }
 
     public Date getAlkupvm() {
@@ -40,28 +38,11 @@ public class AmkouteOrgDTO {
         this.loppupvm = loppupvm;
     }
 
-    public List<AmkouteKoulutusDTO> getKoulutukset() {
-        return koulutukset;
+    public List<AmkouteMaarays> getMaaraykset() {
+        return maaraykset;
     }
 
-    public void setKoulutukset(List<AmkouteKoulutusDTO> koulutukset) {
-        this.koulutukset = koulutukset;
+    public void setMaaraykset(List<AmkouteMaarays> maaraykset) {
+        this.maaraykset = maaraykset;
     }
-
-    public List<AmkouteJarjestamiskuntaDTO> getJarjestamiskunnat() {
-        return jarjestamiskunnat;
-    }
-
-    public void setJarjestamiskunnat(List<AmkouteJarjestamiskuntaDTO> jarjestamiskunnat) {
-        this.jarjestamiskunnat = jarjestamiskunnat;
-    }
-
-    public List<AmkouteOpetuskieliDTO> getOpetuskielet() {
-        return opetuskielet;
-    }
-
-    public void setOpetuskielet(List<AmkouteOpetuskieliDTO> opetuskielet) {
-        this.opetuskielet = opetuskielet;
-    }
-
 }

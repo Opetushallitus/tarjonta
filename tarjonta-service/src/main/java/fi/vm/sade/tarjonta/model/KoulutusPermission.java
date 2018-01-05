@@ -19,6 +19,9 @@ public class KoulutusPermission {
     @Column(name = "org_oid")
     private String orgOid;
 
+    @Column(name = "kohde_koodi")
+    private String kohdeKoodi;
+
     @Column(name = "koodisto")
     private String koodisto;
 
@@ -31,12 +34,18 @@ public class KoulutusPermission {
     @Column(name = "loppu_pvm")
     private Date loppuPvm;
 
-    public KoulutusPermission(String orgOid, String koodisto, String koodiUri, Date alkuPvm, Date loppuPvm) {
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private KoulutusPermissionType type;
+
+    public KoulutusPermission(String orgOid, String kohdeKoodi, String koodisto, String koodiUri, Date alkuPvm, Date loppuPvm, KoulutusPermissionType type) {
         this.orgOid = orgOid;
+        this.kohdeKoodi = kohdeKoodi;
         this.koodisto = koodisto;
         this.koodiUri = koodiUri;
         this.alkuPvm = alkuPvm;
         this.loppuPvm = loppuPvm;
+        this.type = type;
     }
 
     public KoulutusPermission() {
@@ -56,6 +65,14 @@ public class KoulutusPermission {
 
     public void setOrgOid(String orgOid) {
         this.orgOid = orgOid;
+    }
+
+    public String getKohdeKoodi() {
+        return kohdeKoodi;
+    }
+
+    public void setKohdeKoodi(String kohdeKoodi) {
+        this.kohdeKoodi = kohdeKoodi;
     }
 
     public String getKoodisto() {
@@ -90,4 +107,24 @@ public class KoulutusPermission {
         this.loppuPvm = loppuPvm;
     }
 
+    public KoulutusPermissionType getType() {
+        return type;
+    }
+
+    public void setType(KoulutusPermissionType type) {
+        this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "KoulutusPermission{" +
+                "orgOid='" + orgOid + '\'' +
+                ", kohdeKoodi='" + kohdeKoodi + '\'' +
+                ", koodisto='" + koodisto + '\'' +
+                ", koodiUri='" + koodiUri + '\'' +
+                ", alkuPvm=" + alkuPvm +
+                ", loppuPvm=" + loppuPvm +
+                ", type=" + type +
+                '}';
+    }
 }
