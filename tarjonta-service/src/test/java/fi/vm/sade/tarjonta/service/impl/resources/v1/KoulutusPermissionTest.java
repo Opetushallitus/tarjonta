@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
+import fi.vm.sade.tarjonta.model.KoulutusPermissionType;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionException;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
@@ -40,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -69,7 +71,7 @@ public class KoulutusPermissionTest extends TestUtilityBase {
 
     @Test
     public void testThatPermissionsAreFoundInDb() {
-        KoulutusPermission permission = new KoulutusPermission("org1", "koulutus", "koulutus_1", null, null);
+        KoulutusPermission permission = new KoulutusPermission("org1", null, "koulutus", "koulutus_1", null, null, null);
         koulutusPermissionDAO.insert(permission);
 
         List<KoulutusPermission> matchingPermissions = koulutusPermissionDAO.findByOrganization(Lists.newArrayList("org1"));
@@ -89,7 +91,7 @@ public class KoulutusPermissionTest extends TestUtilityBase {
     @Test
     public void testThatPermissionsAreUpdated() throws IOException {
         // This permission should be removed after update
-        KoulutusPermission permission = new KoulutusPermission("org1", "koulutus", "koulutus_1", null, null);
+        KoulutusPermission permission = new KoulutusPermission("org1", null, "koulutus", "koulutus_1", null, null, KoulutusPermissionType.OIKEUS);
         koulutusPermissionDAO.insert(permission);
         List<KoulutusPermission> beforeUpdatePermission = koulutusPermissionDAO.findByOrganization(Lists.newArrayList("org1"));
         assertEquals(1, beforeUpdatePermission.size());
@@ -100,7 +102,7 @@ public class KoulutusPermissionTest extends TestUtilityBase {
                 new TypeReference<List<AmkouteOrgDTO>>() {
                 }
         );
-        assertEquals(5, orgs.size());
+        assertEquals(166, orgs.size());
 
         koulutusPermissionSynchronizer.updatePermissionsToDb(orgs);
 
@@ -110,21 +112,23 @@ public class KoulutusPermissionTest extends TestUtilityBase {
 
         // And inserted all permissions from JSON
         List<KoulutusPermission> permissions = koulutusPermissionDAO.findAll();
-        assertEquals(102, permissions.size());
+        assertEquals(7145, permissions.size());
+        assertFalse(permissions.stream().anyMatch(p -> p.getType() == null));
+        assertFalse(permissions.stream().anyMatch(p -> p.getKohdeKoodi() == null && !p.getKoodisto().equals("oppilaitoksenopetuskieli")));
 
         permissions = koulutusPermissionDAO.findByOrganization(Lists.newArrayList("1.2.246.562.10.354067406510"));
-        assertEquals(12, permissions.size());
+        assertEquals(5, permissions.size());
     }
 
     @Test(expected = KoulutusPermissionException.class)
     public void testThatIsNotAllowedWhenPermissionIsOutdated() {
         Date d2013Jan = new DateTime().withYear(2013).withMonthOfYear(1).toDate();
-        KoulutusPermission kieliFiPermission = new KoulutusPermission(ORG_OID, "kieli", "kieli_fi", null, d2013Jan);
-        koulutusPermissionDAO.insert(kieliFiPermission);
+        KoulutusPermission koulutusPermission = new KoulutusPermission(ORG_OID, "koulutus_1", "koulutus", "koulutus_1", null, d2013Jan, KoulutusPermissionType.OIKEUS);
+        koulutusPermissionDAO.insert(koulutusPermission);
 
         expectOrganization();
         KoulutusV1RDTO dto = getAmisDto();
-        dto.setOpetuskielis(getOpetuskielis(Lists.newArrayList("kieli_fi")));
+        dto.setKoulutuskoodi(createCode("koulutus_1"));
 
         koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
     }
@@ -132,12 +136,12 @@ public class KoulutusPermissionTest extends TestUtilityBase {
     @Test(expected = KoulutusPermissionException.class)
     public void testThatIsNotAllowedWhenPermissionIsInFuture() {
         Date futureDate = new DateTime().plusYears(1).toDate();
-        KoulutusPermission kieliFiPermission = new KoulutusPermission(ORG_OID, "kieli", "kieli_fi", futureDate, null);
-        koulutusPermissionDAO.insert(kieliFiPermission);
+        KoulutusPermission koulutusPermission = new KoulutusPermission(ORG_OID, "koulutus_1", "koulutus", "koulutus_1", futureDate, null, KoulutusPermissionType.OIKEUS);
+        koulutusPermissionDAO.insert(koulutusPermission);
 
         expectOrganization();
         KoulutusV1RDTO dto = getAmisDto();
-        dto.setOpetuskielis(getOpetuskielis(Lists.newArrayList("kieli_fi")));
+        dto.setKoulutuskoodi(createCode("koulutus_1"));
 
         koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
     }
@@ -152,11 +156,11 @@ public class KoulutusPermissionTest extends TestUtilityBase {
 
     @Test(expected = KoulutusPermissionException.class)
     public void testThatIsNotAllowedWhenLanguageIsNotPermitted() {
-        KoulutusPermission kieliFiPermission = new KoulutusPermission(ORG_OID, "kieli", "kieli_fi", null, null);
+        KoulutusPermission kieliFiPermission = new KoulutusPermission(ORG_OID, null, "kieli", "kieli_fi", null, null, null);
         koulutusPermissionDAO.insert(kieliFiPermission);
-        KoulutusPermission kieliSvPermission = new KoulutusPermission(ORG_OID, "kieli", "kieli_sv", null, null);
+        KoulutusPermission kieliSvPermission = new KoulutusPermission(ORG_OID, null, "kieli", "kieli_sv", null, null, null);
         koulutusPermissionDAO.insert(kieliSvPermission);
-        KoulutusPermission permission = new KoulutusPermission(ORG_OID, "koulutus", "koulutus_1", null, null);
+        KoulutusPermission permission = new KoulutusPermission(ORG_OID, null, "koulutus", "koulutus_1", null, null, null);
         koulutusPermissionDAO.insert(permission);
 
         expectOrganization();
@@ -169,9 +173,9 @@ public class KoulutusPermissionTest extends TestUtilityBase {
 
     @Test(expected = KoulutusPermissionException.class)
     public void testThatIsNotAllowedWhenOsaamisalaIsNotPermitted() {
-        KoulutusPermission koulutusPermission = new KoulutusPermission(ORG_OID, "koulutus", "koulutus_1", null, null);
+        KoulutusPermission koulutusPermission = new KoulutusPermission(ORG_OID, null, "koulutus", "koulutus_1", null, null, null);
         koulutusPermissionDAO.insert(koulutusPermission);
-        KoulutusPermission kieliPermission = new KoulutusPermission(ORG_OID, "kieli", "kieli_fi", null, null);
+        KoulutusPermission kieliPermission = new KoulutusPermission(ORG_OID, null, "kieli", "kieli_fi", null, null, null);
         koulutusPermissionDAO.insert(kieliPermission);
 
         expectOrganization();
@@ -185,13 +189,13 @@ public class KoulutusPermissionTest extends TestUtilityBase {
 
     @Test
     public void testThatIsAllowedToOrganize() {
-        KoulutusPermission koulutusPermission = new KoulutusPermission(ORG_OID, "koulutus", "koulutus_1", null, null);
+        KoulutusPermission koulutusPermission = new KoulutusPermission(ORG_OID, null, "koulutus", "koulutus_1", null, null, KoulutusPermissionType.OIKEUS);
         koulutusPermissionDAO.insert(koulutusPermission);
-        KoulutusPermission kieliFiPermission = new KoulutusPermission(ORG_OID, "kieli", "kieli_fi", null, null);
+        KoulutusPermission kieliFiPermission = new KoulutusPermission(ORG_OID, null, "kieli", "kieli_fi", null, null, KoulutusPermissionType.VELVOITE);
         koulutusPermissionDAO.insert(kieliFiPermission);
-        KoulutusPermission kieliSvPermission = new KoulutusPermission(ORG_OID, "kieli", "kieli_sv", null, null);
+        KoulutusPermission kieliSvPermission = new KoulutusPermission(ORG_OID, null, "kieli", "kieli_sv", null, null, KoulutusPermissionType.VELVOITE);
         koulutusPermissionDAO.insert(kieliSvPermission);
-        KoulutusPermission osaamisalaPermission = new KoulutusPermission(ORG_OID, "osaamisala", "osaamisala_1", null, null);
+        KoulutusPermission osaamisalaPermission = new KoulutusPermission(ORG_OID, null, "osaamisala", "osaamisala_1", null, null, KoulutusPermissionType.OIKEUS);
         koulutusPermissionDAO.insert(osaamisalaPermission);
 
         expectOrganization();

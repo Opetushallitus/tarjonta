@@ -7,14 +7,14 @@ public class KoulutusPermissionException extends RuntimeException {
     private String organisaationNimi;
     private String organisaationOid;
     private String koodisto;
-    private String puuttuvaKoodi;
+    private String kohdeKoodi;
     private KoulutusmoduuliToteutus komoto;
 
     public KoulutusPermissionException(String organisaationNimi, String organisaationOid, String koodisto, String puuttuuvaKoodi) {
         this.organisaationNimi = organisaationNimi;
         this.organisaationOid = organisaationOid;
         this.koodisto = koodisto;
-        this.puuttuvaKoodi = puuttuuvaKoodi;
+        this.kohdeKoodi = puuttuuvaKoodi;
     }
 
     public String getOrganisaationNimi() {
@@ -25,8 +25,8 @@ public class KoulutusPermissionException extends RuntimeException {
         return organisaationOid;
     }
 
-    public String getPuuttuvaKoodi() {
-        return puuttuvaKoodi;
+    public String getKohdeKoodi() {
+        return kohdeKoodi;
     }
 
     public KoulutusmoduuliToteutus getKomoto() {
