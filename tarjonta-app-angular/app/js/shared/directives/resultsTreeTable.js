@@ -33,7 +33,7 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             $scope.model = [];
         }
         if (!$scope.selection) {
-            $scope.selection = [];
+            $scope.selection = {};
         }
         if (!$scope.column) {
             $scope.column = [];
@@ -151,18 +151,14 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
         }
         // VALINTA
         function setSelected(row, selected) {
-            console.log('ResultsTreeTable.setSelected()', [
-                row,
-                selected
-            ]);
             handleSelected(row, selected, true);
         }
         function handleSelected(row, selected, doApply) {
-            console.log('ResultsTreeTable.handleSelected()', [
+            /*console.log('ResultsTreeTable.handleSelected()', [
                 row,
                 selected,
                 doApply
-            ]);
+            ]);*/
             var id = getIdentifier(row);
             var cb = row.$checkbox;
             if (cb) {
@@ -170,21 +166,24 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             }
             if (id) {
                 // lisää/poista valinta
-                var p = $scope.selection.indexOf(id);
-                if (selected) {
-                    if (p == -1) {
-                        $scope.selection.push(id);
+                if (!$scope.selection[id] && selected) {
+                    parents=[];
+                    if (row.tarjoajat) {
+                        parents = row.tarjoajat;
+                    } else {
+                        console.log('no parents available! in ', row);
                     }
+                    $scope.selection[id] = parents;
+                    //console.log('after add: ', $scope.selection);
                 } else {
-                    if (p != -1) {
-                        $scope.selection.splice(p, 1);
-                    }
+                    delete $scope.selection[id];
+                    //console.log('after delete: ', $scope.selection);
                 }
             } else {
                 // delegoi aliriveille
                 var ch = getChildren(row);
                 for (var i in ch) {
-                    handleSelected(ch[i], selected, false); //Ei $apply()-kutsua tästä lähtevässä rekursiossa
+                    handleSelected(ch[i], selected, false); //Ei haluta $apply()-kutsua tästä lähtevässä rekursiossa
                 }
             }
             if (!$scope.$$phase && doApply) {
@@ -373,7 +372,8 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             else {
                 html = html + '<span class="leaf">&nbsp;</span>';
             }
-            var selected = id && $scope.selection.indexOf(id) != -1;
+            //var selected = id && $scope.selection.indexOf(id) != -1;
+            var selected = id && $scope.selection[id];
             html = html + '<input type="checkbox"' + (selected ? 'checked' : '') + '/> ';
             // valikko
             if (getIdentifier(row)) {

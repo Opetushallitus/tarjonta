@@ -252,18 +252,54 @@ angular.module('app.search.controllers', [
         $scope.spec.reset();
     };
     $scope.selection = {
-        koulutukset: [],
+        koulutukset: {},
+        hakukohteetFromTreeTable: {},
         hakukohteet: []
     };
+    if(!$scope.selectedKoulutusOids) {
+        $scope.selectedKoulutusOids = [];
+    }
+
+    $scope.$watch('selection.hakukohteetFromTreeTable', function(newObj, oldObj) {
+        //console.log('selection.hakukohteetFromTreeTable', newObj);
+        var hakukohdeOids = [];
+        for (var key in newObj) {
+            if (newObj.hasOwnProperty(key)) {
+                hakukohdeOids.push(key);
+            }
+        }
+        $scope.selection.hakukohteet = hakukohdeOids;
+    }, true);
+
     $scope.$watch('selection.koulutukset', function(newObj, oldObj) {
-        if (!newObj || newObj.length === 0) {
+        //console.log('selection.koulutukset', newObj);
+        //Parse object into two separate arrays for easier handling
+        var koulutusOids = []; // Valitut koulutukset
+        var parentOids = []; // Valittujen koulutusten vanhemmat. Tämän listan pohjalta tarkistetaan oikeus luoda hakukohde: luojalla täytyy olla oikeus kaikkiin parentOideihin.
+        for (var key in newObj) {
+            if(newObj.hasOwnProperty(key)) {
+                koulutusOids.push(key);
+                if (newObj[key]) {
+                    _.each(newObj[key], function (parentOid) {
+                        if (parentOids.indexOf(parentOid) === -1) {
+                            parentOids.push(parentOid);
+                        }
+                    });
+                }
+            }
+        }
+        //console.log('done parsing, koulutusOids: ', koulutusOids );
+        //console.log('done parsing, parentOids: ', parentOids );
+        $scope.selectedKoulutusOids = koulutusOids;
+
+        if (!koulutusOids || koulutusOids.length === 0) {
             //mitään ei valittuna
             $scope.koulutusActions.canMoveOrCopy = false;
             $scope.koulutusActions.canCreateHakukohde = false;
             return;
         }
-        else if (newObj.length > 1) {
-            //yksi valittuna
+        else if (koulutusOids.length >= 1) {
+            //ainakin yksi valittuna
             $scope.koulutusActions.canMoveOrCopy = false;
         }
         else {
@@ -271,21 +307,17 @@ angular.module('app.search.controllers', [
                 $scope.koulutusActions.canMoveOrCopy = result;
             });
         }
-        //lopullinen tulos tallennetaan tänne (on oikeus luoda hakukohde jos oikeus kaikkiin koulutuksiin):
+
+        //lopullinen tulos tallennetaan tänne (on oikeus luoda hakukohde jos oikeus kaikkien koulutusten tarjoajiin (parentOids)):
         var r = {
             result: true
         };
-        TarjontaService.haeKoulutukset({
-            koulutusOid: newObj
-        }).then(function(koulutukset) {
-            _.each((koulutukset || {}).tulokset, function(tulos) {
-                console.log('Checking permission for oid', tulos.oid);
-                PermissionService.hakukohde.canCreate(tulos.oid).then(function(result) {
-                    r.result = r.result && result;
-                    $scope.koulutusActions.canCreateHakukohde = r.result;
-                });
+        _.each(parentOids, function(pOid) {
+            console.log('Checking permission for parentOid:', pOid);
+            PermissionService.hakukohde.canCreate(pOid).then(function (result) {
+                r.result = r.result && result;
+                $scope.koulutusActions.canCreateHakukohde = r.result;
             });
-            console.log('Done checking permissions, result: ', r.result);
         });
     }, true);
     $scope.menuOptions = [];
@@ -337,7 +369,7 @@ angular.module('app.search.controllers', [
         return !($scope.organisaatioValittu() && $scope.koulutusActions.canCreateKoulutus);
     };
     $scope.luoHakukohdeEnabled = function() {
-        return $scope.selection.koulutukset !== undefined && $scope.selection.koulutukset.length > 0 &&
+        return $scope.selectedKoulutusOids !== undefined && $scope.selectedKoulutusOids.length > 0 &&
             $scope.koulutusActions.canCreateHakukohde;
     };
     if ($scope.spec.attributes.terms == '*') {
@@ -349,11 +381,11 @@ angular.module('app.search.controllers', [
         setTimeout($scope.search, 100);
     }
     $scope.luoUusiHakukohde = function() {
-        if ($scope.selection.koulutukset.length === 0) {
+        if ($scope.selectedKoulutusOids.length === 0) {
             return; // napin pitäisi olla disabloituna, eli tätä ei pitäisi tapahtua, mutta varmuuden vuoksi..
         }
         var promises = [];
-        angular.forEach($scope.selection.koulutukset, function(koulutusOid) {
+        angular.forEach($scope.selectedKoulutusOids, function(koulutusOid) {
             promises.push(TarjontaService.getKoulutusPromise(koulutusOid));
         });
         $q.all(promises).then(function(results) {
@@ -362,7 +394,7 @@ angular.module('app.search.controllers', [
                 arrKomotoIds.push(res.result.oid);
             });
             HakukohdeKoulutukses.geValidateHakukohdeKomotos(arrKomotoIds).then(function(response) {
-                if (response.status === 'OK' && $scope.selection.koulutukset.length === 1 && response.result &&
+                if (response.status === 'OK' && $scope.selectedKoulutusOids.length === 1 && response.result &&
                     response.result.toteutustyyppis && response.result.toteutustyyppis.length === 1) {
                     SharedStateService.addToState('SelectedKoulutukses', arrKomotoIds);
                     SharedStateService.addToState('SelectedToteutusTyyppi', response.result.toteutustyyppis[0]);
@@ -408,7 +440,7 @@ angular.module('app.search.controllers', [
         });
     };
     $scope.siirraTaiKopioi = function() {
-        var komotoOid = $scope.selection.koulutukset[0];
+        var komotoOid = $scope.selectedKoulutusOids[0];
 
         var koulutus = _.chain($scope.koulutusResults.tulokset)
                             .pluck('tulokset')
