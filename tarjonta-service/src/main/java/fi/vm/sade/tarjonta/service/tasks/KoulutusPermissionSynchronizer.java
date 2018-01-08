@@ -172,20 +172,22 @@ public class KoulutusPermissionSynchronizer {
     }
 
     private Session createMailSession() {
-        Properties mailProps = new Properties();
-        mailProps.put("mail.smtp.host", SMTP_HOST);
-        mailProps.put("mail.smtp.port", SMTP_PORT);
-        mailProps.put("mail.smtp.auth", SMTP_AUTHENTICATE);
-        mailProps.put("mail.starttls.enable", SMTP_USE_TLS);
-
         if (SMTP_AUTHENTICATE) {
+            Properties mailProps = new Properties();
+            mailProps.put("mail.smtp.host", SMTP_HOST);
+            mailProps.put("mail.smtp.port", SMTP_PORT);
+            mailProps.put("mail.smtp.auth", SMTP_AUTHENTICATE);
+            mailProps.put("mail.starttls.enable", SMTP_USE_TLS);
+
             return Session.getInstance(mailProps, new javax.mail.Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(SMTP_USERNAME, SMTP_PASSWORD);
                 }
             });
         } else {
-            return Session.getInstance(mailProps);
+            Properties props = new Properties();
+            props.put("mail.smtp.host", SMTP_HOST);
+            return Session.getDefaultInstance(props, null);
         }
     }
 
