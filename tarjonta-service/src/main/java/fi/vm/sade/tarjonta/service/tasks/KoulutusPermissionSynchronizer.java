@@ -12,6 +12,7 @@ import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionException;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
 import fi.vm.sade.tarjonta.shared.UrlConfiguration;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOrgDTO;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -122,13 +123,15 @@ public class KoulutusPermissionSynchronizer {
                     koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(komoto);
                 } catch(KoulutusPermissionException e) {
                     LOG.warn("Found koulutus without Oiva permission", e);
-                    e.setKomoto(komoto);
-                    List<KoulutusPermissionException> invalidKomotos = orgsWithInvalidKomotos.get(e.getOrganisaationOid());
-                    if (invalidKomotos == null) {
-                        invalidKomotos = new ArrayList<>();
+                    if (!TarjontaTila.KOPIOITU.equals(komoto.getTila())) {
+                        e.setKomoto(komoto);
+                        List<KoulutusPermissionException> invalidKomotos = orgsWithInvalidKomotos.get(e.getOrganisaationOid());
+                        if (invalidKomotos == null) {
+                            invalidKomotos = new ArrayList<>();
+                        }
+                        invalidKomotos.add(e);
+                        orgsWithInvalidKomotos.put(e.getOrganisaationOid(), invalidKomotos);
                     }
-                    invalidKomotos.add(e);
-                    orgsWithInvalidKomotos.put(e.getOrganisaationOid(), invalidKomotos);
                 }
             }
         } while(!komotos.isEmpty());
