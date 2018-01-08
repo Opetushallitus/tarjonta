@@ -121,6 +121,7 @@ public class KoulutusPermissionSynchronizer {
                 try {
                     koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(komoto);
                 } catch(KoulutusPermissionException e) {
+                    LOG.warn("Found koulutus without Oiva permission", e);
                     e.setKomoto(komoto);
                     List<KoulutusPermissionException> invalidKomotos = orgsWithInvalidKomotos.get(e.getOrganisaationOid());
                     if (invalidKomotos == null) {

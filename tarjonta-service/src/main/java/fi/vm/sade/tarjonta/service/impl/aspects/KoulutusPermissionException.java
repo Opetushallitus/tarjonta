@@ -41,4 +41,14 @@ public class KoulutusPermissionException extends RuntimeException {
         return koodisto;
     }
 
+    @Override
+    public String toString() {
+        return "KoulutusPermissionException{" +
+                "organisaationNimi='" + organisaationNimi + '\'' +
+                ", organisaationOid='" + organisaationOid + '\'' +
+                ", koodisto='" + koodisto + '\'' +
+                ", kohdeKoodi='" + kohdeKoodi + '\'' +
+                ", komoto=" + komoto +
+                '}';
+    }
 }
