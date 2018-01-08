@@ -23,8 +23,6 @@ import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
-import fi.vm.sade.tarjonta.shared.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.model.RestParam;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
@@ -34,6 +32,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -272,7 +271,9 @@ public class KoulutusCommonConverter {
             //TODO: remove this code block when data is fixed
             toKoodiUriDTO(koodiDto, new KoodiUriAndVersioType(), new KoodiType(), param.getLocale());
         } else if (koodiType == null) {
-            LOG.error("No koodisto service koodi URI found by '{}'.", fromKoodiUri);
+            if (StringUtils.isNotBlank(fromKoodiUri)) {
+                LOG.error("No koodisto service koodi URI found by '{}'.", fromKoodiUri);
+            }
             KoodiUriAndVersioType type = TarjontaKoodistoHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(fromKoodiUri);
             toKoodiUriDTO(koodiDto, type, koodiType, param.getLocale());
             addOtherLanguages(koodiDto, koodiType, param.getLocale(), param.getShowMeta());
