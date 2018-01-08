@@ -138,28 +138,17 @@ public class KoulutusPermissionSynchronizer {
 
     private void sendMail(Map<String, List<KoulutusPermissionException>> orgsWithInvalidKomotos) {
         String subject = "Tarjonnasta löydetty koulutuksia ilman järjestämisoikeutta";
-        StringBuilder body = new StringBuilder("Tarjonnasta löytyi seuraavat koulutukset, joilta puuttuu järjestämisoikeus:\n\n");
+        String body = "Tarjonnasta löytyi seuraavat koulutukset, joilta puuttuu järjestämisoikeus:\n\n";
 
         for (Map.Entry<String, List<KoulutusPermissionException>> entry : orgsWithInvalidKomotos.entrySet()) {
             KoulutusPermissionException firstException = entry.getValue().iterator().next();
 
-            body
-                    .append("\n")
-                    .append(firstException.getOrganisaationNimi())
-                    .append(" (")
-                    .append(firstException.getOrganisaationOid())
-                    .append(")\n");
+            body += "\n" + firstException.getOrganisaationNimi() + " (" + firstException.getOrganisaationOid() + ")\n";
 
             for (KoulutusPermissionException exception : entry.getValue()) {
                 KoulutusmoduuliToteutus komoto = exception.getKomoto();
-                body
-                        .append("\t")
-                        .append(urlConfiguration.url("tarjonta-app.koulutus", komoto.getOid()))
-                        .append(" (")
-                        .append(komoto.getTila().toString())
-                        .append(") (ei oikeutta koodiin \"")
-                        .append(exception.getKohdeKoodi())
-                        .append("\")\n");
+                body += "\t" + urlConfiguration.url("tarjonta-app.koulutus", komoto.getOid()) + " (" + komoto.getTila().toString()
+                        + ") (ei oikeutta koodiin \"" + exception.getPuuttuvaKoodi() + "\")\n";
             }
         }
 
@@ -170,14 +159,14 @@ public class KoulutusPermissionSynchronizer {
             msg.setFrom(new InternetAddress(SMTP_SENDER, SMTP_SENDER));
             msg.addRecipient(Message.RecipientType.TO, new InternetAddress(RECIPIENT, RECIPIENT));
             msg.setSubject(subject);
-            msg.setText(body.toString());
+            msg.setText(body);
             Transport.send(msg);
             LOG.info("AmkouteMail successfully sent");
-        } catch(AddressException e) {
+        } catch (AddressException e) {
             LOG.error("AmkouteMail: Invalid recipient address", e);
-        } catch(MessagingException e) {
+        } catch (MessagingException e) {
             LOG.error("AmkouteMail: MessagingException", e);
-        } catch(UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             LOG.error("AmkouteMail: UnsupportedEncodingException", e);
         }
     }

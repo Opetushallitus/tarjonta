@@ -165,7 +165,7 @@ public class KoulutusPermissionService {
                 .filter(p -> KoulutusPermissionType.OIKEUS.equals(p.getType()))
                 .filter(p -> getKoodiURIFromVersionedUri(koulutusKoodi).equals(p.getKoodiUri()))
                 .noneMatch(checkDates(pvm))) {
-            throwPermissionException(orgDto, koulutusKoodi, "koulutus");
+            throwPermissionException(orgDto, null, koulutusKoodi, "koulutus");
         }
     }
 
@@ -177,7 +177,7 @@ public class KoulutusPermissionService {
                 .filter(checkDates(pvm))
                 .findAny()
                 .ifPresent(violatingOsaamisalaRestriction ->
-                        throwPermissionException(orgDto, violatingOsaamisalaRestriction.getKohdeKoodi(), "osaamisala"));
+                        throwPermissionException(orgDto, violatingOsaamisalaRestriction.getKoodiUri(), violatingOsaamisalaRestriction.getKohdeKoodi(), "osaamisala"));
     }
 
     private void checkLanguageRestrictionDoesNotExist(List<KoulutusPermission> permissions, OrganisaatioRDTO orgDto, Set<String> kielet, String koulutusKoodi, String osaamisalaKoodi, final Date pvm) {
@@ -190,11 +190,11 @@ public class KoulutusPermissionService {
                 .findAny()
                 .ifPresent(
                         violatingLanguageRestriction ->
-                                throwPermissionException(orgDto, violatingLanguageRestriction.getKohdeKoodi(), "kieli"));
+                                throwPermissionException(orgDto, violatingLanguageRestriction.getKoodiUri(), violatingLanguageRestriction.getKohdeKoodi(),"kieli"));
 
     }
 
-    private static void throwPermissionException(OrganisaatioRDTO orgDto, String kohdekoodi, String koodisto) {
+    private static void throwPermissionException(OrganisaatioRDTO orgDto, String puuttuvakoodi, String kohdekoodi, String koodisto) {
         String organisaationNimi = "-";
         try {
             organisaationNimi = orgDto.getNimi().values().iterator().next();
@@ -204,6 +204,7 @@ public class KoulutusPermissionService {
                 organisaationNimi,
                 orgDto.getOid(),
                 koodisto,
+                puuttuvakoodi,
                 kohdekoodi
         );
     }
