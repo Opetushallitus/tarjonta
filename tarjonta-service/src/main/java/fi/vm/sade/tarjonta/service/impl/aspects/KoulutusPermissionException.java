@@ -7,14 +7,16 @@ public class KoulutusPermissionException extends RuntimeException {
     private String organisaationNimi;
     private String organisaationOid;
     private String koodisto;
+    private String puuttuvaKoodi;
     private String kohdeKoodi;
     private KoulutusmoduuliToteutus komoto;
 
-    public KoulutusPermissionException(String organisaationNimi, String organisaationOid, String koodisto, String puuttuuvaKoodi) {
+    public KoulutusPermissionException(String organisaationNimi, String organisaationOid, String koodisto, String puuttuuvaKoodi, String kohdeKoodi) {
         this.organisaationNimi = organisaationNimi;
         this.organisaationOid = organisaationOid;
         this.koodisto = koodisto;
-        this.kohdeKoodi = puuttuuvaKoodi;
+        this.puuttuvaKoodi = puuttuuvaKoodi;
+        this.kohdeKoodi = kohdeKoodi;
     }
 
     public String getOrganisaationNimi() {
@@ -23,6 +25,10 @@ public class KoulutusPermissionException extends RuntimeException {
 
     public String getOrganisaationOid() {
         return organisaationOid;
+    }
+
+    public String getPuuttuvaKoodi() {
+        return puuttuvaKoodi;
     }
 
     public String getKohdeKoodi() {
@@ -47,6 +53,7 @@ public class KoulutusPermissionException extends RuntimeException {
                 "organisaationNimi='" + organisaationNimi + '\'' +
                 ", organisaationOid='" + organisaationOid + '\'' +
                 ", koodisto='" + koodisto + '\'' +
+                ", puuttuvaKoodi='" + puuttuvaKoodi + '\'' +
                 ", kohdeKoodi='" + kohdeKoodi + '\'' +
                 ", komoto=" + komoto +
                 '}';
