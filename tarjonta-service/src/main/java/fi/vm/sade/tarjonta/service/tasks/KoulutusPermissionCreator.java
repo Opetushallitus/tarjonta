@@ -7,6 +7,7 @@ import fi.vm.sade.tarjonta.model.KoulutusPermissionType;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteMaarays;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteMaaraystyyppiValue;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOrgDTO;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -21,10 +22,20 @@ public class KoulutusPermissionCreator {
 
         for (AmkouteOrgDTO org : orgs) {
             for (AmkouteMaarays maarays : org.getMaaraykset()) {
-                permissions.addAll(createMaarays(maarays, org.getJarjestajaOid(), null, org.getAlkupvm(), org.getLoppupvm()));
+                permissions.addAll(createMaarays(maarays, org.getJarjestajaOid(), null, getAlkuPvm(org.getAlkupvm()), getLoppuPvm(org.getLoppupvm())));
             }
         }
         return permissions;
+    }
+
+    // Keskiyö päivää edeltävänä yönä
+    private static Date getAlkuPvm(Date pvm) {
+        return pvm == null ? null : DateUtils.truncate(pvm, Calendar.DATE);
+    }
+
+    // Keskiyö päivämäärästä seuraavana yönä
+    private static Date getLoppuPvm(Date pvm) {
+        return pvm == null ? null : DateUtils.addDays(DateUtils.truncate(pvm, Calendar.DATE), 1);
     }
 
     private static List<KoulutusPermission> createMaarays(AmkouteMaarays maarays, String jarjestajaOid, String ylaMaarayksenKoulutusTaiOsaamisalaKoodi, Date alkupvm, Date loppupvm) {

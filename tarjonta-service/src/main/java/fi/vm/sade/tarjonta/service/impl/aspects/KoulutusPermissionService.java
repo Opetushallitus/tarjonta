@@ -159,13 +159,14 @@ public class KoulutusPermissionService {
 
     }
 
-    private static void checkKoulutusPermissionExists(List<KoulutusPermission> permissions, OrganisaatioRDTO orgDto, final String koulutusKoodi, final Date pvm) {
+    private static void checkKoulutusPermissionExists(List<KoulutusPermission> permissions, OrganisaatioRDTO orgDto, final String koulutusKoodiWithVersion, final Date pvm) {
+        String koulutusKoodi = getKoodiURIFromVersionedUri(koulutusKoodiWithVersion);
         if (permissions.stream()
                 .filter(p -> p.getKoodisto().equals("koulutus"))
                 .filter(p -> KoulutusPermissionType.OIKEUS.equals(p.getType()))
-                .filter(p -> getKoodiURIFromVersionedUri(koulutusKoodi).equals(p.getKoodiUri()))
+                .filter(p -> koulutusKoodi.equals(p.getKoodiUri()))
                 .noneMatch(checkDates(pvm))) {
-            throwPermissionException(orgDto, koulutusKoodi, koulutusKoodi, "koulutus");
+            throwPermissionException(orgDto, koulutusKoodiWithVersion, koulutusKoodiWithVersion, "koulutus");
         }
     }
 
@@ -210,10 +211,20 @@ public class KoulutusPermissionService {
     }
 
     private static Predicate<KoulutusPermission> checkDates(final Date pvm) {
-        return p -> (
-                p.getAlkuPvm() == null || pvm.after(p.getAlkuPvm()))
-                && (p.getLoppuPvm() == null || pvm.before(p.getLoppuPvm())
-        );
+        return p -> {
+            Date alkuPvm = p.getAlkuPvm();
+            Date loppuPvm = p.getLoppuPvm();
+            return (alkuPvm == null || isAfterOrEquals(pvm, alkuPvm))
+                    && (loppuPvm == null || isBeforeOrEquals(pvm, loppuPvm));
+        };
+    }
+
+    private static boolean isAfterOrEquals(Date pvm, Date alkuPvm) {
+        return pvm.after(alkuPvm) || pvm.equals(alkuPvm);
+    }
+
+    private static boolean isBeforeOrEquals(Date pvm, Date loppuPvm) {
+        return pvm.before(loppuPvm) || pvm.equals(loppuPvm);
     }
 
 }
