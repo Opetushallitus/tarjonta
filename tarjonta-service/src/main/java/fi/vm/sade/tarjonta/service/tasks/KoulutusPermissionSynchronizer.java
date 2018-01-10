@@ -67,7 +67,7 @@ public class KoulutusPermissionSynchronizer {
         this.urlConfiguration = urlConfiguration;
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 * * * ?")
     @Transactional
     public void runUpdate() {
         LOG.info("KoulutusPermissions start update");
@@ -97,7 +97,7 @@ public class KoulutusPermissionSynchronizer {
     }
 
     @Transactional(readOnly = true)
-    @Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(cron = "0 */15 * * * ?")
     public void checkExistingKoulutus() {
         LOG.info("Amkoute: check existing koulutus start");
 
