@@ -77,7 +77,7 @@ public class KoulutusPermissionSynchronizer {
 
         try {
             orgs = objectMapper.readValue(
-                    new URL("https://oiva.minedu.fi/api/export/jarjestysluvat"),
+                    new URL(urlConfiguration.url("oiva.jarjestysluvat")),
                     new TypeReference<List<AmkouteOrgDTO>>() {}
             );
         } catch(JsonParseException e) {

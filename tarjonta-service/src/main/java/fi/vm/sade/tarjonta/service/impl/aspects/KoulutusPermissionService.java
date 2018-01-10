@@ -168,7 +168,7 @@ public class KoulutusPermissionService {
                 .filter(p -> p.getKoodisto().equals("koulutus"))
                 .filter(p -> KoulutusPermissionType.OIKEUS.equals(p.getType()))
                 .filter(p -> koulutusKoodi.equals(p.getKoodiUri()) || valmaErityisopetuksenaEqualsValma(koulutusKoodi, p))
-                .noneMatch(checkDates(pvm))) {
+                .noneMatch(checkPermissionIsOngoingWhenKoulutusStarts(pvm))) {
             throwPermissionException(orgDto, koulutusKoodiWithVersion, koulutusKoodiWithVersion, "koulutus");
         }
     }
@@ -182,7 +182,7 @@ public class KoulutusPermissionService {
                 .filter(p -> p.getKoodisto().equals("osaamisala"))
                 .filter(p -> KoulutusPermissionType.RAJOITE.equals(p.getType()))
                 .filter(p -> getKoodiURIFromVersionedUri(code).equals(p.getKoodiUri()))
-                .filter(checkDates(pvm))
+                .filter(checkPermissionIsOngoingWhenKoulutusStarts(pvm))
                 .findAny()
                 .ifPresent(violatingOsaamisalaRestriction ->
                         throwPermissionException(orgDto, violatingOsaamisalaRestriction.getKoodiUri(), violatingOsaamisalaRestriction.getKohdeKoodi(), "osaamisala"));
@@ -194,7 +194,7 @@ public class KoulutusPermissionService {
                 .filter(p -> !kielet.contains(p.getKoodiUri()))
                 .filter(p -> p.getKohdeKoodi().equals(koulutusKoodi) || p.getKohdeKoodi().equals(osaamisalaKoodi))
                 .filter(p -> KoulutusPermissionType.VELVOITE.equals(p.getType()))
-                .filter(checkDates(pvm))
+                .filter(checkPermissionIsOngoingWhenKoulutusStarts(pvm))
                 .findAny()
                 .ifPresent(
                         violatingLanguageRestriction ->
@@ -217,7 +217,7 @@ public class KoulutusPermissionService {
         );
     }
 
-    private static Predicate<KoulutusPermission> checkDates(final Date pvm) {
+    private static Predicate<KoulutusPermission> checkPermissionIsOngoingWhenKoulutusStarts(final Date pvm) {
         return p -> {
             Date alkuPvm = p.getAlkuPvm();
             Date loppuPvm = p.getLoppuPvm();
