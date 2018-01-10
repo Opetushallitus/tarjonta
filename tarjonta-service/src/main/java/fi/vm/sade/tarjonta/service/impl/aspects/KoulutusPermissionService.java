@@ -23,6 +23,9 @@ import static fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper.getKoodiURIFromV
 public class KoulutusPermissionService {
 
     private static final String OPH_OID = "1.2.246.562.10.00000000001";
+    public static final String VALMA = "koulutus_999901";
+    private static final String VALMA_ERITYISOPETUKSENA = "koulutus_999902";
+
 
     @Autowired
     private KoulutusPermissionDAO koulutusPermissionDAO;
@@ -164,10 +167,14 @@ public class KoulutusPermissionService {
         if (permissions.stream()
                 .filter(p -> p.getKoodisto().equals("koulutus"))
                 .filter(p -> KoulutusPermissionType.OIKEUS.equals(p.getType()))
-                .filter(p -> koulutusKoodi.equals(p.getKoodiUri()))
+                .filter(p -> koulutusKoodi.equals(p.getKoodiUri()) || valmaErityisopetuksenaEqualsValma(koulutusKoodi, p))
                 .noneMatch(checkDates(pvm))) {
             throwPermissionException(orgDto, koulutusKoodiWithVersion, koulutusKoodiWithVersion, "koulutus");
         }
+    }
+
+    private static boolean valmaErityisopetuksenaEqualsValma(String koulutusKoodi, KoulutusPermission p) {
+        return p.getKoodiUri().equals(VALMA) && koulutusKoodi.equals(VALMA_ERITYISOPETUKSENA);
     }
 
     private static void checkOsaamisalaRestrictionDoesNotExist(List<KoulutusPermission> permissions, OrganisaatioRDTO orgDto, final String code, final Date pvm) {
