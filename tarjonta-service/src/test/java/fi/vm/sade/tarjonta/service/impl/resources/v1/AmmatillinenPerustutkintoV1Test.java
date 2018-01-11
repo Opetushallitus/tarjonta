@@ -10,8 +10,11 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.service.types.common.KoodistoItemType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
+import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.model.KoulutusPermission;
+import fi.vm.sade.tarjonta.model.KoulutusPermissionType;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
@@ -83,6 +86,9 @@ public class AmmatillinenPerustutkintoV1Test {
     KoulutusmoduuliDAO koulutusmoduuliDAO;
 
     @Autowired
+    protected KoulutusPermissionDAO koulutusPermissionDAO;
+
+    @Autowired
     KoodiService koodiService;
 
     @Autowired
@@ -131,7 +137,7 @@ public class AmmatillinenPerustutkintoV1Test {
         when(koodiService.searchKoodis(new SearchKoodisCriteriaType(){{
             getKoodiUris().add(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO.uri());
         }})).thenReturn(
-                Lists.<KoodiType>newArrayList(new KoodiType(){{
+                Lists.newArrayList(new KoodiType(){{
                     setKoodiUri(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO.uri());
                     setVersio(1);
                 }})
@@ -188,6 +194,11 @@ public class AmmatillinenPerustutkintoV1Test {
     @Test
     @Transactional
     public void testCreateFailsWhenDuplicateKomotoExists() throws OIDCreationException {
+        KoulutusPermission koulutusPermission = new KoulutusPermission(TARJOAJA1, null, "koulutus", "koulutus_x", null, null, KoulutusPermissionType.OIKEUS);
+        koulutusPermissionDAO.insert(koulutusPermission);
+        KoulutusPermission kieliPermission = new KoulutusPermission(TARJOAJA1, null, "kieli", "kieli_fi", null, null, KoulutusPermissionType.VELVOITE);
+        koulutusPermissionDAO.insert(kieliPermission);
+
         final String komoto1Oid = oidServiceMock.getOid();
         when(oidService.get(TarjontaOidType.KOMOTO))
                 .thenReturn(komoto1Oid)

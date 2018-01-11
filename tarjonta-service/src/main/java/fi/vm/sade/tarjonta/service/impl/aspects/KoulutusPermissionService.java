@@ -1,16 +1,11 @@
 package fi.vm.sade.tarjonta.service.impl.aspects;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
-import fi.vm.sade.tarjonta.model.KoodistoUri;
-import fi.vm.sade.tarjonta.model.KoulutusPermission;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
@@ -20,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper.getKoodiURIFromVersionedUri;
 
@@ -27,6 +23,9 @@ import static fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper.getKoodiURIFromV
 public class KoulutusPermissionService {
 
     private static final String OPH_OID = "1.2.246.562.10.00000000001";
+    public static final String VALMA = "koulutus_999901";
+    private static final String VALMA_ERITYISOPETUKSENA = "koulutus_999902";
+
 
     @Autowired
     private KoulutusPermissionDAO koulutusPermissionDAO;
@@ -34,11 +33,23 @@ public class KoulutusPermissionService {
     @Autowired
     private OrganisaatioService organisaatioService;
 
+
+    public static List<ToteutustyyppiEnum> toteustustyyppisToCheckPermissionFor() {
+        return Lists.newArrayList(
+                ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018,
+                ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO,
+                ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA,
+                ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA,
+                ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER,
+                ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS
+        );
+    }
+
     public void checkThatOrganizationIsAllowedToOrganizeEducation(KoulutusmoduuliToteutus komoto) {
         Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
         KoulutusV1RDTO dto;
 
-        switch (komoto.getToteutustyyppi()) {
+        switch(komoto.getToteutustyyppi()) {
             case AMMATILLINEN_PERUSTUTKINTO:
                 dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
                 break;
@@ -88,15 +99,6 @@ public class KoulutusPermissionService {
         return koodi;
     }
 
-    public static List<ToteutustyyppiEnum> getToteustustyyppisToCheckPermissionFor() {
-        return Lists.newArrayList(
-                ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO,
-                ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA,
-                ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA,
-                ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER,
-                ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS
-        );
-    }
 
     public void checkThatOrganizationIsAllowedToOrganizeEducation(KoulutusV1RDTO dto) {
 
@@ -105,7 +107,7 @@ public class KoulutusPermissionService {
             return;
         }
 
-        if (!getToteustustyyppisToCheckPermissionFor().contains(dto.getToteutustyyppi())) {
+        if (!toteustustyyppisToCheckPermissionFor().contains(dto.getToteutustyyppi())) {
             return;
         }
 
@@ -118,11 +120,9 @@ public class KoulutusPermissionService {
         if (dto.getKoulutusohjelma() != null) {
             osaamisalaKoodi = dto.getKoulutusohjelma().getUri();
         }
-        List<String> opetuskielet = new ArrayList<>();
+        Set<String> opetuskielet = Sets.newHashSet();
         if (dto.getOpetuskielis() != null && dto.getOpetuskielis().getUris() != null) {
-            for (String kieli : dto.getOpetuskielis().getUrisAsStringList(false)) {
-                opetuskielet.add(kieli);
-            }
+            opetuskielet.addAll(dto.getOpetuskielis().getUrisAsStringList(false));
         }
 
         Set<Date> alkamispvmt = Sets.newHashSet(dto.getKoulutuksenAlkamisPvms());
@@ -150,54 +150,88 @@ public class KoulutusPermissionService {
 
         for (Date pvm : alkamispvmt) {
             if (koulutusKoodi != null) {
-                checkPermissions(permissions, org, "koulutus", koulutusKoodi, pvm);
+                checkKoulutusPermissionExists(permissions, org, koulutusKoodi, pvm);
             }
 
-            if (osaamisalaKoodi != null) {
-                checkPermissions(permissions, org, "osaamisala", osaamisalaKoodi, pvm);
+            if (osaamisalaKoodi != null) { // Luvassa voi olla poikkeus jollekin osaamisalalle
+                checkOsaamisalaRestrictionDoesNotExist(permissions, org, osaamisalaKoodi, pvm);
             }
 
-            for (String kieli : opetuskielet) {
-                checkPermissions(permissions, org, "kieli", kieli, pvm);
-            }
+            checkLanguageRestrictionDoesNotExist(permissions, org, opetuskielet, koulutusKoodi, osaamisalaKoodi, pvm);
         }
 
     }
 
-    private static void checkPermissions(List<KoulutusPermission> permissions, OrganisaatioRDTO orgDto, final String koodisto, final String code, final Date pvm) {
-        KoulutusPermission matchingPermission = Iterables.find(permissions, matchPermission(koodisto, code, pvm), null);
-
-        if (matchingPermission == null) {
-            String organisaationNimi = "-";
-            try {
-                organisaationNimi = orgDto.getNimi().values().iterator().next();
-            } catch (Exception e) {}
-
-            throw new KoulutusPermissionException(
-                    organisaationNimi,
-                    orgDto.getOid(),
-                    koodisto,
-                    code
-            );
+    private static void checkKoulutusPermissionExists(List<KoulutusPermission> permissions, OrganisaatioRDTO orgDto, final String koulutusKoodiWithVersion, final Date pvm) {
+        String koulutusKoodi = getKoodiURIFromVersionedUri(koulutusKoodiWithVersion);
+        if (permissions.stream()
+                .filter(p -> p.getKoodisto().equals("koulutus"))
+                .filter(p -> KoulutusPermissionType.OIKEUS.equals(p.getType()))
+                .filter(p -> koulutusKoodi.equals(p.getKoodiUri()) || valmaErityisopetuksenaEqualsValma(koulutusKoodi, p))
+                .noneMatch(checkPermissionIsOngoingWhenKoulutusStarts(pvm))) {
+            throwPermissionException(orgDto, koulutusKoodiWithVersion, koulutusKoodiWithVersion, "koulutus");
         }
     }
 
-    private static Predicate<KoulutusPermission> matchPermission(final String koodisto, final String code, final Date pvm) {
-        return new Predicate<KoulutusPermission>() {
-            @Override
-            public boolean apply(KoulutusPermission permission) {
-                return koodisto.equals(permission.getKoodisto())
-                        && getKoodiURIFromVersionedUri(code).equals(permission.getKoodiUri())
-                        && (
-                            permission.getAlkuPvm() == null
-                            || pvm.after(permission.getAlkuPvm())
-                        )
-                        && (
-                            permission.getLoppuPvm() == null
-                            || pvm.before(permission.getLoppuPvm())
-                        );
-            }
+    private static boolean valmaErityisopetuksenaEqualsValma(String koulutusKoodi, KoulutusPermission p) {
+        return p.getKoodiUri().equals(VALMA) && koulutusKoodi.equals(VALMA_ERITYISOPETUKSENA);
+    }
+
+    private static void checkOsaamisalaRestrictionDoesNotExist(List<KoulutusPermission> permissions, OrganisaatioRDTO orgDto, final String code, final Date pvm) {
+        permissions.stream()
+                .filter(p -> p.getKoodisto().equals("osaamisala"))
+                .filter(p -> KoulutusPermissionType.RAJOITE.equals(p.getType()))
+                .filter(p -> getKoodiURIFromVersionedUri(code).equals(p.getKoodiUri()))
+                .filter(checkPermissionIsOngoingWhenKoulutusStarts(pvm))
+                .findAny()
+                .ifPresent(violatingOsaamisalaRestriction ->
+                        throwPermissionException(orgDto, violatingOsaamisalaRestriction.getKoodiUri(), violatingOsaamisalaRestriction.getKohdeKoodi(), "osaamisala"));
+    }
+
+    private void checkLanguageRestrictionDoesNotExist(List<KoulutusPermission> permissions, OrganisaatioRDTO orgDto, Set<String> kielet, String koulutusKoodi, String osaamisalaKoodi, final Date pvm) {
+        permissions.stream()
+                .filter(p -> p.getKoodisto().equals("kieli"))
+                .filter(p -> !kielet.contains(p.getKoodiUri()))
+                .filter(p -> p.getKohdeKoodi().equals(koulutusKoodi) || p.getKohdeKoodi().equals(osaamisalaKoodi))
+                .filter(p -> KoulutusPermissionType.VELVOITE.equals(p.getType()))
+                .filter(checkPermissionIsOngoingWhenKoulutusStarts(pvm))
+                .findAny()
+                .ifPresent(
+                        violatingLanguageRestriction ->
+                                throwPermissionException(orgDto, violatingLanguageRestriction.getKoodiUri(), violatingLanguageRestriction.getKohdeKoodi(),"kieli"));
+
+    }
+
+    private static void throwPermissionException(OrganisaatioRDTO orgDto, String puuttuvakoodi, String kohdekoodi, String koodisto) {
+        String organisaationNimi = "-";
+        try {
+            organisaationNimi = orgDto.getNimi().values().iterator().next();
+        } catch(Exception ignored) {}
+
+        throw new KoulutusPermissionException(
+                organisaationNimi,
+                orgDto.getOid(),
+                koodisto,
+                puuttuvakoodi,
+                kohdekoodi
+        );
+    }
+
+    private static Predicate<KoulutusPermission> checkPermissionIsOngoingWhenKoulutusStarts(final Date pvm) {
+        return p -> {
+            Date alkuPvm = p.getAlkuPvm();
+            Date loppuPvm = p.getLoppuPvm();
+            return (alkuPvm == null || isAfterOrEquals(pvm, alkuPvm))
+                    && (loppuPvm == null || isBeforeOrEquals(pvm, loppuPvm));
         };
+    }
+
+    private static boolean isAfterOrEquals(Date pvm, Date alkuPvm) {
+        return pvm.after(alkuPvm) || pvm.equals(alkuPvm);
+    }
+
+    private static boolean isBeforeOrEquals(Date pvm, Date loppuPvm) {
+        return pvm.before(loppuPvm) || pvm.equals(loppuPvm);
     }
 
 }
