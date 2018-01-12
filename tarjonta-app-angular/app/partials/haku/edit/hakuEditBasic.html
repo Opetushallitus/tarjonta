@@ -282,7 +282,7 @@
             <select required
                     name="ataruLomake"
                     ng-model="model.hakux.result.ataruLomakeAvain"
-                    ng-options="lomake.key as lomake.name for lomake in model.ataruForms"
+                    ng-options="lomake.key as (lomake.name.fi || lomake.name.sv || lomake.name.en || '') for lomake in model.ataruForms"
                     ng-selected="model.hakux.result.ataruLomakeAvain"
                     ng-disabled="model.haku.hakulomake != 'ATARU'"
                     ng-required="model.haku.hakulomake == 'ATARU'"/>

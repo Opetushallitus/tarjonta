@@ -152,7 +152,7 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
             .then(AtaruService.getForms)
             .then(function(forms) {
                 var form = _.findWhere(forms, {'key': ataruLomakeAvain});
-                $scope.model.ataruFormName = (form) ? form.name : '';
+                $scope.model.ataruFormName = form.name.fi || form.name.sv || form.name.en || '';
                 $scope.model.ataruFormError = (form) ? false : true;
             })
             .catch(function(error) {
