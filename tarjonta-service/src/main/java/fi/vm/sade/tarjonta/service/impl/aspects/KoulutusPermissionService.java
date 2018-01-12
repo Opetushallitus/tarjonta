@@ -40,7 +40,7 @@ public class KoulutusPermissionService {
                 ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO,
                 ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA,
                 ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA,
-                ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER,
+//                ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER, Otetaan käyttöön, kun Oivan JSON API palauttaa luvat myös näille
                 ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS
         );
     }
@@ -167,14 +167,10 @@ public class KoulutusPermissionService {
         if (permissions.stream()
                 .filter(p -> p.getKoodisto().equals("koulutus"))
                 .filter(p -> KoulutusPermissionType.OIKEUS.equals(p.getType()))
-                .filter(p -> koulutusKoodi.equals(p.getKoodiUri()) || valmaErityisopetuksenaEqualsValma(koulutusKoodi, p))
+                .filter(p -> koulutusKoodi.equals(p.getKoodiUri()))
                 .noneMatch(checkPermissionIsOngoingWhenKoulutusStarts(pvm))) {
             throwPermissionException(orgDto, koulutusKoodiWithVersion, koulutusKoodiWithVersion, "koulutus");
         }
-    }
-
-    private static boolean valmaErityisopetuksenaEqualsValma(String koulutusKoodi, KoulutusPermission p) {
-        return p.getKoodiUri().equals(VALMA) && koulutusKoodi.equals(VALMA_ERITYISOPETUKSENA);
     }
 
     private static void checkOsaamisalaRestrictionDoesNotExist(List<KoulutusPermission> permissions, OrganisaatioRDTO orgDto, final String code, final Date pvm) {
