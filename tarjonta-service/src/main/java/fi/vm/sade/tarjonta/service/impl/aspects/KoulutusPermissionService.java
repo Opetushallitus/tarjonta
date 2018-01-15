@@ -36,12 +36,12 @@ public class KoulutusPermissionService {
 
     public static List<ToteutustyyppiEnum> toteustustyyppisToCheckPermissionFor() {
         return Lists.newArrayList(
-                ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018,
-                ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO,
-                ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA,
-                ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA,
+//                ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018,
+//                ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO,
+//                ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA,
+//                ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA,
 //                ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER, Otetaan käyttöön, kun Oivan JSON API palauttaa luvat myös näille
-                ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS
+//                ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS
         );
     }
 
