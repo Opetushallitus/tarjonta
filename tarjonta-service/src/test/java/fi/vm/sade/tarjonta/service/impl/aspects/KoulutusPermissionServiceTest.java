@@ -11,7 +11,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOrgDTO;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-@Ignore
 @Transactional
 public class KoulutusPermissionServiceTest extends TestUtilityBase {
 

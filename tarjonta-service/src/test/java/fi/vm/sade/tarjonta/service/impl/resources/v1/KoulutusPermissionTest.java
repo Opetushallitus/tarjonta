@@ -29,7 +29,6 @@ import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOrgDTO;
 import org.joda.time.DateTime;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +47,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-@Ignore
+
 @Transactional
 public class KoulutusPermissionTest extends TestUtilityBase {
 
