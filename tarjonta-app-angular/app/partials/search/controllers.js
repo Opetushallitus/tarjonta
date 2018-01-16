@@ -298,12 +298,13 @@ angular.module('app.search.controllers', [
             $scope.koulutusActions.canCreateHakukohde = false;
             return;
         }
-        else if (koulutusOids.length >= 1) {
-            //ainakin yksi valittuna
+        else if (koulutusOids.length > 1) {
+            //yli yksi valittuna
             $scope.koulutusActions.canMoveOrCopy = false;
         }
         else {
-            PermissionService.koulutus.canMoveOrCopy(newObj).then(function(result) {
+            //tasan yksi valittuna
+            PermissionService.koulutus.canMoveOrCopy($scope.selectedKoulutusOids).then(function(result) {
                 $scope.koulutusActions.canMoveOrCopy = result;
             });
         }
@@ -320,6 +321,7 @@ angular.module('app.search.controllers', [
             });
         });
     }, true);
+
     $scope.menuOptions = [];
     $scope.koulutusActions = {
         canMoveOrCopy: false,
