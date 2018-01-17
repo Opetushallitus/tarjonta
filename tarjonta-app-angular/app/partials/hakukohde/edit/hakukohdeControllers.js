@@ -48,9 +48,8 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             return canSave;
         }
         else {
-            $log.info('CanSaveAsLuonnos, parameter says ok. Tila : ', $scope.model.hakukohde.tila);
-            var canSaveAsLuonnosByTila = CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila);
-            return canSaveAsLuonnosByTila;
+            //$log.info('CanSaveAsLuonnos, parameter says ok. Tila : ', $scope.model.hakukohde.tila);
+            return CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila);
         }
     };
     $scope.model.hakutapaYhteishaku = false;
@@ -178,16 +177,65 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
                 $scope.model.hakukohde.hakukohteenNimiUri = currentUri + '#' + koodi.version;
             }
         };
+
+        //Parsitaan taulukoksi koodit, jotka ovat yhteisiä kaikille hakukohteen koulutuksille
+        $scope.model.findCommonNamesForHakukohde = function(nimetByKoulutus) {
+
+            var source = JSON.parse(JSON.stringify(nimetByKoulutus));
+            var commonKoodisFound = [];
+            var ensimmaisenKoulutuksenKoodit = [];
+            var muidenKoulutustenKoodit = [];
+            if (source && source.length > 0) {
+                ensimmaisenKoulutuksenKoodit = source.splice(0,1)[0];
+                _.each(source, function(koulutuksenKoodit) {
+                    muidenKoulutustenKoodit.push(koulutuksenKoodit);
+                });
+                console.log('alkuarvot asetettu, ', [ensimmaisenKoulutuksenKoodit, muidenKoulutustenKoodit]);
+            }
+
+            var koodiUriFoundInKoodiArray = function (koodiUri, koodiArray) {
+                for(var i=0; i<koodiArray.length; i++) {
+                    var vertailuUri = koodiArray[i].koodiUri;
+                    if (koodiUri === vertailuUri) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+            if (muidenKoulutustenKoodit.length > 0) {
+                _.each(ensimmaisenKoulutuksenKoodit, function(koulutusKoodi) {
+                    var vertailukoodiUri = koulutusKoodi.koodiUri;
+                    var koodiOk = true;
+                    _.each(muidenKoulutustenKoodit, function(muunKoulutuksenKoodit) {
+                        if(!koodiUriFoundInKoodiArray(vertailukoodiUri, muunKoulutuksenKoodit)) {
+                            koodiOk = false;
+                        }
+                    });
+                    if (koodiOk) {
+                        console.log('Löydettiin koodi, joka löytyi kaikista koodiTauluista. lisätään: ', koulutusKoodi);
+                        commonKoodisFound.push(koulutusKoodi);
+                    } else {
+                        console.log('Hylätään koodi: ', koulutusKoodi);
+                    }
+                });
+            } else {
+                return ensimmaisenKoulutuksenKoodit; //Jos vain yksi koulutus, kaikki koodit ok!
+            }
+            console.log('Koulutuksille yhteiset koodit parsittu, palautetaan: ', commonKoodisFound);
+            return commonKoodisFound;
+        };
+
         var populateHakukohteenNimetByKoulutus = function(koulutus) {
             var uri = koulutus.koulutusohjelma.uri ? koulutus.koulutusohjelma.uri : koulutus.koulutuskoodi.uri;
             var pohjakoulutusvaatimus = koulutus.pohjakoulutusvaatimus;
-
+            var relevantKooditForCurrentKoulutus = [];
             var currentUri = window.oph.removeKoodiVersion($scope.model.hakukohde.hakukohteenNimiUri || '');
             var kaytettavaKoodisto = $scope.model.hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA' ? 'aikuhakukohteet' : 'hakukohteet';
             Koodisto.getAlapuolisetKoodit(uri, AuthService.getLanguage())
             .then(function(koulutusohjelmanKoodit) {
                 angular.forEach(koulutusohjelmanKoodit, function(koulutusohjelmanKoodi) {
                     $scope.model.hakukohteenNimetAll.push(koulutusohjelmanKoodi);
+                    relevantKooditForCurrentKoulutus.push(koulutusohjelmanKoodi);
                     if (koulutusohjelmanKoodi.koodiKoodisto === kaytettavaKoodisto) {
                         if(kaytettavaKoodisto === 'aikuhakukohteet') {
                             appendOrReplaceHakukohteenNimi(currentUri, koulutusohjelmanKoodi);
@@ -204,11 +252,14 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
                     }
                 });
             });
+            //console.log('valmis, relevantKooditForCurrentKoulutus: ', relevantKooditForCurrentKoulutus);
+            $scope.model.hakukohteenNimetByKoulutus.push(relevantKooditForCurrentKoulutus);
         };
 
         if ($scope.config.isToisenAsteenKoulutus()) {
             $scope.model.hakukohteenNimet = [];
             $scope.model.hakukohteenNimetAll = [];
+            $scope.model.hakukohteenNimetByKoulutus = []; //Tänne kaikkien koulutusten koodit jaoteltuna koulutuksittain (taulukko taulukossa)
             $scope.model.hakukohteenNimetAlk2018 = [];
             $scope.model.pohjakoulutusvaatimusByKoulutus = null;
             angular.forEach($scope.model.hakukohde.hakukohdeKoulutusOids, function(koulutusOid) {
@@ -274,6 +325,7 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
     $scope.model.loadPohjakoulutusvaatimusFromHakukohde();
 
     $scope.model.populateHakukohteenNimetByHaku = function() {
+        var koulutuksilleYhteisetKoodit = $scope.model.findCommonNamesForHakukohde($scope.model.hakukohteenNimetByKoulutus);
         var pohjakoulutusvaatimus = $scope.model.hakukohde.pohjakoulutusvaatimus;
         var promises = [HakuService.getAllHakus()];
         $q.all(promises).then(function(resolved) {
@@ -286,7 +338,7 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
                 kaytettavaKoodisto = 'aikuhakukohteet';
             }
             $scope.model.hakukohteenNimetAlk2018 = [];
-            angular.forEach($scope.model.hakukohteenNimetAll, function (koodi){
+            angular.forEach(koulutuksilleYhteisetKoodit, function (koodi){
                 if (koodi.koodiKoodisto == kaytettavaKoodisto) {
                     if (kaytettavaKoodisto == 'aikuhakukohteet') {
                         appendOrReplaceHakukohteenNimiAlk2018(koodi);
