@@ -62,7 +62,7 @@ public class KoulutusValidator {
     private static final boolean REQUIRE_KOMO_VALIDATION = true;
     private static final boolean NO_KOMO_VALIDATION = false;
     private static final Date firstOfJanuary2000 = new Date(946738364556L);
-    private static final Date firstOfFebruary2018 = new Date(1517436000000L);
+    private static final Date endOfJanuary2018 = new Date(1517435999000L);
 
     private static final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -131,7 +131,7 @@ public class KoulutusValidator {
             result.addError(createValidationError(KOULUTUSMODUULITYYPPI, KOULUTUSMODUULITYYPPI + " missing, should be OPINTOKOKONAISUUS/OPINTOJAKSO"));
         }
 
-        validateAlkamisPvms(result, dto);
+        validateAlkamisAika(result, dto);
 
         if (!TarjontaTila.PUUTTEELLINEN.equals(dto.getTila())) {
             validateTutkintoonjohtamatonAdditionalRequiredFields(dto, result);
@@ -208,7 +208,7 @@ public class KoulutusValidator {
     public static ResultV1RDTO validateKoulutusKorkeakoulu(KoulutusKorkeakouluV1RDTO dto, ResultV1RDTO result) {
         validateBaseKoulutusData(dto, null, result, NO_KOMO_VALIDATION);
         validateKoulutusohjelma(dto, result);
-        validateAlkamisPvms(result, dto);
+        validateAlkamisAika(result, dto);
         validateKoodi(result, dto.getKoulutuskoodi(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_INVALID);
         validateTunniste(dto, result);
 
@@ -236,7 +236,7 @@ public class KoulutusValidator {
             validatePohjakoulutus = false;
         }
         validateKoodistoRelationsGeneric(dto, result, validatePohjakoulutus);
-        validateAlkamisPvms(result, dto);
+        validateAlkamisAika(result, dto);
 
         if (TarjontaTila.PUUTTEELLINEN.equals(dto.getTila())) {
             return result;
@@ -311,7 +311,7 @@ public class KoulutusValidator {
             validateKoodi(result, valmistavaKoulutus.getSuunniteltuKestoTyyppi(), KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_TYPE_MISSING, KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_TYPE_INVALID);
         }
 
-        validateAlkamisPvms(result, dto);
+        validateAlkamisAika(result, dto);
 
         return result;
     }
@@ -531,10 +531,44 @@ public class KoulutusValidator {
         return true;
     }
 
-    private static void checkKausiVuosi(ResultV1RDTO result, KoodiV1RDTO kausi, Integer year) {
+    private static void validateAlkamisAika(ResultV1RDTO result, KoulutusV1RDTO dto) {
+        if (hasStartingDateMissing(dto)) {
+            result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS, KOULUTUKSEN_ALKAMISPVMS + " is required" +
+                    " (or alternatively koulutuksenAlkamiskausi and koulutuksenAlkamisvuosi can be provided)"));
+        } else if (!dto.getKoulutuksenAlkamisPvms().isEmpty()) {
+            validateAlkamisPvms(result, dto);
+        } else {
+            validateKausiVuosi(result, dto.getKoulutuksenAlkamiskausi(), dto.getKoulutuksenAlkamisvuosi());
+        }
+    }
+
+    private static void validateAlkamisPvms(ResultV1RDTO result, KoulutusV1RDTO dto) {
+        final Set<Date> koulutuksenAlkamisPvms = dto.getKoulutuksenAlkamisPvms();
+        KoulutusValidationMessages validateDates = KoulutusCommonConverter.validateDates(
+                koulutuksenAlkamisPvms.iterator().next(),
+                dto.getKoulutuksenAlkamisPvms());
+
+        if (!validateDates.equals(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_SUCCESS)) {
+            result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS, KOULUTUKSEN_ALKAMISPVMS + " contains invalid starting dates"));
+        }
+        validatePvmAfterFirstOfFebruary2018(result, dto);
+    }
+
+    private static void validatePvmAfterFirstOfFebruary2018(ResultV1RDTO result, KoulutusV1RDTO dto) {
+        if(dto.getToteutustyyppi() == ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO || dto.getToteutustyyppi() == ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA){
+            for (Date startDate : dto.getKoulutuksenAlkamisPvms()) {
+                if(startDate.after(endOfJanuary2018)){
+                    result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS,
+                            KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_WRONGTYPEAFTER_31_01_2018.getFieldName(),
+                            TOTEUTUSTYYPPI + " ei voi olla tätä tyyppiä alkaen 1.2.2018"));
+                }
+            }
+        }
+    }
+
+    private static void validateKausiVuosi(ResultV1RDTO result, KoodiV1RDTO kausi, Integer year) {
         if (kausi == null || isEmpty(kausi.getUri())) {
             result.addError(createValidationError(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_MISSING.lower()));
-
         } else if (!KoodistoURI.isValidKausiUri(kausi.getUri())) {
             result.addError(createValidationError(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_INVALID.getFieldName(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_INVALID.lower()));
         }
@@ -544,37 +578,25 @@ public class KoulutusValidator {
         } else if (year < 2000) {
             result.addError(createValidationError(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_INVALID.getFieldName(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_INVALID.lower()));
         }
-    }
 
-    private static void validateAlkamisPvms(ResultV1RDTO result, KoulutusV1RDTO dto) {
-        if (hasStartingDateMissing(dto)) {
-            result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS, KOULUTUKSEN_ALKAMISPVMS + " is required" +
-                    " (or alternatively koulutuksenAlkamiskausi and koulutuksenAlkamisvuosi can be provided)"));
-        } else if (!dto.getKoulutuksenAlkamisPvms().isEmpty()) {
-            final Set<Date> koulutuksenAlkamisPvms = dto.getKoulutuksenAlkamisPvms();
-            KoulutusValidationMessages validateDates = KoulutusCommonConverter.validateDates(
-                    koulutuksenAlkamisPvms.iterator().next(),
-                    dto.getKoulutuksenAlkamisPvms());
-
-            if (!validateDates.equals(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_SUCCESS)) {
-                result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS, KOULUTUKSEN_ALKAMISPVMS + " contains invalid starting dates"));
-            }
-            validateAfterFirstOfAugust2018(result, dto);
-        } else {
-            checkKausiVuosi(result, dto.getKoulutuksenAlkamiskausi(), dto.getKoulutuksenAlkamisvuosi());
+        if (isKausiDuringOrAfterKevät2018(kausi, year)) {
+            result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS,
+                    KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_WRONGTYPEAFTER_31_01_2018.getFieldName(),
+                    TOTEUTUSTYYPPI + " ei voi olla tätä tyyppiä alkaen 1.2.2018." +
+                            " Jos koulutus alkaa samalla kaudella, käytä tarkkaa päivämäärää kauden sijaan."));
         }
     }
 
-    private static void validateAfterFirstOfAugust2018(ResultV1RDTO result, KoulutusV1RDTO dto) {
-        if(dto.getToteutustyyppi() == ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO || dto.getToteutustyyppi() == ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA){
-            for (Date startDate : dto.getKoulutuksenAlkamisPvms()) {
-                if(startDate.after(firstOfFebruary2018)){
-                    result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS,
-                            KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_WRONGTYPEAFTER182018.getFieldName(),
-                            TOTEUTUSTYYPPI + " ei voi olla tätä tyyppiä alkaen " + dateFormat.format(firstOfFebruary2018)));
-                }
-            }
+    private static boolean isKausiDuringOrAfterKevät2018(KoodiV1RDTO kausi, Integer year) {
+        if (kausi == null || year == null) {
+            return false;
         }
+
+        boolean isKevät = kausi.getUri().startsWith("kausi_k");
+        boolean isDuring = isKevät && year == 2018;
+        boolean isAfter = year > 2018;
+
+        return isDuring || isAfter;
     }
 
     private static void validateSuuniteltukesto(ResultV1RDTO result, KoulutusV1RDTO dto) {
