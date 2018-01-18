@@ -60,7 +60,7 @@ public class KoulutusValidator {
     private static final boolean REQUIRE_KOMO_VALIDATION = true;
     private static final boolean NO_KOMO_VALIDATION = false;
     private static final Date firstOfJanuary2000 = new Date(946738364556L);
-    private static final Date firstOfAugust2018 =  new Date(1533081600000L);
+    private static final Date firstOfFebruary2018 = new Date(1517436000000L);
 
     public static final String KOULUTUSOHJELMA = "koulutusohjelma";
     public static final String KOULUTUSMODUULITYYPPI = "koulutusmoduuliTyyppi";
@@ -564,8 +564,10 @@ public class KoulutusValidator {
     private static void validateAfterFirstOfAugust2018(ResultV1RDTO result, KoulutusV1RDTO dto) {
         if(dto.getToteutustyyppi() == ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO || dto.getToteutustyyppi() == ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA){
             for (Date startDate : dto.getKoulutuksenAlkamisPvms()) {
-                if(startDate.after(firstOfAugust2018)){
-                    result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS, KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_WRONGTYPEAFTER182018.getFieldName(), KOULUTUKSEN_ALKAMISPVMS + " cannot be this type after 1.8.2018"));
+                if(startDate.after(firstOfFebruary2018)){
+                    result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS,
+                            KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_WRONGTYPEAFTER182018.getFieldName(),
+                            KOULUTUKSEN_ALKAMISPVMS + " cannot be this type after " + firstOfFebruary2018.toString()));
                 }
             }
         }

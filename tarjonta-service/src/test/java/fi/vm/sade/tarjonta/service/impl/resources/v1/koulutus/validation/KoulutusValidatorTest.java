@@ -179,13 +179,34 @@ public class KoulutusValidatorTest {
     }
 
     @Test
-    public void testStartingDateFirstOfAugust2018(){
+    public void testStartingDateFirstOfAugust2018Fails(){
         KoulutusAmmatillinenPerustutkintoV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
         dto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dataPopulator.defaultValuesForDto(dto);
-         /*
-         * Validation success
-         * ******************************************
-         */
+        prepStartingDate2018TestDTO(dto);
+
+        dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(new Date(1533168000000L))); // 2.8.2018 fail
+
+        ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
+        org.junit.Assert.assertTrue("has errors", v.hasErrors());
+        org.junit.Assert.assertEquals("errors count", v.getErrors().size(), 1);
+
+        assertErrorExist(v.getErrors(), KoulutusValidator.KOULUTUKSEN_ALKAMISPVMS);
+    }
+
+    @Test
+    public void testStartingDateBeforeFirstOfAugust2018Succeeds(){
+        KoulutusAmmatillinenPerustutkintoV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
+        dto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dataPopulator.defaultValuesForDto(dto);
+        prepStartingDate2018TestDTO(dto);
+
+        dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(new Date(946738364556L))); // 1.1.2000 ok
+        dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(new Date(1517436000000L))); // 1.2.2018 ok
+
+        ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
+        org.junit.Assert.assertFalse("no errors", v.hasErrors());
+    }
+
+    private void prepStartingDate2018TestDTO(KoulutusAmmatillinenPerustutkintoV1RDTO dto) {
         dto.setTila(TarjontaTila.VALMIS);
         dto.getOrganisaatio().setOid("1");
         dto.setEqf(new KoodiV1RDTO("1", 1, null));
@@ -212,14 +233,6 @@ public class KoulutusValidatorTest {
         dto.setSuunniteltuKestoTyyppi(new KoodiV1RDTO("1", 1, null));
 
         dto.setToteutustyyppi(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO);
-        dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(new Date(946738364556L))); // 1.1.2000 ok
-        dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(new Date(1533168000000L))); // 2.8.2018 fail
-
-        ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
-        org.junit.Assert.assertTrue("errors", v.hasErrors());
-        org.junit.Assert.assertEquals("errors count", v.getErrors().size(), 1);
-
-        assertErrorExist(v.getErrors(), KoulutusValidator.KOULUTUKSEN_ALKAMISPVMS);
     }
 
     @Test
