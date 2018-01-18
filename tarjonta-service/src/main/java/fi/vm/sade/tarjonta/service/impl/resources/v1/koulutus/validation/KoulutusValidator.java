@@ -44,6 +44,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +63,8 @@ public class KoulutusValidator {
     private static final boolean NO_KOMO_VALIDATION = false;
     private static final Date firstOfJanuary2000 = new Date(946738364556L);
     private static final Date firstOfFebruary2018 = new Date(1517436000000L);
+
+    private static final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
     public static final String KOULUTUSOHJELMA = "koulutusohjelma";
     public static final String KOULUTUSMODUULITYYPPI = "koulutusmoduuliTyyppi";
@@ -567,7 +571,7 @@ public class KoulutusValidator {
                 if(startDate.after(firstOfFebruary2018)){
                     result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS,
                             KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_WRONGTYPEAFTER182018.getFieldName(),
-                            KOULUTUKSEN_ALKAMISPVMS + " cannot be this type after " + firstOfFebruary2018.toString()));
+                            TOTEUTUSTYYPPI + " ei voi olla tätä tyyppiä alkaen " + dateFormat.format(firstOfFebruary2018)));
                 }
             }
         }
