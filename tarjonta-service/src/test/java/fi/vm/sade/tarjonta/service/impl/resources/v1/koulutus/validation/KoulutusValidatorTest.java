@@ -219,6 +219,8 @@ public class KoulutusValidatorTest {
         org.junit.Assert.assertEquals("errors count", v.getErrors().size(), 1);
 
         assertErrorExist(v.getErrors(), KoulutusValidator.KOULUTUKSEN_ALKAMISPVMS);
+        String invalidTypeForDateMessage = "toteutustyyppi ei voi olla tätä tyyppiä alkaen 1.2.2018. Jos koulutus alkaa samalla kaudella, käytä tarkkaa päivämäärää kauden sijaan.";
+        Assert.assertNotNull(Iterables.find(v.getErrors(), candidate -> candidate.getErrorMessageParameters().contains(invalidTypeForDateMessage)));
     }
 
     @Test
@@ -237,8 +239,6 @@ public class KoulutusValidatorTest {
         assertErrorExist(v.getErrors(), KoulutusValidator.KOULUTUKSEN_ALKAMISPVMS);
     }
 
-
-
     @Test
     public void testAlkamisKausiFrom2018SucceedsForOtherTypes(){
         KoulutusAmmatillinenPerustutkintoV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
@@ -253,6 +253,22 @@ public class KoulutusValidatorTest {
         org.junit.Assert.assertEquals("errors count", v.getErrors().size(), 1);
 
         assertErrorExist(v.getErrors(), KoulutusValidator.KOULUTUKSEN_ALKAMISPVMS);
+    }
+
+    @Test
+    public void testNullAlkamisVuosiFailsWithCorrectMessage(){
+        KoulutusAmmatillinenPerustutkintoV1RDTO dto = new KoulutusAmmatillinenPerustutkintoV1RDTO();
+        dto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dataPopulator.defaultValuesForDto(dto);
+        prepStartingDate2018TestDTO(dto);
+        dto.setKoulutuksenAlkamisvuosi(null);
+        dto.setKoulutuksenAlkamiskausi(null);
+
+        ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
+        org.junit.Assert.assertTrue("has errors", v.hasErrors());
+        org.junit.Assert.assertEquals("errors count", v.getErrors().size(), 1);
+
+        String missingVuosiMessage = "koulutuksenAlkamisPvms is required (or alternatively koulutuksenAlkamiskausi and koulutuksenAlkamisvuosi can be provided)";
+        Assert.assertNotNull(Iterables.find(v.getErrors(), candidate -> missingVuosiMessage.equals(candidate.getErrorMessageKey())));
     }
 
     private void prepStartingDate2018TestDTO(KoulutusAmmatillinenPerustutkintoV1RDTO dto) {
@@ -384,12 +400,7 @@ public class KoulutusValidatorTest {
     }
 
     private void assertErrorExist(List<ErrorV1RDTO> errors, final String errorField) {
-        Assert.assertNotNull(Iterables.find(errors, new Predicate<ErrorV1RDTO>() {
-            @Override
-            public boolean apply(@Nullable ErrorV1RDTO candidate) {
-                return errorField.equals(candidate.getErrorField());
-            }
-        }));
+        Assert.assertNotNull(Iterables.find(errors, candidate -> errorField.equals(candidate.getErrorField())));
     }
 
     private void assertErrorExist(List<ErrorV1RDTO> errors, KoulutusValidationMessages em) {
