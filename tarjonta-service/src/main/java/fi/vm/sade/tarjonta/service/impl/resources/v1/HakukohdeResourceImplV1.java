@@ -459,9 +459,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     private List<HakukohdeValidationMessages> validateHakukohdeAndPopulateImplicitFields(HakukohdeV1RDTO hakukohdeV1RDTO) {
 
-        final List<HakukohdeValidationMessages> validationMessageses = new ArrayList<>();
-
-        validationMessageses.addAll(hakukohdeValidator.validateCommonProperties(hakukohdeV1RDTO));
+        final List<HakukohdeValidationMessages> validationMessageses = new ArrayList<>(hakukohdeValidator.validateCommonProperties(hakukohdeV1RDTO));
 
         try {
             hakukohdeV1RDTO = populateImplicitFields(hakukohdeV1RDTO);

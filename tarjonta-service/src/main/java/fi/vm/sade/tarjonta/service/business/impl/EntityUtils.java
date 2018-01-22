@@ -97,19 +97,17 @@ public final class EntityUtils {
     }
 
     public static void copyFields(Map<KomoTeksti, MonikielinenTeksti> dst, List<NimettyMonikielinenTekstiTyyppi> src, KomoTeksti... keys) {
-        copyFields(dst, src, new Function<String, KomoTeksti>() {
-            public KomoTeksti apply(String input) {
-                return KomoTeksti.valueOf(input);
-            }
-        }, keys.length == 0 ? KomoTeksti.values() : keys);
+        copyFields(dst, src, input ->
+                KomoTeksti.valueOf(input),
+                keys.length == 0 ? KomoTeksti.values() : keys
+        );
     }
 
     public static void copyFields(Map<KomotoTeksti, MonikielinenTeksti> dst, List<NimettyMonikielinenTekstiTyyppi> src, KomotoTeksti... keys) {
-        copyFields(dst, src, new Function<String, KomotoTeksti>() {
-            public KomotoTeksti apply(String input) {
-                return KomotoTeksti.valueOf(input);
-            }
-        }, keys.length == 0 ? KomotoTeksti.values() : keys);
+        copyFields(dst, src, input ->
+                KomotoTeksti.valueOf(input),
+                keys.length == 0 ? KomotoTeksti.values() : keys
+        );
     }
 
     public static <T> void copyFields(Map<T, MonikielinenTeksti> dst, List<NimettyMonikielinenTekstiTyyppi> src, Function<String, T> keyResolver, T... keys) {
@@ -124,15 +122,15 @@ public final class EntityUtils {
 
     public static <T> void copyFields(List<NimettyMonikielinenTekstiTyyppi> dst, Map<T, MonikielinenTeksti> src, T... keys) {
         Set<T> kenums = new HashSet<T>(Arrays.asList(keys));
-        for (Map.Entry<T, MonikielinenTeksti> e : src.entrySet()) {
-            if (kenums.isEmpty() || kenums.contains(e.getKey())) {
-                List<MonikielinenTekstiTyyppi.Teksti> txts = new ArrayList<MonikielinenTekstiTyyppi.Teksti>();
-                for (TekstiKaannos tk : e.getValue().getTekstiKaannos()) {
-                    txts.add(new MonikielinenTekstiTyyppi.Teksti(tk.getArvo(), tk.getKieliKoodi()));
+        src.forEach((key, value) -> {
+            if (kenums.isEmpty() || kenums.contains(key)) {
+                List<Teksti> txts = new ArrayList<Teksti>();
+                for (TekstiKaannos tk : value.getTekstiKaannos()) {
+                    txts.add(new Teksti(tk.getArvo(), tk.getKieliKoodi()));
                 }
-                dst.add(new NimettyMonikielinenTekstiTyyppi(txts, e.getKey().toString()));
+                dst.add(new NimettyMonikielinenTekstiTyyppi(txts, key.toString()));
             }
-        }
+        });
     }
 
     public static void copyFields(PaivitaKoulutusTyyppi from, KoulutusmoduuliToteutus to) {

@@ -222,12 +222,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             if (params.cache) {
                 String cacheKey = resolveComplexCacheKey(criteriaList, params);
                 try {
-                    return hakuCache.get(cacheKey, new Callable<ResultV1RDTO<List<HakuV1RDTO>>>() {
-                        @Override
-                        public ResultV1RDTO<List<HakuV1RDTO>> call() throws Exception {
-                            return findHakuResultByCriteriaOrAllIfNull(params, criteriaList);
-                        }
-                    });
+                    return hakuCache.get(cacheKey, () ->
+                            findHakuResultByCriteriaOrAllIfNull(params, criteriaList)
+                    );
                 } catch (ExecutionException e) {
                     LOG.error("Failed to cache result for key '" + FIND_ALL_CACHE_KEY + "', fetching all hakus as is", e);
                     ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
@@ -250,13 +247,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     private ResultV1RDTO<List<HakuV1RDTO>> findAllHakus(final HakuSearchParamsV1RDTO params) {
         try {
-            return hakuCache.get(FIND_ALL_CACHE_KEY, new Callable<ResultV1RDTO<List<HakuV1RDTO>>>() {
-                @Override
-                public ResultV1RDTO<List<HakuV1RDTO>> call() {
-                    return findHakuResultByCriteriaOrAllIfNull(params, null);
-
-                }
-            });
+            return hakuCache.get(FIND_ALL_CACHE_KEY, () ->
+                    findHakuResultByCriteriaOrAllIfNull(params, null)
+            );
         } catch (ExecutionException e) {
             LOG.error("Failed to cache result for key '" + FIND_ALL_CACHE_KEY + "', fetching all hakus as is", e);
             ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
@@ -290,12 +283,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     private String resolveComplexCacheKey(List<HakuSearchCriteria> criteriaList, HakuSearchParamsV1RDTO params) {
         List<HakuSearchCriteria> normalized = new ArrayList<>(criteriaList);
-        Collections.sort(normalized, new Comparator<HakuSearchCriteria>() {
-            @Override
-            public int compare(HakuSearchCriteria left, HakuSearchCriteria right) {
-                return left.getField().compareTo(right.getField());
-            }
-        });
+        normalized.sort(Comparator.comparing(HakuSearchCriteria::getField));
 
         StringBuilder cacheKey = new StringBuilder()
                 .append("addHakukohdes=").append(params.addHakukohdes)
@@ -959,7 +947,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     private void sortHakukohdeTulokset(List<HakukohdePerustieto> tulokset) {
-        Collections.sort(tulokset, new OrderByTarjoajaAndHakukohdeName());
+        tulokset.sort(new OrderByTarjoajaAndHakukohdeName());
     }
 
     @Override
@@ -1126,12 +1114,12 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             grouped.get(key).add(dto);
         }
 
-        for (Map.Entry<String, List<AtaruLomakeHakuV1RDTO>> entry : grouped.entrySet()) {
+        grouped.forEach((key, value) -> {
             AtaruLomakkeetV1RDTO dto = new AtaruLomakkeetV1RDTO();
-            dto.setAvain(entry.getKey());
-            dto.setHaut(entry.getValue());
+            dto.setAvain(key);
+            dto.setHaut(value);
             result.add(dto);
-        }
+        });
 
         ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
         resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);

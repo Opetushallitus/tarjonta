@@ -354,12 +354,9 @@ public class KoulutusmoduuliToteutusDAOTest extends TestUtilityBase {
     }
 
     private Set<KoodistoUri> toKoodistoUri(List<String> koodis) {
-        return FluentIterable.from(koodis).transform(new Function<String, KoodistoUri>() {
-            @Override
-            public KoodistoUri apply(String input) {
-                return new KoodistoUri(input);
-            }
-        }).toSet();
+        return FluentIterable.from(koodis).transform(input ->
+                new KoodistoUri(input)
+        ).toSet();
     }
 
 }

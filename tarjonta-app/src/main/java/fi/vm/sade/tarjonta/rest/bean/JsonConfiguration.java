@@ -160,12 +160,9 @@ public class JsonConfiguration {
             jsons.add(new JsonConfigObject(key, PropertyPlaceholder.getProperty(key)));
         }
 
-        Collections.sort(jsons, new Comparator<JsonConfigObject>() {
-            @Override
-            public int compare(JsonConfigObject a, JsonConfigObject b) {
-                int ret = a.getKey().compareTo(b.getKey());
-                return ret != 0 ? ret : a.getKey().compareTo(b.getKey());
-            }
+        jsons.sort((a, b) -> {
+            int ret = a.getKey().compareTo(b.getKey());
+            return ret != 0 ? ret : a.getKey().compareTo(b.getKey());
         });
 
         StringBuilder outputJson = new StringBuilder();

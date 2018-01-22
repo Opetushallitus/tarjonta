@@ -63,15 +63,14 @@ public class KoodiUrisV1RDTO extends KoodiV1RDTO {
         List<String> list = new ArrayList<String>();
 
         if (uris != null) {
-            for (Map.Entry<String, Integer> entry : uris.entrySet()) {
-                String uri = entry.getKey();
+            uris.forEach((uri, value) -> {
 
                 if (addVersionToUri) {
-                    uri = uri.concat("#" + entry.getValue().toString());
+                    uri = uri.concat("#" + value.toString());
                 }
 
                 list.add(uri);
-            }
+            });
         }
 
         return list;

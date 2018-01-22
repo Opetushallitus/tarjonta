@@ -179,9 +179,9 @@ public class SolrDocumentToHakukohdeConverter {
     private void copyTarjoajaNimi(HakukohdePerustieto hakukohde,
                                   OrganisaatioPerustieto organisaatio) {
         if (organisaatio != null) {
-            for (Entry<String, String> nimi : organisaatio.getNimi().entrySet()) {
-                hakukohde.setTarjoajaNimi(nimi.getKey(), nimi.getValue());
-            }
+            organisaatio.getNimi().forEach((key, value) ->
+                    hakukohde.setTarjoajaNimi(key, value)
+            );
         }
     }
 

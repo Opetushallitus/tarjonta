@@ -106,10 +106,10 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
     public void setLiitteenKuvaukset(Map<String, String> liitteenKuvaukset) {
         if (liitteenKuvaukset != null) {
             Map<String, String> cleanMap = new HashMap<String, String>();
-            for (Map.Entry<String, String> entry : liitteenKuvaukset.entrySet()) {
-                String kieli = entry.getKey().split("#")[0];
-                cleanMap.put(kieli, entry.getValue());
-            }
+            liitteenKuvaukset.forEach((key, value) -> {
+                String kieli = key.split("#")[0];
+                cleanMap.put(kieli, value);
+            });
             liitteenKuvaukset = cleanMap;
         }
         this.liitteenKuvaukset = liitteenKuvaukset;

@@ -59,13 +59,9 @@ public class ParameterServices implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        final RemovalListener<String, JSONObject> onRemoval = new RemovalListener<String, JSONObject>() {
-
-            @Override
-            public void onRemoval(RemovalNotification<String, JSONObject> notification) {
-                 LOG.debug("Cache - onRemoval() target: {} - cache size = {}", notification.getKey(), _cache.size());
-            }
-        };
+        final RemovalListener<String, JSONObject> onRemoval = notification ->
+                LOG.debug("Cache - onRemoval() target: {} - cache size = {}", notification.getKey(), _cache.size()
+                );
         
         final CacheLoader<String, JSONObject> cacheLoader = new CacheLoader<String, JSONObject>() {
 

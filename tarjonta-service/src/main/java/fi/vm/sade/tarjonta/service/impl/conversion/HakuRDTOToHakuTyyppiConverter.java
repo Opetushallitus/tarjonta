@@ -65,9 +65,9 @@ public class HakuRDTOToHakuTyyppiConverter implements Converter<HakuDTO, HakuTyy
 	
 	private List<HaunNimi> convertHakuNimis(Map<String, String> values) {
 		List<HaunNimi> ret = new ArrayList<HaunNimi>();
-		for (Map.Entry<String, String> e : values.entrySet()) {
-			ret.add(new HaunNimi(e.getKey(), e.getValue()));
-		}
+        values.forEach((key, value) ->
+                ret.add(new HaunNimi(key, value))
+        );
 		return ret;
 	}
 

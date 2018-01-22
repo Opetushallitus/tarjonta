@@ -426,12 +426,12 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         if (dto.getOpintojenRakenneKuvas() != null && !dto.getOpintojenRakenneKuvas().isEmpty()) {
             //validate optional images
-            for (Entry<String, KuvaV1RDTO> e : dto.getOpintojenRakenneKuvas().entrySet()) {
+            dto.getOpintojenRakenneKuvas().forEach((key, value) -> {
                 //do not validate null img objects as the img keys will be use to delete images
-                if (e.getValue() != null) {
-                    KoulutusValidator.validateKoulutusKuva(e.getValue(), e.getKey(), result);
+                if (value != null) {
+                    KoulutusValidator.validateKoulutusKuva(value, key, result);
                 }
-            }
+            });
         }
 
         if (!result.hasErrors()) {
@@ -993,14 +993,14 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 }
 
                 final BeanWrapperImpl beanWrapper = new BeanWrapperImpl(dto);
-                for (Entry<String, String> e : defaultsMap.entrySet()) {
-                    if (e.getValue() != null && !e.getValue().isEmpty() && beanWrapper.isReadableProperty(e.getKey())) {
+                defaultsMap.forEach((key, value) -> {
+                    if (value != null && !value.isEmpty() && beanWrapper.isReadableProperty(key)) {
                         //only uri is needed, as it will be expanded to koodi object
                         KoodiV1RDTO koodi = new KoodiV1RDTO();
-                        koodi.setUri(e.getValue());
-                        beanWrapper.setPropertyValue(e.getKey(), koodi);
+                        koodi.setUri(value);
+                        beanWrapper.setPropertyValue(key, koodi);
                     }
-                }
+                });
             }
 
             if (koulutuskoodi.contains("_")) {
@@ -1193,9 +1193,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         Map<String, BinaryData> findAllImagesByKomotoOid = koulutusmoduuliToteutusDAO.findAllImagesByKomotoOid(oid);
         if (findAllImagesByKomotoOid != null && !findAllImagesByKomotoOid.isEmpty()) {
             List<KuvaV1RDTO> list = Lists.newArrayList();
-            for (Entry<String, BinaryData> e : findAllImagesByKomotoOid.entrySet()) {
-                list.add(new KuvaV1RDTO(e.getValue().getFilename(), e.getValue().getMimeType(), e.getKey(), Base64.encodeBase64String(e.getValue().getData())));
-            }
+            findAllImagesByKomotoOid.forEach((key, value) ->
+                    list.add(new KuvaV1RDTO(value.getFilename(), value.getMimeType(), key, Base64.encodeBase64String(value.getData())))
+            );
             result.setResult(list);
         } else {
             result.setStatus(NOT_FOUND);
@@ -1555,12 +1555,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 }
 
                 //update all hakukohdes
-                indexerResource.indexHakukohteet(Lists.newArrayList(Iterators.transform(hakukohdes.iterator(), new Function<Hakukohde, Long>() {
-                    @Override
-                    public Long apply(@Nullable Hakukohde arg0) {
-                        return arg0.getId();
-                    }
-                })));
+                indexerResource.indexHakukohteet(Lists.newArrayList(Iterators.transform(hakukohdes.iterator(), arg0 -> arg0.getId())));
                 break;
 
             case TEST_COPY:
@@ -1696,8 +1691,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         }
         else {
             List<Oppiaine> oppiaineet = oppiaineDAO.findByOppiaineKieliKoodi(oppiaine, kieliKoodi);
-            Set<Oppiaine> asSet = new HashSet<>();
-            asSet.addAll(oppiaineet);
+            Set<Oppiaine> asSet = new HashSet<>(oppiaineet);
             result.setResult(converterToRDTO.oppiaineetFromEntityToDto(asSet));
         }
 

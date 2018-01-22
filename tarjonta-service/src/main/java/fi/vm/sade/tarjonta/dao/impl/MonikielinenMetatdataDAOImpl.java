@@ -102,21 +102,24 @@ public class MonikielinenMetatdataDAOImpl extends AbstractJpaDAOImpl<Monikieline
         query.setMaxResults(Integer.MAX_VALUE);
 
         List<MonikielinenMetadata> tmp = query.getResultList();
-        if (tmp.size() == 0) {
-            // New entry
+        switch (tmp.size()) {
+            case 0:
+                // New entry
 
-            result = new MonikielinenMetadata();
-            result.setAvain(avain);
-            result.setKategoria(kategoria);
-            result.setKieli(kieli);
-        } else if (tmp.size() == 1) {
-            // Existing
-            result = tmp.get(0);
-        } else {
-            // Hmm... this should never happen since db uniqueness constraint
-            LOG.error("findOrCreateByAvainKategoriaKieli({}, {}, {})", new Object[]{avain, kategoria, kieli});
-            LOG.error("  FOUND {} > 1 ENTRIES, NOW THIS SHOULD BE IMPOSSIBLE, DB SHOULD ENFORCE UNIQUENESS!", tmp.size());
-            throw new IllegalStateException("MonikielinenMetadata database uniqueness constraint violation!");
+                result = new MonikielinenMetadata();
+                result.setAvain(avain);
+                result.setKategoria(kategoria);
+                result.setKieli(kieli);
+                break;
+            case 1:
+                // Existing
+                result = tmp.get(0);
+                break;
+            default:
+                // Hmm... this should never happen since db uniqueness constraint
+                LOG.error("findOrCreateByAvainKategoriaKieli({}, {}, {})", new Object[]{avain, kategoria, kieli});
+                LOG.error("  FOUND {} > 1 ENTRIES, NOW THIS SHOULD BE IMPOSSIBLE, DB SHOULD ENFORCE UNIQUENESS!", tmp.size());
+                throw new IllegalStateException("MonikielinenMetadata database uniqueness constraint violation!");
         }
 
         LOG.debug("  result = {}", result);

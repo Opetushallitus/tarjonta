@@ -132,12 +132,10 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
         String komoOid = komoto.getKoulutusmoduuli().getOid();
         if (komoOid != null) {
-            Set<String> parents = new HashSet<String>();
-            parents.addAll(koulutusSisaltyvyysDAO.getParents(komoOid));
+            Set<String> parents = new HashSet<String>(koulutusSisaltyvyysDAO.getParents(komoOid));
             dto.setParents(parents);
 
-            Set<String> children = new HashSet<String>();
-            children.addAll(koulutusSisaltyvyysDAO.getChildren(komoOid));
+            Set<String> children = new HashSet<String>(koulutusSisaltyvyysDAO.getChildren(komoOid));
             dto.setChildren(children);
         }
 
@@ -175,9 +173,9 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
             //Map<String, BinaryData> findAllImagesByKomotoOid = koulutusmoduuliToteutusDAO.findAllImagesByKomotoOid(komotoOid);
             if (param.getShowImg() && komoto.getKuvat() != null && !komoto.getKuvat().isEmpty()) {
-                for (Map.Entry<String, BinaryData> e : komoto.getKuvat().entrySet()) {
-                    kkDto.getOpintojenRakenneKuvas().put(e.getKey(), new KuvaV1RDTO(e.getValue().getFilename(), e.getValue().getMimeType(), e.getKey(), Base64.encodeBase64String(e.getValue().getData())));
-                }
+                komoto.getKuvat().forEach((key, value) ->
+                        kkDto.getOpintojenRakenneKuvas().put(key, new KuvaV1RDTO(value.getFilename(), value.getMimeType(), key, Base64.encodeBase64String(value.getData())))
+                );
             }
             try {
                 kkDto.setJohtaaTutkintoon(yhdenPaikanSaantoBuilder.koulutusJohtaaTutkintoon(komoto));
@@ -554,15 +552,17 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         // KJOH-778 multiple owners, API output
         //
         for (KoulutusOwner owner : komoto.getOwners()) {
-            if (KoulutusOwner.TARJOAJA.equals(owner.getOwnerType())) {
-                dto.getOpetusTarjoajat().add(owner.getOwnerOid());
-            }
-            else if (KoulutusOwner.JARJESTAJA.equals(owner.getOwnerType())) {
-                dto.getOpetusJarjestajat().add(owner.getOwnerOid());
-            }
-            else {
-                LOG.error("SKIPPING komoto oid: {}, invalid KoulutusOwner oid/type: {}/{}, accepted; TARJOAJA/JARJESTAJA",
-                        komoto.getOid(), owner.getOwnerOid(), owner.getOwnerType());
+            switch (owner.getOwnerType()) {
+                case KoulutusOwner.TARJOAJA:
+                    dto.getOpetusTarjoajat().add(owner.getOwnerOid());
+                    break;
+                case KoulutusOwner.JARJESTAJA:
+                    dto.getOpetusJarjestajat().add(owner.getOwnerOid());
+                    break;
+                default:
+                    LOG.error("SKIPPING komoto oid: {}, invalid KoulutusOwner oid/type: {}/{}, accepted; TARJOAJA/JARJESTAJA",
+                            komoto.getOid(), owner.getOwnerOid(), owner.getOwnerType());
+                    break;
             }
         }
 

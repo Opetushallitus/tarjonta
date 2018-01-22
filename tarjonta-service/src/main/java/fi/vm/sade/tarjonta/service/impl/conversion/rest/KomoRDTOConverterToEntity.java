@@ -166,10 +166,10 @@ public class KomoRDTOConverterToEntity {
         Preconditions.checkNotNull(dto.getTekstis(), "Language map objects cannot be null! Error in field : " + msg);
 
         MonikielinenTeksti mt = new MonikielinenTeksti();
-        for (Entry<String, String> kieliAndText : dto.getTekstis().entrySet()) {
-            koodistoUri.validateKieliUri(kieliAndText.getKey());
-            mt.addTekstiKaannos(kieliAndText.getKey(), kieliAndText.getValue());
-        }
+        dto.getTekstis().forEach((key, value) -> {
+            koodistoUri.validateKieliUri(key);
+            mt.addTekstiKaannos(key, value);
+        });
 
         return mt;
     }
@@ -311,12 +311,9 @@ public class KomoRDTOConverterToEntity {
                 List<String> splitStringToList = EntityUtils.splitStringToList(m.getKoulutustyyppiUri());
 
                 //convert list to set
-                HashSet<KoodistoUri> types = Sets.<KoodistoUri>newHashSet(Iterators.transform(splitStringToList.iterator(), new Function<String, KoodistoUri>() {
-                    @Override
-                    public KoodistoUri apply(@Nullable String arg0) {
-                        return new KoodistoUri(arg0);
-                    }
-                }));
+                HashSet<KoodistoUri> types = Sets.<KoodistoUri>newHashSet(Iterators.transform(splitStringToList.iterator(), arg0 ->
+                        new KoodistoUri(arg0))
+                );
 
                 //join the new types to the old types and convert back to string object
                 m.setKoulutustyyppiUri(joinWithoutVersion(koulutustyyppis, types, FieldNames.KOULUTUSTYYPPI));

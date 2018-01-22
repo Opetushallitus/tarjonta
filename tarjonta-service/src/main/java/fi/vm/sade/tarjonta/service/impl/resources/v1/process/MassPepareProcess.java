@@ -180,13 +180,9 @@ public class MassPepareProcess {
 
     private void executeInTransaction(final Runnable runnable) {
         TransactionTemplate tt = new TransactionTemplate(tm);
-        tt.execute(new TransactionCallback<Object>() {
-
-            @Override
-            public Object doInTransaction(TransactionStatus status) {
-                runnable.run();
-                return null;
-            }
+        tt.execute(status -> {
+            runnable.run();
+            return null;
         });
     }
 
@@ -195,19 +191,14 @@ public class MassPepareProcess {
 
     @Transactional(readOnly = false)
     private void deleteBatch(final String fromOid) {
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
-                massakopiointiDAO.deleteAllByHakuOid(fromOid);
-            }
-        });
+        executeInTransaction(() ->
+                massakopiointiDAO.deleteAllByHakuOid(fromOid)
+        );
     }
 
     @Transactional(readOnly = false)
     private void flushKoulutusBatch(final String fromOid, final Set<Long> komotoIds) throws OIDCreationException {
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
+        executeInTransaction(() -> {
                 LOG.info("prepare koulutus batch size of {}: {}/{}", komotoIds.size(), countKomoto, countTotalKomoto);
                 for (Long komotoId : komotoIds) {
                     LOG.debug("convert {} komoto by id : {}", countKomoto, komotoId);
@@ -266,16 +257,13 @@ public class MassPepareProcess {
                             KoulutusmoduuliToteutus.class,
                             komoto,
                             metaObject);
-                }
             }
         });
     }
 
     @Transactional(readOnly = false)
     private void flushHakukohdeBatch(final String processId, final String fromOid, final Set<Long> hakukohdeIds) throws OIDCreationException {
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
+        executeInTransaction(() -> {
                 LOG.info("prepare hakukohde batch size of {}: {}/{}", hakukohdeIds.size(), countHakukohde, countTotalHakukohde);
                 for (Long hakukohdeId : hakukohdeIds) {
                     LOG.debug("convert {} hakukohde by id : {}", countHakukohde, hakukohdeId);
@@ -311,7 +299,6 @@ public class MassPepareProcess {
                             Hakukohde.class,
                             hakukohde,
                             metaObject);
-                }
             }
         });
     }

@@ -179,12 +179,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     @After
     public void after() {
         super.after();
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
-                tarjontaFixtures.deleteAll();
-            }
-        });
+        executeInTransaction(() -> tarjontaFixtures.deleteAll());
     }
 
     private OrganisaatioRDTO getOrgDTO(String string) {
@@ -202,10 +197,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
 
     void createTestDataInTransaction() {
 
-        executeInTransaction(new Runnable() {
-
-            @Override
-            public void run() {
+        executeInTransaction(() -> {
                 hakukohde = tarjontaFixtures
                         .createPersistedHakukohdeWithKoulutus("1.2.3.4.555");
                 LueHakukohdeVastausTyyppi hakukohdeVastaus = publicService
@@ -228,8 +220,6 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
                         .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
                                 .getOid()));
                 adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
-            }
-
         });
     }
 
@@ -315,13 +305,10 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         Mockito.stub(organisaatioSearchService.findByOidSet(Mockito.anySet())).toReturn(Arrays.asList(getOrganisaatio("1.2.3.4.5.6.7.8.9")));
 
         // tee kk koulutus
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
+        executeInTransaction(() -> {
                 KoulutusKorkeakouluV1RDTO kkKoulutus = getKKKoulutus();
                 ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResource.postKoulutus(kkKoulutus, request).getEntity();
                 assertEquals("errors in koulutus insert", false, result.hasErrors());
-            }
         });
 
         KoulutuksetKysely kysely = new KoulutuksetKysely();
@@ -339,15 +326,12 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         createTestDataInTransaction();
 
         // tee kk koulutus ja hakukohde
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
+        executeInTransaction(() -> {
                 KoulutusKorkeakouluV1RDTO kk = getKKKoulutus();
                 ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResource.postKoulutus(kk, request).getEntity();
                 HakukohdeV1RDTO hakukohde = getKKHakukohde(postKorkeakouluKoulutus.getResult().getOid());
                 ResultV1RDTO<HakukohdeV1RDTO> response = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(hakukohde, request).getEntity();
                 assertEquals("errors in koulutus insert", false, response.hasErrors());
-            }
         });
 
         HakukohteetKysely kysely = new HakukohteetKysely();
@@ -454,13 +438,9 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     private void executeInTransaction(final Runnable runnable) {
 
         TransactionTemplate tt = new TransactionTemplate(tm);
-        tt.execute(new TransactionCallback<Object>() {
-
-            @Override
-            public Object doInTransaction(TransactionStatus status) {
-                runnable.run();
-                return null;
-            }
+        tt.execute(status -> {
+            runnable.run();
+            return null;
         });
 
     }

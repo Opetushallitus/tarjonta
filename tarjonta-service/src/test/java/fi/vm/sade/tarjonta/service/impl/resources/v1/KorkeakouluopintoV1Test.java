@@ -244,18 +244,8 @@ public class KorkeakouluopintoV1Test {
         assertEquals(komotoOid, result.getResult().getOid());
         Set<KoulutusIdentification> sisaltyyKoulutuksiin = result.getResult().getSisaltyyKoulutuksiin();
         assertEquals(2, sisaltyyKoulutuksiin.size());
-        assertNotNull(Iterables.find(sisaltyyKoulutuksiin, new Predicate<KoulutusIdentification>() {
-            @Override
-            public boolean apply(KoulutusIdentification koulutus) {
-                return koulutus.getOid().equals(parentKoulutus1.getOid());
-            }
-        }));
-        assertNotNull(Iterables.find(sisaltyyKoulutuksiin, new Predicate<KoulutusIdentification>() {
-            @Override
-            public boolean apply(KoulutusIdentification koulutus) {
-                return koulutus.getOid().equals(parentKoulutus2.getOid());
-            }
-        }));
+        assertNotNull(Iterables.find(sisaltyyKoulutuksiin, koulutus -> koulutus.getOid().equals(parentKoulutus1.getOid())));
+        assertNotNull(Iterables.find(sisaltyyKoulutuksiin, koulutus -> koulutus.getOid().equals(parentKoulutus2.getOid())));
     }
 
     @Test

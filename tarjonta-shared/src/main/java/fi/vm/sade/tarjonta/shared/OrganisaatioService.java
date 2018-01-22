@@ -138,12 +138,7 @@ public class OrganisaatioService {
                     new URL(urlConfiguration.url("organisaatio-service.findChildrenOidsByOid", oid)), OrganisaatioHakutulosSuppeaDTOV2.class);
             return FluentIterable
                     .from(result.getOrganisaatiot())
-                    .transform(new Function<OrganisaatioPerustietoSuppea, String>() {
-                        @Override
-                        public String apply(OrganisaatioPerustietoSuppea org) {
-                            return org.getOid();
-                        }
-                    })
+                    .transform(org -> org.getOid())
                     .filter(Predicates.not(Predicates.equalTo(oid)))
                     .toSet();
         } catch (Exception e) {
@@ -157,9 +152,9 @@ public class OrganisaatioService {
         final OrganisaatioRDTO org = findByOid(orgOid);
         if (org != null) {
             final Map<String, String> map = new HashMap<>();
-            for (Map.Entry<String, String> entry : org.getNimi().entrySet()) {
-                map.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(entry.getKey()), entry.getValue());
-            }
+            org.getNimi().forEach((key, value) ->
+                    map.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(key), value)
+            );
             return map;
         }
         return new HashMap<>();
