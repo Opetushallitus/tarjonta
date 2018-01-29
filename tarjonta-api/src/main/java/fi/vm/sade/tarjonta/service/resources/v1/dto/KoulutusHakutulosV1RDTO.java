@@ -24,6 +24,7 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
     private Map<String, String> koulutusLaji;
     private String koulutuslajiUri;
     private TarjontaTila tila;
+    private String koulutustyyppiUri;
     private KoulutusasteTyyppi koulutusasteTyyppi;
     private ToteutustyyppiEnum toteutustyyppiEnum;
     private Map<String, String> pohjakoulutusvaatimus;
@@ -37,6 +38,14 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
     private String koulutuksenTarjoajaKomoto;
     private String parentKomoOid;
     private List<String> siblingKomotos;
+
+    public String getKoulutustyyppiUri() {
+        return koulutustyyppiUri;
+    }
+
+    public void setKoulutustyyppiUri(String koulutustyyppiUri) {
+        this.koulutustyyppiUri = koulutustyyppiUri;
+    }
 
     public List<String> getOpetuskielet() {
         return opetuskielet;

@@ -2005,7 +2005,7 @@ public class ConverterV1 {
 
     private KoulutusHakutulosV1RDTO convert(KoulutusPerustieto ht) {
         KoulutusHakutulosV1RDTO ret = new KoulutusHakutulosV1RDTO();
-
+        ret.setKoulutustyyppiUri(ht.getKoulutustyyppi());
         ret.setOid(ht.getKomotoOid());
         ret.setKomoOid(ht.getKoulutusmoduuli());
         ret.setNimi(ht.getNimi());
