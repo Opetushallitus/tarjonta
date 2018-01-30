@@ -79,6 +79,17 @@ public interface KoulutusV1Resource {
             + "2. lang=FI näyttää yksittäisen metadatan annetun kielikoodin mukaan.")
     public ResultV1RDTO<KoulutusV1RDTO> findByOid(@PathParam("oid") String oid, @QueryParam("meta") Boolean showMeta, @QueryParam("img") Boolean showImages, @QueryParam("lang") String userLang);
 
+    @POST
+    @Path("/oids")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Näyttää koulutukset annetuilla koulutuksen oideilla",
+            notes = "Operaatio näyttää yhden koulutuksen annetulla koulutuksen oid:lla."
+                    + " Muut parametrit : "
+                    + "1. meta=false poistaa koodisto-palvelun metatietoa haettavaan koulutuksen dataan. "
+                    + "2. lang=FI näyttää yksittäisen metadatan annetun kielikoodin mukaan.")
+    public ResultV1RDTO<List<KoulutusV1RDTO>> findByOids(List<String> oids, @Context HttpServletRequest request);
+
     @DELETE
     @Path("/{oid}")
     @PreAuthorize("isAuthenticated()")

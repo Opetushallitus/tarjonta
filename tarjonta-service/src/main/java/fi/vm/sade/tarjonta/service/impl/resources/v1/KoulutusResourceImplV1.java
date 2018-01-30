@@ -75,12 +75,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.KOULUTUS;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.TOTEUTUSTYYPPI;
@@ -184,6 +186,16 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     @Autowired
     private AuditHelper auditHelper;
 
+    @Override
+    public ResultV1RDTO<List<KoulutusV1RDTO>> findByOids(List<String> oids, HttpServletRequest request) {
+        ResultV1RDTO<List<KoulutusV1RDTO>> result = new ResultV1RDTO<>();
+        RestParam r = new RestParam(true, false, null);
+        result.setResult(oids.stream().map(koulutusmoduuliToteutusDAO::findKomotoByOid)
+                .filter(k -> k != null)
+                .filter(k -> !isValmistavaToteutustyyppi(k.getToteutustyyppi()))
+                .map(k -> convert(converterToRDTO, k , r)).collect(Collectors.toList()));
+        return result;
+    }
     @Override
     public ResultV1RDTO<KoulutusV1RDTO> findByOid(String komotoOid, Boolean showMeta, Boolean showImg, String userLang) {
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<>();
