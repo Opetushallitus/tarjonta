@@ -189,7 +189,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     @Override
     public ResultV1RDTO<List<KoulutusV1RDTO>> findByOids(List<String> oids, HttpServletRequest request) {
         ResultV1RDTO<List<KoulutusV1RDTO>> result = new ResultV1RDTO<>();
-        RestParam r = new RestParam(true, false, null);
+        RestParam r = new RestParam(false, false, null);
         result.setResult(oids.stream().map(koulutusmoduuliToteutusDAO::findKomotoByOid)
                 .filter(k -> k != null)
                 .filter(k -> !isValmistavaToteutustyyppi(k.getToteutustyyppi()))
