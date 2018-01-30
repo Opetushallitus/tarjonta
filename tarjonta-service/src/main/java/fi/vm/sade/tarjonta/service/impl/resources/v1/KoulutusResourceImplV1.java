@@ -188,9 +188,10 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     @Override
     public ResultV1RDTO<List<KoulutusV1RDTO>> findByOids(List<String> oids, HttpServletRequest request) {
+        Preconditions.checkState(oids != null && !oids.isEmpty(), "Can't find KOMOTO's with empty oid list!");
         ResultV1RDTO<List<KoulutusV1RDTO>> result = new ResultV1RDTO<>();
         RestParam r = new RestParam(false, false, null);
-        result.setResult(oids.stream().map(koulutusmoduuliToteutusDAO::findKomotoByOid)
+        result.setResult(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(oids).stream()
                 .filter(k -> k != null)
                 .filter(k -> !isValmistavaToteutustyyppi(k.getToteutustyyppi()))
                 .map(k -> convert(converterToRDTO, k , r)).collect(Collectors.toList()));
