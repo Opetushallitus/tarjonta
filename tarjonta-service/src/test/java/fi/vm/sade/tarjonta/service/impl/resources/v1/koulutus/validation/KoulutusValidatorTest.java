@@ -1,5 +1,9 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -44,31 +48,31 @@ public class KoulutusValidatorTest {
 
         final KoulutusValidationMessages tunnisteError = KoulutusValidationMessages.KOULUTUS_TUNNISTE_LENGTH;
 
-        org.junit.Assert.assertTrue(tunnisteError.lower(), r.hasErrors());
+        assertTrue(tunnisteError.lower(), r.hasErrors());
         assertErrorExist(r.getErrors(), tunnisteError);
 
         kk.setTunniste("12345678901234567890123456789012345");
         r = new ResultV1RDTO<>();
         KoulutusValidator.validateTunniste(kk, r);
-        org.junit.Assert.assertFalse(tunnisteError.lower(), r.hasErrors());
+        assertFalse(tunnisteError.lower(), r.hasErrors());
 
         kk.setTunniste("");
         r = new ResultV1RDTO<>();
         KoulutusValidator.validateTunniste(kk, r);
-        org.junit.Assert.assertFalse(tunnisteError.lower(), r.hasErrors());
+        assertFalse(tunnisteError.lower(), r.hasErrors());
 
         kk.setTunniste(null);
         r = new ResultV1RDTO<>();
         KoulutusValidator.validateTunniste(kk, r);
-        org.junit.Assert.assertFalse(tunnisteError.lower(), r.hasErrors());
+        assertFalse(tunnisteError.lower(), r.hasErrors());
     }
 
     @Test
     public void testValidationLukioNullObject() {
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<>();
         ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(null, KOULUTUS_OHJELMA, result);
-        org.junit.Assert.assertTrue("errors", v.hasErrors());
-        org.junit.Assert.assertEquals("errors count", 1, v.getErrors().size());
+        assertTrue("errors", v.hasErrors());
+        assertEquals("errors count", 1, v.getErrors().size());
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_INPUT_OBJECT_MISSING);
 
         KoulutusLukioV1RDTO dto = new KoulutusLukioV1RDTO();
@@ -180,7 +184,7 @@ public class KoulutusValidatorTest {
         dto.setSuunniteltuKestoTyyppi(new KoodiV1RDTO("1", 1, null));
 
         v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO<>());
-        org.junit.Assert.assertFalse("not success?", v.hasErrors());
+        assertFalse("not success?", v.hasErrors());
     }
 
     @Test
@@ -192,8 +196,8 @@ public class KoulutusValidatorTest {
         dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(new Date(1517436000000L))); // 1.8.2018 fail
 
         ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO<>());
-        org.junit.Assert.assertTrue("has errors", v.hasErrors());
-        org.junit.Assert.assertEquals("errors count", v.getErrors().size(), 1);
+        assertTrue("has errors", v.hasErrors());
+        assertEquals("errors count", v.getErrors().size(), 1);
 
         assertErrorExist(v.getErrors(), KoulutusValidator.KOULUTUKSEN_ALKAMISPVMS);
     }
@@ -208,7 +212,7 @@ public class KoulutusValidatorTest {
         dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(new Date(1517414400000L))); // 31.1.2018 ok
 
         ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO<>());
-        org.junit.Assert.assertFalse("no errors", v.hasErrors());
+        assertFalse("no errors", v.hasErrors());
     }
 
     @Test
@@ -220,12 +224,12 @@ public class KoulutusValidatorTest {
         // ei alkamispäivämäärää
 
         ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO<>());
-        org.junit.Assert.assertTrue("has errors", v.hasErrors());
-        org.junit.Assert.assertEquals("errors count", v.getErrors().size(), 1);
+        assertTrue("has errors", v.hasErrors());
+        assertEquals("errors count", v.getErrors().size(), 1);
 
         assertErrorExist(v.getErrors(), KoulutusValidator.KOULUTUKSEN_ALKAMISPVMS);
         String invalidTypeForDateMessage = "toteutustyyppi ei voi olla tätä tyyppiä alkaen 1.2.2018. Jos koulutus alkaa samalla kaudella, käytä tarkkaa päivämäärää kauden sijaan.";
-        Assert.assertNotNull(Iterables.find(v.getErrors(), candidate -> candidate.getErrorMessageParameters().contains(invalidTypeForDateMessage)));
+        assertNotNull(Iterables.find(v.getErrors(), candidate -> candidate.getErrorMessageParameters().contains(invalidTypeForDateMessage)));
     }
 
     @Test
@@ -238,8 +242,8 @@ public class KoulutusValidatorTest {
         // ei alkamispäivämäärää
 
         ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO<>());
-        org.junit.Assert.assertTrue("has errors", v.hasErrors());
-        org.junit.Assert.assertEquals("errors count", v.getErrors().size(), 1);
+        assertTrue("has errors", v.hasErrors());
+        assertEquals("errors count", v.getErrors().size(), 1);
 
         assertErrorExist(v.getErrors(), KoulutusValidator.KOULUTUKSEN_ALKAMISPVMS);
     }
@@ -254,8 +258,8 @@ public class KoulutusValidatorTest {
         // ei alkamispäivämäärää
 
         ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO<>());
-        org.junit.Assert.assertTrue("has errors", v.hasErrors());
-        org.junit.Assert.assertEquals("errors count", v.getErrors().size(), 1);
+        assertTrue("has errors", v.hasErrors());
+        assertEquals("errors count", v.getErrors().size(), 1);
 
         assertErrorExist(v.getErrors(), KoulutusValidator.KOULUTUKSEN_ALKAMISPVMS);
     }
@@ -269,11 +273,11 @@ public class KoulutusValidatorTest {
         dto.setKoulutuksenAlkamiskausi(null);
 
         ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO<>());
-        org.junit.Assert.assertTrue("has errors", v.hasErrors());
-        org.junit.Assert.assertEquals("errors count", v.getErrors().size(), 1);
+        assertTrue("has errors", v.hasErrors());
+        assertEquals("errors count", v.getErrors().size(), 1);
 
         String missingVuosiMessage = "koulutuksenAlkamisPvms is required (or alternatively koulutuksenAlkamiskausi and koulutuksenAlkamisvuosi can be provided)";
-        Assert.assertNotNull(Iterables.find(v.getErrors(), candidate -> missingVuosiMessage.equals(candidate.getErrorMessageKey())));
+        assertNotNull(Iterables.find(v.getErrors(), candidate -> missingVuosiMessage.equals(candidate.getErrorMessageKey())));
     }
 
     private void prepStartingDate2018TestDTO(KoulutusAmmatillinenPerustutkintoV1RDTO dto) {
@@ -307,23 +311,23 @@ public class KoulutusValidatorTest {
 
     @Test
     public void requireKoodiUriWithVersion() {
-        Assert.assertFalse(KoulutusValidator.isValidKoodiUriWithVersion(null));
-        Assert.assertFalse(KoulutusValidator.isValidKoodiUriWithVersion(new KoodiV1RDTO()));
-        Assert.assertFalse(KoulutusValidator.isValidKoodiUriWithVersion(new KoodiV1RDTO("", -1, null)));
-        Assert.assertFalse(KoulutusValidator.isValidKoodiUriWithVersion(new KoodiV1RDTO("", 1, null)));
-        Assert.assertFalse(KoulutusValidator.isValidKoodiUriWithVersion(new KoodiV1RDTO(null, 1, null)));
-        Assert.assertFalse(KoulutusValidator.isValidKoodiUriWithVersion(new KoodiV1RDTO("1", 0, null)));
-        Assert.assertTrue(KoulutusValidator.isValidKoodiUriWithVersion(new KoodiV1RDTO("1", 1, null)));
+        assertFalse(KoulutusValidator.isValidKoodiUriWithVersion(null));
+        assertFalse(KoulutusValidator.isValidKoodiUriWithVersion(new KoodiV1RDTO()));
+        assertFalse(KoulutusValidator.isValidKoodiUriWithVersion(new KoodiV1RDTO("", -1, null)));
+        assertFalse(KoulutusValidator.isValidKoodiUriWithVersion(new KoodiV1RDTO("", 1, null)));
+        assertFalse(KoulutusValidator.isValidKoodiUriWithVersion(new KoodiV1RDTO(null, 1, null)));
+        assertFalse(KoulutusValidator.isValidKoodiUriWithVersion(new KoodiV1RDTO("1", 0, null)));
+        assertTrue(KoulutusValidator.isValidKoodiUriWithVersion(new KoodiV1RDTO("1", 1, null)));
     }
 
     @Test
     public void notNullStrOrEmpty() {
-        Assert.assertFalse(KoulutusValidator.notNullStrOrEmpty(null));
-        Assert.assertFalse(KoulutusValidator.notNullStrOrEmpty(""));
-        Assert.assertFalse(KoulutusValidator.notNullStrOrEmpty(" "));
-        Assert.assertFalse(KoulutusValidator.notNullStrOrEmpty("          "));
-        Assert.assertTrue(KoulutusValidator.notNullStrOrEmpty(" 1 "));
-        Assert.assertTrue(KoulutusValidator.notNullStrOrEmpty("1"));
+        assertFalse(KoulutusValidator.notNullStrOrEmpty(null));
+        assertFalse(KoulutusValidator.notNullStrOrEmpty(""));
+        assertFalse(KoulutusValidator.notNullStrOrEmpty(" "));
+        assertFalse(KoulutusValidator.notNullStrOrEmpty("          "));
+        assertTrue(KoulutusValidator.notNullStrOrEmpty(" 1 "));
+        assertTrue(KoulutusValidator.notNullStrOrEmpty("1"));
     }
 
     @Test
@@ -331,64 +335,64 @@ public class KoulutusValidatorTest {
         //use any error message, this test do not care the error message types.
         final KoulutusValidationMessages missing = KoulutusValidationMessages.KOULUTUS_NQF_MISSING;
         final KoulutusValidationMessages invalid = KoulutusValidationMessages.KOULUTUS_NQF_INVALID;
-        Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), null, missing, invalid, null));
+        assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), null, missing, invalid, null));
 
         KoodiUrisV1RDTO dto = new KoodiUrisV1RDTO();
-        Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, null));
+        assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, null));
 
         //set empty map (size of zero)
         Map<String, Integer> uris = Maps.newHashMap();
         dto.setUris(uris);
 
         //no limit
-        Assert.assertTrue(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, null));
+        assertTrue(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, null));
         //limit == uris.size
-        Assert.assertTrue(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, 0));
+        assertTrue(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, 0));
         //limit > uris.size
-        Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, 1));
+        assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, 1));
 
         uris.put(null, null);
         dto.setUris(uris);
-        Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, null));
+        assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, null));
 
         uris.put(null, -1);
         dto.setUris(uris);
-        Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, null));
+        assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, null));
 
         uris = Maps.newHashMap();
         uris.put("", 0);
         dto.setUris(uris);
-        Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, null));
+        assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, null));
 
         uris = Maps.newHashMap();
         uris.put("", 1);
         dto.setUris(uris);
-        Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, null));
+        assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, null));
 
         uris = Maps.newHashMap();
         uris.put("", 0);
         dto.setUris(uris);
-        Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, null));
+        assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, null));
 
         uris = Maps.newHashMap();
         uris.put("1", 1);
         uris.put("", -1);
         dto.setUris(uris);
-        Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, null));
+        assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, null));
 
         uris = Maps.newHashMap();
         uris.put("1", 1);
         uris.put("2", 2);
         dto.setUris(uris);
-        Assert.assertTrue(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, 1));
-        Assert.assertTrue(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, 2));
-        Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, 3));
+        assertTrue(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, 1));
+        assertTrue(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, 2));
+        assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO<>(), dto, missing, invalid, 3));
 
     }
 
     private void checkMissingErrors(ResultV1RDTO<KoulutusV1RDTO> v, int eCount) {
-        org.junit.Assert.assertTrue("errors", v.hasErrors());
-        org.junit.Assert.assertEquals("errors count", v.getErrors().size(), eCount);
+        assertTrue("errors", v.hasErrors());
+        assertEquals("errors count", v.getErrors().size(), eCount);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING);
@@ -405,7 +409,7 @@ public class KoulutusValidatorTest {
     }
 
     private void assertErrorExist(List<ErrorV1RDTO> errors, final String errorField) {
-        Assert.assertNotNull(Iterables.find(errors, candidate -> errorField.equals(candidate.getErrorField())));
+        assertNotNull(Iterables.find(errors, candidate -> errorField.equals(candidate.getErrorField())));
     }
 
     private void assertErrorExist(List<ErrorV1RDTO> errors, KoulutusValidationMessages em) {
