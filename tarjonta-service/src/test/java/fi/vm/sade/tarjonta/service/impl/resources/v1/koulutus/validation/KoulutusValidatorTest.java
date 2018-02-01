@@ -409,7 +409,14 @@ public class KoulutusValidatorTest {
     }
 
     private void assertErrorExist(List<ErrorV1RDTO> errors, final String errorField) {
-        assertNotNull(Iterables.find(errors, candidate -> errorField.equals(candidate.getErrorField())));
+        List<String> actualErrorFields = errors.stream().map(ErrorV1RDTO::getErrorField).collect(Collectors.toList());
+        String message = "Only got error fields " + actualErrorFields + " , expected '" + errorField + "'";
+        try {
+            assertNotNull(message, Iterables.find(errors, candidate -> errorField.equals(candidate.getErrorField())));
+        } catch (Exception e) {
+            System.err.println(message);
+            throw e;
+        }
     }
 
     private void assertErrorExist(List<ErrorV1RDTO> errors, KoulutusValidationMessages em) {
