@@ -56,6 +56,8 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +79,7 @@ public class KoulutusValidator {
     private static final boolean REQUIRE_KOMO_VALIDATION = true;
     private static final boolean NO_KOMO_VALIDATION = false;
     private static final Date firstOfJanuary2000 = new Date(946738364556L);
-    private static final Date endOfJanuary2018 = new Date(1517435999000L);
+    public static final Date endOfJanuary2018 = new DateTime(2018, 1, 31, 23, 59, 59).withZone(DateTimeZone.forID("EET")).toDate();
     private static final Set<ToteutustyyppiEnum> invalidTypesAfterJanuary2018 = Sets.newHashSet(
             ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO,
             ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA);
