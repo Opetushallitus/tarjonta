@@ -67,11 +67,14 @@ public class KoulutusValidatorTest {
     private KoulutusValidator validator = new KoulutusValidator(Mockito.mock(KoulutusmoduuliToteutusDAO.class),
         Mockito.mock(PermissionChecker.class),
         mockOrganisaatioService);
+    private final Koulutusmoduuli tutkinto = new Koulutusmoduuli();
 
     @Before
     public void populateTestData() {
         jarjestavaOrganisaatioRdto.setOid(jarjestavaOrganisaatio.getOid());
         jarjestavaOrganisaatioRdto.setNimi(ImmutableMap.of("fi", jarjestavaOrganisaatio.getNimi()));
+
+        tutkinto.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
     }
 
     @Test
@@ -430,38 +433,36 @@ public class KoulutusValidatorTest {
     @Test
     public void nayttokoulutuksenJarjestavaOrganisaatioOnPakollinenAmmattitutkinnoilleErikoisammattitutkinnoilleJaAmmatillisillePerustutkinnoilleNayttotutkintonaEnnenReformia() {
         when(mockOrganisaatioService.findByOid(jarjestavaOrganisaatio.getOid())).thenReturn(jarjestavaOrganisaatioRdto);
-        Koulutusmoduuli komo = new Koulutusmoduuli();
-        komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
 
         NayttotutkintoV1RDTO poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO = populate(new KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO());
         NayttotutkintoV1RDTO vanhaAmmattitutkintoV1RDTO = populate(new AmmattitutkintoV1RDTO());
         NayttotutkintoV1RDTO vanhaErikoisammattitutkintoV1RDTO = populate(new ErikoisammattitutkintoV1RDTO());
 
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<>(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO);
-        validator.validateKoulutusNayttotutkinto(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO, komo, result);
+        validator.validateKoulutusNayttotutkinto(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO, tutkinto, result);
         assertEquals(null, result.getErrors());
 
         result.setResult(vanhaAmmattitutkintoV1RDTO);
-        validator.validateKoulutusNayttotutkinto(vanhaAmmattitutkintoV1RDTO, komo, result);
+        validator.validateKoulutusNayttotutkinto(vanhaAmmattitutkintoV1RDTO, tutkinto, result);
         assertEquals(null, result.getErrors());
 
         result.setResult(vanhaErikoisammattitutkintoV1RDTO);
-        validator.validateKoulutusNayttotutkinto(vanhaErikoisammattitutkintoV1RDTO, komo, result);
+        validator.validateKoulutusNayttotutkinto(vanhaErikoisammattitutkintoV1RDTO, tutkinto, result);
         assertEquals(null, result.getErrors());
 
         Arrays.asList(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO, vanhaAmmattitutkintoV1RDTO, vanhaErikoisammattitutkintoV1RDTO)
             .forEach(k -> k.setJarjestavaOrganisaatio(null));
 
         result.setResult(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO);
-        validator.validateKoulutusNayttotutkinto(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO, komo, result);
+        validator.validateKoulutusNayttotutkinto(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO, tutkinto, result);
         assertErrorExist(result.getErrors(), KOULUTUS_JARJESTAJA_MISSING.getFieldName());
 
         result.setResult(vanhaAmmattitutkintoV1RDTO);
-        validator.validateKoulutusNayttotutkinto(vanhaAmmattitutkintoV1RDTO, komo, result);
+        validator.validateKoulutusNayttotutkinto(vanhaAmmattitutkintoV1RDTO, tutkinto, result);
         assertErrorExist(result.getErrors(), KOULUTUS_JARJESTAJA_MISSING.getFieldName());
 
         result.setResult(vanhaErikoisammattitutkintoV1RDTO);
-        validator.validateKoulutusNayttotutkinto(vanhaErikoisammattitutkintoV1RDTO, komo, result);
+        validator.validateKoulutusNayttotutkinto(vanhaErikoisammattitutkintoV1RDTO, tutkinto, result);
         assertErrorExist(result.getErrors(), KOULUTUS_JARJESTAJA_MISSING.getFieldName());
 
         verify(mockOrganisaatioService, times(3)).findByOid(jarjestavaOrganisaatio.getOid());
