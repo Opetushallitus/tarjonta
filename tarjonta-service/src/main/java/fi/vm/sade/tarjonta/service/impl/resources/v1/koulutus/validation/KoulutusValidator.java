@@ -94,14 +94,16 @@ public class KoulutusValidator {
     public static final String TOTEUTUSTYYPPI = "toteutustyyppi";
     public static final String OPETUS_JARJESTAJAT = "opetusJarjestajat";
 
-    @Autowired
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+    private final KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+    private final PermissionChecker permissionChecker;
+    private final OrganisaatioService organisaatioService;
 
     @Autowired
-    private PermissionChecker permissionChecker;
-
-    @Autowired
-    private OrganisaatioService organisaatioService;
+    public KoulutusValidator(KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO, PermissionChecker permissionChecker, OrganisaatioService organisaatioService) {
+        this.koulutusmoduuliToteutusDAO = koulutusmoduuliToteutusDAO;
+        this.permissionChecker = permissionChecker;
+        this.organisaatioService = organisaatioService;
+    }
 
     /**
      * Required data validation for koulutus -type of objects.
