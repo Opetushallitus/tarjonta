@@ -76,7 +76,8 @@ public class KoulutusValidator {
     private static final int DEFAULT_MIN = 1;
     private static final boolean REQUIRE_KOMO_VALIDATION = true;
     private static final boolean NO_KOMO_VALIDATION = false;
-    public static final Date endOfJanuary2018 = new DateTime(2018, 1, 31, 23, 59, 59).withZone(DateTimeZone.forID("EET")).toDate();
+    private static final DateTimeZone EET = DateTimeZone.forID("EET");
+    private static final Date endOfJanuary2018 = new DateTime(2018, 1, 31, 23, 59, 59).withZone(EET).toDate();
     private static final Set<ToteutustyyppiEnum> invalidTypesAfterJanuary2018 = Sets.newHashSet(
             ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO,
             ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA);
