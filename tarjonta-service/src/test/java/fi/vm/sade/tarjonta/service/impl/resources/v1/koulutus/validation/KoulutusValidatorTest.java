@@ -1,41 +1,78 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation;
 
+import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING;
+import static fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusImplicitDataPopulator;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.LokalisointiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.AmmattitutkintoV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.ErikoisammattitutkintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPerustutkintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NayttotutkintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import org.joda.time.LocalDate;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class KoulutusValidatorTest {
 
     private static final Koulutusmoduuli KOULUTUS_OHJELMA = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+    private final OrganisaatioV1RDTO jarjestavaOrganisaatio = new OrganisaatioV1RDTO(
+        "organisaatioOid",
+        "Näyttötutkinnonjärjestäjät Ry",
+        Collections.singletonList(new LokalisointiV1RDTO("fi", "kieli_fi", "Näyttötutkinnonjärjestäjät Ry")));
+    private final OrganisaatioRDTO jarjestavaOrganisaatioRdto = new OrganisaatioRDTO();
+
     private KoulutusImplicitDataPopulator dataPopulator = new KoulutusImplicitDataPopulator();
+    private OrganisaatioService mockOrganisaatioService = Mockito.mock(OrganisaatioService.class);
+    private KoulutusValidator validator = new KoulutusValidator(Mockito.mock(KoulutusmoduuliToteutusDAO.class),
+        Mockito.mock(PermissionChecker.class),
+        mockOrganisaatioService);
+
+    @Before
+    public void populateTestData() {
+        jarjestavaOrganisaatioRdto.setOid(jarjestavaOrganisaatio.getOid());
+        jarjestavaOrganisaatioRdto.setNimi(ImmutableMap.of("fi", jarjestavaOrganisaatio.getNimi()));
+    }
 
     @Test
     public void testTunniste() {
@@ -390,6 +427,47 @@ public class KoulutusValidatorTest {
 
     }
 
+    @Test
+    public void nayttokoulutuksenJarjestavaOrganisaatioOnPakollinenAmmattitutkinnoilleErikoisammattitutkinnoilleJaAmmatillisillePerustutkinnoilleNayttotutkintonaEnnenReformia() {
+        when(mockOrganisaatioService.findByOid(jarjestavaOrganisaatio.getOid())).thenReturn(jarjestavaOrganisaatioRdto);
+        Koulutusmoduuli komo = new Koulutusmoduuli();
+        komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
+
+        NayttotutkintoV1RDTO poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO = populate(new KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO());
+        NayttotutkintoV1RDTO vanhaAmmattitutkintoV1RDTO = populate(new AmmattitutkintoV1RDTO());
+        NayttotutkintoV1RDTO vanhaErikoisammattitutkintoV1RDTO = populate(new ErikoisammattitutkintoV1RDTO());
+
+        ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<>(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO);
+        validator.validateKoulutusNayttotutkinto(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO, komo, result);
+        assertEquals(null, result.getErrors());
+
+        result.setResult(vanhaAmmattitutkintoV1RDTO);
+        validator.validateKoulutusNayttotutkinto(vanhaAmmattitutkintoV1RDTO, komo, result);
+        assertEquals(null, result.getErrors());
+
+        result.setResult(vanhaErikoisammattitutkintoV1RDTO);
+        validator.validateKoulutusNayttotutkinto(vanhaErikoisammattitutkintoV1RDTO, komo, result);
+        assertEquals(null, result.getErrors());
+
+        Arrays.asList(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO, vanhaAmmattitutkintoV1RDTO, vanhaErikoisammattitutkintoV1RDTO)
+            .forEach(k -> k.setJarjestavaOrganisaatio(null));
+
+        result.setResult(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO);
+        validator.validateKoulutusNayttotutkinto(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO, komo, result);
+        assertErrorExist(result.getErrors(), KOULUTUS_JARJESTAJA_MISSING.getFieldName());
+
+        result.setResult(vanhaAmmattitutkintoV1RDTO);
+        validator.validateKoulutusNayttotutkinto(vanhaAmmattitutkintoV1RDTO, komo, result);
+        assertErrorExist(result.getErrors(), KOULUTUS_JARJESTAJA_MISSING.getFieldName());
+
+        result.setResult(vanhaErikoisammattitutkintoV1RDTO);
+        validator.validateKoulutusNayttotutkinto(vanhaErikoisammattitutkintoV1RDTO, komo, result);
+        assertErrorExist(result.getErrors(), KOULUTUS_JARJESTAJA_MISSING.getFieldName());
+
+        verify(mockOrganisaatioService, times(3)).findByOid(jarjestavaOrganisaatio.getOid());
+        verifyNoMoreInteractions(mockOrganisaatioService);
+    }
+
     private void checkMissingErrors(ResultV1RDTO<KoulutusV1RDTO> v, int eCount) {
         assertTrue("errors", v.hasErrors());
         assertEquals("errors count", v.getErrors().size(), eCount);
@@ -426,5 +504,14 @@ public class KoulutusValidatorTest {
             }
         }
         Assert.fail("Could not find error code '" + em + "' in errors:" + errors);
+    }
+
+    private <T extends NayttotutkintoV1RDTO> T populate(T dto) {
+        dto.setOrganisaatio(new OrganisaatioV1RDTO("tarjoajaOid"));
+        dto.setKoulutuksenAlkamisPvms(Collections.singleton(new LocalDate(2015, 1, 1).toDate()));
+        dto.setOpetuskielis(new KoodiUrisV1RDTO(ImmutableMap.of("fi", 1)));
+        dto.setJarjestavaOrganisaatio(jarjestavaOrganisaatio);
+        dto.setTila(JULKAISTU);
+        return dto;
     }
 }
