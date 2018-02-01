@@ -63,8 +63,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -78,13 +76,10 @@ public class KoulutusValidator {
     private static final int DEFAULT_MIN = 1;
     private static final boolean REQUIRE_KOMO_VALIDATION = true;
     private static final boolean NO_KOMO_VALIDATION = false;
-    private static final Date firstOfJanuary2000 = new Date(946738364556L);
     public static final Date endOfJanuary2018 = new DateTime(2018, 1, 31, 23, 59, 59).withZone(DateTimeZone.forID("EET")).toDate();
     private static final Set<ToteutustyyppiEnum> invalidTypesAfterJanuary2018 = Sets.newHashSet(
             ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO,
             ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA);
-
-    private static final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
     public static final String KOULUTUSOHJELMA = "koulutusohjelma";
     public static final String KOULUTUSMODUULITYYPPI = "koulutusmoduuliTyyppi";
