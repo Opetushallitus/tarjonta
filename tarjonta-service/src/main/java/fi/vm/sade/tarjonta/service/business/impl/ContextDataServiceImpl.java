@@ -72,7 +72,7 @@ public class ContextDataServiceImpl implements ContextDataService {
                 }
             }
 
-            LOG.error("Not user lang found.");
+            LOG.info("Not user lang found.");
             return "FI";
         }
     }
