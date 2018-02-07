@@ -265,6 +265,12 @@ public class ResultV1RDTO<T> implements Serializable {
         return r;
     }
 
+    public static <T> ResultV1RDTO<T> notFound() {
+        ResultV1RDTO<T> r = new ResultV1RDTO<>();
+        r.setStatus(ResultStatus.NOT_FOUND);
+        return r;
+    }
+
 
 
 

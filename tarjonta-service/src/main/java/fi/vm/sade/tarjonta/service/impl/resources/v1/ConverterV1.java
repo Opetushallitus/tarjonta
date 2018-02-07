@@ -28,6 +28,7 @@ import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.business.exception.DataErrorException;
 import fi.vm.sade.tarjonta.service.copy.NullAwareBeanUtilsBean;
 import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
@@ -678,10 +679,11 @@ public class ConverterV1 {
     }
 
     private static final Set<TarjontaTila> validTilas = Sets.newHashSet(TarjontaTila.VALMIS, TarjontaTila.JULKAISTU);
-    private void convertKomotoFields(Hakukohde h, HakukohdeV1RDTO dto) throws IllegalStateException {
+
+    private void convertKomotoFields(Hakukohde h, HakukohdeV1RDTO dto) throws DataErrorException {
         try {
             Set<Triple<Boolean, Integer, String>> komotoInfos = getKomotoInfos(h, validTilas); // Preferoi VALMIS ja JULKAISTU tiloja
-            if(komotoInfos.size() == 0){ // Jos ei julkaistuja koulutuksia, käytä mitä hyvänsä.
+            if (komotoInfos.size() == 0) { // Jos ei julkaistuja koulutuksia, käytä mitä hyvänsä.
                 komotoInfos = getKomotoInfos(h, Sets.newHashSet(TarjontaTila.values()));
             }
 
@@ -690,13 +692,14 @@ public class ConverterV1 {
                 dto.setTutkintoonJohtava(ki.getLeft());
                 dto.setKoulutuksenAlkamisvuosi(ki.getMiddle());
                 dto.setKoulutuksenAlkamiskausiUri(ki.getRight());
-            } else if(komotoInfos.size() > 1){
-                throw new IllegalStateException(String.format(
+            } else if (komotoInfos.size() > 1) {
+                throw new DataErrorException(String.format(
                         "Hakukohteeseen %s liittyvien koulutusten tiedot ovat ristiriitaiset [johtaaTutkintoon, vuosi, kausi]: %s", h.getOid(), komotoInfos));
             } else {
-                throw new IllegalStateException(String.format("Hakukohteella %s ei ole koulutuksia", h.getOid()));
+                throw new DataErrorException(String.format("Hakukohteella %s ei ole koulutuksia", h.getOid()));
             }
-        } catch (Exception e) {
+        } catch(Exception e) {
+            if (e instanceof DataErrorException) throw e;
             throw new IllegalStateException("Failed to convert hakukohde " + h.getOid() + " to DTO due to error in linked komotos", e);
         }
     }
