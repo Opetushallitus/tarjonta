@@ -101,5 +101,5 @@ smtp.username={{ryhmasahkoposti_smtp_username}}
 smtp.password={{ryhmasahkoposti_smtp_password}}
 smtp.sender={{ryhmasahkoposti_smtp_sender}}
 
-oiva.username{{tarjonta_oiva_username}}
+oiva.username={{tarjonta_oiva_username}}
 oiva.password={{tarjonta_oiva_password}}
