@@ -14,6 +14,8 @@ import fi.vm.sade.tarjonta.shared.UrlConfiguration;
 import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOrgDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,7 +28,9 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.*;
 
 @Service
@@ -54,6 +58,10 @@ public class KoulutusPermissionSynchronizer {
     private String SMTP_USERNAME;
     @Value("${smtp.password}")
     private String SMTP_PASSWORD;
+    @Value("${oiva.username}")
+    private String OIVA_USERNAME;
+    @Value("${oiva.password}")
+    private String OIVA_PASSWORD;
 
     private static final int KOMOTO_BATCH_SIZE = 500;
 
@@ -76,10 +84,18 @@ public class KoulutusPermissionSynchronizer {
         List<AmkouteOrgDTO> orgs = new ArrayList<>();
 
         try {
+            URL url = new URL(urlConfiguration.url("oiva.jarjestysluvat"));
+            String basicAuthLogin = Base64.encodeBase64String((OIVA_USERNAME + ":" + OIVA_PASSWORD).getBytes(Charset.forName("UTF-8")));
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Authorization", "Basic " + basicAuthLogin);
+
             orgs = objectMapper.readValue(
-                    new URL("https://oiva.minedu.fi/api/export/jarjestysluvat"),
+                    IOUtils.toString(connection.getInputStream()),
                     new TypeReference<List<AmkouteOrgDTO>>() {}
             );
+
         } catch(JsonParseException e) {
             LOG.error("KoulutusPermission update failed, JSON parse error", e);
         } catch(JsonMappingException e) {
