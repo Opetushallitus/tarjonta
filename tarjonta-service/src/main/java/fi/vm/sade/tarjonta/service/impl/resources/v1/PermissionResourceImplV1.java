@@ -90,12 +90,12 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
             ObjectMapper mapper = new ObjectMapper();
             Map map = mapper.readValue(stacktrace, Map.class);
 
-            LOG.error("recordUiStacktrace");
+            LOG.warn("recordUiStacktrace");
             for (Object key : map.keySet()) {
-                LOG.error("{} - {}", key, map.get(key));
+                LOG.info("{} - {}", key, map.get(key));
             }
         } catch (Throwable ex) {
-            LOG.error("recordUiStacktrace\n{}", stacktrace);
+            LOG.warn("recordUiStacktrace\n{}", stacktrace);
         }
     }
 

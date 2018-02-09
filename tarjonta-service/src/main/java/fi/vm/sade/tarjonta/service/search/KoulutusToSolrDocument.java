@@ -472,7 +472,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
                 : koulutusmoduuliToteutus.getKoulutusmoduuli().getKoulutusUri();
 
         if (koulutusUri == null) {
-            logger.error("Data error - koulutus URI missing by KOMOTO OID '{}'", koulutusmoduuliToteutus.getOid());
+            logger.info("Data error - koulutus URI missing by KOMOTO OID '{}'", koulutusmoduuliToteutus.getOid());
             return;
         }
 

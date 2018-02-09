@@ -34,6 +34,7 @@ import fi.vm.sade.tarjonta.service.auditlog.AuditLog;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.business.exception.DataErrorException;
 import fi.vm.sade.tarjonta.service.copy.NullAwareBeanUtilsBean;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidator;
@@ -357,28 +358,31 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     public ResultV1RDTO<HakukohdeV1RDTO> findByOid(String oid, boolean populate) {
 
         LOG.debug("HAKUKOHDE-REST V1 findByOid : ", oid);
-        if (oid != null && oid.trim().length() > 0) {
-            Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
-            if (hakukohde != null) {
-                HakukohdeV1RDTO hakukohdeRDTO = converterV1.toHakukohdeRDTO(hakukohde, populate);
+        try {
+            if (oid != null && oid.trim().length() > 0) {
+                Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
+                if (hakukohde != null) {
+                    HakukohdeV1RDTO hakukohdeRDTO = converterV1.toHakukohdeRDTO(hakukohde, populate);
 
-                updateKoulutusTypesToHakukohdeDto(hakukohdeRDTO);
-                ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<>();
-                result.setResult(hakukohdeRDTO);
-                result.setStatus(ResultV1RDTO.ResultStatus.OK);
+                    updateKoulutusTypesToHakukohdeDto(hakukohdeRDTO);
+                    ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<>();
+                    result.setResult(hakukohdeRDTO);
+                    result.setStatus(ResultV1RDTO.ResultStatus.OK);
 
-                return result;
+                    return result;
+                } else {
+                    return ResultV1RDTO.notFound();
+                }
             } else {
-                ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<>();
-                result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
-                return result;
-
+                return ResultV1RDTO.notFound();
             }
-        } else {
-            ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<>();
-
-            result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
-            return result;
+        } catch(Exception e) {
+            if (e instanceof DataErrorException) {
+                LOG.warn("Fetching hakukohde failed", e.getMessage());
+            } else {
+                LOG.error("Fetching hakukohde failed", e);
+            }
+            return ResultV1RDTO.notFound();
         }
     }
 
