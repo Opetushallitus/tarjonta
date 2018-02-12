@@ -19,7 +19,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.AccessDeniedException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -34,33 +33,22 @@ import static fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.createVal
  * @author Jukka Raanamo
  */
 @Provider
-public class TarjontaPublicationExceptionMapper implements ExceptionMapper<Throwable> {
+public class TarjontaPublicationExceptionMapper implements ExceptionMapper<JsonMappingException> {
 
     private static final Logger log = LoggerFactory.getLogger(TarjontaPublicationExceptionMapper.class);
 
     @Override
-    public Response toResponse(Throwable e) {
+    public Response toResponse(JsonMappingException e) {
+        log.error("JsonMappingException", e);
 
-        if (e instanceof JsonMappingException) {
-            log.error("JsonMappingException", e);
+        ResultV1RDTO result = ResultV1RDTO.create(ResultV1RDTO.ResultStatus.ERROR, null, null);
 
-            ResultV1RDTO result = ResultV1RDTO.create(ResultV1RDTO.ResultStatus.ERROR, null, null);
-
-            for (Reference ref : ((JsonMappingException) e).getPath()) {
-                result.addError(createValidationError(ref.getFieldName(), String.format("invalid format for field '%s'", ref.getFieldName())));
-            }
-
-            return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
+        for (Reference ref : e.getPath()) {
+            result.addError(createValidationError(ref.getFieldName(), String.format("invalid format for field '%s'", ref.getFieldName())));
         }
 
-        if (e instanceof AccessDeniedException) {
-            log.info("AccessDeniedException: " + e.getMessage());
-
-            return Response.status(Response.Status.FORBIDDEN).entity("").build();
-        }
-
-        log.error("Sending unmapped exception from API: ", e);
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString()).build();
+        return Response.status(400).entity(result).build();
     }
+
 }
 

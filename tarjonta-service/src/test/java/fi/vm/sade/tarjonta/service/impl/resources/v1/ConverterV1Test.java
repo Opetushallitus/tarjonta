@@ -8,6 +8,7 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.business.exception.DataErrorException;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.YhdenPaikanSaantoBuilder;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
@@ -750,7 +751,7 @@ public class ConverterV1Test extends TestMockBase {
         assertThat(h.isTutkintoonJohtava(), is(false));
     }
 
-    @Test(expected=IllegalStateException.class)
+    @Test(expected=DataErrorException.class)
     public void testThatKomotoDependantFieldThrowsException(){
         when(yhdenPaikanSaantoBuilder.koulutusJohtaaTutkintoon(Matchers.any(KoulutusmoduuliToteutus.class))).thenReturn(false);
 
