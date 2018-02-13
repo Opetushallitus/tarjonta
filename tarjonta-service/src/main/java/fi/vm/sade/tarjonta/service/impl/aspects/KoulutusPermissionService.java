@@ -126,11 +126,11 @@ public class KoulutusPermissionService {
                 .map(this::convertKomotoToDto)
                 .forEach(komoto -> {
                     if (komoto != null && komoto.getOrganisaatio() != null && komoto.getOrganisaatio().getOid() != null) {
-                        String orgOid = komoto.getOrganisaatio().getOid();
-                        if (!orgsToKomotosMap.containsKey(orgOid)) {
-                            orgsToKomotosMap.put(orgOid, Lists.newArrayList());
+                        String koulutustoimijaOid = organisaatioService.findKoulutustoimijaForOrganisation(komoto.getOrganisaatio().getOid());
+                        if (!orgsToKomotosMap.containsKey(koulutustoimijaOid)) {
+                            orgsToKomotosMap.put(koulutustoimijaOid, Lists.newArrayList());
                         }
-                        orgsToKomotosMap.get(orgOid).add(komoto);
+                        orgsToKomotosMap.get(koulutustoimijaOid).add(komoto);
                     }
                 });
         for (Map.Entry<String, List<KoulutusV1RDTO>> entry : orgsToKomotosMap.entrySet()) {

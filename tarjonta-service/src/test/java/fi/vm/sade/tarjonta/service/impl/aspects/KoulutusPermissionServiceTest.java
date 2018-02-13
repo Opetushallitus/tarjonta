@@ -126,14 +126,16 @@ public class KoulutusPermissionServiceTest extends TestUtilityBase {
 
     @Test
     public void velvoitettuKieli() throws IOException {
-        expectOrganization("1.2.246.562.10.346830761110");
+        String KOULUTUSTOIMIJA = "1.2.246.562.10.346830761110";
+        expect(organisaatioServiceMock.findKoulutustoimijaForOrganisation("1.2.246.562.10.346830761111")).andReturn(KOULUTUSTOIMIJA);
+        expectOrganization(KOULUTUSTOIMIJA);
 
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         komoto.setOpetuskieli(Sets.newHashSet(new KoodistoUri("kieli_asd")));
         komoto.setKoulutusUri("koulutus_341101");
         komoto.setToteutustyyppi(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO);
         komoto.setKoulutuksenAlkamisPvms(Sets.newHashSet());
-        komoto.setTarjoaja("1.2.246.562.10.346830761110");
+        komoto.setTarjoaja("1.2.246.562.10.346830761111");
         Koulutusmoduuli komo = new Koulutusmoduuli();
         komoto.setKoulutusmoduuli(komo);
 
@@ -143,9 +145,9 @@ public class KoulutusPermissionServiceTest extends TestUtilityBase {
         service.checkThatLanguageRequirementHasBeenFullfilled(komotos, results);
 
         assertEquals(1, results.size());
-        assertEquals(1, results.get("1.2.246.562.10.346830761110").size());
-        assertEquals("kieli", results.get("1.2.246.562.10.346830761110").get(0).getKoodisto());
-        assertEquals("koulutus_371101", results.get("1.2.246.562.10.346830761110").get(0).getKohdeKoodi());
+        assertEquals(1, results.get(KOULUTUSTOIMIJA).size());
+        assertEquals("kieli", results.get(KOULUTUSTOIMIJA).get(0).getKoodisto());
+        assertEquals("koulutus_371101", results.get(KOULUTUSTOIMIJA).get(0).getKohdeKoodi());
     }
 
     private void expectOrganization(String orgOid) throws IOException {
