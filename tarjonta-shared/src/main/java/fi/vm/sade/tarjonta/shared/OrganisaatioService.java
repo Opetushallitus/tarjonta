@@ -57,6 +57,15 @@ public class OrganisaatioService {
                 }
             });
 
+    private final LoadingCache<String, String> koulutustoimijaCache = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .expireAfterWrite(30, TimeUnit.MINUTES)
+            .build(new CacheLoader<String, String>() {
+                public String load(String oid) {
+                    return fetchKoulutustoimija(oid);
+                }
+            });
+
     @Autowired
     public OrganisaatioService(TarjontaKoodistoHelper tarjontaKoodistoHelper, UrlConfiguration urlConfiguration) {
         this.tarjontaKoodistoHelper = tarjontaKoodistoHelper;
@@ -112,6 +121,16 @@ public class OrganisaatioService {
             throw new RuntimeException(msg);
         }
     }
+
+    public String findKoulutustoimijaForOrganisation(String oid){
+        try {
+            return koulutustoimijaCache.get(oid);
+        } catch (ExecutionException e) {
+            final String msg = "Getting organization from Guava cache failed for hae API. Org oid: " + oid;
+            LOG.error(msg);
+            throw new RuntimeException(msg);
+        }
+    }
     private OrganisaatioResultDTO fetchOrganisationWithHaeAPI(String oid) {
         try {
             return ignoreFieldsObjectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.organisaatio.hae", oid)), OrganisaatioResultDTO.class);
@@ -125,6 +144,17 @@ public class OrganisaatioService {
     private OrganisaatioRDTO fetchOrganisation(String oid) {
         try {
             return objectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.fetchOrganisation", oid)), OrganisaatioRDTO.class);
+        } catch (Exception e) {
+            final String msg = "Could not fetch organization with oid " + oid;
+            LOG.error(msg);
+            throw new RuntimeException(msg);
+        }
+    }
+
+    private String fetchKoulutustoimija(String oid) {
+        try {
+            OrganisaatioResultDTO org = ignoreFieldsObjectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.organisaatio.hierarkia", oid)), OrganisaatioResultDTO.class);
+            return org.getOrganisaatiot().get(0).getOid();
         } catch (Exception e) {
             final String msg = "Could not fetch organization with oid " + oid;
             LOG.error(msg);
