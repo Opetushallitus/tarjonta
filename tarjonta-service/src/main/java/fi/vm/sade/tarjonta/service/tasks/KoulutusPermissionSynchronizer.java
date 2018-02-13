@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
@@ -130,8 +131,10 @@ public class KoulutusPermissionSynchronizer {
         Map<String, List<KoulutusPermissionException>> orgsWithInvalidKomotos = new HashMap<>();
         int offset = 0;
 
+        List<KoulutusmoduuliToteutus> allKomotos = Lists.newArrayList();
         do {
             komotos = koulutusmoduuliToteutusDAO.findFutureKoulutukset(tyyppis, offset, KOMOTO_BATCH_SIZE);
+            allKomotos.addAll(komotos);
             offset += KOMOTO_BATCH_SIZE;
 
             for (KoulutusmoduuliToteutus komoto : komotos) {
@@ -150,7 +153,9 @@ public class KoulutusPermissionSynchronizer {
                     }
                 }
             }
+
         } while(!komotos.isEmpty());
+        koulutusPermissionService.checkThatLanguageRequirementHasBeenFullfilled(allKomotos);
 
         return orgsWithInvalidKomotos;
     }
