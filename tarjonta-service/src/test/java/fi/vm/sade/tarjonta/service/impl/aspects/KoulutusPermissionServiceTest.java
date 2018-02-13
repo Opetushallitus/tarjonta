@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.TestUtilityBase;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -134,15 +136,16 @@ public class KoulutusPermissionServiceTest extends TestUtilityBase {
         komoto.setTarjoaja("1.2.246.562.10.346830761110");
         Koulutusmoduuli komo = new Koulutusmoduuli();
         komoto.setKoulutusmoduuli(komo);
-        try {
-            List<KoulutusmoduuliToteutus> komotos = Lists.newArrayList(komoto);
-            service.checkThatLanguageRequirementHasBeenFullfilled(komotos);
-        } catch(KoulutusPermissionException e) {
-            assertEquals("kieli", e.getKoodisto());
-            assertEquals("koulutus_371101", e.getKohdeKoodi());
-            return;
-        }
-        fail();
+
+        Map<String, List<KoulutusPermissionException>> results = Maps.newHashMap();
+
+        List<KoulutusmoduuliToteutus> komotos = Lists.newArrayList(komoto);
+        service.checkThatLanguageRequirementHasBeenFullfilled(komotos, results);
+
+        assertEquals(1, results.size());
+        assertEquals(1, results.get("1.2.246.562.10.346830761110").size());
+        assertEquals("kieli", results.get("1.2.246.562.10.346830761110").get(0).getKoodisto());
+        assertEquals("koulutus_371101", results.get("1.2.246.562.10.346830761110").get(0).getKohdeKoodi());
     }
 
     private void expectOrganization(String orgOid) throws IOException {

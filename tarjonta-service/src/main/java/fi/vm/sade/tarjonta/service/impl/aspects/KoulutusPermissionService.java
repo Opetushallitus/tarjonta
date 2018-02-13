@@ -12,6 +12,8 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +26,7 @@ import static fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper.getKoodiURIFromV
 public class KoulutusPermissionService {
 
     private static final String OPH_OID = "1.2.246.562.10.00000000001";
-
+    private static final Logger LOG = LoggerFactory.getLogger(KoulutusPermissionService.class);
 
     @Autowired
     private KoulutusPermissionDAO koulutusPermissionDAO;
@@ -116,8 +118,9 @@ public class KoulutusPermissionService {
      * Yöllinen oikeustarkistus tarkistaa, että joss koulutustoimijan pitää järjestää koulutusta tietyllä kielellä,
      * sillä täytyy olla velvoitteen voimassaollessa ainakin yksi koulutus velvoitetulla opetuskielllä.
      * @param allKomotos kaikki yöllisen tarkistuksen piirissä olevat koulutukset.
+     * @param orgsWithInvalidKomotos organisaatiokohtainen virhelista, johon virheet lisätään.
      */
-    public void checkThatLanguageRequirementHasBeenFullfilled(List<KoulutusmoduuliToteutus> allKomotos) {
+    public void checkThatLanguageRequirementHasBeenFullfilled(List<KoulutusmoduuliToteutus> allKomotos, final Map<String, List<KoulutusPermissionException>> orgsWithInvalidKomotos) {
         HashMap<String, List<KoulutusV1RDTO>> orgsToKomotosMap = Maps.newHashMap();
         allKomotos.stream()
                 .map(this::convertKomotoToDto)
@@ -134,8 +137,17 @@ public class KoulutusPermissionService {
             OrganisaatioRDTO org = organisaatioService.findByOid(entry.getKey());
 
             List<KoulutusPermission> permissions = getKoulutusPermissionsForOrgansationAndParents(org);
-            checkThatLanguageRequirementHasBeenFullfilledForOrganisation(org, permissions, entry.getValue());
-
+            try {
+                checkThatLanguageRequirementHasBeenFullfilledForOrganisation(org, permissions, entry.getValue());
+            } catch(KoulutusPermissionException e) {
+                LOG.warn("Found organisation without language that has Oiva requirement", e);
+                List<KoulutusPermissionException> invalidKomotos = orgsWithInvalidKomotos.get(e.getOrganisaationOid());
+                if (invalidKomotos == null) {
+                    invalidKomotos = new ArrayList<>();
+                }
+                invalidKomotos.add(e);
+                orgsWithInvalidKomotos.put(e.getOrganisaationOid(), invalidKomotos);
+            }
         }
     }
 

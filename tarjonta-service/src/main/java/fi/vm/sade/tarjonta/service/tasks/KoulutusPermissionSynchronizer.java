@@ -155,7 +155,7 @@ public class KoulutusPermissionSynchronizer {
             }
 
         } while(!komotos.isEmpty());
-        koulutusPermissionService.checkThatLanguageRequirementHasBeenFullfilled(allKomotos);
+        koulutusPermissionService.checkThatLanguageRequirementHasBeenFullfilled(allKomotos, orgsWithInvalidKomotos);
 
         return orgsWithInvalidKomotos;
     }
@@ -171,8 +171,13 @@ public class KoulutusPermissionSynchronizer {
 
             for (KoulutusPermissionException exception : entry.getValue()) {
                 KoulutusmoduuliToteutus komoto = exception.getKomoto();
-                body += "\t" + urlConfiguration.url("tarjonta-app.koulutus", komoto.getOid()) + " (" + komoto.getTila().toString()
-                        + ") (ei oikeutta koodiin \"" + exception.getPuuttuvaKoodi() + "\")\n";
+                if (komoto != null) {
+                    body += "\t" + urlConfiguration.url("tarjonta-app.koulutus", komoto.getOid()) + " (" + komoto.getTila().toString()
+                            + ") (ei oikeutta koodiin \"" + exception.getPuuttuvaKoodi() + "\")\n";
+                } else {
+                    body += "\ttoteuttamaton kielivaatimus (koulutuskoodilla \"" + exception.getKohdeKoodi()
+                            + "\" on velvoite kielikoodiin \"" + exception.getPuuttuvaKoodi() + "\")\n";
+                }
             }
         }
 
