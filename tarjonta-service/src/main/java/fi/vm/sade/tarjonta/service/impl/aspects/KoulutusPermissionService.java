@@ -141,12 +141,10 @@ public class KoulutusPermissionService {
                 checkThatLanguageRequirementHasBeenFullfilledForOrganisation(org, permissions, entry.getValue());
             } catch(KoulutusPermissionException e) {
                 LOG.warn("Found organisation without language that has Oiva requirement", e);
-                List<KoulutusPermissionException> invalidKomotos = orgsWithInvalidKomotos.get(e.getOrganisaationOid());
-                if (invalidKomotos == null) {
-                    invalidKomotos = new ArrayList<>();
+                if (!orgsWithInvalidKomotos.containsKey(e.getOrganisaationOid())) {
+                    orgsWithInvalidKomotos.put(e.getOrganisaationOid(), Lists.newArrayList());
                 }
-                invalidKomotos.add(e);
-                orgsWithInvalidKomotos.put(e.getOrganisaationOid(), invalidKomotos);
+                orgsWithInvalidKomotos.get(e.getOrganisaationOid()).add(e);
             }
         }
     }

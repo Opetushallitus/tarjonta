@@ -144,12 +144,11 @@ public class KoulutusPermissionSynchronizer {
                     LOG.warn("Found koulutus without Oiva permission", e);
                     if (!TarjontaTila.KOPIOITU.equals(komoto.getTila())) {
                         e.setKomoto(komoto);
-                        List<KoulutusPermissionException> invalidKomotos = orgsWithInvalidKomotos.get(e.getOrganisaationOid());
-                        if (invalidKomotos == null) {
-                            invalidKomotos = new ArrayList<>();
+
+                        if (!orgsWithInvalidKomotos.containsKey(e.getOrganisaationOid())) {
+                            orgsWithInvalidKomotos.put(e.getOrganisaationOid(), Lists.newArrayList());
                         }
-                        invalidKomotos.add(e);
-                        orgsWithInvalidKomotos.put(e.getOrganisaationOid(), invalidKomotos);
+                        orgsWithInvalidKomotos.get(e.getOrganisaationOid()).add(e);
                     }
                 }
             }
