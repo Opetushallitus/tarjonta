@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
@@ -130,8 +131,10 @@ public class KoulutusPermissionSynchronizer {
         Map<String, List<KoulutusPermissionException>> orgsWithInvalidKomotos = new HashMap<>();
         int offset = 0;
 
+        List<KoulutusmoduuliToteutus> allKomotos = Lists.newArrayList();
         do {
             komotos = koulutusmoduuliToteutusDAO.findFutureKoulutukset(tyyppis, offset, KOMOTO_BATCH_SIZE);
+            allKomotos.addAll(komotos);
             offset += KOMOTO_BATCH_SIZE;
 
             for (KoulutusmoduuliToteutus komoto : komotos) {
@@ -141,16 +144,17 @@ public class KoulutusPermissionSynchronizer {
                     LOG.warn("Found koulutus without Oiva permission", e);
                     if (!TarjontaTila.KOPIOITU.equals(komoto.getTila())) {
                         e.setKomoto(komoto);
-                        List<KoulutusPermissionException> invalidKomotos = orgsWithInvalidKomotos.get(e.getOrganisaationOid());
-                        if (invalidKomotos == null) {
-                            invalidKomotos = new ArrayList<>();
+
+                        if (!orgsWithInvalidKomotos.containsKey(e.getOrganisaationOid())) {
+                            orgsWithInvalidKomotos.put(e.getOrganisaationOid(), Lists.newArrayList());
                         }
-                        invalidKomotos.add(e);
-                        orgsWithInvalidKomotos.put(e.getOrganisaationOid(), invalidKomotos);
+                        orgsWithInvalidKomotos.get(e.getOrganisaationOid()).add(e);
                     }
                 }
             }
+
         } while(!komotos.isEmpty());
+        koulutusPermissionService.checkThatLanguageRequirementHasBeenFullfilled(allKomotos, orgsWithInvalidKomotos);
 
         return orgsWithInvalidKomotos;
     }
@@ -166,8 +170,13 @@ public class KoulutusPermissionSynchronizer {
 
             for (KoulutusPermissionException exception : entry.getValue()) {
                 KoulutusmoduuliToteutus komoto = exception.getKomoto();
-                body += "\t" + urlConfiguration.url("tarjonta-app.koulutus", komoto.getOid()) + " (" + komoto.getTila().toString()
-                        + ") (ei oikeutta koodiin \"" + exception.getPuuttuvaKoodi() + "\")\n";
+                if (komoto != null) {
+                    body += "\t" + urlConfiguration.url("tarjonta-app.koulutus", komoto.getOid()) + " (" + komoto.getTila().toString()
+                            + ") (ei oikeutta koodiin \"" + exception.getPuuttuvaKoodi() + "\")\n";
+                } else {
+                    body += "\ttoteuttamaton kielivaatimus (koulutuskoodilla \"" + exception.getKohdeKoodi()
+                            + "\" on velvoite kielikoodiin \"" + exception.getPuuttuvaKoodi() + "\")\n";
+                }
             }
         }
 

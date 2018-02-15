@@ -50,23 +50,26 @@ public class KoulutusPermissionCreator {
             case "osaamisala": maarayksenKohdeKoodi  = maarays.getKoodisto() + "_" + maarays.getKoodiarvo();  break;
         }
 
+        KoulutusPermissionType maaraysTyyppi;
         AmkouteMaaraystyyppiValue tyyppi = maarays.getMaaraystyyppi().getTunniste();
         switch(tyyppi) {
             case OIKEUS:
-                permissions.add(new KoulutusPermission(jarjestajaOid, maarayksenKohdeKoodi, maarays.getKoodisto(), maarays.getKoodisto() + "_" + maarays.getKoodiarvo(), alkupvm, loppupvm, KoulutusPermissionType.OIKEUS));
+                maaraysTyyppi = KoulutusPermissionType.OIKEUS;
                 break;
             case RAJOITE:
-                permissions.add(new KoulutusPermission(jarjestajaOid, maarayksenKohdeKoodi, maarays.getKoodisto(), maarays.getKoodisto() + "_" + maarays.getKoodiarvo(), alkupvm, loppupvm, KoulutusPermissionType.RAJOITE));
+                maaraysTyyppi = KoulutusPermissionType.RAJOITE;
                 break;
             case POIKKEUS:
-                permissions.add(new KoulutusPermission(jarjestajaOid, maarayksenKohdeKoodi, maarays.getKoodisto(), maarays.getKoodisto() + "_" + maarays.getKoodiarvo(), alkupvm, loppupvm, KoulutusPermissionType.POIKKEUS));
+                maaraysTyyppi = KoulutusPermissionType.POIKKEUS;
                 break;
             case VELVOITE:
-                permissions.add(new KoulutusPermission(jarjestajaOid, maarayksenKohdeKoodi, maarays.getKoodisto(), maarays.getKoodisto() + "_" + maarays.getKoodiarvo(), alkupvm, loppupvm, KoulutusPermissionType.VELVOITE));
+                maaraysTyyppi = KoulutusPermissionType.VELVOITE;
                 break;
             default:
                 throw new RuntimeException("Unknown määräystyyppi");
         }
+        permissions.add(new KoulutusPermission(jarjestajaOid, maarayksenKohdeKoodi, maarays.getKoodisto(), maarays.getKoodisto() + "_" + maarays.getKoodiarvo(), alkupvm, loppupvm, maaraysTyyppi));
+
         for (AmkouteMaarays alimaarays : maarays.getAliMaaraykset()) {
             permissions.addAll(createMaarays(alimaarays, jarjestajaOid, maarayksenKohdeKoodi, alkupvm, loppupvm));
         }

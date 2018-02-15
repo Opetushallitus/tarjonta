@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.service.impl.aspects;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
@@ -11,6 +12,8 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +26,7 @@ import static fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper.getKoodiURIFromV
 public class KoulutusPermissionService {
 
     private static final String OPH_OID = "1.2.246.562.10.00000000001";
-    public static final String VALMA = "koulutus_999901";
-    private static final String VALMA_ERITYISOPETUKSENA = "koulutus_999902";
-
+    private static final Logger LOG = LoggerFactory.getLogger(KoulutusPermissionService.class);
 
     @Autowired
     private KoulutusPermissionDAO koulutusPermissionDAO;
@@ -45,9 +46,23 @@ public class KoulutusPermissionService {
         );
     }
 
+    /**
+     * Wrapperi checkThatOrganizationIsAllowedToOrganizeEducation(KoulutusV1RDTO dto):lle. Muuntaa
+     * KoulutusmoduuliToteutus -> KoulutusV1RDTO yöllistä kantaan perustuvaa oikeustarkistusta varten.
+     *
+     * @param komoto tietokannasta haettu koulutus, joka tarkistetaan.
+     */
     public void checkThatOrganizationIsAllowedToOrganizeEducation(KoulutusmoduuliToteutus komoto) {
-        Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
         KoulutusV1RDTO dto;
+        dto = convertKomotoToDto(komoto);
+        if (dto == null) return;
+
+        checkThatOrganizationIsAllowedToOrganizeEducation(dto);
+    }
+
+    private KoulutusV1RDTO convertKomotoToDto(KoulutusmoduuliToteutus komoto) {
+        KoulutusV1RDTO dto;
+        Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
 
         switch(komoto.getToteutustyyppi()) {
             case AMMATILLINEN_PERUSTUTKINTO:
@@ -66,7 +81,7 @@ public class KoulutusPermissionService {
                 dto = new KoulutusAmmatilliseenPeruskoulutukseenValmentavaERV1RDTO();
                 break;
             default:
-                return;
+                return null;
         }
 
         dto.setOrganisaatio(new OrganisaatioV1RDTO(komoto.getTarjoaja()));
@@ -85,8 +100,7 @@ public class KoulutusPermissionService {
             kielet.put(uri.getKoodiUri().split("#")[0], 1);
         }
         dto.setOpetuskielis(new KoodiUrisV1RDTO(kielet));
-
-        checkThatOrganizationIsAllowedToOrganizeEducation(dto);
+        return dto;
     }
 
     private String getFromKomotoOrKomo(String komotoUri, String komoUri) {
@@ -100,6 +114,105 @@ public class KoulutusPermissionService {
     }
 
 
+    /**
+     * Yöllinen oikeustarkistus tarkistaa, että joss koulutustoimijan pitää järjestää koulutusta tietyllä kielellä,
+     * sillä täytyy olla velvoitteen voimassaollessa ainakin yksi koulutus velvoitetulla opetuskielllä.
+     * @param allKomotos kaikki yöllisen tarkistuksen piirissä olevat koulutukset.
+     * @param orgsWithInvalidKomotos organisaatiokohtainen virhelista, johon virheet lisätään.
+     */
+    public void checkThatLanguageRequirementHasBeenFullfilled(List<KoulutusmoduuliToteutus> allKomotos, final Map<String, List<KoulutusPermissionException>> orgsWithInvalidKomotos) {
+        HashMap<String, List<KoulutusV1RDTO>> orgsToKomotosMap = Maps.newHashMap();
+        allKomotos.stream()
+                .map(this::convertKomotoToDto)
+                .forEach(komoto -> {
+                    if (komoto != null && komoto.getOrganisaatio() != null && komoto.getOrganisaatio().getOid() != null) {
+                        String koulutustoimijaOid = organisaatioService.findKoulutustoimijaForOrganisation(komoto.getOrganisaatio().getOid());
+                        if (!orgsToKomotosMap.containsKey(koulutustoimijaOid)) {
+                            orgsToKomotosMap.put(koulutustoimijaOid, Lists.newArrayList());
+                        }
+                        orgsToKomotosMap.get(koulutustoimijaOid).add(komoto);
+                    }
+                });
+        for (Map.Entry<String, List<KoulutusV1RDTO>> entry : orgsToKomotosMap.entrySet()) {
+            OrganisaatioRDTO org = organisaatioService.findByOid(entry.getKey());
+
+            List<KoulutusPermission> permissions = getKoulutusPermissionsForOrgansationAndParents(org);
+            try {
+                checkThatLanguageRequirementHasBeenFullfilledForOrganisation(org, permissions, entry.getValue());
+            } catch(KoulutusPermissionException e) {
+                LOG.warn("Found organisation without language that has Oiva requirement", e);
+                if (!orgsWithInvalidKomotos.containsKey(e.getOrganisaationOid())) {
+                    orgsWithInvalidKomotos.put(e.getOrganisaationOid(), Lists.newArrayList());
+                }
+                orgsWithInvalidKomotos.get(e.getOrganisaationOid()).add(e);
+            }
+        }
+    }
+
+    private void checkThatLanguageRequirementHasBeenFullfilledForOrganisation(OrganisaatioRDTO org, List<KoulutusPermission> permissions, List<KoulutusV1RDTO> komotos) {
+        permissions.stream()
+                .filter(p -> p.getKoodisto().equals("kieli"))
+                .filter(p -> KoulutusPermissionType.VELVOITE.equals(p.getType()))
+                .forEach(requirement -> {
+                    if (komotos.stream().noneMatch(checkKomotoConformsLanguageRequirement(requirement))) {
+                        throwPermissionException(org, requirement.getKoodiUri(), requirement.getKohdeKoodi(), requirement.getKoodisto());
+                    }
+                });
+
+    }
+
+    private Predicate<KoulutusV1RDTO> checkKomotoConformsLanguageRequirement(KoulutusPermission requirement) {
+        return komoto -> {
+            String koulutusKoodi = null;
+            if (komoto.getKoulutuskoodi() != null) {
+                koulutusKoodi = komoto.getKoulutuskoodi().getUri();
+            }
+            String osaamisalaKoodi = null;
+            if (komoto.getKoulutusohjelma() != null) {
+                osaamisalaKoodi = komoto.getKoulutusohjelma().getUri();
+            }
+
+            // Permission matches koulutus
+            if (!requirement.getKohdeKoodi().equals(koulutusKoodi)
+                    && !requirement.getKohdeKoodi().equals(osaamisalaKoodi)){
+                return false;
+            }
+
+
+            Set<String> opetuskielet = Sets.newHashSet();
+            if (komoto.getOpetuskielis() != null && komoto.getOpetuskielis().getUris() != null) {
+                opetuskielet.addAll(komoto.getOpetuskielis().getUrisAsStringList(false));
+            }
+
+            // Koulutus has correct language
+            if (!opetuskielet.contains(requirement.getKoodiUri())) {
+                return false;
+            }
+
+            Set<Date> alkamispvmt = Sets.newHashSet(komoto.getKoulutuksenAlkamisPvms());
+            if (alkamispvmt.isEmpty()) {
+                alkamispvmt.add(IndexDataUtils.getDateFromYearAndKausi(
+                        komoto.getKoulutuksenAlkamisvuosi(), komoto.getKoulutuksenAlkamiskausi().getUri()
+                ));
+            }
+
+            Preconditions.checkArgument(!alkamispvmt.isEmpty(), "alkamispvm cannot be empty!");
+
+            // Koulutus starts when requirement is valid.
+            for (Date pvm : alkamispvmt) {
+                if (checkPermissionIsOngoingWhenKoulutusStarts(requirement, pvm)) {
+                    return true;
+                }
+            }
+            return false;
+        };
+    }
+
+    /**
+     * Reaaliaikatarkistus, kun virkailija tallentaa koulutuksen. Tarkistetaan, että koulutustoimijalla on oikeus
+     * järjestää koulutus ja että sen alaisella osaamsalalla ei ole oikkeusta.
+     * @param dto
+     */
     public void checkThatOrganizationIsAllowedToOrganizeEducation(KoulutusV1RDTO dto) {
 
         // If saving an existing education -> ignore check
@@ -120,10 +233,6 @@ public class KoulutusPermissionService {
         if (dto.getKoulutusohjelma() != null) {
             osaamisalaKoodi = dto.getKoulutusohjelma().getUri();
         }
-        Set<String> opetuskielet = Sets.newHashSet();
-        if (dto.getOpetuskielis() != null && dto.getOpetuskielis().getUris() != null) {
-            opetuskielet.addAll(dto.getOpetuskielis().getUrisAsStringList(false));
-        }
 
         Set<Date> alkamispvmt = Sets.newHashSet(dto.getKoulutuksenAlkamisPvms());
         if (alkamispvmt.isEmpty()) {
@@ -136,6 +245,21 @@ public class KoulutusPermissionService {
 
         OrganisaatioRDTO org = organisaatioService.findByOid(orgOid);
 
+        List<KoulutusPermission> permissions = getKoulutusPermissionsForOrgansationAndParents(org);
+
+        for (Date pvm : alkamispvmt) {
+            if (koulutusKoodi != null) {
+                checkKoulutusPermissionExists(permissions, org, koulutusKoodi, pvm);
+            }
+
+            if (osaamisalaKoodi != null) { // Luvassa voi olla poikkeus jollekin osaamisalalle
+                checkOsaamisalaRestrictionDoesNotExist(permissions, org, osaamisalaKoodi, pvm);
+            }
+        }
+
+    }
+
+    private List<KoulutusPermission> getKoulutusPermissionsForOrgansationAndParents(OrganisaatioRDTO org) {
         List<String> orgOids = Lists.newArrayList(org.getOid());
         if (org.getParentOidPath() != null) {
             String[] parentPath = org.getParentOidPath().split("\\|");
@@ -146,20 +270,7 @@ public class KoulutusPermissionService {
             }
         }
 
-        List<KoulutusPermission> permissions = koulutusPermissionDAO.findByOrganization(orgOids);
-
-        for (Date pvm : alkamispvmt) {
-            if (koulutusKoodi != null) {
-                checkKoulutusPermissionExists(permissions, org, koulutusKoodi, pvm);
-            }
-
-            if (osaamisalaKoodi != null) { // Luvassa voi olla poikkeus jollekin osaamisalalle
-                checkOsaamisalaRestrictionDoesNotExist(permissions, org, osaamisalaKoodi, pvm);
-            }
-
-            checkLanguageRestrictionDoesNotExist(permissions, org, opetuskielet, koulutusKoodi, osaamisalaKoodi, pvm);
-        }
-
+        return koulutusPermissionDAO.findByOrganization(orgOids);
     }
 
     private static void checkKoulutusPermissionExists(List<KoulutusPermission> permissions, OrganisaatioRDTO orgDto, final String koulutusKoodiWithVersion, final Date pvm) {
@@ -168,7 +279,7 @@ public class KoulutusPermissionService {
                 .filter(p -> p.getKoodisto().equals("koulutus"))
                 .filter(p -> KoulutusPermissionType.OIKEUS.equals(p.getType()))
                 .filter(p -> koulutusKoodi.equals(p.getKoodiUri()))
-                .noneMatch(checkPermissionIsOngoingWhenKoulutusStarts(pvm))) {
+                .noneMatch(p -> checkPermissionIsOngoingWhenKoulutusStarts(p, pvm))) {
             throwPermissionException(orgDto, koulutusKoodiWithVersion, koulutusKoodiWithVersion, "koulutus");
         }
     }
@@ -178,24 +289,10 @@ public class KoulutusPermissionService {
                 .filter(p -> p.getKoodisto().equals("osaamisala"))
                 .filter(p -> KoulutusPermissionType.RAJOITE.equals(p.getType()))
                 .filter(p -> getKoodiURIFromVersionedUri(code).equals(p.getKoodiUri()))
-                .filter(checkPermissionIsOngoingWhenKoulutusStarts(pvm))
+                .filter(p -> checkPermissionIsOngoingWhenKoulutusStarts(p, pvm))
                 .findAny()
                 .ifPresent(violatingOsaamisalaRestriction ->
                         throwPermissionException(orgDto, violatingOsaamisalaRestriction.getKoodiUri(), violatingOsaamisalaRestriction.getKohdeKoodi(), "osaamisala"));
-    }
-
-    private void checkLanguageRestrictionDoesNotExist(List<KoulutusPermission> permissions, OrganisaatioRDTO orgDto, Set<String> kielet, String koulutusKoodi, String osaamisalaKoodi, final Date pvm) {
-        permissions.stream()
-                .filter(p -> p.getKoodisto().equals("kieli"))
-                .filter(p -> !kielet.contains(p.getKoodiUri()))
-                .filter(p -> p.getKohdeKoodi().equals(koulutusKoodi) || p.getKohdeKoodi().equals(osaamisalaKoodi))
-                .filter(p -> KoulutusPermissionType.VELVOITE.equals(p.getType()))
-                .filter(checkPermissionIsOngoingWhenKoulutusStarts(pvm))
-                .findAny()
-                .ifPresent(
-                        violatingLanguageRestriction ->
-                                throwPermissionException(orgDto, violatingLanguageRestriction.getKoodiUri(), violatingLanguageRestriction.getKohdeKoodi(),"kieli"));
-
     }
 
     private static void throwPermissionException(OrganisaatioRDTO orgDto, String puuttuvakoodi, String kohdekoodi, String koodisto) {
@@ -213,13 +310,11 @@ public class KoulutusPermissionService {
         );
     }
 
-    private static Predicate<KoulutusPermission> checkPermissionIsOngoingWhenKoulutusStarts(final Date pvm) {
-        return p -> {
-            Date alkuPvm = p.getAlkuPvm();
-            Date loppuPvm = p.getLoppuPvm();
-            return (alkuPvm == null || isAfterOrEquals(pvm, alkuPvm))
-                    && (loppuPvm == null || isBeforeOrEquals(pvm, loppuPvm));
-        };
+    private static boolean checkPermissionIsOngoingWhenKoulutusStarts(KoulutusPermission p, final Date pvm) {
+        Date alkuPvm = p.getAlkuPvm();
+        Date loppuPvm = p.getLoppuPvm();
+        return (alkuPvm == null || isAfterOrEquals(pvm, alkuPvm))
+                && (loppuPvm == null || isBeforeOrEquals(pvm, loppuPvm));
     }
 
     private static boolean isAfterOrEquals(Date pvm, Date alkuPvm) {
