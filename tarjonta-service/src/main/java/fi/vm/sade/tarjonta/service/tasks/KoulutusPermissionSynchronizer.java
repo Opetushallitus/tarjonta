@@ -76,7 +76,7 @@ public class KoulutusPermissionSynchronizer {
         this.urlConfiguration = urlConfiguration;
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     @Transactional
     public void runUpdate() {
         LOG.info("KoulutusPermissions start update");
