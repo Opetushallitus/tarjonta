@@ -232,9 +232,29 @@ public final class AuditLog {
                 traverseAndTruncate(afterJson);
                 traverseAndTruncate(beforeJson);
 
-
                 final ArrayNode patchArray = (ArrayNode) JsonDiff.asJson(beforeJson, afterJson);
-                builder.updated("change", toGson(beforeJson), toGsonArray(patchArray));
+                patchArray.forEach(patch -> {
+                    JsonNode operation = patch.get("op");
+                    JsonNode path = patch.get("path");
+                    JsonNode value = patch.get("value");
+                    String prettyPath = path.asText().substring(1).replaceAll("/", ".");
+                    switch (operation.asText()) {
+                        case "add": {
+                            builder.added(prettyPath, value.asText());
+                            break;
+                        }
+                        case "remove": {
+                            JsonNode oldValue = beforeJson.at(path.asText());
+                            builder.removed(prettyPath, oldValue.asText());
+                            break;
+                        }
+                        case "replace": {
+                            JsonNode oldValue = beforeJson.at(path.asText());
+                            builder.updated(prettyPath, oldValue.asText(),value.asText());
+                            break;
+                        }
+                    }
+                });
             }
         } catch(Exception e) {
             LOG.error("diff calculation failed", e);
