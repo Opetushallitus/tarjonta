@@ -279,6 +279,16 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
+    public List<Hakukohde> findHakukohteetByOids(Set<String> oids) {
+        Preconditions.checkNotNull(oids, "Hakukohde OID set cannot be null.");
+
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+
+        return from(qHakukohde)
+                .where(qHakukohde.oid.in(oids)).list(qHakukohde);
+    }
+
+    @Override
     public Hakukohde findHakukohdeById(final Long id) {
         Preconditions.checkNotNull(id, "Hakukohde ID cannot be null.");
 

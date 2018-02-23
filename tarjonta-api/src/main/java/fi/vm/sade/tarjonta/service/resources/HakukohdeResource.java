@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.tarjonta.service.resources.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 
@@ -36,6 +37,12 @@ public interface HakukohdeResource {
     @Path("{oid}/kela")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     HakukohdeKelaDTO getHakukohdeKelaByOID(@PathParam("oid") String oid);
+
+    @POST
+    @Path("/tilastokeskus")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    List<HakukohdeKelaDTO> gatHakukohdeKelaDTOs(List<String> hakukohdeOids);
 
     /**
      * /hakukohde?searchTerms=xxx&count=10&startIndex=100&lastModifiedBefore=X&lastModifiedSince=XX

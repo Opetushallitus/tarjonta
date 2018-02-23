@@ -44,6 +44,8 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
     Hakukohde findHakukohdeByOid(String oid);
 
+    List<Hakukohde> findHakukohteetByOids(Set<String> oids);
+
     Hakukohde findHakukohdeByUniqueExternalId(String uniqueExternalId);
 
     Hakukohde findExistingHakukohde(HakukohdeV1RDTO dto);
