@@ -41,11 +41,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -410,15 +410,28 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
                 .and(moduuli.koulutusUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(koulutusUri) + "#%"))
                 .and(like)).listResults(moduuli);
 
-        //result of the query should aways be unique, or there is somekind of data error. 
-        if (modules.getTotal() > 1) {
-            for (Koulutusmoduuli m : modules.getResults()) {
-                log.error("Error in module oid : ", m.getOid());
+        // result of the query should aways be unique, or there is somekind of data error.
+        List<Koulutusmoduuli> results = modules.getResults();
+        if (results.size() > 1) {
+            // If koulutusohjelma uri was not given, try to filter out the results with koulutusohjelma to avoid duplicates. BUG-1640
+            if (likeKoulutusohjelmaUri != null) {
+                List<Koulutusmoduuli> filteredResults = results.stream()
+                        .filter(koulutusmoduuli -> koulutusmoduuli.getKoulutusohjelmaUri() == null)
+                        .collect(Collectors.toList());
+                if (filteredResults.size() == 1) {
+                    results = filteredResults;
+                }
             }
 
-            throw new RuntimeException("Possible data error - result contains too many modules, koulutus uri : '" + koulutusUri + "'." + " ohjelma : '" + likeKoulutusohjelmaUri + "|" + likeOsaamisalaUri + "|" + likeLukiolinjaUri + "'");
+            if (results.size() > 1) {
+                String oids = results.stream()
+                        .map(koulutusmoduuli -> koulutusmoduuli.getOid())
+                        .reduce(", ", String::concat);
+                log.error("Error in modules: " + oids);
+                throw new RuntimeException("Possible data error - result contains too many modules (" + oids + " ), koulutus uri : '" + koulutusUri + "'." + " ohjelma : '" + likeKoulutusohjelmaUri + "|" + likeOsaamisalaUri + "|" + likeLukiolinjaUri + "'");
+            }
         }
 
-        return !modules.isEmpty() ? modules.getResults().get(0) : null;
+        return results.size() == 1 ? results.get(0) : null;
     }
 }
