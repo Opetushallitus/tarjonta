@@ -78,6 +78,7 @@ public class KoulutusValidator {
     private static final boolean NO_KOMO_VALIDATION = false;
     private static final DateTimeZone EET = DateTimeZone.forID("EET");
     private static final Date endOfJanuary2018 = new DateTime(2018, 1, 31, 23, 59, 59).withZone(EET).toDate();
+    private static final Date endOf2017 = new DateTime(2017, 12, 31, 23, 59, 59).withZone(EET).toDate();
     private static final Set<ToteutustyyppiEnum> invalidTypesAfterJanuary2018 = Sets.newHashSet(
             ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO,
             ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA);
@@ -315,6 +316,14 @@ public class KoulutusValidator {
         }
 
         if (dto.getValmistavaKoulutus() != null) {
+            for (Date startDate : dto.getKoulutuksenAlkamisPvms()) {
+                if (startDate.after(endOf2017)){
+                    result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS,
+                            KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VALMISTAVAKOULUTUSAFTER_31_12_2017.getFieldName(),
+                            "Valmistavaa koulutusta ei sallita alkaen 1.1.2018"));
+                }
+            }
+
             final ValmistavaV1RDTO valmistavaKoulutus = dto.getValmistavaKoulutus();
             if (!notNullStrOrEmpty(valmistavaKoulutus.getSuunniteltuKestoArvo())) {
                 result.addError(createValidationError(KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_VALUE_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_VALUE_MISSING.lower()));
