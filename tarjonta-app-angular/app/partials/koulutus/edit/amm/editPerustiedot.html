@@ -1,5 +1,5 @@
 <table class="tarjontaForm">
-    <tr>
+    <tr ng-if="(model.koulutuksenAlkamisvuosi && model.koulutuksenAlkamisvuosi < 2018)">
         <th></th>
         <td>
             <input type="checkbox" ng-model="uiModel.cbShowValmistavaKoulutus" />
@@ -250,7 +250,7 @@
 
 
 <!-- k. maksullisuus -->
-<tr  ng-if="uiModel.toggleTabs">
+<tr  ng-if="uiModel.toggleTabs && (uiModel.cbShowValmistavaKoulutus || (model.koulutuksenAlkamisVuosi && model.koulutuksenAlkamisVuosi < 2018))">
     <th></th>
     <td>
         <input type="checkbox" data-ng-model="model.valmistavaKoulutus.opintojenMaksullisuus"/>
@@ -258,7 +258,7 @@
     </td>
     <td></td>
 </tr>
-<tr  ng-if="uiModel.toggleTabs">
+<tr  ng-if="uiModel.toggleTabs && (uiModel.cbShowValmistavaKoulutus || (model.koulutuksenAlkamisVuosi && model.koulutuksenAlkamisVuosi < 2018))">
     <th></th>
     <td>
         <span tt="koulutus.edit.maksullisuus.hinta">Hinta</span>
@@ -294,7 +294,8 @@
 <!-- väli -->
 <tr class="padding"><td colspan="3"></td></tr>
 
-<tbody ng-if="uiModel.toggleTabs" ng-include="'partials/koulutus/edit/amm/editValmistavaKoulutusYhteyshenkilo.html'"></tbody>
+<tbody ng-if="uiModel.toggleTabs && (uiModel.cbShowValmistavaKoulutus || (model.koulutuksenAlkamisVuosi && model.koulutuksenAlkamisVuosi < 2018))"
+       ng-include="'partials/koulutus/edit/amm/editValmistavaKoulutusYhteyshenkilo.html'"></tbody>
 
 <!-- väli -->
 <tr class="padding"><td colspan="3"></td></tr>
