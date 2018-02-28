@@ -453,18 +453,6 @@ public class KoulutusValidatorTest {
         Arrays.asList(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO, vanhaAmmattitutkintoV1RDTO, vanhaErikoisammattitutkintoV1RDTO)
             .forEach(k -> k.setJarjestavaOrganisaatio(null));
 
-        result.setResult(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO);
-        validator.validateKoulutusNayttotutkinto(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO, tutkinto, result);
-        assertErrorExist(result.getErrors(), KOULUTUS_JARJESTAJA_MISSING.getFieldName());
-
-        result.setResult(vanhaAmmattitutkintoV1RDTO);
-        validator.validateKoulutusNayttotutkinto(vanhaAmmattitutkintoV1RDTO, tutkinto, result);
-        assertErrorExist(result.getErrors(), KOULUTUS_JARJESTAJA_MISSING.getFieldName());
-
-        result.setResult(vanhaErikoisammattitutkintoV1RDTO);
-        validator.validateKoulutusNayttotutkinto(vanhaErikoisammattitutkintoV1RDTO, tutkinto, result);
-        assertErrorExist(result.getErrors(), KOULUTUS_JARJESTAJA_MISSING.getFieldName());
-
         verify(mockOrganisaatioService, times(3)).findByOid(jarjestavaOrganisaatio.getOid());
         verifyNoMoreInteractions(mockOrganisaatioService);
     }

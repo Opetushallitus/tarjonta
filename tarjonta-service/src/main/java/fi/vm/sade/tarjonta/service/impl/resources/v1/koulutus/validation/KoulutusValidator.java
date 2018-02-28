@@ -303,9 +303,7 @@ public class KoulutusValidator {
         if (!TarjontaTila.PUUTTEELLINEN.equals(dto.getTila())) {
             validateKoodiUris(result, dto.getOpetuskielis(), KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_INVALID, DEFAULT_MIN);
 
-            if (dto.getJarjestavaOrganisaatio() == null || dto.getJarjestavaOrganisaatio().getOid() == null || dto.getJarjestavaOrganisaatio().getOid().isEmpty()) {
-                result.addError(createValidationError(KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING.lower()));
-            } else {
+            if (dto.getJarjestavaOrganisaatio() != null) {
                 validateOrganisation(
                         dto.getJarjestavaOrganisaatio(),
                         result,
