@@ -95,6 +95,7 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.*;
 
@@ -1099,9 +1100,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         }
     }
 
-    @Override
-    public ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> findAtaruFormUsage(List<String> organisationOids) {
-        List<Haku> hakus = hakuDAO.findHakusWithAtaruFormKeys(organisationOids);
+    private List<AtaruLomakkeetV1RDTO> convert(List<Haku> hakus) {
         Map<String, List<AtaruLomakeHakuV1RDTO>> grouped = new HashMap<>();
         List<AtaruLomakkeetV1RDTO> result = new ArrayList<>();
 
@@ -1109,7 +1108,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             AtaruLomakeHakuV1RDTO dto = converterV1.fromHakuToAtaruLomakeHakuRDTO(haku);
             String key = haku.getAtaruLomakeAvain();
             if (!grouped.containsKey(key)) {
-                grouped.put(key, new ArrayList<AtaruLomakeHakuV1RDTO>());
+                grouped.put(key, new ArrayList<>());
             }
             grouped.get(key).add(dto);
         }
@@ -1120,11 +1119,29 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             dto.setHaut(value);
             result.add(dto);
         });
+        return result;
+    }
+
+    @Override
+    public ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> findAtaruFormUsage(List<String> organisationOids) {
+        final boolean returnEverything =
+                organisationOids == null ||
+                organisationOids.isEmpty() ||
+                organisationOids.stream().anyMatch(s -> "1.2.246.562.10.00000000001".equals(s));
 
         ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
+        List<Haku> hakus = hakuDAO.findHakusWithAtaruFormKeys();
         resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
-        resultV1RDTO.setResult(result);
 
+        if(returnEverything) {
+            resultV1RDTO.setResult(convert(hakus));
+        } else {
+            HakukohteetKysely q = new HakukohteetKysely();
+            q.getTarjoajaOids().addAll(organisationOids);
+            HakukohteetVastaus r = hakukohdeSearchService.haeHakukohteet(q);
+            final Set<String> hakuOids = r.getHakukohteet().stream().map(HakukohdePerustieto::getHakuOid).distinct().collect(Collectors.toSet());
+            resultV1RDTO.setResult(convert(hakus.stream().filter(h -> hakuOids.contains(h.getOid())).collect(Collectors.toList())));
+        }
         return resultV1RDTO;
     }
 }

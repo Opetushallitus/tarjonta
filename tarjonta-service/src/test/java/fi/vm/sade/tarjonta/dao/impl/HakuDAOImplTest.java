@@ -377,7 +377,7 @@ public class HakuDAOImplTest extends TestData {
         hakuDAO.insert(haku3);
         hakuDAO.insert(haku4);
 
-        List<Haku> ataruFormKeys = hakuDAO.findHakusWithAtaruFormKeys(Collections.EMPTY_LIST);
+        List<Haku> ataruFormKeys = hakuDAO.findHakusWithAtaruFormKeys();
         assertTrue(ataruFormKeys.size() == 3);
     }
 
@@ -414,7 +414,7 @@ public class HakuDAOImplTest extends TestData {
         hakuDAO.insert(haku4);
 
         List<String> emptyOids = new ArrayList<>();
-        List<Haku> resultAll = hakuDAO.findHakusWithAtaruFormKeys(emptyOids);
+        List<Haku> resultAll = hakuDAO.findHakusWithAtaruFormKeys();
         assertTrue(resultAll.size() == 3);
         List<String> allOids = getHakuOids(resultAll);
         assertEquals(allOids.contains(HAKU_OID1), true);
@@ -424,13 +424,13 @@ public class HakuDAOImplTest extends TestData {
 
         List<String> unknownOids = new ArrayList<>();
         unknownOids.add("foobar");
-        List<Haku> resultUnknown = hakuDAO.findHakusWithAtaruFormKeys(unknownOids);
+        List<Haku> resultUnknown = hakuDAO.findHakusWithAtaruFormKeys();
         assertTrue(resultUnknown.size() == 0);
 
         List<String> filterOids1 = new ArrayList<>();
         filterOids1.add(organisaatioOid1);
         filterOids1.add(organisaatioOid3);
-        List<Haku> result1 = hakuDAO.findHakusWithAtaruFormKeys(filterOids1);
+        List<Haku> result1 = hakuDAO.findHakusWithAtaruFormKeys();
         assertTrue(result1.size() == 2);
         List<String> resultOids1 = getHakuOids(result1);
         assertEquals(resultOids1.contains(HAKU_OID1), true);
@@ -440,7 +440,7 @@ public class HakuDAOImplTest extends TestData {
 
         List<String> filterOids2 = new ArrayList<>();
         filterOids2.add(organisaatioOid2);
-        List<Haku> result2 = hakuDAO.findHakusWithAtaruFormKeys(filterOids2);
+        List<Haku> result2 = hakuDAO.findHakusWithAtaruFormKeys();
         assertTrue(result2.size() == 1);
         List<String> resultOids2 = getHakuOids(result2);
         assertEquals(resultOids2.contains(HAKU_OID1), false);
@@ -450,7 +450,7 @@ public class HakuDAOImplTest extends TestData {
 
         List<String> filterOids3 = new ArrayList<>();
         filterOids3.add(organisaatioOid4);
-        List<Haku> result3 = hakuDAO.findHakusWithAtaruFormKeys(filterOids3);
+        List<Haku> result3 = hakuDAO.findHakusWithAtaruFormKeys();
         assertTrue(result3.size() == 1);
         List<String> resultOids3 = getHakuOids(result3);
         assertEquals(resultOids3.contains(HAKU_OID1), true);
