@@ -14,14 +14,11 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Stopwatch;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
@@ -95,7 +92,9 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.*;
 
@@ -883,7 +882,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         // filtteroi tarvittaessa tulokset joko tarjoaja- tai hakukohdenimen
         // mukaan!
         if (!filtterointiTeksti.isEmpty()) {
-            tulokset = Collections2.filter(tulokset, new Predicate<HakukohdePerustieto>() {
+            tulokset = Collections2.filter(tulokset, new com.google.common.base.Predicate<HakukohdePerustieto>() {
 
                 private String haeTekstiAvaimella(Map<String, String> tekstit) {
 
@@ -1127,7 +1126,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         final boolean returnEverything =
                 organisationOids == null ||
                 organisationOids.isEmpty() ||
-                organisationOids.stream().anyMatch(s -> "1.2.246.562.10.00000000001".equals(s));
+                organisationOids.stream().anyMatch("1.2.246.562.10.00000000001"::equals);
 
         ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
         List<Haku> hakus = hakuDAO.findHakusWithAtaruFormKeys();
@@ -1136,11 +1135,17 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         if(returnEverything) {
             resultV1RDTO.setResult(convert(hakus));
         } else {
+            final Set<String> oids = Sets.newHashSet(organisationOids);
             HakukohteetKysely q = new HakukohteetKysely();
             q.getTarjoajaOids().addAll(organisationOids);
             HakukohteetVastaus r = hakukohdeSearchService.haeHakukohteet(q);
             final Set<String> hakuOids = r.getHakukohteet().stream().map(HakukohdePerustieto::getHakuOid).distinct().collect(Collectors.toSet());
-            resultV1RDTO.setResult(convert(hakus.stream().filter(h -> hakuOids.contains(h.getOid())).collect(Collectors.toList())));
+            Predicate<Haku> organizationBelongsToHakukohde = (h) -> hakuOids.contains(h.getOid());
+            Predicate<Haku> organizationBelongsToHaku = (h) -> !Sets.intersection(Sets.newHashSet(h.getTarjoajaOids()), oids).isEmpty();
+           resultV1RDTO.setResult(convert(hakus.stream()
+                    .filter(organizationBelongsToHakukohde
+                            .or(organizationBelongsToHaku))
+                    .collect(Collectors.toList())));
         }
         return resultV1RDTO;
     }
