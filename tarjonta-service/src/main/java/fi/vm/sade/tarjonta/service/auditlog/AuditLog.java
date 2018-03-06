@@ -217,7 +217,35 @@ public final class AuditLog {
 
     }
 
-
+    static Changes.Builder jsonDiffToChanges(Changes.Builder builder, JsonNode beforeJson, JsonNode afterJson) {
+        traverseAndTruncate(afterJson);
+        traverseAndTruncate(beforeJson);
+        final ArrayNode patchArray = (ArrayNode) JsonDiff.asJson(beforeJson, afterJson);
+        patchArray.forEach(patch -> {
+            JsonNode operation = patch.get("op");
+            JsonNode path = patch.get("path");
+            JsonNode value = patch.get("value");
+            //remove first / symbol from the path beginning and replace all subsequent ones with dots
+            String prettyPath = path.asText().substring(1).replaceAll("/", ".");
+            switch (operation.asText()) {
+                case "add": {
+                    builder.added(prettyPath, value.asText());
+                    break;
+                }
+                case "remove": {
+                    JsonNode oldValue = beforeJson.at(path.asText());
+                    builder.removed(prettyPath, oldValue.asText());
+                    break;
+                }
+                case "replace": {
+                    JsonNode oldValue = beforeJson.at(path.asText());
+                    builder.updated(prettyPath, oldValue.asText(), value.asText());
+                    break;
+                }
+            }
+        });
+        return builder;
+    }
 
     private static <T> Changes.Builder getChanges(@Nullable T afterOperation, @Nullable T beforeOperation) {
         Changes.Builder builder = new Changes.Builder();
@@ -229,32 +257,7 @@ public final class AuditLog {
             } else if (afterOperation != null) {
                 JsonNode afterJson = mapper.valueToTree(afterOperation);
                 JsonNode beforeJson = mapper.valueToTree(beforeOperation);
-                traverseAndTruncate(afterJson);
-                traverseAndTruncate(beforeJson);
-
-                final ArrayNode patchArray = (ArrayNode) JsonDiff.asJson(beforeJson, afterJson);
-                patchArray.forEach(patch -> {
-                    JsonNode operation = patch.get("op");
-                    JsonNode path = patch.get("path");
-                    JsonNode value = patch.get("value");
-                    String prettyPath = path.asText().substring(1).replaceAll("/", ".");
-                    switch (operation.asText()) {
-                        case "add": {
-                            builder.added(prettyPath, value.asText());
-                            break;
-                        }
-                        case "remove": {
-                            JsonNode oldValue = beforeJson.at(path.asText());
-                            builder.removed(prettyPath, oldValue.asText());
-                            break;
-                        }
-                        case "replace": {
-                            JsonNode oldValue = beforeJson.at(path.asText());
-                            builder.updated(prettyPath, oldValue.asText(),value.asText());
-                            break;
-                        }
-                    }
-                });
+                builder = jsonDiffToChanges(builder, beforeJson, afterJson);
             }
         } catch(Exception e) {
             LOG.error("diff calculation failed", e);

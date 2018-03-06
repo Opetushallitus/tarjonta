@@ -2,12 +2,12 @@ package fi.vm.sade.tarjonta.service.auditlog;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.auditlog.Audit;
+import com.google.gson.JsonObject;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import fi.vm.sade.tarjonta.service.auditlog.AuditLog;
+import fi.vm.sade.auditlog.Changes;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -78,6 +78,27 @@ public class AuditLogTest {
         int number = json.get("number").intValue();
         assertEquals(99, number);
     }
+
+    @Test
+    public void testJsonPatchDiff() throws IOException {
+        String changedJsonString = "{" +
+                " \"longString\": \"" + longString + "\"," +
+                " \"shortString\": \"wasp\"," +
+                " \"number\": 99," +
+                " \"array\": [ \"" + longString + "\" ] " +
+                "}";
+
+        JsonNode json = mapper.readTree(jsonString);
+        JsonNode jsonChanged = mapper.readTree(changedJsonString);
+        Changes.Builder builder = new Changes.Builder();
+        AuditLog.jsonDiffToChanges(builder, json, jsonChanged);
+        Changes build = builder.build();
+
+        JsonObject jsonObject = build.asJson();
+        assertEquals(jsonObject.get("shortString").getAsJsonObject().get("oldValue").getAsString(), "bee");
+        assertEquals(jsonObject.get("shortString").getAsJsonObject().get("newValue").getAsString(), "wasp");
+    }
+
 
     private String createLongString() {
         int length = 33000;
