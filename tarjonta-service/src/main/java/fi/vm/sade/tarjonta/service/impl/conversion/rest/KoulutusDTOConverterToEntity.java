@@ -43,10 +43,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Conversions to entity objects.
@@ -76,6 +73,14 @@ public class KoulutusDTOConverterToEntity {
     private OppiaineDAO oppiaineDAO;
     @Autowired
     KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
+
+
+    private static List<ToteutustyyppiEnum> toteutustyypitJotkaEivatVaadiKoulutuslajia = Arrays.asList(
+            ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018,
+            ToteutustyyppiEnum.AMMATTITUTKINTO,
+            ToteutustyyppiEnum.ERIKOISAMMATTITUTKINTO
+    );
+
 
     /*
      * KORKEAKOULU RDTO CONVERSION TO ENTITY
@@ -382,7 +387,7 @@ public class KoulutusDTOConverterToEntity {
                             komoto.getLinkkis()));
         }
 
-        if (dto.getKoulutuslaji() != null && !dto.getToteutustyyppi().equals(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018)) {
+        if (dto.getKoulutuslaji() != null && requiresKoulutuslaji(dto)) {
             komoto.getKoulutuslajis().clear();
             komoto.setKoulutuslajis(commonConverter.convertToUris(dto.getKoulutuslaji(), komoto.getKoulutuslajis(), FieldNames.KOULUTUSLAJI));
         }
@@ -490,7 +495,7 @@ public class KoulutusDTOConverterToEntity {
             komoto.setOpetusPaikkas(commonConverter.convertToUris(dto.getOpetusPaikkas(), komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS));
         }
 
-        if (dto.getKoulutuslaji() != null) {
+        if (dto.getKoulutuslaji() != null && requiresKoulutuslaji(dto)) {
             komoto.getKoulutuslajis().clear();
             komoto.setKoulutuslajis(commonConverter.convertToUris(dto.getKoulutuslaji(), komoto.getKoulutuslajis(), FieldNames.KOULUTUSLAJI));
         }
@@ -532,6 +537,10 @@ public class KoulutusDTOConverterToEntity {
         }
 
         return komoto;
+    }
+
+    private boolean requiresKoulutuslaji(KoulutusV1RDTO dto) {
+        return !toteutustyypitJotkaEivatVaadiKoulutuslajia.contains(dto.getToteutustyyppi());
     }
 
     /*
