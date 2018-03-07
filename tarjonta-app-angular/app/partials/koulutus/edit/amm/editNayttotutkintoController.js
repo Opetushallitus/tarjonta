@@ -2,6 +2,7 @@ var app = angular.module('app.edit.ctrl.amm', []);
 app.controller('EditNayttotutkintoController', function($routeParams, $scope, $log,
                         TarjontaService, LocalisationService, KoulutusConverterFactory, $modal, dialogService) {
     var ENUMS = KoulutusConverterFactory.ENUMS;
+    var reformin2018Alku = new Date(Date.UTC(2017, 11, 31, 22, 0, 0));
     /*
     * WATCHES
     */
@@ -144,6 +145,15 @@ app.controller('EditNayttotutkintoController', function($routeParams, $scope, $l
             }
         }
     };
+
+    $scope.koulutusOnEnnen2018Reformia = function() {
+        console.log('$scope.model.koulutuksenAlkamisPvms', $scope.model.koulutuksenAlkamisPvms);
+        console.log('$scope.model.koulutuksenAlkamisvuosi', $scope.model.koulutuksenAlkamisvuosi);
+        return _.some($scope.model.koulutuksenAlkamisPvms, function (alkamisTimestamp) {
+            return alkamisTimestamp < reformin2018Alku.getTime();
+        }) || $scope.model.koulutuksenAlkamisvuosi < 2018;
+    };
+
     // Init generic edit controller (parent scope)
     $scope.init({
         model: {
@@ -181,7 +191,7 @@ app.controller('EditNayttotutkintoController', function($routeParams, $scope, $l
                 }
                 uiModel.enableOsaamisala = angular.isDefined(model.koulutusohjelma.uri);
             }
-            else if ($routeParams.org && model.koulutuksenAlkamisvuosi && model.koulutuksenAlkamisvuosi < 2018) {
+            else if ($routeParams.org && $scope.koulutusOnEnnen2018Reformia()) {
                 $scope.initValmistavaKoulutus(model, uiModel, vkUiModel);
             }
             //Ui model for editValmistavaKoulutusPerustiedot and eeditValmistavaKoulutusLisatiedot pages (special case)

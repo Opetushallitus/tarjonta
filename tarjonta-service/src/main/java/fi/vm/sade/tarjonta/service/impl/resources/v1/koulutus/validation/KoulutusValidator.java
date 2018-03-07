@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation;
 
+import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages.KOULUTUS_JARJESTAJA_NOT_ALLOWED;
 import static fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.createValidationError;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
@@ -78,7 +79,6 @@ public class KoulutusValidator {
     private static final boolean NO_KOMO_VALIDATION = false;
     private static final DateTimeZone EET = DateTimeZone.forID("EET");
     private static final Date endOfJanuary2018 = new DateTime(2018, 1, 31, 23, 59, 59).withZone(EET).toDate();
-    private static final Date endOf2017 = new DateTime(2017, 12, 31, 23, 59, 59).withZone(EET).toDate();
     private static final Set<ToteutustyyppiEnum> invalidTypesAfterJanuary2018 = Sets.newHashSet(
             ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO,
             ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA);
@@ -303,25 +303,14 @@ public class KoulutusValidator {
         if (!TarjontaTila.PUUTTEELLINEN.equals(dto.getTila())) {
             validateKoodiUris(result, dto.getOpetuskielis(), KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_INVALID, DEFAULT_MIN);
 
-            if (dto.getJarjestavaOrganisaatio() != null) {
-                validateOrganisation(
-                        dto.getJarjestavaOrganisaatio(),
-                        result,
-                        KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING,
-                        KoulutusValidationMessages.KOULUTUS_JARJESTAJA_INVALID
-                );
+            if (dto.alkaaEnnenReformia()) {
+                requireNayttotutkinnonJarjestaja(dto, result);
+            } else {
+                doNotAllowNayttotutkinnonJarjestaja(dto, result);
             }
         }
 
         if (dto.getValmistavaKoulutus() != null) {
-            for (Date startDate : dto.getKoulutuksenAlkamisPvms()) {
-                if (startDate.after(endOf2017)){
-                    result.addError(createValidationError(KOULUTUKSEN_ALKAMISPVMS,
-                            KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VALMISTAVAKOULUTUSAFTER_31_12_2017.getFieldName(),
-                            "Valmistavaa koulutusta ei sallita alkaen 1.1.2018"));
-                }
-            }
-
             final ValmistavaV1RDTO valmistavaKoulutus = dto.getValmistavaKoulutus();
             if (!notNullStrOrEmpty(valmistavaKoulutus.getSuunniteltuKestoArvo())) {
                 result.addError(createValidationError(KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_VALUE_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_VALUE_MISSING.lower()));
@@ -336,6 +325,25 @@ public class KoulutusValidator {
         validateAlkamisAika(result, dto);
 
         return result;
+    }
+
+    private void requireNayttotutkinnonJarjestaja(NayttotutkintoV1RDTO dto, ResultV1RDTO<KoulutusV1RDTO> result) {
+        if (dto.getJarjestavaOrganisaatio() == null || dto.getJarjestavaOrganisaatio().getOid() == null || dto.getJarjestavaOrganisaatio().getOid().isEmpty()) {
+            result.addError(createValidationError(KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING.lower()));
+        } else {
+            validateOrganisation(
+                    dto.getJarjestavaOrganisaatio(),
+                    result,
+                    KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING,
+                    KoulutusValidationMessages.KOULUTUS_JARJESTAJA_INVALID
+            );
+        }
+    }
+
+    private void doNotAllowNayttotutkinnonJarjestaja(NayttotutkintoV1RDTO dto, ResultV1RDTO<KoulutusV1RDTO> result) {
+        if (dto.getJarjestavaOrganisaatio() != null && dto.getJarjestavaOrganisaatio().getOid() != null && !dto.getJarjestavaOrganisaatio().getOid().isEmpty()) {
+            result.addError(createValidationError(KOULUTUS_JARJESTAJA_NOT_ALLOWED.getFieldName(), KOULUTUS_JARJESTAJA_NOT_ALLOWED.lower()));
+        }
     }
 
     public boolean isValidOrganisation(String orgOid) {

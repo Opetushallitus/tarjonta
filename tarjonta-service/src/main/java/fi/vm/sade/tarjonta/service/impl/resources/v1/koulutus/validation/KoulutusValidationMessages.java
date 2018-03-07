@@ -21,7 +21,6 @@ public enum KoulutusValidationMessages {
     KOULUTUS_ALKAMISPVM_MISSING("koulutuksenAlkamisPvms"),
     KOULUTUS_ALKAMISPVM_SUCCESS("koulutuksenAlkamisPvms"),
     KOULUTUS_ALKAMISPVM_WRONGTYPEAFTER_31_01_2018("koulutuksenAlkamisPvmsAfter"),
-    KOULUTUS_ALKAMISPVM_VALMISTAVAKOULUTUSAFTER_31_12_2017("valmistavaKoulutusAlkamisPvmsAfter"),
     KOULUTUS_ALKAMISPVM_KAUSI_INVALID("koulutuksenAlkamiskausi"),
     KOULUTUS_ALKAMISPVM_KAUSI_MISSING("koulutuksenAlkamiskausi"),
     KOULUTUS_ALKAMISPVM_VUOSI_MISSING("koulutuksenAlkamisvuosi"),
@@ -88,6 +87,7 @@ public enum KoulutusValidationMessages {
     KOULUTUS_TARJOAJA_INVALID("organisaatio.oid"),
     KOULUTUS_JARJESTAJA_MISSING("organisaatio.oid"),
     KOULUTUS_JARJESTAJA_INVALID("organisaatio.oid"),
+    KOULUTUS_JARJESTAJA_NOT_ALLOWED("organisaatio.oid"),
     KOULUTUS_INVALID_TRANSITION(""),
     //kesto 
     KOULUTUS_SUUNNITELTU_KESTO_VALUE_MISSING("suunniteltuKestoArvo"),
