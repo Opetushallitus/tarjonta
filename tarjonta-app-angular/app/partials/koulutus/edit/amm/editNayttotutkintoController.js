@@ -147,11 +147,9 @@ app.controller('EditNayttotutkintoController', function($routeParams, $scope, $l
     };
 
     $scope.koulutusOnEnnen2018Reformia = function() {
-        console.log('$scope.model.koulutuksenAlkamisPvms', $scope.model.koulutuksenAlkamisPvms);
-        console.log('$scope.model.koulutuksenAlkamisvuosi', $scope.model.koulutuksenAlkamisvuosi);
         return _.some($scope.model.koulutuksenAlkamisPvms, function (alkamisTimestamp) {
             return alkamisTimestamp < reformin2018Alku.getTime();
-        }) || $scope.model.koulutuksenAlkamisvuosi < 2018;
+        }) || ($scope.model.koulutuksenAlkamisvuosi && $scope.model.koulutuksenAlkamisvuosi < 2018);
     };
 
     // Init generic edit controller (parent scope)
