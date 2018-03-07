@@ -1,11 +1,15 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation;
 
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING;
+import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages.KOULUTUS_JARJESTAJA_NOT_ALLOWED;
 import static fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -453,7 +457,54 @@ public class KoulutusValidatorTest {
         Arrays.asList(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO, vanhaAmmattitutkintoV1RDTO, vanhaErikoisammattitutkintoV1RDTO)
             .forEach(k -> k.setJarjestavaOrganisaatio(null));
 
+        result.setResult(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO);
+        validator.validateKoulutusNayttotutkinto(poistuvaAmmatillinenPerustutkintoNayttotutkintonaV1RDTO, tutkinto, result);
+        assertErrorExist(result.getErrors(), KOULUTUS_JARJESTAJA_MISSING.getFieldName());
+
+        result.setResult(vanhaAmmattitutkintoV1RDTO);
+        validator.validateKoulutusNayttotutkinto(vanhaAmmattitutkintoV1RDTO, tutkinto, result);
+        assertErrorExist(result.getErrors(), KOULUTUS_JARJESTAJA_MISSING.getFieldName());
+
+        result.setResult(vanhaErikoisammattitutkintoV1RDTO);
+        validator.validateKoulutusNayttotutkinto(vanhaErikoisammattitutkintoV1RDTO, tutkinto, result);
+        assertErrorExist(result.getErrors(), KOULUTUS_JARJESTAJA_MISSING.getFieldName());
+
         verify(mockOrganisaatioService, times(3)).findByOid(jarjestavaOrganisaatio.getOid());
+        verifyNoMoreInteractions(mockOrganisaatioService);
+    }
+
+    @Test
+    public void nayttokoulutuksenJarjestavaaOrganisaatiotaEiSallitaUusilleAmmattitutkinnoilleEikaErikoisammattitutkinnoille() {
+        Date pvmVarmastiReforminJalkeen = new LocalDate(2018, 4, 1).toDate();
+        NayttotutkintoV1RDTO uusiAmmattitutkinto = populate(new AmmattitutkintoV1RDTO());
+        NayttotutkintoV1RDTO uusiErikoisammattitutkinto = populate(new ErikoisammattitutkintoV1RDTO());
+        uusiAmmattitutkinto.setKoulutuksenAlkamisPvms(Collections.singleton(pvmVarmastiReforminJalkeen));
+        uusiErikoisammattitutkinto.setKoulutuksenAlkamisPvms(Collections.singleton(pvmVarmastiReforminJalkeen));
+
+        ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<>(uusiAmmattitutkinto);
+        result.setResult(uusiAmmattitutkinto);
+        validator.validateKoulutusNayttotutkinto(uusiAmmattitutkinto, tutkinto, result);
+        assertErrorExist(result.getErrors(), KOULUTUS_JARJESTAJA_NOT_ALLOWED.getFieldName());
+        assertThat(result.getErrors(), hasSize(1));
+        assertEquals(KOULUTUS_JARJESTAJA_NOT_ALLOWED.lower(), result.getErrors().get(0).getErrorMessageKey());
+
+        result = new ResultV1RDTO<>(uusiErikoisammattitutkinto);
+        validator.validateKoulutusNayttotutkinto(uusiErikoisammattitutkinto, tutkinto, result);
+        assertErrorExist(result.getErrors(), KOULUTUS_JARJESTAJA_NOT_ALLOWED.getFieldName());
+        assertThat(result.getErrors(), hasSize(1));
+        assertEquals(KOULUTUS_JARJESTAJA_NOT_ALLOWED.lower(), result.getErrors().get(0).getErrorMessageKey());
+
+        Arrays.asList(uusiAmmattitutkinto, uusiErikoisammattitutkinto).forEach(k -> k.setJarjestavaOrganisaatio(null));
+
+        result = new ResultV1RDTO<>(uusiAmmattitutkinto);
+        validator.validateKoulutusNayttotutkinto(uusiAmmattitutkinto, tutkinto, result);
+        assertEquals(null, result.getErrors());
+
+        result = new ResultV1RDTO<>(uusiErikoisammattitutkinto);
+        validator.validateKoulutusNayttotutkinto(uusiErikoisammattitutkinto, tutkinto, result);
+        assertEquals(null, result.getErrors());
+
+        verify(mockOrganisaatioService, never()).findByOid(jarjestavaOrganisaatio.getOid());
         verifyNoMoreInteractions(mockOrganisaatioService);
     }
 

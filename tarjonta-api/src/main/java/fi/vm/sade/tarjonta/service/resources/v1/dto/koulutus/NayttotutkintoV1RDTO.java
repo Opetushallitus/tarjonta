@@ -16,16 +16,22 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
+
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 
 /**
  *
  * @author jani
  */
 public abstract class NayttotutkintoV1RDTO extends KoulutusV1RDTO {
+    private static final Date beginningOfJanuary2018 = Date.from(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("EET")).toInstant());
 
     @ApiModelProperty(value = "Tutkintonimike", required = true)
     private KoodiV1RDTO tutkintonimike;
@@ -116,4 +122,12 @@ public abstract class NayttotutkintoV1RDTO extends KoulutusV1RDTO {
         this.tarkenne = tarkenne;
     }
 
+    public boolean alkaaEnnenReformia() {
+        if ((getKoulutuksenAlkamisPvms() == null || getKoulutuksenAlkamisPvms().isEmpty())
+            &&
+            (getKoulutuksenAlkamisvuosi() == null || getKoulutuksenAlkamisvuosi() >= 2018)) {
+            return false;
+        }
+        return getKoulutuksenAlkamisPvms().stream().allMatch(a -> a.before(beginningOfJanuary2018));
+    }
 }
