@@ -292,14 +292,15 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
             var promise = Koodisto.getAlapuolisetKoodit($scope.model.koulutustyyppi.koodiUri);
             promise.then(function(koodis) {
                 var koulutuslajiKoodis = _.where(koodis, {koodiKoodisto:CONFIG.env['koodisto-uris.koulutuslaji']});
-                if (koulutuslajiKoodis && koulutuslajiKoodis.length === 1 && toteutustyyppi != "AMMATILLINEN_PERUSTUTKINTO_ALK_2018") {
-                    $location.path('/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri +
-                    '/' + koulutuslajiKoodis[0].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid);
+
+                var toteutustyypitJoillaEiKoulutuslajia = ['AMMATILLINEN_PERUSTUTKINTO_ALK_2018', 'ERIKOISAMMATTITUTKINTO', 'AMMATTITUTKINTO']
+                var onKoulutuslajillinenToteutustyyppi = toteutustyypitJoillaEiKoulutuslajia.indexOf(toteutustyyppi) == -1;
+                var url = '/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid;
+                if (koulutuslajiKoodis && koulutuslajiKoodis.length === 1 && onKoulutuslajillinenToteutustyyppi) {
+                    url += '/' + koulutuslajiKoodis[0].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid;
                 }
-                else {
-                    $location.path('/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri +
-                    '/edit/' + $scope.model.organisaatiot[0].oid);
-                }
+                $location.path(url);
+
                 if ($scope.model.pohjakoulutusvaatimus) {
                     $location.search('pohjakoulutusvaatimus', $scope.model.pohjakoulutusvaatimus);
                 }
