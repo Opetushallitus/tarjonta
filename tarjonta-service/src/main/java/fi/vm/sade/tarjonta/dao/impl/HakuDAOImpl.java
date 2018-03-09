@@ -349,20 +349,12 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     }
 
     @Override
-    public List<Haku> findHakusWithAtaruFormKeys(List<String> organisationOids) {
+    public List<Haku> findHakusWithAtaruFormKeys() {
         QHaku qHaku = QHaku.haku;
-
-        BooleanBuilder orgExpr = new BooleanBuilder();
-        if (organisationOids != null) {
-            for (String organisationOid : organisationOids) {
-                orgExpr.or(qHaku.tarjoajaOidString.contains(organisationOid));
-            }
-        }
 
         return from(qHaku)
           .where(qHaku.ataruLomakeAvain.isNotNull())
           .where(qHaku.tila.ne(TarjontaTila.POISTETTU))
-          .where(orgExpr)
           .list(qHaku);
     }
 }

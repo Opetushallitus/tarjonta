@@ -21,23 +21,33 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutusTarjoajatiedot;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.ConverterV1;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.OidServiceMock;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.AtaruLomakeHakuV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.AtaruLomakkeetV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.search.HakukohdeSearchService;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import junit.framework.Assert;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -377,8 +387,28 @@ public class HakuDAOImplTest extends TestData {
         hakuDAO.insert(haku3);
         hakuDAO.insert(haku4);
 
-        List<Haku> ataruFormKeys = hakuDAO.findHakusWithAtaruFormKeys(Collections.EMPTY_LIST);
+        List<Haku> ataruFormKeys = hakuDAO.findHakusWithAtaruFormKeys();
         assertTrue(ataruFormKeys.size() == 3);
+    }
+    private HakukohdeSearchService hakukohdeSearchReturning(HakukohteetVastaus vastaus) {
+        HakukohdeSearchService h = Mockito.mock(HakukohdeSearchService.class);
+        Mockito.when(h.haeHakukohteet(Mockito.any())).thenReturn(vastaus);
+        return h;
+    }
+    private HakuResourceImplV1 hakuResourceWith(HakuDAOImpl hakuDao, HakukohdeSearchService hakukohdeSearchService) {
+        HakuResourceImplV1 hakuResourceImplV1 = new HakuResourceImplV1();
+        ConverterV1 c = Mockito.mock(ConverterV1.class);
+        Mockito.when(c.fromHakuToAtaruLomakeHakuRDTO(Mockito.any())).then(a -> {
+            Haku h = (Haku)a.getArguments()[0];
+            AtaruLomakeHakuV1RDTO at = new AtaruLomakeHakuV1RDTO();
+            at.setOid(h.getOid());
+            return at;
+        });
+        ReflectionTestUtils.setField(hakuResourceImplV1, "converterV1",c);
+
+        ReflectionTestUtils.setField(hakuResourceImplV1, "hakuDAO",hakuDAO);
+        ReflectionTestUtils.setField(hakuResourceImplV1, "hakukohdeSearchService",hakukohdeSearchService);
+        return hakuResourceImplV1;
     }
 
     @Test
@@ -414,7 +444,7 @@ public class HakuDAOImplTest extends TestData {
         hakuDAO.insert(haku4);
 
         List<String> emptyOids = new ArrayList<>();
-        List<Haku> resultAll = hakuDAO.findHakusWithAtaruFormKeys(emptyOids);
+        List<Haku> resultAll = hakuDAO.findHakusWithAtaruFormKeys();
         assertTrue(resultAll.size() == 3);
         List<String> allOids = getHakuOids(resultAll);
         assertEquals(allOids.contains(HAKU_OID1), true);
@@ -422,17 +452,22 @@ public class HakuDAOImplTest extends TestData {
         assertEquals(allOids.contains(HAKU_OID3), true);
         assertEquals(allOids.contains(HAKU_OID4), false);
 
+        HakukohteetVastaus v = new HakukohteetVastaus();
+        v.setHakukohteet(Collections.emptyList());
+        HakukohdeSearchService hakukohdeSearchService = hakukohdeSearchReturning(v);
+        HakuResourceImplV1 hakuResourceImplV1 = hakuResourceWith(hakuDAO, hakukohdeSearchService);
+
         List<String> unknownOids = new ArrayList<>();
         unknownOids.add("foobar");
-        List<Haku> resultUnknown = hakuDAO.findHakusWithAtaruFormKeys(unknownOids);
+        List<AtaruLomakkeetV1RDTO> resultUnknown = hakuResourceImplV1.findAtaruFormUsage(unknownOids).getResult();
         assertTrue(resultUnknown.size() == 0);
 
         List<String> filterOids1 = new ArrayList<>();
         filterOids1.add(organisaatioOid1);
         filterOids1.add(organisaatioOid3);
-        List<Haku> result1 = hakuDAO.findHakusWithAtaruFormKeys(filterOids1);
+        List<AtaruLomakkeetV1RDTO> result1 = hakuResourceImplV1.findAtaruFormUsage(filterOids1).getResult();
         assertTrue(result1.size() == 2);
-        List<String> resultOids1 = getHakuOids(result1);
+        List<String> resultOids1 = getAtaruHakuOids(result1);
         assertEquals(resultOids1.contains(HAKU_OID1), true);
         assertEquals(resultOids1.contains(HAKU_OID2), false);
         assertEquals(resultOids1.contains(HAKU_OID3), true);
@@ -440,9 +475,9 @@ public class HakuDAOImplTest extends TestData {
 
         List<String> filterOids2 = new ArrayList<>();
         filterOids2.add(organisaatioOid2);
-        List<Haku> result2 = hakuDAO.findHakusWithAtaruFormKeys(filterOids2);
+        List<AtaruLomakkeetV1RDTO> result2 = hakuResourceImplV1.findAtaruFormUsage(filterOids2).getResult();
         assertTrue(result2.size() == 1);
-        List<String> resultOids2 = getHakuOids(result2);
+        List<String> resultOids2 = getAtaruHakuOids(result2);
         assertEquals(resultOids2.contains(HAKU_OID1), false);
         assertEquals(resultOids2.contains(HAKU_OID2), true);
         assertEquals(resultOids2.contains(HAKU_OID3), false);
@@ -450,9 +485,9 @@ public class HakuDAOImplTest extends TestData {
 
         List<String> filterOids3 = new ArrayList<>();
         filterOids3.add(organisaatioOid4);
-        List<Haku> result3 = hakuDAO.findHakusWithAtaruFormKeys(filterOids3);
+        List<AtaruLomakkeetV1RDTO> result3 = hakuResourceImplV1.findAtaruFormUsage(filterOids3).getResult();
         assertTrue(result3.size() == 1);
-        List<String> resultOids3 = getHakuOids(result3);
+        List<String> resultOids3 = getAtaruHakuOids(result3);
         assertEquals(resultOids3.contains(HAKU_OID1), true);
         assertEquals(resultOids3.contains(HAKU_OID2), false);
         assertEquals(resultOids3.contains(HAKU_OID3), false);
@@ -466,7 +501,9 @@ public class HakuDAOImplTest extends TestData {
         }
         return result;
     }
-
+    private List<String> getAtaruHakuOids(List<AtaruLomakkeetV1RDTO> hakus) {
+        return hakus.stream().flatMap(a -> a.getHaut().stream()).map(h -> h.getOid()).collect(Collectors.toList());
+    }
     private void createHakuWithMontaTarjoajaa() {
         Haku haku = new Haku();
         haku.setOid("1.1.1");

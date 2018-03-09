@@ -361,7 +361,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
     @Test
     public void thatHakusWithoutAtaruFormsReturnsEmpty() {
         List<Haku> empty = new ArrayList<>();
-        when(hakuDAO.findHakusWithAtaruFormKeys(Collections.EMPTY_LIST)).thenReturn(empty);
+        when(hakuDAO.findHakusWithAtaruFormKeys()).thenReturn(empty);
 
         ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> result = hakuResource.findAtaruFormUsage(Collections.EMPTY_LIST);
 
@@ -386,7 +386,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
         Haku mockHaku2 = createHakuWithName(oid2, nimi2, lomakeKey1);
         Haku mockHaku3 = createHakuWithName(oid3, nimi3, lomakeKey2);
         List<Haku> mockHaut = new ArrayList<>(Arrays.asList(mockHaku1, mockHaku2, mockHaku3));
-        when(hakuDAO.findHakusWithAtaruFormKeys(Collections.EMPTY_LIST)).thenReturn(mockHaut);
+        when(hakuDAO.findHakusWithAtaruFormKeys()).thenReturn(mockHaut);
 
         AtaruLomakeHakuV1RDTO mockItem1 = createAtaruLomakeItem(oid1, nimi1);
         AtaruLomakeHakuV1RDTO mockItem2 = createAtaruLomakeItem(oid2, nimi2);

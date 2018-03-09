@@ -101,5 +101,5 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
      *
      * @return List of haku's that use Ataru forms
      */
-    List<Haku> findHakusWithAtaruFormKeys(List<String> organisationOids);
+    List<Haku> findHakusWithAtaruFormKeys();
 }
