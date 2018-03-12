@@ -216,7 +216,7 @@ describe('Edit koulutus testeja', function() {
                 "passivoitu": false
             }];
 
-        $httpBackend.whenGET('/oppijanumerorekisteri-service/henkilo?count=2000&passivoitu=false&duplikaatti=false&tyyppi=VIRKAILIJA&org=org-oid-1.2.3.4').respond(response);
+        $httpBackend.whenGET('/oppijanumerorekisteri-service/henkilo?page=1&count=2000&passivoitu=false&duplikaatti=false&tyyppi=VIRKAILIJA&organisaatioOids=org-oid-1.2.3.4').respond(response);
         $httpBackend.whenGET('/oppijanumerorekisteri-service/henkilo/1.2.246.562.24.91121139885').respond(henkilo);
         $httpBackend.whenGET('/kayttooikeus-service/henkilo/1.2.246.562.24.91121139885/organisaatiohenkilo').respond(organisaatiohenkilo);
 

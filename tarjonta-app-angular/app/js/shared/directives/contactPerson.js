@@ -8,7 +8,7 @@ app.directive('contactPerson', function(YhteyshenkiloService) {
         }
         $scope.yhteyshenkilot = [];
         YhteyshenkiloService.etsi({
-            org: [$scope.orgOid]
+            organisaatioOids: [$scope.orgOid]
         }).then(function(yhteyshenkilot) {
             if (yhteyshenkilot !== undefined) {
                 $scope.yhteyshenkilot = yhteyshenkilot;
