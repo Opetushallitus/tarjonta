@@ -2,7 +2,6 @@ var app = angular.module('app.edit.ctrl.amm', []);
 app.controller('EditNayttotutkintoController', function($routeParams, $scope, $log,
                         TarjontaService, LocalisationService, KoulutusConverterFactory, $modal, dialogService) {
     var ENUMS = KoulutusConverterFactory.ENUMS;
-    var reformin2018Alku = new Date(Date.UTC(2017, 11, 31, 22, 0, 0));
     /*
     * WATCHES
     */

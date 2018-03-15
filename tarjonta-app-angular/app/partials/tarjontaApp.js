@@ -393,6 +393,7 @@ angular.module('app').config([
                     res.result.jarjestavatOrganisaatiot = jarjestajat;
                     res.result.jarjestettavatKoulutukset = jarjestettavatKoulutukset;
 
+                    var reformin2018Alku = new Date(Date.UTC(2017, 11, 31, 22, 0, 0));
                     res.result.koulutusOnEnnen2018Reformia = _.some(res.result.koulutuksenAlkamisPvms,
                         function (alkamisTimestamp) {
                             return alkamisTimestamp < reformin2018Alku.getTime();
