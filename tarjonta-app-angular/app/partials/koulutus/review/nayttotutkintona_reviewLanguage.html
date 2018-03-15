@@ -99,7 +99,7 @@
         </tr>
 
         <!-- organisaation nimi -->
-        <tr>
+        <tr ng-if="model.koulutus.jarjestavaOrganisaatio || model.koulutus.koulutusOnEnnen2018Reformia">
             <th tt="koulutus.review.perustiedot.nayttotutkinnon-jarjestaja">Näyttötutkinnon järjestäjä</th>
             <td colspan="2">
                 {{model.koulutus.jarjestavaOrganisaatio.nimi}}

@@ -145,13 +145,6 @@ app.controller('EditNayttotutkintoController', function($routeParams, $scope, $l
             }
         }
     };
-
-    $scope.koulutusOnEnnen2018Reformia = function() {
-        return _.some($scope.model.koulutuksenAlkamisPvms, function (alkamisTimestamp) {
-            return alkamisTimestamp < reformin2018Alku.getTime();
-        }) || ($scope.model.koulutuksenAlkamisvuosi && $scope.model.koulutuksenAlkamisvuosi < 2018);
-    };
-
     // Init generic edit controller (parent scope)
     $scope.init({
         model: {
@@ -189,7 +182,7 @@ app.controller('EditNayttotutkintoController', function($routeParams, $scope, $l
                 }
                 uiModel.enableOsaamisala = angular.isDefined(model.koulutusohjelma.uri);
             }
-            else if ($routeParams.org && $scope.koulutusOnEnnen2018Reformia()) {
+            else if ($routeParams.org && model.koulutusOnEnnen2018Reformia) {
                 $scope.initValmistavaKoulutus(model, uiModel, vkUiModel);
             }
             //Ui model for editValmistavaKoulutusPerustiedot and eeditValmistavaKoulutusLisatiedot pages (special case)

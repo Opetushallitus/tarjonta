@@ -393,6 +393,11 @@ angular.module('app').config([
                     res.result.jarjestavatOrganisaatiot = jarjestajat;
                     res.result.jarjestettavatKoulutukset = jarjestettavatKoulutukset;
 
+                    res.result.koulutusOnEnnen2018Reformia = _.some(res.result.koulutuksenAlkamisPvms,
+                        function (alkamisTimestamp) {
+                            return alkamisTimestamp < reformin2018Alku.getTime();
+                        }) || (res.result.koulutuksenAlkamisvuosi && res.result.koulutuksenAlkamisvuosi < 2018);
+
                     defer.resolve(res);
                 });
             });
