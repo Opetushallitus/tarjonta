@@ -79,7 +79,7 @@
             </td>
         </tr>
 
-        <tr>
+        <tr ng-if="model.koulutus.koulutuslaji.meta[lang.koodi_uri].nimi || model.koulutus.koulutusOnEnnen2018Reformia">
             <th tt="koulutus.review.perustiedot.koulutuslaji">Koulutuslaji</th>
             <td colspan="2">
                 {{model.koulutus.koulutuslaji.meta[lang.koodi_uri].nimi}}
