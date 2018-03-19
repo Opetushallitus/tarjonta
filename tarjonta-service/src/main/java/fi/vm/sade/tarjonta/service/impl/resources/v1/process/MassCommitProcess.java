@@ -143,6 +143,7 @@ public class MassCommitProcess {
             setIndexedDatesToNull();
 
             getState().getParameters().put("result", "success");
+            LOG.info("Commit succeeded");
         } catch (Throwable ex) {
             LOG.error("Copy failed", ex);
 
@@ -180,6 +181,7 @@ public class MassCommitProcess {
     }
 
     private void setIndexedDatesToNull() {
+        LOG.info("setIndexedDatesToNull()");
         setKomotoIndexedDateToNull(indexKomotoIds);
         setHakukohdeIndexedDateToNull(indexHakukohdeIds);
     }
@@ -285,6 +287,7 @@ public class MassCommitProcess {
             }
 
             targetHakuoid = haku.getOid();
+            LOG.info("new haku oid: {}", targetHakuoid);
             getState().getParameters().put(MassCopyProcess.TO_HAKU_OID, targetHakuoid);
             Date d = new Date();
 
