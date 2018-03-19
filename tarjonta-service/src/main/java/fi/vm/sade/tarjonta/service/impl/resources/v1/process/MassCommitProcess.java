@@ -134,6 +134,9 @@ public class MassCommitProcess {
             countTotalKomoto = oldKomotoOids.size();
             countTotalHakukohde = oldHakukohdeOids.size();
 
+            LOG.info("countTotalKomoto: {}", countTotalKomoto);
+            LOG.info("countTotalHakukohde: {}", countTotalHakukohde);
+
             insertHaku(fromHakuOid, ip, session, userAgent);
             handleKomotos(processId, oldKomotoOids);
             handleSisaltyvyydet(processId, oldKomoOids);
