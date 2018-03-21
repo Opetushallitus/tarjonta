@@ -280,6 +280,9 @@ public class MassPepareProcess {
 
                     // Skip hakukohde if it has no koulutus
                     if (metaObject.hasNoKomotos()) {
+                        LOG.warn(String.format("Skipping copying hakukohde %s, because it has no komotos in states %s",
+                            hakukohde.getOid(),
+                            COPY_TILAS_AS_LIST));
                         continue;
                     }
 
