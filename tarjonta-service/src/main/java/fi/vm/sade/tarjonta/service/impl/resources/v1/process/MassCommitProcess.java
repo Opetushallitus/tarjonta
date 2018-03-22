@@ -114,7 +114,6 @@ public class MassCommitProcess {
         this.state = state;
     }
 
-    @Transactional
     public void run() {
         countHakukohde = 0;
         countKomoto = 0;
