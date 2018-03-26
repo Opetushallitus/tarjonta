@@ -66,7 +66,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
@@ -1163,17 +1162,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     public String getTutkintonimikeUri() {
-        int limit = 1;
-        if (this.tutkintonimikes.size() > limit) {
-            throw new RuntimeException(String.format("Not allowed error - Too many starting tutkintonimike objects, " +
-                "maybe you are using a wrong method? Expected at most %d tutkintonimike but got %d : %s"
-                , limit, tutkintonimikes.size(), tutkintonimikes.stream().map(KoodistoUri::getKoodiUri).collect(Collectors.toList())));
-        } else if (tutkintonimikes.isEmpty()) {
-            //at least parent komo's tutkintonimike can be null.
-            return null;
-        }
-
-        return tutkintonimikes.iterator().next().getKoodiUri();
+        return getTutkintonimikeUri(tutkintonimikes);
     }
 
     public void setTutkintonimikeUri(String tutkintonimike) {
