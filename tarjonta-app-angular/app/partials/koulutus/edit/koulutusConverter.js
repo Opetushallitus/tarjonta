@@ -584,8 +584,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         }
     });
     var NAYTTOTUTKINTO_STRUCTURE = angular.extend({}, GENERIC_STRUCTURE, {
-        koodistoDefaults: {
-            tutkintonimike: 'tutkintonimikkeet_00000'
+        RELATIONS: {
+            tutkintonimikes: {}
         },
         templates: {
             review: 'NAYTTOTUTKINTO',
@@ -1320,9 +1320,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             koulutustyyppiKoodiUri: 'koulutustyyppi_12'
         }),
         AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA: angular.extend({}, NAYTTOTUTKINTO_STRUCTURE, {
-            koodistoDefaults: {
-                tutkintonimike: 'tutkintonimikkeet_00000'
-            },
             koulutustyyppiKoodiUri: 'koulutustyyppi_13',
             RELATIONS: {
                 tutkintonimikes: {}

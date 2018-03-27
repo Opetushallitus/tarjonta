@@ -223,7 +223,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         assertEqualDtoKoodi(KOULUTUSKOODI, result.getKoulutuskoodi());
         assertEqualDtoKoodi(LAAJUUSARVO, result.getOpintojenLaajuusarvo());
         assertEqualDtoKoodi(LAAJUUSYKSIKKO, result.getOpintojenLaajuusyksikko());
-        assertEqualDtoKoodi(TUTKINTONIMIKE, result.getTutkintonimike());
+        assertEqualMetaDto(TUTKINTONIMIKE, result.getTutkintonimikes());
         assertEqualDtoKoodi(KOULUTUSLAJI, result.getKoulutuslaji());
         assertEqualDtoKoodi(TUTKINTO, result.getTutkinto());
 
@@ -292,7 +292,6 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
         dto.setKoulutuslaji(toKoodiUri(KOULUTUSLAJI));
-        dto.setTutkintonimike(toKoodiUri(TUTKINTONIMIKE));
         dto.setTutkintonimikes(getTutkintonimikes());
         dto.setJarjestavaOrganisaatio(new OrganisaatioV1RDTO(ORGANISATION_JARJESTAJA_OID, null, null));
         dto.setKoulutustyyppi(toKoodiUri(KOULUTUSTYYPPI));
