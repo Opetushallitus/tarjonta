@@ -66,6 +66,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
@@ -1437,6 +1439,17 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      */
     public void setKoulutuksenlaajuusUri(String koulutuksenlaajuusUri) {
         this.koulutuksenlaajuusUri = koulutuksenlaajuusUri;
+    }
+
+    public boolean alkaaEnnenReformia() {
+        if ((getKoulutuksenAlkamisPvms() == null || getKoulutuksenAlkamisPvms().isEmpty())
+                &&
+                (getAlkamisVuosi() == null || getAlkamisVuosi() >= 2018)) {
+            return false;
+        }
+
+        Date beginningOfJanuary2018 = Date.from(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("EET")).toInstant());
+        return getKoulutuksenAlkamisPvms().stream().allMatch(a -> a.before(beginningOfJanuary2018));
     }
 
 }

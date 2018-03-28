@@ -366,6 +366,31 @@ public class MassCommitProcess {
                     }
                 }
 
+                // 2018 reformia edeltävien koulutusten kopiointi reformin jälkeiselle alkamisajalle
+                if (!komoto.alkaaEnnenReformia()) {
+                    HashSet<KoodistoUri> newKoulutuslajis = new HashSet<>();
+                    for (KoodistoUri koulutuslaji : komoto.getKoulutuslajis()) {
+                        String koodiUri = koulutuslaji.getKoodiUri();
+                        if (!koodiUri.startsWith("koulutuslaji_a#")) {
+                            newKoulutuslajis.add(koulutuslaji);
+                        } else {
+                            LOG.info("Removing koulutuslaji {} from copied komoto {}", koodiUri, meta.getNewKomotoOid());
+                        }
+                    }
+                    komoto.setKoulutuslajis(newKoulutuslajis);
+
+                    List<ToteutustyyppiEnum> nayttotutkintoToteutustyypit = Arrays.asList(
+                            ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018,
+                            ToteutustyyppiEnum.AMMATTITUTKINTO,
+                            ToteutustyyppiEnum.ERIKOISAMMATTITUTKINTO);
+                    boolean onNayttotutkinto = nayttotutkintoToteutustyypit.contains(komoto.getToteutustyyppi());
+
+                    if (onNayttotutkinto && komoto.getJarjesteja() != null) {
+                        LOG.info("Setting jarjesteja to null in copied komoto {}, jarjesteja was {}", meta.getNewKomotoOid(), komoto.getJarjesteja());
+                        komoto.setJarjesteja(null);
+                    }
+                }
+
                 if (ToteutustyyppiEnum.KORKEAKOULUTUS.equals(komoto.getToteutustyyppi())) {
                     komoto = koulutusUtilService.copyKomotoAndKomo(
                             komoto, komoto.getTarjoaja(), meta.getNewKomotoOid(), meta.getNewKomoOid(), false, KoulutusKorkeakouluV1RDTO.class
