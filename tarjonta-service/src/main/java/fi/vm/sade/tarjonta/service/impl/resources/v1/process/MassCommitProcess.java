@@ -352,43 +352,7 @@ public class MassCommitProcess {
 
                 LOG.debug("convert json to entity by oid : {}, new oid : {}", oldKomotoOid, meta.getNewKomotoOid());
 
-                if (komoto.getValmistavaKoulutus() != null) {
-                    KoulutusmoduuliToteutus valmistava = komoto.getValmistavaKoulutus();
-                    valmistava.setKoulutusmoduuli(komoto.getKoulutusmoduuli());
-                    valmistava.setTila(TarjontaTila.KOPIOITU);
-                    valmistava.setId(null);
-                    valmistava.setHaunKopioinninTunniste(processId);
-                    try {
-                        valmistava.setOid(oidService.get(TarjontaOidType.KOMOTO));
-                    }
-                    catch (OIDCreationException e) {
-                        LOG.error("OID Service failed for valmistava koulutus", meta.getOriginalKomotoOid());
-                    }
-                }
-
-                // 2018 reformia edeltävien koulutusten kopiointi: poistetaan aikuiskoulutus ja näyttötutkinnon järjestäjä
-                HashSet<KoodistoUri> newKoulutuslajis = new HashSet<>();
-                for (KoodistoUri koulutuslaji : komoto.getKoulutuslajis()) {
-                    String koodiUri = koulutuslaji.getKoodiUri();
-                    if (!koodiUri.startsWith("koulutuslaji_a#")) {
-                        newKoulutuslajis.add(koulutuslaji);
-                    } else {
-                        LOG.info("Removing koulutuslaji {} from copied komoto {}", koodiUri, meta.getNewKomotoOid());
-                    }
-                }
-                komoto.setKoulutuslajis(newKoulutuslajis);
-
-                List<ToteutustyyppiEnum> nayttotutkintoToteutustyypit = Arrays.asList(
-                        ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018,
-                        ToteutustyyppiEnum.AMMATTITUTKINTO,
-                        ToteutustyyppiEnum.ERIKOISAMMATTITUTKINTO);
-                boolean onNayttotutkinto = nayttotutkintoToteutustyypit.contains(komoto.getToteutustyyppi());
-
-                if (onNayttotutkinto && komoto.getJarjesteja() != null) {
-                    LOG.info("Setting jarjesteja to null in copied komoto {}, jarjesteja was {}", meta.getNewKomotoOid(), komoto.getJarjesteja());
-                    komoto.setJarjesteja(null);
-                }
-
+                cleanKomotoForReformi2018(komoto, meta);
 
                 if (ToteutustyyppiEnum.KORKEAKOULUTUS.equals(komoto.getToteutustyyppi())) {
                     komoto = koulutusUtilService.copyKomotoAndKomo(
@@ -428,6 +392,41 @@ public class MassCommitProcess {
             }
         }
         indexKomotoIds.addAll(batchOfIndexIds);
+    }
+
+    // 2018 reformia edeltävien koulutusten kopiointi: poistetaan aikuiskoulutus, näyttötutkinnon järjestäjä, ja valmistava koulutus
+    private void cleanKomotoForReformi2018(KoulutusmoduuliToteutus komoto, MetaObject meta) {
+        HashSet<KoodistoUri> newKoulutuslajis = new HashSet<>();
+        for (KoodistoUri koulutuslaji : komoto.getKoulutuslajis()) {
+            String koodiUri = koulutuslaji.getKoodiUri();
+            if (!koodiUri.startsWith("koulutuslaji_a#")) {
+                newKoulutuslajis.add(koulutuslaji);
+            } else {
+                LOG.info("Removing koulutuslaji {} from copied komoto {}", koodiUri, meta.getNewKomotoOid());
+            }
+        }
+        komoto.setKoulutuslajis(newKoulutuslajis);
+
+        List<ToteutustyyppiEnum> nayttotutkintoToteutustyypit = Arrays.asList(
+                ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018,
+                ToteutustyyppiEnum.AMMATTITUTKINTO,
+                ToteutustyyppiEnum.ERIKOISAMMATTITUTKINTO);
+        boolean onNayttotutkinto = nayttotutkintoToteutustyypit.contains(komoto.getToteutustyyppi());
+
+        if (onNayttotutkinto && komoto.getJarjesteja() != null) {
+            LOG.info("Setting jarjesteja to null in copied komoto {}, jarjesteja was {}", meta.getNewKomotoOid(), komoto.getJarjesteja());
+            komoto.setJarjesteja(null);
+        }
+
+        List<ToteutustyyppiEnum> toteutustyypitJoiltaPoistettavaValmistavaKoultuus = Arrays.asList(
+                ToteutustyyppiEnum.AMMATTITUTKINTO,
+                ToteutustyyppiEnum.ERIKOISAMMATTITUTKINTO);
+        boolean onPoistettavaValmistavaKoulutus = toteutustyypitJoiltaPoistettavaValmistavaKoultuus.contains(komoto.getToteutustyyppi());
+
+        if (komoto.getValmistavaKoulutus() != null) {
+            LOG.info("Removing valmistavaKoulutus {} from copied komoto {}", komoto.getValmistavaKoulutus().getOid(), meta.getNewKomotoOid());
+            komoto.setValmistavaKoulutus(null);
+        }
     }
 
     private void insertHakukohdes(Set<String> oldOids, String processId, String targetHakuOid) {
