@@ -279,14 +279,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      * @return
      */
     public String getTutkintonimikeUri() {
-        if (this.tutkintonimikes.size() > 1) {
-            throw new RuntimeException("Not allowed error - Too many starting tutkintonimike objects, maybe you are using a wrong method?");
-        } else if (tutkintonimikes.isEmpty()) {
-            //at least parent komo's tutkintonimike can be null. 
-            return null;
-        }
-
-        return tutkintonimikes.iterator().next().getKoodiUri();
+        return BaseKoulutusmoduuli.getTutkintonimikeUri(tutkintonimikes);
     }
 
     public void setTutkintonimikeUri(String tutkintonimikeUri) {

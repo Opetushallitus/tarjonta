@@ -435,16 +435,9 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
                                             param
                                     )
                             );
-                    // Aseta myös yksittäinen "tutkintonimike"-kenttä, jotta vanha rajapinta ei hajoa
-                    ammDto.setTutkintonimike(commonConverter.convertToKoodiDTO(
-                            komo.getTutkintonimikeUri(),
-                            komoto.getTutkintonimikes().iterator().next().getKoodiUri(),
-                            FieldNames.TUTKINTONIMIKE,
-                            NO,
-                            param
-                    ));
                 } else {
-                    ammDto.setTutkintonimike(commonConverter.convertToKoodiDTO(komo.getTutkintonimikeUri(), komoto.getTutkintonimikeUri(), FieldNames.TUTKINTONIMIKE, NO, param));
+                    ammDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(getTutkintonimikes(komoto, komo),
+                        FieldNames.TUTKINTONIMIKE, param));
                 }
             }
 

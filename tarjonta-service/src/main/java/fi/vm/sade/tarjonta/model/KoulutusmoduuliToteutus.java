@@ -15,13 +15,14 @@
  */
 package fi.vm.sade.tarjonta.model;
 
+import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Ordering;
+
 import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.AutowireHelper;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.OpintopolkuAlkamiskausi;
@@ -30,13 +31,41 @@ import org.apache.commons.lang.time.DateUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.MapKeyEnumerated;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
-import java.util.*;
-
-import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
@@ -1133,14 +1162,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     public String getTutkintonimikeUri() {
-        if (this.tutkintonimikes.size() > 1) {
-            throw new RuntimeException("Not allowed error - Too many starting tutkintonimike objects, maybe you are using a wrong method?");
-        } else if (tutkintonimikes.isEmpty()) {
-            //at least parent komo's tutkintonimike can be null.
-            return null;
-        }
-
-        return tutkintonimikes.iterator().next().getKoodiUri();
+        return getTutkintonimikeUri(tutkintonimikes);
     }
 
     public void setTutkintonimikeUri(String tutkintonimike) {

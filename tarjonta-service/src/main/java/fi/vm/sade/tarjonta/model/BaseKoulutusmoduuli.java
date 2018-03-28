@@ -15,13 +15,21 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import java.util.Date;
-
-import javax.persistence.*;
-
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import java.io.Serializable;
+import java.util.Date;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Yhteinen abstrakti perusluokka (ei entiteetti) Koulutusmoduuli:lle seka
@@ -132,6 +140,20 @@ public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements 
 
     @Column(name = ULKOINEN_TUNNISTE_COLUMN_NAME)
     private String ulkoinenTunniste;
+
+    protected static String getTutkintonimikeUri(Set<KoodistoUri> tutkintonimikes) {
+        int limit = 1;
+        if (tutkintonimikes.size() > limit) {
+            throw new RuntimeException(String.format("Not allowed error - Too many starting tutkintonimike objects, " +
+                "maybe you are using a wrong method? Expected at most %d tutkintonimike but got %d : %s"
+                , limit, tutkintonimikes.size(), tutkintonimikes.stream().map(KoodistoUri::getKoodiUri).collect(Collectors.toList())));
+        } else if (tutkintonimikes.isEmpty()) {
+            //at least parent komo's tutkintonimike can be null.
+            return null;
+        }
+
+        return tutkintonimikes.iterator().next().getKoodiUri();
+    }
 
     @PreUpdate
     protected void beforeUpdate() {

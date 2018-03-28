@@ -27,8 +27,8 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
  */
 public abstract class NayttotutkintoV1RDTO extends KoulutusV1RDTO {
 
-    @ApiModelProperty(value = "Tutkintonimike", required = true)
-    private KoodiV1RDTO tutkintonimike;
+    @ApiModelProperty(value = "OPH tutkintonimike-koodit (korkeakoulutuksella eri koodistot kuin ammatillisella- ja lukio-koulutuksella)")
+    private KoodiUrisV1RDTO tutkintonimikes;
 
     @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan", required = false)
     private String linkkiOpetussuunnitelmaan;
@@ -77,15 +77,19 @@ public abstract class NayttotutkintoV1RDTO extends KoulutusV1RDTO {
     /**
      * @return the tutkintonimike
      */
-    public KoodiV1RDTO getTutkintonimike() {
-        return tutkintonimike;
+    public KoodiUrisV1RDTO getTutkintonimikes() {
+        if (this.tutkintonimikes == null) {
+            this.tutkintonimikes = new KoodiUrisV1RDTO();
+        }
+
+        return tutkintonimikes;
     }
 
     /**
-     * @param tutkintonimike the tutkintonimike to set
+     * @param tutkintonimikes the tutkintonimikes to set
      */
-    public void setTutkintonimike(KoodiV1RDTO tutkintonimike) {
-        this.tutkintonimike = tutkintonimike;
+    public void setTutkintonimikes(KoodiUrisV1RDTO tutkintonimikes) {
+        this.tutkintonimikes = tutkintonimikes;
     }
 
     /**

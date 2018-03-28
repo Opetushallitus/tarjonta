@@ -468,16 +468,7 @@ public class KoulutusDTOConverterToEntity {
                 komoto.setKoulutusohjelmaUri(commonConverter.convertToUri(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA));
             }
         }
-
-        komoto.setTutkintonimikeUri(commonConverter.convertToUri(dto.getTutkintonimike(), FieldNames.TUTKINTONIMIKE, ALLOW_NULL_KOODI_URI));
-
-        if (dto instanceof KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) {
-            komoto.setTutkintonimikes(commonConverter.convertToUris(
-                ((KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto).getTutkintonimikes(),
-                null,
-                FieldNames.TUTKINTONIMIKE)
-            );
-        }
+        komoto.setTutkintonimikes(commonConverter.convertToUris(dto.getTutkintonimikes(), null, FieldNames.TUTKINTONIMIKE));
 
         if (dto.getOpetuskielis() != null) {
             komoto.getOpetuskielis().clear();
