@@ -87,6 +87,7 @@ public enum KoulutusValidationMessages {
     KOULUTUS_TARJOAJA_INVALID("organisaatio.oid"),
     KOULUTUS_JARJESTAJA_MISSING("organisaatio.oid"),
     KOULUTUS_JARJESTAJA_INVALID("organisaatio.oid"),
+    KOULUTUS_JARJESTAJA_NOT_ALLOWED("organisaatio.oid"),
     KOULUTUS_INVALID_TRANSITION(""),
     //kesto 
     KOULUTUS_SUUNNITELTU_KESTO_VALUE_MISSING("suunniteltuKestoArvo"),

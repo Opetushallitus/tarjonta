@@ -441,6 +441,11 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
             add(doc, KOULUTUSLAJI_EN, metadata.getNimi());
 
             add(doc, KOULUTUSLAJI_URIS, koulutusmoduuliToteutus.getKoulutuslajis().iterator().next().getKoodiUri());
+        } else {
+            doc.removeField(KOULUTUSLAJI_FI);
+            doc.removeField(KOULUTUSLAJI_SV);
+            doc.removeField(KOULUTUSLAJI_EN);
+            doc.removeField(KOULUTUSLAJI_URIS);
         }
     }
 

@@ -420,7 +420,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
                     break;
             }
 
-            ammDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
+            ammDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, YES, param));
 
             if (!getTutkintonimikes(komoto, komo).isEmpty()
                     || !StringUtils.isBlank(komo.getTutkintonimikeUri())

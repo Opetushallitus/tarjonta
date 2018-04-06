@@ -152,7 +152,7 @@ app.controller('EditNayttotutkintoController', function($routeParams, $scope, $l
         uiModel: {
             //custom stuff
             toggleTabs: false,
-            cbShowValmistavaKoulutus: true,
+            cbShowValmistavaKoulutus: false,
             enableOsaamisala: false,
             koulutusohjelma: [],
             tutkintoModules: {},
@@ -181,7 +181,7 @@ app.controller('EditNayttotutkintoController', function($routeParams, $scope, $l
                 }
                 uiModel.enableOsaamisala = angular.isDefined(model.koulutusohjelma.uri);
             }
-            else if ($routeParams.org) {
+            else if ($routeParams.org && model.koulutusOnEnnen2018Reformia) {
                 $scope.initValmistavaKoulutus(model, uiModel, vkUiModel);
             }
             //Ui model for editValmistavaKoulutusPerustiedot and eeditValmistavaKoulutusLisatiedot pages (special case)

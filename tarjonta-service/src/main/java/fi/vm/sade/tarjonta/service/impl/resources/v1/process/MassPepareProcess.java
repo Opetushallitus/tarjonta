@@ -145,6 +145,7 @@ public class MassPepareProcess {
             flushHakukohdeBatch(processId, fromOid, batch);
 
             getState().getParameters().put("result", "success");
+            LOG.info("Prepare succeeded");
         } catch (Throwable ex) {
             LOG.error("Copy failed", ex);
 

@@ -411,8 +411,11 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
     }
 
     private void addKoulutuslajit(SolrInputDocument doc, List<String> koodistoUris) {
-        if (koodistoUris == null) {
-            return;
+        if (koodistoUris == null || koodistoUris.isEmpty()) {
+            doc.removeField(KOULUTUSLAJI_URIS);
+            doc.removeField(KOULUTUSLAJI_FI);
+            doc.removeField(KOULUTUSLAJI_SV);
+            doc.removeField(KOULUTUSLAJI_EN);
         }
 
         for (String uri : koodistoUris) {

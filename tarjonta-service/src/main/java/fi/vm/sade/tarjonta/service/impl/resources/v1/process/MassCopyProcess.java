@@ -120,6 +120,7 @@ public class MassCopyProcess implements ProcessDefinition {
                 }
             }
             parameters.put("result", "success");
+            LOG.info("Copy succeeded for params haku oid : '{}', process id '{}'", fromOid, getState().getId());
         } catch(Throwable ex) {
             LOG.error("Copy failed", ex);
             getState().setMessageKey("my.test.process.error");

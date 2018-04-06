@@ -7,7 +7,7 @@ angular.module('Yhteyshenkilo', [
         var plainUrls = window.urls().noEncode();
 
         $log = $log.getInstance('YhteyshenkiloService');
-        var henkHaku = $resource(plainUrls.url("oppijanumerorekisteri-service.henkilo", {count:2000, passivoitu:false, duplikaatti:false, tyyppi:"VIRKAILIJA"}), {}, {
+        var henkHaku = $resource(plainUrls.url("oppijanumerorekisteri-service.henkilo", {page:1, count:2000, passivoitu:false, duplikaatti:false, tyyppi:"VIRKAILIJA"}), {}, {
             cache: true,
             get: {
                 method: 'GET',

@@ -24,7 +24,7 @@ app.controller('EditYhteyshenkiloCtrl', [
             $scope.yhteyshenkilot = [];
 
             YhteyshenkiloService.etsi({
-                org: [orgOid]
+                organisaatioOids: [orgOid]
             }).then(function(yhteyshenkilot) {
                 if (yhteyshenkilot !== undefined) {
                     $scope.yhteyshenkilot = yhteyshenkilot;
