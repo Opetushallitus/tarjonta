@@ -25,9 +25,6 @@ import java.util.List;
  */
 @ApiModel(value = "Organisaation/tarjoajan syötämiseen ja näyttämiseen käytettävä rajapintaolio")
 public class OrganisaatioV1RDTO extends BaseV1RDTO {
-
-    @ApiModelProperty(value = "Organisaation yksilöivä tunniste", required = true)
-    private String oid;
     private String nimi;
     private List<LokalisointiV1RDTO> _nimet;
 
@@ -61,20 +58,6 @@ public class OrganisaatioV1RDTO extends BaseV1RDTO {
 
     public void setNimet(List<LokalisointiV1RDTO> _nimet) {
         this._nimet = _nimet;
-    }
-
-    /**
-     * @return the oid
-     */
-    public String getOid() {
-        return oid;
-    }
-
-    /**
-     * @param oid the oid to set
-     */
-    public void setOid(String oid) {
-        this.oid = oid;
     }
 
     /**

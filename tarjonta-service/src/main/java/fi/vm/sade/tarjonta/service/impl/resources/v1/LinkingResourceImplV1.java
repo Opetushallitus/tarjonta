@@ -1,8 +1,13 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.KOULUTUS;
+import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.LINK_KOULUTUS;
+import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.UNLINK_KOULUTUS;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import fi.vm.sade.auditlog.Changes;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
@@ -29,8 +34,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
-import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.*;
 
 /**
  * TODO, authorization!!
@@ -147,8 +150,8 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
                         removeAlamoduulitByKomoOid(childKomoOid, parentKomo.getSisaltyvyysList());
                     }
 
-                    AuditLog.log(UNLINK_KOULUTUS, KOULUTUS, parentKomoOid, null, null,
-                            request, ImmutableMap.of("linkOids", paramChildOids.toString()));
+                    AuditLog.log(UNLINK_KOULUTUS, KOULUTUS, parentKomoOid, Changes.EMPTY,
+                        request, ImmutableMap.of("linkOids", paramChildOids.toString()));
                 }
             }
         } else {
@@ -226,8 +229,8 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
                         parentKomo, komo, ValintaTyyppi.ALL_OFF);
                 koulutusSisaltyvyysDAO.insert(sisaltyvyys);
             }
-            AuditLog.log(LINK_KOULUTUS, KOULUTUS, parent, null, null,
-                    request, ImmutableMap.of("linkOids", children.toString()));
+            AuditLog.log(LINK_KOULUTUS, KOULUTUS, parent, Changes.EMPTY,
+                request, ImmutableMap.of("linkOids", children.toString()));
         }
         return result;
     }
