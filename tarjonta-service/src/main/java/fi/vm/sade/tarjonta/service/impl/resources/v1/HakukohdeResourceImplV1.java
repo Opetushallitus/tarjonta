@@ -14,17 +14,38 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.ADD_KOULUTUS_TO_HAKUKOHDE;
+import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.HAKUKOHDE;
+import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.MODIFY_RYHMAT;
+import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.REMOVE_KOULUTUS_FROM_HAKUKOHDE;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang.StringUtils.substringBefore;
+import static org.apache.commons.lang.StringUtils.trimToEmpty;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiParam;
+
+import fi.vm.sade.auditlog.Changes;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakuaika;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
+import fi.vm.sade.tarjonta.model.KoulutusOwner;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutusTarjoajatiedot;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.Ryhmaliitos;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
+import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
@@ -40,9 +61,29 @@ import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.Hakuko
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidator;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRyhmaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeValintaperusteetV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusTarjoajaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusmoduuliTarjoajatiedotV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ValitutKoulutuksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
-import fi.vm.sade.tarjonta.service.search.*;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
+import fi.vm.sade.tarjonta.service.search.HakukohdeSearchService;
+import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.service.search.IndexerResource;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
+import fi.vm.sade.tarjonta.service.search.KoulutusSearchService;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
@@ -64,11 +105,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
-
-import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.*;
-import static org.apache.commons.lang.StringUtils.*;
 
 public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
@@ -1224,7 +1269,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             LOG.info("indexing hakukohde {}", hakukohdeOid);
             indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
 
-            AuditLog.log(ADD_KOULUTUS_TO_HAKUKOHDE, HAKUKOHDE, hakukohdeOid, null, null, request,
+            AuditLog.log(ADD_KOULUTUS_TO_HAKUKOHDE, HAKUKOHDE, hakukohdeOid, Changes.EMPTY, request,
                     ImmutableMap.of("addedKomotos", liitettavatKomotot.stream().map(k -> k.getOid()).collect(Collectors.joining(", "))));
 
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
@@ -1359,8 +1404,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             }
         }
 
-        AuditLog.log(REMOVE_KOULUTUS_FROM_HAKUKOHDE, HAKUKOHDE, hakukohde.getOid(), null, null,
-                request, ImmutableMap.of("addedKomotos", komotoToRemove.stream().map(k -> k.getOid()).collect(Collectors.joining(", "))));
+        AuditLog.log(REMOVE_KOULUTUS_FROM_HAKUKOHDE, HAKUKOHDE, hakukohde.getOid(), Changes.EMPTY,
+            request, ImmutableMap.of("addedKomotos", komotoToRemove.stream().map(k -> k.getOid()).collect(Collectors.joining(", "))));
 
         resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
         resultV1RDTO.setResult(getKomotoOids(koulutukses));
@@ -1441,8 +1486,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
             }
 
-            AuditLog.log(MODIFY_RYHMAT, HAKUKOHDE, hakukohde.getOid(), null, null,
-                    request, ImmutableMap.of("ryhmaOperation", operation.toString()));
+            AuditLog.log(MODIFY_RYHMAT, HAKUKOHDE, hakukohde.getOid(), Changes.EMPTY,
+                request, ImmutableMap.of("ryhmaOperation", operation.toString()));
         }
 
         return result;

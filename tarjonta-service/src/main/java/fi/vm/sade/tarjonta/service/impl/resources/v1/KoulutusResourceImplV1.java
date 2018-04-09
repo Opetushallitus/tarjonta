@@ -31,6 +31,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import fi.vm.sade.auditlog.Changes;
 import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
@@ -1630,7 +1631,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 koulutusmoduuliToteutusDAO.update(komoto);
 
                 KoulutusV1RDTO dtoAfterOperation = auditHelper.getKomotoAsDto(komoto);
-                AuditLog.log(AuditLog.MOVE, KOULUTUS, dtoAfterOperation.getOid(), dtoAfterOperation, originalKoulutusDto, request);
+                AuditLog.log(AuditLog.MOVE, KOULUTUS, dtoAfterOperation.getOid(), Changes.updatedDto(dtoAfterOperation, originalKoulutusDto), request);
 
                 result.getResult().getTo().add(new KoulutusCopyStatusV1RDTO(komoto.getOid(), orgOid));
                 indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));

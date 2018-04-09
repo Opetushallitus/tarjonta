@@ -35,7 +35,7 @@ public class BaseV1RDTO implements Serializable {
     private String modifiedBy;
 
     @ApiModelProperty(value = "Objektin yksilöivä tunniste", required = true)
-    private String oid;
+    protected String oid;
 
     @ApiModelProperty(value = "Objektin versio numero", required = true)
     private Long version;
