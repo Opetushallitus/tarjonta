@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import fi.vm.sade.auditlog.*;
+import fi.vm.sade.javautils.http.HttpServletRequestUtils;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.BaseV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -158,10 +159,9 @@ public final class AuditLog {
 
     public static InetAddress getInetAddress(HttpServletRequest request) {
         try {
-            return InetAddress.getByName(request.getRemoteAddr());
-        } catch(Exception e) {
-            LOG.error("Couldn't log InetAddress for log entry", e);
-            return null;
+            return InetAddress.getByName(HttpServletRequestUtils.getRemoteAddress(request));
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
         }
     }
 
