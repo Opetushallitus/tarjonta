@@ -473,6 +473,11 @@
             <version>${generic-common.version}</version>
         </dependency>
         <dependency>
+            <groupId>fi.vm.sade.java-utils</groupId>
+            <artifactId>java-http</artifactId>
+            <version>0.1.2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>com.mysema.commons</groupId>
             <artifactId>mysema-commons-lang</artifactId>
             <version>${mysema-commons-lang.version}</version>
