@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.service.auditlog;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -229,17 +230,17 @@ public final class AuditLog {
             String prettyPath = path.asText().substring(1).replaceAll("/", ".");
             switch (operation.asText()) {
                 case "add": {
-                    builder.added(prettyPath, value.asText());
+                    builder.added(prettyPath, toString(value));
                     break;
                 }
                 case "remove": {
                     JsonNode oldValue = beforeJson.at(path.asText());
-                    builder.removed(prettyPath, oldValue.asText());
+                    builder.removed(prettyPath, toString(oldValue));
                     break;
                 }
                 case "replace": {
                     JsonNode oldValue = beforeJson.at(path.asText());
-                    builder.updated(prettyPath, oldValue.asText(), value.asText());
+                    builder.updated(prettyPath, toString(oldValue), toString(value));
                     break;
                 }
             }
@@ -308,4 +309,14 @@ public final class AuditLog {
         }
     }
 
+    private static String toString(JsonNode value) {
+        if (value.isTextual() || value.isBoolean() || value.isNumber()) {
+            return value.asText();
+        }
+        try {
+            return mapper.writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

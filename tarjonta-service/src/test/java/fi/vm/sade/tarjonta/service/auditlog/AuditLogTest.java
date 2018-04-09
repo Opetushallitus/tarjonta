@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import fi.vm.sade.auditlog.Changes;
@@ -99,6 +100,26 @@ public class AuditLogTest {
         assertEquals(jsonObject.get("shortString").getAsJsonObject().get("newValue").getAsString(), "wasp");
     }
 
+    @Test
+    public void testJsonPatchDiffWithNestedObject() throws IOException {
+        String changedJsonString = "{" +
+                " \"longString\": \"" + longString + "\"," +
+                " \"shortString\": \"bee\"," +
+                " \"number\": 99," +
+                " \"array\": [ \"" + longString + "\" ], " +
+                " \"nested\" : { \"foo\": \"bar\" }"+
+                "}";
+
+        JsonNode json = mapper.readTree(jsonString);
+        JsonNode jsonChanged = mapper.readTree(changedJsonString);
+        Changes.Builder builder = new Changes.Builder();
+        AuditLog.jsonDiffToChanges(builder, json, jsonChanged);
+        Changes build = builder.build();
+
+        JsonObject jsonObject = build.asJson();
+        assertNull(jsonObject.get("nested").getAsJsonObject().get("oldValue"));
+        assertEquals("\"{\\\"foo\\\":\\\"bar\\\"}\"", jsonObject.get("nested").getAsJsonObject().get("newValue").toString());
+    }
 
     private String createLongString() {
         int length = 33000;
