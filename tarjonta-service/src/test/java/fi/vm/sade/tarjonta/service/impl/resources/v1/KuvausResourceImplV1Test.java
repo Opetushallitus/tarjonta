@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import fi.vm.sade.tarjonta.TestMockBase;
+import fi.vm.sade.tarjonta.helpers.HttpTestHelper;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;

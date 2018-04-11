@@ -11,6 +11,7 @@ import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.helpers.HttpTestHelper;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
 import fi.vm.sade.tarjonta.model.KoulutusPermissionType;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
