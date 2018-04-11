@@ -34,7 +34,7 @@ public abstract class NayttotutkintoV1RDTO extends KoulutusV1RDTO {
     private static final Date beginningOfJanuary2018 = Date.from(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("EET")).toInstant());
 
     @ApiModelProperty(value = "OPH tutkintonimike-koodit (korkeakoulutuksella eri koodistot kuin ammatillisella- ja lukio-koulutuksella)")
-    protected KoodiUrisV1RDTO tutkintonimikes;
+    private KoodiUrisV1RDTO tutkintonimikes;
 
     @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan", required = false)
     private String linkkiOpetussuunnitelmaan;
