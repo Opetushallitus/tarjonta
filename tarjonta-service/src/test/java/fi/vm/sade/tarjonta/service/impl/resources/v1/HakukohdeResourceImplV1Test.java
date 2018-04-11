@@ -1,6 +1,5 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -72,7 +71,7 @@ public class HakukohdeResourceImplV1Test {
     @Autowired
     private ParameterServices parameterServices;
 
-    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpTestHelper httpTestHelper = new HttpTestHelper(true);
     private HttpServletRequest request = httpTestHelper.request;
 
     private String hakukohdeOid = "hakukohde_oid";

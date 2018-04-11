@@ -39,7 +39,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -66,7 +65,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
 
     private static final String ORGANISATION_JARJESTAJA_OID = "organisaatio_jarjestaja_oid";
     private static final String VALMENTAVA_KOMOTO_OID = "valmentava_komoto_oid";
-    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpTestHelper httpTestHelper = new HttpTestHelper(true);
     private HttpServletRequest request = httpTestHelper.request;
 
     @Before

@@ -69,7 +69,7 @@ public class MassCopyTest extends TestUtilityBase {
     @Autowired
     ApplicationContext applicationContext;
 
-    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpTestHelper httpTestHelper = new HttpTestHelper(true);
     private HttpServletRequest request = httpTestHelper.request;
 
     @Before
@@ -296,6 +296,7 @@ public class MassCopyTest extends TestUtilityBase {
         ProcessV1RDTO state = ProcessV1RDTO.generate();
         HashMap<String, String> params = new HashMap<>();
         params.put(MassCopyProcess.SELECTED_HAKU_OID, hakuOid);
+        params.put(MassCopyProcess.USER_OID, "1.2.246.562.24.11111111111");
         state.setParameters(params);
         try {
             state.setIp(InetAddress.getByName("10.0.0.2"));

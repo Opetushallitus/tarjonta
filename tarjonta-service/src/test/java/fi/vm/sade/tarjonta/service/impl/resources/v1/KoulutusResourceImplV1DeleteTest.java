@@ -34,7 +34,6 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
@@ -65,7 +64,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
 
     private static final String KOMO2_OID = "another_komo_oid";
     private static final String KOMOTO2_OID = "another_komoto_oid";
-    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpTestHelper httpTestHelper = new HttpTestHelper(true);
     private HttpServletRequest request = httpTestHelper.request;
 
     private Hakukohde hakukohde;

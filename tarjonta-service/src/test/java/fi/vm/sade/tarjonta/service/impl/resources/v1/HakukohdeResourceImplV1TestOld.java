@@ -55,7 +55,7 @@ public class HakukohdeResourceImplV1TestOld extends TestUtilityBase {
     @Autowired
     private TarjontaKoodistoHelper koodistoHelper;
 
-    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpTestHelper httpTestHelper = new HttpTestHelper(true);
     private HttpServletRequest request = httpTestHelper.request;
 
     @Before

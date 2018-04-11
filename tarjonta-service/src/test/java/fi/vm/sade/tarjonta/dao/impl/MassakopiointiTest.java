@@ -35,7 +35,6 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +64,7 @@ public class MassakopiointiTest extends TestData {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MassakopiointiTest.class);
     private static final Date DATE_2014 = (new DateTime(KOULUTUS_START_DATE)).plusYears(1).toDate();
-    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpTestHelper httpTestHelper = new HttpTestHelper(true);
     private HttpServletRequest request = httpTestHelper.request;
 
     @Autowired
