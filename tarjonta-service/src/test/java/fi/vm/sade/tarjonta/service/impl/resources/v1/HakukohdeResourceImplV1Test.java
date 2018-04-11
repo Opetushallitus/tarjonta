@@ -72,7 +72,8 @@ public class HakukohdeResourceImplV1Test {
     @Autowired
     private ParameterServices parameterServices;
 
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpServletRequest request = httpTestHelper.request;
 
     private String hakukohdeOid = "hakukohde_oid";
 

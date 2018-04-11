@@ -37,7 +37,8 @@ public class ImplicitDataPopulatorTest extends LukioV1Test {
     @Autowired
     KoodiService koodiService;
 
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpServletRequest request = httpTestHelper.request;
 
     @Before
     public void init() {

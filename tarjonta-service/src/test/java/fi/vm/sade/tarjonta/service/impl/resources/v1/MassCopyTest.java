@@ -34,6 +34,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -67,8 +69,8 @@ public class MassCopyTest extends TestUtilityBase {
     @Autowired
     ApplicationContext applicationContext;
 
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-
+    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpServletRequest request = httpTestHelper.request;
 
     @Before
     public void before() {
@@ -295,6 +297,11 @@ public class MassCopyTest extends TestUtilityBase {
         HashMap<String, String> params = new HashMap<>();
         params.put(MassCopyProcess.SELECTED_HAKU_OID, hakuOid);
         state.setParameters(params);
+        try {
+            state.setIp(InetAddress.getByName("10.0.0.2"));
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
 
         MassPepareProcess prepareProcess = applicationContext.getBean(MassPepareProcess.class);
         prepareProcess.setState(state);

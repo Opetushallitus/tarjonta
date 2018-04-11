@@ -60,7 +60,8 @@ public class HakuResourceImplV1Test extends TestMockBase {
     private UriInfo uriInfo;
     private MultivaluedMap<String, String> queryParams = new MultivaluedHashMap();
     private AuditHelper audithelper = mock(AuditHelper.class);
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpServletRequest request = httpTestHelper.request;
 
     @Before
     public void setUp() throws Exception {

@@ -65,7 +65,8 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
 
     private static final String KOMO2_OID = "another_komo_oid";
     private static final String KOMOTO2_OID = "another_komoto_oid";
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpServletRequest request = httpTestHelper.request;
 
     private Hakukohde hakukohde;
     private Haku haku;

@@ -58,8 +58,8 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("embedded-solr")
 @Transactional()
 public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
-
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpServletRequest request = httpTestHelper.request;
 
     @Before
     public void setUp() throws OIDCreationException {

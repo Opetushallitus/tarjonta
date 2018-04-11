@@ -20,7 +20,8 @@ public class KuvausResourceImplV1Test extends TestMockBase {
 
     @InjectMocks
     private KuvausResourceImplV1 kuvausResource;
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpServletRequest request = httpTestHelper.request;
 
 
     private ValintaperusteSoraKuvaus getDummyValintaperustekuvaus() {

@@ -81,7 +81,8 @@ public class AmmattitutkintoV1Test {
 
     private static final String KOULUTUSKOODI = "koulutus_ammattitutkinto";
     private static final String KOMO_OID = "ammattitutkintoKomoOid";
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpServletRequest request = httpTestHelper.request;
 
     @Before
     public void init() {

@@ -66,7 +66,8 @@ public class KorkeakoulutusV1Test {
     KoodiService koodiService;
 
     private static final String KOULUTUSKOODI = "koulutus_testikoodi";
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpServletRequest request = httpTestHelper.request;
 
 
     @Before

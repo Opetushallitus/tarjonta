@@ -100,7 +100,8 @@ public class AmmatillinenPerustutkintoV1Test {
     private static final String OSAAMISALA = "osaamisala_x";
     private static final String KOMO_OID = "ammKomoOid";
     private static final String TUTKINTONIMIKE = "tutkintonimike_x";
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpServletRequest request = httpTestHelper.request;
 
     @Before
     public void init() {
