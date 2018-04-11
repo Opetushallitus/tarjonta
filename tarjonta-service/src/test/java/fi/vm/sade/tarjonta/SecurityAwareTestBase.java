@@ -30,7 +30,7 @@ abstract public class SecurityAwareTestBase extends TestUtilityBase {
      */
     @Before
     public void before() {
-        setCurrentUser("ophadmin", getAuthority("APP_" + TarjontaPermissionServiceImpl.TARJONTA + "_CRUD", ophOid));
+        setCurrentUser("1.2.246.562.24.22222222222", getAuthority("APP_" + TarjontaPermissionServiceImpl.TARJONTA + "_CRUD", ophOid));
         OidProvider oidProvider = Mockito.mock(OidProvider.class);
         
         Mockito.stub(oidProvider.getSelfAndParentOids(ophOid)).toReturn(
