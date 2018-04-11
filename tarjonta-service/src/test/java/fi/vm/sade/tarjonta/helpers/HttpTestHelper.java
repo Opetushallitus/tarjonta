@@ -1,4 +1,4 @@
-package fi.vm.sade.tarjonta.service.impl.resources.v1;
+package fi.vm.sade.tarjonta.helpers;
 
 import static org.mockito.Mockito.when;
 
