@@ -66,7 +66,8 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
 
     private static final String ORGANISATION_JARJESTAJA_OID = "organisaatio_jarjestaja_oid";
     private static final String VALMENTAVA_KOMOTO_OID = "valmentava_komoto_oid";
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpServletRequest request = httpTestHelper.request;
 
     @Before
     public void setUp() throws OIDCreationException {

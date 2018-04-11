@@ -62,7 +62,8 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
     private OrganisaatioRDTO organisaatioDTO = new OrganisaatioRDTO();
     private HakukohdeDAO hakukohdeDAO;
     private AuditHelper auditHelper;
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpServletRequest request = httpTestHelper.request;
 
     @Before
     public void setUp() throws OIDCreationException {

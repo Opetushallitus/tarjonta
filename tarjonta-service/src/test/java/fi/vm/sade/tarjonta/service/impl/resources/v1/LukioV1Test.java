@@ -83,7 +83,8 @@ public class LukioV1Test {
     private static final String KOULUTUSKOODI = "koulutus_yo";
     private static final String LUKIOLINJA = "lukionlinja_x";
     private static final String KOMO_OID = "lukioKomoOid";
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpServletRequest request = httpTestHelper.request;
 
     @Before
     public void init() {

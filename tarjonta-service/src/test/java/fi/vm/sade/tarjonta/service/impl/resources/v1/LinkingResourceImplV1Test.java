@@ -27,7 +27,8 @@ import java.util.Set;
 @ActiveProfiles("embedded-solr")
 @Transactional()
 public class LinkingResourceImplV1Test extends TestUtilityBase {
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpServletRequest request = httpTestHelper.request;
 
     @Test
     public void testLinkingActions() {

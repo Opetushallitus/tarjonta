@@ -24,6 +24,7 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.HttpTestHelper;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -64,7 +65,8 @@ public class MassakopiointiTest extends TestData {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MassakopiointiTest.class);
     private static final Date DATE_2014 = (new DateTime(KOULUTUS_START_DATE)).plusYears(1).toDate();
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpServletRequest request = httpTestHelper.request;
 
     @Autowired
     private HakukohdeDAOImpl hakukohdeDAO;

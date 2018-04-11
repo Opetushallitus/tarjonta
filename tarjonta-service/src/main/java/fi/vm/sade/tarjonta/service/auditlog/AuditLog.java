@@ -3,7 +3,12 @@ package fi.vm.sade.tarjonta.service.auditlog;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import fi.vm.sade.auditlog.*;
+import fi.vm.sade.auditlog.ApplicationType;
+import fi.vm.sade.auditlog.Audit;
+import fi.vm.sade.auditlog.Changes;
+import fi.vm.sade.auditlog.Operation;
+import fi.vm.sade.auditlog.Target;
+import fi.vm.sade.auditlog.User;
 import fi.vm.sade.javautils.http.HttpServletRequestUtils;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.BaseV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
@@ -131,17 +136,11 @@ public final class AuditLog {
     }
 
     private static User getUser(@Nonnull HttpServletRequest request) {
-        try {
-            String userAgent = getUserAgentHeader(request);
-            String session = getSession(request);
-            InetAddress ip = getInetAddress(request);
-            String userOid = getUserOidFromSession();
-            return getUser(userOid, ip, session, userAgent);
-        } catch(Exception e) {
-            LOG.error("Recording anonymous user", e);
-            return ANONYMOUS_USER;
-        }
-
+        String userAgent = getUserAgentHeader(request);
+        String session = getSession(request);
+        InetAddress ip = getInetAddress(request);
+        String userOid = getUserOidFromSession();
+        return getUser(userOid, ip, session, userAgent);
     }
 
     private static String getUserAgentHeader(HttpServletRequest request) {
@@ -149,12 +148,7 @@ public final class AuditLog {
     }
 
     public static String getSession(HttpServletRequest request) {
-        try {
-            return request.getSession(false).getId();
-        } catch(Exception e) {
-            LOG.error("Couldn't log session for requst {}", request);
-            return null;
-        }
+        return request.getSession(false).getId();
     }
 
     public static InetAddress getInetAddress(HttpServletRequest request) {
@@ -187,19 +181,10 @@ public final class AuditLog {
     }
 
     private static User getUser(String userOid, InetAddress ip, String session, String userAgent) {
-        Oid oid;
-        try {
-            oid = getOid(userOid);
-        } catch(Exception e) {
-            LOG.error("Recording anonymous user", e);
-            oid = DUMMYOID;
-        }
         return new User(
-                oid,
-                ip != null ? ip : InetAddress.getLoopbackAddress(),
-                session != null ? session : UNKNOWN_SESSION,
-                userAgent != null ? userAgent : UNKNOWN_USER_AGENT
-        );
-
+            getOid(userOid),
+            ip,
+            session,
+            userAgent);
     }
 }
