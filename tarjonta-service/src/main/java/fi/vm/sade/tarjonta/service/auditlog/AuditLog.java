@@ -55,23 +55,6 @@ public final class AuditLog {
     private static final Audit AUDITLOG = new Audit(new AuditLogger(), "tarjonta", ApplicationType.BACKEND);
     private static final Logger LOG = LoggerFactory.getLogger(AuditLog.class);
 
-    public static final String UNKNOWN_USER_AGENT = "Unknown user agent";
-    private static final String DUMMYOID_STR = "1.2.999.999.99.99999999999";
-    private static final String UNKNOWN_SESSION = "Unknown session";
-    private static final User ANONYMOUS_USER;
-    private static Oid DUMMYOID;
-
-    static {
-        User anon = null;
-        try {
-            DUMMYOID = new Oid(DUMMYOID_STR);
-            anon = new User(DUMMYOID, InetAddress.getByName(""), null, null);
-        } catch(GSSException | UnknownHostException e) {
-            LOG.error("Creating anonymous anon failed", e);
-        }
-        ANONYMOUS_USER = anon;
-    }
-
     @PreDestroy
     public void destroy() {
         AUDITLOG.logStopped();
