@@ -27,7 +27,6 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ActiveProfiles;
@@ -83,7 +82,7 @@ public class LukioV1Test {
     private static final String KOULUTUSKOODI = "koulutus_yo";
     private static final String LUKIOLINJA = "lukionlinja_x";
     private static final String KOMO_OID = "lukioKomoOid";
-    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpTestHelper httpTestHelper = new HttpTestHelper(true);
     private HttpServletRequest request = httpTestHelper.request;
 
     @Before

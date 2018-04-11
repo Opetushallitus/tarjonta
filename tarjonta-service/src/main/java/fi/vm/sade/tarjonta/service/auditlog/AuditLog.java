@@ -159,15 +159,6 @@ public final class AuditLog {
         }
     }
 
-    public static Oid getOid(String usernameFromSession) {
-        try {
-            return new Oid(usernameFromSession);
-        } catch(Exception e) {
-            LOG.error("Couldn't log oid {} for log entry", usernameFromSession, e);
-            return null;
-        }
-    }
-
     public static String getUserOidFromSession() {
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null) {
@@ -181,10 +172,14 @@ public final class AuditLog {
     }
 
     private static User getUser(String userOid, InetAddress ip, String session, String userAgent) {
-        return new User(
-            getOid(userOid),
-            ip,
-            session,
-            userAgent);
+        try {
+            return new User(
+                new Oid(userOid),
+                ip,
+                session,
+                userAgent);
+        } catch (GSSException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

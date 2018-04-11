@@ -26,7 +26,6 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ActiveProfiles;
@@ -81,7 +80,7 @@ public class AmmattitutkintoV1Test {
 
     private static final String KOULUTUSKOODI = "koulutus_ammattitutkinto";
     private static final String KOMO_OID = "ammattitutkintoKomoOid";
-    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpTestHelper httpTestHelper = new HttpTestHelper(true);
     private HttpServletRequest request = httpTestHelper.request;
 
     @Before

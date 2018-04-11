@@ -8,7 +8,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,7 +19,7 @@ public class KuvausResourceImplV1Test extends TestMockBase {
 
     @InjectMocks
     private KuvausResourceImplV1 kuvausResource;
-    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpTestHelper httpTestHelper = new HttpTestHelper(true);
     private HttpServletRequest request = httpTestHelper.request;
 
 

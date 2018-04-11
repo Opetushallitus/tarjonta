@@ -62,7 +62,7 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
     private OrganisaatioRDTO organisaatioDTO = new OrganisaatioRDTO();
     private HakukohdeDAO hakukohdeDAO;
     private AuditHelper auditHelper;
-    private HttpTestHelper httpTestHelper = new HttpTestHelper();
+    private HttpTestHelper httpTestHelper = new HttpTestHelper(true);
     private HttpServletRequest request = httpTestHelper.request;
 
     @Before
