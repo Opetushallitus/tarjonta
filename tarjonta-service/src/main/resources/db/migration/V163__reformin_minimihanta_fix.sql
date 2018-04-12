@@ -13,12 +13,14 @@
 -- Ammatilliseen peruskoulutukseen valmentava koulutus (VALMA) erityisopetuksena (19) AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA
 
 insert into koulutusmoduuli_toteutus_koulutuslaji(koulutusmoduuli_toteutus_id, koodi_uri)
-    with komoto_ids_array as (SELECT ARRAY(SELECT komoto.id FROM koulutusmoduuli_toteutus as komoto
-          where komoto.alkamisvuosi = 2018
-              and komoto.toteutustyyppi in ('LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA',
-                                            'AIKUISTEN_PERUSOPETUS',
-                                            'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA')
-              and komoto.koulutustyyppi_uri is not null
-              and komoto.id not in (select kola.koulutusmoduuli_toteutus_id from koulutusmoduuli_toteutus_koulutuslaji as kola)
-    ))
-    values(unnest(komoto_ids_array), 'koulutuslaji_a#1');
+values(
+  unnest((SELECT ARRAY(SELECT komoto.id FROM koulutusmoduuli_toteutus as komoto
+  where komoto.alkamisvuosi = 2018
+        and komoto.toteutustyyppi in ('LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA',
+                                      'AIKUISTEN_PERUSOPETUS',
+                                      'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA')
+        and komoto.koulutustyyppi_uri is not null
+        and komoto.id not in (select kola.koulutusmoduuli_toteutus_id from koulutusmoduuli_toteutus_koulutuslaji as kola)
+  ))),
+  'koulutuslaji_a#1'
+);
