@@ -292,13 +292,14 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
             var promise = Koodisto.getAlapuolisetKoodit($scope.model.koulutustyyppi.koodiUri);
             promise.then(function(koodis) {
                 var koulutuslajiKoodis = _.where(koodis, {koodiKoodisto:CONFIG.env['koodisto-uris.koulutuslaji']});
-
                 var toteutustyypitJoillaEiKoulutuslajia = ['AMMATILLINEN_PERUSTUTKINTO_ALK_2018', 'ERIKOISAMMATTITUTKINTO', 'AMMATTITUTKINTO']
                 var onKoulutuslajillinenToteutustyyppi = toteutustyypitJoillaEiKoulutuslajia.indexOf(toteutustyyppi) == -1;
-                var url = '/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid;
+
+                var url = '/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri;
                 if (koulutuslajiKoodis && koulutuslajiKoodis.length === 1 && onKoulutuslajillinenToteutustyyppi) {
-                    url += '/' + koulutuslajiKoodis[0].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid;
+                    url += '/' + koulutuslajiKoodis[0].koodiUri;
                 }
+                url += '/edit/' + $scope.model.organisaatiot[0].oid;
                 $location.path(url);
 
                 if ($scope.model.pohjakoulutusvaatimus) {
