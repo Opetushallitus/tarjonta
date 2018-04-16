@@ -291,7 +291,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             return result;
         } catch (Exception e) {
             LOG.error("Uncaught error when fetching koulutus {}", komotoOid, e);
-            result.setStatus(NOT_FOUND);
+            result.setStatus(ERROR);
+            result.addError(createSystemError(e, null, null));
             return result;
         }
     }
