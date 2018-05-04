@@ -336,14 +336,8 @@ public class HakukohdeValidator {
             liiteValidationMsgs.add(HakukohdeValidationMessages.HAKUKOHDE_LIITE_NIMI_MISSING);
         }
 
-        if (liite.getLiitteenToimitusOsoite() == null) {
-            liiteValidationMsgs.add(HakukohdeValidationMessages.HAKUKOHDE_LIITE_OSOITE_MISSING);
-        }
-
         if (liite.getToimitettavaMennessa() == null && validateToimitettavaMennessa) {
-
             liiteValidationMsgs.add(HakukohdeValidationMessages.HAKUKOHDE_LIITE_TOIMITETTAVA_MENNESSA_MISSING);
-
         }
 
         return new ArrayList<>(liiteValidationMsgs);

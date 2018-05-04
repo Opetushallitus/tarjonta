@@ -114,11 +114,8 @@
                                        ng-change="status.dirtify()"
                                 />
                                 <br/>
-	                            <osoite-field required model="liite.liitteenToimitusOsoite" ng-disabled="!liite.muuOsoiteEnabled" on-change="status.dirtify()"></osoite-field>
+	                            <osoite-field model="liite.liitteenToimitusOsoite" ng-disabled="!liite.muuOsoiteEnabled" on-change="status.dirtify()"></osoite-field>
 	                        </div>
-                        </td>
-                        <td>
-                            <p class="error" ng-show="model.showError && !liite.isEmpty(liiteWithKieliVersiot.commonFields) && !validator.isValidToimitusOsoite(liite)" tt="tarjonta.hakukohde.liite.errors.toimitusOsoite">Liitteen toimistusosoite on pakollinen mikäli organisaation hakijapalveluiden postiosoitetta ei käytetä tai sitä ei ole määritelty.</p>
                         </td>
                     </tr>
 
