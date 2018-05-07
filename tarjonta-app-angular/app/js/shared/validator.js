@@ -76,7 +76,7 @@ angular.module('Validator', [])
         }
 
         function isValidSahkoinenOsoite(liite) {
-            return !liite.sahkoinenOsoiteEnabled || notEmpty(liite.sahkoinenToimitusOsoite);
+            return (!liite.sahkoinenOsoiteEnabled && liite.ensisijainenOsoiteTyyppi != 'VainSahkoinenOsoite') || notEmpty(liite.sahkoinenToimitusOsoite);
         }
 
         function isValidLiitteet(liitteet, jatkuvaHaku) {

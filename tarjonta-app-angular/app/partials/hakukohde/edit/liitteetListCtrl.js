@@ -12,20 +12,30 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
     $scope.liitteetModel.selectedLangs = [];
     $scope.liitteetModel.liitetyypit = [];
     var osoitteetReceived = false;
+    $scope.OsoiteTyyppiEnum = {
+        ORGANISAATION: 'OrganisaationOsoite',
+        MUU: 'MuuOsoite',
+        VAIN_SAHKOINEN: 'VainSahkoinenOsoite',
+    };
+
     function postProcessLiite(liite) {
         if (liite.sahkoinenOsoiteEnabled === undefined) {
             liite.sahkoinenOsoiteEnabled = liite.sahkoinenToimitusOsoite !== undefined;
         }
-        if (liite.muuOsoiteEnabled === undefined && osoitteetReceived) {
+        if (liite.ensisijainenOsoiteTyyppi === undefined && osoitteetReceived) {
             if ($scope.model.liitteidenToimitusOsoite[liite.kieliUri]) {
                 var nimi1 = $scope.model.hakutoimistonNimi[liite.kieliUri];
                 var nimi2 = liite.liitteenVastaanottaja;
                 var os1 = $scope.model.liitteidenToimitusOsoite[liite.kieliUri];
                 var os2 = liite.liitteenToimitusOsoite;
-                liite.muuOsoiteEnabled = nimi1 != nimi2 || os1.osoiterivi1 != os2.osoiterivi1 || os1.postinumero != os2.postinumero;
+                if (nimi1 != nimi2 || os1.osoiterivi1 != os2.osoiterivi1 || os1.postinumero != os2.postinumero) {
+                    liite.ensisijainenOsoiteTyyppi == $scope.OsoiteTyyppiEnum.MUU;
+                } else {
+                    liite.ensisijainenOsoiteTyyppi == $scope.OsoiteTyyppiEnum.ORGANISAATION;
+                }
             }
             else {
-                liite.muuOsoiteEnabled = true;
+                liite.ensisijainenOsoiteTyyppi == $scope.OsoiteTyyppiEnum.MUU;
             }
         }
         liite.liitteenKuvaukset = liite.liitteenKuvaukset || {};
@@ -188,6 +198,13 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
     $scope.liitteenSahkoinenOsoiteEnabledChanged = function(liite) {
         if (!liite.sahkoinenOsoiteEnabled) {
             liite.sahkoinenToimitusOsoite = undefined;
+        }
+    };
+    $scope.liitteenVainSahkoinenOsoiteChanged = function(liite) {
+        if (liite.ensisijainenOsoiteTyyppi == $scope.OsoiteTyyppiEnum.VAIN_SAHKOINEN) {
+            liite.sahkoinenOsoiteEnabled = true;
+            liite.liitteenVastaanottaja = null;
+            liite.liitteenToimitusOsoite = null;
         }
     };
     $scope.deleteLiite = function(index, confirm) {
