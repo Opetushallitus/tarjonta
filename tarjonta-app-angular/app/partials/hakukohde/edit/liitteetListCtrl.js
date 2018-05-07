@@ -29,13 +29,13 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
                 var os1 = $scope.model.liitteidenToimitusOsoite[liite.kieliUri];
                 var os2 = liite.liitteenToimitusOsoite;
                 if (nimi1 != nimi2 || os1.osoiterivi1 != os2.osoiterivi1 || os1.postinumero != os2.postinumero) {
-                    liite.ensisijainenOsoiteTyyppi == $scope.OsoiteTyyppiEnum.MUU;
+                    liite.ensisijainenOsoiteTyyppi = $scope.OsoiteTyyppiEnum.MUU;
                 } else {
-                    liite.ensisijainenOsoiteTyyppi == $scope.OsoiteTyyppiEnum.ORGANISAATION;
+                    liite.ensisijainenOsoiteTyyppi = $scope.OsoiteTyyppiEnum.ORGANISAATION;
                 }
             }
             else {
-                liite.ensisijainenOsoiteTyyppi == $scope.OsoiteTyyppiEnum.MUU;
+                liite.ensisijainenOsoiteTyyppi = $scope.OsoiteTyyppiEnum.MUU;
             }
         }
         liite.liitteenKuvaukset = liite.liitteenKuvaukset || {};
@@ -201,11 +201,9 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
         }
     };
     $scope.liitteenVainSahkoinenOsoiteChanged = function(liite) {
-        if (liite.ensisijainenOsoiteTyyppi == $scope.OsoiteTyyppiEnum.VAIN_SAHKOINEN) {
             liite.sahkoinenOsoiteEnabled = true;
             liite.liitteenVastaanottaja = null;
             liite.liitteenToimitusOsoite = null;
-        }
     };
     $scope.deleteLiite = function(index, confirm) {
         if (confirm) {
