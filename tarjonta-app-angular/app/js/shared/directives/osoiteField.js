@@ -52,6 +52,7 @@ app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
         }
 
         function initPostinumerot() {
+            $log.info('initPostinumerot()');
             if (!$scope.model) {
                 return;
             }
@@ -66,6 +67,7 @@ app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
         $scope.$watch('model.initPostinumerot', initPostinumerot);
 
         $scope.updatePostinumero = function(model) {
+            $log.info('updatePostinumerot, model: ', model);
             var koodi;
             var uiValue = model.postinumeroUi;
             if (uiValue) {
