@@ -24,17 +24,25 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
         }
         if (liite.ensisijainenOsoiteTyyppi === undefined && osoitteetReceived) {
             if ($scope.model.liitteidenToimitusOsoite[liite.kieliUri]) {
-                var nimi1 = $scope.model.hakutoimistonNimi[liite.kieliUri];
-                var nimi2 = liite.liitteenVastaanottaja;
-                var os1 = $scope.model.liitteidenToimitusOsoite[liite.kieliUri];
-                var os2 = liite.liitteenToimitusOsoite;
-                if (nimi1 != nimi2 || os1.osoiterivi1 != os2.osoiterivi1 || os1.postinumero != os2.postinumero) {
-                    liite.ensisijainenOsoiteTyyppi = $scope.OsoiteTyyppiEnum.MUU;
-                } else {
+                var nimiOrganisaatiolla = $scope.model.hakutoimistonNimi[liite.kieliUri];
+                var nimiLiitteella = liite.liitteenVastaanottaja;
+                var osoiteOrganisaatiolla = $scope.model.liitteidenToimitusOsoite[liite.kieliUri];
+                var osoiteLiitteella = liite.liitteenToimitusOsoite;
+
+                var vastaanottajatMatch = (nimiOrganisaatiolla == nimiLiitteella);
+                var osoitteetMatch = (osoiteOrganisaatiolla && osoiteLiitteella && osoiteOrganisaatiolla.osoiterivi1 == osoiteLiitteella.osoiterivi1);
+                var postinumerotMatch = (osoiteOrganisaatiolla && osoiteLiitteella && osoiteOrganisaatiolla.postinumero == osoiteLiitteella.postinumero);
+
+                if (vastaanottajatMatch && osoitteetMatch && postinumerotMatch) {
                     liite.ensisijainenOsoiteTyyppi = $scope.OsoiteTyyppiEnum.ORGANISAATION;
+                } else if (!nimiLiitteella && !osoiteLiitteella) {
+                    liite.ensisijainenOsoiteTyyppi = $scope.OsoiteTyyppiEnum.VAIN_SAHKOINEN;
+                } else {
+                    liite.ensisijainenOsoiteTyyppi = $scope.OsoiteTyyppiEnum.MUU;
                 }
-            }
-            else {
+            } else if (!nimiLiitteella && !osoiteLiitteella) {
+                liite.ensisijainenOsoiteTyyppi = $scope.OsoiteTyyppiEnum.VAIN_SAHKOINEN;
+            } else {
                 liite.ensisijainenOsoiteTyyppi = $scope.OsoiteTyyppiEnum.MUU;
             }
         }
@@ -42,8 +50,9 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
         return liite;
     }
     $scope.$on('liiteAdded', function(event, liite) {
-        liite.liitteenToimitusOsoite = liite.liitteenToimitusOsoite ||
-            angular.copy($scope.model.liitteidenToimitusOsoite[liite.kieliUri]) || {};
+        if (!liite.liitteenToimitusOsoite && !liite.sahkoinenToimitusOsoite) {
+            liite.liitteenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite[liite.kieliUri]) || {};
+        }
         postProcessLiite(liite);
     });
     $scope.$on('addEmptyLitteet', function() {
@@ -56,12 +65,14 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
                 if (typeof liite !== 'object' || lang === 'commonFields') {
                     return;
                 }
-                if (!liite.liitteenVastaanottaja) {
-                    liite.liitteenVastaanottaja = $scope.model.hakutoimistonNimi[liite.kieliUri];
-                }
-                if (!liite.liitteenToimitusOsoite || Object.keys(liite.liitteenToimitusOsoite).length === 0) {
-                    liite.liitteenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite[liite.kieliUri]);
-                    postProcessLiite(liite);
+                if (!liite.sahkoinenToimitusOsoite) {
+                    if (!liite.liitteenVastaanottaja) {
+                        liite.liitteenVastaanottaja = $scope.model.hakutoimistonNimi[liite.kieliUri];
+                    }
+                    if (!liite.liitteenToimitusOsoite || Object.keys(liite.liitteenToimitusOsoite).length === 0) {
+                        liite.liitteenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite[liite.kieliUri]);
+                        postProcessLiite(liite);
+                    }
                 }
             });
         });

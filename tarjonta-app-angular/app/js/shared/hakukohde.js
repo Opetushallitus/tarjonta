@@ -254,9 +254,6 @@ app.factory('HakukohdeService', function($resource, $http, $rootScope, KoulutusC
             kieliUri: ''
         };
         var addr = liitteidenToimitusosoite;
-        var muuOsoiteEnabled = function() {
-            return this.ensisijainenOsoiteTyyppi == 'MuuOsoite';
-        };
         return {
             hakukohdeOid: hakukohde.oid,
             kieliUri: kieliUri,
@@ -266,7 +263,6 @@ app.factory('HakukohdeService', function($resource, $http, $rootScope, KoulutusC
             //tmennessa,
             liitteenVastaanottaja: hakutoimistonNimi,
             liitteenToimitusOsoite: addr ? angular.copy(addr) : {},
-            muuOsoiteEnabled: muuOsoiteEnabled,
             sahkoinenOsoiteEnabled: false,
             ensisijainenOsoiteTyyppi: addr ? 'OrganisaationOsoite' : 'MuuOsoite',
             kaytetaanHakulomakkeella: hakukohde.toteutusTyyppi === 'KORKEAKOULUTUS' ? false : true,

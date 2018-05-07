@@ -108,13 +108,13 @@
 	                        <div class="inset">
                                 <input type="text" class="liiteVastaanottaja"
                                        ng-required="true"
-                                       ng-disabled="!liite.muuOsoiteEnabled()"
+                                       ng-disabled="liite.ensisijainenOsoiteTyyppi != 'MuuOsoite'"
                                        placeholder="{{tt.liitteenVastaanottaja}}"
                                        data-ng-model="liite.liitteenVastaanottaja"
                                        ng-change="status.dirtify()"
                                 />
                                 <br/>
-	                            <osoite-field model="liite.liitteenToimitusOsoite" ng-disabled="!liite.muuOsoiteEnabled()" on-change="status.dirtify()"></osoite-field>
+	                            <osoite-field model="liite.liitteenToimitusOsoite" ng-disabled="liite.ensisijainenOsoiteTyyppi != 'MuuOsoite'" on-change="status.dirtify()"></osoite-field>
 	                        </div>
 
                             <label>
