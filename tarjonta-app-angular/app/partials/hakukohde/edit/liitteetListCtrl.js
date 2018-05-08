@@ -50,7 +50,7 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
         return liite;
     }
     $scope.$on('liiteAdded', function(event, liite) {
-        if (!liite.liitteenToimitusOsoite && !liite.sahkoinenToimitusOsoite) {
+        if (!liite.liitteenToimitusOsoite && !liite.sahkoinenToimitusOsoite && (liite.ensisijainenOsoiteTyyppi != $scope.OsoiteTyyppiEnum.VAIN_SAHKOINEN)) {
             liite.liitteenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite[liite.kieliUri]) || {};
         }
         postProcessLiite(liite);
