@@ -75,6 +75,15 @@ angular.module('Validator', [])
             return true;
         }
 
+        function isValidToimitusOsoite(liite) {
+            var isNotMuuOsoite = (liite.ensisijainenOsoiteTyyppi != 'MuuOsoite');
+            var osoiteNotEmpty = liite.liitteenToimitusOsoite && notEmpty([
+                liite.liitteenToimitusOsoite.osoiterivi1,
+                liite.liitteenToimitusOsoite.postinumero
+            ]);
+            return (isNotMuuOsoite || osoiteNotEmpty);
+        }
+
         function isValidSahkoinenOsoite(liite) {
             return (!liite.sahkoinenOsoiteEnabled && liite.ensisijainenOsoiteTyyppi != 'VainSahkoinenOsoite') || notEmpty(liite.sahkoinenToimitusOsoite);
         }
@@ -90,7 +99,8 @@ angular.module('Validator', [])
                     if (!notEmpty(liite.liitteenNimi)
                         && !notEmpty(commonFields.liitteenTyyppi)
                         || (!notEmpty(commonFields.toimitettavaMennessa) && !jatkuvaHaku)
-                        || !isValidSahkoinenOsoite(liite)) {
+                        || !isValidSahkoinenOsoite(liite)
+                        || !isValidToimitusOsoite(liite)) {
                         return true;
                     }
                 });

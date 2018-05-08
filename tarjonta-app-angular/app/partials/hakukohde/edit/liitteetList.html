@@ -122,6 +122,9 @@
                                 <span tt="tarjonta.hakukohde.liite.modal.vainSahkoinenOsoite"></span><br/>
                             </label>
                         </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && !liite.isEmpty(liiteWithKieliVersiot.commonFields) && !validator.isValidToimitusOsoite(liite)" tt="tarjonta.hakukohde.liite.errors.toimitusOsoite">Liitteen toimistusosoite on pakollinen mikäli organisaation hakijapalveluiden postiosoitetta ei käytetä tai sitä ei ole määritelty.</p>
+                        </td>
                     </tr>
 
                     <tr>
