@@ -209,6 +209,10 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
     $scope.liitteenSahkoinenOsoiteEnabledChanged = function(liite) {
         if (!liite.sahkoinenOsoiteEnabled) {
             liite.sahkoinenToimitusOsoite = undefined;
+            if (liite.ensisijainenOsoiteTyyppi == $scope.OsoiteTyyppiEnum.VAIN_SAHKOINEN) {
+                // Ilman sähköistä osoitetta ei voi olla "Vain sähköinen lähetys"
+                liite.ensisijainenOsoiteTyyppi = $scope.OsoiteTyyppiEnum.MUU;
+            }
         }
     };
     $scope.liitteenVainSahkoinenOsoiteChanged = function(liite) {
