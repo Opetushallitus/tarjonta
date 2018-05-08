@@ -85,7 +85,10 @@ angular.module('Validator', [])
         }
 
         function isValidSahkoinenOsoite(liite) {
-            return (!liite.sahkoinenOsoiteEnabled && liite.ensisijainenOsoiteTyyppi != 'VainSahkoinenOsoite') || notEmpty(liite.sahkoinenToimitusOsoite);
+            var isVainSahkoinen = liite.ensisijainenOsoiteTyyppi == 'VainSahkoinenOsoite';
+            var ifVainSahkoinenThenPostiOsoiteIsNull = !isVainSahkoinen || (liite.liitteenVastaanottaja == null && liite.liitteenToimitusOsoite == null);
+            var noSahkoinenOsoiteRequired = (!liite.sahkoinenOsoiteEnabled && !isVainSahkoinen);
+            return noSahkoinenOsoiteRequired || (notEmpty(liite.sahkoinenToimitusOsoite) && ifVainSahkoinenThenPostiOsoiteIsNull);
         }
 
         function isValidLiitteet(liitteet, jatkuvaHaku) {
