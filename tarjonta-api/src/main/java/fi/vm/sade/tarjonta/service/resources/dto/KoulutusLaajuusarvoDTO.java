@@ -4,6 +4,7 @@ package fi.vm.sade.tarjonta.service.resources.dto;
 public class KoulutusLaajuusarvoDTO {
     private String oid;
     private String koulutuskoodi;
+    private String koulutustyyppi;
     private String opintojenLaajuusarvo;
 
     public String getOid() {
@@ -29,4 +30,13 @@ public class KoulutusLaajuusarvoDTO {
     public String getOpintojenLaajuusarvo() {
         return opintojenLaajuusarvo;
     }
+
+    public String getKoulutustyyppi() {
+        return koulutustyyppi;
+    }
+
+    public void setKoulutustyyppi(String koulutustyyppi) {
+        this.koulutustyyppi = koulutustyyppi;
+    }
+
 }
