@@ -76,15 +76,19 @@ angular.module('Validator', [])
         }
 
         function isValidToimitusOsoite(liite) {
-            var r = !liite.muuOsoiteEnabled || notEmpty([
-                    liite.liitteenToimitusOsoite.osoiterivi1,
-                    liite.liitteenToimitusOsoite.postinumero
-                ]);
-            return r;
+            var isNotMuuOsoite = (liite.ensisijainenOsoiteTyyppi != 'MuuOsoite');
+            var osoiteNotEmpty = liite.liitteenToimitusOsoite && notEmpty([
+                liite.liitteenToimitusOsoite.osoiterivi1,
+                liite.liitteenToimitusOsoite.postinumero
+            ]);
+            return (isNotMuuOsoite || osoiteNotEmpty);
         }
 
         function isValidSahkoinenOsoite(liite) {
-            return !liite.sahkoinenOsoiteEnabled || notEmpty(liite.sahkoinenToimitusOsoite);
+            var isVainSahkoinen = liite.ensisijainenOsoiteTyyppi == 'VainSahkoinenOsoite';
+            var ifVainSahkoinenThenPostiOsoiteIsNull = !isVainSahkoinen || (liite.liitteenVastaanottaja == null && liite.liitteenToimitusOsoite == null);
+            var noSahkoinenOsoiteRequired = (!liite.sahkoinenOsoiteEnabled && !isVainSahkoinen);
+            return noSahkoinenOsoiteRequired || (notEmpty(liite.sahkoinenToimitusOsoite) && ifVainSahkoinenThenPostiOsoiteIsNull);
         }
 
         function isValidLiitteet(liitteet, jatkuvaHaku) {
@@ -325,7 +329,6 @@ angular.module('Validator', [])
                 valintakoe: {
                     isValidAjankohta: isValidAjankohta
                 },
-                isValidToimitusOsoite: isValidToimitusOsoite,
                 isValidSahkoinenOsoite: isValidSahkoinenOsoite
             }
         };

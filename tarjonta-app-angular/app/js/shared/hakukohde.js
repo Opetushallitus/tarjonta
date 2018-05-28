@@ -263,8 +263,8 @@ app.factory('HakukohdeService', function($resource, $http, $rootScope, KoulutusC
             //tmennessa,
             liitteenVastaanottaja: hakutoimistonNimi,
             liitteenToimitusOsoite: addr ? angular.copy(addr) : {},
-            muuOsoiteEnabled: !addr,
             sahkoinenOsoiteEnabled: false,
+            ensisijainenOsoiteTyyppi: addr ? 'OrganisaationOsoite' : 'MuuOsoite',
             kaytetaanHakulomakkeella: hakukohde.toteutusTyyppi === 'KORKEAKOULUTUS' ? false : true,
             isNew: true
         };

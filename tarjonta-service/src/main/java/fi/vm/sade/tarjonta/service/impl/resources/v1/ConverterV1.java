@@ -1502,7 +1502,9 @@ public class ConverterV1 {
         hakukohdeLiite.setSahkoinenToimitusosoite(hakukohdeLiiteV1RDTO.getSahkoinenToimitusOsoite());
         hakukohdeLiite.setErapaiva(hakukohdeLiiteV1RDTO.getToimitettavaMennessa());
         hakukohdeLiite.setVastaanottaja(hakukohdeLiiteV1RDTO.getLiitteenVastaanottaja());
-        hakukohdeLiite.setToimitusosoite(CommonRestConverters.toOsoite(hakukohdeLiiteV1RDTO.getLiitteenToimitusOsoite()));
+        if (hakukohdeLiiteV1RDTO.getLiitteenToimitusOsoite() != null) {
+            hakukohdeLiite.setToimitusosoite(CommonRestConverters.toOsoite(hakukohdeLiiteV1RDTO.getLiitteenToimitusOsoite()));
+        }
         hakukohdeLiite.setKuvaus(convertMapToMonikielinenTeksti(hakukohdeLiiteV1RDTO.getLiitteenKuvaukset()));
         hakukohdeLiite.setLiitetyyppi(hakukohdeLiiteV1RDTO.getLiitteenTyyppi());
         hakukohdeLiite.setJarjestys(hakukohdeLiiteV1RDTO.getJarjestys());

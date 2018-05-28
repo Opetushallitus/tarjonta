@@ -91,31 +91,36 @@
 	                    </td>
 	                </tr>
 
-	                <tr class="required">
+	                <tr>
 	                    <th tt="tarjonta.hakukohde.liite.modal.toimitusosoite"></th>
 	                    <td>
 	                        <label>
-                                <input type="radio" ng-model="liite.muuOsoiteEnabled" ng-change="status.dirtify()" ng-value="false" ng-click="resetOsoite(kieli.koodiUri, liite)"/>
+                                <input type="radio" ng-model="liite.ensisijainenOsoiteTyyppi" ng-change="status.dirtify()" ng-value="OsoiteTyyppiEnum.ORGANISAATION" ng-click="resetOsoite(kieli.koodiUri, liite)"/>
                                 <span tt="tarjonta.hakukohde.liite.modal.kaytetaanOrganisaationPostiosoitetta"></span>
                             </label>
                             <br />
 
                             <label>
-	                            <input type="radio" ng-model="liite.muuOsoiteEnabled" ng-change="status.dirtify()" ng-value="true"/>
+	                            <input type="radio" ng-model="liite.ensisijainenOsoiteTyyppi" ng-change="status.dirtify()" ng-value="OsoiteTyyppiEnum.MUU"/>
                                 <span tt="tarjonta.hakukohde.liite.modal.kaytetaanMuutaOsoitetta"></span><br/>
                             </label>
 
 	                        <div class="inset">
                                 <input type="text" class="liiteVastaanottaja"
                                        ng-required="true"
-                                       ng-disabled="!liite.muuOsoiteEnabled"
+                                       ng-disabled="liite.ensisijainenOsoiteTyyppi != 'MuuOsoite'"
                                        placeholder="{{tt.liitteenVastaanottaja}}"
                                        data-ng-model="liite.liitteenVastaanottaja"
                                        ng-change="status.dirtify()"
                                 />
                                 <br/>
-	                            <osoite-field required model="liite.liitteenToimitusOsoite" ng-disabled="!liite.muuOsoiteEnabled" on-change="status.dirtify()"></osoite-field>
+	                            <osoite-field model="liite.liitteenToimitusOsoite" ng-disabled="liite.ensisijainenOsoiteTyyppi != 'MuuOsoite'" on-change="status.dirtify()"></osoite-field>
 	                        </div>
+
+                            <label>
+                                <input type="radio" ng-model="liite.ensisijainenOsoiteTyyppi" ng-change="status.dirtify()" ng-value="OsoiteTyyppiEnum.VAIN_SAHKOINEN" ng-click="liitteenVainSahkoinenOsoiteChanged(liite)"/>
+                                <span tt="tarjonta.hakukohde.liite.modal.vainSahkoinenOsoite"></span><br/>
+                            </label>
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && !liite.isEmpty(liiteWithKieliVersiot.commonFields) && !validator.isValidToimitusOsoite(liite)" tt="tarjonta.hakukohde.liite.errors.toimitusOsoite">Liitteen toimistusosoite on pakollinen mikäli organisaation hakijapalveluiden postiosoitetta ei käytetä tai sitä ei ole määritelty.</p>
