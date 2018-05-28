@@ -11,6 +11,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -150,7 +151,7 @@ public class HakukohdeSearchService extends SearchService {
     }
 
     private void addFilterForHakukohdeOid(HakukohteetKysely kysely, SolrQuery q) {
-        if (kysely.getHakukohdeOid() != null) {
+        if (StringUtils.isNotBlank(kysely.getHakukohdeOid())) {
             q.addFilterQuery(String.format(matchFull(), OID, kysely.getHakukohdeOid()));
         }
     }
@@ -189,7 +190,7 @@ public class HakukohdeSearchService extends SearchService {
     }
 
     private void addFilterForHakuOid(HakukohteetKysely kysely, SolrQuery q) {
-        if (kysely.getHakuOid() != null) {
+        if (StringUtils.isNotBlank(kysely.getHakuOid())) {
             q.addFilterQuery(String.format(matchFull(), HAUN_OID, kysely.getHakuOid()));
         }
     }
