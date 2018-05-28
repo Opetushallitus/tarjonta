@@ -42,7 +42,7 @@ public interface HakukohdeResource {
     @Path("/tilastokeskus")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    List<HakukohdeKelaDTO> gatHakukohdeKelaDTOs(List<String> hakukohdeOids);
+    List<HakukohdeKelaDTO> gatHakukohdeKelaDTOs(List<String> hakukohdeOids);  // PETAR this is the method that has to handle empty input better.
 
     /**
      * /hakukohde?searchTerms=xxx&count=10&startIndex=100&lastModifiedBefore=X&lastModifiedSince=XX

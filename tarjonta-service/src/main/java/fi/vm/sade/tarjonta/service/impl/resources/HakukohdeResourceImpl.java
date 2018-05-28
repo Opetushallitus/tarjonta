@@ -91,7 +91,10 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     }
 
     @Override
-    public List<HakukohdeKelaDTO> gatHakukohdeKelaDTOs(List<String> hakukohdeOids) {
+    public List<HakukohdeKelaDTO> gatHakukohdeKelaDTOs(List<String> hakukohdeOids) { // PETAR this method to return error 400 if hakukohdeOids is empty.
+        if (hakukohdeOids.isEmpty()) {
+            throw new IllegalArgumentException("hakukohdeOids on tyhjä");
+        }
         List<Hakukohde> hakukohteet = hakukohdeDAO.findHakukohteetByOids(new HashSet(hakukohdeOids));
         List<HakukohdeKelaDTO> hakukohdeKelaDTOs = new ArrayList<>();
         for (Hakukohde hakukohde : hakukohteet) {
