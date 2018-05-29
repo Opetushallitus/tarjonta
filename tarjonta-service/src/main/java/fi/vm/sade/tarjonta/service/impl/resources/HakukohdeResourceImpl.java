@@ -31,6 +31,7 @@ import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.Response;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
@@ -96,7 +97,9 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     @Override
     public List<HakukohdeKelaDTO> gatHakukohdeKelaDTOs(List<String> hakukohdeOids) { // PETAR this method to return error 400 if hakukohdeOids is empty.
         if (hakukohdeOids.isEmpty()) {
-            throw new BadRequestException("hakukohdeOids on tyhjä");
+            Response.ResponseBuilder resp_builder = Response.status(Response.Status.BAD_REQUEST);
+            resp_builder.entity("hakukohdeOid on tyhjä");
+            throw new BadRequestException(resp_builder.build());
         }
         List<Hakukohde> hakukohteet = hakukohdeDAO.findHakukohteetByOids(new HashSet(hakukohdeOids));
         List<HakukohdeKelaDTO> hakukohdeKelaDTOs = new ArrayList<>();
