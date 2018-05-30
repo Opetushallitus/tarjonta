@@ -95,11 +95,11 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     }
 
     @Override
-    public List<HakukohdeKelaDTO> gatHakukohdeKelaDTOs(List<String> hakukohdeOids) { // PETAR this method to return error 400 if hakukohdeOids is empty.
+    public List<HakukohdeKelaDTO> gatHakukohdeKelaDTOs(List<String> hakukohdeOids) {
         if (hakukohdeOids.isEmpty()) {
-            Response.ResponseBuilder resp_builder = Response.status(Response.Status.BAD_REQUEST);
-            resp_builder.entity("hakukohdeOid on tyhjä");
-            throw new BadRequestException(resp_builder.build());
+            Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity("hakukohdeOid on tyhjä");
+            throw new BadRequestException(responseBuilder.build());
         }
         List<Hakukohde> hakukohteet = hakukohdeDAO.findHakukohteetByOids(new HashSet(hakukohdeOids));
         List<HakukohdeKelaDTO> hakukohdeKelaDTOs = new ArrayList<>();
