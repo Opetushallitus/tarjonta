@@ -215,7 +215,7 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
             }
         }
     };
-    $scope.liitteenVainSahkoinenOsoiteChanged = function(liite) {
+    $scope.liitteenVainSahkoinenOsoiteClicked = function(liite) {
             liite.sahkoinenOsoiteEnabled = true;
             liite.liitteenVastaanottaja = null;
             liite.liitteenToimitusOsoite = null;
