@@ -88,7 +88,9 @@ angular.module('Validator', [])
             var isVainSahkoinen = liite.ensisijainenOsoiteTyyppi == 'VainSahkoinenOsoite';
             var ifVainSahkoinenThenPostiOsoiteIsNull = !isVainSahkoinen || (liite.liitteenVastaanottaja == null && liite.liitteenToimitusOsoite == null);
             var noSahkoinenOsoiteRequired = (!liite.sahkoinenOsoiteEnabled && !isVainSahkoinen);
-            return noSahkoinenOsoiteRequired || (notEmpty(liite.sahkoinenToimitusOsoite) && ifVainSahkoinenThenPostiOsoiteIsNull);
+            var exists = notEmpty(liite.sahkoinenToimitusOsoite);
+            var existsAndIsvalid = (exists && ifVainSahkoinenThenPostiOsoiteIsNull);
+            return noSahkoinenOsoiteRequired || existsAndIsvalid;
         }
 
         function isValidLiitteet(liitteet, jatkuvaHaku) {

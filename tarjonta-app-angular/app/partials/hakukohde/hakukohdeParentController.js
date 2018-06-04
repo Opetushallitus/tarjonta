@@ -1350,6 +1350,16 @@ app.controller('HakukohdeParentController', [
             }
         }
 
+        function removeEmptyToimitusOsoites(liitteetWithLangs) {
+            _.each(liitteetWithLangs, function (liiteWithLangs) {
+                _.each(liiteWithLangs, function (liite) {
+                    if (liite.liitteenToimitusOsoite && !liite.liitteenToimitusOsoite.osoiterivi1 && !liite.liitteenToimitusOsoite.postinumero) {
+                        liite.liitteenToimitusOsoite = null;
+                    }
+                });
+            });
+        }
+
         $scope.model.saveParent = function(tila) {
             if (!tila) {
                 throw 'tila cannot be undefined!';
@@ -1359,6 +1369,7 @@ app.controller('HakukohdeParentController', [
             $scope.model.showError = false;
             PermissionService.permissionResource().authorize({}, function() {
                 $scope.emptyErrorMessages();
+                removeEmptyToimitusOsoites($scope.model.hakukohde.hakukohteenLiitteet);
                 var errors = ValidatorService.hakukohde.validate(
                     $scope.model,
                     $scope.getHakuByOid($scope.model.hakukohde.hakuOid),
