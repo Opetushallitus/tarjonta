@@ -144,6 +144,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
         k.setOid(m.getOid());
         k.setOpintojenLaajuusarvo(uriToArvo(m.getOpintojenLaajuusarvo().getUri()));
         k.setKoulutuskoodi(uriToArvo(m.getKoulutuskoodi().getUri()));
+        k.setKoulutustyyppi(uriToArvo(m.getKoulutustyyppi().getUri()));
         return k;
     }
     private String uriToArvo(String uri) {
