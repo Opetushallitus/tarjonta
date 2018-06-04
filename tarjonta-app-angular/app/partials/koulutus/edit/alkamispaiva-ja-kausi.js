@@ -44,7 +44,6 @@ app.directive('alkamispaivaJaKausi', [
             });
             $scope.clearKausiSelection = function() {
                 $scope.kausiUri = '';
-                // BUG-1760 - Also clear the year.
                 $scope.vuosi = '';
             };
             $scope.onAddDate = function() {
