@@ -31,7 +31,7 @@ app.directive('alkamispaivaJaKausi', [
                     $scope.fieldNamePrefix + '_kausivuosi' :
                     'kausivuosi'
             };
-            // Not setting min & max years if kausi is not active:
+            // BUG-1760 Not setting min & max years if kausi is not active:
             if ($scope.isKausiVuosiRadioButtonActive()) {
                 $scope.minYear = new Date().getFullYear() - 1;
                 $scope.maxYear = $scope.minYear + 11;
@@ -49,6 +49,7 @@ app.directive('alkamispaivaJaKausi', [
 
             $scope.clearKausiSelection = function() {
                 $scope.kausiUri = '';
+                // BUG-1760 Clear also the year if kausi is not selected.
                 $scope.vuosi = '';
             };
             $scope.onAddDate = function() {
