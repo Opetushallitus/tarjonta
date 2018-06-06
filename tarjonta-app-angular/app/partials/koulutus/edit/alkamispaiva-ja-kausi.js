@@ -31,19 +31,26 @@ app.directive('alkamispaivaJaKausi', [
                     $scope.fieldNamePrefix + '_kausivuosi' :
                     'kausivuosi'
             };
-            $scope.minYear = new Date().getFullYear() - 1;
-            $scope.maxYear = $scope.minYear + 11;
-            $scope.$watch('ctrl.kausi', function(valNew, valOld) {
-                $scope.form[$scope.ctrl.kausivuosi] = valNew;
-                if (valNew && $scope.kausi) {
-                    $scope.kausiUri = '';
-                }
-            });
-            $scope.$watch('kausiUri', function(valNew, valOld) {
-                $scope.kausiUiModel.uri = $scope.kausiUri;
-            });
+            // BUG-1760 Not setting min & max years if kausi is not active:
+            if ($scope.isKausiVuosiRadioButtonActive()) {
+                $scope.minYear = new Date().getFullYear() - 1;
+                $scope.maxYear = $scope.minYear + 11;
+
+                $scope.$watch('ctrl.kausi', function(valNew, valOld) {
+                    $scope.form[$scope.ctrl.kausivuosi] = valNew;
+                    if (valNew && $scope.kausi) {
+                        $scope.kausiUri = '';
+                    }
+                });
+                $scope.$watch('kausiUri', function(valNew, valOld) {
+                    $scope.kausiUiModel.uri = $scope.kausiUri;
+                });
+            }
+
             $scope.clearKausiSelection = function() {
                 $scope.kausiUri = '';
+                // BUG-1760 Clear also the year if kausi is not selected.
+                $scope.vuosi = '';
             };
             $scope.onAddDate = function() {
                 $scope.alkamisPaivat.clickAddDate();
