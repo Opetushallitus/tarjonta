@@ -29,6 +29,10 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.Response;
+
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
 /**
@@ -92,6 +96,11 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
     @Override
     public List<HakukohdeKelaDTO> gatHakukohdeKelaDTOs(List<String> hakukohdeOids) {
+        if (hakukohdeOids.isEmpty()) {
+            Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity("hakukohdeOid on tyhjä");
+            throw new BadRequestException(responseBuilder.build());
+        }
         List<Hakukohde> hakukohteet = hakukohdeDAO.findHakukohteetByOids(new HashSet(hakukohdeOids));
         List<HakukohdeKelaDTO> hakukohdeKelaDTOs = new ArrayList<>();
         for (Hakukohde hakukohde : hakukohteet) {
