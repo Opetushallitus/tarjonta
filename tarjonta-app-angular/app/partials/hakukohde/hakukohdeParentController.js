@@ -1375,12 +1375,6 @@ app.controller('HakukohdeParentController', [
                     $scope.getHakuByOid($scope.model.hakukohde.hakuOid),
                     $scope.hakukohdex.result);
                 if (errors.length === 0 && $scope.editHakukohdeForm.$valid) {
-
-                    if ($scope.model.yhteystiedotKaytaOrganisaatioOsoitetta) {
-                        // Tyhjennä taulukko säilyttäen alkuperäinen referenssi
-                        $scope.model.hakukohde.yhteystiedot.splice(0, $scope.model.hakukohde.yhteystiedot.length);
-                    }
-
                     updateTila(tila);
                     $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
                     $scope.removeEmptyKuvaukses();
