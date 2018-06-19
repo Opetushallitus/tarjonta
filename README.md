@@ -134,6 +134,7 @@ Ajoympäristöä varten tarvitaan:
   - katso tunnukset `security-context-backend.xml`:sta
 - Front-kehityksessä voit käyttää selaimessa /dist polkua. Staattinen sovellus buildataan komennolla `(cd tarjonta-app-angular && gulp build:dev)`
 
+
 ### Ylläpidon toimintoja
 
 #### Uusien koulutusmoduulien luonti (KOMO-import)
