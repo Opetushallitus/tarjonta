@@ -43,9 +43,8 @@ public class TarjontaBaseEntity extends BaseEntity {
 
     private String getTekija() {
         if (SecurityContextHolder.getContext() != null
-                && SecurityContextHolder.getContext().getAuthentication() != null
-                && SecurityContextHolder.getContext().getAuthentication().getPrincipal() != null) {
-            return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+                && SecurityContextHolder.getContext().getAuthentication() != null) {
+            return SecurityContextHolder.getContext().getAuthentication().getName();
         } else {
             return null;
         }

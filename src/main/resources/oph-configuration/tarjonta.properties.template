@@ -17,6 +17,11 @@ host.haku={{host_haku}}
 host.ilb={{host_ilb}}
 host.alb={{host_alb}}
 host.virkailija={{host_virkailija}}
+
+cas.service.oppijanumerorekisteri-service=https://${host.virkailija}/oppijanumerorekisteri-service
+tarjonta.oppijanumerorekisteri.username={{tarjonta_oppijanumerorekisteri_username}}
+tarjonta.oppijanumerorekisteri.password={{tarjonta_oppijanumerorekisteri_password}}
+
 organisaatio.solr.url={{organisaatio_solr_url}}
 port.organisaatio-service={{port_organisaatio_service}}
 port.koodisto-service={{port_koodisto_service}}

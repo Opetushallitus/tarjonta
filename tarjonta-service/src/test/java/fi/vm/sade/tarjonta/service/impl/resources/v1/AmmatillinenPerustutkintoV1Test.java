@@ -28,6 +28,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.ONRService;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
@@ -96,6 +97,9 @@ public class AmmatillinenPerustutkintoV1Test {
 
     @Autowired
     KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
+
+    @Autowired
+    ONRService onrService;
 
     private static final String KOULUTUSKOODI = "koulutus_x";
     private static final String OSAAMISALA = "osaamisala_x";

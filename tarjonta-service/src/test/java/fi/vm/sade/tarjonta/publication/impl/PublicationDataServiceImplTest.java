@@ -59,6 +59,8 @@ import static org.junit.Assert.assertNotNull;
 @Transactional
 public class PublicationDataServiceImplTest extends TestUtilityBase {
 
+    public static final String TEST_USER_OID = "123.123.123.123";
+
     private PublicationDataServiceImpl publicationDataService;
     private Koulutusmoduuli komo1, komo2, komo3;
     private KoulutusmoduuliToteutus komoto1;
@@ -71,7 +73,7 @@ public class PublicationDataServiceImplTest extends TestUtilityBase {
     public void setUp() {
         em.clear();
 
-        setCurrentUser("mock_test_user", getAuthority("APP_TARJONTA_CRUD", "test.user.oid.123"));
+        setCurrentUser(TEST_USER_OID, getAuthority("APP_TARJONTA_CRUD", "test.user.oid.123"));
 
         //We could autowire the class, but then a 
         //test debug mode (at least in Netbean) fails.
@@ -480,7 +482,7 @@ public class PublicationDataServiceImplTest extends TestUtilityBase {
         if (haku) {
             assertNotNull("haku last update date", h1.getLastUpdateDate());
             Assert.assertTrue("haku last update date", h1.getLastUpdateDate().getTime() > compareDate.getTime());
-            assertEquals("haku last update by oid", "mock_test_user", h1.getLastUpdatedByOid());
+            assertEquals("haku last update by oid", TEST_USER_OID, h1.getLastUpdatedByOid());
         } else {
             Assert.assertNull("haku last update date", h1.getLastUpdateDate());
             Assert.assertNull("haku last update by oid was not null!!", h1.getLastUpdatedByOid());
@@ -490,7 +492,7 @@ public class PublicationDataServiceImplTest extends TestUtilityBase {
             assertNotNull("toteutus last update date", k1.getUpdated());
             Assert.assertTrue("toteutus last update date not after compare date: " + k1.getUpdated().getTime() + "!>=" + compareDate.getTime(), k1.getUpdated().getTime()>compareDate.getTime());
 //            Assert.assertNotSame("toteutus last update date not set, it's zero!!", 0, k1.getUpdated().getTime());
-            assertEquals("toteutus last update by oid", "mock_test_user", k1.getLastUpdatedByOid());
+            assertEquals("toteutus last update by oid", TEST_USER_OID, k1.getLastUpdatedByOid());
         } else {
             Assert.assertTrue("toteutus last update date", k1.getUpdated().before(compareDate));
             Assert.assertNull("toteutus last update by oid was not null", k1.getLastUpdatedByOid());
@@ -498,7 +500,7 @@ public class PublicationDataServiceImplTest extends TestUtilityBase {
 
         if (hakukohde) {
             assertNotNull("hakukohde last update date", hk1.getLastUpdateDate());
-            assertEquals("hakukohde last update by oid", "mock_test_user", hk1.getLastUpdatedByOid());
+            assertEquals("hakukohde last update by oid", TEST_USER_OID, hk1.getLastUpdatedByOid());
             Assert.assertTrue("hakukohde last update date", hk1.getLastUpdateDate()==null || hk1.getLastUpdateDate().getTime()>compareDate.getTime());
         } else {
             Assert.assertNull("hakukohde last update date was set!", hk1.getLastUpdateDate());

@@ -52,6 +52,7 @@ import fi.vm.sade.tarjonta.service.search.KoulutusSearchService;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.ONRService;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -82,7 +83,7 @@ import static org.mockito.Mockito.*;
  */
 abstract class KoulutusBase extends TestUtilityBase {
 
-    protected static final String USER_OID = "mock_test_user";
+    protected static final String USER_OID = "123.123.123.123";
     protected static final String KOULUTUSOHJELMA = "koulutusohjelma";
     protected static final Integer VUOSI = 2013;
     protected static final String KAUSI_KOODI_URI = "kausi_k";
@@ -170,7 +171,8 @@ abstract class KoulutusBase extends TestUtilityBase {
         doNothing().when(permissionChecker).checkUpdateKoulutusByTarjoajaOid(anyString());
 
         koodistoUri = createMock(KoodistoURI.class);
-        contextDataService = new ContextDataServiceImpl();
+        ONRService onrService = mock(ONRService.class);
+        contextDataService = new ContextDataServiceImpl(onrService);
         koulutusSisaltyvyysDAO = mock(KoulutusSisaltyvyysDAO.class);
         koulutusSearchService = mock(KoulutusSearchService.class);
         hakukohdeSearchService = mock(HakukohdeSearchService.class);
@@ -287,7 +289,8 @@ abstract class KoulutusBase extends TestUtilityBase {
     protected void initMockInstanceInternalStates() {
         setCurrentUser(USER_OID, getAuthority("APP_TARJONTA_CRUD", "test.user.oid.123"));
 
-        contextDataService = new ContextDataServiceImpl();
+        ONRService onrService = mock(ONRService.class);
+        contextDataService = new ContextDataServiceImpl(onrService);
 
         organisaatioServiceMock = mock(OrganisaatioService.class);
         when(organisaatioServiceMock.findByOid(ORGANISATION_OID)).thenReturn(organisaatioDTO);
