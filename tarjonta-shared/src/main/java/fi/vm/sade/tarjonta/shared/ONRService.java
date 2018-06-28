@@ -30,7 +30,7 @@ public class ONRService {
 
     public String findUserAsiointikieli(String oid) {
         try {
-            String url = urlConfiguration.url("oppijanumerorekisteri.henkilo.asiointiKieli");
+            String url = urlConfiguration.url("oppijanumerorekisteri.henkilo.asiointiKieli", oid);
             return cachingRestClient.getAsString(url);
         } catch (Exception e) {
             LOG.error("Getting virkailija asiointikieli from ONR failed", e);
