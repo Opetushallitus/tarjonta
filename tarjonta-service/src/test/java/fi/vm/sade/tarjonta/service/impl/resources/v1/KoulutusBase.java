@@ -52,7 +52,7 @@ import fi.vm.sade.tarjonta.service.search.KoulutusSearchService;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
-import fi.vm.sade.tarjonta.shared.ONRService;
+import fi.vm.sade.tarjonta.shared.OnrService;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -171,7 +171,7 @@ abstract class KoulutusBase extends TestUtilityBase {
         doNothing().when(permissionChecker).checkUpdateKoulutusByTarjoajaOid(anyString());
 
         koodistoUri = createMock(KoodistoURI.class);
-        ONRService onrService = mock(ONRService.class);
+        OnrService onrService = mock(OnrService.class);
         contextDataService = new ContextDataServiceImpl(onrService);
         koulutusSisaltyvyysDAO = mock(KoulutusSisaltyvyysDAO.class);
         koulutusSearchService = mock(KoulutusSearchService.class);
@@ -289,7 +289,7 @@ abstract class KoulutusBase extends TestUtilityBase {
     protected void initMockInstanceInternalStates() {
         setCurrentUser(USER_OID, getAuthority("APP_TARJONTA_CRUD", "test.user.oid.123"));
 
-        ONRService onrService = mock(ONRService.class);
+        OnrService onrService = mock(OnrService.class);
         contextDataService = new ContextDataServiceImpl(onrService);
 
         organisaatioServiceMock = mock(OrganisaatioService.class);

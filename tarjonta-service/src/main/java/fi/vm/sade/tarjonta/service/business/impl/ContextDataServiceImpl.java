@@ -15,13 +15,11 @@
  */
 package fi.vm.sade.tarjonta.service.business.impl;
 
-import fi.vm.sade.security.SadeUserDetailsWrapper;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
-import fi.vm.sade.tarjonta.shared.ONRService;
+import fi.vm.sade.tarjonta.shared.OnrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -35,10 +33,10 @@ public class ContextDataServiceImpl implements ContextDataService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextDataServiceImpl.class);
 
-    private ONRService onrService;
+    private OnrService onrService;
 
     @Autowired
-    public ContextDataServiceImpl(ONRService onrService) {
+    public ContextDataServiceImpl(OnrService onrService) {
         this.onrService = onrService;
     }
 

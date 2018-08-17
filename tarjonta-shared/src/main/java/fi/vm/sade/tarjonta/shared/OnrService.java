@@ -8,14 +8,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ONRService {
-    private static final Logger LOG = LoggerFactory.getLogger(ONRService.class);
+public class OnrService {
+    private static final Logger LOG = LoggerFactory.getLogger(OnrService.class);
 
     private final CachingRestClient cachingRestClient;
     private final UrlConfiguration urlConfiguration;
 
     @Autowired
-    public ONRService(UrlConfiguration urlConfiguration,
+    public OnrService(UrlConfiguration urlConfiguration,
                       @Value("${cas.service.oppijanumerorekisteri-service}") String targetService,
                       @Value("${tarjonta.oppijanumerorekisteri.username}") String clientAppUser,
                       @Value("${tarjonta.oppijanumerorekisteri.password}") String clientAppPass) {

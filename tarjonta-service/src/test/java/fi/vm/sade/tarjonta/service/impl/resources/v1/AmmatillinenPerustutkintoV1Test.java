@@ -1,6 +1,5 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -28,7 +27,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
-import fi.vm.sade.tarjonta.shared.ONRService;
+import fi.vm.sade.tarjonta.shared.OnrService;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
@@ -99,7 +98,7 @@ public class AmmatillinenPerustutkintoV1Test {
     KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
 
     @Autowired
-    ONRService onrService;
+    OnrService onrService;
 
     private static final String KOULUTUSKOODI = "koulutus_x";
     private static final String OSAAMISALA = "osaamisala_x";
