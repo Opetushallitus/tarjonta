@@ -31,6 +31,7 @@
     <mockito:mock id="koodistoProactiveCaching" class="fi.vm.sade.tarjonta.shared.KoodistoProactiveCaching"/>
     <mockito:mock id="permissionChecker" class="fi.vm.sade.tarjonta.service.auth.PermissionChecker"/>
     <mockito:mock id="tarjontaKoodistoHelper" class="fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper"/>
+    <mockito:mock id="onrService" class="fi.vm.sade.tarjonta.shared.OnrService"/>
 
     <bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResourceImpl"/>
     <bean id="tarjontaHakukohdeResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakukohdeResourceImpl"/>

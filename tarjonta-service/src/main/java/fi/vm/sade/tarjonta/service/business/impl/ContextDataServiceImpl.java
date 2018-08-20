@@ -15,11 +15,11 @@
  */
 package fi.vm.sade.tarjonta.service.business.impl;
 
-import fi.vm.sade.security.SadeUserDetailsWrapper;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.shared.OnrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +32,13 @@ import org.springframework.stereotype.Component;
 public class ContextDataServiceImpl implements ContextDataService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextDataServiceImpl.class);
+
+    private OnrService onrService;
+
+    @Autowired
+    public ContextDataServiceImpl(OnrService onrService) {
+        this.onrService = onrService;
+    }
 
     /**
      * Get user's user-service OID.
@@ -46,7 +53,9 @@ public class ContextDataServiceImpl implements ContextDataService {
             return "NA";
         }
 
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+        String userOid = SecurityContextHolder.getContext().getAuthentication().getName();
+        LOG.info("Got user oid from authentication:" + userOid);
+        return userOid;
     }
 
     /**
@@ -60,20 +69,18 @@ public class ContextDataServiceImpl implements ContextDataService {
                 || SecurityContextHolder.getContext().getAuthentication() == null) {
             return null;
         } else {
-            final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            final Object principal = authentication.getPrincipal();
 
-            if (principal != null && principal instanceof SadeUserDetailsWrapper) {
-                SadeUserDetailsWrapper sadeUser = (SadeUserDetailsWrapper) principal;
-                LOG.info("User SadeUserDetailsWrapper : {}, user oid : {}", sadeUser, sadeUser.getUsername());
+            String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+            LOG.info("Got user oid from authentication for onr query:" + userId);
 
-                if (sadeUser.getLang() != null && !sadeUser.getLang().isEmpty()) {
-                    return sadeUser.getLang(); //return an user lang code
-                }
+            // Call to ONR
+            String userLang = onrService.findUserAsiointikieli(userId);
+            LOG.info("Got user lang from onr:" + userLang);
+
+            if(userLang == null || "".equals(userLang)) {
+                return "FI";
             }
-
-            LOG.info("Not user lang found.");
-            return "FI";
+            return userLang.toUpperCase();
         }
     }
 }

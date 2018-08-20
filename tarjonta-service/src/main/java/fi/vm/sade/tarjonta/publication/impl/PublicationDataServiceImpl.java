@@ -558,19 +558,8 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         Preconditions.checkNotNull(SecurityContextHolder.getContext(), "Context object cannot be null.");
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Preconditions.checkNotNull(authentication, "Authentication object cannot be null.");
-        final Object principal = authentication.getPrincipal();
-
-        if (principal != null && principal instanceof SadeUserDetailsWrapper) {
-            SadeUserDetailsWrapper sadeUser = (SadeUserDetailsWrapper) principal;
-            log.info("User SadeUserDetailsWrapper : {}, user oid : {}", sadeUser, sadeUser.getUsername());
-            return sadeUser.getUsername(); //should be an user OID, not name.
-        } else if (authentication.getName() != null) {
-            //should be an user OID, not name.
-            log.info("User oid  : {}", authentication.getName());
-            return authentication.getName();
-        }
-
-        log.error("No an user OID found! Authentication : {}", authentication);
-        return null;
+        String oid = authentication.getName();
+        Preconditions.checkNotNull(oid, "User oid cannot be null.");
+        return oid;
     }
 }
