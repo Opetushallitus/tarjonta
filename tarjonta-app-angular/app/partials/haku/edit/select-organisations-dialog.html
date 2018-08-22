@@ -29,7 +29,7 @@
                 <td width="50%">
                     <ul style="height:250px" class="listView" >
                         <li ng-repeat="organisaatio in model.organisaatiot">
-                            <a ng-click="doRemoveSelected(organisaatio)">[X]</a> {{organisaatio.nimi}}
+                            <a ng-if="model.organisaatiot.length > 1" ng-click="doRemoveSelected(organisaatio)">[X]</a> {{organisaatio.nimi}}
                         </li>
                         <li ng-show="!hasSelectedOrganisations()" data-tt="haku.select.organisations.not-selected">Ei valittuja organisaatioita</li>
                     </ul>
