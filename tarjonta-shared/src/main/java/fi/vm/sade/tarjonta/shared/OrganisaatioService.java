@@ -8,8 +8,10 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.FluentIterable;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.dto.v2.OrganisaatioHakutulosSuppeaDTOV2;
 import fi.vm.sade.organisaatio.dto.v2.OrganisaatioPerustietoSuppea;
+import fi.vm.sade.organisaatio.dto.v3.OrganisaatioRDTOV3;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioResultDTO;
 import org.slf4j.Logger;
@@ -18,9 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -178,6 +178,19 @@ public class OrganisaatioService {
                     .toSet();
         } catch (Exception e) {
             final String msg = "Could not fetch child oids for organization with oid " + oid;
+            LOG.error(msg);
+            throw new RuntimeException(msg);
+        }
+    }
+
+    public List<OrganisaatioRDTOV3> findByOidSet(Set<String> oids) {
+        //TODO:
+        try {
+            List<OrganisaatioRDTOV3> results = (List<OrganisaatioRDTOV3>) objectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.findByOids", oids)), OrganisaatioRDTOV3.class);
+
+            ;
+        } catch (Exception e) {
+            final String msg = "Could not fetch organization with oid set " + oids;
             LOG.error(msg);
             throw new RuntimeException(msg);
         }

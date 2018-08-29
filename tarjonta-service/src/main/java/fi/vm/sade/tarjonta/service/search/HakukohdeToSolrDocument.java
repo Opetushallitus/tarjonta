@@ -28,6 +28,7 @@ import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.lang.StringUtils;
@@ -51,8 +52,11 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
 
     private final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
+    //@Autowired
+    //private OrganisaatioSearchService organisaatioSearchService;
+
     @Autowired
-    private OrganisaatioSearchService organisaatioSearchService;
+    private OrganisaatioService organisaatioService;
 
     @Autowired
     private TarjontaKoodistoHelper koodistoHelper;
@@ -247,7 +251,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
         Set<String> kuntas = new HashSet<String>();
 
         for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
-            List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioSearchService.findByOidSet(koulutusmoduuliToteutus.getOwnerOids());
+            List<OrganisaatioRDTOV3> organisaatiotiedot = organisaatioService.findByOidSet(koulutusmoduuliToteutus.getOwnerOids());
 
             for (OrganisaatioPerustieto organisaatioPerustieto : organisaatiotiedot) {
                 kuntas.add(getKoodiURIFromVersionedUri(organisaatioPerustieto.getKotipaikkaUri()));
@@ -263,7 +267,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
         Set<String> oppilaitostyypit = new HashSet<String>();
 
         for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
-            List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioSearchService.findByOidSet(koulutusmoduuliToteutus.getOwnerOids());
+            List<OrganisaatioRDTOV3> organisaatiotiedot = organisaatioService.findByOidSet(koulutusmoduuliToteutus.getOwnerOids());
 
             for (OrganisaatioPerustieto organisaatioPerustieto : organisaatiotiedot) {
                 String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(organisaatioPerustieto);
@@ -456,7 +460,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     }
 
     private boolean addOrganisaatioTiedotForTarjoaja(SolrInputDocument hakukohdeDoc, String tarjoaja) {
-        final List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(Sets.newHashSet(tarjoaja));
+        final List<OrganisaatioRDTOV3> orgs = organisaatioService.findByOidSet(Sets.newHashSet(tarjoaja));
         if (orgs.size() == 0) {
             return false;
         }
