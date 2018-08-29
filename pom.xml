@@ -99,7 +99,7 @@
     <mysema-commons-lang.version>0.2.4</mysema-commons-lang.version>
     <objenesis.version>.</objenesis.version>
     <oid.version>8.0-SNAPSHOT</oid.version>
-    <organisaatio.api.version>2015-13</organisaatio.api.version>
+    <organisaatio.api.version>2018-5-SNAPSHOT</organisaatio.api.version>
     <organisaatio.solr.version>13.0</organisaatio.solr.version>
     <paranamer.version>2.5.2</paranamer.version>
     <postgresql.version>42.1.4</postgresql.version>
