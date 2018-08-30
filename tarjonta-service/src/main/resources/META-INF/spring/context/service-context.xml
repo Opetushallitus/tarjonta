@@ -47,12 +47,9 @@
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeDTOToHakukohdeTyyppiConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.ValintakoeRDTOToValintakoeConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.HakukohdeLiiteRDTOToLiiteConverter"/>
+                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter"/>
             </list>
         </property>
 
     </bean>
-
-    <bean scope="singleton" class="fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService"/>
-    <bean scope="singleton" class="fi.vm.sade.organisaatio.service.search.SolrServerFactory"/>
-
 </beans>

@@ -24,11 +24,11 @@ import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.solr.common.SolrInputDocument;
@@ -49,7 +49,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private OrganisaatioSearchService organisaatioSearchService;
+    private OrganisaatioService organisaatioService;
 
     @Autowired
     private TarjontaKoodistoHelper koodistoHelper;
@@ -81,7 +81,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         String firstOwner = koulutusmoduuliToteutus.getTarjoaja();
         addFirstOwner(komotoDoc, firstOwner);
 
-        List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioSearchService.findByOidSet(koulutusmoduuliToteutus.getOwnerOids());
+        List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioService.findByOidSet(koulutusmoduuliToteutus.getOwnerOids());
 
         addOid(komotoDoc, koulutusmoduuliToteutus);
         addTyypit(komotoDoc, koulutusmoduuliToteutus);
@@ -394,11 +394,11 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
     }
 
     private List<OrganisaatioPerustieto> getTarjoajat(KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
-        return organisaatioSearchService.findByOidSet(koulutusmoduuliToteutus.getTarjoajaOids());
+        return organisaatioService.findByOidSet(koulutusmoduuliToteutus.getTarjoajaOids());
     }
 
     private List<OrganisaatioPerustieto> getJarjestajat(KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
-        return organisaatioSearchService.findByOidSet(koulutusmoduuliToteutus.getJarjestajaOids());
+        return organisaatioService.findByOidSet(koulutusmoduuliToteutus.getJarjestajaOids());
     }
 
     private void addTyypit(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
