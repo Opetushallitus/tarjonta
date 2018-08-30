@@ -18,6 +18,7 @@ import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 ;
 
 
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioResultDTO;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
@@ -200,9 +201,13 @@ public class OrganisaatioService {
         OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter converter = new OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter();
         try {
 
-            List<OrganisaatioRDTOV3> results = objectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.findByOids", oids)), OrganisaatioRDTOV3.class);
-            //TODO: convert from OrganisaatioRDTOV3
-            return results;
+            List<OrganisaatioRDTOV3> results = (List<OrganisaatioRDTOV3>) objectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.findByOids", oids)), OrganisaatioRDTOV3.class);
+            
+            List<OrganisaatioPerustieto> convertedResults = new ArrayList<>();
+            for (OrganisaatioRDTOV3 dto : results) {
+                convertedResults.add(converter.convert(dto));
+            }
+            return convertedResults;
         } catch (Exception e) {
             final String msg = "Could not fetch organization with oid set " + organisaatioOids;
             LOG.error(msg);
