@@ -19,6 +19,17 @@ import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioResultDTO;
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.codehaus.jettison.json.JSONArray;
 
 import org.slf4j.Logger;
@@ -26,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -195,42 +207,32 @@ public class OrganisaatioService {
             oids.put(oid);
         }
         OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter converter = new OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter();
-        try {
 
-            List<OrganisaatioRDTOV3> results = objectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.findByOids", oids)), new TypeReference<List<OrganisaatioRDTOV3>>() {});
+
+        String organisaatioUrl = urlConfiguration.getProperty("organisaatio-service.findByOids");
+        HttpPost post = new HttpPost(organisaatioUrl);
+        post.addHeader("content-type", "application/json;charset=UTF-8");
+
+
+
+        try {
+            post.setEntity(new StringEntity(oids.toString()));
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpResponse response = client.execute(post);
+            List<OrganisaatioRDTOV3> results = objectMapper.readValue(response.toString(), new TypeReference<List<OrganisaatioRDTOV3>>() {});
 
             List<OrganisaatioPerustieto> convertedResults = new ArrayList<>();
             for (OrganisaatioRDTOV3 dto : results) {
                 convertedResults.add(converter.convert(dto));
             }
             return convertedResults;
-        } catch (Exception e) {
+
+        } catch (IOException e) {
             final String msg = "Could not fetch organization with oid set " + organisaatioOids;
             LOG.error(msg);
             throw new RuntimeException(msg);
         }
     }
-/*
-    public List<OrganisaatioPerustieto> findByOidSet(Set<String> organisationOids) {
-        SolrQuery q = new SolrQuery(String.format(SolrOrgFields.OID + ":(%s)", Joiner.on(" ").join(organisationOids)));
-        q.setRows(organisationOids.size());
-
-        final SolrDocumentToOrganisaatioPerustietoTypeFunction converter = new SolrDocumentToOrganisaatioPerustietoTypeFunction(null);
-
-        try {
-            List<OrganisaatioPerustieto> result = Lists.newArrayList(
-            Lists.transform(
-            solr.query(q, SolrRequest.METHOD.POST).getResults(),
-                    converter));
-            return result;
-        } catch (SolrServerException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-*/
-
-
 
     public Map<String, String> getTarjoajaNimiMap(String orgOid) {
         final OrganisaatioRDTO org = findByOid(orgOid);
