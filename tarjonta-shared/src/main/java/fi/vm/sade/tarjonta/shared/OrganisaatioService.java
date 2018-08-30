@@ -207,7 +207,7 @@ public class OrganisaatioService {
         try {
 
             List<OrganisaatioRDTOV3> results = (List<OrganisaatioRDTOV3>) objectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.findByOids", oids)), OrganisaatioRDTOV3.class);
-            
+
             List<OrganisaatioPerustieto> convertedResults = new ArrayList<>();
             for (OrganisaatioRDTOV3 dto : results) {
                 convertedResults.add(converter.convert(dto));
