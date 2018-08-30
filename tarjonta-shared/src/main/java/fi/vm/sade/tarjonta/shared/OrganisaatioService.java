@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.shared;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
@@ -9,10 +10,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Lists;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.dto.v2.OrganisaatioHakutulosSuppeaDTOV2;
-import fi.vm.sade.organisaatio.dto.v2.OrganisaatioPerustietoSuppea;
 import fi.vm.sade.organisaatio.dto.v3.OrganisaatioRDTOV3;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 ;
@@ -20,11 +19,8 @@ import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioResultDTO;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrRequest;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -206,7 +202,7 @@ public class OrganisaatioService {
         OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter converter = new OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter();
         try {
 
-            List<OrganisaatioRDTOV3> results = (List<OrganisaatioRDTOV3>) objectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.findByOids", oids)), OrganisaatioRDTOV3.class);
+            List<OrganisaatioRDTOV3> results = objectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.findByOids", oids)), new TypeReference<List<OrganisaatioRDTOV3>>() {});
 
             List<OrganisaatioPerustieto> convertedResults = new ArrayList<>();
             for (OrganisaatioRDTOV3 dto : results) {
