@@ -224,7 +224,7 @@ public class OrganisaatioService {
             post.setEntity(new StringEntity(oids.toString()));
             HttpClient client = HttpClientBuilder.create().build();
             HttpResponse response = client.execute(post);
-            List<OrganisaatioRDTOV3> results = objectMapper.readValue(response.toString(), new TypeReference<List<OrganisaatioRDTOV3>>() {});
+            List<OrganisaatioRDTOV3> results = objectMapper.readValue(response.getEntity().getContent(), new TypeReference<List<OrganisaatioRDTOV3>>() {});
 
             List<OrganisaatioPerustieto> convertedResults = new ArrayList<>();
             for (OrganisaatioRDTOV3 dto : results) {
