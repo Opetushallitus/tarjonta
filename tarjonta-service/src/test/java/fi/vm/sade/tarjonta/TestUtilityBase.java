@@ -3,7 +3,6 @@ package fi.vm.sade.tarjonta;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.YhdenPaikanSaantoBuilder;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
-import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.security.OrganisationHierarchyAuthorizer;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusSisaltyvyysDAOImpl;
@@ -101,7 +100,7 @@ abstract public class TestUtilityBase {
     protected KoulutusUtilService koulutusUtilService;
 
     @Autowired
-    protected OrganisaatioSearchService organisaatioSearchService;
+    protected OrganisaatioService organisaatioService;
 
     @Autowired
     protected TarjontaPublicService publicService;
@@ -123,9 +122,6 @@ abstract public class TestUtilityBase {
 
     @Autowired
     protected KoulutusSearchService koulutusSearchService;
-
-    @Autowired
-    protected OrganisaatioService organisaatioService;
 
     @Autowired
     protected KoulutusSisaltyvyysDAO KoulutusSisaltyvyysDAO;

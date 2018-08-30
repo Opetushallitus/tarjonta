@@ -31,9 +31,9 @@ public class OppilaitostyyppiResolverTest extends TestMockBase {
         OrganisaatioPerustieto orgWithoutOppilaitostyyppi = createOrganisaatioPerustietoWithoutOppilaitostyyppi();
         OrganisaatioPerustieto orgWithOppilaitostyyppi = createOrganisaatioPerustietoWithOppilaitostyyppi();
 
-        when(organisaatioSearchService.findByOidSet(new HashSet<String>(Arrays.asList("1.2.3"))))
+        when(organisaatioService.findByOidSet(new HashSet<String>(Arrays.asList("1.2.3"))))
                 .thenReturn(Arrays.asList(orgWithoutOppilaitostyyppi));
-        when(organisaatioSearchService.findByOidSet(new HashSet<String>(Arrays.asList("4.5.6"))))
+        when(organisaatioService.findByOidSet(new HashSet<String>(Arrays.asList("4.5.6"))))
                 .thenReturn(Arrays.asList(orgWithOppilaitostyyppi));
 
         String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(orgWithoutOppilaitostyyppi);

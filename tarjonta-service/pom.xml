@@ -578,11 +578,11 @@
             <artifactId>spring-security-core</artifactId>
             <version>${spring-security.version}</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>fi.vm.sade.organisaatio</groupId>
             <artifactId>organisaatio-solr-client</artifactId>
             <version>${organisaatio.solr.version}</version>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -609,6 +609,14 @@
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.organisaatio</groupId>
+            <artifactId>organisaatio-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.organisaatio</groupId>
+            <artifactId>organisaatio-api</artifactId>
         </dependency>
     </dependencies>
 

@@ -2,7 +2,6 @@ package fi.vm.sade.tarjonta;
 
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
-import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.OidService;
@@ -37,7 +36,7 @@ abstract public class TestMockBase {
     protected PublicationDataService publicationDataService;
 
     @Mock
-    protected OrganisaatioSearchService organisaatioSearchService;
+    protected OrganisaatioService organisaatioService;
 
     @Mock
     protected OppilaitostyyppiResolver oppilaitostyyppiResolver;
@@ -67,9 +66,6 @@ abstract public class TestMockBase {
 
     @Mock
     protected KuvausDAO kuvausDAO;
-
-    @Mock
-    protected OrganisaatioService organisaatioService;
 
     @Mock
     protected ContextDataService contextDataService;

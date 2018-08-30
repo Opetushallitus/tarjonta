@@ -22,6 +22,7 @@ import java.util.*;
 import javax.annotation.Nullable;
 import javax.jws.WebParam;
 
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
@@ -138,7 +138,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Autowired
     private PermissionChecker permissionChecker;
     @Autowired
-    private OrganisaatioSearchService organisaatioSearchService;
+    private OrganisaatioService organisaatioService;
     @Autowired
     private OidService oidService;
     @Autowired
@@ -624,7 +624,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
      * @param tarjoaja
      */
     private void checkOrganisationExists(String tarjoaja) {
-        List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(Sets.newHashSet(tarjoaja));
+        List<OrganisaatioPerustieto> orgs = organisaatioService.findByOidSet(Sets.newHashSet(tarjoaja));
         if (orgs.size() != 1 || (orgs.get(0).getLakkautusPvm() != null && orgs.get(0).getLakkautusPvm().before(new Date()))) {
             throw new RuntimeException("nonexisting.organisation.error");
         }
