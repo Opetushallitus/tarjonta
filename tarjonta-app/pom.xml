@@ -43,18 +43,6 @@
             <version>${koodisto.version}</version>
         </dependency>
 
-        <!--dependency>
-            <groupId>fi.vm.sade.organisaatio</groupId>
-            <artifactId>organisaatio-solr-client</artifactId>
-            <version>${organisaatio.solr.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-jdk14</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency-->
-
         <dependency>
             <groupId>fi.vm.sade.authentication</groupId>
             <artifactId>authentication-api</artifactId>

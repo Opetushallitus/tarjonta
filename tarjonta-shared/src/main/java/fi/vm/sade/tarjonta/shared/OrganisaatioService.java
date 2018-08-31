@@ -99,7 +99,7 @@ public class OrganisaatioService {
         VARHAISKASVATUKSEN_TOIMIPAIKKA("Varhaiskasvatuksen toimipaikka"),
         TYOELAMAJARJESTO("Tyoelamajarjesto");
 
-        public final String value;
+        private final String value;
 
         OrganisaatioTyyppi(String v) {
             value = v;
@@ -203,27 +203,21 @@ public class OrganisaatioService {
         for (String oid: organisaatioOids) {
             oids.put(oid);
         }
+
         OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter converter = new OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter();
-
-
-        String organisaatioUrl = urlConfiguration.getProperty("organisaatio-service.findByOids");
-        HttpPost post = new HttpPost(organisaatioUrl);
+        HttpPost post = new HttpPost(urlConfiguration.getProperty("organisaatio-service.findByOids"));
         post.addHeader("content-type", "application/json;charset=UTF-8");
-
-
 
         try {
             post.setEntity(new StringEntity(oids.toString()));
             HttpClient client = HttpClientBuilder.create().build();
             HttpResponse response = client.execute(post);
             List<OrganisaatioRDTOV3> results = objectMapper.readValue(response.getEntity().getContent(), new TypeReference<List<OrganisaatioRDTOV3>>() {});
-
             List<OrganisaatioPerustieto> convertedResults = new ArrayList<>();
             for (OrganisaatioRDTOV3 dto : results) {
                 convertedResults.add(converter.convert(dto));
             }
             return convertedResults;
-
         } catch (IOException e) {
             final String msg = "Could not fetch organization with oid set " + organisaatioOids;
             LOG.error(msg);
