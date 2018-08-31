@@ -3,8 +3,6 @@ package fi.vm.sade.tarjonta.shared;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -19,17 +17,11 @@ import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioResultDTO;
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.codehaus.jettison.json.JSONArray;
 
 import org.slf4j.Logger;
@@ -100,9 +92,12 @@ public class OrganisaatioService {
         KOULUTUSTOIMIJA("Koulutustoimija"),
         OPPILAITOS("Oppilaitos"),
         TOIMIPISTE("Toimipiste"),
-        MUU_ORGANISAATIO("Muu organisaatio");
+        MUU_ORGANISAATIO("Muu organisaatio"),
+        RYHMA("Ryhma"),
+        VARHAISKASVATUKSEN_JARJESTAJA("Varhaiskasvatuksen jarjestaja"),
+        TYOELAMAJARJESTO("Tyoelamajarjesto");
 
-        private final String value;
+        public final String value;
 
         OrganisaatioTyyppi(String v) {
             value = v;
