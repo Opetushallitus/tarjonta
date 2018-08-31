@@ -1,5 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
+
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.dto.v3.OrganisaatioRDTOV3;
 import org.slf4j.Logger;
@@ -8,13 +10,12 @@ import org.springframework.core.convert.converter.Converter;
 
 import java.text.SimpleDateFormat;
 
-//public class OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter extends AbstractToDomainConverter<OrganisaatioRDTOV3, OrganisaatioPerustieto> {
 public class OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter implements Converter<OrganisaatioRDTOV3, OrganisaatioPerustieto> {
     private static final Logger LOG = LoggerFactory.getLogger(OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter.class);
 
     @Override
     public OrganisaatioPerustieto convert(OrganisaatioRDTOV3 t) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        //SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         //List<Yhteystieto> yhteystietos = new ArrayList<Yhteystieto>();
         OrganisaatioPerustieto s = new OrganisaatioPerustieto();
 
@@ -29,12 +30,15 @@ public class OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter implements Conv
         s.setOppilaitosKoodi(t.getOppilaitosKoodi());
         s.setOppilaitostyyppi(t.getOppilaitosTyyppiUri());
         s.setToimipistekoodi(t.getToimipistekoodi());
-        //s.setMatch(t.getMatch);
+        //s.setMatch();
         s.setNimi(t.getNimi());
-        //s.setorganisaatioTyypit(t.getTyypit());
-        //s.setk(t.getKieletUris());
+        for (String organisaatioTyyppi : t.getTyypit()) {
+            s.getOrganisaatiotyypit().add(OrganisaatioTyyppi.fromValue(organisaatioTyyppi));
+        }
+
+        t.getKieletUris();
         s.setKotipaikkaUri(t.getKotipaikkaUri());
-        //s.setChildren(t.ge);
+        //s.setChildren();
 
         return s;
     }
