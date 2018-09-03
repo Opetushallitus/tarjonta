@@ -8,15 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.converter.Converter;
 
-import java.text.SimpleDateFormat;
-
 public class OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter implements Converter<OrganisaatioRDTOV3, OrganisaatioPerustieto> {
     private static final Logger LOG = LoggerFactory.getLogger(OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter.class);
 
     @Override
     public OrganisaatioPerustieto convert(OrganisaatioRDTOV3 t) {
-        //SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        //List<Yhteystieto> yhteystietos = new ArrayList<Yhteystieto>();
         OrganisaatioPerustieto s = new OrganisaatioPerustieto();
 
         s.setOid(t.getOid());
@@ -26,7 +22,7 @@ public class OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter implements Conv
         s.setParentOidPath(t.getParentOid());
         s.setYtunnus(t.getYTunnus());
         s.setVirastoTunnus(t.getVirastoTunnus());
-        //s.setAliOrganisaatioMaara(t.getAliOrganisaatioMaara);
+        //s.setAliOrganisaatioMaara();
         s.setOppilaitosKoodi(t.getOppilaitosKoodi());
         s.setOppilaitostyyppi(t.getOppilaitosTyyppiUri());
         s.setToimipistekoodi(t.getToimipistekoodi());
@@ -36,7 +32,10 @@ public class OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter implements Conv
             s.getOrganisaatiotyypit().add(OrganisaatioTyyppi.fromValue(organisaatioTyyppi));
         }
 
-        t.getKieletUris();
+        for (String kieliUri : t.getKieletUris()) {
+            s.getKieletUris().add(kieliUri);
+        }
+
         s.setKotipaikkaUri(t.getKotipaikkaUri());
         //s.setChildren();
 
