@@ -225,6 +225,7 @@ public class OrganisaatioService {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("content-type", "application/json;charset=UTF-8");
+                connection.setDoOutput(true);
 
                 OutputStreamWriter wr= new OutputStreamWriter(connection.getOutputStream());
                 wr.write(oids.toString());
