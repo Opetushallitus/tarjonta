@@ -205,14 +205,17 @@ public class OrganisaatioService {
         }
 
         OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter converter = new OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter();
-        HttpPost post = new HttpPost(urlConfiguration.getProperty("organisaatio-service.findByOids"));
-        post.addHeader("content-type", "application/json;charset=UTF-8");
+        //HttpPost post = new HttpPost(urlConfiguration.getProperty("organisaatio-service.findByOids"));
+        //post.addHeader("content-type", "application/json;charset=UTF-8");
 
         try {
-            post.setEntity(new StringEntity(oids.toString()));
-            HttpClient client = HttpClientBuilder.create().build();
-            HttpResponse response = client.execute(post);
-            List<OrganisaatioRDTOV3> results = objectMapper.readValue(response.getEntity().getContent(), new TypeReference<List<OrganisaatioRDTOV3>>() {});
+            //post.setEntity(new StringEntity(oids.toString()));
+            //HttpClient client = HttpClientBuilder.create().build();
+            //HttpResponse response = client.execute(post);
+            //List<OrganisaatioRDTOV3> results = objectMapper.readValue(response.getEntity().getContent(), new TypeReference<List<OrganisaatioRDTOV3>>() {});
+
+            List<OrganisaatioRDTOV3> results = objectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.findByOids", oids)), new TypeReference<List<OrganisaatioRDTOV3>>() {});
+
             List<OrganisaatioPerustieto> convertedResults = new ArrayList<>();
             for (OrganisaatioRDTOV3 dto : results) {
                 convertedResults.add(converter.convert(dto));

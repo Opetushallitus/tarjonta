@@ -215,8 +215,9 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     }
 
     private void addDataFromKoulutus(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
-        addOppilaitostyypit(hakukohdeDoc, hakukohde);
-        addKunnat(hakukohdeDoc, hakukohde);
+        //addOppilaitostyypit(hakukohdeDoc, hakukohde);
+        //addKunnat(hakukohdeDoc, hakukohde);
+        addKunnatAndOppilaitostyypit(hakukohdeDoc, hakukohde);
         addOpetuskielet(hakukohdeDoc, hakukohde);
         addKoulutusmoduuliTyyppi(hakukohdeDoc, hakukohde);
     }
@@ -275,7 +276,31 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
         return true;
     }
 
-    private void addKunnat(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
+    private void addKunnatAndOppilaitostyypit(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
+        Set<String> kuntas = new HashSet<String>();
+        Set<String> oppilaitostyypit = new HashSet<String>();
+
+        for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
+            List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioService.findByOidSet(koulutusmoduuliToteutus.getOwnerOids());
+
+            for (OrganisaatioPerustieto organisaatioPerustieto : organisaatiotiedot) {
+                String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(organisaatioPerustieto);
+                if (oppilaitostyyppi != null) {
+                    oppilaitostyypit.add(oppilaitostyyppi);
+                }
+                kuntas.add(getKoodiURIFromVersionedUri(organisaatioPerustieto.getKotipaikkaUri()));
+            }
+        }
+
+        for (String kunta : kuntas) {
+            add(hakukohdeDoc, KUNTA_URIS, kunta);
+        }
+        for (String oppilaitostyyppi : oppilaitostyypit) {
+            add(hakukohdeDoc, OPPILAITOSTYYPPI_URIS, oppilaitostyyppi);
+        }
+    }
+
+    /*    private void addKunnat(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
         Set<String> kuntas = new HashSet<String>();
 
         for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
@@ -308,7 +333,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
         for (String oppilaitostyyppi : oppilaitostyypit) {
             add(hakukohdeDoc, OPPILAITOSTYYPPI_URIS, oppilaitostyyppi);
         }
-    }
+    }*/
 
     private void addAloituspaikkatiedot(SolrInputDocument doc, Hakukohde hakukohde) {
         add(doc, ALOITUSPAIKAT, hakukohde.getAloituspaikatLkm());
