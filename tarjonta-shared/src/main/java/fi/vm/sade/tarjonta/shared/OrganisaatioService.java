@@ -1,7 +1,9 @@
 package fi.vm.sade.tarjonta.shared;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Predicates;
 import com.google.common.cache.CacheBuilder;
@@ -16,7 +18,10 @@ import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 
 
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter;
+import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOrgDTO;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioResultDTO;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -30,7 +35,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -205,16 +213,39 @@ public class OrganisaatioService {
         }
 
         OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter converter = new OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter();
-        //HttpPost post = new HttpPost(urlConfiguration.getProperty("organisaatio-service.findByOids"));
-        //post.addHeader("content-type", "application/json;charset=UTF-8");
+
+        List<OrganisaatioRDTOV3> results = new ArrayList<>();
 
         try {
-            //post.setEntity(new StringEntity(oids.toString()));
-            //HttpClient client = HttpClientBuilder.create().build();
-            //HttpResponse response = client.execute(post);
-            //List<OrganisaatioRDTOV3> results = objectMapper.readValue(response.getEntity().getContent(), new TypeReference<List<OrganisaatioRDTOV3>>() {});
 
-            List<OrganisaatioRDTOV3> results = objectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.findByOids", oids)), new TypeReference<List<OrganisaatioRDTOV3>>() {});
+
+                URL url = new URL(urlConfiguration.url("organisaatio-service.findByOids"));
+
+
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("content-type", "application/json;charset=UTF-8");
+
+                OutputStreamWriter wr= new OutputStreamWriter(connection.getOutputStream());
+                wr.write(oids.toString());
+                wr.flush();
+
+
+                results = objectMapper.readValue(IOUtils.toString(connection.getInputStream()),
+                        new TypeReference<List<OrganisaatioRDTOV3>>() {}
+                );
+
+//            } catch(JsonParseException e) {
+//                LOG.error("KoulutusPermission update failed, JSON parse error", e);
+//            } catch(JsonMappingException e) {
+//                LOG.error("KoulutusPermission update failed, JSON mapping error", e);
+//            } catch(IOException e) {
+//                LOG.error("KoulutusPermission update failed, IOException", e);
+//            }
+
+
+
+            //results = objectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.findByOids", oids)), new TypeReference<List<OrganisaatioRDTOV3>>() {});
 
             List<OrganisaatioPerustieto> convertedResults = new ArrayList<>();
             for (OrganisaatioRDTOV3 dto : results) {
