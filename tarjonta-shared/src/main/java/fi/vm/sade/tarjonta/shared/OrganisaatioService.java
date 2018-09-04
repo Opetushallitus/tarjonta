@@ -230,6 +230,7 @@ public class OrganisaatioService {
                 OutputStreamWriter wr= new OutputStreamWriter(connection.getOutputStream());
                 wr.write(oids.toString());
                 wr.flush();
+                wr.close();
 
 
                 results = objectMapper.readValue(IOUtils.toString(connection.getInputStream()),
