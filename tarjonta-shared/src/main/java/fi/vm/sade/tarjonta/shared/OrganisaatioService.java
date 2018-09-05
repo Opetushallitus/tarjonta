@@ -240,7 +240,7 @@ public class OrganisaatioService {
             }
             return convertedResults;
         } catch (SocketTimeoutException e) {
-            final String msg = "Could not fetch organization with oid set " + organisaatioOids;
+            final String msg = "Could not fetch organization with oid set " + organisaatioOids + " - connection timed out.";
             LOG.error(msg);
             throw new RuntimeException(msg);
         } catch (IOException e) {
