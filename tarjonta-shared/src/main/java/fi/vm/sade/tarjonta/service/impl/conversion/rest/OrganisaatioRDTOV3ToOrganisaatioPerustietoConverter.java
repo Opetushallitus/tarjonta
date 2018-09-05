@@ -19,7 +19,7 @@ public class OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter implements Conv
         s.setAlkuPvm(t.getAlkuPvm());
         s.setLakkautusPvm(t.getLakkautusPvm());
         s.setParentOid(t.getParentOid());
-        s.setParentOidPath(t.getParentOid());
+        s.setParentOidPath(t.getParentOidPath());
         s.setYtunnus(t.getYTunnus());
         s.setVirastoTunnus(t.getVirastoTunnus());
         //s.setAliOrganisaatioMaara();
