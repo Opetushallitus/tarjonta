@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -206,54 +207,42 @@ public class OrganisaatioService {
         if (organisaatioOids.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
-
-        JSONArray oids = new JSONArray();
-        for (String oid: organisaatioOids) {
-            oids.put(oid);
-        }
-
-        OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter converter = new OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter();
-
-        List<OrganisaatioRDTOV3> results = new ArrayList<>();
-
         try {
 
+            JSONArray oids = new JSONArray();
+            for (String oid : organisaatioOids) {
+                oids.put(oid);
+            }
+            URL url = new URL(urlConfiguration.url("organisaatio-service.findByOids"));
 
-                URL url = new URL(urlConfiguration.url("organisaatio-service.findByOids"));
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("clientSubSystemCode", "1.2.246.562.10.00000000001.tarjonta");
+            connection.setRequestProperty("content-type", "application/json;charset=UTF-8");
+            connection.setDoOutput(true);
+            connection.setConnectTimeout(2000);
+            connection.setReadTimeout(10000);
 
-
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("POST");
-                connection.setRequestProperty("content-type", "application/json;charset=UTF-8");
-                connection.setDoOutput(true);
-
-                OutputStreamWriter wr= new OutputStreamWriter(connection.getOutputStream());
-                wr.write(oids.toString());
-                wr.flush();
-                wr.close();
-
-
-                results = objectMapper.readValue(IOUtils.toString(connection.getInputStream()),
-                        new TypeReference<List<OrganisaatioRDTOV3>>() {}
-                );
-
-//            } catch(JsonParseException e) {
-//                LOG.error("KoulutusPermission update failed, JSON parse error", e);
-//            } catch(JsonMappingException e) {
-//                LOG.error("KoulutusPermission update failed, JSON mapping error", e);
-//            } catch(IOException e) {
-//                LOG.error("KoulutusPermission update failed, IOException", e);
-//            }
+            OutputStreamWriter wr= new OutputStreamWriter(connection.getOutputStream());
+            wr.write(oids.toString());
+            wr.flush();
+            wr.close();
 
 
-
-            //results = objectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.findByOids", oids)), new TypeReference<List<OrganisaatioRDTOV3>>() {});
+            List<OrganisaatioRDTOV3> results = objectMapper.readValue(IOUtils.toString(connection.getInputStream()),
+                    new TypeReference<List<OrganisaatioRDTOV3>>() {}
+            );
 
             List<OrganisaatioPerustieto> convertedResults = new ArrayList<>();
+            OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter converter = new OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter();
             for (OrganisaatioRDTOV3 dto : results) {
                 convertedResults.add(converter.convert(dto));
             }
             return convertedResults;
+        } catch (SocketTimeoutException e) {
+            final String msg = "Could not fetch organization with oid set " + organisaatioOids;
+            LOG.error(msg);
+            throw new RuntimeException(msg);
         } catch (IOException e) {
             final String msg = "Could not fetch organization with oid set " + organisaatioOids;
             LOG.error(msg);
