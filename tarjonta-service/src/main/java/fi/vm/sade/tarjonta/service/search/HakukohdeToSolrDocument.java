@@ -174,6 +174,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
         Map<String, KoulutusmoduuliToteutusTarjoajatiedot> koulutusmoduuliToteutusTarjoajatiedot = hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot();
         Set<String> tarjoajaoids= new HashSet<String>();
         // Jos ei ole monta tarjoajaa -> indeksoi kuten ennen KJOH-778
+        // Gather all oids to one findByOids rest call:
         if (koulutusmoduuliToteutusTarjoajatiedot.isEmpty()) {
             tarjoajaoids.add(hakukohde.getFirstKoulutus().getTarjoaja());
         } else { // Monta tarjoajaa
@@ -216,8 +217,6 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     }
 
     private void addDataFromKoulutus(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
-        //addOppilaitostyypit(hakukohdeDoc, hakukohde);
-        //addKunnat(hakukohdeDoc, hakukohde);
         addKunnatAndOppilaitostyypit(hakukohdeDoc, hakukohde);
         addOpetuskielet(hakukohdeDoc, hakukohde);
         addKoulutusmoduuliTyyppi(hakukohdeDoc, hakukohde);
