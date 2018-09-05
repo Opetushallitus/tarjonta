@@ -15,12 +15,9 @@
  */
 package fi.vm.sade.tarjonta.service.search;
 
-import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
@@ -96,24 +93,6 @@ public class IndexDataUtils {
         }
 
         return kmdt;
-    }
-
-    public static KoodiType getKoodiByUriWithVersion(String uriWithVersion, KoodiService koodiService) {
-        SearchKoodisCriteriaType searchCriteria;
-
-        String[] koodiUriAndVersion = splitKoodiURI(uriWithVersion);
-
-        int version = Integer.parseInt(koodiUriAndVersion[1]);
-        String uri = koodiUriAndVersion[0];
-
-        if (version < 0) {
-            searchCriteria = KoodiServiceSearchCriteriaBuilder.latestKoodisByUris(uri);
-        } else {
-            searchCriteria = KoodiServiceSearchCriteriaBuilder.koodiByUriAndVersion(uri, version);
-        }
-
-        List<KoodiType> queryResult = koodiService.searchKoodis(searchCriteria);
-        return queryResult.isEmpty() ? null : queryResult.get(0);
     }
 
     public static String parseKausi(Date koulutuksenAlkamisPvm) {
