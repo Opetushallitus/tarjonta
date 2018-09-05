@@ -11,10 +11,6 @@
                 serviceClass="fi.vm.sade.koodisto.service.KoodiService"
                 address="${koodi.public.webservice.url.backend}"/>
 
-    <jaxws:client id="koodistoPublicService"
-                  serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
-                  address="${koodisto.public.webservice.url.backend}"/>
-
     <jaxws:client id="tarjontaAdminService"
                   serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService"
                   address="${tarjonta.admin.webservice.url.backend}"/>

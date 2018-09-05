@@ -30,14 +30,6 @@
         </jaxws:outInterceptors>
     </jaxws:client>
 
-    <jaxws:client id="koodistoPublicService"
-                  serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
-                  address="${koodisto.public.webservice.url.backend}">
-        <jaxws:outInterceptors>
-            <ref bean="callerIdInterceptor"/>
-        </jaxws:outInterceptors>
-    </jaxws:client>
-
     <bean id="callerIdInterceptor" class="fi.vm.sade.tarjonta.rest.CallerIdCxfInterceptor">
         <property name="headerValue" value="${callerid.tarjonta.tarjonta-service.backend}"/>
     </bean>

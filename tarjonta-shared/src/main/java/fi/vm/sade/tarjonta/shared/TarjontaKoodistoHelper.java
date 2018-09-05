@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.shared;
 import com.google.common.base.Preconditions;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.KoodistoService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.SearchKoodisVersioSelectionType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
@@ -51,8 +50,6 @@ public class TarjontaKoodistoHelper {
     public static final String LANGUAGE_SEPARATOR = ", ";
     public static final String KOODI_URI_PREFIX = "kieli_";
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaKoodistoHelper.class);
-    @Autowired
-    private KoodistoService _koodistoService;
     @Autowired
     private KoodiService koodiService;
     @Autowired
