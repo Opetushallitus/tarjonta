@@ -1,8 +1,5 @@
 package fi.vm.sade.tarjonta.shared;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.javautils.httpclient.*;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -45,11 +42,7 @@ public class KoodiServiceImplTest {
         properties.addDefault("host.virkailija", "localhost");
         OphHttpClient httpClient = new OphHttpClient(httpClientProxyMock, "tarjonta", properties);
 
-        ObjectMapper objectMapper = new ObjectMapper(); // TODO: konfiguraatio on vain tarjonta-service modulissa
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
-        koodiServiceImpl = new KoodiServiceImpl(httpClient, objectMapper);
+        koodiServiceImpl = new KoodiServiceImpl(httpClient);
     }
 
     @Test

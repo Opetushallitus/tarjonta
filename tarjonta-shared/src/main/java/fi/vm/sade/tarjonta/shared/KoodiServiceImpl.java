@@ -1,6 +1,8 @@
 package fi.vm.sade.tarjonta.shared;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import fi.vm.sade.javautils.httpclient.OphHttpClient;
@@ -28,8 +30,12 @@ public class KoodiServiceImpl implements KoodiService {
     private final ObjectReader objectReader;
 
     @Autowired
-    public KoodiServiceImpl(OphHttpClient httpClient, ObjectMapper objectMapper) {
+    public KoodiServiceImpl(OphHttpClient httpClient) {
         this.httpClient = httpClient;
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
         this.objectReader = objectMapper.reader();
     }
 
