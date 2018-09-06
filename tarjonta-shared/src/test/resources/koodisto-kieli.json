@@ -1,0 +1,114 @@
+[
+  {
+    "koodiUri": "kieli_fi",
+    "resourceUri": "https://virkailija.opintopolku.fi/koodisto-service/rest/codeelement/kieli_fi",
+    "version": 0,
+    "versio": 1,
+    "koodisto": {
+      "koodistoUri": "kieli",
+      "organisaatioOid": "1.2.246.562.10.00000000001",
+      "koodistoVersios": [
+        1
+      ]
+    },
+    "koodiArvo": "FI",
+    "paivitysPvm": 1382966990980,
+    "voimassaAlkuPvm": "1990-01-01",
+    "voimassaLoppuPvm": null,
+    "tila": "LUONNOS",
+    "metadata": [
+      {
+        "nimi": "suomi",
+        "kuvaus": "suomi",
+        "lyhytNimi": "suomi",
+        "kayttoohje": null,
+        "kasite": null,
+        "sisaltaaMerkityksen": null,
+        "eiSisallaMerkitysta": null,
+        "huomioitavaKoodi": null,
+        "sisaltaaKoodiston": null,
+        "kieli": "FI"
+      },
+      {
+        "nimi": "Finnish",
+        "kuvaus": "Finnish",
+        "lyhytNimi": "Finnish",
+        "kayttoohje": null,
+        "kasite": null,
+        "sisaltaaMerkityksen": null,
+        "eiSisallaMerkitysta": null,
+        "huomioitavaKoodi": null,
+        "sisaltaaKoodiston": null,
+        "kieli": "EN"
+      },
+      {
+        "nimi": "finska",
+        "kuvaus": "finska",
+        "lyhytNimi": "finska",
+        "kayttoohje": null,
+        "kasite": null,
+        "sisaltaaMerkityksen": null,
+        "eiSisallaMerkitysta": null,
+        "huomioitavaKoodi": null,
+        "sisaltaaKoodiston": null,
+        "kieli": "SV"
+      }
+    ]
+  },
+  {
+    "koodiUri": "kieli_sv",
+    "resourceUri": "https://virkailija.opintopolku.fi/koodisto-service/rest/codeelement/kieli_sv",
+    "version": 0,
+    "versio": 1,
+    "koodisto": {
+      "koodistoUri": "kieli",
+      "organisaatioOid": "1.2.246.562.10.00000000001",
+      "koodistoVersios": [
+        1
+      ]
+    },
+    "koodiArvo": "SV",
+    "paivitysPvm": 1382966986774,
+    "voimassaAlkuPvm": "1990-01-01",
+    "voimassaLoppuPvm": null,
+    "tila": "LUONNOS",
+    "metadata": [
+      {
+        "nimi": "ruotsi",
+        "kuvaus": "ruotsi",
+        "lyhytNimi": "ruotsi",
+        "kayttoohje": null,
+        "kasite": null,
+        "sisaltaaMerkityksen": null,
+        "eiSisallaMerkitysta": null,
+        "huomioitavaKoodi": null,
+        "sisaltaaKoodiston": null,
+        "kieli": "FI"
+      },
+      {
+        "nimi": "Swedish",
+        "kuvaus": "Swedish",
+        "lyhytNimi": "Swedish",
+        "kayttoohje": null,
+        "kasite": null,
+        "sisaltaaMerkityksen": null,
+        "eiSisallaMerkitysta": null,
+        "huomioitavaKoodi": null,
+        "sisaltaaKoodiston": null,
+        "kieli": "EN"
+      },
+      {
+        "nimi": "svenska",
+        "kuvaus": "svenska",
+        "lyhytNimi": "svenska",
+        "kayttoohje": null,
+        "kasite": null,
+        "sisaltaaMerkityksen": null,
+        "eiSisallaMerkitysta": null,
+        "huomioitavaKoodi": null,
+        "sisaltaaKoodiston": null,
+        "kieli": "SV"
+      }
+    ]
+  }
+]

@@ -6,10 +6,6 @@
 
     <!-- AUTHENTICATION / AUTHORIZATION SUPPORT -->
     <import resource="classpath:authentication-client.xml"/>
-	 
-    <jaxws:client id="koodiPublicService"
-                serviceClass="fi.vm.sade.koodisto.service.KoodiService"
-                address="${koodi.public.webservice.url.backend}"/>
 
     <jaxws:client id="tarjontaAdminService"
                   serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService"

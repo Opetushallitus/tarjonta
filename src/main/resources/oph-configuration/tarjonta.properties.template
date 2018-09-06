@@ -62,7 +62,6 @@ cas.service.organisaatio-service=https://${host.virkailija}/organisaatio-service
 cas.service.tarjonta-app=https://${host.virkailija}/tarjonta-app
 cas.service.tarjonta-service=https://${host.virkailija}/tarjonta-service
 flyway.initOnMigrate=true
-koodi.public.webservice.url.backend=https://${host.virkailija}/koodisto-service/services/koodiService
 jpa.schemaUpdate=validate
 jpa.showSql=false
 log4j.properties.file=${user.home.conf}/log4j.properties

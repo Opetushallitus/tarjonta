@@ -67,7 +67,7 @@
 
     <!-- apply the cacheable behaviour to all koodisto interfaces -->
     <aop:config>
-        <aop:advisor advice-ref="cacheAdviceKoodiService" pointcut="execution(* fi.vm.sade.koodisto.service.KoodiService.*(..))"/>
+        <aop:advisor advice-ref="cacheAdviceKoodiService" pointcut="execution(* fi.vm.sade.tarjonta.shared.KoodiService.*(..))"/>
     </aop:config>
 
 </beans>
