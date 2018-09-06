@@ -3,25 +3,18 @@ package fi.vm.sade.tarjonta.shared;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.javautils.httpclient.OphHttpClient;
-import fi.vm.sade.javautils.httpclient.OphHttpClientProxy;
-import fi.vm.sade.javautils.httpclient.OphHttpResponse;
-import fi.vm.sade.javautils.httpclient.OphRequestParameters;
+import fi.vm.sade.javautils.httpclient.*;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
-import fi.vm.sade.tarjonta.TestOphHttpClientProxy;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
@@ -34,18 +27,23 @@ public class KoodiServiceImplTest {
 
     private KoodiServiceImpl koodiServiceImpl;
 
-    private OphHttpClientProxy httpClientProxySpy;
+    private OphHttpClientProxy httpClientProxyMock;
     private OphHttpResponse httpResponseMock;
 
     @Before
-    public void setup() {
+    public void setup() throws IOException {
+        OphHttpClientProxyRequest httpClientProxyRequestMock = mock(OphHttpClientProxyRequest.class);
+        when(httpClientProxyRequestMock.execute(any())).thenAnswer(invocation
+                -> ((OphHttpResponseHandler) invocation.getArguments()[0]).handleResponse(httpResponseMock));
+        when(httpClientProxyRequestMock.handleManually()).thenReturn(httpResponseMock);
+        httpClientProxyMock = mock(OphHttpClientProxy.class);
+        when(httpClientProxyMock.createRequest(any())).thenReturn(httpClientProxyRequestMock);
         httpResponseMock = mock(OphHttpResponse.class);
         when(httpResponseMock.getStatusCode()).thenReturn(200);
 
         UrlConfiguration properties = new UrlConfiguration();
         properties.addDefault("host.virkailija", "localhost");
-        httpClientProxySpy = spy(new TestOphHttpClientProxy(httpResponseMock));
-        OphHttpClient httpClient = new OphHttpClient(httpClientProxySpy, "tarjonta", properties);
+        OphHttpClient httpClient = new OphHttpClient(httpClientProxyMock, "tarjonta", properties);
 
         ObjectMapper objectMapper = new ObjectMapper(); // TODO: konfiguraatio on vain tarjonta-service modulissa
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -65,7 +63,7 @@ public class KoodiServiceImplTest {
 
         assertTrue(koodiTypes.isEmpty());
         ArgumentCaptor<OphRequestParameters> requestParametersArgumentCaptor = ArgumentCaptor.forClass(OphRequestParameters.class);
-        verify(httpClientProxySpy).createRequest(requestParametersArgumentCaptor.capture());
+        verify(httpClientProxyMock).createRequest(requestParametersArgumentCaptor.capture());
         OphRequestParameters requestParameters = requestParametersArgumentCaptor.getValue();
         assertEquals("https://localhost/koodisto-service/rest/json/rinnasteinen/uri1", requestParameters.url);
     }
@@ -81,7 +79,7 @@ public class KoodiServiceImplTest {
 
         assertTrue(koodiTypes.isEmpty());
         ArgumentCaptor<OphRequestParameters> requestParametersArgumentCaptor = ArgumentCaptor.forClass(OphRequestParameters.class);
-        verify(httpClientProxySpy).createRequest(requestParametersArgumentCaptor.capture());
+        verify(httpClientProxyMock).createRequest(requestParametersArgumentCaptor.capture());
         OphRequestParameters requestParameters = requestParametersArgumentCaptor.getValue();
         assertEquals("https://localhost/koodisto-service/rest/json/relaatio/sisaltyy-alakoodit/uri1", requestParameters.url);
     }
@@ -97,7 +95,7 @@ public class KoodiServiceImplTest {
 
         assertTrue(koodiTypes.isEmpty());
         ArgumentCaptor<OphRequestParameters> requestParametersArgumentCaptor = ArgumentCaptor.forClass(OphRequestParameters.class);
-        verify(httpClientProxySpy).createRequest(requestParametersArgumentCaptor.capture());
+        verify(httpClientProxyMock).createRequest(requestParametersArgumentCaptor.capture());
         OphRequestParameters requestParameters = requestParametersArgumentCaptor.getValue();
         assertEquals("https://localhost/koodisto-service/rest/json/relaatio/sisaltyy-ylakoodit/uri1", requestParameters.url);
     }
@@ -112,7 +110,7 @@ public class KoodiServiceImplTest {
 
         assertTrue(koodiTypes.isEmpty());
         ArgumentCaptor<OphRequestParameters> requestParametersArgumentCaptor = ArgumentCaptor.forClass(OphRequestParameters.class);
-        verify(httpClientProxySpy).createRequest(requestParametersArgumentCaptor.capture());
+        verify(httpClientProxyMock).createRequest(requestParametersArgumentCaptor.capture());
         OphRequestParameters requestParameters = requestParametersArgumentCaptor.getValue();
         assertEquals("https://localhost/koodisto-service/rest/json/koodisto1/koodi/arvo/koodi1", requestParameters.url);
     }
@@ -126,7 +124,7 @@ public class KoodiServiceImplTest {
 
         assertTrue(koodiTypes.isEmpty());
         ArgumentCaptor<OphRequestParameters> requestParametersArgumentCaptor = ArgumentCaptor.forClass(OphRequestParameters.class);
-        verify(httpClientProxySpy).createRequest(requestParametersArgumentCaptor.capture());
+        verify(httpClientProxyMock).createRequest(requestParametersArgumentCaptor.capture());
         OphRequestParameters requestParameters = requestParametersArgumentCaptor.getValue();
         assertEquals("https://localhost/koodisto-service/rest/json/searchKoodis", requestParameters.url);
     }
@@ -144,7 +142,7 @@ public class KoodiServiceImplTest {
 
         assertTrue(koodiTypes.isEmpty());
         ArgumentCaptor<OphRequestParameters> requestParametersArgumentCaptor = ArgumentCaptor.forClass(OphRequestParameters.class);
-        verify(httpClientProxySpy).createRequest(requestParametersArgumentCaptor.capture());
+        verify(httpClientProxyMock).createRequest(requestParametersArgumentCaptor.capture());
         OphRequestParameters requestParameters = requestParametersArgumentCaptor.getValue();
         assertEquals("https://localhost/koodisto-service/rest/json/searchKoodis?validAt=2018-09-06T19%3A35%3A52.216Z", requestParameters.url);
     }
@@ -158,7 +156,7 @@ public class KoodiServiceImplTest {
 
         assertTrue(koodiTypes.size() == 2);
         ArgumentCaptor<OphRequestParameters> requestParametersArgumentCaptor = ArgumentCaptor.forClass(OphRequestParameters.class);
-        verify(httpClientProxySpy).createRequest(requestParametersArgumentCaptor.capture());
+        verify(httpClientProxyMock).createRequest(requestParametersArgumentCaptor.capture());
         OphRequestParameters requestParameters = requestParametersArgumentCaptor.getValue();
         assertEquals("https://localhost/koodisto-service/rest/json/searchKoodis", requestParameters.url);
     }
