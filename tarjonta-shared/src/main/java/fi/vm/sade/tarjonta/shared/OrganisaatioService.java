@@ -81,7 +81,11 @@ public class OrganisaatioService {
         KOULUTUSTOIMIJA("Koulutustoimija"),
         OPPILAITOS("Oppilaitos"),
         TOIMIPISTE("Toimipiste"),
-        MUU_ORGANISAATIO("Muu organisaatio");
+        OPPISOPIMUSTOIMIPISTE("Oppisopimustoimipiste"),
+        MUU_ORGANISAATIO("Muu organisaatio"),
+        RYHMA("Ryhma"),
+        VARHAISKASVATUKSEN_JARJESTAJA("Varhaiskasvatuksen jarjestaja"),
+        TYOELAMAJARJESTO("Tyoelamajarjesto");
 
         private final String value;
 
