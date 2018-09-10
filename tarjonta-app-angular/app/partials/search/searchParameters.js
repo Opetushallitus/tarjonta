@@ -100,8 +100,6 @@ angular.module('search.hakutulokset.searchparameters', [])
         function getDefaultHakuehdot() {
             return {
                 'searchStr': '',
-                'organisaatiotyyppi': '',
-                'oppilaitostyyppi': undefined,
                 'aktiiviset': true,
                 'lakkautetut': false,
                 'suunnitellut': false,
