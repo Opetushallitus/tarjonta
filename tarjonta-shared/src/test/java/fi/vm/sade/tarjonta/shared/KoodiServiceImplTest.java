@@ -58,7 +58,7 @@ public class KoodiServiceImplTest {
         ArgumentCaptor<OphRequestParameters> requestParametersArgumentCaptor = ArgumentCaptor.forClass(OphRequestParameters.class);
         verify(httpClientProxyMock).createRequest(requestParametersArgumentCaptor.capture());
         OphRequestParameters requestParameters = requestParametersArgumentCaptor.getValue();
-        assertEquals("https://localhost/koodisto-service/rest/json/rinnasteinen/uri1?koodiVersio=1", requestParameters.url);
+        assertEquals("https://localhost/koodisto-service/rest/json/relaatio/rinnasteinen/uri1?koodiVersio=1", requestParameters.url);
     }
 
     @Test
