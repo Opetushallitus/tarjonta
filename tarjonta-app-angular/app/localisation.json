@@ -1059,11 +1059,6 @@
   "locale" : "sv",
   "category" : "tarjonta"
 }, {
-    "value" : "Visa också aktiva",
-    "key" : "organisaatiohaku.label.nayta.myos.aktiiviset",
-    "locale" : "sv",
-    "category" : "tarjonta"
-}, {
   "value" : "[koulutus.edit.header.title-en]",
   "key" : "koulutus.edit.header.title",
   "locale" : "en",
@@ -1439,11 +1434,6 @@
   "key" : "organisaatiohaku.label.nayta.myos.suunnitellut",
   "locale" : "en",
   "category" : "tarjonta"
-}, {
-    "value" : "[organisaatiohaku.label.nayta.myos.aktiiviset-en]",
-    "key" : "organisaatiohaku.label.nayta.myos.aktiiviset",
-    "locale" : "en",
-    "category" : "tarjonta"
 }, {
   "value" : "[tarjonta.haku.alkamisKausi-en]",
   "key" : "tarjonta.haku.alkamisKausi",
@@ -3379,11 +3369,6 @@
   "key" : "organisaatiohaku.label.nayta.myos.suunnitellut",
   "locale" : "fi",
   "category" : "tarjonta"
-}, {
-    "value" : "Näytä myös aktiiviset",
-    "key" : "organisaatiohaku.label.nayta.myos.aktiiviset",
-    "locale" : "fi",
-    "category" : "tarjonta"
 }, {
   "value" : "Haluatko varmasti poistaa hakukohteen:",
   "key" : "tarjonta.poistovahvistus.ohje.hakukohde",
