@@ -102,6 +102,7 @@ angular.module('search.hakutulokset.searchparameters', [])
                 'searchStr': '',
                 'organisaatiotyyppi': '',
                 'oppilaitostyyppi': undefined,
+                'aktiiviset': true,
                 'lakkautetut': false,
                 'suunnitellut': false,
                 'skipparents': true
