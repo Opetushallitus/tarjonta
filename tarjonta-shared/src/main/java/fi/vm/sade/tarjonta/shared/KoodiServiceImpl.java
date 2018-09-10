@@ -49,12 +49,12 @@ public class KoodiServiceImpl implements KoodiService {
     private OphHttpRequest getRelaatioRequest(SuhteenTyyppiType suhdeTyyppi, boolean onAlaKoodi, KoodiUriAndVersioType koodi) {
         switch (suhdeTyyppi) {
             case RINNASTEINEN:
-                return httpClient.get("koodisto-service.relaatio.rinnasteinen.byKoodiUri", koodi.getKoodiUri());
+                return httpClient.get("koodisto-service.relaatio.rinnasteinen.byKoodiUri", koodi.getKoodiUri(), koodi.getVersio());
             case SISALTYY:
                 if (onAlaKoodi) {
-                    return httpClient.get("koodisto-service.relaatio.sisaltyy-ylakoodit.byKoodiUri", koodi.getKoodiUri());
+                    return httpClient.get("koodisto-service.relaatio.sisaltyy-ylakoodit.byKoodiUri", koodi.getKoodiUri(), koodi.getVersio());
                 } else {
-                    return httpClient.get("koodisto-service.relaatio.sisaltyy-alakoodit.byKoodiUri", koodi.getKoodiUri());
+                    return httpClient.get("koodisto-service.relaatio.sisaltyy-alakoodit.byKoodiUri", koodi.getKoodiUri(), koodi.getVersio());
                 }
             default:
                 throw new IllegalArgumentException("Tuntematon suhdeTyyppi: " + suhdeTyyppi);
