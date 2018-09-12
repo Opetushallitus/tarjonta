@@ -240,8 +240,6 @@ public class KoulutusValidatorTest {
         dto.setKoulutuksenAlkamisPvms(Sets.newHashSet(new Date(1517436000000L))); // 1.8.2018 fail
 
         ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO<>());
-        System.out.println("testStartingDateFirstOfFebruary2018Fails | errors: " + v.getErrors());
-        System.out.println("testStartingDateFirstOfFebruary2018Fails | errors size: " + v.getErrors().size());
         assertTrue("has errors", v.hasErrors());
         assertEquals("errors count", v.getErrors().size(), 1);
 
