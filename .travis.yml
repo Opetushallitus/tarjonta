@@ -12,6 +12,13 @@ cache:
   directories:
   - $HOME/.m2
 
+env:
+  global:
+    # ARTIFACTORY_USERNAME
+    - secure: "j4nzpK6naIR501fBbl/v9MvQOeau1/+if0G/ZjWuhU4o1GJY/gj2ckI5AhgwzzTVIZ4dSn+XbNadNSerzirsC4WziJoUFxOsH0SNPSfrojBgfCFgy2u3+Q/sLZa/XCNePZvzxMFk9qtvc1anx9AJwsYFaH8YVwdxtojzPQeBhO1uM0f/PzCIelsrNA9cebikjySOXz7PGCw0Z319Upz7Xl52O4TvXxXLPeK4eeguwxk9L8ZLbbSk9AafALQBC+iCIp+gxzPUGTAyu2/h1OLqeUDSXpcY/XwACTcnSknQCcoVAs8FIG2Pozoh4C1Q0Eg20uCpuelfOkJp8JnpoFR0pxbLtlm7O52Fd6UECuzGLBrAE6TcEpbJbATZ4kBDUaqOfEPGXpEaEMydN8I9IfopOVN1uA+BNoySENfF9W/2w60/azyOa6crg8wVg7AukkjUbMWynckQtogzTmN9+q+PkYI9uAMhEESGLZ7yzz/oG7ZOmrxC0R7HgTjy4/n128EQa3whsqRUgT/dNyhv4IVWgTLiBIDoh3OzDOBJll3quiLCU9n9XtEZIU6UX/17rlQMWirC2Ss18tnkCtB5U7zEEKB+YvmuYbGXgH2KbyRbOmgjHMAVijDWQG3KM5gaIt6u1gaeB9opHQb0trjp46CuB5lotR8oj3aKBZk42Ane/24="
+    # ARTIFACTORY_PASSWORD
+    - secure: "JRXFrAAx1+Qg4zLkZmddqTooQnTbkJXa7/u8uFmRtRX4siQRsjHxARYnzhrKWnDXqjfA0pZ65zw1NnmaTcyLND+ERASOEZwQ0zerCeyP+XFl47iqAWghQwJdZwvcHuutgdK+IJVtDwoM9PulC59Gpg+1C1SNHTTQjs7hzaPxcmXwMZ1HwVVNQ1xsA7gFuUYnNjJwkHB11RTrf22ztKCuh1e8IHjcrlirWXNJlQTYG8RUtkas1n65aXUq8n52m6pjpBQuT7rwFqY52a79fzmxVlK47WCrjgJaEslh9BXiJwhHHQH1xhx1PFBJKKZIMjKko8eQ/C4wkmPqdXZsHZZ/bE2YSP3ijH2gDvLVg6l2NYvRF34rmKG5pePMMr1zMyaRtOMsrTQn1+J3rfbqrlQtVuz64EgNV3RCTxJ64oDT5WQMCEu5pjbRtKrN45NCK2AgmBKA35VykOb4gs1xhPKB+dk57uxtrMIyF93cj2w5dA5D2cNfvRpH5fe6yBvD9uk21UsgqGbh0Y1qCjaYf6FC3G8txbMgrN3AHpX/xxUG0rVv8aFZyEEPyin2hJvVMFRyUXnD3urC4AQHXzcpsV40/J9l3bdQmIDWD15+zjFD2RneGAqJE1svJQCOEP8i7tAtsUcONbY0SE1zEQzqbq0x8foAWy6jj0XOObC0sfHce/g="
+
 install:
 - git clone https://github.com/Opetushallitus/ci-tools.git
 - source ci-tools/common/setup-tools.sh
@@ -20,4 +27,5 @@ install:
 - date
 
 script:
-- mvn clean install -B -Dbranch=${TRAVIS_BRANCH} -Drevision=${TRAVIS_COMMIT} -DbuildNumber=${TRAVIS_BUILD_NUMBER}
+- mvn clean install -B -Dbranch=${TRAVIS_BRANCH} -Drevision=${TRAVIS_COMMIT} -DbuildNumber=${TRAVIS_BUILD_NUMBER} -DskipTests
+- mvn clean deploy -pl tarjonta-api -DskipTests --settings maven-settings.xml
