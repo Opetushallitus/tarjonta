@@ -75,7 +75,7 @@ window.urls.addProperties( {
     "koodisto-service.koodiInKoodisto":"/koodisto-service/rest/json/$1/koodi/$2",
     "koodisto-service.search":"/koodisto-service/rest/json/searchKoodis",
 
-    "organisaatio-service.search":"/organisaatio-service/rest/organisaatio/hae",
+    "organisaatio-service.search":"/organisaatio-service/rest/organisaatio/v2/hierarkia/hae",
     "organisaatio-service.ryhmat":"/organisaatio-service/rest/organisaatio/v2/ryhmat",
     "organisaatio-service.byOid":"/organisaatio-service/rest/organisaatio/$1",
     "organisaatio-service.parentOids":"/organisaatio-service/rest/organisaatio/$1/parentoids",
