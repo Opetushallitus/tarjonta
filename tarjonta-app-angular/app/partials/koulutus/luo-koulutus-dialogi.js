@@ -111,6 +111,8 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
     $scope.sallitutKoulutustyypit = $scope.sallitutKoulutustyypit || [];
     // haetaan organisaatihierarkia joka valittuna kälissä tai jos mitään ei ole valittuna organisaatiot joihin käyttöoikeus
     OrganisaatioService.etsi({
+        aktiiviset: true,
+        suunnitellut: true,
         oidRestrictionList: $scope.luoKoulutusDialogOrg || AuthService.getOrganisations()
     }).then(function(vastaus) {
         $scope.lkorganisaatiot = vastaus.organisaatiot;

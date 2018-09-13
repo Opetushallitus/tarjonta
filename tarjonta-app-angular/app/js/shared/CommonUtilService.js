@@ -58,6 +58,8 @@ app.service('CommonUtilService', function($resource, $log, $q, Config, Organisaa
         else if (organisaatio.organisaatiotyypit.indexOf('TOIMIPISTE') != -1) {
             var findOppilaitosFromParents = function(oid) {
                 OrganisaatioService.etsi({
+                    aktiiviset: true,
+                    suunnitellut: true,
                     oidRestrictionList: oid
                 }).then(function(vastaus) {
                     if (vastaus.organisaatiot[0].organisaatiotyypit.indexOf('TOIMIPISTE') !== -1) {
