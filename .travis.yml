@@ -31,7 +31,7 @@ install:
 - date
 
 script:
-- mvn clean install -B -Dbranch=${TRAVIS_BRANCH} -Drevision=${TRAVIS_COMMIT} -DbuildNumber=${TRAVIS_BUILD_NUMBER} -DskipTests
+- mvn clean package -B -Dbranch=${TRAVIS_BRANCH} -Drevision=${TRAVIS_COMMIT} -DbuildNumber=${TRAVIS_BUILD_NUMBER} -DskipTests
 - mvn clean deploy -pl tarjonta-api -DskipTests --settings maven-settings.xml
 
 - mv tarjonta-service/target/tarjonta-service.war $DOCKER_BUILD_DIR/artifact/tarjonta-service.war
