@@ -113,6 +113,8 @@ angular.module('Organisaatio', [
             var deferred = $q.defer();
             // hae org (ja sen alapuoliset)
             etsi({
+                aktiiviset: true,
+                suunnitellut: true,
                 oidRestrictionList: organisaatioOid
             }).then(function(data) {
                 var organisaatio = data.organisaatiot[0];
@@ -295,6 +297,8 @@ angular.module('Organisaatio', [
                 var deferred = $q.defer();
 
                 etsi({
+                    aktiiviset: true,
+                    suunnitellut: true,
                     oidRestrictionList: oidRestrictionList || AuthService.getOrganisations()
                 }).then(function(response) {
                     var organizationMap = {};

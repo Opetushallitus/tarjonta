@@ -380,6 +380,8 @@ app.controller('HakukohdeParentController', [
         };
         $scope.haeTarjoajaOppilaitosTyypit = function() {
             OrganisaatioService.etsi({
+                aktiiviset: true,
+                suunnitellut: true,
                 oidRestrictionList: $scope.model.hakukohde.tarjoajaOids
             }).then(function(data) {
                 getOppilaitosTyyppis(data.organisaatiot);

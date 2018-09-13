@@ -44,6 +44,8 @@ app.controller('HakuEditSelectOrganisationsController', [
         promises.push(deferred.promise);
         // haetaan organisaatihierarkia joka valittuna kälissä tai jos mitään ei ole valittuna organisaatiot joihin käyttöoikeus
         OrganisaatioService.etsi({
+            aktiiviset: true,
+            suunnitellut: true,
             oidRestrictionList: AuthService.getOrganisations()
         }).then(function(vastaus) {
             $log.info('  X asetetaan org hakutulos modeliin.');

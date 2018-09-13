@@ -72,6 +72,8 @@ angular.module('app.search.controllers', [
         selectOrg = getDefaultOrg();
         if (orgs.indexOf(OPH_ORG_OID) == -1) {
             OrganisaatioService.etsi({
+                aktiiviset: true,
+                suunnitellut: true,
                 oidRestrictionList: orgs
             }).then(function(vastaus) {
                 $scope.$root.tulos = vastaus.organisaatiot;

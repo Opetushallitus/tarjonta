@@ -41,6 +41,8 @@ app.controller('ValintaperusteSearchController', function($scope, $rootScope, $r
             $log.info('USER IS NOT OPH, GETTING ORGANIZATIONS....');
             $log.info('USER ORGANIZATIONS : ', AuthService.getOrganisations());
             OrganisaatioService.etsi({
+                aktiiviset: true,
+                suunnitellut: true,
                 oidRestrictionList: AuthService.getOrganisations()
             }).then(function(data) {
                 getOppilaitosTyyppis(data.organisaatiot);
