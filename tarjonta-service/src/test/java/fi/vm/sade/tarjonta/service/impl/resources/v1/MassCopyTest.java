@@ -261,7 +261,7 @@ public class MassCopyTest extends TestUtilityBase {
 
         final String processId1 = copyHaku("race-condition-1");
         final String processId2 = copyHaku("race-condition-2");
-        Thread.sleep(6000);
+        Thread.sleep(20000);
 
         executeInTransaction(() -> {
             assertHaku("race-condition-1", processId1, 4);
@@ -273,7 +273,7 @@ public class MassCopyTest extends TestUtilityBase {
         Haku copiedHaku = getLatestHakuByUlkoinenTunniste(fromOid);
 
         assertEquals(fromOid, copiedHaku.getHaunTunniste());
-        assertEquals(copiedHaku.getHakukohdes().size(), expectedHakukohdeCount);
+        assertEquals(expectedHakukohdeCount, copiedHaku.getHakukohdes().size());
 
         for (Hakukohde hakukohde : copiedHaku.getHakukohdes()) {
             assertEquals(copyProcessId, hakukohde.getHaunKopioinninTunniste());
