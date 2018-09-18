@@ -1,0 +1,53 @@
+sudo: required
+
+language: java
+
+jdk:
+- oraclejdk8
+
+services:
+- docker
+
+cache:
+  directories:
+  - $HOME/.m2
+
+env:
+  global:
+    # ARTIFACTORY_USERNAME
+    - secure: "j4nzpK6naIR501fBbl/v9MvQOeau1/+if0G/ZjWuhU4o1GJY/gj2ckI5AhgwzzTVIZ4dSn+XbNadNSerzirsC4WziJoUFxOsH0SNPSfrojBgfCFgy2u3+Q/sLZa/XCNePZvzxMFk9qtvc1anx9AJwsYFaH8YVwdxtojzPQeBhO1uM0f/PzCIelsrNA9cebikjySOXz7PGCw0Z319Upz7Xl52O4TvXxXLPeK4eeguwxk9L8ZLbbSk9AafALQBC+iCIp+gxzPUGTAyu2/h1OLqeUDSXpcY/XwACTcnSknQCcoVAs8FIG2Pozoh4C1Q0Eg20uCpuelfOkJp8JnpoFR0pxbLtlm7O52Fd6UECuzGLBrAE6TcEpbJbATZ4kBDUaqOfEPGXpEaEMydN8I9IfopOVN1uA+BNoySENfF9W/2w60/azyOa6crg8wVg7AukkjUbMWynckQtogzTmN9+q+PkYI9uAMhEESGLZ7yzz/oG7ZOmrxC0R7HgTjy4/n128EQa3whsqRUgT/dNyhv4IVWgTLiBIDoh3OzDOBJll3quiLCU9n9XtEZIU6UX/17rlQMWirC2Ss18tnkCtB5U7zEEKB+YvmuYbGXgH2KbyRbOmgjHMAVijDWQG3KM5gaIt6u1gaeB9opHQb0trjp46CuB5lotR8oj3aKBZk42Ane/24="
+    # ARTIFACTORY_PASSWORD
+    - secure: "JRXFrAAx1+Qg4zLkZmddqTooQnTbkJXa7/u8uFmRtRX4siQRsjHxARYnzhrKWnDXqjfA0pZ65zw1NnmaTcyLND+ERASOEZwQ0zerCeyP+XFl47iqAWghQwJdZwvcHuutgdK+IJVtDwoM9PulC59Gpg+1C1SNHTTQjs7hzaPxcmXwMZ1HwVVNQ1xsA7gFuUYnNjJwkHB11RTrf22ztKCuh1e8IHjcrlirWXNJlQTYG8RUtkas1n65aXUq8n52m6pjpBQuT7rwFqY52a79fzmxVlK47WCrjgJaEslh9BXiJwhHHQH1xhx1PFBJKKZIMjKko8eQ/C4wkmPqdXZsHZZ/bE2YSP3ijH2gDvLVg6l2NYvRF34rmKG5pePMMr1zMyaRtOMsrTQn1+J3rfbqrlQtVuz64EgNV3RCTxJ64oDT5WQMCEu5pjbRtKrN45NCK2AgmBKA35VykOb4gs1xhPKB+dk57uxtrMIyF93cj2w5dA5D2cNfvRpH5fe6yBvD9uk21UsgqGbh0Y1qCjaYf6FC3G8txbMgrN3AHpX/xxUG0rVv8aFZyEEPyin2hJvVMFRyUXnD3urC4AQHXzcpsV40/J9l3bdQmIDWD15+zjFD2RneGAqJE1svJQCOEP8i7tAtsUcONbY0SE1zEQzqbq0x8foAWy6jj0XOObC0sfHce/g="
+    # AWS_ACCESS_KEY_ID
+    - secure: "SLNt+84T9TbdUroeOZrQKbQDHdrVoMm3AYSZa5fAyijSwCc4cL/jMr3x2HUtKhqA/yp14QvEkM2NG1QPw2P0EBvanaODXjsp9GX5yd0zygAl9s7Ta1IIOQ2c3DSpsquSUO3mkJSbx+1rugbq0t4X/wQeGyOVXTqmjBMBxyNgeSYc3tPguTrC/sZgELMVm8R0pFBphtnE4cv4htarRR0gNXXCNG4PxLlaAXnZHPucujEtbgVmAKd+NY4dDCrinlLSsrnAV2d59+Usf3MgM2ZIt0Cb21pbfyZSIaybyGL/yf5WY7zAMNeMyRlPQLDJDr28JO7eR3nxFrbmKICKdh7Aw49TQ3FYlkJhpE2Z1n+TqBI1GsV6AqYBDYA+OxFkyYh1rt99fu6b6huR4GP0+8ouOl4ROJhRk2i7FWE7HyDamahs/VZQWPWPNqr4at42ckiHxAGZZNV6zdHexVd12na4iDMqRMxtGbBgXfCM6i+wKLAR9TzeCbeevkJUOblRvYMd3C9CZbGo7z40lfoOJbAwl3ZVzJ0MNMCDPIaP5zZJMhpTt0FbEhcNa2/3TiPWVJaDEP+65hFW8Q+wAMypeaNi+W54o1H8T8Dkex/R+vxBufYptYRaqShFtE1PFvRIKM1bcgOnAh8WfHHcOWHN6hEEp/qhJbLYVYm/dyeqKTRxte8="
+    # AWS_SECRET_ACCESS_KEY
+    - secure: "G/tIjOrnzr+6bDpY5B0fVzpA8N54GJ8wyrhYKAKTe67n9Aov1FnuXrvvmSUHGVuBzXvuvjKznxtEQlTUbmnxkIvLg+Bp4z00N9TdCTAQBEPKgiqJMrj1YuuKSabXn5VCXbcOOwS5QqzzmNymB7lODh6f8k/zr5iI2iLmd+rlzc8BOE/WCAbFZIcnexHvxaGagsHinovpGyTBf78xJ5AeDSt2KQVRyNMQB9LXWrGgnq2trFaS5EpMOopbAhLuKeZ85RFFP3TlIjivbpJY6wv6Q5xsE+WKARI7O73Y7lrN84Yuw1NFfgCM/KJwrenBwdWuvlo8484wCbZ9Go4XVogRBDmFcmN+w1tbNyVRKlmtwktYW5WV+IMGDVQKdUyVEgZF5ZOqpwwXynpQieQHKN4DU0+yKYrFkCdAJ6McPPFOoOo550W+4eUYR7fc5HWIQ9QFSwqpLow9Z4iOuYM1bqP1t9QqTc/PloQkfNpX3+DTwrtAScymzTIRFLJdcSodGxWqnYFDAJuaQ/WSmAC+91iBbEa3gXRKwQnm3VLZfl4ObvlYAclGmuHg234o1JqKbwTVaWBH7PALZdK1DkwUkJjdsps8om8pcqqD2J1XBNpyutBPsKwME3pkd9WDiH02AbJeCGS7mWdi+pjedOSV9q6kC9ZKP40Z4CDAnBjHi0wdLdQ="
+
+install:
+- git clone https://github.com/Opetushallitus/ci-tools.git
+- source ci-tools/common/setup-tools.sh
+- export ARTIFACT_NAME="tarjonta"
+- export TZ=Europe/Helsinki
+- date
+
+script:
+- mvn clean package -B -Dbranch=${TRAVIS_BRANCH} -Drevision=${TRAVIS_COMMIT} -DbuildNumber=${TRAVIS_BUILD_NUMBER} -DskipTests
+
+- mv tarjonta-service/target/tarjonta-service.war $DOCKER_BUILD_DIR/artifact/tarjonta-service.war
+- mv tarjonta-app/target/tarjonta-app-*.war $DOCKER_BUILD_DIR/artifact/tarjonta-app.war
+- cp -vr src/main/resources/oph-configuration $DOCKER_BUILD_DIR/config/
+
+- export BASE_IMAGE="base-legacy:0.1"
+- ./ci-tools/common/pull-image.sh
+- ./ci-tools/build/build-war.sh $ARTIFACT_NAME
+
+deploy:
+  - provider: script
+    script: mvn deploy -pl tarjonta-api -DskipTests --settings ci-tools/common/maven-settings.xml
+    skip_cleanup: true
+    on:
+      branch: master
+  - provider: script
+    script: ./ci-tools/build/upload-image.sh $ARTIFACT_NAME
+    on:
+      all_branches: true
