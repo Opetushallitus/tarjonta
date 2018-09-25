@@ -386,7 +386,8 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
                 searchStr: qterm,
                 lakkautetut: false,
                 skipparents: false,
-                suunnitellut: false
+                suunnitellut: false,
+                aktiiviset: true
             }).then(function(result) {
                 $scope.lkorganisaatiot = result.organisaatiot;
             });

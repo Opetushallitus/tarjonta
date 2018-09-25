@@ -52,7 +52,8 @@ app.controller('OrganizationSelectionController', function($location, $q, $scope
                 searchStr: qterm,
                 lakkautetut: false,
                 skipparents: false,
-                suunnitellut: false
+                suunnitellut: false,
+                aktiiviset: true
             }).then(function(result) {
                 $scope.lkorganisaatiot = result.organisaatiot;
             });
