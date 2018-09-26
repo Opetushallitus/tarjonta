@@ -99,8 +99,8 @@
     <mysema-commons-lang.version>0.2.4</mysema-commons-lang.version>
     <objenesis.version>.</objenesis.version>
     <oid.version>8.0-SNAPSHOT</oid.version>
-    <organisaatio.api.version>2018-5-SNAPSHOT</organisaatio.api.version>
-    <organisaatio.solr.version>2018-5-SNAPSHOT</organisaatio.solr.version>
+    <organisaatio.api.version>2018-6-SNAPSHOT</organisaatio.api.version>
+    <organisaatio.solr.version>2018-6-SNAPSHOT</organisaatio.solr.version>
     <paranamer.version>2.5.2</paranamer.version>
     <postgresql.version>42.1.4</postgresql.version>
     <powermock.version>1.4.12</powermock.version>
