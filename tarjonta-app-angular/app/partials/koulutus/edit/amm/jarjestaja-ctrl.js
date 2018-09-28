@@ -55,7 +55,8 @@ app.controller('JarjestajaCtrl', function($modalInstance, targetOrganisaatio, Ta
         organisaatiotyyppi: 'Koulutustoimija',
         lakkautetut: false,
         skipparents: true,
-        suunnitellut: false
+        suunnitellut: false,
+        aktiiviset: true
     }).then(function(vastaus) {
 
         $scope.alkorganisaatiot = _.chain(vastaus.organisaatiot)

@@ -283,7 +283,8 @@ var app = angular.module('app.haku.list.ctrl', [
                 searchStr: qterm,
                 lakkautetut: false,
                 skipparents: false,
-                suunnitellut: false
+                suunnitellut: true,
+                aktiiviset: true
             }).then(function(result) {
                 return processOrganizations([], result.organisaatiot);
             });
