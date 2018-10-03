@@ -34,6 +34,7 @@ import java.util.*;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1.getCriteriaListFromParams;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.core.StringContains.*;
@@ -94,6 +95,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
         Whitebox.setInternalState(yhdenPaikanSaantoBuilder, "tarjontaKoodistoHelper", tarjontaKoodistoHelper);
 
         when(uriInfo.getQueryParameters()).thenReturn(queryParams);
+        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(queryParams);
     }
 
     @Test(expected = NullPointerException.class)
@@ -445,6 +447,15 @@ public class HakuResourceImplV1Test extends TestMockBase {
         // disable limiting logic
         queryParams.remove("virkailijaTyyppi");
         assertTrue("non-existent virkailijaTyyppi should not produce any criteria", getCriteriaListFromParams(params, uriInfo).isEmpty());
+    }
+
+    @Test
+    public void findWillUseCache() {
+        HakuSearchParamsV1RDTO params = new HakuSearchParamsV1RDTO();
+        params.virkailijaTyyppi = "all";
+        params.cache = true;
+
+        hakuResource.find(params, uriInfo);
     }
 
     private static void assertKohdejoukot(HakuSearchParamsV1RDTO params, UriInfo uriInfo, String expectedValue) {

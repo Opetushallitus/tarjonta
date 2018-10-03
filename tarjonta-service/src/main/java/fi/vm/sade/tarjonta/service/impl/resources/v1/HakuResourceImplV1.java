@@ -210,6 +210,12 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Override
     public ResultV1RDTO<List<HakuV1RDTO>> find(final HakuSearchParamsV1RDTO params, UriInfo uriInfo) {
+        LOG.error("URIINFO: " + uriInfo.getQueryParameters());
+        if (params != null) {
+            LOG.error("PARAMS: virkailijaTyypi=" + params.virkailijaTyyppi + " cache=" + params.cache + "addHakukohdes=" + params.addHakukohdes);
+        } else {
+            LOG.error("PARAMS is null!");
+        }
         final List<HakuSearchCriteria> criteriaList = new ArrayList<>();
         criteriaList.addAll(getCriteriaListFromUri(uriInfo, null));
         criteriaList.addAll(getCriteriaListFromParams(params, uriInfo));
