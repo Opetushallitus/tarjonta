@@ -8,9 +8,9 @@ import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
 import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.auditlog.AuditHelper;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.util.AutoRefreshableCache;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.YhdenPaikanSaantoBuilder;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
-import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -50,7 +50,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
     private TarjontaKoodistoHelper tarjontaKoodistoHelper = mock(TarjontaKoodistoHelper.class);
 
     @InjectMocks
-    private HakuV1Resource hakuResource = new HakuResourceImplV1();
+    private HakuResourceImplV1 hakuResource = new HakuResourceImplV1();
 
     @Rule
     public ExpectedException nonUniqueKoulutuksenAlkamiskaudet = ExpectedException.none();
@@ -63,6 +63,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
 
     @Before
     public void setUp() throws Exception {
+        hakuResource.hakuCache = mock(AutoRefreshableCache.class);
         when(oidService.get(TarjontaOidType.HAKU)).thenReturn("1.2.3.4.5");
 
         when(koodiService.searchKoodis(createKoodistoCriteriaMatcher("kieli_fi"))).thenReturn(koodistoHelper.getKoodiTypes("FI"));
