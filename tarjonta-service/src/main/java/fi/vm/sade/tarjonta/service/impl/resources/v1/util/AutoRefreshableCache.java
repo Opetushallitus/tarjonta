@@ -25,9 +25,9 @@ import java.util.concurrent.*;
 
 /**
  * This is a LoadingCache wrapper which refreshes the entries asynchronously.
- * The idea is to have the heaviest entries marked as "keep" and
+ * The idea is to have the heaviest entries marked as "keeper" and
  * have them all the time in cache. After invalidateAll, the "keep" entries
- * will load in background so that users (almost) never need to wait for
+ * will be reloaded in background so that users (almost) never need to wait for
  * heavy entries to load.
  *
  * Cache.refreshAfterWrite(long, TimeUnit) is not used because it will reload
@@ -42,14 +42,16 @@ public class AutoRefreshableCache<T> {
     private static final Logger LOG = LoggerFactory.getLogger(AutoRefreshableCache.class);
 
     private ConcurrentMap<String, Callable<? extends T>> loadersForKeys;
+    private ConcurrentMap<String, Callable<? extends T>> loadersForKeeperKeys;
 
     public AutoRefreshableCache() {
         loadersForKeys = new ConcurrentHashMap<>();
+        loadersForKeeperKeys = new ConcurrentHashMap<>();
         initializeCache(null);
     }
 
     /**
-     * Can be also used from unit test to supply custom Ticker
+     * Can be also used from unit test to supply a custom Ticker
      * @param ticker
      */
     void initializeCache(Ticker ticker) {
@@ -68,15 +70,43 @@ public class AutoRefreshableCache<T> {
                 });
     }
 
+    /**
+     * Even though this looks like Cache's method, and not LoadingCache's one, this is the method
+     * to use to query the key from the cache.
+     * @param cacheKey
+     * @param valueLoader
+     * @return
+     */
     public T get(String cacheKey, Callable<? extends T> valueLoader) {
         loadersForKeys.put(cacheKey, valueLoader);
+        loadersForKeeperKeys.replace(cacheKey, valueLoader);
         try {
-            return cache.get(cacheKey, valueLoader);
+            return cache.get(cacheKey);
         } catch (ExecutionException e) {
-            final String message = "Failed to put value for key " + cacheKey + " into cache";
+            String message = "Failed to put value for key " + cacheKey + " into cache";
             LOG.error(message, e);
             throw new RuntimeException(message, e);
         }
+    }
+
+    /**
+     * Mark that given key is a "keeper". "Keepers" are the entries that will be automatically
+     * reloaded after invalidateAll().
+     * @param key
+     */
+    public void markAsKeeper(String key) {
+        Callable<? extends T> loader = loadersForKeys.get(key);
+        if (loader != null) {
+            loadersForKeeperKeys.put(key, loader);
+        } else {
+            String message = "Cannot mark a non-existent key as keeper (key=" + key + ")";
+            LOG.error(message);
+            throw new RuntimeException(message);
+        }
+    }
+
+    public T getIfPresent(T key) {
+        return cache.getIfPresent(key);
     }
 
     /**
@@ -84,13 +114,12 @@ public class AutoRefreshableCache<T> {
      * asynchronously reloaded.
      */
     public void invalidateAll() {
+        cache.invalidateAll();
+        loadersForKeys.clear();
+        loadersForKeeperKeys.forEach((key, loader) -> get(key, loader));
     }
 
-    Cache<String, T> getCache() {
+    LoadingCache<String, T> getCache() {
         return cache;
-    }
-
-    public T getIfPresent(T key) {
-        return cache.getIfPresent(key);
     }
 }

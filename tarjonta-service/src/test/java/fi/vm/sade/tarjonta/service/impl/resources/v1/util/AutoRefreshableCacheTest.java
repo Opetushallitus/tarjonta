@@ -18,6 +18,7 @@ public class AutoRefreshableCacheTest {
     private Ticker tickerMock;
     private final String KEY1 = "key1";
     private final String KEY2 = "key2";
+    private final int REFRESH_PERIOD_IN_MINUTES = 5;
 
     @Before
     public void setUp() throws Exception {
@@ -42,10 +43,10 @@ public class AutoRefreshableCacheTest {
     public void refreshesAutomaticallyExactlyWhenRefreshPeriodExpires() throws ExecutionException {
         final String firstBackendValue = "starting value";
         String firstValue = getValue(KEY1, firstBackendValue);
-        setTimeToMinutes(4);
+        setTimeToMinutes(REFRESH_PERIOD_IN_MINUTES - 1);
         final String newValue = "new value";
         String stillStartingValue = getValue(KEY1, newValue); // newValue will be ignored because cache is not yet refreshed
-        setTimeToMinutes(6); // at this point there should be already a refresh
+        setTimeToMinutes(REFRESH_PERIOD_IN_MINUTES + 1); // at this point there should be already a refresh
 
         String automaticallyRefreshedValue = cache.getIfPresent(KEY1); // now it should be newValue because refresh was done at 5 minutes
 
@@ -59,7 +60,7 @@ public class AutoRefreshableCacheTest {
     public void keyInsertedAtDifferentTimesWillRefreshAtDifferentTimes() throws ExecutionException {
         final String key1value1 = "valueAt00";
         getValue(KEY1, key1value1);
-        setTimeToMinutes(3);
+        setTimeToMinutes(REFRESH_PERIOD_IN_MINUTES - 2);
         final String key2value1 = "valueAt03";
         final String key1value2 = "key1value2";
         assertEquals(key1value1, getValue(KEY1, key1value2));
@@ -67,12 +68,40 @@ public class AutoRefreshableCacheTest {
         final String key2value2 = "key2value2";
         getValue(KEY2, key2value2);
         assertEquals(key2value1, cache.getIfPresent(KEY2));
-        setTimeToMinutes(7);
+        setTimeToMinutes(REFRESH_PERIOD_IN_MINUTES + 2);
         assertEquals("KEY1 is refreshed", key1value2, cache.getIfPresent(KEY1));
         assertEquals("KEY2 still did not expire", key2value1, cache.getIfPresent(KEY2));
-        setTimeToMinutes(10);
+        setTimeToMinutes(2 * REFRESH_PERIOD_IN_MINUTES);
         assertEquals(key1value2, cache.getIfPresent(KEY1));
         assertEquals("Now also KEY2 is refreshed", key2value2, cache.getIfPresent(KEY2));
+    }
+
+    @Test
+    public void invalidateRemovesAllIfThereAreNoKeepers() throws ExecutionException {
+        getValue(KEY1, "value");
+        assertNotNull(cache.getIfPresent(KEY1));
+
+        cache.invalidateAll();
+
+        assertNull(cache.getIfPresent(KEY1));
+        assertEquals(0, cache.getCache().size());
+    }
+
+    @Test
+    public void keepersWillBeKeptAndRefreshedAfterInvalidate() throws ExecutionException {
+        final String keepersNewValue = "new_value";
+        getValue(KEY1, "Keeper's old value");
+        getValue(KEY2, "value2");
+        cache.markAsKeeper(KEY1);
+        getValue(KEY1, keepersNewValue);
+        assertEquals(2, cache.getCache().size());
+
+        cache.invalidateAll();
+
+        assertEquals(1, cache.getCache().size());
+        assertNull("Non-keeper is deleted", cache.getIfPresent(KEY2));
+        assertNotNull("Keeper is there (again)", cache.getIfPresent(KEY1));
+        assertEquals("Keeper has the most recent value", keepersNewValue, cache.getIfPresent(KEY1));
     }
 
     private String getValue(String key, String backendValue) throws ExecutionException {
