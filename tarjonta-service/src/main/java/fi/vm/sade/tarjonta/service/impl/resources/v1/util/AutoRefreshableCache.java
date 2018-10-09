@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1.util;
 
 import com.google.common.base.Ticker;
 import com.google.common.cache.*;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListenableFutureTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -37,12 +39,16 @@ import java.util.concurrent.*;
 @Service
 public class AutoRefreshableCache<T> {
 
+    public final static int REFRESH_PERIOD_IN_MINUTES = 5;
+
     private LoadingCache<String, T> cache;
 
     private static final Logger LOG = LoggerFactory.getLogger(AutoRefreshableCache.class);
 
     private ConcurrentMap<String, Callable<? extends T>> loadersForKeys;
     private ConcurrentMap<String, Callable<? extends T>> loadersForKeeperKeys;
+
+    private final Executor executor = Executors.newFixedThreadPool(3);
 
     public AutoRefreshableCache() {
         loadersForKeys = new ConcurrentHashMap<>();
@@ -60,12 +66,20 @@ public class AutoRefreshableCache<T> {
             builder.ticker(ticker);
         }
         this.cache = builder
-                .refreshAfterWrite(5, TimeUnit.MINUTES)
+                .refreshAfterWrite(REFRESH_PERIOD_IN_MINUTES, TimeUnit.MINUTES)
                 .build(new CacheLoader<String, T>() {
                     @Override
                     public T load(String key) throws Exception {
                         Callable<? extends T> valueLoader = loadersForKeys.get(key);
                         return valueLoader.call();
+                    }
+
+                    @Override
+                    public ListenableFuture<T> reload(final String key, T prevT) {
+                        ListenableFutureTask<T> task = ListenableFutureTask.create(
+                                () -> loadersForKeys.get(key).call());
+                        executor.execute(task);
+                        return task;
                     }
                 });
     }
@@ -132,7 +146,7 @@ public class AutoRefreshableCache<T> {
     public void invalidateAll() {
         cache.invalidateAll();
         loadersForKeys.clear();
-        loadersForKeeperKeys.forEach((key, loader) -> get(key, loader));
+        executor.execute(() -> loadersForKeeperKeys.forEach((key, loader) -> get(key, loader)));
     }
 
     LoadingCache<String, T> getCache() {
