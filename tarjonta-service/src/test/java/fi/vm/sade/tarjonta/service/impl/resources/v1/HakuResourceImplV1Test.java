@@ -35,9 +35,9 @@ import static fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1.g
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.anyString;
 import static org.hamcrest.core.StringContains.*;
+import static org.mockito.Mockito.*;
 
 public class HakuResourceImplV1Test extends TestMockBase {
 
@@ -451,12 +451,16 @@ public class HakuResourceImplV1Test extends TestMockBase {
     }
 
     @Test
-    public void findWillUseCache() {
+    public void findWillUseCacheAndMarkTheEntryAsKeeper() {
         HakuSearchParamsV1RDTO params = new HakuSearchParamsV1RDTO();
         params.virkailijaTyyppi = "all";
         params.cache = true;
+        queryParams.putSingle("virkailijaTyyppi", "all");
+        when(hakuResource.hakuCache.get(anyString(), any(), anyBoolean())).thenReturn(null);
 
         hakuResource.find(params, uriInfo);
+
+        verify(hakuResource.hakuCache, times(1)).get(anyString(), any(), eq(true));
     }
 
     private static void assertKohdejoukot(HakuSearchParamsV1RDTO params, UriInfo uriInfo, String expectedValue) {

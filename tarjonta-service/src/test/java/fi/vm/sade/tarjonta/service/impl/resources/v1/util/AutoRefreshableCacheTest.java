@@ -104,6 +104,27 @@ public class AutoRefreshableCacheTest {
         assertEquals("Keeper has the most recent value", keepersNewValue, cache.getIfPresent(KEY1));
     }
 
+    @Test
+    public void markAsKeeperDirectlyInGetMethod() {
+        cache.get(KEY1, () -> "value", true);
+        cache.get(KEY2, () -> "value", false);
+        assertEquals(2, cache.getCache().size());
+
+        cache.invalidateAll();
+
+        assertEquals(1, cache.getCache().size());
+    }
+
+    @Test
+    public void markAsKeeperDirectlyInGetMethodStaysKeeperForever() {
+        cache.get(KEY1, () -> "value", true);
+        cache.get(KEY1, () -> "value but no keeper flag");
+
+        cache.invalidateAll();
+
+        assertEquals("The entry should stay, even though the second call did not contain flag", 1, cache.getCache().size());
+    }
+
     private String getValue(String key, String backendValue) throws ExecutionException {
         Callable<String> loader = () -> backendValue;
         return cache.get(key, loader);

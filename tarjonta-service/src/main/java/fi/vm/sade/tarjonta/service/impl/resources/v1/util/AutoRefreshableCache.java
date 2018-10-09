@@ -71,11 +71,12 @@ public class AutoRefreshableCache<T> {
     }
 
     /**
-     * Even though this looks like Cache's method, and not LoadingCache's one, this is the method
-     * to use to query the key from the cache.
+     * Gets the value of the key from the cache, using the valueLoader. Note that value will be
+     * taken from cache if entry corresponding to cacheKey already exists. The refresh of value in
+     * cache will happen asynchronously, when the refresh period for that entry expires.
      * @param cacheKey
      * @param valueLoader
-     * @return
+     * @return value of the entry identified by key, either from cache or freshly retrieved using loader
      */
     public T get(String cacheKey, Callable<? extends T> valueLoader) {
         loadersForKeys.put(cacheKey, valueLoader);
@@ -103,6 +104,21 @@ public class AutoRefreshableCache<T> {
             LOG.error(message);
             throw new RuntimeException(message);
         }
+    }
+
+    /**
+     * Does {@link #get(String, Callable)} and, if isKeeper is true, also {@link #markAsKeeper(String)}
+     * @param cacheKey
+     * @param valueLoader
+     * @param isKeeper
+     * @return
+     */
+    public T get(String cacheKey, Callable<? extends T> valueLoader, boolean isKeeper) {
+        T result = get(cacheKey, valueLoader);
+        if (isKeeper) {
+            markAsKeeper(cacheKey);
+        }
+        return result;
     }
 
     public T getIfPresent(T key) {
