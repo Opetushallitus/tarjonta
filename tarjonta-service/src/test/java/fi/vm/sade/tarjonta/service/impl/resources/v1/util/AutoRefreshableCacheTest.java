@@ -1,16 +1,20 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.util;
 
-import com.google.common.base.Ticker;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import com.google.common.base.Ticker;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.beans.BeanUtils;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 public class AutoRefreshableCacheTest {
 
@@ -21,15 +25,15 @@ public class AutoRefreshableCacheTest {
     private final int REFRESH_PERIOD_IN_MINUTES = AutoRefreshableCache.REFRESH_PERIOD_IN_MINUTES;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         tickerMock = mock(Ticker.class);
         setTimeToMinutes(0);
-        cache = new AutoRefreshableCache<>();
+        cache = new AutoRefreshableCache<>(Runnable::run);
         cache.initializeCache(tickerMock);
     }
 
     @Test
-    public void cachesTheValue() throws ExecutionException {
+    public void cachesTheValue() {
         final String value = "my value";
 
         cache.get(KEY1, () -> value);
@@ -40,7 +44,7 @@ public class AutoRefreshableCacheTest {
     }
 
     @Test
-    public void refreshesAutomaticallyExactlyWhenRefreshPeriodForEntryExpires() throws ExecutionException {
+    public void refreshesAutomaticallyExactlyWhenRefreshPeriodForEntryExpires() {
         final long startTimeInMinutes = 3;
         setTimeToMinutes(startTimeInMinutes);
         final String firstBackendValue = "starting value";
@@ -59,7 +63,7 @@ public class AutoRefreshableCacheTest {
     }
 
     @Test
-    public void invalidateRemovesAllIfThereAreNoKeepers() throws ExecutionException {
+    public void invalidateRemovesAllIfThereAreNoKeepers() {
         getValue(KEY1, "value");
         assertNotNull(cache.getIfPresent(KEY1));
 
@@ -70,7 +74,7 @@ public class AutoRefreshableCacheTest {
     }
 
     @Test
-    public void keepersWillBeKeptAndRefreshedAfterInvalidate() throws ExecutionException, InterruptedException {
+    public void keepersWillBeKeptAndRefreshedAfterInvalidate() {
         final String keepersNewValue = "new_value";
         getValue(KEY1, "Keeper's old value");
         getValue(KEY2, "value2");
@@ -79,7 +83,6 @@ public class AutoRefreshableCacheTest {
         assertEquals(2, cache.getCache().size());
 
         cache.invalidateAll();
-        Thread.sleep(100);
 
         assertEquals(1, cache.getCache().size());
         assertNull("Non-keeper is deleted", cache.getIfPresent(KEY2));
@@ -88,29 +91,27 @@ public class AutoRefreshableCacheTest {
     }
 
     @Test
-    public void markAsKeeperDirectlyInGetMethod() throws InterruptedException {
+    public void markAsKeeperDirectlyInGetMethod() {
         cache.get(KEY1, () -> "value", true);
         cache.get(KEY2, () -> "value", false);
         assertEquals(2, cache.getCache().size());
 
         cache.invalidateAll();
-        Thread.sleep(100);
 
         assertEquals(1, cache.getCache().size());
     }
 
     @Test
-    public void markAsKeeperDirectlyInGetMethodStaysKeeperForever() throws InterruptedException {
+    public void markAsKeeperDirectlyInGetMethodStaysKeeperForever() {
         cache.get(KEY1, () -> "value", true);
         cache.get(KEY1, () -> "value but no keeper flag");
 
         cache.invalidateAll();
-        Thread.sleep(100);
 
         assertEquals("The entry should stay, even though the second call did not contain flag", 1, cache.getCache().size());
     }
 
-    private String getValue(String key, String backendValue) throws ExecutionException {
+    private String getValue(String key, String backendValue) {
         Callable<String> loader = () -> backendValue;
         return cache.get(key, loader);
     }

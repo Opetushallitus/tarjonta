@@ -57,11 +57,16 @@ public class AutoRefreshableCache<T> {
     private ConcurrentMap<String, Callable<? extends T>> loadersForKeys;
     private ConcurrentMap<String, Callable<? extends T>> loadersForKeeperKeys;
 
-    private final Executor executor = Executors.newFixedThreadPool(3);
+    private final Executor executor;
 
     public AutoRefreshableCache() {
+        this(Executors.newFixedThreadPool(3));
+    }
+
+    public AutoRefreshableCache(Executor executor) {
         loadersForKeys = new ConcurrentHashMap<>();
         loadersForKeeperKeys = new ConcurrentHashMap<>();
+        this.executor = executor;
         initializeCache(null);
     }
 
