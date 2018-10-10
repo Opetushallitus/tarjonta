@@ -67,7 +67,6 @@ public class AutoRefreshableCache<T> {
 
     /**
      * Can be also used from unit test to supply a custom Ticker
-     * @param ticker
      */
     void initializeCache(Ticker ticker) {
         CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder();
@@ -97,8 +96,6 @@ public class AutoRefreshableCache<T> {
      * Gets the value of the key from the cache, using the valueLoader. Note that value will be
      * taken from cache if entry corresponding to cacheKey already exists. The refresh of value in
      * cache will happen asynchronously, when the refresh period for that entry expires.
-     * @param cacheKey
-     * @param valueLoader
      * @return value of the entry identified by key, either from cache or freshly retrieved using loader
      */
     public T get(String cacheKey, Callable<? extends T> valueLoader) {
@@ -116,7 +113,6 @@ public class AutoRefreshableCache<T> {
     /**
      * Mark that given key is a "keeper". "Keepers" are the entries that will be automatically
      * reloaded after invalidateAll().
-     * @param key
      */
     public void markAsKeeper(String key) {
         Callable<? extends T> loader = loadersForKeys.get(key);
@@ -131,10 +127,6 @@ public class AutoRefreshableCache<T> {
 
     /**
      * Does {@link #get(String, Callable)} and, if isKeeper is true, also {@link #markAsKeeper(String)}
-     * @param cacheKey
-     * @param valueLoader
-     * @param isKeeper
-     * @return
      */
     public T get(String cacheKey, Callable<? extends T> valueLoader, boolean isKeeper) {
         T result = get(cacheKey, valueLoader);
