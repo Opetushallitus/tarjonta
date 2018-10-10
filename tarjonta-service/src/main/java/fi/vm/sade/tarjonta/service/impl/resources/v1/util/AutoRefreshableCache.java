@@ -147,7 +147,7 @@ public class AutoRefreshableCache<T> {
     public void invalidateAll() {
         cache.invalidateAll();
         loadersForKeys.clear();
-        executor.execute(() -> loadersForKeeperKeys.forEach((key, loader) -> get(key, loader)));
+        executor.execute(() -> loadersForKeeperKeys.forEach(this::get));
     }
 
     LoadingCache<String, T> getCache() {
