@@ -14,10 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import com.google.common.base.Predicates;
 import com.google.common.base.Stopwatch;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.*;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -33,6 +30,7 @@ import fi.vm.sade.tarjonta.service.auditlog.AuditLog;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.util.AutoRefreshableCache;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.KoodistoValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
@@ -89,12 +87,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.*;
 
@@ -164,10 +159,10 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private final String FIND_ALL_CACHE_KEY = "findAll";
 
     /**
-     * Cache for search results, keyed by virkailijaTyyppi. This is not the optimal solution at the time of writing but it is the fastest one to implement.
+     * Cache for search results, keyed by virkailijaTyyppi.
      */
-    private final Cache<String, ResultV1RDTO<List<HakuV1RDTO>>> hakuCache = CacheBuilder
-            .newBuilder().expireAfterWrite(5, TimeUnit.MINUTES).build();
+    @Autowired
+    AutoRefreshableCache<ResultV1RDTO<List<HakuV1RDTO>>> hakuCache;
 
     @Override
     public ResultV1RDTO<List<String>> search(GenericSearchParamsV1RDTO genericSearchParamsDTO, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
@@ -210,6 +205,12 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Override
     public ResultV1RDTO<List<HakuV1RDTO>> find(final HakuSearchParamsV1RDTO params, UriInfo uriInfo) {
+        LOG.debug("URIINFO: " + uriInfo.getQueryParameters());
+        if (params != null) {
+            LOG.debug("PARAMS: virkailijaTyypi=" + params.virkailijaTyyppi + " cache=" + params.cache + " addHakukohdes=" + params.addHakukohdes);
+        } else {
+            LOG.debug("PARAMS is null!");
+        }
         final List<HakuSearchCriteria> criteriaList = new ArrayList<>();
         criteriaList.addAll(getCriteriaListFromUri(uriInfo, null));
         criteriaList.addAll(getCriteriaListFromParams(params, uriInfo));
@@ -223,10 +224,11 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 String cacheKey = resolveComplexCacheKey(criteriaList, params);
                 try {
                     return hakuCache.get(cacheKey, () ->
-                            findHakuResultByCriteriaOrAllIfNull(params, criteriaList)
+                            findHakuResultByCriteriaOrAllIfNull(params, criteriaList),
+                            queryParametersMeanAll(uriInfo.getQueryParameters())
                     );
-                } catch (ExecutionException e) {
-                    LOG.error("Failed to cache result for key '" + FIND_ALL_CACHE_KEY + "', fetching all hakus as is", e);
+                } catch (RuntimeException e) {
+                    LOG.error("Failed to cache result for key '" + cacheKey + "', fetching all hakus as is", e);
                     ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
                     createSystemErrorFromException(e, resultV1RDTO);
                     return resultV1RDTO;
@@ -237,6 +239,28 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         }
     }
 
+    /**
+     * @param queryParameters
+     * @return true only if all parameters are allowed, with value(s) equal to allowed value.
+     */
+    private boolean queryParametersMeanAll(MultivaluedMap<String, String> queryParameters) {
+        final Map<String, String> allowedParameters = ImmutableMap.of(
+                "addHakukohdes", "false",
+                "cache", "true",
+                "virkailijaTyyppi", "all");
+        for (String key: queryParameters.keySet()) {
+            String allowedValue = allowedParameters.get(key);
+            if (allowedValue != null) {
+                List<String> realValues = queryParameters.get(key);
+                if (!realValues.stream().allMatch(v -> allowedValue.equals(v))) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
 
     @Override
     public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus() {
@@ -247,10 +271,11 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     private ResultV1RDTO<List<HakuV1RDTO>> findAllHakus(final HakuSearchParamsV1RDTO params) {
         try {
-            return hakuCache.get(FIND_ALL_CACHE_KEY, () ->
-                    findHakuResultByCriteriaOrAllIfNull(params, null)
+            return hakuCache.get(FIND_ALL_CACHE_KEY,
+                () -> findHakuResultByCriteriaOrAllIfNull(params, null),
+                true
             );
-        } catch (ExecutionException e) {
+        } catch (RuntimeException e) {
             LOG.error("Failed to cache result for key '" + FIND_ALL_CACHE_KEY + "', fetching all hakus as is", e);
             ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
             createSystemErrorFromException(e, resultV1RDTO);
