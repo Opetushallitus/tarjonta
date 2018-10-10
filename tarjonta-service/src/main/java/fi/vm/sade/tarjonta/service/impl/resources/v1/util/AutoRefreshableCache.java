@@ -16,14 +16,23 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1.util;
 
 
 import com.google.common.base.Ticker;
-import com.google.common.cache.*;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListenableFutureTask;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is a LoadingCache wrapper which refreshes the entries asynchronously.
@@ -61,7 +70,7 @@ public class AutoRefreshableCache<T> {
      * @param ticker
      */
     void initializeCache(Ticker ticker) {
-        CacheBuilder builder = CacheBuilder.newBuilder();
+        CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder();
         if (ticker != null) {
             builder.ticker(ticker);
         }
