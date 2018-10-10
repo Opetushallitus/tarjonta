@@ -85,6 +85,7 @@ public class OrganisaatioService {
         MUU_ORGANISAATIO("Muu organisaatio"),
         RYHMA("Ryhma"),
         VARHAISKASVATUKSEN_JARJESTAJA("Varhaiskasvatuksen jarjestaja"),
+        VARHAISKASVATUKSEN_TOIMIPAIKKA("Varhaiskasvatuksen toimipaikka"),
         TYOELAMAJARJESTO("Tyoelamajarjesto");
 
         private final String value;
