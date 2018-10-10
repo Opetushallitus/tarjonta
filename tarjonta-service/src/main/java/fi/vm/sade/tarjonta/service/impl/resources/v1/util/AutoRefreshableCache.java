@@ -40,10 +40,6 @@ import java.util.concurrent.TimeUnit;
  * have them all the time in cache. After invalidateAll, the "keep" entries
  * will be reloaded in background so that users (almost) never need to wait for
  * heavy entries to load.
- *
- * Cache.refreshAfterWrite(long, TimeUnit) is not used because it will reload
- * the entry only when it is next time queried by the user, and this what we try
- * to avoid with this class.
  */
 @Service
 public class AutoRefreshableCache<T> {
