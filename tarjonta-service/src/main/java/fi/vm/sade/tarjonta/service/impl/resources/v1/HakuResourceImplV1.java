@@ -271,8 +271,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     private ResultV1RDTO<List<HakuV1RDTO>> findAllHakus(final HakuSearchParamsV1RDTO params) {
         try {
-            return hakuCache.get(FIND_ALL_CACHE_KEY, () ->
-                    findHakuResultByCriteriaOrAllIfNull(params, null), true
+            return hakuCache.get(FIND_ALL_CACHE_KEY,
+                () -> findHakuResultByCriteriaOrAllIfNull(params, null),
+                true
             );
         } catch (RuntimeException e) {
             LOG.error("Failed to cache result for key '" + FIND_ALL_CACHE_KEY + "', fetching all hakus as is", e);
