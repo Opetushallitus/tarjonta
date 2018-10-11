@@ -17,6 +17,7 @@ import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.it.TarjontaSearchServiceTest;
+
 import fi.vm.sade.tarjonta.shared.KoodiService;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;

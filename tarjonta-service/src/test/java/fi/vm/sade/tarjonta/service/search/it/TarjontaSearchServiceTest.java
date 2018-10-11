@@ -9,7 +9,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
@@ -37,6 +36,7 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
+
 import fi.vm.sade.tarjonta.shared.KoodiService;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
