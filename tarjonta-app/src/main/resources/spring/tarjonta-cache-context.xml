@@ -48,11 +48,6 @@
             <cache:cacheable method="listKoodiByRelation"/>
         </cache:caching>
     </cache:advice>
-    <cache:advice id="cacheAdviceKoodistoService" cache-manager="cacheManager">
-        <cache:caching cache="koodistos">
-            <cache:cacheable method="searchKoodistos" />
-        </cache:caching>
-    </cache:advice>
 
     <!--
       Make Organisaatio calls cacheable
@@ -70,8 +65,7 @@
 
     <!-- apply the cacheable behaviour to all koodisto interfaces -->
     <aop:config>
-        <aop:advisor advice-ref="cacheAdviceKoodiService" pointcut="execution(* fi.vm.sade.koodisto.service.KoodiService.*(..))"/>
-        <aop:advisor advice-ref="cacheAdviceKoodistoService" pointcut="execution(* fi.vm.sade.koodisto.service.KoodistoService.*(..))"/>
+        <aop:advisor advice-ref="cacheAdviceKoodiService" pointcut="execution(* fi.vm.sade.tarjonta.shared.KoodiService.*(..))"/>
     </aop:config>
 
 </beans>

@@ -32,10 +32,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import fi.vm.sade.koodisto.service.GenericFault;
-import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
@@ -128,6 +125,7 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusSearchService;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.shared.KoodiService;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -156,13 +154,7 @@ import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -1093,8 +1085,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 //Very simple parameter check, if an undescore char is in the string, then the data is koodisto service koodi URI.
                 result.setResult(koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(dto.getClass(), defaultsMap.isEmpty() ? null : dto, koulutuskoodi, byUserRequest));
             } else {
-                SearchKoodisByKoodistoCriteriaType search = KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUri(koulutuskoodi, KoodistoURI.KOODISTO_TUTKINTO_URI);
-                List<KoodiType> searchKoodisByKoodisto = koodiService.searchKoodisByKoodisto(search);
+                List<KoodiType> searchKoodisByKoodisto = koodiService.searchKoodisByKoodisto(KoodistoURI.KOODISTO_TUTKINTO_URI, koulutuskoodi);
                 if (searchKoodisByKoodisto == null || searchKoodisByKoodisto.isEmpty()) {
                     throw new TarjontaBusinessException("No koulutuskoodi koodisto KoodiType object found by '" + koulutuskoodi + "'.");
                 }

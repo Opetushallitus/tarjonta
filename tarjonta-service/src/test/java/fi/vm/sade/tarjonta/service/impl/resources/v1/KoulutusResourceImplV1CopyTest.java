@@ -2,7 +2,6 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.service.types.common.KoodistoItemType;
@@ -15,6 +14,7 @@ import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KorkeakouluOpintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.search.it.TarjontaSearchServiceTest;
+import fi.vm.sade.tarjonta.shared.KoodiService;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;

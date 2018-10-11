@@ -103,7 +103,6 @@ public class JsonConfiguration {
             "koodisto.lang.en.uri",
             "koodisto.lang.fi.uri",
             "koodisto.lang.sv.uri",
-            "koodisto.public.webservice.url.backend",
             "koodisto.suomi.uri",
             "oid.rest.url.backend",
             "organisaatio.api.rest.url",
