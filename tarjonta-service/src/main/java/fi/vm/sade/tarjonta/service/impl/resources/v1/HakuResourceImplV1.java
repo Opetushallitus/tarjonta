@@ -239,6 +239,30 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         }
     }
 
+    @Override
+    public ResultV1RDTO<List<HakuV1RDTO>> findByAlkamisvuosi(Integer alkamisVuosi) {
+
+        ResultV1RDTO<List<HakuV1RDTO>> results = new ResultV1RDTO<>();
+        try {
+            List<Haku> hakus;
+            LOG.info("Loading hakus with koulutuksenalkamisvuosi: " + alkamisVuosi + " from DB.");
+            hakus = hakuDAO.findByAlkamisvuosi(alkamisVuosi);
+
+            LOG.debug("Got {} hakus.", hakus.size());
+
+            HakuSearchParamsV1RDTO params = new HakuSearchParamsV1RDTO();
+            results.setResult(hakusToHakuRDTO(hakus, params));
+            results.setStatus(ResultStatus.OK);
+            return results;
+
+        } catch (RuntimeException e) {
+            LOG.error("Failed to get hakus with koulutuksen alkamisvuosi: " + alkamisVuosi + ".", e);
+            ResultV1RDTO<List<HakuV1RDTO>> resultsError = new ResultV1RDTO<>();
+            createSystemErrorFromException(e, resultsError);
+            return resultsError;
+        }
+    }
+
     /**
      * @param queryParameters
      * @return true only if all parameters are allowed, with value(s) equal to allowed value.

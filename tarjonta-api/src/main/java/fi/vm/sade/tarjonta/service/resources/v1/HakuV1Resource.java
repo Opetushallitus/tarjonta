@@ -79,6 +79,12 @@ public interface HakuV1Resource {
     @ApiOperation(value = "Palauttaa kaikki haut hakuparametrien mukaisesti", notes = "Palauttaa kaikki haut hakuparametrien mukaisesti", response = HakuV1RDTO.class)
     public ResultV1RDTO<List<HakuV1RDTO>> find(@QueryParam("") HakuSearchParamsV1RDTO params, @Context UriInfo uriInfo);
 
+    @GET
+    @Path("/findByAlkamisvuosi/{alkamisVuosi}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Palauttaa haut annetulla koulutuksen alkamisvuodella", notes = "Palauttaa haut annetulla koulutuksen alkamisvuodella", response = HakuV1RDTO.class)
+    public ResultV1RDTO<List<HakuV1RDTO>> findByAlkamisvuosi(@PathParam("alkamisVuosi") Integer alkamisVuosi);
+
     @DELETE
     @Path("/{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")

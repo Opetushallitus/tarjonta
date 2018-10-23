@@ -102,4 +102,14 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
      * @return List of haku's that use Ataru forms
      */
     List<Haku> findHakusWithAtaruFormKeys();
+
+    /**
+     * Find hakus by koulutuksen alkamisvuosi
+     *
+     * @param alkamisVuosi Integer, koulutuksen alkamisvuosi
+     *
+     * @return List of hakus that has the vuosi as alkamisvuosi
+     *
+     */
+    List<Haku> findByAlkamisvuosi(Integer alkamisVuosi);
 }
