@@ -83,7 +83,7 @@ public interface HakuV1Resource {
     @Path("/findByAlkamisvuosi/{alkamisVuosi}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa haut annetulla koulutuksen alkamisvuodella", notes = "Palauttaa haut annetulla koulutuksen alkamisvuodella", response = HakuV1RDTO.class)
-    public ResultV1RDTO<List<HakuV1RDTO>> findByAlkamisvuosi(@PathParam("alkamisVuosi") Integer alkamisVuosi);
+    public ResultV1RDTO<List<HakuV1RDTO>> findByAlkamisvuosi(@ApiParam(value = "Koulutuksen alkamisvuosi", required = true) @PathParam("alkamisVuosi") Integer alkamisVuosi);
 
     @DELETE
     @Path("/{oid}")
