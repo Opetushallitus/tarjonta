@@ -32,6 +32,7 @@ import javax.ws.rs.core.UriInfo;
 import java.util.*;
 
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1.getCriteriaListFromParams;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -463,6 +464,29 @@ public class HakuResourceImplV1Test extends TestMockBase {
         verify(hakuResource.hakuCache, times(1)).get(anyString(), any(), eq(true));
     }
 
+    @Test
+    public void findAllFetchesDataFromBackedWhenCacheUpdatefails() {
+        when(hakuResource.hakuCache.get(anyString(), any(), anyBoolean())).thenThrow(new RuntimeException("Boom"));
+        when(hakuDAO.findAll()).thenReturn(Arrays.asList(createHaku("1.1.1"), createHaku("2.2.2")));
+
+        assertThat(hakuResource.findAllHakus().getResult(), hasSize(2));
+    }
+
+    @Test
+    public void findFetchesDataFromBackedWhenCacheUpdatefails() {
+        HakuSearchParamsV1RDTO params = new HakuSearchParamsV1RDTO();
+        params.setModifiedAfter(1539939112896L);
+        params.virkailijaTyyppi = "all";
+        params.cache = true;
+        queryParams.putSingle("virkailijaTyyppi", "all");
+
+        when(hakuResource.hakuCache.get(anyString(), any(), anyBoolean())).thenThrow(new RuntimeException("Boom"));
+        when(hakuDAO.findHakuByCriteria(anyInt(), anyInt(), any(ArrayList.class)))
+            .thenReturn(Arrays.asList(createHaku("1.1.1"), createHaku("2.2.2")));
+
+        assertThat(hakuResource.find(params, uriInfo).getResult(), hasSize(2));
+    }
+
     private static void assertKohdejoukot(HakuSearchParamsV1RDTO params, UriInfo uriInfo, String expectedValue) {
         List<HakuSearchCriteria> criteria = getCriteriaListFromParams(params, uriInfo);
         assertEquals("Well-defined virkailijaTyyppi should result in exactly one criterion", 1, criteria.size());
@@ -488,9 +512,14 @@ public class HakuResourceImplV1Test extends TestMockBase {
         return result;
     }
 
-    private Haku createHakuWithName(String oid, MonikielinenTeksti nimi, String key) {
+    private Haku createHaku(String oid) {
         Haku haku = new Haku();
         haku.setOid(oid);
+        return haku;
+    }
+
+    private Haku createHakuWithName(String oid, MonikielinenTeksti nimi, String key) {
+        Haku haku = createHaku(oid);
         haku.setNimi(nimi);
         haku.setAtaruLomakeAvain(key);
         return haku;

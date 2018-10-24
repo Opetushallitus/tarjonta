@@ -229,9 +229,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                     );
                 } catch (RuntimeException e) {
                     LOG.error("Failed to cache result for key '" + cacheKey + "', fetching all hakus as is", e);
-                    ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
-                    createSystemErrorFromException(e, resultV1RDTO);
-                    return resultV1RDTO;
+                    createSystemErrorFromException(e, new ResultV1RDTO<List<HakuV1RDTO>>());
+                    return findHakuResultByCriteriaOrAllIfNull(params, criteriaList);
                 }
             }
 
@@ -277,9 +276,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             );
         } catch (RuntimeException e) {
             LOG.error("Failed to cache result for key '" + FIND_ALL_CACHE_KEY + "', fetching all hakus as is", e);
-            ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<>();
-            createSystemErrorFromException(e, resultV1RDTO);
-            return resultV1RDTO;
+            createSystemErrorFromException(e, new ResultV1RDTO<List<HakuV1RDTO>>());
+            return findHakuResultByCriteriaOrAllIfNull(params, null);
         }
     }
 
