@@ -168,7 +168,7 @@
                     <div ng-if="model.hakux.result.ataruLomakeAvain && !isAtaruRole()">
                         <span tt="haku.review.haunTiedot.hakulomake.ataru.ilmanOikeuksia">Käytetään Lomake-editorin lomaketta.</span>
                     </div>
-                    <div ng-if="model.hakux.result.hakulomakeUri">
+                    <div ng-if="model.hakux.result.hakulomakeUri && (model.hakux.result.ataruLomakeAvain === null && model.hakux.result.jarjestelmanHakulomake === null)">
                         <span tt="haku.review.haunTiedot.hakulomake.oma">Käytetään omaa hakulomaketta: </span>
                         <a href="{{model.hakux.result.hakulomakeUri}}" target="_blank">{{ model.hakux.result.hakulomakeUri }}</a>
                     </div>
