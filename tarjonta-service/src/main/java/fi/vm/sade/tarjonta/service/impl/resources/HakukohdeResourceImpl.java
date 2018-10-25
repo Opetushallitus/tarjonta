@@ -13,6 +13,7 @@ import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusResourceImplV1;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.OrganisaatioUtil;
 import fi.vm.sade.tarjonta.service.resources.dto.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioKelaDTO;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioResultDTO;
@@ -151,11 +152,21 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
     private KoulutusLaajuusarvoDTO convert(KoulutusV1RDTO m) {
         KoulutusLaajuusarvoDTO k = new KoulutusLaajuusarvoDTO();
         k.setOid(m.getOid());
-        k.setOpintojenLaajuusarvo(uriToArvo(m.getOpintojenLaajuusarvo().getUri()));
-        k.setKoulutuskoodi(uriToArvo(m.getKoulutuskoodi().getUri()));
-        k.setKoulutustyyppi(uriToArvo(m.getKoulutustyyppi().getUri()));
+        k.setOpintojenLaajuusarvo(uriToArvo(safeGetKoodiUri(m.getOpintojenLaajuusarvo(), "opintojenLaajuusarvo")));
+        k.setKoulutuskoodi(uriToArvo(safeGetKoodiUri(m.getKoulutuskoodi(), "koulutusKoodi")));
+        k.setKoulutustyyppi(uriToArvo(safeGetKoodiUri(m.getKoulutustyyppi(), "koulutusTyyppi")));
         return k;
     }
+
+    private String safeGetKoodiUri(KoodiV1RDTO koodi, String debugInfoForLog) {
+        if (koodi != null) return koodi.getUri();
+        else {
+            LOG.warn("Tilastokeskus-warning - returning null as value is not available for " + debugInfoForLog); //TODO: For debug, prolly remove me when done
+            return null;
+        }
+
+    }
+
     private String uriToArvo(String uri) {
         if(uri == null) {
             return null;
