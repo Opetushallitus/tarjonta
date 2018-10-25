@@ -429,7 +429,6 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * @return
      */
     public boolean userCanCreateHakuWithOrgs(String... hakuOrgs) {
-        
         for(String org: hakuOrgs) {
             final boolean isAllowed = hakujenHallintaPermissionServiceWrapped.checkAccess(org, hakujenHallintaPermissionServiceWrapped.ROLE_CRUD);
             if(isAllowed) { //update/crud organisaatioon

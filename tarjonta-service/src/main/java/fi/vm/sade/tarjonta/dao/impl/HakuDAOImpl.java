@@ -357,4 +357,20 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
           .where(qHaku.tila.ne(TarjontaTila.POISTETTU))
           .list(qHaku);
     }
+
+    @Override
+    public List<Haku> findByAlkamisvuosi(Integer alkamisVuosi) {
+        String q = ("select distinct(h.*) from koulutusmoduuli_toteutus komoto " +
+                "join koulutus_hakukohde kh on komoto.id = kh.koulutus_id " +
+                "join hakukohde hk on kh.hakukohde_id = hk.id " +
+                "join haku h on hk.haku_id = h.id " +
+                "where hk.tila = 'JULKAISTU' and komoto.tila = 'JULKAISTU' " +
+                "and((h.koulutuksen_alkamisvuosi is null " +
+                "and komoto.alkamisvuosi = ?) " +
+                "or (h.koulutuksen_alkamisvuosi = ?))");
+        Query query = getEntityManager().createNativeQuery(q, Haku.class);
+        query.setParameter(1, alkamisVuosi);
+        query.setParameter(2, alkamisVuosi);
+        return query.getResultList();
+    }
 }

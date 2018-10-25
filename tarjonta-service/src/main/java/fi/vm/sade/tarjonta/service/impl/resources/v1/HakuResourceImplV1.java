@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.*;
+import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
@@ -235,6 +236,31 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             }
 
             return findHakuResultByCriteriaOrAllIfNull(params, criteriaList);
+        }
+    }
+
+    @Override
+    public ResultV1RDTO<List<HakuV1RDTO>> findByAlkamisvuosi(@ApiParam(value = "Koulutuksen alkamisvuosi", required = true) Integer alkamisVuosi) {
+
+        ResultV1RDTO<List<HakuV1RDTO>> results = new ResultV1RDTO<>();
+        try {
+            List<Haku> hakus;
+            LOG.info("Loading hakus with koulutuksenalkamisvuosi: " + alkamisVuosi + " from DB.");
+            hakus = hakuDAO.findByAlkamisvuosi(alkamisVuosi);
+            LOG.debug("Got {} hakus.", hakus.size());
+            if (hakus.size() == 0) {
+                results.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            } else {
+                HakuSearchParamsV1RDTO params = new HakuSearchParamsV1RDTO();
+                results.setResult(hakusToHakuRDTO(hakus, params));
+                results.setStatus(ResultV1RDTO.ResultStatus.OK);
+            }
+            return results;
+        } catch (RuntimeException e) {
+            LOG.error("Failed to get hakus with koulutuksen alkamisvuosi: " + alkamisVuosi + ".", e);
+            ResultV1RDTO<List<HakuV1RDTO>> resultsError = new ResultV1RDTO<>();
+            createSystemErrorFromException(e, resultsError);
+            return resultsError;
         }
     }
 
