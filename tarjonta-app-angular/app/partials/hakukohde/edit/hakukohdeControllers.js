@@ -293,6 +293,16 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
         }
         // Append or replace (depends on index)
         $scope.model.hakukohteenNimetAlk2018[index] = koodi;
+
+        // Update model value to newest koodi version
+        console.log("Check for need to update");
+        var currentUri = window.oph.removeKoodiVersion($scope.model.hakukohde.hakukohteenNimiUri || '');
+        if (currentUri === koodi.uriWithoutVersion) {
+            var newUri = currentUri + '#' + koodi.version;
+            console.log("model.hakukohde.hakukohtenNimiUri was: " + $scope.model.hakukohde.hakukohteenNimiUri);
+            console.log("Updating model.hakukohde.hakukohteenNimiUri to " + newUri);
+            $scope.model.hakukohde.hakukohteenNimiUri = newUri;
+        }
     };
 
     $scope.model.loadPohjakoulutusvaatimus = function () {
