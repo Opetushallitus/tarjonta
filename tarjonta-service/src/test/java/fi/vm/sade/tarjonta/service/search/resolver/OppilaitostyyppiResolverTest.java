@@ -6,9 +6,12 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import static junit.framework.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 
@@ -21,7 +24,7 @@ public class OppilaitostyyppiResolverTest extends TestMockBase {
     public void thatOppilaitostyyppiIsResolved() {
         OrganisaatioPerustieto org = createOrganisaatioPerustietoWithOppilaitostyyppi();
 
-        String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(org);
+        String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(org, new HashMap<>());
 
         assertEquals("oppilaitostyyppi_42", oppilaitostyyppi);
     }
@@ -31,12 +34,10 @@ public class OppilaitostyyppiResolverTest extends TestMockBase {
         OrganisaatioPerustieto orgWithoutOppilaitostyyppi = createOrganisaatioPerustietoWithoutOppilaitostyyppi();
         OrganisaatioPerustieto orgWithOppilaitostyyppi = createOrganisaatioPerustietoWithOppilaitostyyppi();
 
-        when(organisaatioService.findByOidSet(new HashSet<String>(Arrays.asList("1.2.3"))))
-                .thenReturn(Arrays.asList(orgWithoutOppilaitostyyppi));
-        when(organisaatioService.findByOidSet(new HashSet<String>(Arrays.asList("4.5.6"))))
+        when(organisaatioService.findByUsingCache(any(), any()))
                 .thenReturn(Arrays.asList(orgWithOppilaitostyyppi));
 
-        String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(orgWithoutOppilaitostyyppi);
+        String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(orgWithoutOppilaitostyyppi, new HashMap<>());
 
         assertEquals("oppilaitostyyppi_42", oppilaitostyyppi);
     }

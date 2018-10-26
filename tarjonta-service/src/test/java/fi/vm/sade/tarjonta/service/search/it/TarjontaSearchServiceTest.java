@@ -118,11 +118,23 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
                         .newHashSet("1.2.3.4.555"))).toReturn(
                 Lists.newArrayList(getOrganisaatio("1.2.3.4.555")));
         Mockito.stub(
+                organisaatioService.findByUsingHakukohdeIndexingCache(Sets
+                        .newHashSet("1.2.3.4.555"))).toReturn(
+                Lists.newArrayList(getOrganisaatio("1.2.3.4.555")));
+        Mockito.stub(
                 organisaatioService.findByOidSet(Sets
                         .newHashSet("1.2.3.4.556"))).toReturn(
                 Lists.newArrayList(getOrganisaatio("1.2.3.4.556")));
         Mockito.stub(
+                organisaatioService.findByUsingHakukohdeIndexingCache(Sets
+                        .newHashSet("1.2.3.4.556"))).toReturn(
+                Lists.newArrayList(getOrganisaatio("1.2.3.4.556")));
+        Mockito.stub(
                 organisaatioService.findByOidSet(Sets
+                        .newHashSet("1.2.3.4.557"))).toReturn(
+                Lists.newArrayList(getOrganisaatio("1.2.3.4.557")));
+        Mockito.stub(
+                organisaatioService.findByUsingHakukohdeIndexingCache(Sets
                         .newHashSet("1.2.3.4.557"))).toReturn(
                 Lists.newArrayList(getOrganisaatio("1.2.3.4.557")));
         Mockito.stub(
@@ -133,7 +145,19 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
                                 getOrganisaatio("1.2.3.4.556"),
                                 getOrganisaatio("1.2.3.4.557")));
         Mockito.stub(
+                organisaatioService.findByUsingHakukohdeIndexingCache(Sets.newHashSet(
+                        "1.2.3.4.555", "1.2.3.4.556", "1.2.3.4.557")))
+                .toReturn(
+                        Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),
+                                getOrganisaatio("1.2.3.4.556"),
+                                getOrganisaatio("1.2.3.4.557")));
+        Mockito.stub(
                 organisaatioService.findByOidSet(Sets.newHashSet(
+                        "1.2.3.4.555", "1.2.3.4.556"))).toReturn(
+                Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),
+                        getOrganisaatio("1.2.3.4.556")));
+        Mockito.stub(
+                organisaatioService.findByUsingHakukohdeIndexingCache(Sets.newHashSet(
                         "1.2.3.4.555", "1.2.3.4.556"))).toReturn(
                 Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),
                         getOrganisaatio("1.2.3.4.556")));
@@ -301,6 +325,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     @Test
     public void testKKKoulutus() throws SolrServerException {
         Mockito.stub(organisaatioService.findByOidSet(Mockito.anySet())).toReturn(Arrays.asList(getOrganisaatio("1.2.3.4.5.6.7.8.9")));
+        Mockito.stub(organisaatioService.findByUsingKoulutusIndexingCache(Mockito.anySet())).toReturn(Arrays.asList(getOrganisaatio("1.2.3.4.5.6.7.8.9")));
 
         // tee kk koulutus
         executeInTransaction(() -> {

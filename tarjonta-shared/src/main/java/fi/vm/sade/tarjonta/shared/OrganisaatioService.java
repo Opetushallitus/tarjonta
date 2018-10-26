@@ -1,9 +1,7 @@
 package fi.vm.sade.tarjonta.shared;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Predicates;
 import com.google.common.cache.CacheBuilder;
@@ -14,21 +12,10 @@ import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.dto.v2.OrganisaatioHakutulosSuppeaDTOV2;
 import fi.vm.sade.organisaatio.dto.v3.OrganisaatioRDTOV3;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
-;
-
-
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter;
-import fi.vm.sade.tarjonta.shared.amkouteDTO.AmkouteOrgDTO;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioResultDTO;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.codehaus.jettison.json.JSONArray;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +26,11 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 public class OrganisaatioService {
@@ -85,6 +73,20 @@ public class OrganisaatioService {
                     return fetchKoulutustoimija(oid);
                 }
             });
+
+    public Map<String, OrganisaatioPerustieto> getHakukohdeIndexingOrganisaatioCache() {
+        return hakukohdeIndexingOrganisaatioCache;
+    }
+
+    public Map<String, OrganisaatioPerustieto> getKoulutusIndexingOrganisaatioCache() {
+        return koulutusIndexingOrganisaatioCache;
+    }
+
+    // Nollataan ennen indeksointia. Elinkaareksi on tarkoitettu indeksoinnin kesto.
+    private final Map<String, OrganisaatioPerustieto> hakukohdeIndexingOrganisaatioCache = new HashMap<>();
+
+    // Nollataan ennen indeksointia. Elinkaareksi on tarkoitettu indeksoinnin kesto.
+    private final Map<String, OrganisaatioPerustieto> koulutusIndexingOrganisaatioCache = new HashMap<>();
 
     @Autowired
     public OrganisaatioService(TarjontaKoodistoHelper tarjontaKoodistoHelper, UrlConfiguration urlConfiguration) {
@@ -203,9 +205,71 @@ public class OrganisaatioService {
         }
     }
 
+    public void clearHakukohdeIndexingCache() {
+        this.hakukohdeIndexingOrganisaatioCache.clear();
+    }
+
+    public void clearKoulutusIndexingCache() {
+        this.hakukohdeIndexingOrganisaatioCache.clear();
+    }
+
+    /**
+     * Hakukohde organisaatio cachea hyödyntävä wrapperi. Hakee löytymättömät organisaatiotiedot organisaatiopalvelusta
+     * @param organisaatioOids Setti organisaatio oideja
+     * @return Lista organisaatioiden tietoja
+     */
+    public List<OrganisaatioPerustieto> findByUsingHakukohdeIndexingCache(Set<String> organisaatioOids) {
+        return this.findByUsingIndexingCache(organisaatioOids, this.hakukohdeIndexingOrganisaatioCache);
+    }
+
+    /**
+     * Koulutus organisaatio cachea hyödyntävä wrapperi. Hakee löytymättömät organisaatiotiedot organisaatiopalvelusta
+     * @param organisaatioOids Setti organisaatio oideja
+     * @return Lista organisaatioiden tietoja
+     */
+    public List<OrganisaatioPerustieto> findByUsingKoulutusIndexingCache(Set<String> organisaatioOids) {
+        return this.findByUsingIndexingCache(organisaatioOids, this.koulutusIndexingOrganisaatioCache);
+    }
+
+    /**
+     * Hakee annetusta organisaatio cachesta löytymättömät organisaatiotiedot organisaatiopalvelusta
+     * @param organisaatioOids Setti organisaatio oideja
+     * @param cache Organisaatiocache
+     * @return Lista organisaatioiden tietoja
+     */
+    public List<OrganisaatioPerustieto> findByUsingCache(Set<String> organisaatioOids, Map<String, OrganisaatioPerustieto> cache) {
+        return this.findByUsingIndexingCache(organisaatioOids, cache);
+    }
+
+    private List<OrganisaatioPerustieto> findByUsingIndexingCache(Set<String> organisaatioOids, Map<String, OrganisaatioPerustieto> cache) {
+        Set<String> uncachedOrganisaatioOids = organisaatioOids.stream()
+                .filter(organisaatioOid -> cache.keySet().contains(organisaatioOid))
+                .collect(Collectors.toSet());
+        this.findByOidSet(uncachedOrganisaatioOids)
+                .forEach(perustieto -> cache.put(perustieto.getOid(), perustieto));
+        return organisaatioOids.stream()
+                .map(cache::get)
+                .collect(Collectors.toList());
+    }
+
     public List<OrganisaatioPerustieto> findByOidSet(Set<String> organisaatioOids) {
+        final AtomicInteger counter = new AtomicInteger(0);
+
+        return organisaatioOids.stream()
+                .distinct()
+                .collect(Collectors.groupingBy(it -> counter.getAndIncrement() / 1000, Collectors.toSet()))
+                .values().stream()
+                .map(this::findByOidSetAtChunks)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
+
+    private List<OrganisaatioPerustieto> findByOidSetAtChunks(Set<String> organisaatioOids) {
         if (organisaatioOids.isEmpty()) {
             return Collections.EMPTY_LIST;
+        }
+        if (organisaatioOids.size() > 1000) {
+            throw new IllegalStateException("Tried to fetch more than 1000 organisations at time.");
         }
         try {
 

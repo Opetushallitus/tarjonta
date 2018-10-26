@@ -48,11 +48,13 @@ public class IndexerResourceTest {
         ReflectionTestUtils.setField(indexer, "hakukohdeConverter", hakukohdeToSolr);
 
         OrganisaatioService organisaatioService = Mockito.mock(OrganisaatioService.class);
-        stub(organisaatioService.findByOidSet(anySet())).toReturn(Lists.newArrayList(getOrg("o-oid-12345")));
+        stub(organisaatioService.findByUsingHakukohdeIndexingCache(anySet())).toReturn(Lists.newArrayList(getOrg("o-oid-12345")));
+        stub(organisaatioService.findByUsingKoulutusIndexingCache(anySet())).toReturn(Lists.newArrayList(getOrg("o-oid-12345")));
         ReflectionTestUtils.setField(hakukohdeToSolr, "organisaatioService", organisaatioService);
+        ReflectionTestUtils.setField(indexer, "organisaatioService", organisaatioService);
 
         OppilaitostyyppiResolver oppilaitostyyppiResolver = Mockito.mock(OppilaitostyyppiResolver.class);
-        stub(oppilaitostyyppiResolver.resolve(any(OrganisaatioPerustieto.class))).toReturn("oppilaitostyyppi_41");
+        stub(oppilaitostyyppiResolver.resolve(any(OrganisaatioPerustieto.class), any())).toReturn("oppilaitostyyppi_41");
         ReflectionTestUtils.setField(hakukohdeToSolr, "oppilaitostyyppiResolver", oppilaitostyyppiResolver);
 
         TarjontaKoodistoHelper tarjontaKoodistoHelper = new TarjontaKoodistoHelper();

@@ -245,7 +245,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     }
 
     private boolean addOrganisaatioTiedotForTarjoaja(SolrInputDocument hakukohdeDoc, Set<String> tarjoajaOids) {
-        final List<OrganisaatioPerustieto> orgs = organisaatioService.findByOidSet(tarjoajaOids);
+        final List<OrganisaatioPerustieto> orgs = organisaatioService.findByUsingHakukohdeIndexingCache(tarjoajaOids);
         if (orgs.size() == 0) {
             return false;
         }
@@ -286,10 +286,10 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
             ownerOids.addAll(koulutusmoduuliToteutus.getOwnerOids());
         }
 
-        List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioService.findByOidSet(ownerOids);
+        List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioService.findByUsingHakukohdeIndexingCache(ownerOids);
 
             for (OrganisaatioPerustieto organisaatioPerustieto : organisaatiotiedot) {
-                String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(organisaatioPerustieto);
+                String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(organisaatioPerustieto, this.organisaatioService.getHakukohdeIndexingOrganisaatioCache());
                 if (oppilaitostyyppi != null) {
                     oppilaitostyypit.add(oppilaitostyyppi);
                 }

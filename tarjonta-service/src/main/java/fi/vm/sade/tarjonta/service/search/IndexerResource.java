@@ -6,6 +6,7 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -25,8 +26,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Transactional(readOnly = true)
 @Component
@@ -48,10 +48,13 @@ public class IndexerResource {
     private IndexerDAO indexerDao;
 
     @Autowired
-    HakukohdeToSolrDocument hakukohdeConverter;
+    private HakukohdeToSolrDocument hakukohdeConverter;
 
     @Autowired
-    KoulutusToSolrDocument koulutusConverter;
+    private KoulutusToSolrDocument koulutusConverter;
+
+    @Autowired
+    private OrganisaatioService organisaatioService;
 
     @GET
     @Path("/koulutukset/clear")
@@ -167,19 +170,27 @@ public class IndexerResource {
         deleteByOid(oids, hakukohdeSolr);
     }
 
-    public void indexHakukohteet(List<Long> hakukohdeIdt) {
+    /**
+     * Index hakukohteet in batches
+     * @param hakukohdeIdt hakukohde ids to index
+     * @return Index time for every id
+     */
+    public Map<Long, Date> indexHakukohteet(List<Long> hakukohdeIdt) {
         if (hakukohdeIdt.size() == 0) {
-            return;
+            return new HashMap<>();
         }
+        this.organisaatioService.clearHakukohdeIndexingCache();
         List<SolrInputDocument> docs = Lists.newArrayList();
         int batch_size = 50;
         int index = 0;
+        Map<Long, Date> indexTimes = new HashMap<>();
         do {
             for (int j = index; j < index + batch_size && j < hakukohdeIdt.size(); j++) {
 
                 Long hakukohdeId = hakukohdeIdt.get(j);
                 logger.debug(j + ". Fetching hakukohde:" + hakukohdeId);
                 docs.addAll(hakukohdeConverter.apply(hakukohdeId));
+                indexTimes.put(hakukohdeId, new Date());
             }
             index += batch_size;
             logger.debug("indexing:" + docs.size() + " docs");
@@ -188,41 +199,23 @@ public class IndexerResource {
         } while (index < hakukohdeIdt.size());
 
         commit(hakukohdeSolr);
-    }
-
-    public void indexHakukohdeIndexEntities(List<Long> hakukohdeIds) throws SolrServerException,
-            IOException {
-        List<SolrInputDocument> docs = Lists.newArrayList();
-        int batch_size = 100;
-        for (Long hakukohdeId : hakukohdeIds) {
-            docs.addAll(hakukohdeConverter.apply(hakukohdeId));
-            if (docs.size() > batch_size) {
-                logger.debug("indexing:" + docs.size() + " docs");
-                hakukohdeSolr.add(docs);
-                docs.clear();
-            }
-        }
-        if (docs.size() > 0) {
-            hakukohdeSolr.add(docs);
-            docs.clear();
-        }
-
-        commit(hakukohdeSolr);
+        return indexTimes;
     }
 
     /**
-     * Index koulutukset
+     * Index koulutukset in batches
      *
      * @param koulutukset id's of koulutukset to index
-     * @throws IOException
-     * @throws SolrServerException
+     * @return Index time for every id
      */
-    public void indexKoulutukset(List<Long> koulutukset) {
+    public Map<Long, Date> indexKoulutukset(List<Long> koulutukset) {
         if (koulutukset.size() == 0) {
-            return;
+            return new HashMap<>();
         }
+        this.organisaatioService.clearKoulutusIndexingCache();
         int batch_size = 50;
         int index = 0;
+        Map<Long, Date> koulutusIndexed = new HashMap<>();
         do {
             final List<SolrInputDocument> docs = Lists.newArrayList();
 
@@ -244,6 +237,7 @@ public class IndexerResource {
                         }
                     }
                 }
+                koulutusIndexed.put(koulutusId, new Date());
             }
             index += batch_size;
             logger.debug("indexing:" + docs.size() + " docs");
@@ -252,6 +246,7 @@ public class IndexerResource {
         } while (index < koulutukset.size());
 
         commit(koulutusSolr);
+        return koulutusIndexed;
     }
 
     private void commit(SolrServer solr) {

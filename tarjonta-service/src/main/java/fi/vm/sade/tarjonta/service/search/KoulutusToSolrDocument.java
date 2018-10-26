@@ -81,7 +81,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         String firstOwner = koulutusmoduuliToteutus.getTarjoaja();
         addFirstOwner(komotoDoc, firstOwner);
 
-        List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioService.findByOidSet(koulutusmoduuliToteutus.getOwnerOids());
+        List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioService.findByUsingKoulutusIndexingCache(koulutusmoduuliToteutus.getOwnerOids());
 
         addOid(komotoDoc, koulutusmoduuliToteutus);
         addTyypit(komotoDoc, koulutusmoduuliToteutus);
@@ -155,7 +155,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         Set<String> oppilaitostyypit = new HashSet<String>();
 
         for (OrganisaatioPerustieto organisaatioPerustieto : organisaatiotiedot) {
-            String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(organisaatioPerustieto);
+            String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(organisaatioPerustieto, this.organisaatioService.getKoulutusIndexingOrganisaatioCache());
             if (oppilaitostyyppi != null) {
                 oppilaitostyypit.add(oppilaitostyyppi);
             }
@@ -394,11 +394,11 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
     }
 
     private List<OrganisaatioPerustieto> getTarjoajat(KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
-        return organisaatioService.findByOidSet(koulutusmoduuliToteutus.getTarjoajaOids());
+        return organisaatioService.findByUsingKoulutusIndexingCache(koulutusmoduuliToteutus.getTarjoajaOids());
     }
 
     private List<OrganisaatioPerustieto> getJarjestajat(KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
-        return organisaatioService.findByOidSet(koulutusmoduuliToteutus.getJarjestajaOids());
+        return organisaatioService.findByUsingKoulutusIndexingCache(koulutusmoduuliToteutus.getJarjestajaOids());
     }
 
     private void addTyypit(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
@@ -492,7 +492,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         }
     }
 
-    public static void addKoulutusKoodis(SolrInputDocument doc, KoulutusmoduuliToteutus komoto) {
+    private static void addKoulutusKoodis(SolrInputDocument doc, KoulutusmoduuliToteutus komoto) {
         String opintoalaUri = komoto.getOpintoalaUri() != null ?
                 komoto.getOpintoalaUri() :
                 komoto.getKoulutusmoduuli().getOpintoalaUri();

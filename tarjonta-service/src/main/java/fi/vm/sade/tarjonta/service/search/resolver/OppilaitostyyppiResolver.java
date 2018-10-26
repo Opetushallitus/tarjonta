@@ -18,12 +18,12 @@ public class OppilaitostyyppiResolver {
     @Autowired
     private OrganisaatioService organisaatioService;
 
-    public String resolve(OrganisaatioPerustieto organisaatioPerustieto) {
+    public String resolve(OrganisaatioPerustieto organisaatioPerustieto, Map<String, OrganisaatioPerustieto> cache) {
         if (organisaatioPerustieto.getOppilaitostyyppi() != null) {
             return getKoodiURIFromVersionedUri(organisaatioPerustieto.getOppilaitostyyppi());
         } else {
             ArrayList<String> oids = getReversedParentOrgOids(organisaatioPerustieto);
-            String oppilaitostyyppi = getOppilaitostyyppiFromParentOrganisation(oids);
+            String oppilaitostyyppi = getOppilaitostyyppiFromParentOrganisation(oids, cache);
             if (oppilaitostyyppi != null) {
                 return oppilaitostyyppi;
             }
@@ -31,13 +31,12 @@ public class OppilaitostyyppiResolver {
         return null;
     }
 
-    private String getOppilaitostyyppiFromParentOrganisation(ArrayList<String> oids) {
-        for (String oid : oids) {
-            List<OrganisaatioPerustieto> parents = organisaatioService.findByOidSet(new HashSet<String>(Arrays.asList(oid)));
-            if (!parents.isEmpty()) {
-                OrganisaatioPerustieto parentOrganisaatioPerustieto = parents.get(0);
-                if (parentOrganisaatioPerustieto.getOppilaitostyyppi() != null) {
-                    return getKoodiURIFromVersionedUri(parentOrganisaatioPerustieto.getOppilaitostyyppi());
+    private String getOppilaitostyyppiFromParentOrganisation(ArrayList<String> oids, Map<String, OrganisaatioPerustieto> cache) {
+        List<OrganisaatioPerustieto> parents = organisaatioService.findByUsingCache(new HashSet<>(oids), cache);
+        for (OrganisaatioPerustieto parent : parents) {
+            if (parent != null) {
+                if (parent.getOppilaitostyyppi() != null) {
+                    return getKoodiURIFromVersionedUri(parent.getOppilaitostyyppi());
                 }
             }
         }

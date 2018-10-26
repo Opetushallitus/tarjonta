@@ -3,7 +3,9 @@ package fi.vm.sade.tarjonta.service.tasks;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +44,11 @@ public class IndexSyncronizer {
     public void updateHakukohteet() {
         logger.debug("Searching for unindexed hakukohdes...");
         List<Long> ids = indexerDao.findUnindexedHakukohdeIds();
-        for (Long id : ids) {
-            Date now = new Date();
-            logger.debug("  index now: id = {}", id);
-            indexerResource.indexHakukohteet(Lists.newArrayList(id));
-            indexerDao.updateHakukohdeIndexed(id, now);
-        }
+        indexerResource.indexHakukohteet(ids)
+                .forEach((id, date) -> {
+                    logger.debug("  index now: id = {}", id);
+                    indexerDao.updateHakukohdeIndexed(id, date);
+        });
     }
 
     @Transactional
@@ -55,12 +56,11 @@ public class IndexSyncronizer {
     public void updateKoulutukset() {
         logger.debug("Searching for unindexed koulutukses...");
         List<Long> ids = indexerDao.findUnindexedKoulutusIds();
-        for (Long id : ids) {
-            logger.debug("  index now: id = {}", id);
-            Date now = new Date();
-            indexerResource.indexKoulutukset(Lists.newArrayList(id));
-            indexerDao.updateKoulutusIndexed(id, now);
-        }
+        indexerResource.indexKoulutukset(ids)
+                .forEach((id, date) -> {
+                    logger.debug("  index now: id = {}", id);
+                    indexerDao.updateKoulutusIndexed(id, date);
+                });
     }
 
     @Transactional

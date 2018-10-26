@@ -45,9 +45,9 @@ public class KoulutusToSolrDocumentTest extends TestMockBase {
         Whitebox.setInternalState(converter, "koodistoHelper", tarjontaKoodistoHelper);
 
         when(koulutusmoduuliToteutusDAO.findBy("id", 1L)).thenReturn(Arrays.asList(koulutusmoduuliToteutus));
-        when(organisaatioService.findByOidSet(new HashSet<String>(Arrays.asList("1.2.3", "4.5.6")))).thenReturn(organisaatioPerustiedot);
-        when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(0))).thenReturn("oppilaitostyyppi_41");
-        when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(1))).thenReturn("oppilaitostyyppi_42");
+        when(organisaatioService.findByUsingKoulutusIndexingCache(new HashSet<String>(Arrays.asList("1.2.3", "4.5.6")))).thenReturn(organisaatioPerustiedot);
+        when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(0), new HashMap<>())).thenReturn("oppilaitostyyppi_41");
+        when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(1), new HashMap<>())).thenReturn("oppilaitostyyppi_42");
     }
 
     @Test
@@ -58,7 +58,7 @@ public class KoulutusToSolrDocumentTest extends TestMockBase {
 
     @Test
     public void thatEmptyListIsReturnedWhenNoOrganisationFound() {
-        when(organisaatioService.findByOidSet(new HashSet<String>(Arrays.asList("1.2.3", "4.5.6")))).thenReturn(new ArrayList<OrganisaatioPerustieto>());
+        when(organisaatioService.findByUsingKoulutusIndexingCache(new HashSet<String>(Arrays.asList("1.2.3", "4.5.6")))).thenReturn(new ArrayList<OrganisaatioPerustieto>());
         List<SolrInputDocument> docs = converter.apply(koulutusmoduuliToteutus.getId());
         assertTrue(docs.isEmpty());
     }
