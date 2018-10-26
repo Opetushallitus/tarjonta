@@ -243,7 +243,7 @@ public class OrganisaatioService {
 
     private List<OrganisaatioPerustieto> findByUsingIndexingCache(Set<String> organisaatioOids, Map<String, OrganisaatioPerustieto> cache) {
         Set<String> uncachedOrganisaatioOids = organisaatioOids.stream()
-                .filter(organisaatioOid -> cache.keySet().contains(organisaatioOid))
+                .filter(organisaatioOid -> !cache.keySet().contains(organisaatioOid))
                 .collect(Collectors.toSet());
         this.findByOidSet(uncachedOrganisaatioOids)
                 .forEach(perustieto -> cache.put(perustieto.getOid(), perustieto));
