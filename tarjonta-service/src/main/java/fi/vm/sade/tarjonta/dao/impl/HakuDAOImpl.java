@@ -364,7 +364,9 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
                 "join koulutus_hakukohde kh on komoto.id = kh.koulutus_id " +
                 "join hakukohde hk on kh.hakukohde_id = hk.id " +
                 "join haku h on hk.haku_id = h.id " +
-                "where hk.tila = 'JULKAISTU' and komoto.tila = 'JULKAISTU' " +
+                "where h.tila = 'JULKAISTU' " +
+                "and hk.tila = 'JULKAISTU' " +
+                "and komoto.tila = 'JULKAISTU' " +
                 "and((h.koulutuksen_alkamisvuosi is null " +
                 "and komoto.alkamisvuosi = ?) " +
                 "or (h.koulutuksen_alkamisvuosi = ?))");
