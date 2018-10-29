@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
@@ -139,6 +140,7 @@ public class IndexerResource {
      * Index hakukohteet in batches
      * @param hakukohdeIdt hakukohde ids to index
      */
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void indexHakukohteet(List<Long> hakukohdeIdt) {
         if (hakukohdeIdt.size() > 100) {
             this.organisaatioService.refreshCache(this.organisaatioService.getHakukohdeIndexingOrganisaatioCache());
@@ -161,6 +163,7 @@ public class IndexerResource {
      *
      * @param koulutukset id's of koulutukset to index
      */
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void indexKoulutukset(List<Long> koulutukset) {
         if (koulutukset.size() > 100) {
             this.organisaatioService.refreshCache(this.organisaatioService.getKoulutusIndexingOrganisaatioCache());
