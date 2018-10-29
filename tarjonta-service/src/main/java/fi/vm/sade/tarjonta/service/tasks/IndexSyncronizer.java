@@ -28,7 +28,7 @@ import fi.vm.sade.tarjonta.service.search.IndexerResource;
 @Profile("default")
 public class IndexSyncronizer {
 
-    final Logger logger = LoggerFactory.getLogger(IndexSyncronizer.class);
+    private final Logger logger = LoggerFactory.getLogger(IndexSyncronizer.class);
 
     @Autowired
     private IndexSyncronizerUtils indexSyncronizerUtils;
@@ -39,28 +39,18 @@ public class IndexSyncronizer {
     @Autowired
     private IndexerResource indexerResource;
 
-    @Transactional
     @Scheduled(cron = "*/10 * * * * ?")
     public void updateHakukohteet() {
         logger.debug("Searching for unindexed hakukohdes...");
         List<Long> ids = indexerDao.findUnindexedHakukohdeIds();
-        indexerResource.indexHakukohteet(ids)
-                .forEach((id, date) -> {
-                    logger.debug("  index now: id = {}", id);
-                    indexerDao.updateHakukohdeIndexed(id, date);
-        });
+        indexerResource.indexHakukohteet(ids);
     }
 
-    @Transactional
     @Scheduled(cron = "*/10 * * * * ?")
     public void updateKoulutukset() {
         logger.debug("Searching for unindexed koulutukses...");
         List<Long> ids = indexerDao.findUnindexedKoulutusIds();
-        indexerResource.indexKoulutukset(ids)
-                .forEach((id, date) -> {
-                    logger.debug("  index now: id = {}", id);
-                    indexerDao.updateKoulutusIndexed(id, date);
-                });
+        indexerResource.indexKoulutukset(ids);
     }
 
     @Transactional

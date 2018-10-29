@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.business.IndexService;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import org.apache.solr.client.solrj.SolrServer;
@@ -48,13 +48,10 @@ public class IndexerResource {
     private IndexerDAO indexerDao;
 
     @Autowired
-    private HakukohdeToSolrDocument hakukohdeConverter;
-
-    @Autowired
-    private KoulutusToSolrDocument koulutusConverter;
-
-    @Autowired
     private OrganisaatioService organisaatioService;
+
+    @Autowired
+    private IndexService indexService;
 
     @GET
     @Path("/koulutukset/clear")
@@ -104,46 +101,14 @@ public class IndexerResource {
         this.koulutusSolr = factory.getSolrServer("koulutukset");
     }
 
-    private void index(final SolrServer solr, List<SolrInputDocument> docs) {
-        if (docs.size() > 0) {
-            final List<SolrInputDocument> localDocs = ImmutableList
-                    .copyOf(docs);
-            afterCommit(new TransactionSynchronizationAdapter() {
-                @Override
-                public void afterCommit() {
-                    Exception lastException = null;
-
-                    // try 3 times
-                    for (int i = 0; i < 5; i++) {
-                        try {
-                            logger.debug("Indexing {} docs, try {}", localDocs.size(), i);
-                            solr.add(localDocs);
-                            logger.debug("Committing changes to index.");
-                            solr.commit(true, true, false);
-                            logger.debug("Done.");
-                            return; //exit on success!
-                        } catch (Exception e) {
-                            lastException = e;
-                        }
-                    }
-                    // fail
-                    throw new RuntimeException(
-                            "indexing.error, last exception:", lastException);
-
-                }
-            });
-        }
-    }
-
     public void deleteKoulutus(List<String> oids) throws IOException {
         deleteByOid(oids, koulutusSolr);
     }
 
-    private void deleteByOid(List<String> oids, final SolrServer solr)
-            throws IOException {
+    private void deleteByOid(List<String> oids, final SolrServer solr) {
         final List<String> localOids = ImmutableList.copyOf(oids);
 
-        afterCommit(((TransactionSynchronization) new TransactionSynchronizationAdapter() {
+        afterCommit(new TransactionSynchronizationAdapter() {
             @Override
             public void afterCommit() {
                 try {
@@ -153,7 +118,7 @@ public class IndexerResource {
                     throw new RuntimeException("indexing.error", e);
                 }
             }
-        }));
+        });
     }
 
     private static void afterCommit(TransactionSynchronization sync) {
@@ -173,12 +138,8 @@ public class IndexerResource {
     /**
      * Index hakukohteet in batches
      * @param hakukohdeIdt hakukohde ids to index
-     * @return Index time for every id
      */
-    public Map<Long, Date> indexHakukohteet(List<Long> hakukohdeIdt) {
-        if (hakukohdeIdt.size() == 0) {
-            return new HashMap<>();
-        }
+    public void indexHakukohteet(List<Long> hakukohdeIdt) {
         if (hakukohdeIdt.size() > 100) {
             this.organisaatioService.refreshCache(this.organisaatioService.getHakukohdeIndexingOrganisaatioCache());
         }
@@ -188,35 +149,19 @@ public class IndexerResource {
         List<SolrInputDocument> docs = Lists.newArrayList();
         int batch_size = 50;
         int index = 0;
-        Map<Long, Date> indexTimes = new HashMap<>();
         do {
-            for (int j = index; j < index + batch_size && j < hakukohdeIdt.size(); j++) {
-
-                Long hakukohdeId = hakukohdeIdt.get(j);
-                logger.debug(j + ". Fetching hakukohde:" + hakukohdeId);
-                docs.addAll(hakukohdeConverter.apply(hakukohdeId));
-                indexTimes.put(hakukohdeId, new Date());
-            }
-            index += batch_size;
-            logger.debug("indexing:" + docs.size() + " docs");
-            index(hakukohdeSolr, docs);
-            docs.clear();
+            index = this.indexService.indexHakukohdeBatch(hakukohdeIdt, docs, batch_size, index);
         } while (index < hakukohdeIdt.size());
 
         commit(hakukohdeSolr);
-        return indexTimes;
     }
 
     /**
      * Index koulutukset in batches
      *
      * @param koulutukset id's of koulutukset to index
-     * @return Index time for every id
      */
-    public Map<Long, Date> indexKoulutukset(List<Long> koulutukset) {
-        if (koulutukset.size() == 0) {
-            return new HashMap<>();
-        }
+    public void indexKoulutukset(List<Long> koulutukset) {
         if (koulutukset.size() > 100) {
             this.organisaatioService.refreshCache(this.organisaatioService.getKoulutusIndexingOrganisaatioCache());
         }
@@ -225,38 +170,11 @@ public class IndexerResource {
         }
         int batch_size = 50;
         int index = 0;
-        Map<Long, Date> koulutusIndexed = new HashMap<>();
         do {
-            final List<SolrInputDocument> docs = Lists.newArrayList();
-
-            for (int j = index; j < index + batch_size && j < koulutukset.size(); j++) {
-
-                Long koulutusId = koulutukset.get(j);
-                logger.debug(j + ". Fetching koulutus:" + koulutusId);
-                docs.addAll(koulutusConverter.apply(koulutusId));
-
-                // Reindex sibling komotos
-                KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.read(koulutusId);
-                if (komoto != null) {
-                    List<KoulutusmoduuliToteutus> siblings = koulutusmoduuliToteutusDAO.findSiblingKomotos(komoto);
-                    if (siblings != null) {
-                        for (KoulutusmoduuliToteutus sibling : siblings) {
-                            if (!koulutukset.contains(sibling.getId())) {
-                                docs.addAll(koulutusConverter.apply(sibling.getId()));
-                            }
-                        }
-                    }
-                }
-                koulutusIndexed.put(koulutusId, new Date());
-            }
-            index += batch_size;
-            logger.debug("indexing:" + docs.size() + " docs");
-            index(koulutusSolr, docs);
-            docs.clear();
+            index = this.indexService.indexKoulutusBatch(koulutukset, batch_size, index);
         } while (index < koulutukset.size());
 
         commit(koulutusSolr);
-        return koulutusIndexed;
     }
 
     private void commit(SolrServer solr) {

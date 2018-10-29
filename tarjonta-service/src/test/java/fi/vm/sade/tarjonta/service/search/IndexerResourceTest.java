@@ -9,6 +9,8 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.business.IndexService;
+import fi.vm.sade.tarjonta.service.business.impl.IndexServiceImpl;
 import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
 import fi.vm.sade.tarjonta.shared.KoodiService;
 import fi.vm.sade.tarjonta.shared.KoodistoProactiveCaching;
@@ -45,7 +47,6 @@ public class IndexerResourceTest {
         indexer = new IndexerResource();
         indexer.setSolrServerFactory(factory);
         HakukohdeToSolrDocument hakukohdeToSolr = new HakukohdeToSolrDocument();
-        ReflectionTestUtils.setField(indexer, "hakukohdeConverter", hakukohdeToSolr);
 
         OrganisaatioService organisaatioService = Mockito.mock(OrganisaatioService.class);
         stub(organisaatioService.findByUsingHakukohdeIndexingCache(anySet())).toReturn(Lists.newArrayList(getOrg("o-oid-12345")));
@@ -68,6 +69,9 @@ public class IndexerResourceTest {
         HakukohdeDAOImpl hakukohdeDAO = Mockito.mock(HakukohdeDAOImpl.class);
         Whitebox.setInternalState(hakukohdeToSolr, "hakukohdeDAO", hakukohdeDAO);
         Mockito.stub(hakukohdeDAO.findBy("id", 1L)).toReturn(Arrays.asList(getHakukohde()));
+
+        IndexService indexService = new IndexServiceImpl(null, null, hakukohdeToSolr, indexerDao, factory);
+        ReflectionTestUtils.setField(indexer, "indexService", indexService);
     }
 
     private OrganisaatioPerustieto getOrg(String oid) {
