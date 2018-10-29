@@ -15,18 +15,14 @@
  */
 package fi.vm.sade.tarjonta.service.search;
 
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -53,7 +49,9 @@ public class KoulutusSearchService extends SearchService {
     private final SolrServer koulutusSolr;
 
     @Autowired
-    public KoulutusSearchService(SolrServerFactory factory) {
+    public KoulutusSearchService(SolrServerFactory factory,
+                                 OrganisaatioService organisaatioService) {
+        super(organisaatioService);
         this.koulutusSolr = factory.getSolrServer("koulutukset");
     }
 

@@ -117,11 +117,11 @@ public class TarjontaFixtures {
         return valintakoe;
     }
 
-    public Koulutusmoduuli createTutkintoOhjelma() {
+    public static Koulutusmoduuli createTutkintoOhjelma() {
         return createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
     }
 
-    public Koulutusmoduuli createKoulutusmoduuli(KoulutusmoduuliTyyppi tyyppi) {
+    public static Koulutusmoduuli createKoulutusmoduuli(KoulutusmoduuliTyyppi tyyppi) {
         Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
         m.setOid(randomOid("koulutusmoduuli"));
         m.setNimi(createText("Koulutusmoduulinimi (fi)", "Koulutusmoduulinimi (sv)", "Koulutusmoduulinimi (en)"));
@@ -207,7 +207,7 @@ public class TarjontaFixtures {
 
     }
 
-    public KoulutusmoduuliToteutus createTutkintoOhjelmaToteutusWithTarjoajaOid(String tarjoajaOid) {
+    public static KoulutusmoduuliToteutus createTutkintoOhjelmaToteutusWithTarjoajaOid(String tarjoajaOid) {
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.YEAR, 1);
@@ -266,7 +266,7 @@ public class TarjontaFixtures {
      *
      * @return
      */
-    public Hakukohde createHakukohde() {
+    public static Hakukohde createHakukohde() {
 
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setOid(randomOid("hakukohde"));

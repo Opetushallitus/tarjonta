@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta;
 
+import fi.vm.sade.tarjonta.service.business.IndexService;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.YhdenPaikanSaantoBuilder;
 import fi.vm.sade.tarjonta.shared.KoodiService;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
@@ -27,6 +28,7 @@ import fi.vm.sade.tarjonta.shared.ParameterServices;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -161,4 +163,8 @@ abstract public class TestUtilityBase {
 
     @Autowired
     protected YhdenPaikanSaantoBuilder yhdenPaikanSaantoBuilder;
+
+    @Autowired
+    @Qualifier("indexservice")
+    protected IndexService indexService;
 }

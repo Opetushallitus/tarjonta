@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -29,7 +30,9 @@ public class HakukohdeSearchService extends SearchService {
     private final SolrServer hakukohdeSolr;
 
     @Autowired
-    public HakukohdeSearchService(SolrServerFactory factory) {
+    public HakukohdeSearchService(SolrServerFactory factory,
+                                  OrganisaatioService organisaatioService) {
+        super(organisaatioService);
         this.hakukohdeSolr = factory.getSolrServer("hakukohteet");
     }
 

@@ -21,10 +21,11 @@ public class SearchService {
     protected static final String QUERY_ALL = "*:*";
     protected static final String TEKSTIHAKU_TEMPLATE = "%s:*%s*";
 
-    @Autowired
     private OrganisaatioService organisaatioService;
 
-    public SearchService() {
+    @Autowired
+    public SearchService(OrganisaatioService organisaatioService) {
+        this.organisaatioService = organisaatioService;
     }
 
     protected Map<String, OrganisaatioPerustieto> searchOrgs(Set<String> orgOids) throws SolrServerException {
