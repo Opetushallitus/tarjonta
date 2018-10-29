@@ -179,7 +179,12 @@ public class IndexerResource {
         if (hakukohdeIdt.size() == 0) {
             return new HashMap<>();
         }
-        this.organisaatioService.clearHakukohdeIndexingCache();
+        if (hakukohdeIdt.size() > 100) {
+            this.organisaatioService.refreshCache(this.organisaatioService.getHakukohdeIndexingOrganisaatioCache());
+        }
+        else {
+            this.organisaatioService.clearHakukohdeIndexingOrganisaatioCache();
+        }
         List<SolrInputDocument> docs = Lists.newArrayList();
         int batch_size = 50;
         int index = 0;
@@ -212,7 +217,12 @@ public class IndexerResource {
         if (koulutukset.size() == 0) {
             return new HashMap<>();
         }
-        this.organisaatioService.clearKoulutusIndexingCache();
+        if (koulutukset.size() > 100) {
+            this.organisaatioService.refreshCache(this.organisaatioService.getKoulutusIndexingOrganisaatioCache());
+        }
+        else {
+            this.organisaatioService.clearKoulutusIndexingOrganisaatioCache();
+        }
         int batch_size = 50;
         int index = 0;
         Map<Long, Date> koulutusIndexed = new HashMap<>();

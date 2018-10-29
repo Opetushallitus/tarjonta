@@ -7,6 +7,7 @@ import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
 import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.shared.KoodistoProactiveCaching;
+import fi.vm.sade.tarjonta.shared.OrganisaatioCache;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -49,7 +50,7 @@ public class HakukohdeToSolrDocumentTest extends TestMockBase {
 
         when(hakukohdeDAO.findBy("id", 1L)).thenReturn(Arrays.asList(hakukohde));
         when(organisaatioService.findByUsingHakukohdeIndexingCache(new HashSet<String>(Arrays.asList("1.2.3")))).thenReturn(organisaatioPerustiedot);
-        when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(0), new HashMap<>())).thenReturn("oppilaitostyyppi_41");
+        when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(0), organisaatioService.getHakukohdeIndexingOrganisaatioCache())).thenReturn("oppilaitostyyppi_41");
     }
 
     @Test

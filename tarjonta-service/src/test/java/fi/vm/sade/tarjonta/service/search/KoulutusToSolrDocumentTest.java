@@ -7,6 +7,7 @@ import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
 import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.shared.KoodistoProactiveCaching;
+import fi.vm.sade.tarjonta.shared.OrganisaatioCache;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -46,8 +47,8 @@ public class KoulutusToSolrDocumentTest extends TestMockBase {
 
         when(koulutusmoduuliToteutusDAO.findBy("id", 1L)).thenReturn(Arrays.asList(koulutusmoduuliToteutus));
         when(organisaatioService.findByUsingKoulutusIndexingCache(new HashSet<String>(Arrays.asList("1.2.3", "4.5.6")))).thenReturn(organisaatioPerustiedot);
-        when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(0), new HashMap<>())).thenReturn("oppilaitostyyppi_41");
-        when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(1), new HashMap<>())).thenReturn("oppilaitostyyppi_42");
+        when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(0), organisaatioService.getKoulutusIndexingOrganisaatioCache())).thenReturn("oppilaitostyyppi_41");
+        when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(1), organisaatioService.getKoulutusIndexingOrganisaatioCache())).thenReturn("oppilaitostyyppi_42");
     }
 
     @Test

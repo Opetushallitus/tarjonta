@@ -288,13 +288,13 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
 
         List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioService.findByUsingHakukohdeIndexingCache(ownerOids);
 
-            for (OrganisaatioPerustieto organisaatioPerustieto : organisaatiotiedot) {
-                String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(organisaatioPerustieto, this.organisaatioService.getHakukohdeIndexingOrganisaatioCache());
-                if (oppilaitostyyppi != null) {
-                    oppilaitostyypit.add(oppilaitostyyppi);
-                }
-                kuntas.add(getKoodiURIFromVersionedUri(organisaatioPerustieto.getKotipaikkaUri()));
+        for (OrganisaatioPerustieto organisaatioPerustieto : organisaatiotiedot) {
+            String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(organisaatioPerustieto, this.organisaatioService.getHakukohdeIndexingOrganisaatioCache());
+            if (oppilaitostyyppi != null) {
+                oppilaitostyypit.add(oppilaitostyyppi);
             }
+            kuntas.add(getKoodiURIFromVersionedUri(organisaatioPerustieto.getKotipaikkaUri()));
+        }
 
 
         for (String kunta : kuntas) {
