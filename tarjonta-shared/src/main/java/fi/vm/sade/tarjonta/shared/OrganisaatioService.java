@@ -281,7 +281,7 @@ public class OrganisaatioService {
 
         return organisaatioOids.stream()
                 .distinct()
-                .collect(Collectors.groupingBy(it -> counter.getAndIncrement() / 1000, Collectors.toSet()))
+                .collect(Collectors.groupingBy(it -> counter.getAndIncrement() / 100, Collectors.toSet()))
                 .values().stream()
                 .map(this::findByOidSetAtChunks)
                 .flatMap(Collection::stream)
