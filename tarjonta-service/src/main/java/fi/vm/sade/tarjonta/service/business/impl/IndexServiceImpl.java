@@ -10,6 +10,7 @@ import fi.vm.sade.tarjonta.service.search.HakukohdeToSolrDocument;
 import fi.vm.sade.tarjonta.service.search.KoulutusToSolrDocument;
 import fi.vm.sade.tarjonta.service.search.SolrServerFactory;
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -61,7 +63,6 @@ public class IndexServiceImpl implements IndexService {
         final List<SolrInputDocument> docs = Lists.newArrayList();
 
         for (int j = index; j < index + batch_size && j < koulutukset.size(); j++) {
-
             Long koulutusId = koulutukset.get(j);
             logger.debug(j + ". Fetching koulutus:" + koulutusId);
             docs.addAll(koulutusConverter.apply(koulutusId));
@@ -84,6 +85,7 @@ public class IndexServiceImpl implements IndexService {
         logger.debug("indexing:" + docs.size() + " docs");
         index(koulutusSolr, docs);
         docs.clear();
+        commit(koulutusSolr);
         return index;
     }
 
@@ -101,6 +103,7 @@ public class IndexServiceImpl implements IndexService {
         logger.debug("indexing:" + docs.size() + " docs");
         index(hakukohdeSolr, docs);
         docs.clear();
+        commit(hakukohdeSolr);
         return index;
     }
 
@@ -132,6 +135,14 @@ public class IndexServiceImpl implements IndexService {
 
                 }
             });
+        }
+    }
+
+    private void commit(SolrServer solr) {
+        try {
+            solr.commit(true, true, false);
+        } catch (SolrServerException | IOException e) {
+            throw new RuntimeException("indexing.error", e);
         }
     }
 

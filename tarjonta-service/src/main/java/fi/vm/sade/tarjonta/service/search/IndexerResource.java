@@ -27,6 +27,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Transactional(readOnly = true)
@@ -142,20 +144,20 @@ public class IndexerResource {
      */
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void indexHakukohteet(List<Long> hakukohdeIdt) {
-        if (hakukohdeIdt.size() > 100) {
+        int batch_size = 50;
+        if (hakukohdeIdt.size() > batch_size) {
             this.organisaatioService.refreshCache(this.organisaatioService.getHakukohdeIndexingOrganisaatioCache());
         }
         else {
             this.organisaatioService.clearHakukohdeIndexingOrganisaatioCache();
         }
+        LocalDateTime indexingStarted = this.logIndexingStart(hakukohdeIdt.size(), "hakukohde");
         List<SolrInputDocument> docs = Lists.newArrayList();
-        int batch_size = 50;
         int index = 0;
         do {
             index = this.indexService.indexHakukohdeBatch(hakukohdeIdt, docs, batch_size, index);
         } while (index < hakukohdeIdt.size());
-
-        commit(hakukohdeSolr);
+        this.logIndexingReady(hakukohdeIdt.size(), indexingStarted, "hakukohde");
     }
 
     /**
@@ -165,29 +167,19 @@ public class IndexerResource {
      */
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void indexKoulutukset(List<Long> koulutukset) {
-        if (koulutukset.size() > 100) {
+        int batch_size = 50;
+        if (koulutukset.size() > batch_size) {
             this.organisaatioService.refreshCache(this.organisaatioService.getKoulutusIndexingOrganisaatioCache());
         }
         else {
             this.organisaatioService.clearKoulutusIndexingOrganisaatioCache();
         }
-        int batch_size = 50;
+        LocalDateTime indexingStarted = this.logIndexingStart(koulutukset.size(), "koulutus");
         int index = 0;
         do {
             index = this.indexService.indexKoulutusBatch(koulutukset, batch_size, index);
         } while (index < koulutukset.size());
-
-        commit(koulutusSolr);
-    }
-
-    private void commit(SolrServer solr) {
-        try {
-            solr.commit(true, true, false);
-        } catch (SolrServerException e) {
-            throw new RuntimeException("indexing.error", e);
-        } catch (IOException e) {
-            throw new RuntimeException("indexing.error", e);
-        }
+        this.logIndexingReady(koulutukset.size(), indexingStarted, "koulutus");
     }
 
     @GET
@@ -208,5 +200,18 @@ public class IndexerResource {
             indexHakukohteet(hakukohdeDAO.findIdsByoids(tm.getMuutetutHakukohteet()));
         }
 
+    }
+
+    private LocalDateTime logIndexingStart(int entitysToIndex, String type) {
+        if (entitysToIndex > 0) {
+            logger.info("Starting {} idexing with {} to index", type, entitysToIndex);
+        }
+        return LocalDateTime.now();
+    }
+
+    private void logIndexingReady(int entitysToIndex, LocalDateTime started, String type) {
+        if (entitysToIndex > 0) {
+            logger.info("Finished {} indexing with time {} millis", type, ChronoUnit.MILLIS.between(started, LocalDateTime.now()));
+        }
     }
 }

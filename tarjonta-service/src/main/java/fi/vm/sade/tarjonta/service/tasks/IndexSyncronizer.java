@@ -1,11 +1,7 @@
 package fi.vm.sade.tarjonta.service.tasks;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import fi.vm.sade.tarjonta.shared.OrganisaatioService;
+import fi.vm.sade.tarjonta.dao.IndexerDAO;
+import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
-
-import fi.vm.sade.tarjonta.dao.IndexerDAO;
-import fi.vm.sade.tarjonta.service.search.IndexerResource;
+import java.util.List;
 
 /**
  * Update koulutus/hakukohde indexes
