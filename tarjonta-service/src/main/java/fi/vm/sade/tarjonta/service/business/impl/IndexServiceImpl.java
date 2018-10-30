@@ -59,6 +59,18 @@ public class IndexServiceImpl implements IndexService {
 
     @Transactional
     @Override
+    public void indexKoulutukset(List<Long> koulutusIds) {
+        this.indexKoulutusBatch(koulutusIds, koulutusIds.size() + 1, 0);
+    }
+
+    @Transactional
+    @Override
+    public void indexHakukohteet(List<Long> ids) {
+        this.indexHakukohdeBatch(ids, ids.size() + 1, 0);
+    }
+
+    @Transactional
+    @Override
     public int indexKoulutusBatch(List<Long> koulutukset, int batch_size, int index) {
         final List<SolrInputDocument> docs = Lists.newArrayList();
 
@@ -91,7 +103,8 @@ public class IndexServiceImpl implements IndexService {
 
     @Transactional
     @Override
-    public int indexHakukohdeBatch(List<Long> hakukohdeIdt, List<SolrInputDocument> docs, int batch_size, int index) {
+    public int indexHakukohdeBatch(List<Long> hakukohdeIdt, int batch_size, int index) {
+        final List<SolrInputDocument> docs = Lists.newArrayList();
         for (int j = index; j < index + batch_size && j < hakukohdeIdt.size(); j++) {
 
             Long hakukohdeId = hakukohdeIdt.get(j);

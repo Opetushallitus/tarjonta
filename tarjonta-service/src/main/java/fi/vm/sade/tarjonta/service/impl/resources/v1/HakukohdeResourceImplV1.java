@@ -34,6 +34,7 @@ import fi.vm.sade.tarjonta.service.auditlog.AuditLog;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.business.IndexService;
 import fi.vm.sade.tarjonta.service.business.exception.DataErrorException;
 import fi.vm.sade.tarjonta.service.copy.NullAwareBeanUtilsBean;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
@@ -94,6 +95,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Autowired
     private IndexerResource indexerResource;
+
+    @Autowired
+    private IndexService indexService;
 
     @Autowired
     private PublicationDataService publicationDataService;
@@ -570,8 +574,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         setHakukohde(komotot, hakukohde);
         hakukohdeDAO.update(hakukohde);
 
-        indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
-        indexerResource.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), arg0 -> arg0 != null ? arg0.getId() : null)));
+        indexService.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+        indexService.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), arg0 -> arg0 != null ? arg0.getId() : null)));
 
         ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<>();
         result.setStatus(ResultV1RDTO.ResultStatus.OK);
@@ -752,8 +756,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 LOG.debug("Hakukohde.liitteet -> {}", hakukohde.getLiites());
                 LOG.debug("Hakukohde.kokeet -> {}", hakukohde.getValintakoes());
                 LOG.debug("Hakukohde", hakukohde);
-                indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
-                indexerResource.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), arg0 -> arg0 != null ? arg0.getId() : null)));
+                indexService.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+                indexService.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), arg0 -> arg0 != null ? arg0.getId() : null)));
 
                 ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<>();
                 result.setStatus(ResultV1RDTO.ResultStatus.OK);
@@ -809,7 +813,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             hakukohdeDAO.safeDelete(hakukohde.getOid(), contextDataService.getCurrentUserOid());
             List<Long> hakukohdeIds = new ArrayList<>();
             hakukohdeIds.add(hakukohde.getId());
-            indexerResource.indexHakukohteet(hakukohdeIds);
+            indexService.indexHakukohteet(hakukohdeIds);
 
             HakukohdeV1RDTO originalHakukohdeDTO = converterV1.toHakukohdeRDTO(hakukohde);
             AuditLog.delete(HAKUKOHDE, oid, originalHakukohdeDTO, request);
@@ -1215,14 +1219,14 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 koulutusmoduuliToteutusDAO.update(komoto);
 
                 LOG.info("indexing koulutukset for hakukohde {}: {}", hakukohdeOid, liitettavatKomotoOids);
-                indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
+                indexService.indexKoulutukset(Lists.newArrayList(komoto.getId()));
             }
 
             updateTarjoajatiedot(hakukohde, koulutukses);
 
             hakukohdeDAO.update(hakukohde);
             LOG.info("indexing hakukohde {}", hakukohdeOid);
-            indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+            indexService.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
 
             AuditLog.log(ADD_KOULUTUS_TO_HAKUKOHDE, HAKUKOHDE, hakukohdeOid, null, null, request,
                     ImmutableMap.of("addedKomotos", liitettavatKomotot.stream().map(k -> k.getOid()).collect(Collectors.joining(", "))));
@@ -1306,7 +1310,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                         } else {
                             tarjoajatiedotForKoulutus.removeTarjoaja(tarjoajaOid);
                             hakukohdeDAO.update(hakukohde);
-                            indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+                            indexService.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
                         }
                     }
                 }
@@ -1332,13 +1336,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
                     koulutusmoduuliToteutusDAO.update(komoto);
                     LOG.info("indexing koulutus removal {} for {}", komoto.getId(), hakukohdeOid);
-                    indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
+                    indexService.indexKoulutukset(Lists.newArrayList(komoto.getId()));
                 }
 
                 LOG.debug("Hakukohde has more koulutukses, updating it");
                 hakukohdeDAO.update(hakukohde);
                 LOG.info("indexing hk {}", hakukohdeOid);
-                indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+                indexService.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
             } else {
 
                 List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(getKomotoOids(koulutukses));
@@ -1346,7 +1350,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 for (KoulutusmoduuliToteutus komoto : komotos) {
                     komoto.removeHakukohde(hakukohde);
                     hakukohde.removeKoulutusmoduuliToteutus(komoto);
-                    indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
+                    indexService.indexKoulutukset(Lists.newArrayList(komoto.getId()));
                 }
 
                 LOG.info("Hakukohde {} does not have anymore koulutukses, removing it", hakukohdeOid);
@@ -1436,9 +1440,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             hakukohde.setLastUpdateDate(new Date());
             hakukohdeDAO.update(hakukohde);
 
-            indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+            indexService.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
             for (KoulutusmoduuliToteutus komoto: hakukohde.getKoulutusmoduuliToteutuses()) {
-                indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
+                indexService.indexKoulutukset(Lists.newArrayList(komoto.getId()));
             }
 
             AuditLog.log(MODIFY_RYHMAT, HAKUKOHDE, hakukohde.getOid(), null, null,

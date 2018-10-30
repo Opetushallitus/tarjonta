@@ -152,10 +152,9 @@ public class IndexerResource {
             this.organisaatioService.clearHakukohdeIndexingOrganisaatioCache();
         }
         LocalDateTime indexingStarted = this.logIndexingStart(hakukohdeIdt.size(), "hakukohde");
-        List<SolrInputDocument> docs = Lists.newArrayList();
         int index = 0;
         do {
-            index = this.indexService.indexHakukohdeBatch(hakukohdeIdt, docs, batch_size, index);
+            index = this.indexService.indexHakukohdeBatch(hakukohdeIdt, batch_size, index);
         } while (index < hakukohdeIdt.size());
         this.logIndexingReady(hakukohdeIdt.size(), indexingStarted, "hakukohde");
     }
@@ -194,10 +193,10 @@ public class IndexerResource {
 
     public void indexMuutokset(Tilamuutokset tm) {
         if (tm.getMuutetutKomotot().size() > 0) {
-            indexKoulutukset(koulutusmoduuliToteutusDAO.findIdsByoids(tm.getMuutetutKomotot()));
+            this.indexService.indexKoulutukset(koulutusmoduuliToteutusDAO.findIdsByoids(tm.getMuutetutKomotot()));
         }
         if (tm.getMuutetutHakukohteet().size() > 0) {
-            indexHakukohteet(hakukohdeDAO.findIdsByoids(tm.getMuutetutHakukohteet()));
+            this.indexService.indexHakukohteet(hakukohdeDAO.findIdsByoids(tm.getMuutetutHakukohteet()));
         }
 
     }

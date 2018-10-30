@@ -60,6 +60,7 @@ import fi.vm.sade.tarjonta.service.auditlog.AuditLog;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.business.IndexService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionException;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
@@ -183,6 +184,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     @Autowired
     private IndexerResource indexerResource;
+
+    @Autowired
+    private IndexService indexService;
 
     @Autowired
     private KoulutuskoodiRelations koulutuskoodiRelations;
@@ -1588,7 +1592,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     linkingV1Resource.link(new KomoLink(komoParentOid, newKomoChildOids.toArray(new String[newKomoChildOids.size()])), request);
                 }
 
-                indexerResource.indexKoulutukset(newKomotoIds);
+                indexService.indexKoulutukset(newKomotoIds);
                 break;
 
             case MOVE:
@@ -1624,7 +1628,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 AuditLog.log(AuditLog.MOVE, KOULUTUS, dtoAfterOperation.getOid(), dtoAfterOperation, originalKoulutusDto, request);
 
                 result.getResult().getTo().add(new KoulutusCopyStatusV1RDTO(komoto.getOid(), orgOid));
-                indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
+                indexService.indexKoulutukset(Lists.newArrayList(komoto.getId()));
                 final List<Hakukohde> hakukohdes = hakukohdeDAO.findByKoulutusOid(komoto.getOid());
 
                 // Päivitä hakukohteen tarjoajatiedot (jos ne on asetettu)
@@ -1639,7 +1643,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 }
 
                 //update all hakukohdes
-                indexerResource.indexHakukohteet(Lists.newArrayList(Iterators.transform(hakukohdes.iterator(), arg0 -> arg0.getId())));
+                indexService.indexHakukohteet(Lists.newArrayList(Iterators.transform(hakukohdes.iterator(), arg0 -> arg0.getId())));
                 break;
 
             case TEST_COPY:
@@ -1783,7 +1787,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     private void indexKomoto(KoulutusmoduuliToteutus komoto) {
-        indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
+        indexService.indexKoulutukset(Lists.newArrayList(komoto.getId()));
 
         // Fetch on lazy hakukohteille -> pitää hakea erikseen
         final List<Hakukohde> hakukohdes = hakukohdeDAO.findByKoulutusOid(komoto.getOid());
@@ -1791,7 +1795,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         for (Hakukohde hakukohde : hakukohdes) {
             hakukohdeIds.add(hakukohde.getId());
         }
-        indexerResource.indexHakukohteet(hakukohdeIds);
+        indexService.indexHakukohteet(hakukohdeIds);
     }
 
 }
