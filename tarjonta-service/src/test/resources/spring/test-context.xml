@@ -46,7 +46,7 @@
     <bean id="massCopyProcess" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess"/>
     <bean id="processTest" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.TestProcess"/>
     <bean id="helper" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.V1TestHelper"/>
-    <bean id="indexService" class="fi.vm.sade.tarjonta.service.business.IndexServiceMock" />
+    <bean id="indexService" class="fi.vm.sade.tarjonta.service.business.impl.IndexServiceImpl" />
     
     <!--
         Create a dynamic mock class for the jms message sender.
