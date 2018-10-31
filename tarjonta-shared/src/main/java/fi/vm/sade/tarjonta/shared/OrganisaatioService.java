@@ -276,7 +276,13 @@ public class OrganisaatioService {
                 .collect(Collectors.toList());
     }
 
-    public List<OrganisaatioPerustieto> findByOidSet(Set<String> organisaatioOids) {
+    /**
+     * Hakee haluttujen organisaatioiden tiedot synkronoidusti, jolloin useat threadit eivät pysty dossaamaan
+     * organisaatiopalvelua.
+     * @param organisaatioOids Organisaatioiden oidit
+     * @return Organisaatioiden tiedot
+     */
+    public synchronized List<OrganisaatioPerustieto> findByOidSet(Set<String> organisaatioOids) {
         final AtomicInteger counter = new AtomicInteger(0);
 
         return organisaatioOids.stream()
