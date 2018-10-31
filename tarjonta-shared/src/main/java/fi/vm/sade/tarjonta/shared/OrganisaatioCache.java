@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.shared;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -12,6 +13,7 @@ import static java.util.stream.Collectors.toMap;
 public class OrganisaatioCache {
     private OrganisaatioPerustieto root;
     private Map<String,OrganisaatioPerustieto> byOid;
+    private LocalDateTime lastUpdated;
 
     public OrganisaatioCache() {
         this.clear();
@@ -25,6 +27,7 @@ public class OrganisaatioCache {
         this.byOid.put(root.getOid(), root);
         this.byOid.putAll(rootChildren.stream().flatMap(this::andChildren)
             .collect(toMap(OrganisaatioPerustieto::getOid, identity())));
+        this.lastUpdated = LocalDateTime.now();
     }
 
     public void add(OrganisaatioPerustieto organisaatioPerustieto) {
@@ -62,5 +65,10 @@ public class OrganisaatioCache {
     public void clear() {
         this.root = null;
         this.byOid = new HashMap<>();
+        this.lastUpdated = LocalDateTime.MIN;
+    }
+
+    public LocalDateTime getLastUpdated() {
+        return lastUpdated;
     }
 }

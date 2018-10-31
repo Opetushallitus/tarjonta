@@ -81,7 +81,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         String firstOwner = koulutusmoduuliToteutus.getTarjoaja();
         addFirstOwner(komotoDoc, firstOwner);
 
-        List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioService.findByUsingKoulutusIndexingCache(koulutusmoduuliToteutus.getOwnerOids());
+        List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioService.findByUsingOrganisaatioCache(koulutusmoduuliToteutus.getOwnerOids());
 
         addOid(komotoDoc, koulutusmoduuliToteutus);
         addTyypit(komotoDoc, koulutusmoduuliToteutus);
@@ -155,7 +155,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         Set<String> oppilaitostyypit = new HashSet<String>();
 
         for (OrganisaatioPerustieto organisaatioPerustieto : organisaatiotiedot) {
-            String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(organisaatioPerustieto, this.organisaatioService.getKoulutusIndexingOrganisaatioCache());
+            String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(organisaatioPerustieto);
             if (oppilaitostyyppi != null) {
                 oppilaitostyypit.add(oppilaitostyyppi);
             }
@@ -394,11 +394,11 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
     }
 
     private List<OrganisaatioPerustieto> getTarjoajat(KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
-        return organisaatioService.findByUsingKoulutusIndexingCache(koulutusmoduuliToteutus.getTarjoajaOids());
+        return organisaatioService.findByUsingOrganisaatioCache(koulutusmoduuliToteutus.getTarjoajaOids());
     }
 
     private List<OrganisaatioPerustieto> getJarjestajat(KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
-        return organisaatioService.findByUsingKoulutusIndexingCache(koulutusmoduuliToteutus.getJarjestajaOids());
+        return organisaatioService.findByUsingOrganisaatioCache(koulutusmoduuliToteutus.getJarjestajaOids());
     }
 
     private void addTyypit(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus koulutusmoduuliToteutus) {

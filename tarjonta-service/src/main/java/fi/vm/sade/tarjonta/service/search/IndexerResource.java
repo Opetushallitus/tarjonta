@@ -1,7 +1,6 @@
 package fi.vm.sade.tarjonta.service.search;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
@@ -10,7 +9,6 @@ import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,12 +143,6 @@ public class IndexerResource {
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void indexHakukohteet(List<Long> hakukohdeIdt) {
         int batch_size = 50;
-        if (hakukohdeIdt.size() > batch_size) {
-            this.organisaatioService.refreshCache(this.organisaatioService.getHakukohdeIndexingOrganisaatioCache());
-        }
-        else {
-            this.organisaatioService.clearHakukohdeIndexingOrganisaatioCache();
-        }
         LocalDateTime indexingStarted = this.logIndexingStart(hakukohdeIdt.size(), "hakukohde");
         int index = 0;
         do {
@@ -167,12 +159,6 @@ public class IndexerResource {
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void indexKoulutukset(List<Long> koulutukset) {
         int batch_size = 50;
-        if (koulutukset.size() > batch_size) {
-            this.organisaatioService.refreshCache(this.organisaatioService.getKoulutusIndexingOrganisaatioCache());
-        }
-        else {
-            this.organisaatioService.clearKoulutusIndexingOrganisaatioCache();
-        }
         LocalDateTime indexingStarted = this.logIndexingStart(koulutukset.size(), "koulutus");
         int index = 0;
         do {

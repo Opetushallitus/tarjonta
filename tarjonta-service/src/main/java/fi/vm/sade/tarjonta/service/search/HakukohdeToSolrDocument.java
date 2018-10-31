@@ -20,7 +20,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
@@ -245,7 +244,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     }
 
     private boolean addOrganisaatioTiedotForTarjoaja(SolrInputDocument hakukohdeDoc, Set<String> tarjoajaOids) {
-        final List<OrganisaatioPerustieto> orgs = organisaatioService.findByUsingHakukohdeIndexingCache(tarjoajaOids);
+        final List<OrganisaatioPerustieto> orgs = organisaatioService.findByUsingOrganisaatioCache(tarjoajaOids);
         if (orgs.size() == 0) {
             return false;
         }
@@ -286,10 +285,10 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
             ownerOids.addAll(koulutusmoduuliToteutus.getOwnerOids());
         }
 
-        List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioService.findByUsingHakukohdeIndexingCache(ownerOids);
+        List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioService.findByUsingOrganisaatioCache(ownerOids);
 
         for (OrganisaatioPerustieto organisaatioPerustieto : organisaatiotiedot) {
-            String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(organisaatioPerustieto, this.organisaatioService.getHakukohdeIndexingOrganisaatioCache());
+            String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(organisaatioPerustieto);
             if (oppilaitostyyppi != null) {
                 oppilaitostyypit.add(oppilaitostyyppi);
             }

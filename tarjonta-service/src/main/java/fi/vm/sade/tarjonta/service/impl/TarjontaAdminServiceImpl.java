@@ -627,7 +627,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
      * @param tarjoaja
      */
     private void checkOrganisationExists(String tarjoaja) {
-        List<OrganisaatioPerustieto> orgs = organisaatioService.findByOidSet(Sets.newHashSet(tarjoaja));
+        List<OrganisaatioPerustieto> orgs = organisaatioService.findByUsingOrganisaatioCache(Sets.newHashSet(tarjoaja));
         if (orgs.size() != 1 || (orgs.get(0).getLakkautusPvm() != null && orgs.get(0).getLakkautusPvm().before(new Date()))) {
             throw new RuntimeException("nonexisting.organisation.error");
         }

@@ -30,7 +30,7 @@ public class SearchService {
 
     protected Map<String, OrganisaatioPerustieto> searchOrgs(Set<String> orgOids) throws SolrServerException {
         Map<String, OrganisaatioPerustieto> oidIndex = Maps.newHashMap();
-        List<OrganisaatioPerustieto> orgVastaus = organisaatioService.findByOidSet(orgOids);
+        List<OrganisaatioPerustieto> orgVastaus = organisaatioService.findByUsingOrganisaatioCache(orgOids);
         for (OrganisaatioPerustieto org : orgVastaus) {
             oidIndex.put(org.getOid(), org);
         }

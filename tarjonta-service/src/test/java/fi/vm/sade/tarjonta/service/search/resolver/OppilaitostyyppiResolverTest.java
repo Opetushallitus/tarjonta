@@ -2,14 +2,10 @@ package fi.vm.sade.tarjonta.service.search.resolver;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.TestMockBase;
-import fi.vm.sade.tarjonta.shared.OrganisaatioCache;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -25,7 +21,7 @@ public class OppilaitostyyppiResolverTest extends TestMockBase {
     public void thatOppilaitostyyppiIsResolved() {
         OrganisaatioPerustieto org = createOrganisaatioPerustietoWithOppilaitostyyppi();
 
-        String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(org, new OrganisaatioCache());
+        String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(org);
 
         assertEquals("oppilaitostyyppi_42", oppilaitostyyppi);
     }
@@ -35,10 +31,9 @@ public class OppilaitostyyppiResolverTest extends TestMockBase {
         OrganisaatioPerustieto orgWithoutOppilaitostyyppi = createOrganisaatioPerustietoWithoutOppilaitostyyppi();
         OrganisaatioPerustieto orgWithOppilaitostyyppi = createOrganisaatioPerustietoWithOppilaitostyyppi();
 
-        when(organisaatioService.findByUsingCache(any(), any()))
-                .thenReturn(Arrays.asList(orgWithOppilaitostyyppi));
+        when(organisaatioService.findByUsingOrganisaatioCache(any())).thenReturn(Arrays.asList(orgWithOppilaitostyyppi));
 
-        String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(orgWithoutOppilaitostyyppi, new OrganisaatioCache());
+        String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(orgWithoutOppilaitostyyppi);
 
         assertEquals("oppilaitostyyppi_42", oppilaitostyyppi);
     }

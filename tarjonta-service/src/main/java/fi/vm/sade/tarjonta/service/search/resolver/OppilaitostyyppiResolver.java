@@ -4,7 +4,6 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.tarjonta.shared.OrganisaatioCache;
 import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,12 +18,12 @@ public class OppilaitostyyppiResolver {
     @Autowired
     private OrganisaatioService organisaatioService;
 
-    public String resolve(OrganisaatioPerustieto organisaatioPerustieto, OrganisaatioCache cache) {
+    public String resolve(OrganisaatioPerustieto organisaatioPerustieto) {
         if (organisaatioPerustieto.getOppilaitostyyppi() != null) {
             return getKoodiURIFromVersionedUri(organisaatioPerustieto.getOppilaitostyyppi());
         } else {
             ArrayList<String> oids = getReversedParentOrgOids(organisaatioPerustieto);
-            String oppilaitostyyppi = getOppilaitostyyppiFromParentOrganisation(oids, cache);
+            String oppilaitostyyppi = getOppilaitostyyppiFromParentOrganisation(oids);
             if (oppilaitostyyppi != null) {
                 return oppilaitostyyppi;
             }
@@ -32,8 +31,8 @@ public class OppilaitostyyppiResolver {
         return null;
     }
 
-    private String getOppilaitostyyppiFromParentOrganisation(ArrayList<String> oids, OrganisaatioCache cache) {
-        List<OrganisaatioPerustieto> parents = organisaatioService.findByUsingCache(new HashSet<>(oids), cache);
+    private String getOppilaitostyyppiFromParentOrganisation(ArrayList<String> oids) {
+        List<OrganisaatioPerustieto> parents = organisaatioService.findByUsingOrganisaatioCache(new HashSet<>(oids));
         for (OrganisaatioPerustieto parent : parents) {
             if (parent != null) {
                 if (parent.getOppilaitostyyppi() != null) {

@@ -20,6 +20,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -27,6 +28,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +40,8 @@ import java.util.stream.Collectors;
 public class OrganisaatioService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ObjectMapper ignoreFieldsObjectMapper = createIgnoreFieldsObjectMapper();
+    private final Long cacheRefreshInterval;
+
     private static ObjectMapper createIgnoreFieldsObjectMapper() {
         ObjectMapper m = new ObjectMapper();
         m.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -75,34 +80,21 @@ public class OrganisaatioService {
                 }
             });
 
-    public OrganisaatioCache getHakukohdeIndexingOrganisaatioCache() {
-        return hakukohdeIndexingOrganisaatioCache;
-    }
-
-    public OrganisaatioCache getKoulutusIndexingOrganisaatioCache() {
-        return koulutusIndexingOrganisaatioCache;
-    }
-
-    public void clearHakukohdeIndexingOrganisaatioCache() {
-        hakukohdeIndexingOrganisaatioCache.clear();
-    }
-
-    public void clearKoulutusIndexingOrganisaatioCache() {
-        koulutusIndexingOrganisaatioCache.clear();
+    public OrganisaatioCache getOrganisaatioPerustietoCache() {
+        return organisaatioPerustietoCache;
     }
 
     // Nollataan ennen indeksointia. Elinkaareksi on tarkoitettu indeksoinnin kesto.
-    private final OrganisaatioCache hakukohdeIndexingOrganisaatioCache;
-
-    // Nollataan ennen indeksointia. Elinkaareksi on tarkoitettu indeksoinnin kesto.
-    private final OrganisaatioCache koulutusIndexingOrganisaatioCache;
+    private final OrganisaatioCache organisaatioPerustietoCache;
 
     @Autowired
-    public OrganisaatioService(TarjontaKoodistoHelper tarjontaKoodistoHelper, UrlConfiguration urlConfiguration) {
+    public OrganisaatioService(TarjontaKoodistoHelper tarjontaKoodistoHelper,
+                               UrlConfiguration urlConfiguration,
+                               @Value("${tarjonta-service.organisaatiocache.refresh-interval-seconds: 60}") Long refreshInterval) {
         this.tarjontaKoodistoHelper = tarjontaKoodistoHelper;
         this.urlConfiguration = urlConfiguration;
-        this.hakukohdeIndexingOrganisaatioCache = new OrganisaatioCache();
-        this.koulutusIndexingOrganisaatioCache = new OrganisaatioCache();
+        this.organisaatioPerustietoCache = new OrganisaatioCache();
+        this.cacheRefreshInterval = refreshInterval;
     }
 
     /**
@@ -141,11 +133,13 @@ public class OrganisaatioService {
         }
     }
 
-    public synchronized long refreshCache(OrganisaatioCache organisaatioCache) {
-        // Add organisations to cache (active, incoming and passive)
-        List<OrganisaatioPerustieto> organisaatiosWithoutRootOrg = this.fetchAllOrganisationWithHaeAPI().getOrganisaatiot();
-        organisaatioCache.populateOrganisaatioCache(new OrganisaatioPerustieto(), organisaatiosWithoutRootOrg);
-        LOG.info("Organisation client cache refreshed with {} organisations", organisaatioCache.getCacheCount());
+    public synchronized long refreshCacheIfNeeded(OrganisaatioCache organisaatioCache) {
+        if (ChronoUnit.SECONDS.between(organisaatioCache.getLastUpdated(), LocalDateTime.now()) > this.cacheRefreshInterval) {
+            // Add organisations to cache (active, incoming and passive)
+            List<OrganisaatioPerustieto> organisaatiosWithoutRootOrg = this.fetchAllOrganisationWithHaeAPI().getOrganisaatiot();
+            organisaatioCache.populateOrganisaatioCache(new OrganisaatioPerustieto(), organisaatiosWithoutRootOrg);
+            LOG.info("Organisation client cache refreshed with {} organisations", organisaatioCache.getCacheCount());
+        }
         return organisaatioCache.getCacheCount();
     }
 
@@ -240,17 +234,8 @@ public class OrganisaatioService {
      * @param organisaatioOids Setti organisaatio oideja
      * @return Lista organisaatioiden tietoja
      */
-    public List<OrganisaatioPerustieto> findByUsingHakukohdeIndexingCache(Set<String> organisaatioOids) {
-        return this.findByUsingIndexingCache(organisaatioOids, this.hakukohdeIndexingOrganisaatioCache);
-    }
-
-    /**
-     * Koulutus organisaatio cachea hyödyntävä wrapperi. Hakee löytymättömät organisaatiotiedot organisaatiopalvelusta
-     * @param organisaatioOids Setti organisaatio oideja
-     * @return Lista organisaatioiden tietoja
-     */
-    public List<OrganisaatioPerustieto> findByUsingKoulutusIndexingCache(Set<String> organisaatioOids) {
-        return this.findByUsingIndexingCache(organisaatioOids, this.koulutusIndexingOrganisaatioCache);
+    public List<OrganisaatioPerustieto> findByUsingOrganisaatioCache(Set<String> organisaatioOids) {
+        return this.findByUsingCache(organisaatioOids, this.organisaatioPerustietoCache);
     }
 
     /**
@@ -260,10 +245,7 @@ public class OrganisaatioService {
      * @return Lista organisaatioiden tietoja
      */
     public List<OrganisaatioPerustieto> findByUsingCache(Set<String> organisaatioOids, OrganisaatioCache cache) {
-        return this.findByUsingIndexingCache(organisaatioOids, cache);
-    }
-
-    private List<OrganisaatioPerustieto> findByUsingIndexingCache(Set<String> organisaatioOids, OrganisaatioCache cache) {
+        this.refreshCacheIfNeeded(this.organisaatioPerustietoCache);
         Set<String> uncachedOrganisaatioOids = organisaatioOids.stream()
                 .filter(organisaatioOid -> !cache.getByOid(organisaatioOid).isPresent())
                 .collect(Collectors.toSet());
@@ -277,12 +259,12 @@ public class OrganisaatioService {
     }
 
     /**
-     * Hakee haluttujen organisaatioiden tiedot synkronoidusti, jolloin useat threadit eivät pysty dossaamaan
+     * Hakee haluttujen organisaatioiden tiedot
      * organisaatiopalvelua.
      * @param organisaatioOids Organisaatioiden oidit
      * @return Organisaatioiden tiedot
      */
-    public synchronized List<OrganisaatioPerustieto> findByOidSet(Set<String> organisaatioOids) {
+    public List<OrganisaatioPerustieto> findByOidSet(Set<String> organisaatioOids) {
         final AtomicInteger counter = new AtomicInteger(0);
 
         return organisaatioOids.stream()
@@ -301,15 +283,15 @@ public class OrganisaatioService {
         if (organisaatioOids.size() > 1000) {
             throw new IllegalStateException("Tried to fetch more than 1000 organisations at time.");
         }
+        HttpURLConnection connection = null;
         try {
-
             JSONArray oids = new JSONArray();
             for (String oid : organisaatioOids) {
                 oids.put(oid);
             }
             URL url = new URL(urlConfiguration.url("organisaatio-service.findByOids"));
 
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("clientSubSystemCode", "1.2.246.562.10.00000000001.tarjonta");
             connection.setRequestProperty("content-type", "application/json;charset=UTF-8");
@@ -321,7 +303,6 @@ public class OrganisaatioService {
             wr.write(oids.toString());
             wr.flush();
             wr.close();
-
 
             List<OrganisaatioRDTOV3> results = objectMapper.readValue(IOUtils.toString(connection.getInputStream()),
                     new TypeReference<List<OrganisaatioRDTOV3>>() {}
@@ -341,6 +322,10 @@ public class OrganisaatioService {
             final String msg = "Could not fetch organization with oid set " + organisaatioOids;
             LOG.error(msg);
             throw new RuntimeException(msg);
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
     }
 

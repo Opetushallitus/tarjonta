@@ -7,7 +7,6 @@ import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
 import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.shared.KoodistoProactiveCaching;
-import fi.vm.sade.tarjonta.shared.OrganisaatioCache;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -49,8 +48,8 @@ public class HakukohdeToSolrDocumentTest extends TestMockBase {
         Whitebox.setInternalState(converter, "koodistoHelper", tarjontaKoodistoHelper);
 
         when(hakukohdeDAO.findBy("id", 1L)).thenReturn(Arrays.asList(hakukohde));
-        when(organisaatioService.findByUsingHakukohdeIndexingCache(new HashSet<String>(Arrays.asList("1.2.3")))).thenReturn(organisaatioPerustiedot);
-        when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(0), organisaatioService.getHakukohdeIndexingOrganisaatioCache())).thenReturn("oppilaitostyyppi_41");
+        when(organisaatioService.findByUsingOrganisaatioCache(new HashSet<String>(Arrays.asList("1.2.3")))).thenReturn(organisaatioPerustiedot);
+        when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(0))).thenReturn("oppilaitostyyppi_41");
     }
 
     @Test
@@ -61,7 +60,7 @@ public class HakukohdeToSolrDocumentTest extends TestMockBase {
 
     @Test
     public void thatEmptyListIsReturnedWhenNoOrganisationFound() {
-        when(organisaatioService.findByUsingHakukohdeIndexingCache(new HashSet<String>(Arrays.asList("1.2.3")))).thenReturn(new ArrayList<OrganisaatioPerustieto>());
+        when(organisaatioService.findByUsingOrganisaatioCache(new HashSet<String>(Arrays.asList("1.2.3")))).thenReturn(new ArrayList<OrganisaatioPerustieto>());
         List<SolrInputDocument> docs = converter.apply(hakukohde.getId());
         assertTrue(docs.isEmpty());
     }
