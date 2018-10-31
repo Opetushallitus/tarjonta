@@ -6,6 +6,7 @@ import com.google.common.primitives.Longs;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.TestUtilityBase;
+import fi.vm.sade.tarjonta.helpers.HttpTestHelper;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCommitProcess;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
@@ -34,6 +35,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -67,8 +70,8 @@ public class MassCopyTest extends TestUtilityBase {
     @Autowired
     ApplicationContext applicationContext;
 
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-
+    private HttpTestHelper httpTestHelper = new HttpTestHelper(true);
+    private HttpServletRequest request = httpTestHelper.request;
 
     @Before
     public void before() {
@@ -294,7 +297,13 @@ public class MassCopyTest extends TestUtilityBase {
         ProcessV1RDTO state = ProcessV1RDTO.generate();
         HashMap<String, String> params = new HashMap<>();
         params.put(MassCopyProcess.SELECTED_HAKU_OID, hakuOid);
+        params.put(MassCopyProcess.USER_OID, "1.2.246.562.24.11111111111");
         state.setParameters(params);
+        try {
+            state.setIp(InetAddress.getByName("10.0.0.2"));
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
 
         MassPepareProcess prepareProcess = applicationContext.getBean(MassPepareProcess.class);
         prepareProcess.setState(state);

@@ -11,6 +11,7 @@ import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.tarjonta.dao.KoulutusPermissionDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.helpers.HttpTestHelper;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
 import fi.vm.sade.tarjonta.model.KoulutusPermissionType;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
@@ -33,7 +34,6 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ActiveProfiles;
@@ -100,7 +100,8 @@ public class AmmatillinenPerustutkintoV1Test {
     private static final String OSAAMISALA = "osaamisala_x";
     private static final String KOMO_OID = "ammKomoOid";
     private static final String TUTKINTONIMIKE = "tutkintonimike_x";
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper(true);
+    private HttpServletRequest request = httpTestHelper.request;
 
     @Before
     public void init() {

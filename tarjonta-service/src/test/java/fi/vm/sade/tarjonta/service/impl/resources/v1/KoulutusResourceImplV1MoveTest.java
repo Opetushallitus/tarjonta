@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.helpers.HttpTestHelper;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
@@ -62,7 +63,8 @@ public class KoulutusResourceImplV1MoveTest extends KoulutusBase {
     private OrganisaatioRDTO organisaatioDTO = new OrganisaatioRDTO();
     private HakukohdeDAO hakukohdeDAO;
     private AuditHelper auditHelper;
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper(true);
+    private HttpServletRequest request = httpTestHelper.request;
 
     @Before
     public void setUp() throws OIDCreationException {

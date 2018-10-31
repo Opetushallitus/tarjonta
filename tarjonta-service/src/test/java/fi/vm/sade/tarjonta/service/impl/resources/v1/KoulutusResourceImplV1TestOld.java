@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.collect.Sets;
 import fi.vm.sade.oid.service.ExceptionMessage;
+import fi.vm.sade.tarjonta.helpers.HttpTestHelper;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Oppiaine;
@@ -31,7 +32,6 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -57,8 +57,8 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("embedded-solr")
 @Transactional()
 public class KoulutusResourceImplV1TestOld extends KoulutusBase {
-
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private HttpTestHelper httpTestHelper = new HttpTestHelper(true);
+    private HttpServletRequest request = httpTestHelper.request;
 
     @Before
     public void setUp() throws OIDCreationException {

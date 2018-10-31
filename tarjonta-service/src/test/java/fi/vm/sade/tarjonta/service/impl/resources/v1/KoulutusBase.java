@@ -83,7 +83,7 @@ import static org.mockito.Mockito.*;
  */
 abstract class KoulutusBase extends TestUtilityBase {
 
-    protected static final String USER_OID = "123.123.123.123";
+    protected static final String USER_OID = "1.2.246.562.24.64735725450";
     protected static final String KOULUTUSOHJELMA = "koulutusohjelma";
     protected static final Integer VUOSI = 2013;
     protected static final String KAUSI_KOODI_URI = "kausi_k";

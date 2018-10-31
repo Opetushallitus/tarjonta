@@ -59,7 +59,7 @@ import static org.junit.Assert.assertNotNull;
 @Transactional
 public class PublicationDataServiceImplTest extends TestUtilityBase {
 
-    public static final String TEST_USER_OID = "123.123.123.123";
+    public static final String TEST_USER_OID = "1.2.246.562.24.64735725450";
 
     private PublicationDataServiceImpl publicationDataService;
     private Koulutusmoduuli komo1, komo2, komo3;
