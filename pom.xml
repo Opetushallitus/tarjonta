@@ -24,7 +24,7 @@
     <asm.version>5.2</asm.version>
     <aspectj-maven-plugin.version>1.4</aspectj-maven-plugin.version>
     <aspectj.version>1.8.10</aspectj.version>
-    <auditlogger.version>8.3.1-SNAPSHOT</auditlogger.version>
+    <auditlogger.version>8.3.0-SNAPSHOT</auditlogger.version>
     <authentication.api.version>10.0-SNAPSHOT</authentication.api.version>
     <build-helper-maven-plugin.version>1.4</build-helper-maven-plugin.version>
     <cas-client-core.version>3.4.1</cas-client-core.version>
