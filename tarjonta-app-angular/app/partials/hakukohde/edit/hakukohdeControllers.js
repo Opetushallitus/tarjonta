@@ -299,7 +299,7 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
         var currentUri = window.oph.removeKoodiVersion($scope.model.hakukohde.hakukohteenNimiUri || '');
         if (currentUri === koodi.uriWithoutVersion) {
             var newUri = currentUri + '#' + koodi.version;
-            console.log("model.hakukohde.hakukohtenNimiUri was: " + $scope.model.hakukohde.hakukohteenNimiUri);
+            console.log("model.hakukohde.hakukohteenNimiUri was: " + $scope.model.hakukohde.hakukohteenNimiUri);
             console.log("Updating model.hakukohde.hakukohteenNimiUri to " + newUri);
             $scope.model.hakukohde.hakukohteenNimiUri = newUri;
         }
