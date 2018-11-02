@@ -218,7 +218,7 @@ public class HakukohdeValidator {
 
     private static boolean isDuplicateHakukohdeForKomoto(HakukohdeV1RDTO hakukohdeDTO, KoulutusmoduuliToteutus komoto) {
         String hakuOid = hakukohdeDTO.getHakuOid();
-        String nimiUri = hakukohdeDTO.getHakukohteenNimiUri();
+        String nimiUri = TarjontaKoodistoHelper.splitKoodiURIWithVersion(hakukohdeDTO.getHakukohteenNimiUri())[0];
 
         if (!includeInDuplicateCheck(hakukohdeDTO.getTila())) {
             return false;
@@ -227,7 +227,7 @@ public class HakukohdeValidator {
         for (Hakukohde hakukohde : komoto.getHakukohdes()) {
             if (includeInDuplicateCheck(hakukohde.getTila())
                     && hakukohde.getHaku().getOid().equals(hakuOid)
-                    && hakukohde.getHakukohdeNimi().equals(nimiUri)
+                    && TarjontaKoodistoHelper.splitKoodiURIWithVersion(hakukohde.getHakukohdeNimi())[0].equals(nimiUri)
                     && !hakukohde.getOid().equals(hakukohdeDTO.getOid())) {
                 return true;
             }

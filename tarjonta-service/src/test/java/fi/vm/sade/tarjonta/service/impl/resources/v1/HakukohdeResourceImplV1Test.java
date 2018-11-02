@@ -209,61 +209,6 @@ public class HakukohdeResourceImplV1Test {
     }
 
     @Test
-    public void testInsertIdenticalToinenAsteHakukohdes() throws OIDCreationException {
-        Haku haku = insertHaku();
-        Set<String> tarjoajaOids = new HashSet<String>();
-        tarjoajaOids.add("121.121");
-        List<String> koulutusOids = new ArrayList<String>();
-        koulutusOids.add("111.222.333");
-        Collection<String> komotoOids = new HashSet<String>();
-        komotoOids.add("111.222.333");
-
-        HakukohdeV1RDTO hakukohde1 = baseHakukohde();
-        hakukohde1.setToteutusTyyppi(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO);
-        hakukohde1.setHakukohteenNimi("Hakukohde1");
-        hakukohde1.setHakukohdeKoulutusOids(koulutusOids);
-        hakukohde1.setHakukohteenNimet(ImmutableMap.of("kieli_fi", "hakukohteen nimi"));
-        hakukohde1.setHakuOid(haku.getOid());
-        hakukohde1.setUniqueExternalId("1");
-        hakukohde1.setTarjoajaOids(tarjoajaOids);
-
-        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
-        komoto.setOid("111.222.333");
-        komoto.setToteutustyyppi(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO);
-        komoto.setAlkamisVuosi(2015);
-        komoto.setTila(TarjontaTila.JULKAISTU);
-
-        when(koulutusmoduuliToteutusDAO.findByOid("111.222.333")).thenReturn(komoto);
-        when(koulutusmoduuliToteutusDAO.findKomotoByOid("111.222.333")).thenReturn(komoto);
-        when(hakukohdeValidator.checkKoulutukset(komotoOids)).thenReturn(Lists.newArrayList());
-
-        ResultV1RDTO<HakukohdeV1RDTO> result = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde1, request).getEntity();
-        assertEquals(OK, result.getStatus());
-
-        //Now add new Identical hakukohde:
-        HakukohdeV1RDTO hakukohde2 = baseHakukohde();
-        hakukohde2.setToteutusTyyppi(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO);
-        hakukohde2.setHakukohteenNimi("Hakukohde1");
-        hakukohde2.setHakukohdeKoulutusOids(koulutusOids);
-        hakukohde2.setHakukohteenNimet(ImmutableMap.of("kieli_fi", "hakukohteen nimi"));
-        hakukohde2.setHakuOid(haku.getOid());
-        hakukohde2.setUniqueExternalId("1");
-        hakukohde2.setTarjoajaOids(tarjoajaOids);
-
-        when(oidService.get(TarjontaOidType.HAKUKOHDE)).thenReturn("1.2.4");
-
-
-        hakukohde2.setTarjoajaOids(tarjoajaOids);
-        ResultV1RDTO<HakukohdeV1RDTO> result1 = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeV1Resource.postHakukohde(hakukohde2, request).getEntity();
-
-
-        assertEquals(VALIDATION, result1.getStatus());
-//        assertEquals(2, result.getErrors().size());
-//        assertTrue(containsError(result.getErrors(), HAKUKOHDE_KOULUTUS_MISSING));
-//        assertTrue(containsError(result.getErrors(), HAKUKOHDE_HAKU_MISSING));
-    }
-
-    @Test
     public void testDeltaEditHakukohde() throws OIDCreationException {
         when(oidService.get(TarjontaOidType.HAKUKOHDE)).thenReturn(oidServiceMock.getOid());
 
