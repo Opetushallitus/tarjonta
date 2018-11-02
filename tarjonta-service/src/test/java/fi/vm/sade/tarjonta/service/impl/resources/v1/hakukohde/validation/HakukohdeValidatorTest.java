@@ -506,7 +506,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
         hakukohdeDTO = converterV1.setDefaultValues(hakukohdeDTO);
         hakukohdeDTO.setToteutusTyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS);
         hakukohdeDTO.setHakuOid("hakuOid");
-        hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi");
+        hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi#01");
         hakukohdeDTO.getHakukohdeKoulutusOids().add("komotoOid");
         hakukohdeDTO.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.VALMIS);
 
@@ -515,7 +515,7 @@ public class HakukohdeValidatorTest extends TestMockBase {
 
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setOid("hakukohdeOid");
-        hakukohde.setHakukohdeNimi("hakukohdeNimi");
+        hakukohde.setHakukohdeNimi("hakukohdeNimi#02");
         hakukohde.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU);
 
         Haku haku = new Haku();
