@@ -4,6 +4,7 @@ import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO.YhdenPaikanSaanto;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
@@ -32,6 +33,9 @@ public class YhdenPaikanSaantoBuilder {
     public static YhdenPaikanSaanto from(Haku haku) {
         if (!haku.isKorkeakouluHaku()) {
             return new YhdenPaikanSaanto(false, "Ei korkeakouluhaku");
+        }
+        if(!KoulutusmoduuliTyyppi.TUTKINTO.equals(haku.getKoulutusmoduuliTyyppi())) {
+            return new YhdenPaikanSaanto(false, "Haun koulutukset eivät ole tutkintoon johtavaa");
         }
         boolean hasAlkamisVuosiAndUri = haku.getKoulutuksenAlkamisVuosi() != null && haku.getKoulutuksenAlkamiskausiUri() != null;
         if (hasAlkamisVuosiAndUri) {

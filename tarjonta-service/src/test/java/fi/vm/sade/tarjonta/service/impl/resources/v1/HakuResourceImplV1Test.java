@@ -205,6 +205,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
         hakukohde.setHaku(haku);
         haku.setKoulutuksenAlkamisVuosi(2016);
         haku.setKoulutuksenAlkamiskausiUri("kausi_s#1");
+        haku.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
 
         haku.setKohdejoukkoUri("haunkohdejoukko_10#1");
         assertEquals(false, yhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
@@ -214,6 +215,11 @@ public class HakuResourceImplV1Test extends TestMockBase {
         haku.setKohdejoukonTarkenne("");
         assertEquals(true, yhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
         assertEquals("Korkeakouluhaku ilman kohdejoukon tarkennetta", yhdenPaikanSaantoBuilder.from(hakukohde).getSyy());
+
+        haku.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.OPINTOKOKONAISUUS);
+        assertEquals(false, yhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
+        assertEquals("Haun koulutukset eivät ole tutkintoon johtavaa ja hakukohde ei kuulu jatkuvaan korkeakouluhakuun, jonka kohdejoukon tarkenne kuuluu joukkoon [haunkohdejoukontarkenne_3#] tai sitä ei ole", yhdenPaikanSaantoBuilder.from(hakukohde).getSyy());
+        haku.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
 
         haku.setKohdejoukonTarkenne("haunkohdejoukontarkenne_3#1");
         assertEquals(true, yhdenPaikanSaantoBuilder.from(hakukohde).isVoimassa());
