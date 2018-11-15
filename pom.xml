@@ -59,7 +59,7 @@
     <hibernate-jpa-2.0-api.version>1.0.1.Final</hibernate-jpa-2.0-api.version>
     <hibernate.version>4.1.0.Final</hibernate.version>
     <hibernate4-maven-plugin.version>0.2.0</hibernate4-maven-plugin.version>
-    <HikariCP.version>2.4.7</HikariCP.version>
+    <HikariCP.version>3.2.0</HikariCP.version>
     <hsqldb.version>2.0.0</hsqldb.version>
     <httpclient.version>4.5.2</httpclient.version>
     <httpcomponents.version>4.5.2</httpcomponents.version>
@@ -102,7 +102,7 @@
     <organisaatio.api.version>2018-6-SNAPSHOT</organisaatio.api.version>
     <organisaatio.solr.version>2018-6-SNAPSHOT</organisaatio.solr.version>
     <paranamer.version>2.5.2</paranamer.version>
-    <postgresql.version>42.1.4</postgresql.version>
+    <postgresql.version>42.2.5</postgresql.version>
     <powermock.version>1.4.12</powermock.version>
     <properties-maven-plugin.version>1.0-alpha-2</properties-maven-plugin.version>
     <quartz.version>1.8.6</quartz.version>
