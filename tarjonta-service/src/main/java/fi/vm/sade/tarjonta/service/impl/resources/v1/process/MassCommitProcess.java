@@ -396,13 +396,18 @@ public class MassCommitProcess {
 
     // 2018 reformia edeltävien koulutusten kopiointi: poistetaan aikuiskoulutus, näyttötutkinnon järjestäjä, ja valmistava koulutus
     private void cleanKomotoForReformi2018(KoulutusmoduuliToteutus komoto, MetaObject meta) {
+        List<ToteutustyyppiEnum> toteutustyypitJoiltaPoistettavaAikuiskoulutusLaji = Arrays.asList(
+                ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_ALK_2018,
+                ToteutustyyppiEnum.AMMATTITUTKINTO,
+                ToteutustyyppiEnum.ERIKOISAMMATTITUTKINTO);
+        boolean poistetaanAikuiskoulutusLaji = toteutustyypitJoiltaPoistettavaAikuiskoulutusLaji.contains(komoto.getToteutustyyppi());
         HashSet<KoodistoUri> newKoulutuslajis = new HashSet<>();
         for (KoodistoUri koulutuslaji : komoto.getKoulutuslajis()) {
             String koodiUri = koulutuslaji.getKoodiUri();
-            if (!koodiUri.startsWith("koulutuslaji_a#")) {
-                newKoulutuslajis.add(koulutuslaji);
+            if (poistetaanAikuiskoulutusLaji && koodiUri.startsWith("koulutuslaji_a#")) {
+                LOG.info("Removing koulutuslaji {} from copied komoto {} (original oid {}) with toteutustyyppi {}", koodiUri, meta.getNewKomotoOid(), meta.getOriginalKomotoOid(), komoto.getToteutustyyppi());
             } else {
-                LOG.info("Removing koulutuslaji {} from copied komoto {}", koodiUri, meta.getNewKomotoOid());
+                newKoulutuslajis.add(koulutuslaji);
             }
         }
         komoto.setKoulutuslajis(newKoulutuslajis);
@@ -412,9 +417,8 @@ public class MassCommitProcess {
                 ToteutustyyppiEnum.AMMATTITUTKINTO,
                 ToteutustyyppiEnum.ERIKOISAMMATTITUTKINTO);
         boolean onNayttotutkinto = nayttotutkintoToteutustyypit.contains(komoto.getToteutustyyppi());
-
         if (onNayttotutkinto && komoto.getJarjesteja() != null) {
-            LOG.info("Setting jarjesteja to null in copied komoto {}, jarjesteja was {}", meta.getNewKomotoOid(), komoto.getJarjesteja());
+            LOG.info("Setting jarjesteja to null in copied komoto {} (original oid {}) with toteutustyyppi {}, jarjesteja was {}", meta.getNewKomotoOid(), meta.getOriginalKomotoOid(), komoto.getToteutustyyppi(), komoto.getJarjesteja());
             komoto.setJarjesteja(null);
         }
 
@@ -422,9 +426,8 @@ public class MassCommitProcess {
                 ToteutustyyppiEnum.AMMATTITUTKINTO,
                 ToteutustyyppiEnum.ERIKOISAMMATTITUTKINTO);
         boolean onPoistettavaValmistavaKoulutus = toteutustyypitJoiltaPoistettavaValmistavaKoultuus.contains(komoto.getToteutustyyppi());
-
         if (komoto.getValmistavaKoulutus() != null) {
-            LOG.info("Removing valmistavaKoulutus {} from copied komoto {}", komoto.getValmistavaKoulutus().getOid(), meta.getNewKomotoOid());
+            LOG.info("Removing valmistavaKoulutus {} from copied komoto {} (original oid {}) with toteutustyyppi {}", komoto.getValmistavaKoulutus().getOid(), meta.getNewKomotoOid(), meta.getOriginalKomotoOid(), komoto.getToteutustyyppi());
             komoto.setValmistavaKoulutus(null);
         }
     }
