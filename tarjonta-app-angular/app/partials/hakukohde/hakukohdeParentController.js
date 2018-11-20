@@ -1140,7 +1140,14 @@ app.controller('HakukohdeParentController', [
 
                 _.each(rawYhteystiedot, function(yhteystieto) {
                     var kieliUri = oph.removeKoodiVersion(yhteystieto.kieli);
-                    if (_.contains(['posti'], yhteystieto.osoiteTyyppi)) {
+                    if (_.contains(['ulkomainen_posti'], yhteystieto.osoiteTyyppi)) {
+                        $scope.model.organisaationYhteystiedot.push({
+                            kansainvalinenOsoite: yhteystieto.osoite,
+                            osoitemuoto: 'KANSAINVALINEN',
+                            lang: kieliUri
+                        });
+                    }
+                    else if (_.contains(['posti'], yhteystieto.osoiteTyyppi)) {
                         $scope.model.organisaationYhteystiedot.push({
                             lang: kieliUri,
                             osoiterivi1: yhteystieto.osoite,
@@ -1149,12 +1156,11 @@ app.controller('HakukohdeParentController', [
                             osoitemuoto: 'SUOMALAINEN'
                         });
                     }
-                    else if (_.contains(['ulkomainen_posti'], yhteystieto.osoiteTyyppi)) {
-                        $scope.model.organisaationYhteystiedot.push({
-                            kansainvalinenOsoite: yhteystieto.osoite,
-                            osoitemuoto: 'KANSAINVALINEN',
-                            lang: kieliUri
-                        });
+                    else if (_.contains(['ulkomainen_kaynti'], yhteystieto.osoiteTyyppi)
+                        && !kayntiYhteystietos[kieliUri]) {
+                        kayntiYhteystietos[kieliUri] = {
+                            kansainvalinenOsoite: yhteystieto.osoite
+                        };
                     }
                     else if (_.contains(['kaynti'], yhteystieto.osoiteTyyppi)
                                 && !kayntiYhteystietos[kieliUri]) {
@@ -1162,12 +1168,6 @@ app.controller('HakukohdeParentController', [
                             osoiterivi1: yhteystieto.osoite,
                             postinumero: yhteystieto.postinumeroUri,
                             postitoimipaikka: yhteystieto.postitoimipaikka
-                        };
-                    }
-                    else if (_.contains(['ulkomainen_kaynti'], yhteystieto.osoiteTyyppi)
-                        && !kayntiYhteystietos[kieliUri]) {
-                        kayntiYhteystietos[kieliUri] = {
-                            kansainvalinenOsoite: yhteystieto.osoite
                         };
                     }
                 });
