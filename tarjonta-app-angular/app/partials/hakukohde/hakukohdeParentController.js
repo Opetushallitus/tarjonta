@@ -550,7 +550,6 @@ app.controller('HakukohdeParentController', [
                 var toteutustyyppi = getToteutustyyppiFromHakukohdeOrSharedState();
                 var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
                 if ($scope.toisenAsteenKoulutus(toteutustyyppi)) {
-                    //hakuaika = getHakuaikaForToisenAsteenKoulutus(haku);
                     hakuaika = getHakuaikaForToisenAsteenKoulutus($scope.model.hakukohde.hakuaikaId);
                     $scope.model.configurableHakuaika = oph.removeKoodiVersion(haku.hakutyyppiUri) === LISAHAKU
                         || oph.removeKoodiVersion(haku.hakutapaUri) === ERILLISHAKU;
@@ -587,9 +586,7 @@ app.controller('HakukohdeParentController', [
                 }
             }
         };
-        //var getHakuaikaForToisenAsteenKoulutus = function(haku) {
-        //    return haku.hakuaikas[0];
-        //};
+        // BUG-1892 : Get hakuaika to dropdown from haku instead of first on the list.
         var getHakuaikaForToisenAsteenKoulutus = function(hakuaikaId) {
             return haku.hakuaikas.filter(haku.hakuaikas.hakuaikaId = hakuaikaId);
         };
@@ -1571,7 +1568,7 @@ app.controller('HakukohdeParentController', [
         $scope.updateKaytaHaunPaattymisenAikaa = function(value) {
             if (value === true) {
                 var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
-                var hakuaika = getHakuaikaForToisenAsteenKoulutus(haku);
+                var hakuaika = getHakuaikaForToisenAsteenKoulutus($scope.model.hakukohde.hakuaikaId);
                 $scope.model.hakukohde.liitteidenToimitusPvm = hakuaika.loppuPvm;
             }
         };
