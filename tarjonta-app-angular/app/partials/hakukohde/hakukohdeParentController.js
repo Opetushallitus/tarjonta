@@ -550,7 +550,8 @@ app.controller('HakukohdeParentController', [
                 var toteutustyyppi = getToteutustyyppiFromHakukohdeOrSharedState();
                 var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
                 if ($scope.toisenAsteenKoulutus(toteutustyyppi)) {
-                    hakuaika = getHakuaikaForToisenAsteenKoulutus(haku);
+                    //hakuaika = getHakuaikaForToisenAsteenKoulutus(haku);
+                    hakuaika = getHakuaikaForToisenAsteenKoulutus($scope.model.hakukohde.hakuaikaId);
                     $scope.model.configurableHakuaika = oph.removeKoodiVersion(haku.hakutyyppiUri) === LISAHAKU
                         || oph.removeKoodiVersion(haku.hakutapaUri) === ERILLISHAKU;
                     $scope.model.hakukohde.hakuaikaId = hakuaika.hakuaikaId;
@@ -586,9 +587,13 @@ app.controller('HakukohdeParentController', [
                 }
             }
         };
-        var getHakuaikaForToisenAsteenKoulutus = function(haku) {
-            return haku.hakuaikas[0];
+        //var getHakuaikaForToisenAsteenKoulutus = function(haku) {
+        //    return haku.hakuaikas[0];
+        //};
+        var getHakuaikaForToisenAsteenKoulutus = function(hakuaikaId) {
+            return haku.hakuaikas.filter(haku.hakuaikas.hakuaikaId = hakuaikaId);
         };
+
         $scope.retrieveHakus = function() {
             var promises = [HakuService.getAllHakus(), $scope.config.getHaunKohdejoukko()];
             $q.all(promises).then(function(resolved) {
