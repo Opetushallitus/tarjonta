@@ -550,7 +550,7 @@ app.controller('HakukohdeParentController', [
                 var toteutustyyppi = getToteutustyyppiFromHakukohdeOrSharedState();
                 var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
                 if ($scope.toisenAsteenKoulutus(toteutustyyppi)) {
-                    hakuaika = getHakuaikaForToisenAsteenKoulutus($scope.model.hakukohde.hakuaikaId);
+                    hakuaika = getHakuaikaForToisenAsteenKoulutus(haku, $scope.model.hakukohde.hakuaikaId);
                     $scope.model.configurableHakuaika = oph.removeKoodiVersion(haku.hakutyyppiUri) === LISAHAKU
                         || oph.removeKoodiVersion(haku.hakutapaUri) === ERILLISHAKU;
                     $scope.model.hakukohde.hakuaikaId = hakuaika.hakuaikaId;
@@ -586,9 +586,14 @@ app.controller('HakukohdeParentController', [
                 }
             }
         };
-        // BUG-1892 : Get hakuaika to dropdown from haku instead of first on the list.
-        var getHakuaikaForToisenAsteenKoulutus = function(hakuaikaId) {
-            return haku.hakuaikas.filter(haku.hakuaikas.hakuaikaId = hakuaikaId);
+        // BUG-1892 & BUG-1909 : Try to get hakuaika to dropdown from haku instead of first on the list.
+        var getHakuaikaForToisenAsteenKoulutus = function(haku, hakuaikaId) {
+            try {
+                return haku.hakuaikas.filter(haku.hakuaikas.hakuaikaId = hakuaikaId);
+            } catch (err) {
+                return haku.hakuaikas[0];
+            }
+
         };
 
         $scope.retrieveHakus = function() {
@@ -1568,7 +1573,7 @@ app.controller('HakukohdeParentController', [
         $scope.updateKaytaHaunPaattymisenAikaa = function(value) {
             if (value === true) {
                 var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
-                var hakuaika = getHakuaikaForToisenAsteenKoulutus($scope.model.hakukohde.hakuaikaId);
+                var hakuaika = getHakuaikaForToisenAsteenKoulutus(haku, $scope.model.hakukohde.hakuaikaId);
                 $scope.model.hakukohde.liitteidenToimitusPvm = hakuaika.loppuPvm;
             }
         };
