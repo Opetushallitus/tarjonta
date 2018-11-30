@@ -1,19 +1,19 @@
 package fi.vm.sade.tarjonta.service.search;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.business.IndexService;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
@@ -25,8 +25,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 @Transactional(readOnly = true)
 @Component
@@ -48,10 +49,10 @@ public class IndexerResource {
     private IndexerDAO indexerDao;
 
     @Autowired
-    HakukohdeToSolrDocument hakukohdeConverter;
+    private OrganisaatioService organisaatioService;
 
     @Autowired
-    KoulutusToSolrDocument koulutusConverter;
+    private IndexService indexService;
 
     @GET
     @Path("/koulutukset/clear")
@@ -101,46 +102,14 @@ public class IndexerResource {
         this.koulutusSolr = factory.getSolrServer("koulutukset");
     }
 
-    private void index(final SolrServer solr, List<SolrInputDocument> docs) {
-        if (docs.size() > 0) {
-            final List<SolrInputDocument> localDocs = ImmutableList
-                    .copyOf(docs);
-            afterCommit(new TransactionSynchronizationAdapter() {
-                @Override
-                public void afterCommit() {
-                    Exception lastException = null;
-
-                    // try 3 times
-                    for (int i = 0; i < 5; i++) {
-                        try {
-                            logger.debug("Indexing {} docs, try {}", localDocs.size(), i);
-                            solr.add(localDocs);
-                            logger.debug("Committing changes to index.");
-                            solr.commit(true, true, false);
-                            logger.debug("Done.");
-                            return; //exit on success!
-                        } catch (Exception e) {
-                            lastException = e;
-                        }
-                    }
-                    // fail
-                    throw new RuntimeException(
-                            "indexing.error, last exception:", lastException);
-
-                }
-            });
-        }
-    }
-
     public void deleteKoulutus(List<String> oids) throws IOException {
         deleteByOid(oids, koulutusSolr);
     }
 
-    private void deleteByOid(List<String> oids, final SolrServer solr)
-            throws IOException {
+    private void deleteByOid(List<String> oids, final SolrServer solr) {
         final List<String> localOids = ImmutableList.copyOf(oids);
 
-        afterCommit(((TransactionSynchronization) new TransactionSynchronizationAdapter() {
+        afterCommit(new TransactionSynchronizationAdapter() {
             @Override
             public void afterCommit() {
                 try {
@@ -150,7 +119,7 @@ public class IndexerResource {
                     throw new RuntimeException("indexing.error", e);
                 }
             }
-        }));
+        });
     }
 
     private static void afterCommit(TransactionSynchronization sync) {
@@ -167,101 +136,35 @@ public class IndexerResource {
         deleteByOid(oids, hakukohdeSolr);
     }
 
+    /**
+     * Index hakukohteet in batches
+     * @param hakukohdeIdt hakukohde ids to index
+     */
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void indexHakukohteet(List<Long> hakukohdeIdt) {
-        if (hakukohdeIdt.size() == 0) {
-            return;
-        }
-        List<SolrInputDocument> docs = Lists.newArrayList();
         int batch_size = 50;
+        LocalDateTime indexingStarted = this.logIndexingStart(hakukohdeIdt.size(), "hakukohde");
         int index = 0;
         do {
-            for (int j = index; j < index + batch_size && j < hakukohdeIdt.size(); j++) {
-
-                Long hakukohdeId = hakukohdeIdt.get(j);
-                logger.debug(j + ". Fetching hakukohde:" + hakukohdeId);
-                docs.addAll(hakukohdeConverter.apply(hakukohdeId));
-            }
-            index += batch_size;
-            logger.debug("indexing:" + docs.size() + " docs");
-            index(hakukohdeSolr, docs);
-            docs.clear();
+            index = this.indexService.indexHakukohdeBatch(hakukohdeIdt, batch_size, index);
         } while (index < hakukohdeIdt.size());
-
-        commit(hakukohdeSolr);
-    }
-
-    public void indexHakukohdeIndexEntities(List<Long> hakukohdeIds) throws SolrServerException,
-            IOException {
-        List<SolrInputDocument> docs = Lists.newArrayList();
-        int batch_size = 100;
-        for (Long hakukohdeId : hakukohdeIds) {
-            docs.addAll(hakukohdeConverter.apply(hakukohdeId));
-            if (docs.size() > batch_size) {
-                logger.debug("indexing:" + docs.size() + " docs");
-                hakukohdeSolr.add(docs);
-                docs.clear();
-            }
-        }
-        if (docs.size() > 0) {
-            hakukohdeSolr.add(docs);
-            docs.clear();
-        }
-
-        commit(hakukohdeSolr);
+        this.logIndexingReady(hakukohdeIdt.size(), indexingStarted, "hakukohde");
     }
 
     /**
-     * Index koulutukset
+     * Index koulutukset in batches
      *
      * @param koulutukset id's of koulutukset to index
-     * @throws IOException
-     * @throws SolrServerException
      */
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void indexKoulutukset(List<Long> koulutukset) {
-        if (koulutukset.size() == 0) {
-            return;
-        }
         int batch_size = 50;
+        LocalDateTime indexingStarted = this.logIndexingStart(koulutukset.size(), "koulutus");
         int index = 0;
         do {
-            final List<SolrInputDocument> docs = Lists.newArrayList();
-
-            for (int j = index; j < index + batch_size && j < koulutukset.size(); j++) {
-
-                Long koulutusId = koulutukset.get(j);
-                logger.debug(j + ". Fetching koulutus:" + koulutusId);
-                docs.addAll(koulutusConverter.apply(koulutusId));
-
-                // Reindex sibling komotos
-                KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.read(koulutusId);
-                if (komoto != null) {
-                    List<KoulutusmoduuliToteutus> siblings = koulutusmoduuliToteutusDAO.findSiblingKomotos(komoto);
-                    if (siblings != null) {
-                        for (KoulutusmoduuliToteutus sibling : siblings) {
-                            if (!koulutukset.contains(sibling.getId())) {
-                                docs.addAll(koulutusConverter.apply(sibling.getId()));
-                            }
-                        }
-                    }
-                }
-            }
-            index += batch_size;
-            logger.debug("indexing:" + docs.size() + " docs");
-            index(koulutusSolr, docs);
-            docs.clear();
+            index = this.indexService.indexKoulutusBatch(koulutukset, batch_size, index);
         } while (index < koulutukset.size());
-
-        commit(koulutusSolr);
-    }
-
-    private void commit(SolrServer solr) {
-        try {
-            solr.commit(true, true, false);
-        } catch (SolrServerException e) {
-            throw new RuntimeException("indexing.error", e);
-        } catch (IOException e) {
-            throw new RuntimeException("indexing.error", e);
-        }
+        this.logIndexingReady(koulutukset.size(), indexingStarted, "koulutus");
     }
 
     @GET
@@ -276,11 +179,24 @@ public class IndexerResource {
 
     public void indexMuutokset(Tilamuutokset tm) {
         if (tm.getMuutetutKomotot().size() > 0) {
-            indexKoulutukset(koulutusmoduuliToteutusDAO.findIdsByoids(tm.getMuutetutKomotot()));
+            this.indexService.indexKoulutukset(koulutusmoduuliToteutusDAO.findIdsByoids(tm.getMuutetutKomotot()));
         }
         if (tm.getMuutetutHakukohteet().size() > 0) {
-            indexHakukohteet(hakukohdeDAO.findIdsByoids(tm.getMuutetutHakukohteet()));
+            this.indexService.indexHakukohteet(hakukohdeDAO.findIdsByoids(tm.getMuutetutHakukohteet()));
         }
 
+    }
+
+    private LocalDateTime logIndexingStart(int entitysToIndex, String type) {
+        if (entitysToIndex > 0) {
+            logger.info("Starting {} idexing with {} to index", type, entitysToIndex);
+        }
+        return LocalDateTime.now();
+    }
+
+    private void logIndexingReady(int entitysToIndex, LocalDateTime started, String type) {
+        if (entitysToIndex > 0) {
+            logger.info("Finished {} indexing with time {} millis", type, ChronoUnit.MILLIS.between(started, LocalDateTime.now()));
+        }
     }
 }

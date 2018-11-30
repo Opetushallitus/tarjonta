@@ -97,7 +97,6 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
             Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn("oid-komoto");
             Mockito.stub(oidService.get(TarjontaOidType.HAKUKOHDE)).toReturn("oid-hakukohde");
         } catch (OIDCreationException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
 
@@ -105,35 +104,55 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         try {
             clearIndex(solrServerFactory.getOrganisaatioSolrServer());
             clearIndex(solrServerFactory.getSolrServer("hakukohteet"));
-        } catch (SolrServerException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+        } catch (SolrServerException | IOException e) {
             e.printStackTrace();
         }
 
         Mockito.stub(
-                organisaatioSearchService.findByOidSet(Sets
+                organisaatioService.findByOidSet(Sets
                         .newHashSet("1.2.3.4.555"))).toReturn(
                 Lists.newArrayList(getOrganisaatio("1.2.3.4.555")));
         Mockito.stub(
-                organisaatioSearchService.findByOidSet(Sets
+                organisaatioService.findByUsingOrganisaatioCache(Sets
+                        .newHashSet("1.2.3.4.555"))).toReturn(
+                Lists.newArrayList(getOrganisaatio("1.2.3.4.555")));
+        Mockito.stub(
+                organisaatioService.findByOidSet(Sets
                         .newHashSet("1.2.3.4.556"))).toReturn(
                 Lists.newArrayList(getOrganisaatio("1.2.3.4.556")));
         Mockito.stub(
-                organisaatioSearchService.findByOidSet(Sets
+                organisaatioService.findByUsingOrganisaatioCache(Sets
+                        .newHashSet("1.2.3.4.556"))).toReturn(
+                Lists.newArrayList(getOrganisaatio("1.2.3.4.556")));
+        Mockito.stub(
+                organisaatioService.findByOidSet(Sets
                         .newHashSet("1.2.3.4.557"))).toReturn(
                 Lists.newArrayList(getOrganisaatio("1.2.3.4.557")));
         Mockito.stub(
-                organisaatioSearchService.findByOidSet(Sets.newHashSet(
+                organisaatioService.findByUsingOrganisaatioCache(Sets
+                        .newHashSet("1.2.3.4.557"))).toReturn(
+                Lists.newArrayList(getOrganisaatio("1.2.3.4.557")));
+        Mockito.stub(
+                organisaatioService.findByOidSet(Sets.newHashSet(
                         "1.2.3.4.555", "1.2.3.4.556", "1.2.3.4.557")))
                 .toReturn(
                         Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),
                                 getOrganisaatio("1.2.3.4.556"),
                                 getOrganisaatio("1.2.3.4.557")));
         Mockito.stub(
-                organisaatioSearchService.findByOidSet(Sets.newHashSet(
+                organisaatioService.findByUsingOrganisaatioCache(Sets.newHashSet(
+                        "1.2.3.4.555", "1.2.3.4.556", "1.2.3.4.557")))
+                .toReturn(
+                        Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),
+                                getOrganisaatio("1.2.3.4.556"),
+                                getOrganisaatio("1.2.3.4.557")));
+        Mockito.stub(
+                organisaatioService.findByOidSet(Sets.newHashSet(
+                        "1.2.3.4.555", "1.2.3.4.556"))).toReturn(
+                Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),
+                        getOrganisaatio("1.2.3.4.556")));
+        Mockito.stub(
+                organisaatioService.findByUsingOrganisaatioCache(Sets.newHashSet(
                         "1.2.3.4.555", "1.2.3.4.556"))).toReturn(
                 Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),
                         getOrganisaatio("1.2.3.4.556")));
@@ -196,28 +215,28 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     void createTestDataInTransaction() {
 
         executeInTransaction(() -> {
-                hakukohde = tarjontaFixtures
-                        .createPersistedHakukohdeWithKoulutus("1.2.3.4.555");
-                LueHakukohdeVastausTyyppi hakukohdeVastaus = publicService
-                        .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
-                                .getOid()));
-                adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
+            hakukohde = tarjontaFixtures
+                    .createPersistedHakukohdeWithKoulutus("1.2.3.4.555");
+            LueHakukohdeVastausTyyppi hakukohdeVastaus = publicService
+                    .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
+                            .getOid()));
+            adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
 
-                hakukohde = tarjontaFixtures
-                        .createPersistedHakukohdeWithKoulutus("1.2.3.4.556");
-                hakukohdeVastaus = publicService
-                        .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
-                                .getOid()));
+            hakukohde = tarjontaFixtures
+                    .createPersistedHakukohdeWithKoulutus("1.2.3.4.556");
+            hakukohdeVastaus = publicService
+                    .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
+                            .getOid()));
 
 
-                adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
+            adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
 
-                hakukohde = tarjontaFixtures
-                        .createPersistedHakukohdeWithKoulutus("1.2.3.4.557");
-                hakukohdeVastaus = publicService
-                        .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
-                                .getOid()));
-                adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
+            hakukohde = tarjontaFixtures
+                    .createPersistedHakukohdeWithKoulutus("1.2.3.4.557");
+            hakukohdeVastaus = publicService
+                    .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
+                            .getOid()));
+            adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
         });
     }
 
@@ -300,13 +319,14 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
 
     @Test
     public void testKKKoulutus() throws SolrServerException {
-        Mockito.stub(organisaatioSearchService.findByOidSet(Mockito.anySet())).toReturn(Arrays.asList(getOrganisaatio("1.2.3.4.5.6.7.8.9")));
+        Mockito.stub(organisaatioService.findByOidSet(Mockito.anySet())).toReturn(Arrays.asList(getOrganisaatio("1.2.3.4.5.6.7.8.9")));
+        Mockito.stub(organisaatioService.findByUsingOrganisaatioCache(Mockito.anySet())).toReturn(Arrays.asList(getOrganisaatio("1.2.3.4.5.6.7.8.9")));
 
         // tee kk koulutus
         executeInTransaction(() -> {
-                KoulutusKorkeakouluV1RDTO kkKoulutus = getKKKoulutus();
-                ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResource.postKoulutus(kkKoulutus, request).getEntity();
-                assertEquals("errors in koulutus insert", false, result.hasErrors());
+            KoulutusKorkeakouluV1RDTO kkKoulutus = getKKKoulutus();
+            ResultV1RDTO<KoulutusV1RDTO> result = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResource.postKoulutus(kkKoulutus, request).getEntity();
+            assertEquals("errors in koulutus insert", false, result.hasErrors());
         });
 
         KoulutuksetKysely kysely = new KoulutuksetKysely();
@@ -325,11 +345,11 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
 
         // tee kk koulutus ja hakukohde
         executeInTransaction(() -> {
-                KoulutusKorkeakouluV1RDTO kk = getKKKoulutus();
-                ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResource.postKoulutus(kk, request).getEntity();
-                HakukohdeV1RDTO hakukohde = getKKHakukohde(postKorkeakouluKoulutus.getResult().getOid());
-                ResultV1RDTO<HakukohdeV1RDTO> response = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(hakukohde, request).getEntity();
-                assertEquals("errors in koulutus insert", false, response.hasErrors());
+            KoulutusKorkeakouluV1RDTO kk = getKKKoulutus();
+            ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus = (ResultV1RDTO<KoulutusV1RDTO>)koulutusResource.postKoulutus(kk, request).getEntity();
+            HakukohdeV1RDTO hakukohde = getKKHakukohde(postKorkeakouluKoulutus.getResult().getOid());
+            ResultV1RDTO<HakukohdeV1RDTO> response = (ResultV1RDTO<HakukohdeV1RDTO>) hakukohdeResource.postHakukohde(hakukohde, request).getEntity();
+            assertEquals("errors in koulutus insert", false, response.hasErrors());
         });
 
         HakukohteetKysely kysely = new HakukohteetKysely();

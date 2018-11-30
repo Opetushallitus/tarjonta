@@ -51,8 +51,4 @@
         </property>
 
     </bean>
-
-    <bean scope="singleton" class="fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService"/>
-    <bean scope="singleton" class="fi.vm.sade.organisaatio.service.search.SolrServerFactory"/>
-
 </beans>

@@ -34,6 +34,7 @@ import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.auditlog.AuditHelper;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.business.IndexService;
 import fi.vm.sade.tarjonta.service.business.impl.ContextDataServiceImpl;
 import fi.vm.sade.tarjonta.service.impl.aspects.KoulutusPermissionService;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.*;
@@ -131,6 +132,7 @@ abstract class KoulutusBase extends TestUtilityBase {
     protected KoulutusDTOConverterToEntity convertToEntity;
     protected OrganisaatioRDTO organisaatioDTO;
     protected IndexerResource indexerResourceMock;
+    protected IndexService indexServiceMock;
     protected TarjontaKoodistoHelper tarjontaKoodistoHelperMock;
     protected KoulutusKuvausV1RDTO<KomoTeksti> komoKoulutusConverters;
     protected KoulutusKuvausV1RDTO<KomotoTeksti> komotoKoulutusConverters;
@@ -165,7 +167,8 @@ abstract class KoulutusBase extends TestUtilityBase {
         //CREATE MOCKS
         koulutusPermissionServiceMock = mock(KoulutusPermissionService.class);
         tarjontaKoodistoHelperMock = mock(TarjontaKoodistoHelper.class);
-        indexerResourceMock = mock(IndexerResource.class);
+        indexerResourceMock= mock(IndexerResource.class);
+        indexServiceMock= mock(IndexService.class);
         permissionChecker = mock(PermissionChecker.class);
         doNothing().when(permissionChecker).checkCreateKoulutus(anyString());
         doNothing().when(permissionChecker).checkUpdateKoulutusByTarjoajaOid(anyString());
@@ -296,6 +299,7 @@ abstract class KoulutusBase extends TestUtilityBase {
         when(organisaatioServiceMock.findByOid(ORGANISATION_OID)).thenReturn(organisaatioDTO);
 
         indexerResourceMock = mock(IndexerResource.class);
+        indexServiceMock = mock(IndexService.class);
         permissionChecker = mock(PermissionChecker.class);
         doNothing().when(permissionChecker).checkCreateKoulutus(anyString());
         doNothing().when(permissionChecker).checkUpdateKoulutusByTarjoajaOid(anyString());
@@ -308,6 +312,7 @@ abstract class KoulutusBase extends TestUtilityBase {
         //SET VALUES TO INSTANCES
         Whitebox.setInternalState(instance, "organisaatioService", organisaatioServiceMock);
         Whitebox.setInternalState(instance, "indexerResource", indexerResourceMock);
+        Whitebox.setInternalState(instance, "indexService", indexServiceMock);
         Whitebox.setInternalState(instance, "permissionChecker", permissionChecker);
         Whitebox.setInternalState(instance, "contextDataService", contextDataService);
         Whitebox.setInternalState(instance, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAO);

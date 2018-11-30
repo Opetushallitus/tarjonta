@@ -20,14 +20,13 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.lang.StringUtils;
@@ -52,7 +51,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     private final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     @Autowired
-    private OrganisaatioSearchService organisaatioSearchService;
+    private OrganisaatioService organisaatioService;
 
     @Autowired
     private TarjontaKoodistoHelper koodistoHelper;
@@ -172,17 +171,19 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
         boolean orgFound = false;
 
         Map<String, KoulutusmoduuliToteutusTarjoajatiedot> koulutusmoduuliToteutusTarjoajatiedot = hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot();
-
+        Set<String> tarjoajaoids= new HashSet<String>();
         // Jos ei ole monta tarjoajaa -> indeksoi kuten ennen KJOH-778
+        // Gather all oids to one findByOids rest call:
         if (koulutusmoduuliToteutusTarjoajatiedot.isEmpty()) {
-            orgFound = addOrganisaatioTiedotForTarjoaja(hakukohdeDoc, hakukohde.getFirstKoulutus().getTarjoaja());
+            tarjoajaoids.add(hakukohde.getFirstKoulutus().getTarjoaja());
         } else { // Monta tarjoajaa
             for (KoulutusmoduuliToteutusTarjoajatiedot tarjoajaTiedot : koulutusmoduuliToteutusTarjoajatiedot.values()) {
                 for (String tarjoajaOid : tarjoajaTiedot.getTarjoajaOids()) {
-                    orgFound = addOrganisaatioTiedotForTarjoaja(hakukohdeDoc, tarjoajaOid);
+                    tarjoajaoids.add(tarjoajaOid);
                 }
             }
         }
+        orgFound = addOrganisaatioTiedotForTarjoaja(hakukohdeDoc, tarjoajaoids);
         return orgFound;
     }
 
@@ -215,8 +216,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     }
 
     private void addDataFromKoulutus(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
-        addOppilaitostyypit(hakukohdeDoc, hakukohde);
-        addKunnat(hakukohdeDoc, hakukohde);
+        addKunnatAndOppilaitostyypit(hakukohdeDoc, hakukohde);
         addOpetuskielet(hakukohdeDoc, hakukohde);
         addKoulutusmoduuliTyyppi(hakukohdeDoc, hakukohde);
     }
@@ -243,36 +243,62 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
 
     }
 
-    private void addKunnat(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
-        Set<String> kuntas = new HashSet<String>();
+    private boolean addOrganisaatioTiedotForTarjoaja(SolrInputDocument hakukohdeDoc, Set<String> tarjoajaOids) {
+        final List<OrganisaatioPerustieto> orgs = organisaatioService.findByUsingOrganisaatioCache(tarjoajaOids);
+        if (orgs.size() == 0) {
+            return false;
+        }
 
-        for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
-            List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioSearchService.findByOidSet(koulutusmoduuliToteutus.getOwnerOids());
+        final OrganisaatioPerustieto perus = orgs.get(0);
 
-            for (OrganisaatioPerustieto organisaatioPerustieto : organisaatiotiedot) {
-                kuntas.add(getKoodiURIFromVersionedUri(organisaatioPerustieto.getKotipaikkaUri()));
+        // Non-multivalued field -> ensure it's added only once
+        if (hakukohdeDoc.getFieldValue(ORG_NIMI) == null) {
+            String orgNimi = perus.getNimi().get("fi");
+            // Fallback jos ei löydy suomeksi
+            if (StringUtils.isBlank(orgNimi)) {
+                orgNimi = perus.getNimi().values().iterator().next();
+            }
+            add(hakukohdeDoc, ORG_NIMI, orgNimi);
+            add(hakukohdeDoc, ORG_NIMI_LOWERCASE, orgNimi.toLowerCase());
+        }
+        add(hakukohdeDoc, ORG_OID, perus.getOid());
+        ArrayList<String> oidPath = Lists.newArrayList();
+
+        if (perus.getParentOidPath() != null) {
+            Iterables.addAll(oidPath, Splitter.on("/").omitEmptyStrings().split(perus.getParentOidPath()));
+            Collections.reverse(oidPath);
+
+            for (String path : oidPath) {
+                add(hakukohdeDoc, ORG_PATH, path);
             }
         }
+        return true;
+    }
+
+    private void addKunnatAndOppilaitostyypit(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
+        Set<String> kuntas = new HashSet<String>();
+        Set<String> oppilaitostyypit = new HashSet<String>();
+        Set<String> ownerOids = new HashSet<String>();
+
+        // Gather the oids to one call:
+        for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
+            ownerOids.addAll(koulutusmoduuliToteutus.getOwnerOids());
+        }
+
+        List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioService.findByUsingOrganisaatioCache(ownerOids);
+
+        for (OrganisaatioPerustieto organisaatioPerustieto : organisaatiotiedot) {
+            String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(organisaatioPerustieto);
+            if (oppilaitostyyppi != null) {
+                oppilaitostyypit.add(oppilaitostyyppi);
+            }
+            kuntas.add(getKoodiURIFromVersionedUri(organisaatioPerustieto.getKotipaikkaUri()));
+        }
+
 
         for (String kunta : kuntas) {
             add(hakukohdeDoc, KUNTA_URIS, kunta);
         }
-    }
-
-    private void addOppilaitostyypit(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
-        Set<String> oppilaitostyypit = new HashSet<String>();
-
-        for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
-            List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioSearchService.findByOidSet(koulutusmoduuliToteutus.getOwnerOids());
-
-            for (OrganisaatioPerustieto organisaatioPerustieto : organisaatiotiedot) {
-                String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(organisaatioPerustieto);
-                if (oppilaitostyyppi != null) {
-                    oppilaitostyypit.add(oppilaitostyyppi);
-                }
-            }
-        }
-
         for (String oppilaitostyyppi : oppilaitostyypit) {
             add(hakukohdeDoc, OPPILAITOSTYYPPI_URIS, oppilaitostyyppi);
         }
@@ -453,38 +479,6 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
         if (value != null) {
             doc.addField(fieldName, value);
         }
-    }
-
-    private boolean addOrganisaatioTiedotForTarjoaja(SolrInputDocument hakukohdeDoc, String tarjoaja) {
-        final List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(Sets.newHashSet(tarjoaja));
-        if (orgs.size() == 0) {
-            return false;
-        }
-
-        final OrganisaatioPerustieto perus = orgs.get(0);
-
-        // Non-multivalued field -> ensure it's added only once
-        if (hakukohdeDoc.getFieldValue(ORG_NIMI) == null) {
-            String orgNimi = perus.getNimi().get("fi");
-            // Fallback jos ei löydy suomeksi
-            if (StringUtils.isBlank(orgNimi)) {
-                orgNimi = perus.getNimi().values().iterator().next();
-            }
-            add(hakukohdeDoc, ORG_NIMI, orgNimi);
-            add(hakukohdeDoc, ORG_NIMI_LOWERCASE, orgNimi.toLowerCase());
-        }
-        add(hakukohdeDoc, ORG_OID, perus.getOid());
-        ArrayList<String> oidPath = Lists.newArrayList();
-
-        if (perus.getParentOidPath() != null) {
-            Iterables.addAll(oidPath, Splitter.on("/").omitEmptyStrings().split(perus.getParentOidPath()));
-            Collections.reverse(oidPath);
-
-            for (String path : oidPath) {
-                add(hakukohdeDoc, ORG_PATH, path);
-            }
-        }
-        return true;
     }
 
     private Date getStartDate(Set<Hakuaika> hakuaikas) {

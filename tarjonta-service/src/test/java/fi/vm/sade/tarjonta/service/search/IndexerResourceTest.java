@@ -3,16 +3,18 @@ package fi.vm.sade.tarjonta.service.search;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.dao.impl.HakukohdeDAOImpl;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.business.IndexService;
+import fi.vm.sade.tarjonta.service.business.impl.IndexServiceImpl;
 import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
 import fi.vm.sade.tarjonta.shared.KoodiService;
 import fi.vm.sade.tarjonta.shared.KoodistoProactiveCaching;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -45,11 +47,12 @@ public class IndexerResourceTest {
         indexer = new IndexerResource();
         indexer.setSolrServerFactory(factory);
         HakukohdeToSolrDocument hakukohdeToSolr = new HakukohdeToSolrDocument();
-        ReflectionTestUtils.setField(indexer, "hakukohdeConverter", hakukohdeToSolr);
 
-        OrganisaatioSearchService organisaatioSearchService = Mockito.mock(OrganisaatioSearchService.class);
-        stub(organisaatioSearchService.findByOidSet(anySet())).toReturn(Lists.newArrayList(getOrg("o-oid-12345")));
-        ReflectionTestUtils.setField(hakukohdeToSolr, "organisaatioSearchService", organisaatioSearchService);
+        OrganisaatioService organisaatioService = Mockito.mock(OrganisaatioService.class);
+        stub(organisaatioService.findByUsingOrganisaatioCache(anySet())).toReturn(Lists.newArrayList(getOrg("o-oid-12345")));
+        stub(organisaatioService.findByUsingOrganisaatioCache(anySet())).toReturn(Lists.newArrayList(getOrg("o-oid-12345")));
+        ReflectionTestUtils.setField(hakukohdeToSolr, "organisaatioService", organisaatioService);
+        ReflectionTestUtils.setField(indexer, "organisaatioService", organisaatioService);
 
         OppilaitostyyppiResolver oppilaitostyyppiResolver = Mockito.mock(OppilaitostyyppiResolver.class);
         stub(oppilaitostyyppiResolver.resolve(any(OrganisaatioPerustieto.class))).toReturn("oppilaitostyyppi_41");
@@ -66,6 +69,9 @@ public class IndexerResourceTest {
         HakukohdeDAOImpl hakukohdeDAO = Mockito.mock(HakukohdeDAOImpl.class);
         Whitebox.setInternalState(hakukohdeToSolr, "hakukohdeDAO", hakukohdeDAO);
         Mockito.stub(hakukohdeDAO.findBy("id", 1L)).toReturn(Arrays.asList(getHakukohde()));
+
+        IndexService indexService = new IndexServiceImpl(null, null, hakukohdeToSolr, indexerDao, factory);
+        ReflectionTestUtils.setField(indexer, "indexService", indexService);
     }
 
     private OrganisaatioPerustieto getOrg(String oid) {

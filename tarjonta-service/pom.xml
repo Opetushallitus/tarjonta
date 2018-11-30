@@ -579,11 +579,6 @@
             <version>${spring-security.version}</version>
         </dependency>
         <dependency>
-            <groupId>fi.vm.sade.organisaatio</groupId>
-            <artifactId>organisaatio-solr-client</artifactId>
-            <version>${organisaatio.solr.version}</version>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>

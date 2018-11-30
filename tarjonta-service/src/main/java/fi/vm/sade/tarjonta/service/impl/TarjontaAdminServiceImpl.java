@@ -22,6 +22,8 @@ import java.util.*;
 import javax.annotation.Nullable;
 import javax.jws.WebParam;
 
+import fi.vm.sade.tarjonta.service.business.IndexService;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 
 import org.slf4j.LoggerFactory;
@@ -38,7 +40,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
@@ -134,11 +135,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Autowired
     private IndexerResource solrIndexer;
     @Autowired
+    private IndexService indexService;
+    @Autowired
     private KoulutusSearchService searchService;
     @Autowired
     private PermissionChecker permissionChecker;
     @Autowired
-    private OrganisaatioSearchService organisaatioSearchService;
+    private OrganisaatioService organisaatioService;
     @Autowired
     private OidService oidService;
     @Autowired
@@ -420,8 +423,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit(),hakuk));
         hakuk.setViimIndeksointiPvm(hakuk.getLastUpdateDate());
         hakukohdeDAO.update(hakuk);
-        solrIndexer.indexHakukohteet(Lists.newArrayList(hakuk.getId()));
-        solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakuk.getKoulutusmoduuliToteutuses().iterator(), arg0 -> arg0.getId())));
+        indexService.indexHakukohteet(Lists.newArrayList(hakuk.getId()));
+        indexService.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakuk.getKoulutusmoduuliToteutuses().iterator(), arg0 -> arg0.getId())));
 
         //return fresh copy (that has fresh versions so that optimistic locking works)
         LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
@@ -465,10 +468,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             hakukohde.setKoulutusmoduuliToteutuses(komotos);
             log.info("Adding {} koulutukses to hakukohde: {}", hakukohde.getKoulutusmoduuliToteutuses().size(), hakukohde.getOid());
             hakukohdeDAO.update(hakukohde);
-            solrIndexer.indexKoulutukset(getKomotoIds(komotos));
+            indexService.indexKoulutukset(getKomotoIds(komotos));
             List<Long> hakukohdeIds = new ArrayList<Long>();
             hakukohdeIds.add(hakukohde.getId());
-            solrIndexer.indexHakukohteet(hakukohdeIds);
+            indexService.indexHakukohteet(hakukohdeIds);
         } else {
             List<KoulutusmoduuliToteutus> poistettavatModuuliLinkitLista = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(parameters.getKoulutusOids());
             Set<KoulutusmoduuliToteutus> poistettavatModuuliLinkit = new HashSet<KoulutusmoduuliToteutus>(poistettavatModuuliLinkitLista);
@@ -492,8 +495,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                     for (KoulutusmoduuliToteutus komoto : poistettavatModuuliLinkit) {
                         komotoIds.add(komoto.getId());
                     }
-                    solrIndexer.indexKoulutukset(komotoIds);
-                    solrIndexer.indexHakukohteet(hakukohdeOis);
+                    indexService.indexKoulutukset(komotoIds);
+                    indexService.indexHakukohteet(hakukohdeOis);
                 } else {
                     HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
                     hakukohdeTyyppi.setOid(parameters.getHakukohdeOid());
@@ -566,7 +569,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         newHakukohde.getLiites().addAll(originalHakukohde.getLiites());
         newHakukohde.setViimIndeksointiPvm(newHakukohde.getLastUpdateDate());
         hakukohdeDAO.update(newHakukohde);
-        solrIndexer.indexHakukohteet(Lists.newArrayList(newHakukohde.getId()));
+        indexService.indexHakukohteet(Lists.newArrayList(newHakukohde.getId()));
 
         //return fresh copy (that has fresh version so that optimistic locking works)
         LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi(hakukohdePaivitys.getOid());
@@ -584,7 +587,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
         checkOrganisationExists(koulutus.getTarjoaja());
         final KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
-        solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
+        indexService.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
 
 
         final LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
@@ -602,7 +605,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         final KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
 
         try {
-            solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
+            indexService.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
         } catch (Throwable t) {
             log.warn("Koulutusten indeksointi epäonnistui", t);
         }
@@ -612,7 +615,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             hakukohteenidt.add(hk.getId());
         }
 
-        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohteenidt));
+        indexService.indexHakukohteet(Lists.newArrayList(hakukohteenidt));
 
         return new PaivitaKoulutusVastausTyyppi();
     }
@@ -624,7 +627,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
      * @param tarjoaja
      */
     private void checkOrganisationExists(String tarjoaja) {
-        List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(Sets.newHashSet(tarjoaja));
+        List<OrganisaatioPerustieto> orgs = organisaatioService.findByUsingOrganisaatioCache(Sets.newHashSet(tarjoaja));
         if (orgs.size() != 1 || (orgs.get(0).getLakkautusPvm() != null && orgs.get(0).getLakkautusPvm().before(new Date()))) {
             throw new RuntimeException("nonexisting.organisation.error");
         }
@@ -912,12 +915,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
         if (koulutusOidit.size() > 0) {
             log.debug("indexing koulutukset:", koulutusOidit);
-            solrIndexer.indexKoulutukset(koulutusmoduuliToteutusDAO
+            indexService.indexKoulutukset(koulutusmoduuliToteutusDAO
                     .findIdsByoids(koulutusOidit));
         }
         if (hakukohdeOidit.size() > 0) {
             log.debug("indexing hakukohteet:", hakukohdeOidit);
-            solrIndexer.indexHakukohteet(hakukohdeDAO
+            indexService.indexHakukohteet(hakukohdeDAO
                     .findIdsByoids(hakukohdeOidit));
         }
     }

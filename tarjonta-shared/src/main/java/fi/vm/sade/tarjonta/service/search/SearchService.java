@@ -3,7 +3,7 @@ package fi.vm.sade.tarjonta.service.search;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.util.ClientUtils;
@@ -21,15 +21,16 @@ public class SearchService {
     protected static final String QUERY_ALL = "*:*";
     protected static final String TEKSTIHAKU_TEMPLATE = "%s:*%s*";
 
-    @Autowired
-    private OrganisaatioSearchService organisaatioSearchService;
+    private OrganisaatioService organisaatioService;
 
-    public SearchService() {
+    @Autowired
+    public SearchService(OrganisaatioService organisaatioService) {
+        this.organisaatioService = organisaatioService;
     }
 
     protected Map<String, OrganisaatioPerustieto> searchOrgs(Set<String> orgOids) throws SolrServerException {
         Map<String, OrganisaatioPerustieto> oidIndex = Maps.newHashMap();
-        List<OrganisaatioPerustieto> orgVastaus = organisaatioSearchService.findByOidSet(orgOids);
+        List<OrganisaatioPerustieto> orgVastaus = organisaatioService.findByUsingOrganisaatioCache(orgOids);
         for (OrganisaatioPerustieto org : orgVastaus) {
             oidIndex.put(org.getOid(), org);
         }

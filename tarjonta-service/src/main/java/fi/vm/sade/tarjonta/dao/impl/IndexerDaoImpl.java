@@ -52,7 +52,7 @@ public class IndexerDaoImpl implements IndexerDAO {
     @Override
     public List<Long> findUnindexedHakukohdeIds() {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
-        return q(hakukohde).where(hakukohde.viimIndeksointiPvm.isNull().or(hakukohde.viimIndeksointiPvm.before(hakukohde.lastUpdateDate))).limit(100).list(hakukohde.id);
+        return q(hakukohde).where(hakukohde.viimIndeksointiPvm.isNull().or(hakukohde.viimIndeksointiPvm.before(hakukohde.lastUpdateDate))).list(hakukohde.id);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class IndexerDaoImpl implements IndexerDAO {
                 bb(komoto.viimIndeksointiPvm.isNull()
                         .or(komoto.viimIndeksointiPvm.before(komoto.updated)))
                         .and(komoto.alkamisVuosi.isNotNull())
-        ).limit(100).list(komoto.id);
+        ).list(komoto.id);
     }
 
     @Override

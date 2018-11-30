@@ -21,7 +21,6 @@
     <import resource="classpath:/META-INF/spring/logger-mock-context.xml" />
 
     <mockito:mock id="organisaatioService" class="fi.vm.sade.tarjonta.shared.OrganisaatioService"/>
-    <mockito:mock id="organisaatioSearchService" class="fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService"/>
 
     <mockito:mock id="koodiService" class="fi.vm.sade.tarjonta.shared.KoodiService"/>
 
@@ -47,6 +46,7 @@
     <bean id="massCopyProcess" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess"/>
     <bean id="processTest" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.TestProcess"/>
     <bean id="helper" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.V1TestHelper"/>
+    <bean id="indexService" class="fi.vm.sade.tarjonta.service.business.impl.IndexServiceImpl" />
     
     <!--
         Create a dynamic mock class for the jms message sender.

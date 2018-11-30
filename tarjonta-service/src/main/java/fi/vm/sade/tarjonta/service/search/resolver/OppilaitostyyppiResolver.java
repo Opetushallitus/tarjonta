@@ -4,7 +4,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
+import fi.vm.sade.tarjonta.shared.OrganisaatioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +16,7 @@ import static fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper.getKoodiURIFromV
 public class OppilaitostyyppiResolver {
 
     @Autowired
-    private OrganisaatioSearchService organisaatioSearchService;
+    private OrganisaatioService organisaatioService;
 
     public String resolve(OrganisaatioPerustieto organisaatioPerustieto) {
         if (organisaatioPerustieto.getOppilaitostyyppi() != null) {
@@ -32,12 +32,11 @@ public class OppilaitostyyppiResolver {
     }
 
     private String getOppilaitostyyppiFromParentOrganisation(ArrayList<String> oids) {
-        for (String oid : oids) {
-            List<OrganisaatioPerustieto> parents = organisaatioSearchService.findByOidSet(new HashSet<String>(Arrays.asList(oid)));
-            if (!parents.isEmpty()) {
-                OrganisaatioPerustieto parentOrganisaatioPerustieto = parents.get(0);
-                if (parentOrganisaatioPerustieto.getOppilaitostyyppi() != null) {
-                    return getKoodiURIFromVersionedUri(parentOrganisaatioPerustieto.getOppilaitostyyppi());
+        List<OrganisaatioPerustieto> parents = organisaatioService.findByUsingOrganisaatioCache(new HashSet<>(oids));
+        for (OrganisaatioPerustieto parent : parents) {
+            if (parent != null) {
+                if (parent.getOppilaitostyyppi() != null) {
+                    return getKoodiURIFromVersionedUri(parent.getOppilaitostyyppi());
                 }
             }
         }

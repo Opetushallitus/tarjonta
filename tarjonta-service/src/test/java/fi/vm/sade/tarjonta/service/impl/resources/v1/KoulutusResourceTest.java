@@ -12,6 +12,7 @@ import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auditlog.AuditHelper;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.business.IndexService;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
@@ -66,6 +67,9 @@ public class KoulutusResourceTest {
 
     private IndexerResource indexerResource = Mockito
             .mock(IndexerResource.class);
+
+    private IndexService indexService = Mockito
+            .mock(IndexService.class);
 
     private PublicationDataService publicationDataService = Mockito
             .mock(PublicationDataService.class);
@@ -167,6 +171,8 @@ public class KoulutusResourceTest {
                 hakukohdeDAO);
         Whitebox.setInternalState(koulutusResource, "indexerResource",
                 indexerResource);
+        Whitebox.setInternalState(koulutusResource, "indexService",
+                indexService);
         Whitebox.setInternalState(koulutusResource, "publicationDataService",
                 publicationDataService);
         Whitebox.setInternalState(koulutusResource, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAO);

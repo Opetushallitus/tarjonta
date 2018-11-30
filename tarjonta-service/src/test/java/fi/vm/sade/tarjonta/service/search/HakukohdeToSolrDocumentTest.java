@@ -48,7 +48,7 @@ public class HakukohdeToSolrDocumentTest extends TestMockBase {
         Whitebox.setInternalState(converter, "koodistoHelper", tarjontaKoodistoHelper);
 
         when(hakukohdeDAO.findBy("id", 1L)).thenReturn(Arrays.asList(hakukohde));
-        when(organisaatioSearchService.findByOidSet(new HashSet<String>(Arrays.asList("1.2.3")))).thenReturn(organisaatioPerustiedot);
+        when(organisaatioService.findByUsingOrganisaatioCache(new HashSet<String>(Arrays.asList("1.2.3")))).thenReturn(organisaatioPerustiedot);
         when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(0))).thenReturn("oppilaitostyyppi_41");
     }
 
@@ -60,7 +60,7 @@ public class HakukohdeToSolrDocumentTest extends TestMockBase {
 
     @Test
     public void thatEmptyListIsReturnedWhenNoOrganisationFound() {
-        when(organisaatioSearchService.findByOidSet(new HashSet<String>(Arrays.asList("1.2.3")))).thenReturn(new ArrayList<OrganisaatioPerustieto>());
+        when(organisaatioService.findByUsingOrganisaatioCache(new HashSet<String>(Arrays.asList("1.2.3")))).thenReturn(new ArrayList<OrganisaatioPerustieto>());
         List<SolrInputDocument> docs = converter.apply(hakukohde.getId());
         assertTrue(docs.isEmpty());
     }
