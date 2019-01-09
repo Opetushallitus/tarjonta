@@ -350,12 +350,18 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
 
     @Override
     public List<Haku> findHakusWithAtaruFormKeys() {
-        QHaku qHaku = QHaku.haku;
-
-        return from(qHaku)
-          .where(qHaku.ataruLomakeAvain.isNotNull())
-          .where(qHaku.tila.ne(TarjontaTila.POISTETTU))
-          .list(qHaku);
+        return getEntityManager().createQuery(
+                "select h\n" +
+                "from Haku as h\n" +
+                "left join fetch h.nimi as nimi\n" +
+                "left join fetch nimi.tekstis\n" +
+                "left join fetch h.hakuaikas as hakuaika\n" +
+                "left join fetch hakuaika.nimi as hakuaika_nimi\n" +
+                "left join fetch hakuaika_nimi.tekstis\n" +
+                "where h.ataruLomakeAvain is not null and\n" +
+                "      h.tila <> 'POISTETTU'",
+                Haku.class
+        ).getResultList();
     }
 
     @Override
