@@ -191,13 +191,13 @@
 
   <repositories>
     <repository>
-      <id>oph-sade-artifactory</id>
-      <name>oph-sade-artifactory-3rd-party</name>
-      <url>https://artifactory.opintopolku.fi/artifactory/libs-3rd-party</url>
+      <id>oph-nexus-artifactory</id>
+      <name>oph-nexus-3rd-party</name>
+      <url>https://nexus.ops.opintopolku.fi/repository/libs-3rd-party-proxy/</url>
     </repository>
     <repository>
-      <id>oph-sade-artifactory-snapshots</id>
-      <url>https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local</url>
+      <id>oph-nexus-snapshots</id>
+      <url>https://nexus.ops.opintopolku.fi/repository/oph-sade-snapshot-proxy/</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -206,8 +206,8 @@
       </releases>
     </repository>
     <repository>
-      <id>oph-sade-artifactory-releases</id>
-      <url>https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local</url>
+      <id>oph-nexus-releases</id>
+      <url>https://nexus.ops.opintopolku.fi/repository/oph-sade-release-proxy/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -219,9 +219,9 @@
   </repositories>
   <pluginRepositories>
     <pluginRepository>
-      <id>oph-sade-artifactory</id>
-      <name>oph-sade-artifactory-releases</name>
-      <url>https://artifactory.opintopolku.fi/artifactory/libs-3rd-party</url>
+      <id>oph-nexus</id>
+      <name>oph-nexus-releases</name>
+      <url>https://nexus.ops.opintopolku.fi/repository/libs-3rd-party-proxy/</url>
 
     </pluginRepository>
   </pluginRepositories>
