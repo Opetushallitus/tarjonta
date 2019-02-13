@@ -191,7 +191,7 @@
 
   <repositories>
     <repository>
-      <id>oph-nexus-artifactory</id>
+      <id>oph-nexu</id>
       <name>oph-nexus-3rd-party</name>
       <url>https://nexus.ops.opintopolku.fi/repository/libs-3rd-party-proxy/</url>
     </repository>
