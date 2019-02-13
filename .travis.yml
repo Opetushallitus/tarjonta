@@ -26,7 +26,7 @@ env:
 install:
 - git clone https://github.com/Opetushallitus/ci-tools.git
 - cd ci-tools
-- checkout nexus
+- git checkout nexus
 - cd ..
 - source ci-tools/common/setup-tools.sh
 - export ARTIFACT_NAME="tarjonta"
