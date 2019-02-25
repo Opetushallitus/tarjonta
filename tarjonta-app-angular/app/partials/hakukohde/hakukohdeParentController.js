@@ -99,7 +99,8 @@ app.controller('HakukohdeParentController', [
                 'PELASTUSALAN_KOULUTUS',
                 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
                 'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA',
-                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER'
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMENTAVA_ER',
+                'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA'
             ], toteutusTyyppi);
         };
         $scope.CONFIGURATION = {
