@@ -388,7 +388,7 @@ public class HakuDAOImplTest extends TestData {
         hakuDAO.insert(haku4);
 
         List<Haku> ataruFormKeys = hakuDAO.findHakusWithAtaruFormKeys();
-        assertTrue(ataruFormKeys.size() == 3);
+        assertEquals(3, ataruFormKeys.size());
     }
     private HakukohdeSearchService hakukohdeSearchReturning(HakukohteetVastaus vastaus) {
         HakukohdeSearchService h = Mockito.mock(HakukohdeSearchService.class);
@@ -445,7 +445,7 @@ public class HakuDAOImplTest extends TestData {
 
         List<String> emptyOids = new ArrayList<>();
         List<Haku> resultAll = hakuDAO.findHakusWithAtaruFormKeys();
-        assertTrue(resultAll.size() == 3);
+        assertEquals(3, resultAll.size());
         List<String> allOids = getHakuOids(resultAll);
         assertEquals(allOids.contains(HAKU_OID1), true);
         assertEquals(allOids.contains(HAKU_OID2), true);
@@ -563,7 +563,7 @@ public class HakuDAOImplTest extends TestData {
     private Haku createHaku(String oid) {
         Haku haku = new Haku();
         haku.setOid(oid);
-        haku.setNimi(new MonikielinenTeksti("fi", "nimi1_fi"));
+        haku.setNimi(new MonikielinenTeksti("fi", "nimi1_fi", "sv", "nimi1_sv"));
         haku.setKoulutuksenAlkamiskausiUri("k#1");
         haku.setKoulutuksenAlkamisVuosi(2014);
         haku.setTila(TarjontaTila.VALMIS);
