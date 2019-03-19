@@ -1,25 +1,60 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import static fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1.getCriteriaListFromParams;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.core.StringContains.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.TestMockBase;
 import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
 import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
-import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.auditlog.AuditHelper;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.AutoRefreshableCache;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.YhdenPaikanSaantoBuilder;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.AtaruLomakeHakuV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.AtaruLomakkeetV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuSearchParamsV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeTulosV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
+import fi.vm.sade.tarjonta.service.search.HakukohdeSearchService;
+import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -29,16 +64,13 @@ import org.mockito.internal.util.reflection.Whitebox;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
-import java.util.*;
-
-import static fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1.getCriteriaListFromParams;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyString;
-import static org.hamcrest.core.StringContains.*;
-import static org.mockito.Mockito.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 public class HakuResourceImplV1Test extends TestMockBase {
 
@@ -52,6 +84,9 @@ public class HakuResourceImplV1Test extends TestMockBase {
 
     @InjectMocks
     private HakuResourceImplV1 hakuResource = new HakuResourceImplV1();
+
+    @Mock
+    private HakukohdeSearchService hakukohdeSearchService;
 
     @Rule
     public ExpectedException nonUniqueKoulutuksenAlkamiskaudet = ExpectedException.none();
@@ -491,6 +526,67 @@ public class HakuResourceImplV1Test extends TestMockBase {
             .thenReturn(Arrays.asList(createHaku("1.1.1"), createHaku("2.2.2")));
 
         assertThat(hakuResource.find(params, uriInfo).getResult(), hasSize(2));
+    }
+
+    @Test
+    public void organisationGroupOidsCauseHakukohdeSearchBothWithTarjoajaAndGroupOids() {
+        String hakuOid = "1.2.246.562.29.676633696010";
+        String searchTerms = "";
+        String organisationOid1 = "1.2.246.562.10.38382525541";
+        String organisationOid2 = "1.2.246.562.10.21540239577";
+        String organisationOidsStr = organisationOid1 + "," + organisationOid2;
+        String groupOid1 = "1.2.246.562.28.64488491917";
+        String groupOid2 = "1.2.246.562.28.48294892489";
+        String groupOidsStr = groupOid1 + "," + groupOid2;
+
+        when(hakukohdeSearchService.haeHakukohteet(argThat(new ArgumentMatcher<HakukohteetKysely>() {
+                    @Override
+                    public void describeTo(Description description) {
+                        description.appendText("organisationOids");
+                    }
+                    @Override
+                    public boolean matches(Object item) {
+                        if (!(item instanceof HakukohteetKysely)) {
+                            return false;
+                        }
+                        HakukohteetKysely kysely = (HakukohteetKysely) item;
+                        return kysely.getTarjoajaOids().size() == 2 &&
+                            kysely.getTarjoajaOids().contains(organisationOid1) &&
+                            kysely.getTarjoajaOids().contains(organisationOid2);
+                    }
+                }))).thenReturn(createHakukohteetVastaus(1));
+        when(hakukohdeSearchService.haeHakukohteet(argThat(new ArgumentMatcher<HakukohteetKysely>() {
+                    @Override
+                    public void describeTo(Description description) {
+                        description.appendText("groupOids");
+                    }
+                    @Override
+                    public boolean matches(Object item) {
+                        if (!(item instanceof HakukohteetKysely)) {
+                            return false;
+                        }
+                        HakukohteetKysely kysely = (HakukohteetKysely) item;
+                        return kysely.getOrganisaatioRyhmaOid().size() == 2 &&
+                            kysely.getOrganisaatioRyhmaOid().contains(groupOid1) &&
+                            kysely.getOrganisaatioRyhmaOid().contains(groupOid2);
+                    }
+                }))).thenReturn(createHakukohteetVastaus(2));
+
+        HakukohdeTulosV1RDTO result = hakuResource.getHakukohdeTulos(hakuOid, searchTerms, 15, 0, null, null, organisationOidsStr, groupOidsStr, "JULKAISTU", 2018, null);
+        assertThat(result.getTulokset(), hasSize(3));
+    }
+
+    private HakukohteetVastaus createHakukohteetVastaus(int numberToReturn) {
+        HakukohteetVastaus vastaus = new HakukohteetVastaus();
+        vastaus.setHitCount(numberToReturn);
+        List<HakukohdePerustieto> hakukohteet = new LinkedList<>();
+        for (int i = 0; i < numberToReturn; i++) {
+            HakukohdePerustieto hakukohde = new HakukohdePerustieto();
+            hakukohde.setOid("oid" + i);
+            hakukohteet.add(hakukohde);
+        }
+        vastaus.setHakukohteet(hakukohteet);
+        return vastaus;
     }
 
     private static void assertKohdejoukot(HakuSearchParamsV1RDTO params, UriInfo uriInfo, String expectedValue) {

@@ -131,6 +131,7 @@ public interface HakuV1Resource {
                                                   @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
                                                   @QueryParam("lastModifiedSince") Date lastModifiedSince,
                                                   @QueryParam("organisationOids") String organisationOidsStr,
+                                                  @QueryParam("organisationGroupOids") String organisationGroupOidsStr,
                                                   @QueryParam("hakukohdeTilas") String hakukohdeTilasStr,
                                                   @QueryParam("alkamisVuosi") Integer alkamisVuosi,
                                                   @QueryParam("alkamisKausi") String alkamisKausi
