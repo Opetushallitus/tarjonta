@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -25,7 +24,6 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Ordering;
@@ -345,20 +343,6 @@ public class HakuResourceImpl implements HakuResource {
                 SisaltoTyyppi.HAKU, tt.asDto())));
         tarjontaAdminService.paivitaTilat(ptt);
     }
-
-    @Override
-    public KelaHakukohteetDTO haeHakukohteetKela() {
-        HakukohteetVastaus v = hakukohdeSearchService.haeHakukohteet(new HakukohteetKysely());
-        KelaHakukohteetDTO resp = new KelaHakukohteetDTO();
-
-        resp.setHakukohteet(v.getHakukohteet().stream()
-                .map(h -> new KelaHakukohdeDTO(h.getOid(), h.getTarjoajaOid(), h.getNimi(), h.getTila()))
-                .collect(Collectors.toList())
-        );
-
-        return resp;
-    }
-
 
     /**
      * Adjust default value.

@@ -1,20 +1,18 @@
-package fi.vm.sade.tarjonta.service.resources.dto;
+package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class KelaHakukohdeDTO implements Serializable {
+public class KelaHakukohdeV1RDTO implements Serializable {
     private String oid;
     private String tarjoajaOid;
     private Map<String, String> nimi = new HashMap<String, String>();
     private TarjontaTila tila;
 
-    public KelaHakukohdeDTO(String oid, String tarjoajaOid, Map<String, String> nimi, TarjontaTila tila) {
+    public KelaHakukohdeV1RDTO(String oid, String tarjoajaOid, Map<String, String> nimi, TarjontaTila tila) {
         this.oid = oid;
         this.tarjoajaOid = tarjoajaOid;
         this.nimi = nimi;

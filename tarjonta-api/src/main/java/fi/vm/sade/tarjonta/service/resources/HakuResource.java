@@ -17,7 +17,6 @@ import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.KelaHakukohteetDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 
 /**
@@ -197,9 +196,5 @@ public interface HakuResource {
     @Path("{oid}/state")
     @Consumes(MediaType.TEXT_PLAIN)
     public void updateHakuState(@PathParam("oid") String hakuOid, String state);
-
-    @GET
-    @Path("{oid}/kela/export")
-    public KelaHakukohteetDTO haeHakukohteetKela();
 
 }

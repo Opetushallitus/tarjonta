@@ -154,4 +154,11 @@ public interface HakuV1Resource {
     public ResultV1RDTO<List<AtaruLomakkeetV1RDTO>> findAtaruFormUsage(
       @ApiParam(value = "Organisaation oid:t listauksen rajaamiseksi organisaatioiden lomakkeisiin. Jos parametri puuttuu, palautetaan kaikkien organisaatioiden tiedot.", required = false) @QueryParam("oid") final List<String> organisationOids
     );
+
+    @GET
+    @Path("/kela/export")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Hakee listauksen hauista kela exportin tarvitsemilla tiedoilla.")
+    public KelaHakukohteetV1RDTO getHakukohteetKela();
+
 }
