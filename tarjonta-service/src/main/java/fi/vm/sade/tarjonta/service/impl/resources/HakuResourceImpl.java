@@ -8,10 +8,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.service.resources.dto.*;
 import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.*;
 import org.apache.commons.lang.StringUtils;
@@ -33,10 +35,6 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.resources.HakuResource;
-import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 @Transactional(readOnly = true, rollbackFor = Throwable.class)
@@ -346,6 +344,19 @@ public class HakuResourceImpl implements HakuResource {
         PaivitaTilaTyyppi ptt = new PaivitaTilaTyyppi(Collections.singletonList(new GeneerinenTilaTyyppi(hakuOid,
                 SisaltoTyyppi.HAKU, tt.asDto())));
         tarjontaAdminService.paivitaTilat(ptt);
+    }
+
+    @Override
+    public KelaHakukohteetDTO haeHakukohteetKela() {
+        HakukohteetVastaus v = hakukohdeSearchService.haeHakukohteet(new HakukohteetKysely());
+        KelaHakukohteetDTO resp = new KelaHakukohteetDTO();
+
+        resp.setHakukohteet(v.getHakukohteet().stream()
+                .map(h -> new KelaHakukohdeDTO(h.getOid(), h.getTarjoajaOid(), h.getNimi(), h.getTila()))
+                .collect(Collectors.toList())
+        );
+
+        return resp;
     }
 
 
