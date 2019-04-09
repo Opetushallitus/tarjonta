@@ -38,18 +38,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Match;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.ProcessResourceV1;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.AtaruLomakeHakuV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.AtaruLomakkeetV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuSearchParamsV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeNimiV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeTulosV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohdeSearchService;
@@ -1198,4 +1187,19 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         }
         return resultV1RDTO;
     }
+
+    @Override
+    public KelaHakukohteetV1RDTO getHakukohteetKela() {
+        HakukohteetVastaus v = hakukohdeSearchService.haeHakukohteet(new HakukohteetKysely());
+        KelaHakukohteetV1RDTO resp = new KelaHakukohteetV1RDTO();
+
+        resp.setHakukohteet(v.getHakukohteet().stream()
+                .map(h -> new KelaHakukohdeV1RDTO(h.getOid(), h.getTarjoajaOid(), h.getNimi(), h.getTila()))
+                .collect(Collectors.toList())
+        );
+
+        return resp;
+    }
+
+
 }

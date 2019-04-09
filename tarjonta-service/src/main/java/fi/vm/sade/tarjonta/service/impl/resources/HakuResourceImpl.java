@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.service.resources.dto.*;
 import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.*;
 import org.apache.commons.lang.StringUtils;
@@ -23,7 +24,6 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Ordering;
@@ -33,10 +33,6 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.resources.HakuResource;
-import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 @Transactional(readOnly = true, rollbackFor = Throwable.class)
@@ -347,7 +343,6 @@ public class HakuResourceImpl implements HakuResource {
                 SisaltoTyyppi.HAKU, tt.asDto())));
         tarjontaAdminService.paivitaTilat(ptt);
     }
-
 
     /**
      * Adjust default value.
