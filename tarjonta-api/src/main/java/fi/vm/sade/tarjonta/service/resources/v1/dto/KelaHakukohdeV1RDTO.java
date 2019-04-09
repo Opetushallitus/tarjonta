@@ -12,6 +12,10 @@ public class KelaHakukohdeV1RDTO implements Serializable {
     private Map<String, String> nimi = new HashMap<String, String>();
     private TarjontaTila tila;
 
+    public KelaHakukohdeV1RDTO() {
+
+    }
+
     public KelaHakukohdeV1RDTO(String oid, String tarjoajaOid, Map<String, String> nimi, TarjontaTila tila) {
         this.oid = oid;
         this.tarjoajaOid = tarjoajaOid;
