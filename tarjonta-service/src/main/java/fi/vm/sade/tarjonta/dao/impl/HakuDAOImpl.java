@@ -351,7 +351,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     @Override
     public List<Haku> findHakusWithAtaruFormKeys() {
         return getEntityManager().createQuery(
-                "select h\n" +
+                "select distinct h\n" +
                 "from Haku as h\n" +
                 "left join fetch h.nimi as nimi\n" +
                 "left join fetch nimi.tekstis\n" +
