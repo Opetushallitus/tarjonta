@@ -197,7 +197,7 @@
     </repository>
     <repository>
       <id>oph-nexus-snapshots</id>
-      <url>https://nexus.ops.opintopolku.fi/artifactory/repository/oph-sade-snapshot-local/</url>
+      <url>https://nexus.ops.opintopolku.fi/artifactory/oph-sade-snapshot-local/</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
