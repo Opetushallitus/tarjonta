@@ -14,9 +14,15 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.HAKU;
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.*;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiParam;
+
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
@@ -49,6 +55,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +79,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -80,8 +88,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.*;
 
 /**
  * REST API V1 implementation for Haku.
@@ -878,6 +884,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                                                   Date lastModifiedBefore,
                                                   Date lastModifiedSince,
                                                   String organisationOidsStr,
+                                                  String organisationGroupOidsStr,
                                                   String hakukohdeTilasStr,
                                                   Integer alkamisVuosi,
                                                   String alkamisKausi) {
@@ -890,6 +897,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         final String filtterointiTeksti = StringUtils.upperCase(StringUtils.trimToEmpty(searchTerms));
 
         List<String> organisationOids = splitToList(organisationOidsStr, ",");
+        List<String> organisationGroupOids = splitToList(organisationGroupOidsStr, ",");
         List<String> hakukohdeTilas = splitToList(hakukohdeTilasStr, ",");
 
         LOG.debug("  oids = {}", organisationOids);
@@ -914,9 +922,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             }
         }
 
-        HakukohteetVastaus v = hakukohdeSearchService.haeHakukohteet(hakukohteetKysely);
-
-        Collection<HakukohdePerustieto> tulokset = v.getHakukohteet();
+        Collection<HakukohdePerustieto> tulokset = haeHakukohteet(hakukohteetKysely, organisationGroupOids);
         // filtteroi tarvittaessa tulokset joko tarjoaja- tai hakukohdenimen
         // mukaan!
         if (!filtterointiTeksti.isEmpty()) {
@@ -968,6 +974,22 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             ++index;
         }
         return new HakukohdeTulosV1RDTO(size, results);
+    }
+
+    private Collection<HakukohdePerustieto> haeHakukohteet(HakukohteetKysely hakukohteetKysely, List<String> hakukohderyhmaOidit) {
+        HakukohteetVastaus hakukohteetTarjoajarajauksella = hakukohdeSearchService.haeHakukohteet(hakukohteetKysely);
+        if (hakukohderyhmaOidit.isEmpty()) {
+            return hakukohteetTarjoajarajauksella.getHakukohteet();
+        }
+        LOG.info(String.format("Tarjoajarajauksella löytyi %d tulosta. Haetaan hakukohteita kyselyn %s lisäksi myös hakukohderyhmillä %s",
+            hakukohteetTarjoajarajauksella.getHitCount(), ToStringBuilder.reflectionToString(hakukohteetKysely), hakukohderyhmaOidit));
+        hakukohteetKysely.getTarjoajaOids().clear();
+        hakukohteetKysely.setOrganisaatioRyhmaOid(hakukohderyhmaOidit);
+        HakukohteetVastaus hakukohteetRyhmarajauksella = hakukohdeSearchService.haeHakukohteet(hakukohteetKysely);
+        LOG.info("Löytyi vielä " + hakukohteetRyhmarajauksella.getHitCount() + " tulosta ryhmärajauksella.");
+        Set<HakukohdePerustieto> kaikkiTulokset = new HashSet<>(hakukohteetTarjoajarajauksella.getHakukohteet());
+        kaikkiTulokset.addAll(hakukohteetRyhmarajauksella.getHakukohteet());
+        return kaikkiTulokset;
     }
 
     private void createHakukohdeNimiV1RDTO(List<HakukohdeNimiV1RDTO> results, HakukohdePerustieto tulos) {
