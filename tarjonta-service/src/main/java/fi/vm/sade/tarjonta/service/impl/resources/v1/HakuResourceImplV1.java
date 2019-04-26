@@ -988,7 +988,13 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         HakukohteetVastaus hakukohteetRyhmarajauksella = hakukohdeSearchService.haeHakukohteet(hakukohteetKysely);
         LOG.info("Löytyi vielä " + hakukohteetRyhmarajauksella.getHitCount() + " tulosta ryhmärajauksella.");
         Set<HakukohdePerustieto> kaikkiTulokset = new HashSet<>(hakukohteetTarjoajarajauksella.getHakukohteet());
-        kaikkiTulokset.addAll(hakukohteetRyhmarajauksella.getHakukohteet());
+        hakukohteetRyhmarajauksella.getHakukohteet().forEach(hakukohdeRyhmanPerusteella -> {
+            if (kaikkiTulokset.stream().anyMatch(h -> h.getOid().equals(hakukohdeRyhmanPerusteella.getOid()))) {
+                LOG.debug("Skipataan hakukohde " + hakukohdeRyhmanPerusteella.getOid() + " , jonka oidilla on jo lisätty hakukohde tarjoajarajauksella.");
+            } else {
+                kaikkiTulokset.add(hakukohdeRyhmanPerusteella);
+            }
+        });
         return kaikkiTulokset;
     }
 
