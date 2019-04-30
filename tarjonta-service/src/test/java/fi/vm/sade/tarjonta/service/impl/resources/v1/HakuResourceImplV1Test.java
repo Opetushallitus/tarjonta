@@ -71,6 +71,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HakuResourceImplV1Test extends TestMockBase {
 
@@ -554,7 +555,7 @@ public class HakuResourceImplV1Test extends TestMockBase {
                             kysely.getTarjoajaOids().contains(organisationOid1) &&
                             kysely.getTarjoajaOids().contains(organisationOid2);
                     }
-                }))).thenReturn(createHakukohteetVastaus(1));
+                }))).thenReturn(createHakukohteetVastaus(1, 0));
         when(hakukohdeSearchService.haeHakukohteet(argThat(new ArgumentMatcher<HakukohteetKysely>() {
                     @Override
                     public void describeTo(Description description) {
@@ -570,19 +571,72 @@ public class HakuResourceImplV1Test extends TestMockBase {
                             kysely.getOrganisaatioRyhmaOid().contains(groupOid1) &&
                             kysely.getOrganisaatioRyhmaOid().contains(groupOid2);
                     }
-                }))).thenReturn(createHakukohteetVastaus(2));
+                }))).thenReturn(createHakukohteetVastaus(2, 1000));
 
         HakukohdeTulosV1RDTO result = hakuResource.getHakukohdeTulos(hakuOid, searchTerms, 15, 0, null, null, organisationOidsStr, groupOidsStr, "JULKAISTU", 2018, null);
         assertThat(result.getTulokset(), hasSize(3));
     }
 
+    @Test
+    public void hakukohdeIsNotReturnedTwiceIfItIsFoundBothByOrganisationAndGroupOid() {
+        String hakuOid = "1.2.246.562.29.676633696010";
+        String searchTerms = "";
+        String organisationOid1 = "1.2.246.562.10.38382525541";
+        String groupOid1 = "1.2.246.562.28.64488491917";
+
+        HakukohteetVastaus hakukohteetVastaus1 = createHakukohteetVastaus(7, 0);
+        HakukohteetVastaus hakukohteetVastaus2 = createHakukohteetVastaus(7, 0);
+
+        List<String> oids1 = hakukohteetVastaus1.getHakukohteet().stream().map(HakukohdePerustieto::getOid).collect(Collectors.toList());
+        List<String> oids2 = hakukohteetVastaus2.getHakukohteet().stream().map(HakukohdePerustieto::getOid).collect(Collectors.toList());
+        assertEquals(oids1, oids2);
+
+        when(hakukohdeSearchService.haeHakukohteet(argThat(new ArgumentMatcher<HakukohteetKysely>() {
+                    @Override
+                    public void describeTo(Description description) {
+                        description.appendText("organisationOids");
+                    }
+                    @Override
+                    public boolean matches(Object item) {
+                        if (!(item instanceof HakukohteetKysely)) {
+                            return false;
+                        }
+                        HakukohteetKysely kysely = (HakukohteetKysely) item;
+                        return kysely.getTarjoajaOids().size() == 1 &&
+                            kysely.getTarjoajaOids().contains(organisationOid1);
+                    }
+                }))).thenReturn(hakukohteetVastaus1);
+        when(hakukohdeSearchService.haeHakukohteet(argThat(new ArgumentMatcher<HakukohteetKysely>() {
+                    @Override
+                    public void describeTo(Description description) {
+                        description.appendText("groupOids");
+                    }
+                    @Override
+                    public boolean matches(Object item) {
+                        if (!(item instanceof HakukohteetKysely)) {
+                            return false;
+                        }
+                        HakukohteetKysely kysely = (HakukohteetKysely) item;
+                        return kysely.getOrganisaatioRyhmaOid().size() == 1 &&
+                            kysely.getOrganisaatioRyhmaOid().contains(groupOid1);
+                    }
+                }))).thenReturn(hakukohteetVastaus2);
+
+        HakukohdeTulosV1RDTO result = hakuResource.getHakukohdeTulos(hakuOid, searchTerms, 15, 0, null, null, organisationOid1, groupOid1, "JULKAISTU", 2018, null);
+        assertThat(result.getTulokset(), hasSize(7));
+    }
+
     private HakukohteetVastaus createHakukohteetVastaus(int numberToReturn) {
+        return createHakukohteetVastaus(numberToReturn, 0);
+    }
+
+    private HakukohteetVastaus createHakukohteetVastaus(int numberToReturn, int oidStartIndex) {
         HakukohteetVastaus vastaus = new HakukohteetVastaus();
         vastaus.setHitCount(numberToReturn);
         List<HakukohdePerustieto> hakukohteet = new LinkedList<>();
         for (int i = 0; i < numberToReturn; i++) {
             HakukohdePerustieto hakukohde = new HakukohdePerustieto();
-            hakukohde.setOid("oid" + i);
+            hakukohde.setOid("oid" + (oidStartIndex + i));
             hakukohteet.add(hakukohde);
         }
         vastaus.setHakukohteet(hakukohteet);
