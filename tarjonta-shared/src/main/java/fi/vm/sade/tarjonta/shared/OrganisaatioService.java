@@ -307,7 +307,7 @@ public class OrganisaatioService {
 
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
-            connection.setRequestProperty("Caller-Id", "1.2.246.562.10.00000000001.tarjonta");
+            connection.setRequestProperty("Caller-Id", HttpClientConfiguration.CALLER_ID);
             connection.setRequestProperty("content-type", "application/json;charset=UTF-8");
             connection.setDoOutput(true);
             connection.setConnectTimeout(2000);
