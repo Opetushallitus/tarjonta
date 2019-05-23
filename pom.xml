@@ -677,6 +677,12 @@
         <groupId>fi.vm.sade.java-utils</groupId>
         <artifactId>opintopolku-user-details-service</artifactId>
         <version>0.1.0-SNAPSHOT</version>
+        <exclusions>
+          <exclusion>
+            <groupId>fi.vm.sade.java-utils</groupId>
+            <artifactId>httpclient</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <!-- Without this there are intermittent bugs after rebooting tarjonta. -->
