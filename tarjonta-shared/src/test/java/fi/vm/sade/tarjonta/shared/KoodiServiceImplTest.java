@@ -40,7 +40,7 @@ public class KoodiServiceImplTest {
 
         UrlConfiguration properties = new UrlConfiguration();
         properties.addOverride("host.virkailija", "localhost");
-        OphHttpClient httpClient = new OphHttpClient(httpClientProxyMock, "tarjonta", properties);
+        OphHttpClient httpClient = new OphHttpClient(httpClientProxyMock, HttpClientConfiguration.CALLER_ID, properties);
 
         koodiServiceImpl = new KoodiServiceImpl(httpClient);
     }
