@@ -17,6 +17,7 @@ public class KoodistoProactiveCaching {
     @Autowired
     public KoodistoProactiveCaching(UrlConfiguration urlConfiguration) {
         this.cachingKoodistoClient = new CachingKoodistoClient(urlConfiguration.url("koodisto-service.base"));
+        this.cachingKoodistoClient.setCallerId(HttpClientConfiguration.CALLER_ID);
         this.clearCache();
     }
 
