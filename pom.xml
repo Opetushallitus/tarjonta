@@ -12,7 +12,7 @@
   <parent>
     <groupId>fi.vm.sade.generic</groupId>
     <artifactId>build-parent</artifactId>
-    <version>2018-37-SNAPSHOT</version>
+    <version>2019-06-SNAPSHOT</version>
   </parent>
 
   <properties>
