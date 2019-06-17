@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.shared;
 
+import com.google.common.collect.Sets;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ public class OrganisaatioCache {
     public void populateOrganisaatioCache(OrganisaatioPerustieto root, List<OrganisaatioPerustieto> rootChildren) {
         this.root = root;
         this.byOid = new HashMap<>();
-        root.setChildren(rootChildren);
+        root.setChildren(Sets.newHashSet(rootChildren));
         this.setParents(root, rootChildren);
         this.byOid.put(root.getOid(), root);
         this.byOid.putAll(rootChildren.stream().flatMap(this::andChildren)

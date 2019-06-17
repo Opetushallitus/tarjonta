@@ -8,6 +8,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioHakutulos;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.dto.v2.OrganisaatioHakutulosSuppeaDTOV2;
@@ -136,7 +137,7 @@ public class OrganisaatioService {
     public synchronized long refreshCacheIfNeeded(OrganisaatioCache organisaatioCache) {
         if (ChronoUnit.SECONDS.between(organisaatioCache.getLastUpdated(), LocalDateTime.now()) > this.cacheRefreshInterval) {
             // Add organisations to cache (active, incoming and passive)
-            List<OrganisaatioPerustieto> organisaatiosWithoutRootOrg = this.fetchAllOrganisationWithHaeAPI().getOrganisaatiot();
+            List<OrganisaatioPerustieto> organisaatiosWithoutRootOrg = Lists.newArrayList(this.fetchAllOrganisationWithHaeAPI().getOrganisaatiot());
             organisaatioCache.populateOrganisaatioCache(new OrganisaatioPerustieto(), organisaatiosWithoutRootOrg);
             LOG.info("Organisation client cache refreshed with {} organisations", organisaatioCache.getCacheCount());
         }
