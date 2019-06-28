@@ -103,12 +103,12 @@
         <dependency>
             <groupId>fi.vm.sade.java-utils</groupId>
             <artifactId>java-properties</artifactId>
-            <version>${java-utils.version}</version>
+            <version>0.1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>fi.vm.sade.java-utils</groupId>
             <artifactId>httpclient</artifactId>
-            <version>0.3.0-SNAPSHOT</version>
+            <version>${java-utils.version}</version>
         </dependency>
 
         <dependency>
@@ -119,7 +119,7 @@
         <dependency>
             <groupId>fi.vm.sade.java-utils</groupId>
             <artifactId>java-cas</artifactId>
-            <version>${java-utils.version}</version>
+            <version>${java-cas.version}</version>
         </dependency>
 
         <dependency>

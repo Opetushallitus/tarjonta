@@ -15,7 +15,7 @@
 
 package fi.vm.sade.tarjonta.service;
 
-import fi.vm.sade.generic.healthcheck.SpringAwareHealthCheckServlet;
+import fi.vm.sade.javautils.healthcheck.SpringAwareHealthCheckServlet;
 
 /**
  *

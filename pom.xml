@@ -39,8 +39,8 @@
     <commons-lang3.version>3.5</commons-lang3.version>
     <commons-logging.version>1.1.3</commons-logging.version>
     <customfield.version>1.0.0</customfield.version>
-    <cxf-codegen-plugin.version>3.2.0</cxf-codegen-plugin.version>
-    <cxf.version>3.2.0</cxf.version>
+    <cxf-codegen-plugin.version>3.3.0</cxf-codegen-plugin.version>
+    <cxf.version>3.3.0</cxf.version>
     <dbunit-maven-plugin.version>1.0-beta-3</dbunit-maven-plugin.version>
     <easymock.version>3.1</easymock.version>
     <ehcache-core.version>2.5.0</ehcache-core.version>
@@ -67,8 +67,8 @@
     <httpmime.version>4.3.1</httpmime.version>
     <jackson-asl.version>1.9.13</jackson-asl.version>
     <jackson.version>2.8.1</jackson.version>
-    <java-cas.version>0.3.0-SNAPSHOT</java-cas.version>
-    <java-utils.version>0.1.0-SNAPSHOT</java-utils.version>
+    <java-cas.version>0.4.0-SNAPSHOT</java-cas.version>
+    <java-utils.version>0.3.0-SNAPSHOT</java-utils.version>
     <java.version>1.8</java.version>
     <javassist.version>3.18.2-GA</javassist.version>
     <javax.annotation-api.version>1.3</javax.annotation-api.version>
@@ -453,6 +453,11 @@
       <dependency>
         <groupId>fi.vm.sade.java-utils</groupId>
         <artifactId>java-cas</artifactId>
+        <version>${java-cas.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>fi.vm.sade.java-utils</groupId>
+        <artifactId>spring-aware-health-check-servlet</artifactId>
         <version>${java-utils.version}</version>
       </dependency>
       <dependency>
