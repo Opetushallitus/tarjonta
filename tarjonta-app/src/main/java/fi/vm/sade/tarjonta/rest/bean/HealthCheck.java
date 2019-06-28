@@ -1,6 +1,6 @@
 package fi.vm.sade.tarjonta.rest.bean;
 
-import fi.vm.sade.generic.healthcheck.SpringAwareHealthCheckServlet;
+import fi.vm.sade.javautils.healthcheck.SpringAwareHealthCheckServlet;
 
 public class HealthCheck extends SpringAwareHealthCheckServlet {
 
