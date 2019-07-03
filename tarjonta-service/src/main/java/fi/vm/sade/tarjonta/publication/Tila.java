@@ -32,4 +32,8 @@ public class Tila {
 
     private final TarjontaTila tila;
 
+    public String toString() {
+        return String.format("Kissa Tyyppi: %s, tila: %s, oid: %s ", tyyppi.toString(), tila.toString(), oid);
+    }
+
 }
