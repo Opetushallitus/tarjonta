@@ -12,14 +12,14 @@
   <parent>
     <groupId>fi.vm.sade.generic</groupId>
     <artifactId>build-parent</artifactId>
-    <version>2018-37-SNAPSHOT</version>
+    <version>2019-06-SNAPSHOT</version>
   </parent>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
 
-    <activation.version>1.0.2</activation.version>
+    <activation.version>1.1.1</activation.version>
     <antisamy.version>1.4.5</antisamy.version>
     <asm.version>5.2</asm.version>
     <aspectj-maven-plugin.version>1.4</aspectj-maven-plugin.version>
@@ -39,8 +39,8 @@
     <commons-lang3.version>3.5</commons-lang3.version>
     <commons-logging.version>1.1.3</commons-logging.version>
     <customfield.version>1.0.0</customfield.version>
-    <cxf-codegen-plugin.version>3.2.0</cxf-codegen-plugin.version>
-    <cxf.version>3.2.0</cxf.version>
+    <cxf-codegen-plugin.version>3.3.0</cxf-codegen-plugin.version>
+    <cxf.version>3.3.0</cxf.version>
     <dbunit-maven-plugin.version>1.0-beta-3</dbunit-maven-plugin.version>
     <easymock.version>3.1</easymock.version>
     <ehcache-core.version>2.5.0</ehcache-core.version>
@@ -50,7 +50,7 @@
     <flyway-maven-plugin.version>2.0.3</flyway-maven-plugin.version>
     <formbinder.version>2.1.1</formbinder.version>
     <frontend-maven-plugin.version>0.0.25</frontend-maven-plugin.version>
-    <generic-common.version>9.0-SNAPSHOT</generic-common.version>
+    <generic-common.version>9.6-SNAPSHOT</generic-common.version>
     <geronimo-jms_1.1_spec.version>1.1.1</geronimo-jms_1.1_spec.version>
     <gson.version>2.2.4</gson.version>
     <guava.version>18.0</guava.version>
@@ -67,8 +67,8 @@
     <httpmime.version>4.3.1</httpmime.version>
     <jackson-asl.version>1.9.13</jackson-asl.version>
     <jackson.version>2.8.1</jackson.version>
-    <java-cas.version>0.3.0-SNAPSHOT</java-cas.version>
-    <java-utils.version>0.1.0-SNAPSHOT</java-utils.version>
+    <java-cas.version>0.4.0-SNAPSHOT</java-cas.version>
+    <java-utils.version>0.3.0-SNAPSHOT</java-utils.version>
     <java.version>1.8</java.version>
     <javassist.version>3.18.2-GA</javassist.version>
     <javax.annotation-api.version>1.3</javax.annotation-api.version>
@@ -84,7 +84,7 @@
     <joda-time.version>2.3</joda-time.version>
     <jsr311-api.version>1.1.1</jsr311-api.version>
     <junit.version>4.12</junit.version>
-    <koodisto.version>10.0-SNAPSHOT</koodisto.version>
+    <koodisto.version>2019-06-SNAPSHOT</koodisto.version>
     <log.version>8.0</log.version>
     <log4j.version>1.2.17</log4j.version>
     <mail.version>1.4.7</mail.version>
@@ -453,6 +453,11 @@
       <dependency>
         <groupId>fi.vm.sade.java-utils</groupId>
         <artifactId>java-cas</artifactId>
+        <version>${java-cas.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>fi.vm.sade.java-utils</groupId>
+        <artifactId>spring-aware-health-check-servlet</artifactId>
         <version>${java-utils.version}</version>
       </dependency>
       <dependency>
@@ -677,6 +682,12 @@
         <groupId>fi.vm.sade.java-utils</groupId>
         <artifactId>opintopolku-user-details-service</artifactId>
         <version>0.1.0-SNAPSHOT</version>
+        <exclusions>
+          <exclusion>
+            <groupId>fi.vm.sade.java-utils</groupId>
+            <artifactId>httpclient</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <!-- Without this there are intermittent bugs after rebooting tarjonta. -->

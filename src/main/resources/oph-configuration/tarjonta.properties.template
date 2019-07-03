@@ -74,8 +74,8 @@ tarjonta.public.webservice.url.backend=https://${host.virkailija}/tarjonta-servi
 user.home.conf=/data00/oph/tarjonta/oph-configuration
 web.url.cas=https://${host.cas}/cas
 organisaatio.api.rest.url=https://${host.virkailija}/organisaatio-service/rest/
-callerid.tarjonta.tarjonta-app.frontend=tarjonta.tarjonta-app.frontend
-callerid.tarjonta.tarjonta-service.backend=tarjonta.tarjonta-service.backend
+callerid.tarjonta.tarjonta-app.frontend=1.2.246.562.10.00000000001.tarjonta-frontend
+callerid.tarjonta.tarjonta-service.backend=1.2.246.562.10.00000000001.tarjonta-backend
 tarjonta-service.postgresql.url=jdbc:postgresql://{{host_postgresql_tarjonta}}:{{port_postgresql}}/tarjonta?ApplicationName=tarjonta-service
 tarjonta-service.postgresql.user={{host_postgresql_tarjonta_user}}
 tarjonta-service.postgresql.password={{host_postgresql_tarjonta_password}}
