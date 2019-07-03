@@ -179,17 +179,21 @@ public class IndexerResource {
 
     public void indexMuutokset(Tilamuutokset tm) {
         if (tm.getMuutetutKomotot().size() > 0) {
+            LocalDateTime indexingStarted = logIndexingStart(tm.getMuutetutKomotot().size(), "koulutus");
             this.indexService.indexKoulutukset(koulutusmoduuliToteutusDAO.findIdsByoids(tm.getMuutetutKomotot()));
+            logIndexingReady(tm.getMuutetutKomotot().size(), indexingStarted, "koulutus");
         }
         if (tm.getMuutetutHakukohteet().size() > 0) {
+            LocalDateTime indexingStarted = logIndexingStart(tm.getMuutetutHakukohteet().size(), "hakukohde");
             this.indexService.indexHakukohteet(hakukohdeDAO.findIdsByoids(tm.getMuutetutHakukohteet()));
+            logIndexingReady(tm.getMuutetutHakukohteet().size(), indexingStarted, "hakukohde");
         }
 
     }
 
     private LocalDateTime logIndexingStart(int entitysToIndex, String type) {
         if (entitysToIndex > 0) {
-            logger.info("Starting {} idexing with {} to index", type, entitysToIndex);
+            logger.info("Starting {} indexing with {} to index", type, entitysToIndex);
         }
         return LocalDateTime.now();
     }
