@@ -9,8 +9,10 @@ import fi.vm.sade.tarjonta.service.business.IndexService;
 import fi.vm.sade.tarjonta.service.search.HakukohdeToSolrDocument;
 import fi.vm.sade.tarjonta.service.search.KoulutusToSolrDocument;
 import fi.vm.sade.tarjonta.service.search.SolrServerFactory;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,7 @@ import org.springframework.transaction.support.TransactionSynchronizationAdapter
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -104,20 +107,60 @@ public class IndexServiceImpl implements IndexService {
     @Transactional
     @Override
     public int indexHakukohdeBatch(List<Long> hakukohdeIdt, int batch_size, int index) {
-        final List<SolrInputDocument> docs = Lists.newArrayList();
-        for (int j = index; j < index + batch_size && j < hakukohdeIdt.size(); j++) {
-
-            Long hakukohdeId = hakukohdeIdt.get(j);
-            logger.debug(j + ". Fetching hakukohde:" + hakukohdeId);
-            docs.addAll(hakukohdeConverter.apply(hakukohdeId));
+        logger.info("Indexing hakukohde batch, new implementation. Total ids: " + hakukohdeIdt.size());
+        final List<Long> hakukohdeIdsInThisBatch = hakukohdeIdt.subList(index, Math.min(index+batch_size, hakukohdeIdt.size()));
+        final List<Pair<SolrInputDocument, Long>> docsToBeIndexed = new ArrayList<>();
+        for (Long hakukohdeId : hakukohdeIdsInThisBatch) {
+            List<SolrInputDocument> toAdd = hakukohdeConverter.apply(hakukohdeId);
+            toAdd.forEach(doc -> docsToBeIndexed.add(Pair.of(doc, hakukohdeId)));
             indexerDao.updateHakukohdeIndexed(hakukohdeId,  new Date());
         }
-        index += batch_size;
-        logger.debug("indexing:" + docs.size() + " docs");
-        index(hakukohdeSolr, docs);
-        docs.clear();
+        index += hakukohdeIdsInThisBatch.size();
+        logger.debug("indexing:" + docsToBeIndexed.size() + " docs");
+        List<Long> successes = indexToSolrAndReportSuccesses(hakukohdeSolr, docsToBeIndexed);
+        logger.info("Successes: {}. Committing", successes.size());
         commit(hakukohdeSolr);
         return index;
+    }
+
+    private List<Long> indexToSolrAndReportSuccesses(final SolrServer solr, List<Pair<SolrInputDocument, Long>> docsToIndex) {
+        List<Long> successes = new ArrayList<>();
+
+        logger.info("Got call to index {} documents if ", docsToIndex.size());
+
+        if (docsToIndex.size() > 0) {
+            final List<Pair<SolrInputDocument, Long>> localDocs = ImmutableList.copyOf(docsToIndex);
+            afterCommit(new TransactionSynchronizationAdapter() {
+                @Override
+                public void afterCommit() {
+                    Exception lastException = null;
+                    logger.info("Now actually indexing {} documents", localDocs.size());
+                    try {
+                        for (Pair<SolrInputDocument, Long> doc : localDocs) {
+                            System.out.println("adding " + doc.getRight());
+                            UpdateResponse res = solr.add(doc.getLeft());
+                            if (res != null && res.getStatus() == 0) {
+                                successes.add(doc.getRight());
+                            } else if (res != null) {
+                                logger.error("Something went wrong while indexing document id " + doc.getRight() +
+                                        " with oid " + doc.getLeft().get("id") +
+                                        ", status code from solr " + res.getStatus());
+                            } else {
+                                logger.warn("Whoa! Why does solr return a null? id: " + doc.getRight());
+                            }
+                        }
+                        return; // Return peacefully if no errors caught
+                    } catch (Exception e) {
+                        logger.error("Exception happened while indexing: ", e);
+                        lastException = e;
+                    }
+
+                    throw new RuntimeException(
+                            "indexing.error, last exception:", lastException);
+                }
+            });
+        }
+        return successes;
     }
 
     private void index(final SolrServer solr, List<SolrInputDocument> docs) {
@@ -129,6 +172,7 @@ public class IndexServiceImpl implements IndexService {
                 public void afterCommit() {
                     Exception lastException = null;
 
+                    logger.info("Now actually indexing {} documents", localDocs.size());
                     // try 3 times
                     for (int i = 0; i < 5; i++) {
                         try {
@@ -139,6 +183,7 @@ public class IndexServiceImpl implements IndexService {
                             logger.debug("Done.");
                             return; //exit on success!
                         } catch (Exception e) {
+                            logger.error("There was an exception while indexing: ", e);
                             lastException = e;
                         }
                     }
@@ -161,13 +206,12 @@ public class IndexServiceImpl implements IndexService {
 
     private static void afterCommit(TransactionSynchronization sync) {
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
-            logger.debug("Transaction synchronization is ACTIVE. Executing later!");
+            logger.info("Transaction synchronization is ACTIVE. Executing later!");
             TransactionSynchronizationManager.registerSynchronization(sync);
         } else {
-            logger.debug("Transaction synchronization is NOT ACTIVE. Executing right now!");
+            logger.info("Transaction synchronization is NOT ACTIVE. Executing right now!");
             sync.afterCommit();
         }
     }
-
 
 }

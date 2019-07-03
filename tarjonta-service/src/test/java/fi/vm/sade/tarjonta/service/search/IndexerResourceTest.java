@@ -20,6 +20,8 @@ import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.apache.solr.common.SolrInputDocument;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -68,7 +70,9 @@ public class IndexerResourceTest {
 
         HakukohdeDAOImpl hakukohdeDAO = Mockito.mock(HakukohdeDAOImpl.class);
         Whitebox.setInternalState(hakukohdeToSolr, "hakukohdeDAO", hakukohdeDAO);
-        Mockito.stub(hakukohdeDAO.findBy("id", 1L)).toReturn(Arrays.asList(getHakukohde()));
+        Mockito.stub(hakukohdeDAO.findBy("id", 12345L)).toReturn(Arrays.asList(getHakukohde(12345L)));
+        Mockito.stub(hakukohdeDAO.findBy("id", 1234555L)).toReturn(Arrays.asList(getHakukohde(1234555L)));
+        Mockito.stub(hakukohdeDAO.findBy("id", 1234556L)).toReturn(Arrays.asList(getHakukohde(1234556L)));
 
         IndexService indexService = new IndexServiceImpl(null, null, hakukohdeToSolr, indexerDao, factory);
         ReflectionTestUtils.setField(indexer, "indexService", indexService);
@@ -87,13 +91,14 @@ public class IndexerResourceTest {
     @Test
     public void indexing() throws SolrServerException, IOException {
         List<Long> hakukohteet = Lists.newArrayList();
-        hakukohteet.add(getHakukohde().getId());
+        hakukohteet.add(getHakukohde(1234555L).getId());
+        hakukohteet.add(getHakukohde(1234556L).getId());
         indexer.indexHakukohteet(hakukohteet);
-        verify(hakukohteetServer, times(2)).commit(true, true, false);
-        verify(hakukohteetServer, times(1)).add(any(Collection.class));
+        verify(hakukohteetServer, times(2)).add(any(SolrInputDocument.class));
+        verify(hakukohteetServer, times(1)).commit(true, true, false);
     }
 
-    private Hakukohde getHakukohde() {
+    private Hakukohde getHakukohde(Long withId) {
 
         Haku haku = new Haku();
         haku.setOid("oid");
@@ -102,7 +107,7 @@ public class IndexerResourceTest {
 
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setHakukohdeNimi("xxx");
-        hakukohde.setId(1l);
+        hakukohde.setId(withId);
         hakukohde.setHaku(haku);
 
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();

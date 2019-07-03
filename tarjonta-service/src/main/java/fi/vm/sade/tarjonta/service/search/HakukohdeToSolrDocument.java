@@ -72,7 +72,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
             return Collections.EMPTY_LIST;
         }
 
-        List<SolrInputDocument> docs = new ArrayList<SolrInputDocument>();
+        List<SolrInputDocument> docs = new ArrayList<>();
         final SolrInputDocument hakukohdeDoc = new SolrInputDocument();
 
         boolean orgFound = addOrganisaatiotiedot(hakukohdeDoc, hakukohde);
