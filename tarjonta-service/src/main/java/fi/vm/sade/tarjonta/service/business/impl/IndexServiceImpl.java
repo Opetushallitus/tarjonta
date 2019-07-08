@@ -65,18 +65,14 @@ public class IndexServiceImpl implements IndexService {
     @Override
     public void indexKoulutukset(List<Long> koulutusIds) {
         logger.info("Marking following koulutukses to viimindeksointipvm = null: {}", koulutusIds);
-        for (Long id : koulutusIds) {
-            indexerDao.updateKoulutusIndexed(id, null); //Just mark, let IndexSynchronizer cronjob handle the actual indexing
-        }
+        indexerDao.updateKoulutuksesIndexed(koulutusIds, null); //Just mark, let IndexSynchronizer cronjob handle the actual indexing
     }
 
     @Transactional
     @Override
     public void indexHakukohteet(List<Long> hakukohdeIds) {
         logger.info("Marking following hakukohdeids to viimindeksointipvm = null: {}", hakukohdeIds);
-        for (Long id : hakukohdeIds) {
-            indexerDao.updateHakukohdeIndexed(id, null); //Just mark, let IndexSynchronizer cronjob handle the actual indexing
-        }
+        indexerDao.updateHakukohteesIndexed(hakukohdeIds, null); //Just mark, let IndexSynchronizer cronjob handle the actual indexing
     }
 
     @Transactional
