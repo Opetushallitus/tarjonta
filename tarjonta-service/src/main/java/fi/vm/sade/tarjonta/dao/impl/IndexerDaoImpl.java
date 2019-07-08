@@ -89,17 +89,20 @@ public class IndexerDaoImpl implements IndexerDAO {
 
     @Override
     public void updateHakukohteesIndexed(List<Long> ids, Date time) {
-        final QHakukohde hakukohde = QHakukohde.hakukohde;
-        JPAUpdateClause u = new JPAUpdateClause(entityManager, hakukohde);
-        u.set(hakukohde.viimIndeksointiPvm, time).where(hakukohde.id.in(ids)).execute();
-
+        if (ids != null && !ids.isEmpty()) {
+            final QHakukohde hakukohde = QHakukohde.hakukohde;
+            JPAUpdateClause u = new JPAUpdateClause(entityManager, hakukohde);
+            u.set(hakukohde.viimIndeksointiPvm, time).where(hakukohde.id.in(ids)).execute();
+        }
     }
 
     @Override
     public void updateKoulutuksesIndexed(List<Long> ids, Date time) {
-        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        JPAUpdateClause u = new JPAUpdateClause(entityManager, komoto);
-        u.where(komoto.id.in(ids)).set(komoto.viimIndeksointiPvm, time).execute();
+        if (ids != null && !ids.isEmpty()) {
+            final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+            JPAUpdateClause u = new JPAUpdateClause(entityManager, komoto);
+            u.where(komoto.id.in(ids)).set(komoto.viimIndeksointiPvm, time).execute();
+        }
     }
 
     @Override
