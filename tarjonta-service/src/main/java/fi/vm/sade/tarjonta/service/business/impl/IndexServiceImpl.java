@@ -87,6 +87,7 @@ public class IndexServiceImpl implements IndexService {
             if (toAdd != null) {
                 toAdd.forEach(doc -> docsToBeIndexed.add(Pair.of(doc, koulutusId)));
             }
+            indexerDao.updateKoulutusIndexed(koulutusId, new Date());
             //Reindex sibling komotos
             KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.read(koulutusId);
             if (komoto != null) {
@@ -101,13 +102,12 @@ public class IndexServiceImpl implements IndexService {
                                     siblingIds.add(siblingId);
                                     docsToBeIndexed.add(Pair.of(doc, siblingId));
                                 });
+                                indexerDao.updateKoulutusIndexed(siblingId, new Date());
                             }
                         }
-                        indexerDao.updateKoulutusIndexed(sibling.getId(), new Date()); //fixme Not sure about this
                     }
                 }
             }
-            indexerDao.updateKoulutusIndexed(koulutusId, new Date());
         }
 
         logger.info("Indexing {} koulutukses and {} of their siblings", docsToBeIndexed.size()-siblingIds.size(), siblingIds.size());
