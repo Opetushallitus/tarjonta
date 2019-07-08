@@ -1,7 +1,6 @@
 package fi.vm.sade.tarjonta.service.business.impl;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
@@ -77,8 +76,9 @@ public class IndexServiceImpl implements IndexService {
 
     @Transactional
     @Override
-    public int indexKoulutusBatch(List<Long> koulutukset, int batch_size, int index) {
-        final List<Long> koulutusIdsInThisBatch = koulutukset.subList(index, Math.min(index+batch_size, koulutukset.size()));
+    public int indexKoulutusBatch(List<Long> koulutukset, int batchSize, int index) {
+        final List<Long> koulutusIdsInThisBatch = koulutukset.subList(index, Math.min(index+ batchSize, koulutukset.size()));
+        logger.info("Indexing koulutus batch. Total ids: {}, in this batch: {}, index: {} ",koulutukset.size(), koulutusIdsInThisBatch.size(), index);
         final List<Pair<SolrInputDocument, Long>> docsToBeIndexed = new ArrayList<>();
         final List<Long> siblingIds = new ArrayList<>();
 
@@ -112,15 +112,14 @@ public class IndexServiceImpl implements IndexService {
 
         logger.info("Indexing {} koulutukses and {} of their siblings", docsToBeIndexed.size()-siblingIds.size(), siblingIds.size());
         indexToSolrVerbosely(koulutusSolr, docsToBeIndexed, "KOULUTUS");
-        //commit(koulutusSolr);
         return index + koulutusIdsInThisBatch.size();
     }
 
     @Transactional
     @Override
-    public int indexHakukohdeBatch(List<Long> hakukohdeIdt, int batch_size, int index) {
-        logger.info("Indexing hakukohde batch, new implementation. Total ids: " + hakukohdeIdt.size());
-        final List<Long> hakukohdeIdsInThisBatch = hakukohdeIdt.subList(index, Math.min(index+batch_size, hakukohdeIdt.size()));
+    public int indexHakukohdeBatch(List<Long> hakukohdeIdt, int batchSize, int index) {
+        final List<Long> hakukohdeIdsInThisBatch = hakukohdeIdt.subList(index, Math.min(index+ batchSize, hakukohdeIdt.size()));
+        logger.info("Indexing hakukohde batch. Total ids: {}, in this batch: {}, index: {} ",hakukohdeIdt.size(), hakukohdeIdsInThisBatch.size(), index);
         final List<Pair<SolrInputDocument, Long>> docsToBeIndexed = new ArrayList<>();
         for (Long hakukohdeId : hakukohdeIdsInThisBatch) {
             List<SolrInputDocument> toAdd = hakukohdeConverter.apply(hakukohdeId);
@@ -171,47 +170,6 @@ public class IndexServiceImpl implements IndexService {
 
                 }
             });
-        }
-    }
-
-    private void index(final SolrServer solr, List<SolrInputDocument> docs) {
-        if (docs.size() > 0) {
-            final List<SolrInputDocument> localDocs = ImmutableList
-                    .copyOf(docs);
-            afterCommit(new TransactionSynchronizationAdapter() {
-                @Override
-                public void afterCommit() {
-                    Exception lastException = null;
-
-                    logger.info("Now actually indexing documents, old implementation. {}", localDocs.size());
-                    // try 3 times
-                    for (int i = 0; i < 5; i++) {
-                        try {
-                            logger.debug("Indexing {} docs, try {}", localDocs.size(), i);
-                            solr.add(localDocs);
-                            logger.debug("Committing changes to index.");
-                            solr.commit(true, true, false);
-                            logger.debug("Done.");
-                            return; //exit on success!
-                        } catch (Exception e) {
-                            logger.error("There was an exception while indexing: ", e);
-                            lastException = e;
-                        }
-                    }
-                    // fail
-                    throw new RuntimeException(
-                            "indexing.error, last exception:", lastException);
-
-                }
-            });
-        }
-    }
-
-    private void commit(SolrServer solr) {
-        try {
-            solr.commit(true, true, false);
-        } catch (SolrServerException | IOException e) {
-            throw new RuntimeException("indexing.error", e);
         }
     }
 
