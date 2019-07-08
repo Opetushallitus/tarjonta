@@ -221,10 +221,10 @@ public class IndexServiceImpl implements IndexService {
 
     private static void afterCommit(TransactionSynchronization sync) {
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
-            logger.info("Transaction synchronization is ACTIVE. Executing later!");
+            logger.debug("Transaction synchronization is ACTIVE. Executing later!");
             TransactionSynchronizationManager.registerSynchronization(sync);
         } else {
-            logger.info("Transaction synchronization is NOT ACTIVE. Executing right now!");
+            logger.debug("Transaction synchronization is NOT ACTIVE. Executing right now!");
             sync.afterCommit();
         }
     }
