@@ -31,5 +31,4 @@ public class Tila {
     private final Tyyppi tyyppi;
 
     private final TarjontaTila tila;
-
 }

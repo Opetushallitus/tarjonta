@@ -36,6 +36,10 @@ public interface IndexerDAO {
 
     Long setHakukohdeViimindeksointiPvmToNull();
 
+    void updateHakukohteesIndexed(List<Long> ids, Date time);
+
+    void updateKoulutuksesIndexed(List<Long> ids, Date time);
+
     void updateHakukohdeIndexed(Long id, Date time);
 
     void updateKoulutusIndexed(Long id, Date time);

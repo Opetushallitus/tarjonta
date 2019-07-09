@@ -36,14 +36,18 @@ public class IndexSyncronizer {
     public void updateHakukohteet() {
         logger.debug("Searching for unindexed hakukohdes...");
         List<Long> ids = indexerDao.findUnindexedHakukohdeIds();
-        indexerResource.indexHakukohteet(ids);
+        if (!ids.isEmpty()) {
+            indexerResource.indexHakukohteet(ids);
+        }
     }
 
     @Scheduled(cron = "*/10 * * * * ?")
     public void updateKoulutukset() {
         logger.debug("Searching for unindexed koulutukses...");
         List<Long> ids = indexerDao.findUnindexedKoulutusIds();
-        indexerResource.indexKoulutukset(ids);
+        if (!ids.isEmpty()) {
+            indexerResource.indexKoulutukset(ids);
+        }
     }
 
     @Transactional

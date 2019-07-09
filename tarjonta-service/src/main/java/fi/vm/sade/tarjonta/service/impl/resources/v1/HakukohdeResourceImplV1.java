@@ -1162,6 +1162,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
 
         //indeksoi uudelleen muuttunut data
+        if (tm.getMuutetutHakukohteet().size() + tm.getMuutetutKomotot().size() == 0) {
+            LOG.warn("Jostain syystä indeksoitavaa ei ole vaikka tehtiin tilamuutos! " + tilamuutos.toString());
+        }
+        LOG.info("Indeksoidaan muuttuneet koulutukset: {} ja hakukohteet {}", tm.getMuutetutKomotot(), tm.getMuutetutHakukohteet());
         indexerResource.indexMuutokset(tm);
 
         return new ResultV1RDTO<>(tm);
