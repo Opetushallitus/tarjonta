@@ -28,6 +28,12 @@ function tarjontaInit() {
     console.log('** Loading user info; from: ', window.CONFIG.env.casUrl);
     window.CONFIG.env.cas = {};
     init_counter++;
+    var callerId = '1.2.246.562.10.00000000001.tarjonta.tarjonta-app-angular'
+    jQuery.ajaxSetup({
+        headers: {
+            'Caller-Id': callerId
+        }
+    });
     jQuery.ajax(window.CONFIG.env.casUrl, {
         dataType: 'json',
         crossDomain: true,
