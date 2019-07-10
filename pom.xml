@@ -689,6 +689,11 @@
           </exclusion>
         </exclusions>
       </dependency>
+      <dependency>
+        <groupId>fi.vm.sade.java-utils</groupId>
+        <artifactId>opintopolku-cas-servlet-filter</artifactId>
+        <version>0.1.2-SNAPSHOT</version>
+      </dependency>
 
       <!-- Without this there are intermittent bugs after rebooting tarjonta. -->
       <dependency>
