@@ -68,7 +68,8 @@
     <jackson-asl.version>1.9.13</jackson-asl.version>
     <jackson.version>2.8.1</jackson.version>
     <java-cas.version>0.5.0-SNAPSHOT</java-cas.version>
-    <java-utils.version>0.5.0-SNAPSHOT</java-utils.version>
+    <java-utils.version>0.3.0-SNAPSHOT</java-utils.version>
+    <java-utils.httpclient.version>0.3.0-SNAPSHOT</java-utils.httpclient.version>
     <java.version>1.8</java.version>
     <javassist.version>3.18.2-GA</javassist.version>
     <javax.annotation-api.version>1.3</javax.annotation-api.version>
@@ -84,7 +85,7 @@
     <joda-time.version>2.3</joda-time.version>
     <jsr311-api.version>1.1.1</jsr311-api.version>
     <junit.version>4.12</junit.version>
-    <koodisto.version>2019-06-SNAPSHOT</koodisto.version>
+    <koodisto.version>2019-08-SNAPSHOT</koodisto.version>
     <log.version>8.0</log.version>
     <log4j.version>1.2.17</log4j.version>
     <mail.version>1.4.7</mail.version>
