@@ -1,6 +1,6 @@
 package fi.vm.sade.tarjonta.shared;
 
-import fi.vm.sade.generic.rest.CachingRestClient;
+import fi.vm.sade.javautils.legacy_caching_rest_client.CachingRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ public class OnrService {
 
     private final CachingRestClient cachingRestClient;
     private final UrlConfiguration urlConfiguration;
+    private final String callerId = "1.2.246.562.10.00000000001.tarjonta.tarjonta-shared";
 
     @Autowired
     public OnrService(UrlConfiguration urlConfiguration,
@@ -21,7 +22,7 @@ public class OnrService {
                       @Value("${tarjonta.oppijanumerorekisteri.password}") String clientAppPass) {
         this.urlConfiguration = urlConfiguration;
 
-        cachingRestClient = new CachingRestClient();
+        cachingRestClient = new CachingRestClient(callerId);
         cachingRestClient.setWebCasUrl(urlConfiguration.url("cas.url"));
         cachingRestClient.setCasService(targetService);
         cachingRestClient.setUsername(clientAppUser);

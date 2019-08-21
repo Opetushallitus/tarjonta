@@ -9,11 +9,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class HttpClientConfiguration {
 
-    private static final String CLIENT_SUBSYSTEM_CODE = "tarjonta";
+    public static final String CALLER_ID = "1.2.246.562.10.00000000001.tarjonta";
 
     @Bean
     public OphHttpClient httpClient(OphProperties properties) {
-        return ApacheOphHttpClient.createDefaultOphClient(CLIENT_SUBSYSTEM_CODE, properties);
+        return ApacheOphHttpClient.createDefaultOphClient(CALLER_ID, properties);
     }
 
 }

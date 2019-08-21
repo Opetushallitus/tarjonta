@@ -3,11 +3,14 @@ package fi.vm.sade.tarjonta.shared;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.google.common.base.Predicates;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.FluentIterable;
+import fi.vm.sade.javautils.httpclient.OphHttpClient;
+import fi.vm.sade.javautils.httpclient.OphHttpRequest;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioHakutulos;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.dto.v2.OrganisaatioHakutulosSuppeaDTOV2;
@@ -38,9 +41,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrganisaatioService {
+    private final OphHttpClient httpClient;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ObjectMapper ignoreFieldsObjectMapper = createIgnoreFieldsObjectMapper();
     private final Long cacheRefreshInterval;
+    private final ObjectReader objectReader = ignoreFieldsObjectMapper.reader();
 
     private static ObjectMapper createIgnoreFieldsObjectMapper() {
         ObjectMapper m = new ObjectMapper();
@@ -88,9 +94,12 @@ public class OrganisaatioService {
     private final OrganisaatioCache organisaatioPerustietoCache;
 
     @Autowired
-    public OrganisaatioService(TarjontaKoodistoHelper tarjontaKoodistoHelper,
+    public OrganisaatioService(
+            OphHttpClient httpClient,
+            TarjontaKoodistoHelper tarjontaKoodistoHelper,
                                UrlConfiguration urlConfiguration,
                                @Value("${tarjonta-service.organisaatiocache.refresh-interval-seconds: 60}") Long refreshInterval) {
+        this.httpClient = httpClient;
         this.tarjontaKoodistoHelper = tarjontaKoodistoHelper;
         this.urlConfiguration = urlConfiguration;
         this.organisaatioPerustietoCache = new OrganisaatioCache();
@@ -174,7 +183,8 @@ public class OrganisaatioService {
     }
     private OrganisaatioResultDTO fetchOrganisationWithHaeAPI(String oid) {
         try {
-            return ignoreFieldsObjectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.organisaatio.v2.hae-with-oid", oid)), OrganisaatioResultDTO.class);
+            OphHttpRequest req = httpClient.get("organisaatio-service.organisaatio.v2.hae-with-oid", oid);
+            return req.execute(response -> objectReader.forType(OrganisaatioResultDTO.class).readValue(response.asInputStream()));
         } catch (Exception e) {
             final String msg = "Could not fetch organization with oid " + oid;
             LOG.error(msg);
@@ -184,7 +194,8 @@ public class OrganisaatioService {
 
     private OrganisaatioHakutulos fetchAllOrganisationWithHaeAPI() {
         try {
-            return ignoreFieldsObjectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.organisaatio.v2.hae")), OrganisaatioHakutulos.class);
+            OphHttpRequest req = httpClient.get("organisaatio-service.organisaatio.v2.hae");
+            return req.execute(response -> objectReader.forType(OrganisaatioHakutulos.class).readValue(response.asInputStream()));
         } catch (Exception e) {
             final String msg = "Could not fetch all organizations";
             LOG.error(msg);
@@ -194,7 +205,8 @@ public class OrganisaatioService {
 
     private OrganisaatioRDTO fetchOrganisation(String oid) {
         try {
-            return objectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.fetchOrganisation", oid)), OrganisaatioRDTO.class);
+            OphHttpRequest req = httpClient.get("organisaatio-service.fetchOrganisation", oid);
+            return req.execute(response -> objectReader.forType(OrganisaatioRDTO.class).readValue(response.asInputStream()));
         } catch (Exception e) {
             final String msg = "Could not fetch organization with oid " + oid;
             LOG.error(msg);
@@ -204,7 +216,8 @@ public class OrganisaatioService {
 
     private String fetchKoulutustoimija(String oid) {
         try {
-            OrganisaatioResultDTO org = ignoreFieldsObjectMapper.readValue(new URL(urlConfiguration.url("organisaatio-service.organisaatio.hierarkia", oid)), OrganisaatioResultDTO.class);
+            OphHttpRequest req = httpClient.get("organisaatio-service.organisaatio.hierarkia", oid);
+            OrganisaatioResultDTO org = req.execute(response -> objectReader.forType(OrganisaatioResultDTO.class).readValue(response.asInputStream()));
             return org.getOrganisaatiot().get(0).getOid();
         } catch (Exception e) {
             final String msg = "Could not fetch organization with oid " + oid;
@@ -215,8 +228,9 @@ public class OrganisaatioService {
 
     public Set<String> findChildrenOidsByOid(String oid) {
         try {
-            OrganisaatioHakutulosSuppeaDTOV2 result = objectMapper.readValue(
-                    new URL(urlConfiguration.url("organisaatio-service.findChildrenOidsByOid", oid)), OrganisaatioHakutulosSuppeaDTOV2.class);
+            OphHttpRequest req = httpClient.get("organisaatio-service.findChildrenOidsByOid", oid);
+            OrganisaatioHakutulosSuppeaDTOV2 result = req.execute(response -> objectReader.forType(OrganisaatioHakutulosSuppeaDTOV2.class).readValue(response.asInputStream()));
+
             return FluentIterable
                     .from(result.getOrganisaatiot())
                     .transform(org -> org.getOid())
@@ -293,7 +307,7 @@ public class OrganisaatioService {
 
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
-            connection.setRequestProperty("clientSubSystemCode", "1.2.246.562.10.00000000001.tarjonta");
+            connection.setRequestProperty("Caller-Id", HttpClientConfiguration.CALLER_ID);
             connection.setRequestProperty("content-type", "application/json;charset=UTF-8");
             connection.setDoOutput(true);
             connection.setConnectTimeout(2000);
