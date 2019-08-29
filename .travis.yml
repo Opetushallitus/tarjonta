@@ -24,7 +24,7 @@ env:
     - secure: "G/tIjOrnzr+6bDpY5B0fVzpA8N54GJ8wyrhYKAKTe67n9Aov1FnuXrvvmSUHGVuBzXvuvjKznxtEQlTUbmnxkIvLg+Bp4z00N9TdCTAQBEPKgiqJMrj1YuuKSabXn5VCXbcOOwS5QqzzmNymB7lODh6f8k/zr5iI2iLmd+rlzc8BOE/WCAbFZIcnexHvxaGagsHinovpGyTBf78xJ5AeDSt2KQVRyNMQB9LXWrGgnq2trFaS5EpMOopbAhLuKeZ85RFFP3TlIjivbpJY6wv6Q5xsE+WKARI7O73Y7lrN84Yuw1NFfgCM/KJwrenBwdWuvlo8484wCbZ9Go4XVogRBDmFcmN+w1tbNyVRKlmtwktYW5WV+IMGDVQKdUyVEgZF5ZOqpwwXynpQieQHKN4DU0+yKYrFkCdAJ6McPPFOoOo550W+4eUYR7fc5HWIQ9QFSwqpLow9Z4iOuYM1bqP1t9QqTc/PloQkfNpX3+DTwrtAScymzTIRFLJdcSodGxWqnYFDAJuaQ/WSmAC+91iBbEa3gXRKwQnm3VLZfl4ObvlYAclGmuHg234o1JqKbwTVaWBH7PALZdK1DkwUkJjdsps8om8pcqqD2J1XBNpyutBPsKwME3pkd9WDiH02AbJeCGS7mWdi+pjedOSV9q6kC9ZKP40Z4CDAnBjHi0wdLdQ="
 
 install:
-- git clone https://github.com/Opetushallitus/ci-tools.git
+- git clone https://github.com/Opetushallitus/ci-tools.git --branch PP-357_458_readonly_container_nonroot_user
 - source ci-tools/common/setup-tools.sh
 - export ARTIFACT_NAME="tarjonta"
 - export TZ=Europe/Helsinki
@@ -37,7 +37,7 @@ script:
 - mv tarjonta-app/target/tarjonta-app-*.war $DOCKER_BUILD_DIR/artifact/tarjonta-app.war
 - cp -vr src/main/resources/oph-configuration $DOCKER_BUILD_DIR/config/
 
-- export BASE_IMAGE="baseimage-war:master"
+- export BASE_IMAGE="baseimage-war:ci-73"
 - ./ci-tools/common/pull-image.sh
 - ./ci-tools/build/build-war.sh $ARTIFACT_NAME
 
