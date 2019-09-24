@@ -1395,7 +1395,7 @@ app.controller('HakukohdeParentController', [
                     });
                     $scope.checkIsCopy($scope.luonnosVal, true);
                     // BUG-1108, BUG-1213
-                    ['hakuaikaAlkuPvm', 'hakuaikaLoppuPvm', 'aloituspaikatLkm', 'ensikertalaistenAloituspaikat'].map(function(field) {
+                    ['hakuaikaAlkuPvm', 'hakuaikaLoppuPvm', 'aloituspaikatLkm', 'ensikertalaistenAloituspaikat', 'alinHyvaksyttavaKeskiarvo'].map(function(field) {
                         nullAsZero($scope.model.hakukohde, field);
                     });
                     angular.forEach($scope.model.hakukohde.valintakokeet, function(koe) {
