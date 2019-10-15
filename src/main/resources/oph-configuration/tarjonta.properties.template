@@ -97,3 +97,4 @@ smtp.sender={{ryhmasahkoposti_smtp_sender}}
 
 oiva.username={{tarjonta_oiva_username}}
 oiva.password={{tarjonta_oiva_password}}
+oiva.permission.check.disabled={{tarjonta_disable_oiva_permission_check | default("false")}}

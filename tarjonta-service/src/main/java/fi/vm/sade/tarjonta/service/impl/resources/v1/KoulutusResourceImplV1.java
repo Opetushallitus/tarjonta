@@ -245,6 +245,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     @Value("${host.virkailija}")
     private String HOST_VIRKAILIJA;
 
+    @Value("#{new Boolean('${oiva.permission.check.disabled}')}")
+    private Boolean OIVA_PERMISSION_CHECK_DISABLED;
+
     @Autowired
     private KoulutusValidator koulutusValidator;
 
@@ -398,13 +401,18 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     .build();
         }
 
-        try {
-            koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
-        } catch (KoulutusPermissionException e) {
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .entity(create(ERROR, null, createValidationError("koulutusPermission", "koulutusNotAllowedForOrganization." + e.getKoodisto())))
-                    .build();
+        if (OIVA_PERMISSION_CHECK_DISABLED == null || !OIVA_PERMISSION_CHECK_DISABLED) {
+            LOG.info("Checking oiva permissions for komoto " + dto.getKomotoOid());
+            try {
+                koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
+            } catch (KoulutusPermissionException e) {
+                return Response
+                        .status(Response.Status.BAD_REQUEST)
+                        .entity(create(ERROR, null, createValidationError("koulutusPermission", "koulutusNotAllowedForOrganization." + e.getKoodisto())))
+                        .build();
+            }
+        } else {
+            LOG.info("Oiva permission check has been disabled by env parameter, komoto " + dto.getKomotoOid());
         }
 
         if (dto.getClass() == KoulutusKorkeakouluV1RDTO.class) {
