@@ -402,7 +402,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         }
 
         if (OIVA_PERMISSION_CHECK_DISABLED == null || !OIVA_PERMISSION_CHECK_DISABLED) {
-            LOG.info("Checking oiva permissions for komoto " + dto.getKomotoOid());
+            LOG.info("checking for oiva permissions. Komo: " + dto.getKomoOid());
             try {
                 koulutusPermissionService.checkThatOrganizationIsAllowedToOrganizeEducation(dto);
             } catch (KoulutusPermissionException e) {
@@ -412,7 +412,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         .build();
             }
         } else {
-            LOG.info("Oiva permission check has been disabled by env parameter, komoto " + dto.getKomotoOid());
+            LOG.info("Not checking for oiva permissions, check has been disabled by env parameter. Komo: " + dto.getKomoOid());
         }
 
         if (dto.getClass() == KoulutusKorkeakouluV1RDTO.class) {
