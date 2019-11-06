@@ -64,8 +64,6 @@ public class LastModifiedResourceV1Impl implements LastModifiedV1Resource {
             lastModifiedTs = new Date().getTime() - (1000 * 60 * 5);
         }
 
-
-
         Date ts = new Date(lastModifiedTs);
         String tsFmt = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(ts);
 
