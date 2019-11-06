@@ -54,11 +54,13 @@ public interface LastModifiedV1Resource {
      * Otherwise value is used as is.
      *
      * @param lastModifiedTs
+     * @param deleted
      * @return
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa hakuehtojen puitteissa muutosten oid:t ryhmiteltynä.", notes = "Listaa muutosten oidit", response = Map.class)
-    public Map<String, List<String>> lastModified(@QueryParam("lastModified") long lastModifiedTs);
+    public Map<String, List<String>> lastModified(@QueryParam("lastModified") long lastModifiedTs,
+                                                  @QueryParam("deleted") Boolean deleted);
 
 }

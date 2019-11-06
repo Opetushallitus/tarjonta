@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +53,9 @@ public class LastModifiedResourceV1Impl implements LastModifiedV1Resource {
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
     @Override
-    public Map<String, List<String>> lastModified(long lastModifiedTs) {
+    public Map<String, List<String>> lastModified(long lastModifiedTs, Boolean deleted) {
+        fi.vm.sade.tarjonta.shared.types.TarjontaTila tarjontaTila = null;
+        TarjontaTila hakukohdeTarjontaTila = null;
         // If negative, look back that time
         if (lastModifiedTs < 0) {
             lastModifiedTs = new Date().getTime() + lastModifiedTs;
@@ -62,6 +66,11 @@ public class LastModifiedResourceV1Impl implements LastModifiedV1Resource {
             lastModifiedTs = new Date().getTime() - (1000 * 60 * 5);
         }
 
+        if (deleted) {
+            tarjontaTila = fi.vm.sade.tarjonta.shared.types.TarjontaTila.POISTETTU;
+            hakukohdeTarjontaTila = TarjontaTila.POISTETTU;
+        }
+
         Date ts = new Date(lastModifiedTs);
         String tsFmt = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(ts);
 
@@ -69,10 +78,10 @@ public class LastModifiedResourceV1Impl implements LastModifiedV1Resource {
 
         Map<String, List<String>> result = new HashMap<String, List<String>>();
 
-        result.put("koulutusmoduuli", koulutusmoduuliDAO.findOIDsBy(null, 0, 0, null, ts));
-        result.put("koulutusmoduuliToteutus", koulutusmoduuliToteutusDAO.findOIDsBy(null, 0, 0, null, ts));
-        result.put("haku", hakuDAO.findOIDsBy(null, 0, 0, null, ts));
-        result.put("hakukohde", hakukohdeDAO.findOIDsBy(null, 0, 0, null, ts, true));
+        result.put("koulutusmoduuli", koulutusmoduuliDAO.findOIDsBy(tarjontaTila, 0, 0, null, ts));
+        result.put("koulutusmoduuliToteutus", koulutusmoduuliToteutusDAO.findOIDsBy(tarjontaTila, 0, 0, null, ts));
+        result.put("haku", hakuDAO.findOIDsBy(tarjontaTila, 0, 0, null, ts));
+        result.put("hakukohde", hakukohdeDAO.findOIDsBy(hakukohdeTarjontaTila, 0, 0, null, ts, true));
 
         // Add used timestamp to the result
         List<String> tmp = new ArrayList<String>();
