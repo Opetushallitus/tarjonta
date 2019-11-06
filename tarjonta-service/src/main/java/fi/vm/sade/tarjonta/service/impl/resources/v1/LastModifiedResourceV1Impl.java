@@ -66,10 +66,7 @@ public class LastModifiedResourceV1Impl implements LastModifiedV1Resource {
             lastModifiedTs = new Date().getTime() - (1000 * 60 * 5);
         }
 
-        if (deleted) {
-            tarjontaTila = fi.vm.sade.tarjonta.shared.types.TarjontaTila.POISTETTU;
-            hakukohdeTarjontaTila = TarjontaTila.POISTETTU;
-        }
+
 
         Date ts = new Date(lastModifiedTs);
         String tsFmt = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(ts);
@@ -78,10 +75,21 @@ public class LastModifiedResourceV1Impl implements LastModifiedV1Resource {
 
         Map<String, List<String>> result = new HashMap<String, List<String>>();
 
-        result.put("koulutusmoduuli", koulutusmoduuliDAO.findOIDsBy(tarjontaTila, 0, 0, null, ts));
-        result.put("koulutusmoduuliToteutus", koulutusmoduuliToteutusDAO.findOIDsBy(tarjontaTila, 0, 0, null, ts));
-        result.put("haku", hakuDAO.findOIDsBy(tarjontaTila, 0, 0, null, ts));
-        result.put("hakukohde", hakukohdeDAO.findOIDsBy(hakukohdeTarjontaTila, 0, 0, null, ts, true));
+        result.put("koulutusmoduuli", koulutusmoduuliDAO.findOIDsBy(null, 0, 0, null, ts));
+        result.put("koulutusmoduuliToteutus", koulutusmoduuliToteutusDAO.findOIDsBy(null, 0, 0, null, ts));
+        result.put("haku", hakuDAO.findOIDsBy(null, 0, 0, null, ts));
+        result.put("hakukohde", hakukohdeDAO.findOIDsBy(null, 0, 0, null, ts, true));
+
+        if (deleted) {
+            List<String> deletedResults = hakukohdeDAO.findOIDsBy(TarjontaTila.POISTETTU, 0, 0, null, ts, true);
+            List<String> results = result.get("hakukohde");
+            for(String hakukohde : deletedResults) {
+                if (!results.contains(hakukohde)) {
+                        results.add(hakukohde);
+                }
+            }
+            result.put("hakukohde", results);
+        }
 
         // Add used timestamp to the result
         List<String> tmp = new ArrayList<String>();
