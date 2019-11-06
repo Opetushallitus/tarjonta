@@ -54,8 +54,6 @@ public class LastModifiedResourceV1Impl implements LastModifiedV1Resource {
 
     @Override
     public Map<String, List<String>> lastModified(long lastModifiedTs, Boolean deleted) {
-        fi.vm.sade.tarjonta.shared.types.TarjontaTila tarjontaTila = null;
-        TarjontaTila hakukohdeTarjontaTila = null;
         // If negative, look back that time
         if (lastModifiedTs < 0) {
             lastModifiedTs = new Date().getTime() + lastModifiedTs;
