@@ -18,10 +18,7 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -61,6 +58,6 @@ public interface LastModifiedV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa hakuehtojen puitteissa muutosten oid:t ryhmiteltynä.", notes = "Listaa muutosten oidit", response = Map.class)
     public Map<String, List<String>> lastModified(@QueryParam("lastModified") long lastModifiedTs,
-                                                  @QueryParam("deleted") Boolean deleted);
+                                                  @QueryParam("deleted") @DefaultValue("false") Boolean deleted);
 
 }
