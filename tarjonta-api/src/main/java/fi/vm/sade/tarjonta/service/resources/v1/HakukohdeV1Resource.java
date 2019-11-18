@@ -255,7 +255,8 @@ public interface HakukohdeV1Resource {
             @QueryParam("opetuskielet") List<String> opetuskielet,
             @QueryParam("koulutusOid") List<String> koulutusOids,
             @QueryParam("offset") Integer offset,
-            @QueryParam("limit") Integer limit);
+            @QueryParam("limit") Integer limit,
+            @Context HttpServletRequest request);
 
     /**
      * Hakukohteen koulutuksten nimi ja oid, muut tiedot saa /search
