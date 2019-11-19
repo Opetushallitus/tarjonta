@@ -160,9 +160,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                                                                              Integer limit,
                                                                              HttpServletRequest request) {
         Map<String, String[]> parameters = request.getParameterMap();
-        LOG.info("HakukohteetKysely: parameters" + parameters.toString());
         if (parameters.isEmpty()) {
-            LOG.warn("HakukohteetKysely query is empty");
+            LOG.error("HakukohteetKysely query is empty");
+            ResultV1RDTO result = new ResultV1RDTO();
+            result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            result.addError(ErrorV1RDTO.createValidationError("all", "Need at least one parameter"));
+            return result;
         }
 
         organisationOids = removeBlankStrings(organisationOids);
