@@ -157,7 +157,16 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                                                                              List<String> opetuskielet,
                                                                              List<String> koulutusOids,
                                                                              Integer offset,
-                                                                             Integer limit) {
+                                                                             Integer limit,
+                                                                             HttpServletRequest request) {
+        Map<String, String[]> parameters = request.getParameterMap();
+        if (parameters.isEmpty()) {
+            LOG.error("HakukohteetKysely query is empty");
+            ResultV1RDTO result = new ResultV1RDTO();
+            result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            result.addError(ErrorV1RDTO.createValidationError("all", "Need at least one parameter"));
+            return result;
+        }
 
         organisationOids = removeBlankStrings(organisationOids);
         hakukohdeTilas = hakukohdeTilas != null ? hakukohdeTilas : new ArrayList<>();
