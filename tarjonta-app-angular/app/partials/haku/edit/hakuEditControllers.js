@@ -381,11 +381,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
                */
     $scope.checkPriorisointi = function() {
         $log.debug('checkPriorisointi()');
-        if ($scope.model.hakux.result.jarjestelmanHakulomake
-            && $scope.model.hakux.result.sijoittelu) {
-            $scope.model.hakux.result.usePriority = true;
-        }
-        if (!$scope.model.hakux.result.jarjestelmanHakulomake) {
+        if (!($scope.model.hakux.result.jarjestelmanHakulomake || $scope.model.hakux.result.ataruLomakeAvain !== null)) {
             $scope.model.hakux.result.usePriority = false;
         }
     };

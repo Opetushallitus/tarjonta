@@ -215,7 +215,7 @@
         <th data-tt='haku.edit.priorisointi'>Priorisointi</th>
         <td>
             <input type="checkbox" ng-model="model.hakux.result.usePriority" id="priorisointi"
-                   ng-disabled="model.hakux.result.jarjestelmanHakulomake && model.hakux.result.sijoittelu">
+                   ng-disabled="!(model.hakux.result.jarjestelmanHakulomake || model.hakux.result.ataruLomakeAvain !== null)">
             <label for="priorisointi" data-tt="haku.edit.kaytetaanPriorisointia">Haussa käytetään hakukohteiden priorisointia</label>
         </td>
         <td>

@@ -740,10 +740,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         // TODO haku.getHakukausiVuosi() - verrataanko hakukausi / vuosi arvoihin?
         // TODO haku.getKoulutuksenAlkamisVuosi() - verrataanko hakukausi / vuosi arvoihin?
-        // Sijoittelu + system application form -> priority = true
-        if (haku.isSijoittelu() && haku.isJarjestelmanHakulomake()) {
-            haku.setUsePriority(true);
-        }
 
         if (isLisahaku(haku)) {
             if (haku.getParentHakuOid() == null) {
