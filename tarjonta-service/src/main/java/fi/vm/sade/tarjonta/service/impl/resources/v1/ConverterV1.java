@@ -1070,7 +1070,7 @@ public class ConverterV1 {
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setOid(hakukohdeRDTO.getOid());
         hakukohde.setAloituspaikatLkm(hakukohdeRDTO.getAloituspaikatLkm());
-        hakukohde.setAloituspaikatKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getAloituspaikatKuvaukset()));
+
         hakukohde.setHakuaikaAlkuPvm(hakukohdeRDTO.getHakuaikaAlkuPvm());
         hakukohde.setHakuaikaLoppuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
 
