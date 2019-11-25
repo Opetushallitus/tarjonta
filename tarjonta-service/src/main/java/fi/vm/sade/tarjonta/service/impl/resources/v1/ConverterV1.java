@@ -1071,6 +1071,10 @@ public class ConverterV1 {
         hakukohde.setOid(hakukohdeRDTO.getOid());
         hakukohde.setAloituspaikatLkm(hakukohdeRDTO.getAloituspaikatLkm());
 
+        if (hakukohdeRDTO.getAloituspaikatKuvaukset() != null && !hakukohdeRDTO.getAloituspaikatKuvaukset().isEmpty()) {
+            LOG.warn("field `aloituspaikatKuvaukset` was given a value but is deprecated and will not be saved.");
+        }
+
         hakukohde.setHakuaikaAlkuPvm(hakukohdeRDTO.getHakuaikaAlkuPvm());
         hakukohde.setHakuaikaLoppuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
 
