@@ -177,6 +177,21 @@ public class ConverterV1Test extends TestMockBase {
     }
 
     @Test
+    public void thatAloituspaikatKuvauksetIsNotConverted() {
+        HakukohdeV1RDTO hakukohdeDTO = getHakukohdeDTO();
+        Map<String,String> aloituspaikatKuvaukset = new HashMap<String,String>();
+        aloituspaikatKuvaukset.put("fi", "kymmenen");
+        aloituspaikatKuvaukset.put("sv", "tio");
+        hakukohdeDTO.setAloituspaikatKuvaukset(aloituspaikatKuvaukset);
+        String oid = "9.8.7";
+        hakukohdeDTO.setOid(oid);
+
+        Hakukohde hakukohde = converter.toHakukohde(hakukohdeDTO);
+        assertEquals(oid, hakukohde.getOid());
+        assertNull(hakukohde.getAloituspaikatKuvaus());
+    }
+
+    @Test
     public void thatValintakokeetAreConvertedToDTO() {
         when(tarjontaKoodistoHelper.getHakukelpoisuusvaatimusrymaUriForHakukohde(anyString())).thenReturn(null);
 
