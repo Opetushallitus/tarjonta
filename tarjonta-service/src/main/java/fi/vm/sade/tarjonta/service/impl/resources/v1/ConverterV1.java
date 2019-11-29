@@ -1070,7 +1070,11 @@ public class ConverterV1 {
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setOid(hakukohdeRDTO.getOid());
         hakukohde.setAloituspaikatLkm(hakukohdeRDTO.getAloituspaikatLkm());
-        hakukohde.setAloituspaikatKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getAloituspaikatKuvaukset()));
+
+        if (hakukohdeRDTO.getAloituspaikatKuvaukset() != null && !hakukohdeRDTO.getAloituspaikatKuvaukset().isEmpty()) {
+            LOG.warn("field `aloituspaikatKuvaukset` was given a value but is deprecated and will not be saved.");
+        }
+
         hakukohde.setHakuaikaAlkuPvm(hakukohdeRDTO.getHakuaikaAlkuPvm());
         hakukohde.setHakuaikaLoppuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
 
