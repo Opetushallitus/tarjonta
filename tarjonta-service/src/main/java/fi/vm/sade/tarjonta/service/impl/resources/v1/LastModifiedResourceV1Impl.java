@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +53,7 @@ public class LastModifiedResourceV1Impl implements LastModifiedV1Resource {
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
     @Override
-    public Map<String, List<String>> lastModified(long lastModifiedTs) {
+    public Map<String, List<String>> lastModified(long lastModifiedTs, Boolean deleted) {
         // If negative, look back that time
         if (lastModifiedTs < 0) {
             lastModifiedTs = new Date().getTime() + lastModifiedTs;
@@ -73,6 +75,17 @@ public class LastModifiedResourceV1Impl implements LastModifiedV1Resource {
         result.put("koulutusmoduuliToteutus", koulutusmoduuliToteutusDAO.findOIDsBy(null, 0, 0, null, ts));
         result.put("haku", hakuDAO.findOIDsBy(null, 0, 0, null, ts));
         result.put("hakukohde", hakukohdeDAO.findOIDsBy(null, 0, 0, null, ts, true));
+
+        if (deleted) {
+            List<String> deletedResults = hakukohdeDAO.findOIDsBy(TarjontaTila.POISTETTU, 0, 0, null, ts, true);
+            List<String> results = result.get("hakukohde");
+            for(String hakukohde : deletedResults) {
+                if (!results.contains(hakukohde)) {
+                        results.add(hakukohde);
+                }
+            }
+            result.put("hakukohde", results);
+        }
 
         // Add used timestamp to the result
         List<String> tmp = new ArrayList<String>();
