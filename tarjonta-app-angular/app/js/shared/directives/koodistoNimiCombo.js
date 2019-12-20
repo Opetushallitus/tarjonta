@@ -478,9 +478,9 @@ app.directive('koodistocomboaiku', function(Koodisto, $log, $q) {
                                 var latestKoodiVersion = arr.filter(function(koodi) {
                                     return koodi.koodiUri === getKoodiFromKoodiUri($scope.koodiuri);
                                 }).sort(function(a, b) {return b.koodiVersio - a.koodiVersio;})[0].koodiVersio;
-                                console.log(result);
 
                                 if (currentKoodiVersion < latestKoodiVersion) {
+                                    console.log('Löydettiin koodille ' + $scope.koodiuri + ' uudempi koodistoversio ' + latestKoodiVersion + ", käytetään sitä.");
                                     $scope.koodiuri = $scope.koodiuri.replace(/#([0-9])+/, '#' + latestKoodiVersion);
                                 }
                             });
