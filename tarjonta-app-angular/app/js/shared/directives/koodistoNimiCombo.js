@@ -474,18 +474,15 @@ app.directive('koodistocomboaiku', function(Koodisto, $log, $q) {
                                 $scope.koodis = arr;
 
                                 // Esivalitse uusin versio koodista vain siinä tapauksessa, että koodeistä löytyy uudemmalla versiolla oleva koodi
-                                //if ($scope.koodiuri && arr && arr[0].koodiVersio) {
                                 var currentKoodiVersion = getVersionFromKoodiUri($scope.koodiuri);
                                 var latestKoodiVersion = arr.filter(function(koodi) {
                                     return koodi.koodiUri === getKoodiFromKoodiUri($scope.koodiuri);
                                 }).sort(function(a, b) {return b.koodiVersio - a.koodiVersio;})[0].koodiVersio;
                                 console.log(result);
 
-
                                 if (currentKoodiVersion < latestKoodiVersion) {
                                     $scope.koodiuri = $scope.koodiuri.replace(/#([0-9])+/, '#' + latestKoodiVersion);
                                 }
-                                //}
                             });
                         });
                     }
