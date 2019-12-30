@@ -349,10 +349,16 @@ app.directive('koodistocomboaiku', function(Koodisto, $log, $q) {
             filteredHakukohdeKoodis[0].koodiArvo :
             null;
         if (hasIdenticalKoodiArvos(hakukohdeArvo, filteredHakukohdeKoodis)) {
-            //all hakukohde uris should be indetical, remove duplicates by adding only the first one to array.
+            //all hakukohde uris should be identical, remove duplicates by adding only the first one to array.
             resultUris.push(filteredHakukohdeKoodis[0]);
         }
         return resultUris;
+    };
+    var getVersionFromKoodiUri = function(koodiUri) {
+        return koodiUri.split("#")[1];
+    };
+    var getKoodiFromKoodiUri = function(koodiUri) {
+        return koodiUri.split("#")[0];
     };
     return {
         restrict: 'EA',
@@ -467,9 +473,15 @@ app.directive('koodistocomboaiku', function(Koodisto, $log, $q) {
                                 addVersionToKoodis(arr);
                                 $scope.koodis = arr;
 
-                                // Esivalitse uusin versio koodista
-                                if ($scope.koodiuri && arr && arr[0].koodiVersio) {
-                                    $scope.koodiuri = $scope.koodiuri.replace(/#([0-9])+/, '#' + arr[0].koodiVersio);
+                                // Esivalitse uusin versio koodista vain siinä tapauksessa, että koodeistä löytyy uudemmalla versiolla oleva koodi
+                                var currentKoodiVersion = getVersionFromKoodiUri($scope.koodiuri);
+                                var latestKoodiVersion = arr.filter(function(koodi) {
+                                    return getKoodiFromKoodiUri(koodi.koodiUri) === getKoodiFromKoodiUri($scope.koodiuri);
+                                }).sort(function(a, b) {return b.koodiVersio - a.koodiVersio;})[0].koodiVersio;
+
+                                if (currentKoodiVersion < latestKoodiVersion) {
+                                    console.log('Löydettiin koodille ' + $scope.koodiuri + ' uudempi koodistoversio ' + latestKoodiVersion + ", käytetään sitä.");
+                                    $scope.koodiuri = $scope.koodiuri.replace(/#([0-9])+/, '#' + latestKoodiVersion);
                                 }
                             });
                         });
