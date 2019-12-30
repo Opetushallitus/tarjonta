@@ -476,7 +476,7 @@ app.directive('koodistocomboaiku', function(Koodisto, $log, $q) {
                                 // Esivalitse uusin versio koodista vain siinä tapauksessa, että koodeistä löytyy uudemmalla versiolla oleva koodi
                                 var currentKoodiVersion = getVersionFromKoodiUri($scope.koodiuri);
                                 var latestKoodiVersion = arr.filter(function(koodi) {
-                                    return koodi.koodiUri === getKoodiFromKoodiUri($scope.koodiuri);
+                                    return getKoodiFromKoodiUri(koodi.koodiUri) === getKoodiFromKoodiUri($scope.koodiuri);
                                 }).sort(function(a, b) {return b.koodiVersio - a.koodiVersio;})[0].koodiVersio;
 
                                 if (currentKoodiVersion < latestKoodiVersion) {
