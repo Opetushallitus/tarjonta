@@ -309,6 +309,8 @@ public class OrganisaatioService {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Caller-Id", HttpClientConfiguration.CALLER_ID);
             connection.setRequestProperty("content-type", "application/json;charset=UTF-8");
+            connection.setRequestProperty("CSRF", HttpClientConfiguration.CSRF_VALUE);
+            connection.setRequestProperty("Cookie", "CSRF=" + HttpClientConfiguration.CSRF_VALUE + ";");
             connection.setDoOutput(true);
             connection.setConnectTimeout(2000);
             connection.setReadTimeout(10000);
