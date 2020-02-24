@@ -26,14 +26,18 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
     var hakuOid = $route.current.params.id;
     var hakux = $route.current.locals.hakux;
     //haku permissiot
+    console.log("Getting permissions... ");
     PermissionService.getPermissions('haku', hakuOid).then(function(permissiot) {
+        console.log("Handling permissions ");
         $scope.isMutable = permissiot.haku.update;
         $scope.isRemovable = permissiot.haku.remove;
 
         if (hakux.result.koulutusmoduuliTyyppi === 'OPINTOKOKONAISUUS') {
+            console.log("tyyppi: ", hakux.result.koulutusmoduuliTyyppi);
             $scope.isCopyable = false;
 
             OrganisaatioService.getAllowedKoulutustyypit(AuthService.getOrganisations()).then(function(koulutustyypit) {
+                console.log('koulutustyypit: ', koulutustyypit);
                 $scope.isCopyable = permissiot.haku.copy;
 
                 // Tutkintoon johtamatonta hakua ei saa kopioida
@@ -41,6 +45,7 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
                 if (!_.contains(
                         koulutustyypit, KoulutusConverterFactory.STRUCTURE.KORKEAKOULUOPINTO.koulutustyyppiKoodiUri
                     )) {
+                    console.log('setting isCopyable = false');
                     $scope.isCopyable = false;
                 }
             });

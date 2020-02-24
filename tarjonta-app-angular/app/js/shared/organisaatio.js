@@ -110,6 +110,7 @@ angular.module('Organisaatio', [
          * oppilaitokselta. TODO lisää testi
          */
         function haeOppilaitostyypit(organisaatioOid) {
+            console.log('haeOppilaitostyypit', organisaatioOid);
             var deferred = $q.defer();
             // hae org (ja sen alapuoliset)
             etsi({
@@ -117,8 +118,11 @@ angular.module('Organisaatio', [
                 suunnitellut: true,
                 oidRestrictionList: organisaatioOid
             }).then(function(data) {
+                console.log('got organisaatiot ', data);
                 var organisaatio = data.organisaatiot[0];
+                console.log('chose organisaatio ', organisaatio);
                 if (organisaatio.organisaatiotyypit.indexOf('KOULUTUSTOIMIJA') != -1) {
+                    console.log('getting tyypit from children for organisaatio', organisaatio);
                     return getTyypitFromChildren(organisaatio, deferred);
                 }
                 if (organisaatio.organisaatiotyypit.indexOf('OPPILAITOS') != -1) {
@@ -126,6 +130,7 @@ angular.module('Organisaatio', [
                     var oppilaitostyypit = [];
                     addTyyppi(organisaatio, oppilaitostyypit);
                     deferred.resolve(oppilaitostyypit);
+                    console.log('returning tyypit ', oppilaitostyypit);
                     return deferred.promise;
                 }
                 if (organisaatio.organisaatiotyypit.indexOf('TOIMIPISTE') != -1) {
@@ -133,10 +138,12 @@ angular.module('Organisaatio', [
                     deferred.resolve(haeOppilaitostyypit(organisaatio.parentOid));
                 }
             });
+            console.log('returning promise... ', deferred.promise);
             return deferred.promise;
         }
 
         function getAllowedKoulutustyypit(orgOids) {
+            console.log('getAllowedKoulutustyypit ', orgOids);
             var deferred = $q.defer();
 
             var promises = [];
@@ -145,11 +152,14 @@ angular.module('Organisaatio', [
             });
 
             $q.all(promises).then(function(oppilaitostyypit) {
+                console.log('oppilaitostyypit ', oppilaitostyypit);
                 oppilaitostyypit = _.chain(oppilaitostyypit).flatten().compact().uniq().value();
-
+                console.log('oppilaitostyypit, after ', oppilaitostyypit);
                 Koodisto.getAlapuolisetKoodiUrit(oppilaitostyypit, 'koulutustyyppi').then(function(response) {
                     deferred.resolve(_.chain(response.uris).flatten().compact().uniq().value());
                 });
+                console.log('oppilaitostyypit, after alapuoliset ', oppilaitostyypit);
+
             });
 
             return deferred.promise;
