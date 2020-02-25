@@ -26,9 +26,7 @@ app.controller('HakuReviewController', function($scope, $route, $log, $routePara
     var hakuOid = $route.current.params.id;
     var hakux = $route.current.locals.hakux;
     //haku permissiot
-    console.log("Getting permissions... ");
     PermissionService.getPermissions('haku', hakuOid).then(function(permissiot) {
-        console.log("Handling permissions ");
         $scope.isMutable = permissiot.haku.update;
         $scope.isRemovable = permissiot.haku.remove;
 
