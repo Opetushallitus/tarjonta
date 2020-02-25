@@ -106,10 +106,10 @@ angular.module('Organisaatio', [
 
         const ophOid = '1.2.246.562.10.00000000001';
 
-        function keraile(data) {
-            console.log('keraillaan, ', data);
+        function keraile(organisaatios) {
+            console.log('keraillaan, ', organisaatios);
             var keratytTyypit = [];
-            angular.forEach(data, function(organisaatio) {
+            angular.forEach(organisaatios, function(organisaatio) {
                 if (organisaatio.organisaatiotyypit.indexOf('KOULUTUSTOIMIJA') !== -1) {
                     console.log('organisaatio is koulutustoimija, recursing');
                     var lastenTyypit = keraile(organisaatio.children);
@@ -175,6 +175,7 @@ angular.module('Organisaatio', [
                     }
                     if (organisaatio.organisaatiotyypit.indexOf('VARHAISKASVATUKSEN_JARJESTAJA') != -1) {
                         console.log('WARN varhaiskasvatuksen järjestäjä, tarvitseeko tämä erityiskäsittelyä?')
+                        deferred.resolve(haeOppilaitostyypit(organisaatio.parentOid));
                     }
                 }
             });
