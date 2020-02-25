@@ -110,6 +110,7 @@ angular.module('Organisaatio', [
             console.log('keraillaan, ', organisaatios);
             var keratytTyypit = [];
             angular.forEach(organisaatios, function(organisaatio) {
+                console.log('handling organisaatio ', organisaatio);
                 if (organisaatio.organisaatiotyypit.indexOf('KOULUTUSTOIMIJA') !== -1) {
                     console.log('organisaatio is koulutustoimija, recursing');
                     var lastenTyypit = keraile(organisaatio.children);
@@ -122,10 +123,15 @@ angular.module('Organisaatio', [
                     });
                 }
                 if (organisaatio.organisaatiotyypit.indexOf('OPPILAITOS') !== -1) {
-                    console.log('got tyyppi from oppilaitos: ', organisaatio.oppilaitostyyppi);
-                    if (keratytTyypit.indexOf(tyyppi) === -1) {
-                        console.log("adding tyyppi from oppilaitos ", organisaatio.oppilaitostyyppi);
-                        keratytTyypit.push(organisaatio.oppilaitostyyppi);
+                    if (organisaatio.oppilaitostyyppi !== undefined) {
+                        var tyyppi = organisaatio.oppilaitostyyppi;
+                        console.log('got tyyppi from oppilaitos: ', tyyppi);
+                        if (keratytTyypit.indexOf(tyyppi) === -1) {
+                            console.log("adding tyyppi from oppilaitos ", tyyppi);
+                            keratytTyypit.push(tyyppi);
+                        }
+                    } else {
+                        console.log('WARN oppilaitoksella ei vaikuta olevan tyyppiä! ', organisaatio)
                     }
                 }
             });
@@ -149,7 +155,7 @@ angular.module('Organisaatio', [
             }).then(function(data) {
                 if (organisaatioOid === ophOid) {
                     console.log('handling top organization, collecting and returning.');
-                    var keratytTyypit = keraile(data);
+                    var keratytTyypit = keraile(data.organisaatiot);
                     console.log('keratyt tyypit: ', keratytTyypit);
                     deferred.resolve(keratytTyypit);
                     return deferred.promise;
@@ -169,12 +175,9 @@ angular.module('Organisaatio', [
                         console.log('returning tyypit ', oppilaitostyypit);
                         return deferred.promise;
                     }
-                    if (organisaatio.organisaatiotyypit.indexOf('TOIMIPISTE') != -1) {
-                        $log.debug('toimipiste, recurse...');
-                        deferred.resolve(haeOppilaitostyypit(organisaatio.parentOid));
-                    }
-                    if (organisaatio.organisaatiotyypit.indexOf('VARHAISKASVATUKSEN_JARJESTAJA') != -1) {
-                        console.log('WARN varhaiskasvatuksen järjestäjä, tarvitseeko tämä erityiskäsittelyä?')
+                    if (organisaatio.organisaatiotyypit.indexOf('TOIMIPISTE') != -1
+                        || organisaatio.organisaatiotyypit.indexOf('VARHAISKASVATUKSEN_JARJESTAJA') != -1) {
+                        $log.debug('toimipiste or varhaiskasvatuksen_jarjestaja, recurse...');
                         deferred.resolve(haeOppilaitostyypit(organisaatio.parentOid));
                     }
                 }
