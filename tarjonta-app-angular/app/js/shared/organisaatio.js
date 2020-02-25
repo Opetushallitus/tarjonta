@@ -169,11 +169,15 @@ angular.module('Organisaatio', [
                         console.log('returning tyypit ', oppilaitostyypit);
                         return deferred.promise;
                     }
-                    if (organisaatio.organisaatiotyypit.indexOf('TOIMIPISTE') != -1
-                        || organisaatio.organisaatiotyypit.indexOf('VARHAISKASVATUKSEN_JARJESTAJA') != -1) {
+                    if (organisaatio.organisaatiotyypit.indexOf('TOIMIPISTE') != -1) {
                         $log.debug('toimipiste or varhaiskasvatuksen_jarjestaja, recurse...');
                         deferred.resolve(haeOppilaitostyypit(organisaatio.parentOid));
                     }
+                    if (organisaatio.organisaatiotyypit.indexOf('VARHAISKASVATUKSEN_JARJESTAJA') != -1) {
+                        console.log('varhaiskasvatuksen jarjestaja, returning empty set');
+                        deferred.resolve([]);
+                    }
+
                 }
             });
             console.log('returning promise... ', deferred.promise);
