@@ -103,6 +103,35 @@ angular.module('Organisaatio', [
             }
             return deferred.promise;
         }
+
+        const ophOid = '1.2.246.562.10.00000000001';
+
+        function keraile(data) {
+            console.log('keraillaan, ', data);
+            var keratytTyypit = [];
+            angular.forEach(data, function(organisaatio) {
+                if (organisaatio.organisaatiotyypit.indexOf('KOULUTUSTOIMIJA') !== -1) {
+                    console.log('organisaatio is koulutustoimija, recursing');
+                    var lastenTyypit = keraile(organisaatio.children);
+                    angular.forEach(lastenTyypit, function(tyyppi) {
+                        console.log('got tyyppi from koulutustoimija child ', tyyppi);
+                       if (keratytTyypit.indexOf(tyyppi) === -1) {
+                           console.log("adding tyyppi from koulutustoimija child ", tyyppi);
+                           keratytTyypit.push(tyyppi);
+                       }
+                    });
+                }
+                if (organisaatio.organisaatiotyypit.indexOf('OPPILAITOS') !== -1) {
+                    console.log('got tyyppi from oppilaitos: ', organisaatio.oppilaitostyyppi);
+                    if (keratytTyypit.indexOf(tyyppi) === -1) {
+                        console.log("adding tyyppi from oppilaitos ", organisaatio.oppilaitostyyppi);
+                        keratytTyypit.push(organisaatio.oppilaitostyyppi);
+                    }
+                }
+            });
+            return keratytTyypit;
+        }
+
         /*
          * Hakee oppilaitostyypit organisaatiolle, koulutustoimijalle haetaan
          * allaolevista oppilaitoksista, oppilaitoksen tyypit tulee
@@ -118,24 +147,35 @@ angular.module('Organisaatio', [
                 suunnitellut: true,
                 oidRestrictionList: organisaatioOid
             }).then(function(data) {
-                console.log('got organisaatiot ', data);
-                var organisaatio = data.organisaatiot[0];
-                console.log('chose organisaatio ', organisaatio);
-                if (organisaatio.organisaatiotyypit.indexOf('KOULUTUSTOIMIJA') != -1) {
-                    console.log('getting tyypit from children for organisaatio', organisaatio);
-                    return getTyypitFromChildren(organisaatio, deferred);
-                }
-                if (organisaatio.organisaatiotyypit.indexOf('OPPILAITOS') != -1) {
-                    // oppilaitos, palauta tyyppi tästä
-                    var oppilaitostyypit = [];
-                    addTyyppi(organisaatio, oppilaitostyypit);
-                    deferred.resolve(oppilaitostyypit);
-                    console.log('returning tyypit ', oppilaitostyypit);
+                if (organisaatioOid === ophOid) {
+                    console.log('handling top organization, collecting and returning.');
+                    var keratytTyypit = keraile(data);
+                    console.log('keratyt tyypit: ', keratytTyypit);
+                    deferred.resolve(keratytTyypit);
                     return deferred.promise;
-                }
-                if (organisaatio.organisaatiotyypit.indexOf('TOIMIPISTE') != -1) {
-                    $log.debug('toimipiste, recurse...');
-                    deferred.resolve(haeOppilaitostyypit(organisaatio.parentOid));
+                }  else {
+                    console.log('got organisaatiot ', data);
+                    var organisaatio = data.organisaatiot[0]; //fixme, tää ei ehkä oo kovin fiksua.
+                    console.log('chose organisaatio ', organisaatio);
+                    if (organisaatio.organisaatiotyypit.indexOf('KOULUTUSTOIMIJA') != -1) {
+                        console.log('getting tyypit from children for organisaatio', organisaatio);
+                        return getTyypitFromChildren(organisaatio, deferred);
+                    }
+                    if (organisaatio.organisaatiotyypit.indexOf('OPPILAITOS') != -1) {
+                        // oppilaitos, palauta tyyppi tästä
+                        var oppilaitostyypit = [];
+                        addTyyppi(organisaatio, oppilaitostyypit);
+                        deferred.resolve(oppilaitostyypit);
+                        console.log('returning tyypit ', oppilaitostyypit);
+                        return deferred.promise;
+                    }
+                    if (organisaatio.organisaatiotyypit.indexOf('TOIMIPISTE') != -1) {
+                        $log.debug('toimipiste, recurse...');
+                        deferred.resolve(haeOppilaitostyypit(organisaatio.parentOid));
+                    }
+                    if (organisaatio.organisaatiotyypit.indexOf('VARHAISKASVATUKSEN_JARJESTAJA') != -1) {
+                        console.log('WARN varhaiskasvatuksen järjestäjä, tarvitseeko tämä erityiskäsittelyä?')
+                    }
                 }
             });
             console.log('returning promise... ', deferred.promise);
