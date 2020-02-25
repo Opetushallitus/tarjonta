@@ -107,15 +107,11 @@ angular.module('Organisaatio', [
         const ophOid = '1.2.246.562.10.00000000001';
 
         function keraile(organisaatios) {
-            console.log('keraillaan, ', organisaatios);
             var keratytTyypit = [];
             angular.forEach(organisaatios, function(organisaatio) {
-                console.log('handling organisaatio ', organisaatio);
                 if (organisaatio.organisaatiotyypit.indexOf('KOULUTUSTOIMIJA') !== -1) {
-                    console.log('organisaatio is koulutustoimija, recursing');
                     var lastenTyypit = keraile(organisaatio.children);
                     angular.forEach(lastenTyypit, function(tyyppi) {
-                        console.log('got tyyppi from koulutustoimija child ', tyyppi);
                        if (keratytTyypit.indexOf(tyyppi) === -1) {
                            console.log("adding tyyppi from koulutustoimija child ", tyyppi);
                            keratytTyypit.push(tyyppi);
@@ -125,7 +121,6 @@ angular.module('Organisaatio', [
                 if (organisaatio.organisaatiotyypit.indexOf('OPPILAITOS') !== -1) {
                     if (organisaatio.oppilaitostyyppi !== undefined) {
                         var tyyppi = organisaatio.oppilaitostyyppi;
-                        console.log('got tyyppi from oppilaitos: ', tyyppi);
                         if (keratytTyypit.indexOf(tyyppi) === -1) {
                             console.log("adding tyyppi from oppilaitos ", tyyppi);
                             keratytTyypit.push(tyyppi);
@@ -162,6 +157,8 @@ angular.module('Organisaatio', [
                 }  else {
                     console.log('got organisaatiot ', data);
                     var organisaatio = data.organisaatiot[0]; //fixme, tää ei ehkä oo kovin fiksua.
+                    var keratyt = keraile(data.organisaatiot); //fixme, make me the default handler
+                    console.log('keratyt, non-oph ', keratyt);
                     console.log('chose organisaatio ', organisaatio);
                     if (organisaatio.organisaatiotyypit.indexOf('KOULUTUSTOIMIJA') != -1) {
                         console.log('getting tyypit from children for organisaatio', organisaatio);
