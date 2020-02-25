@@ -106,14 +106,13 @@ angular.module('Organisaatio', [
 
         const ophOid = '1.2.246.562.10.00000000001';
 
-        function keraile(organisaatios) {
+        function keraaOrganisaatioidenTyypit(organisaatios) {
             var keratytTyypit = [];
             angular.forEach(organisaatios, function(organisaatio) {
                 if (organisaatio.organisaatiotyypit.indexOf('KOULUTUSTOIMIJA') !== -1) {
-                    var lastenTyypit = keraile(organisaatio.children);
+                    var lastenTyypit = keraaOrganisaatioidenTyypit(organisaatio.children);
                     angular.forEach(lastenTyypit, function(tyyppi) {
-                       if (keratytTyypit.indexOf(tyyppi) === -1) {
-                           console.log("adding tyyppi from koulutustoimija child ", tyyppi);
+                       if (keratytTyypit.indexOf(tyyppi) == -1) {
                            keratytTyypit.push(tyyppi);
                        }
                     });
@@ -121,8 +120,7 @@ angular.module('Organisaatio', [
                 if (organisaatio.organisaatiotyypit.indexOf('OPPILAITOS') !== -1) {
                     if (organisaatio.oppilaitostyyppi !== undefined) {
                         var tyyppi = organisaatio.oppilaitostyyppi;
-                        if (keratytTyypit.indexOf(tyyppi) === -1) {
-                            console.log("adding tyyppi from oppilaitos ", tyyppi);
+                        if (keratytTyypit.indexOf(tyyppi) == -1) {
                             keratytTyypit.push(tyyppi);
                         }
                     } else {
@@ -150,15 +148,14 @@ angular.module('Organisaatio', [
             }).then(function(data) {
                 if (organisaatioOid === ophOid) {
                     console.log('handling top organization, collecting and returning.');
-                    var keratytTyypit = keraile(data.organisaatiot);
+                    var keratytTyypit = keraaOrganisaatioidenTyypit(data.organisaatiot);
                     console.log('keratyt tyypit: ', keratytTyypit);
                     deferred.resolve(keratytTyypit);
                     return deferred.promise;
                 }  else {
                     console.log('got organisaatiot ', data);
-                    var organisaatio = data.organisaatiot[0]; //fixme, tää ei ehkä oo kovin fiksua.
-                    var keratyt = keraile(data.organisaatiot); //fixme, make me the default handler
-                    console.log('keratyt, non-oph ', keratyt);
+                    console.log('organisaatiot size: ', data.organisaatiot.length);
+                    var organisaatio = data.organisaatiot[0]; //fixme, tämä ei toimi useissa keisseissä oikein.
                     console.log('chose organisaatio ', organisaatio);
                     if (organisaatio.organisaatiotyypit.indexOf('KOULUTUSTOIMIJA') != -1) {
                         console.log('getting tyypit from children for organisaatio', organisaatio);
