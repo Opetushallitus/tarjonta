@@ -104,6 +104,7 @@ angular.module('app').value('globalConfig', window.CONFIG);
 angular.module('app').factory('errorLogService', function($log, $window, Config) {
     'use strict';
 
+    var csrfValue = 'CSRF';
     var errorsLoggingTimeout = Config.env['errorlog.timeout'] || 60000;
     var errorsLoggingSuspended = false;
     var loggedErrors = [];
@@ -172,6 +173,10 @@ angular.module('app').factory('errorLogService', function($log, $window, Config)
                 contentType: 'application/json',
                 xhrFields: {
                     withCredentials: true
+                },
+                headers: {
+                    'Cookie': 'CSRF=' + csrfValue,
+                    'CSRF': csrfValue
                 },
                 data: angular.toJson({
                     errorUrl: $window.location.href,
