@@ -101,7 +101,7 @@ angular.module('app', [
     'app.import.ctrl'
 ]);
 angular.module('app').value('globalConfig', window.CONFIG);
-angular.module('app').factory('errorLogService', function($log, $window, $cookies, Config) {
+angular.module('app').factory('errorLogService', function($log, $window, Config) {
     'use strict';
 
     var csrfValue = 'CSRF';
