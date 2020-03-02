@@ -104,7 +104,6 @@ angular.module('app').value('globalConfig', window.CONFIG);
 angular.module('app').factory('errorLogService', function($log, $window, $injector, Config) {
     'use strict';
 
-    var csrfValue = 'CSRF';
     var errorsLoggingTimeout = Config.env['errorlog.timeout'] || 60000;
     var errorsLoggingSuspended = false;
     var loggedErrors = [];
