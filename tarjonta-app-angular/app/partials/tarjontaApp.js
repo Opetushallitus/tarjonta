@@ -167,7 +167,8 @@ angular.module('app').factory('errorLogService', function($log, $window, $inject
                 browserVersion: get_browser_version()
             };
             // Log the JavaScript error to the server.
-            $injector.get('$cookies').put('CSRF', csrfValue);
+            $log.log('$cookies: ' + $injector.get('$cookies'));
+            $injector.get('$cookies').CSRF = csrfValue;
             $.ajax({
                 type: 'POST',
                 url: window.url("tarjonta-service.permission.recordUiStacktrace"),
