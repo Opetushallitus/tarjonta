@@ -167,8 +167,8 @@ angular.module('app').factory('errorLogService', function($log, $window, $inject
                 browserVersion: get_browser_version()
             };
             // Log the JavaScript error to the server.
-            $log.log('$cookies: ' + $injector.get('$cookies'));
-            $injector.get('$cookies').CSRF = csrfValue;
+            //$log.log('$cookies: ' + $injector.get('$cookies'));
+            //$injector.get('$cookies').CSRF = csrfValue;
             $.ajax({
                 type: 'POST',
                 url: window.url("tarjonta-service.permission.recordUiStacktrace"),
@@ -633,6 +633,7 @@ angular.module('app').factory('ajaxInterceptor', function(Config, $cookies) {
                 config.headers['Caller-Id'] = callerid;
             }
             if ($cookies['CSRF']) {
+                $log.log('setting header CSRF: ' + $cookies['CSRF']);
                 config.headers['CSRF'] = $cookies['CSRF'];
             }
             // Fix IE caching AJAX-requests to tarjonta-service.
