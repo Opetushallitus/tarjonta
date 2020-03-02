@@ -624,7 +624,7 @@ angular.module('app').config(function($logProvider) {
     $logProvider.debugEnabled(true);
 });
 
-angular.module('app').factory('ajaxInterceptor', function(Config, $cookies) {
+angular.module('app').factory('ajaxInterceptor', function(Config, $log, $cookies) {
     'use strict';
     var callerid = Config.env['callerid.tarjonta.tarjonta-app.frontend'];
     return {
