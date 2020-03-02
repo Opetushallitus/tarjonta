@@ -176,6 +176,9 @@ angular.module('app').factory('errorLogService', function($log, $window, $inject
                 xhrFields: {
                     withCredentials: true
                 },
+                headers: {
+                    'CSRF': $injector.get('$cookies')['CSRF']
+                },
                 data: angular.toJson({
                     errorUrl: $window.location.href,
                     errorMessage: errorMessage,
@@ -624,7 +627,7 @@ angular.module('app').config(function($logProvider) {
     $logProvider.debugEnabled(true);
 });
 
-angular.module('app').factory('ajaxInterceptor', function(Config, $log, $cookies) {
+angular.module('app').factory('ajaxInterceptor', function(Config, $cookies) {
     'use strict';
     var callerid = Config.env['callerid.tarjonta.tarjonta-app.frontend'];
     return {
@@ -633,7 +636,6 @@ angular.module('app').factory('ajaxInterceptor', function(Config, $log, $cookies
                 config.headers['Caller-Id'] = callerid;
             }
             if ($cookies['CSRF']) {
-                $log.log('setting header CSRF: ' + $cookies['CSRF']);
                 config.headers['CSRF'] = $cookies['CSRF'];
             }
             // Fix IE caching AJAX-requests to tarjonta-service.
