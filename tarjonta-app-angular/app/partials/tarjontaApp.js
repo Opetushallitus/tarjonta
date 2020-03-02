@@ -101,7 +101,7 @@ angular.module('app', [
     'app.import.ctrl'
 ]);
 angular.module('app').value('globalConfig', window.CONFIG);
-angular.module('app').factory('errorLogService', function($log, $window, Config) {
+angular.module('app').factory('errorLogService', function($log, $window, $injector, Config) {
     'use strict';
 
     var csrfValue = 'CSRF';
@@ -167,7 +167,7 @@ angular.module('app').factory('errorLogService', function($log, $window, Config)
                 browserVersion: get_browser_version()
             };
             // Log the JavaScript error to the server.
-            $cookies.CSRF = csrfValue;
+            $injector.get('$cookies').put('CSRF', csrfValue);
             $.ajax({
                 type: 'POST',
                 url: window.url("tarjonta-service.permission.recordUiStacktrace"),
