@@ -154,6 +154,7 @@ angular.module('app').factory('errorLogService', function($log, $window, $inject
         // Try to send stacktrace event to server
         try {
             $log.debug('logging error to server side...');
+            var callerid = Config.env['callerid.tarjonta.tarjonta-app.frontend'];
             var errorMessage = exception.toString();
             var stackTrace = exception.stack.toString();
             var errorId = errorMessage + '---' + stackTrace;
@@ -174,6 +175,7 @@ angular.module('app').factory('errorLogService', function($log, $window, $inject
                     withCredentials: true
                 },
                 headers: {
+                    'Caller-Id': callerid,
                     'CSRF': $injector.get('$cookies')['CSRF']
                 },
                 data: angular.toJson({
