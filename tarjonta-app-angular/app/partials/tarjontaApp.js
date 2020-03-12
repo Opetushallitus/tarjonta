@@ -101,7 +101,7 @@ angular.module('app', [
     'app.import.ctrl'
 ]);
 angular.module('app').value('globalConfig', window.CONFIG);
-angular.module('app').factory('errorLogService', function($log, $window, Config) {
+angular.module('app').factory('errorLogService', function($log, $window, $injector, Config) {
     'use strict';
 
     var errorsLoggingTimeout = Config.env['errorlog.timeout'] || 60000;
@@ -154,6 +154,7 @@ angular.module('app').factory('errorLogService', function($log, $window, Config)
         // Try to send stacktrace event to server
         try {
             $log.debug('logging error to server side...');
+            var callerid = Config.env['callerid.tarjonta.tarjonta-app.frontend'];
             var errorMessage = exception.toString();
             var stackTrace = exception.stack.toString();
             var errorId = errorMessage + '---' + stackTrace;
@@ -172,6 +173,10 @@ angular.module('app').factory('errorLogService', function($log, $window, Config)
                 contentType: 'application/json',
                 xhrFields: {
                     withCredentials: true
+                },
+                headers: {
+                    'Caller-Id': callerid,
+                    'CSRF': $injector.get('$cookies')['CSRF']
                 },
                 data: angular.toJson({
                     errorUrl: $window.location.href,
