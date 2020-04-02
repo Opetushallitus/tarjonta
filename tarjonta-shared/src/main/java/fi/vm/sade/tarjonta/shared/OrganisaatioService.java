@@ -157,7 +157,7 @@ public class OrganisaatioService {
             return orgCache.get(oid);
         } catch (ExecutionException e) {
             final String msg = "Getting organization from Guava cache failed. Org oid: " + oid;
-            LOG.error(msg);
+            LOG.error(msg, e);
             throw new RuntimeException(msg);
         }
     }
@@ -167,7 +167,7 @@ public class OrganisaatioService {
             return orgHaeCache.get(oid);
         } catch (ExecutionException e) {
             final String msg = "Getting organization from Guava cache failed for hae API. Org oid: " + oid;
-            LOG.error(msg);
+            LOG.error(msg, e);
             throw new RuntimeException(msg);
         }
     }
@@ -177,7 +177,7 @@ public class OrganisaatioService {
             return koulutustoimijaCache.get(oid);
         } catch (ExecutionException e) {
             final String msg = "Getting organization from Guava cache failed for hae API. Org oid: " + oid;
-            LOG.error(msg);
+            LOG.error(msg, e);
             throw new RuntimeException(msg);
         }
     }
@@ -187,7 +187,7 @@ public class OrganisaatioService {
             return req.execute(response -> objectReader.forType(OrganisaatioResultDTO.class).readValue(response.asInputStream()));
         } catch (Exception e) {
             final String msg = "Could not fetch organization with oid " + oid;
-            LOG.error(msg);
+            LOG.error(msg, e);
             throw new RuntimeException(msg);
         }
     }
@@ -198,7 +198,7 @@ public class OrganisaatioService {
             return req.execute(response -> objectReader.forType(OrganisaatioHakutulos.class).readValue(response.asInputStream()));
         } catch (Exception e) {
             final String msg = "Could not fetch all organizations";
-            LOG.error(msg);
+            LOG.error(msg, e);
             throw new RuntimeException(msg);
         }
     }
@@ -209,7 +209,7 @@ public class OrganisaatioService {
             return req.execute(response -> objectReader.forType(OrganisaatioRDTO.class).readValue(response.asInputStream()));
         } catch (Exception e) {
             final String msg = "Could not fetch organization with oid " + oid;
-            LOG.error(msg);
+            LOG.error(msg, e);
             throw new RuntimeException(msg);
         }
     }
@@ -221,7 +221,7 @@ public class OrganisaatioService {
             return org.getOrganisaatiot().get(0).getOid();
         } catch (Exception e) {
             final String msg = "Could not fetch organization with oid " + oid;
-            LOG.error(msg);
+            LOG.error(msg, e);
             throw new RuntimeException(msg);
         }
     }
@@ -238,7 +238,7 @@ public class OrganisaatioService {
                     .toSet();
         } catch (Exception e) {
             final String msg = "Could not fetch child oids for organization with oid " + oid;
-            LOG.error(msg);
+            LOG.error(msg, e);
             throw new RuntimeException(msg);
         }
     }
@@ -332,11 +332,11 @@ public class OrganisaatioService {
             return convertedResults;
         } catch (SocketTimeoutException e) {
             final String msg = "Could not fetch organization with oid set " + organisaatioOids + " - connection timed out.";
-            LOG.error(msg);
+            LOG.error(msg, e);
             throw new RuntimeException(msg);
         } catch (IOException e) {
             final String msg = "Could not fetch organization with oid set " + organisaatioOids;
-            LOG.error(msg);
+            LOG.error(msg, e);
             throw new RuntimeException(msg);
         } finally {
             if (connection != null) {
