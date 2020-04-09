@@ -84,6 +84,8 @@ tarjonta-service.postgresql.maxwait={{host_postgresql_tarjonta_max_wait}}
 tarjonta-service.postgresql.maxlifetimemillis=60000
 
 tarjonta-service.organisaatiocache.refresh-interval-seconds={{tarjonta_organisaatiocache_refresh_interval_seconds | default("60")}}
+tarjonta-service.httpclient.timeout.millis={{tarjonta_httpclient_timeout_millis | default('60000')}}
+tarjonta-service.httpclient.keepalive.seconds={{tarjonta_httpclient_keepalive_seconds | default('60')}}
 
 invalid.koulutus.report.recipient={{tarjonta_invalid_koulutus_report_recipient}}
 

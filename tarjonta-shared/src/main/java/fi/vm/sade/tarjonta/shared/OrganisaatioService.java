@@ -158,7 +158,7 @@ public class OrganisaatioService {
         } catch (ExecutionException e) {
             final String msg = "Getting organization from Guava cache failed. Org oid: " + oid;
             LOG.error(msg, e);
-            throw new RuntimeException(msg);
+            throw new RuntimeException(msg, e);
         }
     }
 
@@ -168,7 +168,7 @@ public class OrganisaatioService {
         } catch (ExecutionException e) {
             final String msg = "Getting organization from Guava cache failed for hae API. Org oid: " + oid;
             LOG.error(msg, e);
-            throw new RuntimeException(msg);
+            throw new RuntimeException(msg, e);
         }
     }
 
@@ -178,7 +178,7 @@ public class OrganisaatioService {
         } catch (ExecutionException e) {
             final String msg = "Getting organization from Guava cache failed for hae API. Org oid: " + oid;
             LOG.error(msg, e);
-            throw new RuntimeException(msg);
+            throw new RuntimeException(msg, e);
         }
     }
     private OrganisaatioResultDTO fetchOrganisationWithHaeAPI(String oid) {
@@ -188,7 +188,7 @@ public class OrganisaatioService {
         } catch (Exception e) {
             final String msg = "Could not fetch organization with oid " + oid;
             LOG.error(msg, e);
-            throw new RuntimeException(msg);
+            throw new RuntimeException(msg, e);
         }
     }
 
@@ -199,7 +199,7 @@ public class OrganisaatioService {
         } catch (Exception e) {
             final String msg = "Could not fetch all organizations";
             LOG.error(msg, e);
-            throw new RuntimeException(msg);
+            throw new RuntimeException(msg, e);
         }
     }
 
@@ -210,7 +210,7 @@ public class OrganisaatioService {
         } catch (Exception e) {
             final String msg = "Could not fetch organization with oid " + oid;
             LOG.error(msg, e);
-            throw new RuntimeException(msg);
+            throw new RuntimeException(msg, e);
         }
     }
 
@@ -222,7 +222,7 @@ public class OrganisaatioService {
         } catch (Exception e) {
             final String msg = "Could not fetch organization with oid " + oid;
             LOG.error(msg, e);
-            throw new RuntimeException(msg);
+            throw new RuntimeException(msg, e);
         }
     }
 
@@ -239,7 +239,7 @@ public class OrganisaatioService {
         } catch (Exception e) {
             final String msg = "Could not fetch child oids for organization with oid " + oid;
             LOG.error(msg, e);
-            throw new RuntimeException(msg);
+            throw new RuntimeException(msg, e);
         }
     }
 
