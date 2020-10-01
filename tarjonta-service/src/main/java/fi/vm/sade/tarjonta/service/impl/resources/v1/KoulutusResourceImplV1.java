@@ -382,6 +382,10 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
         }
 
+        LOG.info("Create or update koulutus {}, is lukiokoulutus: {}, isRekisterinpitäjä: {}",
+                dto.getOid(),
+                dto.getToteutustyyppi().equals(ToteutustyyppiEnum.LUKIOKOULUTUS),
+                permissionChecker.isOphCrud());
         permissionChecker.checkUpsertKoulutus(dto);
 
         if (dto.getOid() != null) {
