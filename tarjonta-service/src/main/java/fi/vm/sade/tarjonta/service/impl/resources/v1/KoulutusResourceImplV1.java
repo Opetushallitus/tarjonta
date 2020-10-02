@@ -386,7 +386,12 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 dto.getOid(),
                 dto.getToteutustyyppi().equals(ToteutustyyppiEnum.LUKIOKOULUTUS),
                 permissionChecker.isOphCrud());
-        permissionChecker.checkUpsertKoulutus(dto);
+        try {
+            permissionChecker.checkUpsertKoulutus(dto);
+        } catch (Exception e) {
+            LOG.error("Error while checking permissions: ", e);
+            throw e;
+        }
 
         if (dto.getOid() != null) {
             final Tila tilamuutos = new Tila(Tyyppi.KOMOTO, dto.getTila(), dto.getOid());

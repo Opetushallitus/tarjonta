@@ -300,7 +300,7 @@ public class PermissionChecker {
                     && dto.getToteutustyyppi().equals(ToteutustyyppiEnum.LUKIOKOULUTUS)
                     && komoto.getUpdated().before(cannotEditLukioKomosOlderThanDate)
             ) {
-                throw new NotAuthorizedException("Vain rekisterinpitäjä voi muokata vanhoja lukiokoulutuksia");
+                throw new NotAuthorizedException("Vain rekisterinpitäjä voi muokata vanhoja lukiokoulutuksia, komotoOid: " + komoto.getOid());
             }
             checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
         }
