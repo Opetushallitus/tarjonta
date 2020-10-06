@@ -382,15 +382,16 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
         }
 
-        LOG.info("Create or update koulutus {}, is lukiokoulutus: {}, isRekisterinpitäjä: {}, userOid: {}",
-                dto.getOid(),
-                dto.getToteutustyyppi().equals(ToteutustyyppiEnum.LUKIOKOULUTUS),
-                permissionChecker.isOphCrud(),
-                dto.getModifiedBy());
+        if (dto.getToteutustyyppi().equals(ToteutustyyppiEnum.LUKIOKOULUTUS)) {
+            LOG.info("Create or update lukiokoulutus {}, isRekisterinpitäjä: {}, userOid: {}",
+                    dto.getOid(),
+                    permissionChecker.isOphCrud(),
+                    dto.getModifiedBy());
+        }
         try {
             permissionChecker.checkUpsertKoulutus(dto);
         } catch (Exception e) {
-            LOG.error("Error while checking permissions: ", e);
+            LOG.error("Error while checking permissions: " + e.getMessage());
             throw e;
         }
 
