@@ -28,10 +28,12 @@ import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
 import fi.vm.sade.tarjonta.shared.ParameterServices;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +51,8 @@ public class PermissionChecker {
     KoulutusmoduuliDAO koulutusmoduuliDAOImpl;
     @Autowired
     ParameterServices parameterServices;
+
+    Date cannotEditLukioKomosOlderThanDate = new Date(1598907600000L); // 1. syyskuuta 2020
 
     /**
      * Saako koulutuksen kopioida.
@@ -292,6 +296,13 @@ public class PermissionChecker {
         if (komoto == null) {
             checkCreateKoulutus(dto.getOrganisaatio().getOid());
         } else {
+            if (!isOphCrud()
+                    && (dto.getToteutustyyppi().equals(ToteutustyyppiEnum.LUKIOKOULUTUS)
+                        || dto.getToteutustyyppi().equals(ToteutustyyppiEnum.LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA))
+                    && komoto.getUpdated().before(cannotEditLukioKomosOlderThanDate)
+            ) {
+                throw new NotAuthorizedException("Vain rekisterinpitäjä voi muokata vanhoja lukiokoulutuksia, komotoOid: " + komoto.getOid());
+            }
             checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
         }
     }

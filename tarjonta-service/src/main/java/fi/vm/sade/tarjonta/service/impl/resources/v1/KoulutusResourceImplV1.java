@@ -382,7 +382,19 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
         }
 
-        permissionChecker.checkUpsertKoulutus(dto);
+        if (dto.getToteutustyyppi().equals(ToteutustyyppiEnum.LUKIOKOULUTUS)
+                || dto.getToteutustyyppi().equals(ToteutustyyppiEnum.LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA)) {
+            LOG.info("Create or update lukiokoulutus {}, isRekisterinpitäjä: {}, userOid: {}",
+                    dto.getOid(),
+                    permissionChecker.isOphCrud(),
+                    dto.getModifiedBy());
+        }
+        try {
+            permissionChecker.checkUpsertKoulutus(dto);
+        } catch (Exception e) {
+            LOG.error("Error while checking permissions: " + e.getMessage());
+            throw e;
+        }
 
         if (dto.getOid() != null) {
             final Tila tilamuutos = new Tila(Tyyppi.KOMOTO, dto.getTila(), dto.getOid());
