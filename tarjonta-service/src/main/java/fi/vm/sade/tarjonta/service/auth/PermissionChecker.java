@@ -297,7 +297,8 @@ public class PermissionChecker {
             checkCreateKoulutus(dto.getOrganisaatio().getOid());
         } else {
             if (!isOphCrud()
-                    && dto.getToteutustyyppi().equals(ToteutustyyppiEnum.LUKIOKOULUTUS)
+                    && (dto.getToteutustyyppi().equals(ToteutustyyppiEnum.LUKIOKOULUTUS)
+                        || dto.getToteutustyyppi().equals(ToteutustyyppiEnum.LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA))
                     && komoto.getUpdated().before(cannotEditLukioKomosOlderThanDate)
             ) {
                 throw new NotAuthorizedException("Vain rekisterinpitäjä voi muokata vanhoja lukiokoulutuksia, komotoOid: " + komoto.getOid());
