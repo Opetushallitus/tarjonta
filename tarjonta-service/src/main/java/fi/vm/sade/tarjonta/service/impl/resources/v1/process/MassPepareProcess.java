@@ -112,10 +112,12 @@ public class MassPepareProcess {
             startTs = System.currentTimeMillis();
             final List<Long> hakukohdeIds = hakukohdeDAO.searchHakukohteetByHakuOid(Lists.<String>newArrayList(fromOid), COPY_TILAS);
             final Set<Long> komotoIds = Sets.newHashSet(koulutusmoduuliToteutusDAO.searchKomotoIdsByHakukohdesId(hakukohdeIds, COPY_TILAS));
+            LOG.info("komoto rows before adding children: {}", komotoIds.size());
             komotoIds.addAll(getChildKomotoIds(komotoIds));
 
             countTotalHakukohde = hakukohdeIds.size();
             countTotalKomoto = komotoIds.size();
+            LOG.info("hakukohdeIds total: ", countTotalHakukohde);
             LOG.info("komoto rows total : {}", countTotalKomoto);
 
             Set<Long> batch = Sets.<Long>newHashSet();
@@ -211,6 +213,7 @@ public class MassPepareProcess {
                     // jonkun toisen haun kopioinnin yhteydessä
                     Pair<Object, MetaObject> prevCopyMeta = massakopiointiDAO.find(null, komoto.getOid(), KoulutusmoduuliToteutus.class);
                     if (prevCopyMeta != null) {
+                        LOG.info("komoto {} has already been mass-copied", komoto.getOid());
                         continue;
                     }
 
@@ -218,6 +221,8 @@ public class MassPepareProcess {
                     for (Hakukohde hk : komoto.getHakukohdes()) {
                         if (COPY_TILAS_AS_LIST.contains(hk.getTila())) {
                             metaObject.addHakukohdeOid(hk.getOid());
+                        } else {
+                            LOG.info("komoto {} will not be copied because {} is not in {}", komoto.getOid(), komoto.getTila(), COPY_TILAS_AS_LIST);
                         }
                     }
 
@@ -237,6 +242,7 @@ public class MassPepareProcess {
 
                     // KOMON tiedot
                     if (Sets.newHashSet(KORKEAKOULUTUS, KORKEAKOULUOPINTO).contains(komoto.getToteutustyyppi())) {
+                        LOG.info("saving entity komo {} with new oid {}", komoto.getKoulutusmoduuli().getOid(), newKomoOid);
                         massakopiointiDAO.saveEntityAsJson(
                                 fromOid,
                                 komoto.getKoulutusmoduuli().getOid() + "_" + komoto.getOid(),
@@ -249,6 +255,7 @@ public class MassPepareProcess {
                         );
                     }
 
+                    LOG.info("saving entity komoto {} with new oid {}", fromOid, komoto.getOid());
                     massakopiointiDAO.saveEntityAsJson(
                             fromOid,
                             komoto.getOid(),
@@ -272,10 +279,15 @@ public class MassPepareProcess {
                     Preconditions.checkNotNull(hakukohde, "Hakukohde entity cannot be null!");
 
                     MetaObject metaObject = new MetaObject();
+                    LOG.info("{} komotos for hakukohde {}", hakukohde.getKoulutusmoduuliToteutuses().size(),
+                            hakukohde.getOid());
                     for (KoulutusmoduuliToteutus kt : hakukohde.getKoulutusmoduuliToteutuses()) {
                         //add only the new oid to set of komotos
                         if (COPY_TILAS_AS_LIST.contains(kt.getTila())) {
+                            LOG.info("adding komoto {} to hakukohde {} metaObject", kt.getOid(), hakukohde.getOid());
                             metaObject.addKomotoOid(massakopiointiDAO.findNewOid(processId, kt.getOid()));
+                        } else {
+                            LOG.info("komoto {} is in state {}, which is not in {}", kt.getOid(), kt.getTila(), COPY_TILAS_AS_LIST);
                         }
                     }
 
@@ -294,6 +306,7 @@ public class MassPepareProcess {
                     }
 
                     metaObject.setOriginalHakuOid(fromOid);
+                    LOG.info("saving entity hakukohde {} entity", hakukohde.getOid());
                     massakopiointiDAO.saveEntityAsJson(
                             fromOid,
                             hakukohde.getOid(), //from hakukohde oid
