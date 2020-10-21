@@ -106,7 +106,7 @@
     <postgresql.version>42.2.5</postgresql.version>
     <powermock.version>1.4.12</powermock.version>
     <properties-maven-plugin.version>1.0-alpha-2</properties-maven-plugin.version>
-    <quartz.version>1.8.6</quartz.version>
+    <quartz.version>2.3.2</quartz.version>
     <querydsl.version>3.1.0</querydsl.version>
     <reflections.version>0.9.8</reflections.version>
     <resources.plugin.version>2.5</resources.plugin.version>
