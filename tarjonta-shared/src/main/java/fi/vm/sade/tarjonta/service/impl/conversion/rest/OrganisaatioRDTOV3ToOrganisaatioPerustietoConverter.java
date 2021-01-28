@@ -29,7 +29,9 @@ public class OrganisaatioRDTOV3ToOrganisaatioPerustietoConverter implements Conv
         //s.setMatch();
         s.setNimi(t.getNimi());
         for (String organisaatioTyyppi : t.getTyypit()) {
-            s.getOrganisaatiotyypit().add(OrganisaatioTyyppi.fromValue(organisaatioTyyppi));
+            if ( organisaatioTyyppi != null ) { // organisaatioTyyppi might be null if unknown enum value (API change)
+                s.getOrganisaatiotyypit().add(OrganisaatioTyyppi.fromValue(organisaatioTyyppi));
+            }
         }
 
         for (String kieliUri : t.getKieletUris()) {
