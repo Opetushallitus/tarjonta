@@ -46,7 +46,7 @@ public class OrganisaatioService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ObjectMapper ignoreFieldsObjectMapper = createIgnoreFieldsObjectMapper();
     private final Long cacheRefreshInterval;
-    private final ObjectReader objectReader = ignoreFieldsObjectMapper.reader();
+    protected final ObjectReader objectReader = ignoreFieldsObjectMapper.reader();
 
     private static ObjectMapper createIgnoreFieldsObjectMapper() {
         ObjectMapper m = new ObjectMapper();
