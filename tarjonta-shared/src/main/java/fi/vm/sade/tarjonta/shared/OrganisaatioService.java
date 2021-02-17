@@ -46,11 +46,12 @@ public class OrganisaatioService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ObjectMapper ignoreFieldsObjectMapper = createIgnoreFieldsObjectMapper();
     private final Long cacheRefreshInterval;
-    private final ObjectReader objectReader = ignoreFieldsObjectMapper.reader();
+    protected final ObjectReader objectReader = ignoreFieldsObjectMapper.reader();
 
     private static ObjectMapper createIgnoreFieldsObjectMapper() {
         ObjectMapper m = new ObjectMapper();
         m.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        m.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
         return m;
     }
     private static final Logger LOG = LoggerFactory.getLogger(OrganisaatioService.class);
@@ -120,7 +121,8 @@ public class OrganisaatioService {
         RYHMA("Ryhma"),
         VARHAISKASVATUKSEN_JARJESTAJA("Varhaiskasvatuksen jarjestaja"),
         VARHAISKASVATUKSEN_TOIMIPAIKKA("Varhaiskasvatuksen toimipaikka"),
-        TYOELAMAJARJESTO("Tyoelamajarjesto");
+        TYOELAMAJARJESTO("Tyoelamajarjesto"),
+        KUNTA("Kunta");
 
         private final String value;
 
