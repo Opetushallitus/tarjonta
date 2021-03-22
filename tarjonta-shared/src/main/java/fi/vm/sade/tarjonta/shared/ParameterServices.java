@@ -90,6 +90,7 @@ public class ParameterServices implements InitializingBean {
             // Read ohjausparametrit and parse result with GSON
             URL url = new URL(urlConfiguration.url("ohjausparametrit-service.getParametrit", target));
             URLConnection conn = url.openConnection();
+            conn.setRequestProperty("Caller-Id", HttpClientConfiguration.CALLER_ID);
             return new JSONObject(IOUtils.toString(conn.getInputStream()));
         } catch (FileNotFoundException ex) {
             LOG.debug("No parameters for target: " + target);
