@@ -34,7 +34,7 @@
     <commons-codec.version>1.7</commons-codec.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-fileupload.version>1.3.3</commons-fileupload.version>
-    <commons-io.version>2.1</commons-io.version>
+    <commons-io.version>2.7</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-lang3.version>3.5</commons-lang3.version>
     <commons-logging.version>1.1.3</commons-logging.version>
@@ -52,8 +52,8 @@
     <frontend-maven-plugin.version>0.0.25</frontend-maven-plugin.version>
     <generic-common.version>9.6.1-TARJONTA-SNAPSHOT</generic-common.version>
     <geronimo-jms_1.1_spec.version>1.1.1</geronimo-jms_1.1_spec.version>
-    <gson.version>2.2.4</gson.version>
-    <guava.version>18.0</guava.version>
+    <gson.version>2.8.9</gson.version>
+    <guava.version>30.0-android</guava.version>
     <h2.version>1.3.175</h2.version>
     <hamcrest.version>1.3</hamcrest.version>
     <hibernate-jpa-2.0-api.version>1.0.1.Final</hibernate-jpa-2.0-api.version>
@@ -61,12 +61,12 @@
     <hibernate4-maven-plugin.version>0.2.0</hibernate4-maven-plugin.version>
     <HikariCP.version>3.2.0</HikariCP.version>
     <hsqldb.version>2.0.0</hsqldb.version>
-    <httpclient.version>4.5.2</httpclient.version>
-    <httpcomponents.version>4.5.2</httpcomponents.version>
+    <httpclient.version>4.5.13</httpclient.version>
+    <httpcomponents.version>4.5.13</httpcomponents.version>
     <httpcore.version>4.4.9</httpcore.version>
     <httpmime.version>4.3.1</httpmime.version>
     <jackson-asl.version>1.9.13</jackson-asl.version>
-    <jackson.version>2.10.1</jackson.version>
+    <jackson.version>2.13.4</jackson.version>
     <java-cas.version>0.5.0-SNAPSHOT</java-cas.version>
     <java-utils.version>0.3.0-SNAPSHOT</java-utils.version>
     <java-utils.httpclient.version>0.3.0-SNAPSHOT</java-utils.httpclient.version>
@@ -79,7 +79,7 @@
     <jaxb2-basics.version>0.6.2</jaxb2-basics.version>
     <jaxb2-value-constructor.version>3.0</jaxb2-value-constructor.version>
     <jersey.version>1.9.1</jersey.version>
-    <jettison.version>1.3.8</jettison.version>
+    <jettison.version>1.5.1</jettison.version>
     <jetty-maven-plugin.version>9.2.1.v20140609</jetty-maven-plugin.version>
     <jgrapht-jdk1.5.version>0.7.3</jgrapht-jdk1.5.version>
     <joda-time.version>2.3</joda-time.version>
@@ -112,9 +112,9 @@
     <resources.plugin.version>2.5</resources.plugin.version>
     <servlet.version>3.0.1</servlet.version>
     <slf4j.version>1.7.5</slf4j.version>
-    <solr.version>4.10.4</solr.version>
-    <spring-security.version>4.2.3.RELEASE</spring-security.version>
-    <spring.version>4.3.10.RELEASE</spring.version>
+    <solr.version>8.10.1</solr.version>
+    <spring-security.version>5.5.7</spring-security.version>
+    <spring.version>5.2.22.RELEASE</spring.version>
     <springockito.version>1.0.4</springockito.version>
     <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
     <swagger_2.10.version>1.3.0</swagger_2.10.version>
