@@ -103,7 +103,7 @@
     <organisaatio.api.version>2018-6-SNAPSHOT</organisaatio.api.version>
     <organisaatio.solr.version>2018-6-SNAPSHOT</organisaatio.solr.version>
     <paranamer.version>2.5.2</paranamer.version>
-    <postgresql.version>42.2.5</postgresql.version>
+    <postgresql.version>42.2.27</postgresql.version>
     <powermock.version>1.4.12</powermock.version>
     <properties-maven-plugin.version>1.0-alpha-2</properties-maven-plugin.version>
     <quartz.version>1.8.6</quartz.version>
