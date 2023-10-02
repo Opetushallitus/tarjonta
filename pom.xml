@@ -111,7 +111,7 @@
     <reflections.version>0.9.8</reflections.version>
     <resources.plugin.version>2.5</resources.plugin.version>
     <servlet.version>3.0.1</servlet.version>
-    <slf4j.version>1.7.5</slf4j.version>
+    <slf4j.version>1.7.34</slf4j.version>
     <solr.version>4.10.4</solr.version>
     <spring-security.version>4.2.3.RELEASE</spring-security.version>
     <spring.version>4.3.10.RELEASE</spring.version>
