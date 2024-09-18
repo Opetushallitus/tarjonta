@@ -216,7 +216,11 @@
         <enabled>true</enabled>
       </releases>
     </repository>
-
+    <repository>
+      <id>Maven-restlet-snapshots</id>
+      <name>Maven-restlet-snapshots</name>
+      <url>https://maven.restlet.talend.com/</url>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
