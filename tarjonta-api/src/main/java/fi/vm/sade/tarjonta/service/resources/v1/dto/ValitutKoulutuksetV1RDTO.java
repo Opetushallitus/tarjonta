@@ -1,81 +1,54 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import com.wordnik.swagger.annotations.ApiModel;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
+import io.swagger.annotations.ApiModel;
 import java.util.*;
 
-/*
- * @author: Tuomas Katva 10/11/13
- */
-@ApiModel(value = "Näyttää hakukohteeseen valittujen koulutustusmoduulien toteutuksien yhteensopivuuden.")
+@ApiModel(
+    value = "Näyttää hakukohteeseen valittujen koulutustusmoduulien toteutuksien yhteensopivuuden.")
 public class ValitutKoulutuksetV1RDTO extends BaseV1RDTO {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    //<komotoOid, <invalid with komoto oids>>
-    private Map<String, Set<String>> oidConflictingWithOids;
-    private Boolean valid = false;
-    private List<NimiJaOidRDTO> names;
-    private Set<String> toteutustyyppis;
+  // <komotoOid, <invalid with komoto oids>>
+  private Map<String, Set<String>> oidConflictingWithOids;
+  private Boolean valid = false;
+  private List<NimiJaOidRDTO> names;
+  private Set<String> toteutustyyppis;
 
-    /**
-     * @return the selectedOids
-     */
-    public Map<String, Set<String>> getOidConflictingWithOids() {
-        if (oidConflictingWithOids == null) {
-            oidConflictingWithOids = new HashMap<String, Set<String>>();
-        }
-
-        return oidConflictingWithOids;
+  public Map<String, Set<String>> getOidConflictingWithOids() {
+    if (oidConflictingWithOids == null) {
+      oidConflictingWithOids = new HashMap<String, Set<String>>();
     }
 
-    /**
-     * @param selectedOids the selectedOids to set
-     */
-    public void setOidConflictingWithOids(Map<String, Set<String>> selectedOids) {
-        this.oidConflictingWithOids = selectedOids;
-    }
+    return oidConflictingWithOids;
+  }
 
-    /**
-     * @return the valid
-     */
-    public Boolean getValid() {
-        return valid;
-    }
+  public void setOidConflictingWithOids(Map<String, Set<String>> selectedOids) {
+    this.oidConflictingWithOids = selectedOids;
+  }
 
-    /**
-     * @param valid the valid to set
-     */
-    public void setValid(Boolean valid) {
-        this.valid = valid;
-    }
+  public Boolean getValid() {
+    return valid;
+  }
 
-    /**
-     * @return the names
-     */
-    public List<NimiJaOidRDTO> getNames() {
-        return names;
-    }
+  public void setValid(Boolean valid) {
+    this.valid = valid;
+  }
 
-    /**
-     * @param names
-     */
-    public void setNames(List<NimiJaOidRDTO> names) {
-        this.names = names;
-    }
+  public List<NimiJaOidRDTO> getNames() {
+    return names;
+  }
 
-    /**
-     * @return the toteutustyyppis
-     */
-    public Set<String> getToteutustyyppis() {
-        return toteutustyyppis;
-    }
+  public void setNames(List<NimiJaOidRDTO> names) {
+    this.names = names;
+  }
 
-    /**
-     * @param toteutustyyppis the toteutustyyppis to set
-     */
-    public void setToteutustyyppis(Set<String> toteutustyyppis) {
-        this.toteutustyyppis = toteutustyyppis;
-    }
+  public Set<String> getToteutustyyppis() {
+    return toteutustyyppis;
+  }
 
+  public void setToteutustyyppis(Set<String> toteutustyyppis) {
+    this.toteutustyyppis = toteutustyyppis;
+  }
 }

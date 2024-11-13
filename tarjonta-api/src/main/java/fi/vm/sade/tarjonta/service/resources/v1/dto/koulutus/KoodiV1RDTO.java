@@ -1,220 +1,169 @@
-/*
- * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- *
- * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
- * soon as they will be approved by the European Commission - subsequent versions
- * of the EUPL (the "Licence");
- *
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * European Union Public Licence for more details.
- */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
-import org.apache.commons.lang.StringUtils;
-
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
-/**
- *
- * @author Jani Wilén
- */
 @ApiModel(value = "Koodisto koodi uri:n syötämiseen ja näyttämiseen käytettävä rajapintaolio")
 public class KoodiV1RDTO implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri (lisätietoa)")
-    private String kieliUri;
-    @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n versio (lisätietoa)")
-    private Integer kieliVersio;
-    @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n iso-kielikoodi (lisätietoa)")
-    private String kieliArvo;
-    @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n nimen kielikäännös (lisätietoa)")
-    private String kieliKaannos;
-    @ApiModelProperty(value = "Koodisto koodin uri", required = true)
-    private String uri;
-    @ApiModelProperty(value = "Koodisto koodin versio, koodisto koodi uri:a syötettäessä pakollinen tieto", required = true)
-    private Integer versio = 1;
-    @ApiModelProperty(value = "Koodisto koodin uri:n arvo (lisätietoa)")
-    private String arvo;
-    @ApiModelProperty(value = "Koodisto koodin uri:n nimen kielikäännos (lisätietoa)")
-    private String nimi;
+  private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "Monikielisen lisätiedon näyttämiseen tarkoitettu avain-arvopari, jossa avain on koodisto kieli uri ja arvo on rajapintaolio", required = false)
-    private Map<String, KoodiV1RDTO> meta;
+  @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri (lisätietoa)")
+  private String kieliUri;
 
-    public KoodiV1RDTO() {
-    }
+  @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n versio (lisätietoa)")
+  private Integer kieliVersio;
 
-    public KoodiV1RDTO(String uri, Integer versio, String arvo) {
-        this.uri = uri;
-        this.versio = versio;
-        this.arvo = arvo;
-    }
+  @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n iso-kielikoodi (lisätietoa)")
+  private String kieliArvo;
 
-    public KoodiV1RDTO(String uri, Integer versio, String arvo, String nimi) {
-        this.uri = uri;
-        this.versio = versio;
-        this.arvo = arvo;
-        this.nimi = nimi;
-    }
+  @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n nimen kielikäännös (lisätietoa)")
+  private String kieliKaannos;
 
-    public void setKoodi(String uri, Integer versio, String arvo, String nimi) {
-        this.uri = uri;
-        this.versio = versio;
-        this.arvo = arvo;
-        this.nimi = nimi;
-    }
+  @ApiModelProperty(value = "Koodisto koodin uri", required = true)
+  private String uri;
 
-    /**
-     * @return the uri
-     */
-    public String getUri() {
-        return uri;
-    }
+  @ApiModelProperty(
+      value = "Koodisto koodin versio, koodisto koodi uri:a syötettäessä pakollinen tieto",
+      required = true)
+  private Integer versio = 1;
 
-    /**
-     * @param uri the uri to set
-     */
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
+  @ApiModelProperty(value = "Koodisto koodin uri:n arvo (lisätietoa)")
+  private String arvo;
 
-    /**
-     * @return the versio
-     */
-    public Integer getVersio() {
-        return versio;
-    }
+  @ApiModelProperty(value = "Koodisto koodin uri:n nimen kielikäännos (lisätietoa)")
+  private String nimi;
 
-    /**
-     * @param version the version to set
-     */
-    public void setVersio(Integer versio) {
-        this.versio = versio;
-    }
+  @ApiModelProperty(
+      value =
+          "Monikielisen lisätiedon näyttämiseen tarkoitettu avain-arvopari, jossa avain on koodisto kieli uri ja arvo on rajapintaolio",
+      required = false)
+  private Map<String, KoodiV1RDTO> meta;
 
-    /**
-     * @return the arvo
-     */
-    public String getArvo() {
-        return arvo;
-    }
+  public KoodiV1RDTO() {}
 
-    /**
-     * @param arvo the arvo to set
-     */
-    public void setArvo(String arvo) {
-        this.arvo = arvo;
-    }
+  public KoodiV1RDTO(String uri, Integer versio, String arvo) {
+    this.uri = uri;
+    this.versio = versio;
+    this.arvo = arvo;
+  }
 
-    /**
-     * @return the nimi
-     */
-    public String getNimi() {
-        return nimi;
-    }
+  public KoodiV1RDTO(String uri, Integer versio, String arvo, String nimi) {
+    this.uri = uri;
+    this.versio = versio;
+    this.arvo = arvo;
+    this.nimi = nimi;
+  }
 
-    /**
-     * @param nimi the kaannos to set
-     */
-    public void setNimi(String nimi) {
-        this.nimi = nimi;
-    }
+  public void setKoodi(String uri, Integer versio, String arvo, String nimi) {
+    this.uri = uri;
+    this.versio = versio;
+    this.arvo = arvo;
+    this.nimi = nimi;
+  }
 
-    /**
-     * @return the kieliUri
-     */
-    public String getKieliUri() {
-        return kieliUri;
-    }
+  public String getUri() {
+    return uri;
+  }
 
-    /**
-     * @param kieliUri the kieliUri to set
-     */
-    public void setKieliUri(String kieliUri) {
-        this.kieliUri = kieliUri;
-    }
+  public void setUri(String uri) {
+    this.uri = uri;
+  }
 
-    /**
-     * @return the kieliVersio
-     */
-    public Integer getKieliVersio() {
-        return kieliVersio;
-    }
+  public Integer getVersio() {
+    return versio;
+  }
 
-    /**
-     * @param kieliVersio the kieliVersio to set
-     */
-    public void setKieliVersio(Integer kieliVersio) {
-        this.kieliVersio = kieliVersio;
-    }
+  public void setVersio(Integer versio) {
+    this.versio = versio;
+  }
 
-    /**
-     * @return the kieliArvo
-     */
-    public String getKieliArvo() {
-        return kieliArvo;
-    }
+  public String getArvo() {
+    return arvo;
+  }
 
-    /**
-     * @param kieliArvo the kieliArvo to set
-     */
-    public void setKieliArvo(String kieliArvo) {
-        this.kieliArvo = kieliArvo;
-    }
+  public void setArvo(String arvo) {
+    this.arvo = arvo;
+  }
 
-    /**
-     * @return the kieliKaannos
-     */
-    public String getKieliKaannos() {
-        return kieliKaannos;
-    }
+  public String getNimi() {
+    return nimi;
+  }
 
-    /**
-     * @param kieliKaannos the kieliKaannos to set
-     */
-    public void setKieliKaannos(String kieliKaannos) {
-        this.kieliKaannos = kieliKaannos;
-    }
+  public void setNimi(String nimi) {
+    this.nimi = nimi;
+  }
 
-    /**
-     * @param meta the meta to set
-     */
-    public void setMeta(Map<String, KoodiV1RDTO> meta) {
-        this.meta = meta;
-    }
+  public String getKieliUri() {
+    return kieliUri;
+  }
 
-    public Map<String, KoodiV1RDTO> getMeta() {
-        return meta;
-    }
+  public void setKieliUri(String kieliUri) {
+    this.kieliUri = kieliUri;
+  }
 
-    public static boolean notEmpty(KoodiV1RDTO dto) {
-        return dto != null && !StringUtils.isBlank(dto.getUri());
-    }
+  public Integer getKieliVersio() {
+    return kieliVersio;
+  }
 
-    public static String stripVersionFromKoodiUri(String koodiUri) {
-        return StringUtils.defaultString(koodiUri).split("#")[0];
-    }
+  public void setKieliVersio(Integer kieliVersio) {
+    this.kieliVersio = kieliVersio;
+  }
 
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName() +
-                "[kieliUri="  + this.kieliUri +
-                ", kieliVersio=" + this.kieliVersio +
-                ", kieliArvi=" + this.kieliArvo +
-                ", kieliKaannos=" + this.kieliKaannos +
-                ", uri=" + this.uri +
-                ", version=" + this.versio +
-                ", arvo=" + this.arvo +
-                ", nimi=" + this.nimi +
-                "]";
-    }
+  public String getKieliArvo() {
+    return kieliArvo;
+  }
+
+  public void setKieliArvo(String kieliArvo) {
+    this.kieliArvo = kieliArvo;
+  }
+
+  public String getKieliKaannos() {
+    return kieliKaannos;
+  }
+
+  public void setKieliKaannos(String kieliKaannos) {
+    this.kieliKaannos = kieliKaannos;
+  }
+
+  public void setMeta(Map<String, KoodiV1RDTO> meta) {
+    this.meta = meta;
+  }
+
+  public Map<String, KoodiV1RDTO> getMeta() {
+    return meta;
+  }
+
+  public static boolean notEmpty(KoodiV1RDTO dto) {
+    return dto != null && !StringUtils.isBlank(dto.getUri());
+  }
+
+  public static String stripVersionFromKoodiUri(String koodiUri) {
+    return StringUtils.defaultString(koodiUri).split("#")[0];
+  }
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName()
+        + "[kieliUri="
+        + this.kieliUri
+        + ", kieliVersio="
+        + this.kieliVersio
+        + ", kieliArvi="
+        + this.kieliArvo
+        + ", kieliKaannos="
+        + this.kieliKaannos
+        + ", uri="
+        + this.uri
+        + ", version="
+        + this.versio
+        + ", arvo="
+        + this.arvo
+        + ", nimi="
+        + this.nimi
+        + "]";
+  }
 }

@@ -1,480 +1,471 @@
-/*
- * Copyright (c) 2013 The Finnish Board of Education - Opetushallitus
- *
- * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
- * soon as they will be approved by the European Commission - subsequent versions
- * of the EUPL (the "Licence");
- *
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- */
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
-import org.apache.commons.lang.StringUtils;
-
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.*;
+import org.apache.commons.lang3.StringUtils;
 
-/**
- * DTO representing Haku.
- *
- * @author mlyly
- */
 @ApiModel(value = "Haku REST-api malli (rajapinnan versio V1)")
 public class HakuV1RDTO extends BaseV1RDTO {
 
-    @ApiModelProperty(value = "Hakukauden koodisto uri", required = true)
-    private String hakukausiUri;
+  @ApiModelProperty(value = "Hakukauden koodisto uri", required = true)
+  private String hakukausiUri;
 
-    @ApiModelProperty(value = "Hakukauden vuosi", required = true)
-    private int hakukausiVuosi;
+  @ApiModelProperty(value = "Hakukauden vuosi", required = true)
+  private int hakukausiVuosi;
 
-    @ApiModelProperty(value = "Hakutapa koodisto uri", required = true)
-    private String hakutapaUri;
+  @ApiModelProperty(value = "Hakutapa koodisto uri", required = true)
+  private String hakutapaUri;
 
-    @ApiModelProperty(value = "Hakulomakkeen www-osoite", required = false)
-    private String hakulomakeUri;
+  @ApiModelProperty(value = "Hakulomakkeen www-osoite", required = false)
+  private String hakulomakeUri;
 
-    @ApiModelProperty(value = "Ataru lomakeavain", required = false)
-    private String ataruLomakeAvain;
+  @ApiModelProperty(value = "Ataru lomakeavain", required = false)
+  private String ataruLomakeAvain;
 
-    @ApiModelProperty(value = "Hakutyypin koodisto uri", required = true)
-    private String hakutyyppiUri;
+  @ApiModelProperty(value = "Hakutyypin koodisto uri", required = true)
+  private String hakutyyppiUri;
 
-    @ApiModelProperty(value = "Haun kohdejoukko koodisto uri", required = true)
-    private String kohdejoukkoUri;
+  @ApiModelProperty(value = "Haun kohdejoukko koodisto uri", required = true)
+  private String kohdejoukkoUri;
 
-    @ApiModelProperty(value = "Haun kohdejoukon tarkenne", required = false)
-    private String kohdejoukonTarkenne;
+  @ApiModelProperty(value = "Haun kohdejoukon tarkenne", required = false)
+  private String kohdejoukonTarkenne;
 
-    @ApiModelProperty(value = "Koulutuksen alkamisvuosi", required = true)
-    private int koulutuksenAlkamisVuosi;
+  @ApiModelProperty(value = "Koulutuksen alkamisvuosi", required = true)
+  private int koulutuksenAlkamisVuosi;
 
-    @ApiModelProperty(value = "Koulutuksen alkamiskausi koodisto uri", required = true)
-    private String koulutuksenAlkamiskausiUri;
+  @ApiModelProperty(value = "Koulutuksen alkamiskausi koodisto uri", required = true)
+  private String koulutuksenAlkamiskausiUri;
 
-    @ApiModelProperty(value = "Haun tila (LUONNOS, JULKAISTU, VALMIS, ...)", required = true)
-    private String tila;
+  @ApiModelProperty(value = "Haun tila (LUONNOS, JULKAISTU, VALMIS, ...)", required = true)
+  private String tila;
 
-    @ApiModelProperty(value = "Ylioppilastutkinto antaa hakukelpoisuuden", required = false)
-    private Boolean ylioppilastutkintoAntaaHakukelpoisuuden;
+  @ApiModelProperty(value = "Ylioppilastutkinto antaa hakukelpoisuuden", required = false)
+  private Boolean ylioppilastutkintoAntaaHakukelpoisuuden;
 
-    @ApiModelProperty(value = "Lista hakukohteista joilla ylioppilastutkinto antaa hakukelpoisuuden")
-    private List<String> hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden;
+  @ApiModelProperty(value = "Lista hakukohteista joilla ylioppilastutkinto antaa hakukelpoisuuden")
+  private List<String> hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden;
 
-    @ApiModelProperty(value = "Käytetäänkö järjestelmän sijoittelupalvelua", required = true)
-    private boolean sijoittelu;
+  @ApiModelProperty(value = "Käytetäänkö järjestelmän sijoittelupalvelua", required = true)
+  private boolean sijoittelu;
 
-    @ApiModelProperty(value = "Käytetäänkö järjestelmän hakulomaketta", required = true)
-    private boolean jarjestelmanHakulomake;
+  @ApiModelProperty(value = "Käytetäänkö järjestelmän hakulomaketta", required = true)
+  private boolean jarjestelmanHakulomake;
 
-    @ApiModelProperty(value = "Lista haun hakuaikoja", required = true)
-    private List<HakuaikaV1RDTO> hakuaikas;
+  @ApiModelProperty(value = "Lista haun hakuaikoja", required = true)
+  private List<HakuaikaV1RDTO> hakuaikas;
 
-    @ApiModelProperty(value = "Haun hakukohdehteiden OID lista", required = true)
-    private List<String> hakukohdeOids;
+  @ApiModelProperty(value = "Haun hakukohdehteiden OID lista", required = true)
+  private List<String> hakukohdeOids;
 
-    @ApiModelProperty(value = "Haun tunniste", required = true)
-    private String haunTunniste;
+  @ApiModelProperty(value = "Haun tunniste", required = true)
+  private String haunTunniste;
 
-    @ApiModelProperty(value = "Haun monikielinen nimi", required = true)
-    private Map<String, String> nimi = new HashMap<String, String>();
+  @ApiModelProperty(value = "Haun monikielinen nimi", required = true)
+  private Map<String, String> nimi = new HashMap<String, String>();
 
-    @ApiModelProperty(value = "Koodiston avattua metadataa", required = false)
-    private Map<String, KoodiV1RDTO> koodiMeta;
+  @ApiModelProperty(value = "Koodiston avattua metadataa", required = false)
+  private Map<String, KoodiV1RDTO> koodiMeta;
 
-    @ApiModelProperty(value = "Maksimi hakukohteiden lukumäärä", required = true)
-    private int maxHakukohdes;
+  @ApiModelProperty(value = "Maksimi hakukohteiden lukumäärä", required = true)
+  private int maxHakukohdes;
 
-    @ApiModelProperty(value = "Voiko hakija jättää useita hakemuksia tähän hakuun", required = true)
-    private boolean canSubmitMultipleApplications;
+  @ApiModelProperty(value = "Voiko hakija jättää useita hakemuksia tähän hakuun", required = true)
+  private boolean canSubmitMultipleApplications;
 
-    @ApiModelProperty(value = "Tarjoaja organisatio oidit. Hakukohteita liittävät.", required = false)
-    private String[] organisaatioOids;
+  @ApiModelProperty(value = "Tarjoaja organisatio oidit. Hakukohteita liittävät.", required = false)
+  private String[] organisaatioOids;
 
-    @ApiModelProperty(value = "Tarjoaja organisatio oidit. Muokkaajat.", required = false)
-    private String[] tarjoajaOids;
+  @ApiModelProperty(value = "Tarjoaja organisatio oidit. Muokkaajat.", required = false)
+  private String[] tarjoajaOids;
 
-    @ApiModelProperty(value = "Hakukohteet järjestettävä prioriteettijärjestykseen.", required = false)
-    private boolean usePriority;
+  @ApiModelProperty(
+      value = "Hakukohteet järjestettävä prioriteettijärjestykseen.",
+      required = false)
+  private boolean usePriority;
 
-    @ApiModelProperty(value = "Isäntähaku, johon haku mahdollisesti linkittyy", required = false)
-    private String parentHakuOid;
+  @ApiModelProperty(value = "Isäntähaku, johon haku mahdollisesti linkittyy", required = false)
+  private String parentHakuOid;
 
-    @ApiModelProperty(value = "Sisältyvät haut", required = false)
-    private Set<String> sisaltyvatHaut = new HashSet<String>();
+  @ApiModelProperty(value = "Sisältyvät haut", required = false)
+  private Set<String> sisaltyvatHaut = new HashSet<String>();
 
-    @ApiModelProperty(value = "Hakuun liittyvät organisaatioryhmät", required = false)
-    private List<String> organisaatioryhmat;
+  @ApiModelProperty(value = "Hakuun liittyvät organisaatioryhmät", required = false)
+  private List<String> organisaatioryhmat;
 
-    @ApiModelProperty(value = "Haun koulutusmoduulin tyyppi")
-    private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
+  @ApiModelProperty(value = "Haun koulutusmoduulin tyyppi")
+  private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
 
-    @ApiModelProperty(value = "Mihin asti haku näytetään opintopolussa", required = false)
-    private Date opintopolunNayttaminenLoppuu;
+  @ApiModelProperty(value = "Mihin asti haku näytetään opintopolussa", required = false)
+  private Date opintopolunNayttaminenLoppuu;
 
-    @ApiModelProperty(value = "Maksumuuri käytössä", required = false)
-    private boolean maksumuuriKaytossa = false;
+  @ApiModelProperty(value = "Maksumuuri käytössä", required = false)
+  private boolean maksumuuriKaytossa = false;
 
-    @ApiModelProperty(value = "Tunnistus käytössä", required = false)
-    private boolean tunnistusKaytossa = false;
+  @ApiModelProperty(value = "Tunnistus käytössä", required = false)
+  private boolean tunnistusKaytossa = false;
 
-    @ApiModelProperty(value = "Onko yhden paikan sääntö voimassa haulle ja miksi", required = true)
-    private YhdenPaikanSaanto yhdenPaikanSaanto;
+  @ApiModelProperty(value = "Onko yhden paikan sääntö voimassa haulle ja miksi", required = true)
+  private YhdenPaikanSaanto yhdenPaikanSaanto;
 
-    @ApiModelProperty(value = "Käytetäänkö haussa tarjonnan automaattista sykkausta")
-    private boolean autosyncTarjonta = false;
-
-    @ApiModelProperty(value = "Päivämäärä, josta lähin tarjonnan automaattinen synkkaus on käytössä")
-    private Date autosyncTarjontaFrom;
-
-    @ApiModelProperty(value = "Päivämäärä, johon asti tarjonnan automaattinen synkkaus on käytössä")
-    private Date autosyncTarjontaTo;
-
-    public void addKoodiMeta(KoodiV1RDTO koodi) {
-        if (koodi == null) {
-            return;
-        }
-
-        if (getKoodiMeta() == null) {
-            setKoodiMeta(new HashMap<String, KoodiV1RDTO>());
-        }
-        getKoodiMeta().put(koodi.getUri(), koodi);
-    }
+  @ApiModelProperty(value = "Käytetäänkö haussa tarjonnan automaattista sykkausta")
+  private boolean autosyncTarjonta = false;
 
-    public Map<String, KoodiV1RDTO> getKoodiMeta() {
-        return koodiMeta;
-    }
+  @ApiModelProperty(value = "Päivämäärä, josta lähin tarjonnan automaattinen synkkaus on käytössä")
+  private Date autosyncTarjontaFrom;
 
-    public void setKoodiMeta(Map<String, KoodiV1RDTO> koodiMeta) {
-        this.koodiMeta = koodiMeta;
-    }
+  @ApiModelProperty(value = "Päivämäärä, johon asti tarjonnan automaattinen synkkaus on käytössä")
+  private Date autosyncTarjontaTo;
 
-    public String getHakukausiUri() {
-        return hakukausiUri;
+  public void addKoodiMeta(KoodiV1RDTO koodi) {
+    if (koodi == null) {
+      return;
     }
 
-    public void setHakukausiUri(String hakukausiUri) {
-        this.hakukausiUri = hakukausiUri;
+    if (getKoodiMeta() == null) {
+      setKoodiMeta(new HashMap<String, KoodiV1RDTO>());
     }
+    getKoodiMeta().put(koodi.getUri(), koodi);
+  }
 
-    public String getHakutapaUri() {
-        return hakutapaUri;
-    }
+  public Map<String, KoodiV1RDTO> getKoodiMeta() {
+    return koodiMeta;
+  }
 
-    public void setHakutapaUri(String hakutapaUri) {
-        this.hakutapaUri = hakutapaUri;
-    }
+  public void setKoodiMeta(Map<String, KoodiV1RDTO> koodiMeta) {
+    this.koodiMeta = koodiMeta;
+  }
 
-    public String getHakulomakeUri() {
-        return hakulomakeUri;
-    }
+  public String getHakukausiUri() {
+    return hakukausiUri;
+  }
 
-    public void setHakulomakeUri(String hakulomakeUri) {
-        this.hakulomakeUri = hakulomakeUri;
-    }
+  public void setHakukausiUri(String hakukausiUri) {
+    this.hakukausiUri = hakukausiUri;
+  }
 
-    public String getAtaruLomakeAvain() {
-        return ataruLomakeAvain;
-    }
+  public String getHakutapaUri() {
+    return hakutapaUri;
+  }
 
-    public void setAtaruLomakeAvain(String ataruLomakeAvain) {
-        this.ataruLomakeAvain = ataruLomakeAvain;
-    }
+  public void setHakutapaUri(String hakutapaUri) {
+    this.hakutapaUri = hakutapaUri;
+  }
 
-    public String getHakutyyppiUri() {
-        return hakutyyppiUri;
-    }
+  public String getHakulomakeUri() {
+    return hakulomakeUri;
+  }
 
-    public void setHakutyyppiUri(String hakutyyppiUri) {
-        this.hakutyyppiUri = hakutyyppiUri;
-    }
+  public void setHakulomakeUri(String hakulomakeUri) {
+    this.hakulomakeUri = hakulomakeUri;
+  }
 
-    public String getKohdejoukkoUri() {
-        return kohdejoukkoUri;
-    }
+  public String getAtaruLomakeAvain() {
+    return ataruLomakeAvain;
+  }
 
-    public void setKohdejoukkoUri(String kohdejoukkoUri) {
-        this.kohdejoukkoUri = kohdejoukkoUri;
-    }
+  public void setAtaruLomakeAvain(String ataruLomakeAvain) {
+    this.ataruLomakeAvain = ataruLomakeAvain;
+  }
 
-    public int getKoulutuksenAlkamisVuosi() {
-        return koulutuksenAlkamisVuosi;
-    }
+  public String getHakutyyppiUri() {
+    return hakutyyppiUri;
+  }
 
-    public void setKoulutuksenAlkamisVuosi(int koulutuksenAlkamisVuosi) {
-        this.koulutuksenAlkamisVuosi = koulutuksenAlkamisVuosi;
-    }
+  public void setHakutyyppiUri(String hakutyyppiUri) {
+    this.hakutyyppiUri = hakutyyppiUri;
+  }
 
-    public String getKoulutuksenAlkamiskausiUri() {
-        return koulutuksenAlkamiskausiUri;
-    }
+  public String getKohdejoukkoUri() {
+    return kohdejoukkoUri;
+  }
 
-    public void setKoulutuksenAlkamiskausiUri(String koulutuksenAlkamiskausiUri) {
-        this.koulutuksenAlkamiskausiUri = koulutuksenAlkamiskausiUri;
-    }
+  public void setKohdejoukkoUri(String kohdejoukkoUri) {
+    this.kohdejoukkoUri = kohdejoukkoUri;
+  }
 
-    public String getTila() {
-        return tila;
-    }
+  public int getKoulutuksenAlkamisVuosi() {
+    return koulutuksenAlkamisVuosi;
+  }
 
-    public void setTila(String tila) {
-        this.tila = tila;
-    }
+  public void setKoulutuksenAlkamisVuosi(int koulutuksenAlkamisVuosi) {
+    this.koulutuksenAlkamisVuosi = koulutuksenAlkamisVuosi;
+  }
 
-    public boolean isSijoittelu() {
-        return sijoittelu;
-    }
+  public String getKoulutuksenAlkamiskausiUri() {
+    return koulutuksenAlkamiskausiUri;
+  }
 
-    public void setSijoittelu(boolean sijoittelu) {
-        this.sijoittelu = sijoittelu;
-    }
+  public void setKoulutuksenAlkamiskausiUri(String koulutuksenAlkamiskausiUri) {
+    this.koulutuksenAlkamiskausiUri = koulutuksenAlkamiskausiUri;
+  }
 
-    public List<HakuaikaV1RDTO> getHakuaikas() {
-        if (hakuaikas == null) {
-            hakuaikas = new ArrayList<HakuaikaV1RDTO>();
-        }
+  public String getTila() {
+    return tila;
+  }
 
-        return hakuaikas;
-    }
+  public void setTila(String tila) {
+    this.tila = tila;
+  }
 
-    public void setHakuaikas(List<HakuaikaV1RDTO> hakuaikas) {
-        this.hakuaikas = hakuaikas;
-    }
+  public boolean isSijoittelu() {
+    return sijoittelu;
+  }
 
-    public List<String> getHakukohdeOids() {
-        if (hakukohdeOids == null) {
-            hakukohdeOids = new ArrayList<String>();
-        }
-        return hakukohdeOids;
-    }
+  public void setSijoittelu(boolean sijoittelu) {
+    this.sijoittelu = sijoittelu;
+  }
 
-    public void setHakukohdeOids(List<String> hakukohdeOids) {
-        this.hakukohdeOids = hakukohdeOids;
+  public List<HakuaikaV1RDTO> getHakuaikas() {
+    if (hakuaikas == null) {
+      hakuaikas = new ArrayList<HakuaikaV1RDTO>();
     }
 
-    public String getHaunTunniste() {
-        return haunTunniste;
-    }
+    return hakuaikas;
+  }
 
-    public void setHaunTunniste(String haunTunniste) {
-        this.haunTunniste = haunTunniste;
-    }
+  public void setHakuaikas(List<HakuaikaV1RDTO> hakuaikas) {
+    this.hakuaikas = hakuaikas;
+  }
 
-    public int getHakukausiVuosi() {
-        return hakukausiVuosi;
+  public List<String> getHakukohdeOids() {
+    if (hakukohdeOids == null) {
+      hakukohdeOids = new ArrayList<String>();
     }
+    return hakukohdeOids;
+  }
 
-    public void setHakukausiVuosi(int hakukausiVuosi) {
-        this.hakukausiVuosi = hakukausiVuosi;
-    }
+  public void setHakukohdeOids(List<String> hakukohdeOids) {
+    this.hakukohdeOids = hakukohdeOids;
+  }
 
-    public void setNimi(Map<String, String> nimi) {
-        this.nimi = nimi;
-    }
+  public String getHaunTunniste() {
+    return haunTunniste;
+  }
 
-    public Map<String, String> getNimi() {
-        return nimi;
-    }
+  public void setHaunTunniste(String haunTunniste) {
+    this.haunTunniste = haunTunniste;
+  }
 
-    public int getMaxHakukohdes() {
-        return maxHakukohdes;
-    }
+  public int getHakukausiVuosi() {
+    return hakukausiVuosi;
+  }
 
-    public void setMaxHakukohdes(int maxHakukohdes) {
-        this.maxHakukohdes = maxHakukohdes;
-    }
+  public void setHakukausiVuosi(int hakukausiVuosi) {
+    this.hakukausiVuosi = hakukausiVuosi;
+  }
 
-    public boolean getCanSubmitMultipleApplications() {
-        return canSubmitMultipleApplications;
-    }
+  public void setNimi(Map<String, String> nimi) {
+    this.nimi = nimi;
+  }
 
-    public void setCanSubmitMultipleApplications(boolean canSubmitMultipleApplications) {
-        this.canSubmitMultipleApplications = canSubmitMultipleApplications;
-    }
+  public Map<String, String> getNimi() {
+    return nimi;
+  }
 
-    public String[] getOrganisaatioOids() {
-        return organisaatioOids;
-    }
+  public int getMaxHakukohdes() {
+    return maxHakukohdes;
+  }
 
-    public void setOrganisaatioOids(String[] organisaatioOids) {
-        this.organisaatioOids = organisaatioOids;
-    }
+  public void setMaxHakukohdes(int maxHakukohdes) {
+    this.maxHakukohdes = maxHakukohdes;
+  }
 
-    public String[] getTarjoajaOids() {
-        return tarjoajaOids;
-    }
+  public boolean getCanSubmitMultipleApplications() {
+    return canSubmitMultipleApplications;
+  }
 
-    public void setTarjoajaOids(String[] tarjoajaOids) {
-        this.tarjoajaOids = tarjoajaOids;
-    }
+  public void setCanSubmitMultipleApplications(boolean canSubmitMultipleApplications) {
+    this.canSubmitMultipleApplications = canSubmitMultipleApplications;
+  }
 
-    public boolean isUsePriority() {
-        return usePriority;
-    }
+  public String[] getOrganisaatioOids() {
+    return organisaatioOids;
+  }
 
-    public void setUsePriority(boolean usePriority) {
-        this.usePriority = usePriority;
-    }
+  public void setOrganisaatioOids(String[] organisaatioOids) {
+    this.organisaatioOids = organisaatioOids;
+  }
 
-    public boolean isJarjestelmanHakulomake() {
-        return jarjestelmanHakulomake;
-    }
+  public String[] getTarjoajaOids() {
+    return tarjoajaOids;
+  }
 
-    public void setJarjestelmanHakulomake(boolean jarjestelmanHakulomake) {
-        this.jarjestelmanHakulomake = jarjestelmanHakulomake;
-    }
+  public void setTarjoajaOids(String[] tarjoajaOids) {
+    this.tarjoajaOids = tarjoajaOids;
+  }
 
-    public Set<String> getSisaltyvatHaut() {
-        return sisaltyvatHaut;
-    }
+  public boolean isUsePriority() {
+    return usePriority;
+  }
 
-    public void setSisaltyvatHaut(Set<String> sisaltyvatHaut) {
-        this.sisaltyvatHaut = sisaltyvatHaut;
-    }
+  public void setUsePriority(boolean usePriority) {
+    this.usePriority = usePriority;
+  }
 
-    public String getParentHakuOid() {
-        return parentHakuOid;
-    }
+  public boolean isJarjestelmanHakulomake() {
+    return jarjestelmanHakulomake;
+  }
 
-    public void setParentHakuOid(String parentHakuOid) {
-        this.parentHakuOid = parentHakuOid;
-    }
+  public void setJarjestelmanHakulomake(boolean jarjestelmanHakulomake) {
+    this.jarjestelmanHakulomake = jarjestelmanHakulomake;
+  }
 
-    public List<String> getOrganisaatioryhmat() {
-        return organisaatioryhmat;
-    }
+  public Set<String> getSisaltyvatHaut() {
+    return sisaltyvatHaut;
+  }
 
-    public void setOrganisaatioryhmat(List<String> organisaatioryhmat) {
-        this.organisaatioryhmat = organisaatioryhmat;
-    }
+  public void setSisaltyvatHaut(Set<String> sisaltyvatHaut) {
+    this.sisaltyvatHaut = sisaltyvatHaut;
+  }
 
-    public KoulutusmoduuliTyyppi getKoulutusmoduuliTyyppi() {
-        return koulutusmoduuliTyyppi;
-    }
+  public String getParentHakuOid() {
+    return parentHakuOid;
+  }
 
-    public void setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi koulutusmoduuliTyyppi) {
-        this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
-    }
+  public void setParentHakuOid(String parentHakuOid) {
+    this.parentHakuOid = parentHakuOid;
+  }
 
-    public Boolean getYlioppilastutkintoAntaaHakukelpoisuuden() {
-        return ylioppilastutkintoAntaaHakukelpoisuuden;
-    }
+  public List<String> getOrganisaatioryhmat() {
+    return organisaatioryhmat;
+  }
 
-    public void setYlioppilastutkintoAntaaHakukelpoisuuden(Boolean ylioppilastutkintoAntaaHakukelpoisuuden) {
-        this.ylioppilastutkintoAntaaHakukelpoisuuden = ylioppilastutkintoAntaaHakukelpoisuuden;
-    }
+  public void setOrganisaatioryhmat(List<String> organisaatioryhmat) {
+    this.organisaatioryhmat = organisaatioryhmat;
+  }
 
-    public List<String> getHakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden() {
-        return hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden;
-    }
+  public KoulutusmoduuliTyyppi getKoulutusmoduuliTyyppi() {
+    return koulutusmoduuliTyyppi;
+  }
 
-    public void setHakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden(List<String> hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden) {
-        this.hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden = hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden;
-    }
+  public void setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi koulutusmoduuliTyyppi) {
+    this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
+  }
 
-    public Date getOpintopolunNayttaminenLoppuu() {
-        return opintopolunNayttaminenLoppuu;
-    }
+  public Boolean getYlioppilastutkintoAntaaHakukelpoisuuden() {
+    return ylioppilastutkintoAntaaHakukelpoisuuden;
+  }
 
-    public void setOpintopolunNayttaminenLoppuu(Date opintopolunNayttaminenLoppuu) {
-        this.opintopolunNayttaminenLoppuu = opintopolunNayttaminenLoppuu;
-    }
+  public void setYlioppilastutkintoAntaaHakukelpoisuuden(
+      Boolean ylioppilastutkintoAntaaHakukelpoisuuden) {
+    this.ylioppilastutkintoAntaaHakukelpoisuuden = ylioppilastutkintoAntaaHakukelpoisuuden;
+  }
 
-    public String getKohdejoukonTarkenne() {
-        return kohdejoukonTarkenne;
-    }
+  public List<String> getHakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden() {
+    return hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden;
+  }
 
-    public void setKohdejoukonTarkenne(String kohdejoukonTarkenne) {
-        this.kohdejoukonTarkenne = kohdejoukonTarkenne;
-    }
+  public void setHakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden(
+      List<String> hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden) {
+    this.hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden =
+        hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden;
+  }
 
-    public boolean isMaksumuuriKaytossa() {
-        return isKorkeakouluHaku()
-                && KoulutusmoduuliTyyppi.TUTKINTO.equals(getKoulutusmoduuliTyyppi())
-                && StringUtils.isEmpty(getKohdejoukonTarkenne())
-                && ( (getKoulutuksenAlkamisVuosi() == 2016 && StringUtils.defaultString(getKoulutuksenAlkamiskausiUri()).startsWith("kausi_s#"))
-                    || (getKoulutuksenAlkamisVuosi() == 2017 && StringUtils.defaultString(getKoulutuksenAlkamiskausiUri()).startsWith("kausi_k#")) );
-    }
+  public Date getOpintopolunNayttaminenLoppuu() {
+    return opintopolunNayttaminenLoppuu;
+  }
 
-    public boolean isTunnistusKaytossa() { return tunnistusKaytossa; }
+  public void setOpintopolunNayttaminenLoppuu(Date opintopolunNayttaminenLoppuu) {
+    this.opintopolunNayttaminenLoppuu = opintopolunNayttaminenLoppuu;
+  }
 
-    public void setTunnistusKaytossa(boolean tunnistusKaytossa) {
-        this.tunnistusKaytossa = tunnistusKaytossa;
-    }
+  public String getKohdejoukonTarkenne() {
+    return kohdejoukonTarkenne;
+  }
 
-    public boolean isKorkeakouluHaku() {
-        return StringUtils.defaultString(getKohdejoukkoUri()).startsWith("haunkohdejoukko_12#");
-    }
+  public void setKohdejoukonTarkenne(String kohdejoukonTarkenne) {
+    this.kohdejoukonTarkenne = kohdejoukonTarkenne;
+  }
 
-    public void setYhdenPaikanSaanto(YhdenPaikanSaanto yhdenPaikanSaanto) {
-        this.yhdenPaikanSaanto = yhdenPaikanSaanto;
-    }
+  public boolean isMaksumuuriKaytossa() {
+    return isKorkeakouluHaku()
+        && KoulutusmoduuliTyyppi.TUTKINTO.equals(getKoulutusmoduuliTyyppi())
+        && StringUtils.isEmpty(getKohdejoukonTarkenne())
+        && ((getKoulutuksenAlkamisVuosi() == 2016
+                && StringUtils.defaultString(getKoulutuksenAlkamiskausiUri())
+                    .startsWith("kausi_s#"))
+            || (getKoulutuksenAlkamisVuosi() == 2017
+                && StringUtils.defaultString(getKoulutuksenAlkamiskausiUri())
+                    .startsWith("kausi_k#")));
+  }
 
-    public YhdenPaikanSaanto getYhdenPaikanSaanto() {
-        return yhdenPaikanSaanto;
-    }
+  public boolean isTunnistusKaytossa() {
+    return tunnistusKaytossa;
+  }
 
-    public boolean isAutosyncTarjonta() {
-        return autosyncTarjonta;
-    }
+  public void setTunnistusKaytossa(boolean tunnistusKaytossa) {
+    this.tunnistusKaytossa = tunnistusKaytossa;
+  }
 
-    public void setAutosyncTarjonta(boolean autosyncTarjonta) {
-        this.autosyncTarjonta = autosyncTarjonta;
-    }
+  public boolean isKorkeakouluHaku() {
+    return StringUtils.defaultString(getKohdejoukkoUri()).startsWith("haunkohdejoukko_12#");
+  }
+
+  public void setYhdenPaikanSaanto(YhdenPaikanSaanto yhdenPaikanSaanto) {
+    this.yhdenPaikanSaanto = yhdenPaikanSaanto;
+  }
+
+  public YhdenPaikanSaanto getYhdenPaikanSaanto() {
+    return yhdenPaikanSaanto;
+  }
+
+  public boolean isAutosyncTarjonta() {
+    return autosyncTarjonta;
+  }
+
+  public void setAutosyncTarjonta(boolean autosyncTarjonta) {
+    this.autosyncTarjonta = autosyncTarjonta;
+  }
+
+  public Date getAutosyncTarjontaFrom() {
+    return autosyncTarjontaFrom;
+  }
+
+  public void setAutosyncTarjontaFrom(Date autosyncTarjontaFrom) {
+    this.autosyncTarjontaFrom = autosyncTarjontaFrom;
+  }
+
+  public Date getAutosyncTarjontaTo() {
+    return autosyncTarjontaTo;
+  }
+
+  public void setAutosyncTarjontaTo(Date autosyncTarjontaTo) {
+    this.autosyncTarjontaTo = autosyncTarjontaTo;
+  }
+
+  @ApiModel(value = "Yhden paikan säännön voimassaolotieto haulle")
+  public static class YhdenPaikanSaanto {
+    @ApiModelProperty(value = "Yhden paikan sääntö voimassa", required = true)
+    private boolean voimassa;
+
+    @ApiModelProperty(value = "Yhden paikan säännön perustelu", required = true)
+    private String syy;
+
+    public YhdenPaikanSaanto() {}
 
-    public Date getAutosyncTarjontaFrom() {
-        return autosyncTarjontaFrom;
+    public YhdenPaikanSaanto(boolean voimassa, String syy) {
+      this.voimassa = voimassa;
+      this.syy = syy;
     }
 
-    public void setAutosyncTarjontaFrom(Date autosyncTarjontaFrom) {
-        this.autosyncTarjontaFrom = autosyncTarjontaFrom;
+    public boolean isVoimassa() {
+      return voimassa;
     }
 
-    public Date getAutosyncTarjontaTo() {
-        return autosyncTarjontaTo;
+    public void setVoimassa(boolean voimassa) {
+      this.voimassa = voimassa;
     }
 
-    public void setAutosyncTarjontaTo(Date autosyncTarjontaTo) {
-        this.autosyncTarjontaTo = autosyncTarjontaTo;
+    public String getSyy() {
+      return syy;
     }
 
-    @ApiModel(value = "Yhden paikan säännön voimassaolotieto haulle")
-    public static class YhdenPaikanSaanto {
-        @ApiModelProperty(value = "Yhden paikan sääntö voimassa", required = true)
-        private boolean voimassa;
-        @ApiModelProperty(value = "Yhden paikan säännön perustelu", required = true)
-        private String syy;
-
-        public YhdenPaikanSaanto() {
-        }
-
-        public YhdenPaikanSaanto(boolean voimassa, String syy) {
-            this.voimassa = voimassa;
-            this.syy = syy;
-        }
-
-        public boolean isVoimassa() {
-            return voimassa;
-        }
-
-        public void setVoimassa(boolean voimassa) {
-            this.voimassa = voimassa;
-        }
-
-        public String getSyy() {
-            return syy;
-        }
-
-        public void setSyy(String syy) {
-            this.syy = syy;
-        }
+    public void setSyy(String syy) {
+      this.syy = syy;
     }
+  }
 }
