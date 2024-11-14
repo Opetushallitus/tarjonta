@@ -15,7 +15,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KomoLink;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -24,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +35,6 @@ import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.*;
  * TODO, authorization!!
  */
 @Transactional(readOnly = false)
-@CrossOriginResourceSharing(allowAllOrigins = true)
 public class LinkingResourceImplV1 implements LinkingV1Resource {
 
     private Logger logger = LoggerFactory.getLogger(LinkingResourceImplV1.class);
@@ -111,7 +109,7 @@ public class LinkingResourceImplV1 implements LinkingV1Resource {
                 result.addError(ErrorV1RDTO.createValidationError("childs", LinkingValidationMessages.LINKING_MISSING_CHILD_OIDS.name()));
             } else {
                 for (final String childOid : paramChildOids) {
-                    //validate data 
+                    //validate data
                     final List<String> childKomosChidren = koulutusSisaltyvyysDAO.getChildren(childOid);
                     if (childKomosChidren.isEmpty()) {
                         boolean notFound = true;

@@ -17,10 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -304,7 +304,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     public ResultV1RDTO<KuvausV1RDTO> findById(String tunniste) {
         ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
         try {
-            Long id = new Long(tunniste);
+            Long id = Long.parseLong(tunniste);
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = kuvausDAO.read(id);
             if (valintaperusteSoraKuvaus != null && !valintaperusteSoraKuvaus.getTila().equals(ValintaperusteSoraKuvaus.Tila.POISTETTU)) {
 
@@ -562,7 +562,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
             q.setParameter("kausi", kuvaus.getKausi());
             Long id = kuvaus.getId();
             if (id == null) {
-                id = new Long(0);
+                id = Long.valueOf(0);
             }
             q.setParameter("id", id);
 

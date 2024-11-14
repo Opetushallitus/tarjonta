@@ -18,7 +18,7 @@ package fi.vm.sade.tarjonta.service.impl.conversion;
  */
 
 
-import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
+import fi.vm.sade.tarjonta.service.conversion.AbstractToDomainConverter;
 import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 

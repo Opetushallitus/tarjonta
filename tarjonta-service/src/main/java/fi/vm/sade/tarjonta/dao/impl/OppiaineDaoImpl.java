@@ -15,17 +15,19 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.types.EntityPath;
-import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.jpa.JPAQueryBase;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import fi.vm.sade.tarjonta.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.OppiaineDAO;
 import fi.vm.sade.tarjonta.model.Oppiaine;
 import fi.vm.sade.tarjonta.model.QOppiaine;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.util.List;
 
 @Repository
@@ -37,31 +39,31 @@ public class OppiaineDaoImpl extends AbstractJpaDAOImpl<Oppiaine, Long> implemen
     public Oppiaine findById(Long id) {
         QOppiaine qOppiaine = QOppiaine.oppiaine1;
 
-        return from(qOppiaine)
+        return queryFactory().selectFrom(qOppiaine)
                 .where(qOppiaine.id.eq(id))
-                .uniqueResult(qOppiaine);
+                .fetchOne();
     }
 
     public Oppiaine findOneByOppiaineKieliKoodi(String oppiaine, String kieliKoodi) {
         QOppiaine qOppiaine = QOppiaine.oppiaine1;
 
-        return from(qOppiaine)
+        return queryFactory().selectFrom(qOppiaine)
                 .where(
                         qOppiaine.oppiaine.eq(oppiaine)
                                 .and(qOppiaine.kieliKoodi.eq(kieliKoodi))
                 )
-                .uniqueResult(qOppiaine);
+                .fetchOne();
     }
 
     public List<Oppiaine> findByOppiaineKieliKoodi(String oppiaine, String kieliKoodi) {
         QOppiaine qOppiaine = QOppiaine.oppiaine1;
 
-        return from(qOppiaine)
+        return queryFactory().selectFrom(qOppiaine)
                 .where(
                         qOppiaine.oppiaine.containsIgnoreCase(oppiaine)
                                 .and(qOppiaine.kieliKoodi.eq(kieliKoodi))
                 )
-                .list(qOppiaine);
+                .fetch();
     }
 
     public void deleteUnusedOppiaineet() {
@@ -93,8 +95,8 @@ public class OppiaineDaoImpl extends AbstractJpaDAOImpl<Oppiaine, Long> implemen
         deleteFromOppiaineQ.executeUpdate();
     }
 
-    protected JPAQuery from(EntityPath<?>... o) {
-        return new JPAQuery(getEntityManager()).from(o);
+    protected JPAQueryFactory queryFactory() {
+        return new JPAQueryFactory(entityManager);
     }
 
 }

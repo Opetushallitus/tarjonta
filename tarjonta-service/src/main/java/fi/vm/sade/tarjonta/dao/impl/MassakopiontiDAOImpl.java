@@ -1,34 +1,21 @@
-/*
- * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- *
- * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
- * soon as they will be approved by the European Commission - subsequent versions
- * of the EUPL (the "Licence");
- *
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * European Union Public Licence for more details.
- */
 package fi.vm.sade.tarjonta.dao.impl;
 
 import com.google.common.base.Preconditions;
 import com.mysema.commons.lang.Pair;
-import com.mysema.query.jpa.impl.JPADeleteClause;
-import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.jpa.impl.JPAUpdateClause;
-import com.mysema.query.types.EntityPath;
-import com.mysema.query.types.expr.BooleanExpression;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAQueryBase;
+import com.querydsl.jpa.impl.JPADeleteClause;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import fi.vm.sade.tarjonta.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.MassakopiointiDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
@@ -66,13 +53,13 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
     @Override
     public List<Massakopiointi> search(final SearchCriteria search) {
         QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
-        return from(kopiointi).where(query(search, kopiointi)).list(kopiointi);
+        return queryFactory().selectFrom(kopiointi).where(query(search, kopiointi)).fetch();
     }
 
     @Override
     public List<String> searchOids(final SearchCriteria search) {
         QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
-        return from(kopiointi).where(query(search, kopiointi)).list(kopiointi.oldOid);
+        return queryFactory().select(kopiointi.oldOid).from(kopiointi).where(query(search, kopiointi)).fetch();
     }
 
     public static BooleanExpression query(final SearchCriteria search, QMassakopiointi kopiointi) {
@@ -134,16 +121,16 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
         Preconditions.checkNotNull(oldOid, "Generic OID cannot be null.");
 
         QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
-        return from(kopiointi).where(kopiointi.processId.eq(processId).and(kopiointi.oldOid.eq(oldOid))).uniqueResult(kopiointi);
+        return queryFactory().selectFrom(kopiointi).where(kopiointi.processId.eq(processId).and(kopiointi.oldOid.eq(oldOid))).fetchOne();
     }
 
     @Override
     public Massakopiointi findFirstKomo(String processId, String komoOid) {
         QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
 
-        return from(kopiointi).where(kopiointi.processId.eq(processId)
+        return queryFactory().selectFrom(kopiointi).where(kopiointi.processId.eq(processId)
                 .and(kopiointi.oldOid.startsWith(komoOid + "_")))
-                .orderBy(kopiointi.id.asc()).singleResult(kopiointi);
+                .orderBy(kopiointi.id.asc()).fetchOne();
     }
 
     @Override
@@ -152,10 +139,10 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
         Preconditions.checkNotNull(oldOid, "Generic OID cannot be null.");
 
         QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
-        String newOidFromSameProcessCopy = from(kopiointi)
+        String newOidFromSameProcessCopy = queryFactory().select(kopiointi.newOid).from(kopiointi)
                                             .where(kopiointi.processId.eq(processId)
                                                     .and(kopiointi.oldOid.eq(oldOid)))
-                                            .uniqueResult(kopiointi.newOid);
+                                            .fetchOne();
 
         if (newOidFromSameProcessCopy != null) {
             return newOidFromSameProcessCopy;
@@ -178,10 +165,10 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
 
     public Massakopiointi findByOldOid(String oldOid) {
         QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
-        return from(kopiointi)
+        return queryFactory().selectFrom(kopiointi)
                 .where(kopiointi.oldOid.eq(oldOid))
                 .orderBy(kopiointi.id.asc())
-                .singleResult(kopiointi);
+                .fetchOne();
     }
 
     @Override
@@ -189,7 +176,7 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
         Preconditions.checkNotNull(hakuOid, "Haku OID cannot be null.");
 
         QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
-        return from(kopiointi).where(kopiointi.hakuOid.eq(hakuOid)).list(kopiointi);
+        return queryFactory().selectFrom(kopiointi).where(kopiointi.hakuOid.eq(hakuOid)).fetch();
     }
 
     @Override
@@ -198,7 +185,7 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
         Preconditions.checkNotNull(hakuOid, "Haku OID cannot be null.");
 
         QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
-        return from(kopiointi).where(kopiointi.processId.eq(processId).and(kopiointi.hakuOid.eq(hakuOid))).singleResult(kopiointi.id.count());
+        return queryFactory().select(kopiointi.id.count()).from(kopiointi).where(kopiointi.processId.eq(processId).and(kopiointi.hakuOid.eq(hakuOid))).fetchOne();
     }
 
     @Override
@@ -206,7 +193,7 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
         Preconditions.checkNotNull(hakuOid, "Haku OID cannot be null.");
 
         QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
-        return from(kopiointi).where(kopiointi.hakuOid.eq(hakuOid).and(kopiointi.oldOid.in(oids))).list(kopiointi);
+        return queryFactory().selectFrom(kopiointi).where(kopiointi.hakuOid.eq(hakuOid).and(kopiointi.oldOid.in(oids))).fetch();
     }
 
     @Override
@@ -278,7 +265,7 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
         return komotoUpdate.where(kopiointi.hakuOid.eq(hakuOid).and(kopiointi.tila.eq(tila))).execute();
     }
 
-    protected JPAQuery from(EntityPath<?>... o) {
-        return new JPAQuery(getEntityManager()).from(o);
+    protected JPAQueryFactory queryFactory() {
+        return new JPAQueryFactory(getEntityManager());
     }
 }

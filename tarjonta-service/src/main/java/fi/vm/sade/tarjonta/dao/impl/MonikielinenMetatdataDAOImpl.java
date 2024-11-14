@@ -1,6 +1,6 @@
 package fi.vm.sade.tarjonta.dao.impl;
 
-import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import fi.vm.sade.tarjonta.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
 import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 import java.util.List;
 
 /**

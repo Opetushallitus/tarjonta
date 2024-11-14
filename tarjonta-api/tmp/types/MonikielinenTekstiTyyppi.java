@@ -7,6 +7,12 @@ public class MonikielinenTekstiTyyppi {
 
   protected List<Teksti> teksti;
 
+  public MonikielinenTekstiTyyppi(List<Teksti> teksti) {
+    this.teksti = teksti;
+  }
+
+  public MonikielinenTekstiTyyppi() {}
+
   public List<Teksti> getTeksti() {
     if (teksti == null) {
       teksti = Collections.emptyList();

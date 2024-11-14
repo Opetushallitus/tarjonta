@@ -1,0 +1,602 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions name="tarjontaAdminService"
+                  targetNamespace="http://service.tarjonta.sade.vm.fi/"
+                  xmlns:ns1="http://service.tarjonta.sade.vm.fi/types"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:tns="http://service.tarjonta.sade.vm.fi/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://service.tarjonta.sade.vm.fi/">
+            <xsd:import namespace="http://service.tarjonta.sade.vm.fi/types" schemaLocation="tarjontaAdminService.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+
+    <wsdl:message name="genericFault">
+        <wsdl:part name="fault" element="ns1:genericFaultInfo"></wsdl:part>
+    </wsdl:message>
+
+    <wsdl:message name="lisaaKoulutus">
+        <wsdl:part element="ns1:lisaaKoulutus" name="koulutus"/>
+    </wsdl:message>
+
+    <wsdl:message name="lisaaKoulutusVastaus">
+        <wsdl:part element="ns1:lisaaKoulutusVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="lisaaHakukohde">
+        <wsdl:part element="ns1:lisaaHakukohde" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="lisaaHakukohdeVastaus">
+        <wsdl:part element="ns1:lisaaHakukohdeVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="lisaaKoulutusmoduuli">
+        <wsdl:part element="ns1:lisaaKoulutusmoduuli" name="koulutusmoduuli"/>
+    </wsdl:message>
+
+    <wsdl:message name="lisaaKoulutusmoduuliVastaus">
+        <wsdl:part element="ns1:lisaaKoulutusmoduuliVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="paivitaKoulutusmoduuli">
+        <wsdl:part element="ns1:paivitaKoulutusmoduuli" name="koulutusmoduuli"/>
+    </wsdl:message>
+   
+    <wsdl:message name="paivitaKoulutusmoduuliVastaus">
+        <wsdl:part element="ns1:paivitaKoulutusmoduuliVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="paivitaHakukohde">
+        <wsdl:part element="ns1:paivitaHakukohde" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="paivitaKoulutus">
+        <wsdl:part element="ns1:paivitaKoulutus" name="koulutus"/>
+    </wsdl:message>
+
+    <wsdl:message name="paivitaKoulutusVastaus">
+        <wsdl:part element="ns1:paivitaKoulutusVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="paivitaHakukohdeVastaus">
+        <wsdl:part element="ns1:paivitaHakukohdeVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="poistaHakukohde">
+        <wsdl:part element="ns1:poistaHakukohde" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="poistaHakukohdeVastaus">
+        <wsdl:part element="ns1:poistaHakukohdeVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="lisaaKoulutusHakukohteelle">
+        <wsdl:part element="ns1:lisaaKoulutusHakukohteelle" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="lisaaKoulutusHakukohteelleVastaus">
+        <wsdl:part element="ns1:lisaaKoulutusHakukohteelleVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="poistaKoulutus">
+        <wsdl:part element="ns1:poistaKoulutus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="poistaKoulutusVastaus">
+        <wsdl:part element="ns1:poistaKoulutusVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="initSample">
+        <!-- no args -->
+        <wsdl:part element="ns1:emptyString" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="initKomo">
+        <!-- no args -->
+        <wsdl:part element="ns1:emptyString" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="tallennaLiitteitaHakukohteelle">
+        <wsdl:part element="ns1:tallennaLiitteitaHakukohteelle" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="tallennaLiitteitaHakukohteelleVastaus">
+        <wsdl:part element="ns1:tallennaLiitteitaHakukohteelleVastaus" name="parameters"/>
+    </wsdl:message>
+
+
+    <wsdl:message name="tallennaValintakokeitaHakukohteelle">
+        <wsdl:part element="ns1:tallennaValintakokeitaHakukohteelle" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="tallennaValintakokeitaHakukohteelleVastaus">
+        <wsdl:part element="ns1:tallennaValintakokeitaHakukohteelleVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="paivitaValintakokeitaHakukohteelle">
+        <wsdl:part element="ns1:paivitaValintakokeitaHakukohteelle" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="paivitaValintakokeitaHakukohteelleVastaus">
+        <wsdl:part element="ns1:paivitaValintakokeitaHakukohteelleVastaus" name="parameters"/>
+    </wsdl:message>
+
+
+
+    <wsdl:message name="paivitaTila">
+        <wsdl:part element="ns1:paivitaTila" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="paivitaTilaVastaus">
+        <wsdl:part element="ns1:paivitaTilaVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="testaaTilasiirtyma">
+        <wsdl:part element="ns1:testaaTilasiirtyma" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="testaaTilasiirtymaVastaus">
+        <wsdl:part element="ns1:testaaTilasiirtymaVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="haeOid">
+        <wsdl:part element="ns1:haeOid" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="haeOidVastaus">
+        <wsdl:part element="ns1:haeOidVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="tarkistaKoulutusKopiointi">
+        <wsdl:part element="ns1:tarkistaKoulutusKopiointi" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="tarkistaKoulutusKopiointiVastaus">
+        <wsdl:part element="ns1:tarkistaKoulutusKopiointiVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="haeMetadata">
+        <wsdl:part element="ns1:haeMetadata" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="haeMetadataVastaus">
+        <wsdl:part element="ns1:haeMetadataVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="tallennaMetadata">
+        <wsdl:part element="ns1:tallennaMetadata" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="tallennaMetadataVastaus">
+        <wsdl:part element="ns1:tallennaMetadataVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="poistaValintakoe">
+        <wsdl:part element="ns1:poistaValintakoe" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="poistaValintaKoeVastaus">
+        <wsdl:part element="ns1:poistaValintakoeVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="poistaHakukohdeLiite">
+        <wsdl:part name="parameters" element="ns1:poistaHakukohdeLiite"/>
+    </wsdl:message>
+
+    <wsdl:message name="poistaHakukohdeLiiteVastaus">
+        <wsdl:part name="parameters" element="ns1:poistaHakukohdeLiiteVastaus"/>
+    </wsdl:message>
+    
+    
+    <wsdl:portType name="TarjontaAdminService">
+        
+        <wsdl:documentation>
+            Palvelu hakujen yllapitoon.
+        </wsdl:documentation>
+
+        <wsdl:operation name="tallennaLiitteitaHakukohteelle">
+            <wsdl:input message="tns:tallennaLiitteitaHakukohteelle" name="tallennaLiitteitaHakukohteelle"/>
+            <wsdl:output message="tns:tallennaLiitteitaHakukohteelleVastaus"
+                         name="tallennaLiitteitaHakukohteelleVastaus"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="tallennaValintakokeitaHakukohteelle">
+            <wsdl:input message="tns:tallennaValintakokeitaHakukohteelle" name="tallennaValintakokeitaHakukohteelle"/>
+            <wsdl:output message="tns:tallennaValintakokeitaHakukohteelleVastaus"
+                         name="tallennaValintakokeitaHakukohteelleVastaus"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="paivitaValintakokeitaHakukohteelle">
+            <wsdl:input message="tns:paivitaValintakokeitaHakukohteelle" name="paivitaValintakokeitaHakukohteelle"/>
+            <wsdl:output message="tns:paivitaValintakokeitaHakukohteelleVastaus"
+                         name="paivitaValintakokeitaHakukohteelleVastaus"/>
+        </wsdl:operation>
+        
+        <wsdl:operation name="lisaaHakukohde">
+            <wsdl:documentation>
+                Lisaa hakukohde
+            </wsdl:documentation>
+            <wsdl:input message="tns:lisaaHakukohde" name="lisaaHakukohde">
+            </wsdl:input>
+            <wsdl:output message="tns:lisaaHakukohdeVastaus" name="lisaaHakukohdeVastaus">
+            </wsdl:output>
+            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="paivitaHakukohde">
+            <wsdl:documentation>
+                Paivita hakukohde
+            </wsdl:documentation>
+            <wsdl:input message="tns:paivitaHakukohde" name="paivitaHakukohde">
+            </wsdl:input>
+            <wsdl:output message="tns:paivitaHakukohdeVastaus" name="paivitaHakukohdeVastaus">
+            </wsdl:output>
+            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="poistaHakukohde">
+            <wsdl:documentation>
+                Poista hakukohde
+            </wsdl:documentation>
+            <wsdl:input message="tns:poistaHakukohde" name="poistaHakukohde">
+            </wsdl:input>
+            <wsdl:output message="tns:poistaHakukohdeVastaus" name="poistaHakukohdeVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="poistaKoulutus">
+            <wsdl:documentation>
+                Poista koulutus
+            </wsdl:documentation>
+            <wsdl:input message="tns:poistaKoulutus" name="poistaKoulutus">
+            </wsdl:input>
+            <wsdl:output message="tns:poistaKoulutusVastaus" name="poistaKoulutusVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="poistaValintakoe">
+            <wsdl:documentation>
+                Poista valintakoe hakukohteelta
+            </wsdl:documentation>
+            <wsdl:input message="tns:poistaValintakoe" name="poistaValintakoe">
+            </wsdl:input>
+            <wsdl:output message="tns:poistaValintaKoeVastaus" name="poistaValintakoeVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="poistaHakukohdeLiite">
+            <wsdl:documentation>
+                Poista liite hakukohteelta
+            </wsdl:documentation>
+            <wsdl:input message="tns:poistaHakukohdeLiite" name="poistaHakukohdeLiite">
+            </wsdl:input>
+            <wsdl:output message="tns:poistaHakukohdeLiiteVastaus" name="poistaHakukohdeLiiteVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="lisaaKoulutus">
+            <wsdl:documentation>
+                Lisaa uusi koulutus
+            </wsdl:documentation>
+            <wsdl:input message="tns:lisaaKoulutus" name="lisaaKoulutus">
+            </wsdl:input>
+            <wsdl:output message="tns:lisaaKoulutusVastaus" name="lisaaKoulutusVastaus">
+            </wsdl:output>
+            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="lisaaKoulutusmoduuli">
+            <wsdl:documentation>
+                Lisaa uusi koulutusmoduuli
+            </wsdl:documentation>
+            <wsdl:input message="tns:lisaaKoulutusmoduuli" name="lisaaKoulutusmoduuli">
+            </wsdl:input>
+            <wsdl:output message="tns:lisaaKoulutusmoduuliVastaus" name="lisaaKoulutusmoduuliVastaus">
+            </wsdl:output>
+            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
+        </wsdl:operation>
+        
+        
+        <wsdl:operation name="paivitaKoulutusmoduuli">
+            <wsdl:documentation>
+                Lisaa uusi koulutusmoduuli
+            </wsdl:documentation>
+            <wsdl:input message="tns:paivitaKoulutusmoduuli" name="paivitaKoulutusmoduuli">
+            </wsdl:input>
+            <wsdl:output message="tns:paivitaKoulutusmoduuliVastaus" name="paivitaKoulutusmoduuliVastaus">
+            </wsdl:output>
+            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="paivitaKoulutus">
+            <wsdl:documentation>
+                Paivittaa olemassa olevan koulutuksen tiedot.
+            </wsdl:documentation>
+            <wsdl:input message="tns:paivitaKoulutus" name="paivitaKoulutus">
+            </wsdl:input>
+            <wsdl:output message="tns:paivitaKoulutusVastaus" name="paivitaKoulutusVastaus">
+            </wsdl:output>
+            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="lisaaTaiPoistaKoulutuksiaHakukohteelle">
+            <wsdl:documentation>
+                Lisaa annetulle hakukohteelle annetut koulutukset
+            </wsdl:documentation>
+            <wsdl:input message="tns:lisaaKoulutusHakukohteelle" name="lisaaKoulutusHakukohteelle">
+            </wsdl:input>
+            <wsdl:output message="tns:lisaaKoulutusHakukohteelleVastaus" name="lisaaTaiPoistaKoulutusHakukohteelleVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="paivitaTilat">
+            <wsdl:documentation>
+                Paivita annettujen tarjontatiedon tiloja.
+            </wsdl:documentation>
+            <wsdl:input message="tns:paivitaTila" name="paivitaTila">
+            </wsdl:input>
+            <wsdl:output message="tns:paivitaTilaVastaus" name="paivitaTilaVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="testaaTilasiirtyma">
+            <wsdl:documentation>
+                Paivita annettujen tarjontatiedon tiloja.
+            </wsdl:documentation>
+            <wsdl:input message="tns:testaaTilasiirtyma" name="testaaTilasiirtyma">
+            </wsdl:input>
+            <wsdl:output message="tns:testaaTilasiirtymaVastaus" name="testaaTilasiirtymaVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="haeOid">
+            <wsdl:documentation>
+                Hakee oidin tarjonta palvelusta. Tämä operaatio poistetaan heti kun V1 versio rajapinnasta on käytössä koko tarjonnassa.
+            </wsdl:documentation>
+            <wsdl:input message="tns:haeOid" name="haeOid">
+            </wsdl:input>
+            <wsdl:output message="tns:haeOidVastaus" name="haeOidVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        
+
+        <wsdl:operation name="initSample">
+            <wsdl:documentation>
+                Alustaa tarjonnan esimerkki datalla. Poistetaan kunnes koodisto tarjoaa
+                riittavan maaran dataa.
+            </wsdl:documentation>
+            <wsdl:input message="tns:initSample"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="tarkistaKoulutuksenKopiointi">
+            <wsdl:documentation>Operaatiolla voidaan tarkistaa onko koulutuksesta mahdollista tehdä kopiota kyseiselle
+                tarjojalle
+            </wsdl:documentation>
+            <wsdl:input message="tns:tarkistaKoulutusKopiointi" name="tarkistaKoulutusKopiointi">
+            </wsdl:input>
+            <wsdl:output message="tns:tarkistaKoulutusKopiointiVastaus" name="tarkistaKoulutusKopiointiVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="initKomo">
+            <wsdl:documentation>
+                Alustaa tarjonnan koulutusmoduulin datalla.
+            </wsdl:documentation>
+            <wsdl:input message="tns:initKomo"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="haeMetadata">
+            <wsdl:documentation>Haetaan metadataa avaimella ja/tai kategorialla.
+                Jos "kategoria" on NULL, niin haetaan vain avaimella. Jos
+                molemmat ovat NULL, niin palautetaan kaikki metadatat.
+            </wsdl:documentation>
+            <wsdl:input message="tns:haeMetadata" name="haeMetadata">
+            </wsdl:input>
+            <wsdl:output message="tns:haeMetadataVastaus" name="haeMetadataVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="tallennaMetadata">
+            <wsdl:documentation>Tallennetaan metadataa avaimella, kategoriall, kielellä.
+                Jos arvo on tyhja, metadatapoistetaan.
+                Jos metadataa ei ole olemassa, niin luodaan uusi - olemassaoleva päivitetään.
+                Vain "avain" on pakollinen tieto.
+            </wsdl:documentation>
+            <wsdl:input message="tns:tallennaMetadata" name="tallennaMetadata">
+            </wsdl:input>
+            <wsdl:output message="tns:tallennaMetadataVastaus" name="tallennaMetadataVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+
+    </wsdl:portType>
+
+
+    <wsdl:binding name="TarjontaAdminServiceSoapBinding" type="tns:TarjontaAdminService">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <wsdl:operation name="lisaaHakukohde">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="paivitaHakukohde">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="poistaHakukohde">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="lisaaKoulutusmoduuli">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        
+        <wsdl:operation name="paivitaKoulutusmoduuli">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="lisaaTaiPoistaKoulutuksiaHakukohteelle">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="tallennaLiitteitaHakukohteelle">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="paivitaTilat">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="testaaTilasiirtyma">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="haeOid">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="tallennaValintakokeitaHakukohteelle">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="paivitaValintakokeitaHakukohteelle">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="tarkistaKoulutuksenKopiointi">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="haeMetadata">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="poistaValintakoe">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="poistaHakukohdeLiite">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+
+        <wsdl:operation name="tallennaMetadata">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+    </wsdl:binding>
+
+    <wsdl:service name="TarjontaAdminService">
+        <wsdl:port name="TarjontaAdminServicePort" binding="tns:TarjontaAdminServiceSoapBinding">
+            <soap:address location="http://localhost:8181/cxf/tarjontaAdminService"/>
+        </wsdl:port>
+    </wsdl:service>
+
+
+</wsdl:definitions>

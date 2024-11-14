@@ -6,14 +6,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.Table;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Table;
 
 @Entity
 @JsonIgnoreProperties({"id","version","kielet"})
@@ -61,8 +61,8 @@ public class Kielivalikoima extends TarjontaBaseEntity {
             kielet.add(new KoodistoUri(uri));
         }
     }
-    
-    
+
+
     /**
      * for Json serializer
      * @return
@@ -71,7 +71,7 @@ public class Kielivalikoima extends TarjontaBaseEntity {
     public Set<KoodistoUri> getKieliUrit() {
         return Collections.unmodifiableSet(kielet);
     }
-    
+
     /**
      * for Json serializer
      * @return

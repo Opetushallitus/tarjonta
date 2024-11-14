@@ -1,14 +1,15 @@
 package fi.vm.sade.tarjonta.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
 
+import java.sql.Types;
 import java.util.Date;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  * This entity is used to store "looong" multilanguage texts by key (avain) and category (kategoria).
@@ -24,7 +25,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 public class MonikielinenMetadata extends TarjontaBaseEntity {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     // Make translated texts behave more like "metadata".
@@ -36,7 +37,7 @@ public class MonikielinenMetadata extends TarjontaBaseEntity {
     // For example: "uri: Finnish 358#1"
     private String kieli = null;
     @Lob
-    @Type(type = "org.hibernate.type.TextType")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Basic(fetch = FetchType.EAGER)
     @FilterXss
     private String arvo = null;

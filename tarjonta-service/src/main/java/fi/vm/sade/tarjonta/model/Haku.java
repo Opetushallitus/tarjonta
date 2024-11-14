@@ -1,26 +1,11 @@
-/*
- * Copyright (c) 2012-2014 The Finnish Board of Education - Opetushallitus
- *
- * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
- * soon as they will be approved by the European Commission - subsequent versions
- * of the EUPL (the "Licence");
- *
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * European Union Public Licence for more details.
- */
 package fi.vm.sade.tarjonta.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.Collections;
@@ -129,7 +114,7 @@ public class Haku extends TarjontaBaseEntity {
     private Date lastUpdateDate = new Date();
 
     @Column(name = "opintopolun_nayttaminen_loppuu")
-    @Type(type = "date")
+    @Temporal(TemporalType.DATE)
     private Date opintopolunNayttaminenLoppuu;
 
     @Column(name = "viimPaivittajaOid")

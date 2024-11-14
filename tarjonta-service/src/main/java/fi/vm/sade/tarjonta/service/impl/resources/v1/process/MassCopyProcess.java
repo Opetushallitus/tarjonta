@@ -15,17 +15,10 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.process;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.security.Principal;
 import java.util.Map;
 
 import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.getInetAddress;

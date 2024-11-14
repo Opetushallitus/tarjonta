@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.service.business.impl;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import fi.vm.sade.tarjonta.model.BaseEntity;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
@@ -27,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
 
-import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
@@ -91,7 +91,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
     @Override
     public List<Koulutusmoduuli> findTutkintoOhjelmat() {
-        // todo: dao kerroksen voisi poistaa, ainoastaan vaikeammat haut voisi sijoittaa helper:n taakse      
+        // todo: dao kerroksen voisi poistaa, ainoastaan vaikeammat haut voisi sijoittaa helper:n taakse
         return koulutusmoduuliDAO.findAll();
     }
 
@@ -262,7 +262,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
      */
     private void handleParentKomoto(KoulutusTyyppi koulutus, Koulutusmoduuli moduuli, ToteutustyyppiEnum toteutustyyppi) {
         Preconditions.checkNotNull(toteutustyyppi, "Toteutustyyppi enum cannot be null!");
-        
+
         Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(moduuli);
         String pohjakoulutusUri = koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null;
         List<KoulutusmoduuliToteutus> parentKomotos = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(parentKomo, koulutus.getTarjoaja(), pohjakoulutusUri);
@@ -279,11 +279,11 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             }
             this.koulutusmoduuliToteutusDAO.update(parentKomoto);
 
-            //Start date is updated to siblings of the komoto given in koulutus. The start date is 
-            //replicated to the children of the parent komoto to enable more efficient search based 
-            //on start year and semester of komotos. 
+            //Start date is updated to siblings of the komoto given in koulutus. The start date is
+            //replicated to the children of the parent komoto to enable more efficient search based
+            //on start year and semester of komotos.
             //handleChildKomos(parentKomo, moduuli, koulutus);
-            //If there is not a komoto for the parentKomo, it is created here.    
+            //If there is not a komoto for the parentKomo, it is created here.
         } else if (parentKomo != null) {
             parentKomoto = new KoulutusmoduuliToteutus();
             generateOidForKomoto(parentKomoto);

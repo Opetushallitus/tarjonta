@@ -18,7 +18,7 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
 
-import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
+import fi.vm.sade.tarjonta.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;

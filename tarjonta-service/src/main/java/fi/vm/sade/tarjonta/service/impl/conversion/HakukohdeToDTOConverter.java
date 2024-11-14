@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
+import fi.vm.sade.tarjonta.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
@@ -67,7 +67,7 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
 
         hakukohde.getOpetuskieliUris().addAll(okielet);
         hakukohde.setHakukohteenHakutyyppiUri(s.getHaku().getHakutyyppiUri());
-        
+
 
         if (s.getHakuaika() == null && s.getHaku().getHakuaikas().size() == 1) {
             // jos hakuaikaa ei valittu ja vain yksi on tarjolla, näytetään se
@@ -75,7 +75,7 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         } else {
             hakukohde.setSisaisetHakuajat(CommonToDTOConverter.convertHakuaikaToSisaisetHakuAjat(s.getHakuaika()));
         }
-        
+
         //TODO: hakukohde.setValintaPerusteidenKuvaukset(null);
         hakukohde.getHakukohteenKoulutusOidit().addAll(convertKoulutukses(s.getKoulutusmoduuliToteutuses()));
 

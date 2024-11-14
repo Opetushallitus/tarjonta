@@ -1,0 +1,407 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions name="tarjontaPublicService"
+                  targetNamespace="http://service.tarjonta.sade.vm.fi/"
+                  xmlns:ns1="http://service.tarjonta.sade.vm.fi/types"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:tns="http://service.tarjonta.sade.vm.fi/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://service.tarjonta.sade.vm.fi/">
+            <xsd:import namespace="http://service.tarjonta.sade.vm.fi/types" schemaLocation="tarjontaPublicService.xsd" />
+        </xsd:schema>
+    </wsdl:types>
+
+    <wsdl:message name="listHaku">
+        <wsdl:part element="ns1:listaaHaku" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="listHakuResponse">
+        <wsdl:part element="ns1:listaaHakuVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="haeTarjonta">
+        <wsdl:part element="ns1:haeTarjonta" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="haeTarjontaResponse">
+        <wsdl:part element="ns1:haeTarjontaVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="haeKoulutusmoduulitKysely">
+        <wsdl:part element="ns1:haeKoulutusmoduulitKysely" name="kysely"/>
+    </wsdl:message>
+
+    <wsdl:message name="haeKoulutusmoduulitVastaus">
+        <wsdl:part element="ns1:haeKoulutusmoduulitVastaus" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="haeKaikkiKoulutusmoduulitKysely">
+        <wsdl:part element="ns1:haeKaikkiKoulutusmoduulitKysely" name="kysely"/>
+    </wsdl:message>
+
+    <wsdl:message name="haeKaikkiKoulutusmoduulitVastaus">
+        <wsdl:part element="ns1:haeKaikkiKoulutusmoduulitVastaus" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="lueKoulutusKysely">
+        <wsdl:part element="ns1:lueKoulutusKysely" name="kysely"/>
+    </wsdl:message>
+
+    <wsdl:message name="lueKoulutusVastaus">
+        <wsdl:part element="ns1:lueKoulutusVastaus" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="lueHakukohdeKysely">
+        <wsdl:part element="ns1:lueHakukohdeKysely" name="kysely"/>
+    </wsdl:message>
+
+    <wsdl:message name="lueHakukohdeVastaus">
+        <wsdl:part element="ns1:lueHakukohdeVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="lueHakukohdeKoulutuksineenKysely">
+        <wsdl:part element="ns1:LueHakukohdeKoulutuksineenKysely" name="hakukohdeKysely"/>
+    </wsdl:message>
+
+    <wsdl:message name="lueHakukohdeKoulutuksineenVastaus">
+        <wsdl:part element="ns1:LueHakukohdeKoulutuksineenVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="lueHakukohteenLiitteetKysely">
+        <wsdl:part element="ns1:haeHakukohteenLiitteetKysely" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="lueHakukohteenLiitteetVastaus">
+        <wsdl:part element="ns1:haeHakukohteenLiitteetVastausTyyppi" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="lueHakukohteenLiiteTunnisteellaKysely">
+        <wsdl:part element="ns1:lueHakukohteenLiiteTunnisteellaKyselyTyyppi" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="lueHakukohteenLiiteTunnisteellaVastaus">
+        <wsdl:part element="ns1:lueHakukohteenLiiteTunnisteellaVastausTyyppi" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="lueHakukohteenValintakoeTunnisteellaKysely">
+        <wsdl:part element="ns1:lueHakukohteenValintakoeTunnisteellaKyselyTyyppi" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="lueHakukohteenValintakoeTunnisteellaVastaus">
+        <wsdl:part element="ns1:lueHakukohteenValintakoeTunnisteellaVastausTyyppi" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="haeHakukohteenValintakokeetHakukohteenTunnisteellaKysely">
+        <wsdl:part element="ns1:haeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="haeHakukohteenValintakokeetHakukohteenTunnisteellaVastaus">
+        <wsdl:part element="ns1:haeHakukohteenValintakokeetHakukohteenTunnisteellaVastausTyyppi" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="haeTarjoajanKoulutustenPohjakoulutuksetKysely">
+        <wsdl:part element="ns1:haeTarjoajanKoulutustenPohjakoulutuksetKysely" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="haeTarjoajanKoulutustenPohjakoulutuksetVastaus">
+        <wsdl:part element="ns1:haeTarjoajanKoulutustenPohjakoulutuksetVastaus" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="lueKoulutusmoduuliKysely">
+        <wsdl:part element="ns1:lueKoulutusmoduuliKysely" name="kysely"/>
+    </wsdl:message>
+
+    <wsdl:message name="lueKoulutusmoduuliVastaus">
+        <wsdl:part element="ns1:lueKoulutusmoduuliVastaus" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="haeKoulutustyyppiUrisKysely">
+        <wsdl:part element="ns1:haeKoulutustyyppiUrisKysely" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="haeKoulutustyyppiUrisVastaus">
+        <wsdl:part element="ns1:haeKoulutustyyppiUrisVastaus" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:portType name="TarjontaPublicService">
+
+        <wsdl:documentation>
+            Palvelu tarjontatiedon hakemiseen
+        </wsdl:documentation>
+
+        <wsdl:operation name="listHaku">
+            <wsdl:documentation>
+                Listaa hakukriteriaa vastaavat haut
+            </wsdl:documentation>
+            <wsdl:input message="tns:listHaku" name="listHaku">
+            </wsdl:input>
+            <wsdl:output message="tns:listHakuResponse" name="listHakuResponse">
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="haeTarjonta">
+            <wsdl:documentation>
+                Hae haun tarjonta
+            </wsdl:documentation>
+            <wsdl:input message="tns:haeTarjonta" name="haeTarjonta">
+            </wsdl:input>
+            <wsdl:output message="tns:haeTarjontaResponse" name="haeTarjontaResponse">
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="haeKoulutusmoduulit">
+            <wsdl:documentation>
+                Hakee joukon koulutusmoduuleja ja niiden tarkeimmat tunnusmerkit.
+            </wsdl:documentation>
+            <wsdl:input message="tns:haeKoulutusmoduulitKysely" name="haeKoulutusmoduulitKysely">
+            </wsdl:input>
+            <wsdl:output message="tns:haeKoulutusmoduulitVastaus" name="haeKoulutusmoduulitVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="haeKaikkiKoulutusmoduulit">
+            <wsdl:documentation>
+                Hakee joukon koulutusmoduuleja.
+            </wsdl:documentation>
+            <wsdl:input message="tns:haeKaikkiKoulutusmoduulitKysely" name="haeKaikkiKoulutusmoduulitKysely">
+            </wsdl:input>
+            <wsdl:output message="tns:haeKaikkiKoulutusmoduulitVastaus" name="haeKaikkiKoulutusmoduulitVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+              
+        <wsdl:operation name="lueKoulutus">
+            <wsdl:documentation>
+                Hakee yhden koulutuksen tiedot oidin perusteella.
+            </wsdl:documentation>
+            <wsdl:input message="tns:lueKoulutusKysely" name="lueKoulutusKysely">
+            </wsdl:input>
+            <wsdl:output message="tns:lueKoulutusVastaus" name="lueKoulutusVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="lueHakukohde">
+            <wsdl:documentation>
+                Hakee yhden hakukohteen tiedot oidin perusteella.
+            </wsdl:documentation>
+            <wsdl:input message="tns:lueHakukohdeKysely" name="lueHakukohdeKysely">
+            </wsdl:input>
+            <wsdl:output message="tns:lueHakukohdeVastaus" name="lueHakukohdeVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="lueHakukohdeKoulutuksineen">
+            <wsdl:documentation>Hakee hakukohteen ja siihen mahdollisesti liitetyt koulutukset</wsdl:documentation>
+            <wsdl:input message="tns:lueHakukohdeKoulutuksineenKysely" name="lueHakukohdeKoulutuksineenKysely">
+            </wsdl:input>
+            <wsdl:output message="tns:lueHakukohdeKoulutuksineenVastaus" name="lueHakukohdeKoulutuksineenVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="lueHakukohteenLiitteet">
+            <wsdl:documentation>Hakee hakukohteen liitteiden tiedot Hakukohdteen OID:lla</wsdl:documentation>
+            <wsdl:input message="tns:lueHakukohteenLiitteetKysely" name="lueHakukohteenLiitteetKysely"></wsdl:input>
+            <wsdl:output message="tns:lueHakukohteenLiitteetVastaus" name="lueHakukohteenLiitteetVastaus"></wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="lueHakukohteenLiiteTunnisteella">
+            <wsdl:documentation>Haetaan hakukohteen liite tunnisteella</wsdl:documentation>
+            <wsdl:input message="tns:lueHakukohteenLiiteTunnisteellaKysely" name="lueHakukohteenLiiteTunnisteellaKysely"></wsdl:input>
+            <wsdl:output message="tns:lueHakukohteenLiiteTunnisteellaVastaus" name="lueHakukohteenLiiteTunnisteellaVastaus"></wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="lueHakukohteenValintakoeTunnisteella">
+            <wsdl:documentation>Haetaan hakukohteen valintakoe tunnisteella</wsdl:documentation>
+            <wsdl:input message="tns:lueHakukohteenValintakoeTunnisteellaKysely" name="lueHakukohteenValintakoeTunnisteellaKysely"></wsdl:input>
+            <wsdl:output message="tns:lueHakukohteenValintakoeTunnisteellaVastaus" name="lueHakukohteenValintakoeTunnisteellaVastaus"></wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="haeHakukohteenValintakokeetHakukohteenTunnisteella">
+            <wsdl:documentation>Haetaan hakukohteen valintakokeet hakukohteen tunnisteella</wsdl:documentation>
+            <wsdl:input message="tns:haeHakukohteenValintakokeetHakukohteenTunnisteellaKysely" name="haeHakukohteenValintakokeetHakukohteenTunnisteellaKysely"></wsdl:input>
+            <wsdl:output message="tns:haeHakukohteenValintakokeetHakukohteenTunnisteellaVastaus" name="haeHakukohteenValintakokeetHakukohteenTunnisteellaVastaus"></wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="haeTarjoajanKoulutustenPohjakoulutukset">
+            <wsdl:documentation>Haetaan tarjoajan koulutusten pohjakoulutukset tietylla ajanjaksolla</wsdl:documentation>
+            <wsdl:input message="tns:haeTarjoajanKoulutustenPohjakoulutuksetKysely" name="haeTarjoajanKoulutustenPohjakoulutuksetKysely"></wsdl:input>
+            <wsdl:output message="tns:haeTarjoajanKoulutustenPohjakoulutuksetVastaus" name="haeTarjoajanKoulutustenPohjakoulutuksetVastaus"></wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="lueKoulutusmoduuli">
+            <wsdl:documentation>
+                Hakee yhden koulutusmoduulin tiedot oidin perusteella.
+            </wsdl:documentation>
+            <wsdl:input message="tns:lueKoulutusmoduuliKysely" name="lueKoulutusmoduuliKysely">
+            </wsdl:input>
+            <wsdl:output message="tns:lueKoulutusmoduuliVastaus" name="lueKoulutusmoduuliVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="haeKoulutustyyppiUris">
+            <wsdl:documentation>
+                Hakee organisaation OID:lla organisaation mahdolliset koulutustyypit.
+            </wsdl:documentation>
+            <wsdl:input message="tns:haeKoulutustyyppiUrisKysely" name="haeKoulutustyyppiUrisKysely">
+            </wsdl:input>
+            <wsdl:output message="tns:haeKoulutustyyppiUrisVastaus" name="haeKoulutustyyppiUrisVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        
+        
+
+    </wsdl:portType>
+
+    <wsdl:binding name="TarjontaPublicServiceSoapBinding" type="tns:TarjontaPublicService">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http" />
+
+        <wsdl:operation name="listHaku">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input name="listHaku">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="listHakuResponse">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="haeTarjonta">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input name="haeTarjonta">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="haeTarjontaResponse">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="haeKoulutusmoduulit">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/haeKoulutusmoduulit"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="haeKaikkiKoulutusmoduulit">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/haeKaikkiKoulutusmoduulit"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="lueKoulutus">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/lueKoulutus"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="lueHakukohde">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/lueHakukohde"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="lueHakukohdeKoulutuksineen">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/lueHakukohde" style="document"/>
+            <wsdl:input name="lueHakukohdeKoulutuksineenKysely">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="lueHakukohdeKoulutuksineenVastaus">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="lueHakukohteenLiitteet">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/lueHakukohde" style="document"/>
+            <wsdl:input name="lueHakukohteenLiitteetKysely">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="lueHakukohteenLiitteetVastaus">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="lueHakukohteenLiiteTunnisteella">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/lueHakukohde" style="document"/>
+            <wsdl:input name="lueHakukohteenLiiteTunnisteellaKysely">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="lueHakukohteenLiiteTunnisteellaVastaus">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="lueHakukohteenValintakoeTunnisteella">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/lueHakukohteenValintakoeTunnisteella" style="document"/>
+            <wsdl:input name="lueHakukohteenValintakoeTunnisteellaKysely">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="lueHakukohteenValintakoeTunnisteellaVastaus">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="haeHakukohteenValintakokeetHakukohteenTunnisteella">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/haeHakukohteenValintakokeetHakukohteenTunnisteella" style="document"/>
+            <wsdl:input name="haeHakukohteenValintakokeetHakukohteenTunnisteellaKysely">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="haeHakukohteenValintakokeetHakukohteenTunnisteellaVastaus">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="haeTarjoajanKoulutustenPohjakoulutukset">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/haeTarjoajanKoulutustenPohjakoulutukset" style="document"/>
+            <wsdl:input name="haeTarjoajanKoulutustenPohjakoulutuksetKysely">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="haeTarjoajanKoulutustenPohjakoulutuksetVastaus">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="lueKoulutusmoduuli">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/lueKoulutusmoduuli"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        
+        <wsdl:operation name="haeKoulutustyyppiUris">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/haeKoulutustyyppiUris"/>
+            <wsdl:input name="haeKoulutustyyppiUrisKysely">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="haeKoulutustyyppiUrisVastaus">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="TarjontaPublicService">
+        <wsdl:port name="TarjontaPublicServicePort" binding="tns:TarjontaPublicServiceSoapBinding">
+            <soap:address location="http://localhost:8181/cxf/tarjontaPublicService" />
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>

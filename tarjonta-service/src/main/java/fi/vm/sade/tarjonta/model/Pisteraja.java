@@ -19,9 +19,9 @@ package fi.vm.sade.tarjonta.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.*;
-import org.codehaus.jackson.annotate.JsonBackReference;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
 /**
  *
  * @author: Tuomas Katva
@@ -68,11 +68,11 @@ public class Pisteraja extends TarjontaBaseEntity  {
     public Valintakoe getValintakoe() {
 		return valintakoe;
 	}
-    
+
     public void setValintakoe(Valintakoe valintakoe) {
 		this.valintakoe = valintakoe;
 	}
-    
+
     /**
      * @return the valinnanPisterajaTyyppi
      */

@@ -1,0 +1,322 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xs:schema elementFormDefault="unqualified"
+           targetNamespace="http://service.tarjonta.sade.vm.fi/types" version="1.0"
+           xmlns:tns="http://service.tarjonta.sade.vm.fi/types"
+           xmlns:tarjonta="http://service.tarjonta.sade.vm.fi/types"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+
+	<xs:include schemaLocation="tarjonta.xsd"/>
+
+
+    <xs:element name="genericFaultInfo" type="tarjonta:GenericFaultInfo"></xs:element>
+
+    <xs:element name="lisaaKoulutus" type="tns:LisaaKoulutusTyyppi"/>
+    <xs:element name="lisaaKoulutusVastaus" type="tns:LisaaKoulutusVastausTyyppi"/>
+
+    <xs:element name="paivitaKoulutus" type="tns:PaivitaKoulutusTyyppi"/>
+    <xs:element name="paivitaKoulutusVastaus" type="tns:PaivitaKoulutusVastausTyyppi"/>
+
+    <xs:element name="lisaaKoulutusmoduuli" type="tns:LisaaKoulutusmoduuliTyyppi"/>
+    <xs:element name="lisaaKoulutusmoduuliVastaus" type="tns:LisaaKoulutusmoduuliVastausTyyppi"/>
+    
+    <xs:element name="paivitaKoulutusmoduuli" type="tns:PaivitaKoulutusmoduuliTyyppi"/>
+    <xs:element name="paivitaKoulutusmoduuliVastaus" type="tns:PaivitaKoulutusmoduuliVastausTyyppi"/>
+
+    <xs:element name="lisaaHakukohde" type="tns:LisaaHakukohdeType"/>
+    <xs:element name="lisaaHakukohdeVastaus" type="tns:LisaaHakukohdeVastausType"/>
+
+    <xs:element name="paivitaHakukohde" type="tns:PaivitaHakukohdeType"/>
+    <xs:element name="paivitaHakukohdeVastaus" type="tns:PaivitaHakukohdeVastausType"/>
+
+    <xs:element name="poistaHakukohde" type="tns:PoistaHakukohdeType"/>
+    <xs:element name="poistaHakukohdeVastaus" type="tns:PoistaHakukohdeVastausType"/>
+
+    <xs:element name="poistaKoulutus" type="tns:PoistaKoulutusTyyppi"/>
+    <xs:element name="poistaKoulutusVastaus" type="tns:PoistaKoulutusVastausTyyppi"/>
+
+    <xs:element name="lisaaKoulutusHakukohteelle" type="tns:LisaaKoulutusHakukohteelleTyyppi"/>
+    <xs:element name="lisaaKoulutusHakukohteelleVastaus" type="tns:LisaaKoulutusHakukohteelleVastausTyyppi"/>
+
+    <xs:element name="tallennaLiitteitaHakukohteelle" type="tns:TallennaLiitteitaHakukohteelleTyyppi"/>
+    <xs:element name="tallennaLiitteitaHakukohteelleVastaus" type="tns:TallennaLiitteitaHakukohteelleVastausTyyppi"/>
+
+    <xs:element name="tallennaValintakokeitaHakukohteelle" type="tns:TallennaValintakokeitaHakukohteelleTyyppi"/>
+    <xs:element name="tallennaValintakokeitaHakukohteelleVastaus"
+                type="tns:TallennaValintakokeitaHakukohteelleVastausTyyppi"/>
+
+
+    <xs:element name="paivitaValintakokeitaHakukohteelle" type="tns:PaivitaValintakokeitaHakukohteelleTyyppi"/>
+    <xs:element name="paivitaValintakokeitaHakukohteelleVastaus"
+                type="tns:PaivitaValintakokeitaHakukohteelleVastausTyyppi"/>
+
+    <xs:element name="paivitaTila" type="tns:PaivitaTilaTyyppi"/>
+    <xs:element name="paivitaTilaVastaus" type="tns:PaivitaTilaVastausTyyppi"/>
+
+    <xs:element name="testaaTilasiirtyma" type="tns:GeneerinenTilaTyyppi"/>
+    <xs:element name="testaaTilasiirtymaVastaus" type="xs:boolean"/>
+
+    <xs:element name="haeOid" type="xs:string"/>
+    <xs:element name="haeOidVastaus" type="xs:string"/>
+
+    <xs:element name="tarkistaKoulutusKopiointi" type="tns:TarkistaKoulutusKopiointiTyyppi"/>
+    <xs:element name="tarkistaKoulutusKopiointiVastaus" type="xs:boolean"/>
+
+    <xs:element name="haeMetadata" type="tns:HaeMetadataTyyppi"/>
+    <xs:element name="haeMetadataVastaus" type="tns:HaeMetadataVastausTyyppi"/>
+
+    <xs:element name="tallennaMetadata" type="tns:TallennaMetadataTyyppi"/>
+    <xs:element name="tallennaMetadataVastaus" type="tns:TallennaMetadataVastausTyyppi"/>
+
+    <xs:element name="poistaValintakoe" type="tns:PoistaValintaKoeTyyppi"/>
+    <xs:element name="poistaValintakoeVastaus" type="tns:PoistaValintaKoeTyyppiVastaus"/>
+
+    <xs:element name="poistaHakukohdeLiite" type="tns:PoistaHakukohdeLiiteTyyppi"/>
+    <xs:element name="poistaHakukohdeLiiteVastaus" type="tns:PoistaHakukohdeLiiteVastausTyyppi"/>
+    
+    <xs:element name="emptyString" type="xs:string"/>
+
+    <xs:complexType name="PoistaHakukohdeType">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohdePoisto" type="tarjonta:HakukohdeTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PoistaHakukohdeVastausType">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohdePoistoVastaus" type="tarjonta:HakukohdeTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PoistaKoulutusTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="koulutusOid" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LisaaKoulutusHakukohteelleTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeOid" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="koulutusOids" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="lisaa" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LisaaKoulutusHakukohteelleVastausTyyppi">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="PoistaKoulutusVastausTyyppi">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="PaivitaHakukohdeType">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohdePaivitys" type="tarjonta:HakukohdeTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PaivitaHakukohdeVastausType">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohdePaivitysVastaus" type="tarjonta:HakukohdeTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LisaaHakukohdeType">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohde" type="tarjonta:HakukohdeTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LisaaHakukohdeVastausType">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeVastaus" type="tarjonta:HakukohdeTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LisaaKoulutusTyyppi">
+        <xs:complexContent>
+            <xs:extension base="tarjonta:KoulutusTyyppi">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="LisaaKoulutusVastausTyyppi">
+        <xs:sequence>
+            <!-- optimistic locking -->
+            <xs:element name="Version" type="xs:long" minOccurs="0" maxOccurs="1"/>     
+            <xs:element name="KomoOid" type="xs:string" minOccurs="0" maxOccurs="1"/>    
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PaivitaKoulutusTyyppi">
+        <xs:complexContent>
+            <xs:extension base="tarjonta:KoulutusTyyppi">
+                <xs:sequence>
+                    <xs:element name="KomoOid" minOccurs="0" maxOccurs="1"  type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="PaivitaKoulutusVastausTyyppi">
+    </xs:complexType>
+
+    <xs:complexType name="LisaaKoulutusmoduuliTyyppi">
+        <xs:sequence>
+            <xs:element name="koulutusmoduuli" type="tarjonta:KoulutusmoduuliKoosteTyyppi" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LisaaKoulutusmoduuliVastausTyyppi">
+        <xs:sequence>
+            <xs:element name="koulutusmoduuliVastaus" type="tarjonta:KoulutusmoduuliKoosteTyyppi" minOccurs="1"
+                        maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PaivitaKoulutusmoduuliTyyppi">
+        <xs:sequence>
+            <xs:element name="koulutusmoduuli" type="tarjonta:KoulutusmoduuliKoosteTyyppi" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PaivitaKoulutusmoduuliVastausTyyppi">
+        <xs:sequence>
+            <xs:element name="koulutusmoduuliVastaus" type="tarjonta:KoulutusmoduuliKoosteTyyppi" minOccurs="1"
+                        maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TallennaLiitteitaHakukohteelleTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeOid" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="hakukohteenLiitteen"
+                        type="tarjonta:HakukohdeLiiteTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TallennaLiitteitaHakukohteelleVastausTyyppi">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="TallennaValintakokeitaHakukohteelleTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeOid" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="hakukohteenValintakokeet"
+                        type="tarjonta:ValintakoeTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="TallennaValintakokeitaHakukohteelleVastausTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="hakukohteenValintakokeetVastaus"
+                        type="tarjonta:ValintakoeTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PaivitaValintakokeitaHakukohteelleTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeOid" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="hakukohteenValintakokeet"
+                        type="tarjonta:ValintakoeTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="PaivitaValintakokeitaHakukohteelleVastausTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="hakukohteenValintakokeetVastaus"
+                        type="tarjonta:ValintakoeTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+<!-- XXXX!!!!XXXX -->
+    <xs:complexType name="PaivitaTilaVastausTyyppi">
+        <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="hakukohdeOidit"
+                        type="xs:string"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="komotoOidit"
+                        type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PoistaValintaKoeTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="ValintakoeTunniste" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="PoistaValintaKoeTyyppiVastaus">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="PoistaHakukohdeLiiteTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeLiiteTunniste" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="PoistaHakukohdeLiiteVastausTyyppi">
+        <xs:sequence />
+    </xs:complexType>
+
+    <xs:complexType name="PaivitaTilaTyyppi">
+        <xs:sequence>
+            <xs:element name="tilaOids" type="tarjonta:GeneerinenTilaTyyppi" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="GeneerinenTilaTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="Oid" type="tarjonta:OidTyyppi"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="sisalto" type="tarjonta:SisaltoTyyppi"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="tila" type="tarjonta:TarjontaTila"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TarkistaKoulutusKopiointiTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="koulutusLuokitusKoodi" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="koulutusohjelmaKoodi" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="pohjakoulutus" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="koulutusAlkamisPvm" type="xs:date"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="tarjoajaOid" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="koulutuslajis" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="opetuskielis" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="HaeMetadataTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="avain" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="kategoria" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="HaeMetadataVastausTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="metadatas"
+                        type="tarjonta:MonikielinenMetadataTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TallennaMetadataTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="avain" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="kategoria" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="kieli" type="xs:string"/>
+            <xs:element minOccurs="1" maxOccurs="1" name="arvo" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TallennaMetadataVastausTyyppi">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="metadata" type="tarjonta:MonikielinenMetadataTyyppi"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+</xs:schema>

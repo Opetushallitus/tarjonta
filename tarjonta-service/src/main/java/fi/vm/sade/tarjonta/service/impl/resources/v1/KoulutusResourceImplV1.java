@@ -1,17 +1,3 @@
-/*
- * Copyright (c) 2013 The Finnish Board of Education - Opetushallitus
- *
- * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
- * soon as they will be approved by the European Commission - subsequent versions
- * of the EUPL (the "Licence");
- *
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import static fi.vm.sade.tarjonta.service.auditlog.AuditLog.KOULUTUS;
@@ -136,13 +122,12 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import jakarta.ws.rs.core.Response;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapperImpl;
@@ -150,8 +135,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -162,7 +146,6 @@ import java.util.stream.Collectors;
  * @author mlyly
  */
 @Transactional(readOnly = false)
-@CrossOriginResourceSharing(allowAllOrigins = true)
 public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusResourceImplV1.class);
@@ -999,7 +982,20 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
-    public Response saveKomotoTekstis(String oid, KuvausV1RDTO<KomotoTeksti> dto) {
+    public Response saveKomotoTekstisPUT(String oid, KuvausV1RDTO<KomotoTeksti> dto) {
+        Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
+        Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
+
+        permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
+        komotoKoulutusConverters.convertTekstiDTOToMonikielinenTeksti(dto, komoto.getTekstit());
+        komoto.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
+        koulutusmoduuliToteutusDAO.update(komoto);
+        return Response.ok().build();
+    }
+
+    @Override
+    public Response saveKomotoTekstisPOST(String oid, KuvausV1RDTO<KomotoTeksti> dto) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         Preconditions.checkNotNull(komoto, "KOMOTO not found by OID '%s'.", oid);
@@ -1139,7 +1135,51 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     @Override
     @Transactional(readOnly = false)
-    public ResultV1RDTO<Tilamuutokset> updateTila(String oid, TarjontaTila tila, HttpServletRequest request) {
+    public ResultV1RDTO<Tilamuutokset> updateTilaPOST(String oid, TarjontaTila tila, HttpServletRequest request) {
+        try {
+            permissionChecker.checkUpdateKoulutusByKoulutusOid(oid);
+
+            if (Sets.newHashSet(TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU).contains(tila)) {
+                try {
+                    permissionChecker.checkPublishOrUnpublishKomoto(oid);
+                }
+                catch (NotAuthorizedException e) {
+                    ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<>();
+                    r.addError(createValidationError(null, e.getMessage()));
+                    LOG.error("Exception from permissionChecker", e);
+                    return r;
+                }
+            }
+
+            Tila tilamuutos = new Tila(Tyyppi.KOMOTO, tila, oid);
+
+            Tilamuutokset tm = null;
+            try {
+
+                KoulutusV1RDTO dtoBeforeOperation = findByOid(oid, true, false, contextDataService.getCurrentUserLang()).getResult();
+                tm = publicationDataService.updatePublicationStatus(Lists.newArrayList(tilamuutos));
+                KoulutusV1RDTO dtoAfterOperation = findByOid(oid, true, false, contextDataService.getCurrentUserLang()).getResult();
+                AuditLog.stateChange(KOULUTUS, oid, tila, dtoAfterOperation, dtoBeforeOperation, request, null);
+            } catch (IllegalArgumentException iae) {
+                ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<>();
+                r.addError(createValidationError(null, iae.getMessage()));
+                LOG.error("Exception from updates etc", iae);
+                return r;
+            }
+
+            //indeksoi uudelleen muuttunut data
+            indexerResource.indexMuutokset(tm);
+
+            return new ResultV1RDTO<>(tm);
+        } catch (Exception e) {
+            LOG.error("Unexpected exception", e);
+            throw e;
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public ResultV1RDTO<Tilamuutokset> updateTilaPUT(String oid, TarjontaTila tila, HttpServletRequest request) {
         try {
             permissionChecker.checkUpdateKoulutusByKoulutusOid(oid);
 
@@ -1320,68 +1360,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
      * @return
      */
     @Override
-    public Response saveHtml4Kuva(String oid, String kieliUri, MultipartBody body) {
-        Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
-        Preconditions.checkNotNull(kieliUri, "Koodisto language URI cannot be null.");
-        Preconditions.checkNotNull(body, "MultipartBody cannot be null.");
-        LOG.debug("in saveKuva - komoto OID : {}, kieliUri : {}, bodyType : {}", oid, kieliUri, body.getType());
-        ResultV1RDTO<KuvaV1RDTO> result = new ResultV1RDTO<>();
-        final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
-
-        KoulutusValidator.validateKoulutusUpdate(komoto, result);
-        if (result.hasErrors()) {
-            return Response.serverError().build();
-        }
-
-        permissionChecker.checkAddKoulutusKuva(komoto.getTarjoaja());
-        Attachment att = body.getRootAttachment();
-
-        KoulutusValidator.validateKieliUri(kieliUri, "kieliUri", result);
-        validateMimeType(att.getDataHandler().getContentType(), "contentType", result);
-        if (result.hasErrors()) {
-            return Response.serverError().build();
-        }
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-        InputStream in = null;
-
-        try {
-            in = att.getDataHandler().getInputStream();
-
-            try {
-                IOUtils.copy(in, baos);
-                final String filename = att.getContentDisposition() != null ? att.getContentDisposition().getParameter("filename") : "";
-                final String contentType = att.getDataHandler().getContentType();
-
-                BinaryData bin = null;
-                if (komoto.isKuva(kieliUri)) {
-                    bin = komoto.getKuvat().get(kieliUri);
-                } else {
-                    bin = new BinaryData();
-                }
-
-                bin.setData(baos.toByteArray());
-                bin.setFilename(filename);
-                bin.setMimeType(contentType);
-
-                komoto.setKuvaByUri(kieliUri, bin);
-                komoto.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
-                this.koulutusmoduuliToteutusDAO.update(komoto);
-                result.setStatus(OK);
-            } catch (IOException ex) {
-                LOG.error("BinaryData save failed for komoto OID {}.", oid, ex);
-                result.setStatus(ERROR);
-            } finally {
-                IOUtils.closeQuietly(in);
-                IOUtils.closeQuietly(baos);
-            }
-        } catch (IOException ex) {
-            LOG.error("Image upload failed for komoto OID {}.", oid, ex);
-        } finally {
-            IOUtils.closeQuietly(in);
-        }
-
-        return Response.ok().build();
+    public Response saveHtml4Kuva(String oid, String kieliUri, FormDataMultiPart body) {
+        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 
     /**

@@ -42,10 +42,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -553,7 +551,7 @@ public class MassCommitProcess {
 
                     hk.setAloituspaikatKuvaus(null);
                 }
-                
+
                 Hakukohde insert = hakukohdeDAO.insert(hk);
                 batchOfIndexIds.add(insert.getId());
                 massakopiointi.updateTila(processId, oldHakukohdeOid, Massakopiointi.KopioinninTila.COPIED, processing);

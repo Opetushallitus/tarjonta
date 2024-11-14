@@ -15,9 +15,7 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import javax.persistence.*;
-
-import fi.vm.sade.generic.model.BaseEntity;
+import jakarta.persistence.*;
 
 /**
  * Store images and other binary data.
@@ -27,7 +25,7 @@ import fi.vm.sade.generic.model.BaseEntity;
 @Entity
 public class BinaryData extends BaseEntity {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     private String filename;

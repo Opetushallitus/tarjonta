@@ -18,9 +18,9 @@ package fi.vm.sade.tarjonta.model;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Entity
 @JsonIgnoreProperties({"id","version"})

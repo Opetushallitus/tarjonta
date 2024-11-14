@@ -1,11 +1,11 @@
 package fi.vm.sade.tarjonta.model;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.vm.sade.tarjonta.shared.types.Osoitemuoto;
-import org.codehaus.jackson.annotate.JsonBackReference;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @Entity
 @JsonIgnoreProperties({"id","version"})
@@ -15,7 +15,6 @@ public class Yhteystiedot extends TarjontaBaseEntity {
     public static final String TABLE_NAME = "yhteystiedot";
     private static final long serialVersionUID = 2820464295959137992L;
 
-    @ManyToOne
     @JoinColumn(name = "hakukohde_id", nullable = false)
     @JsonIgnore
     @JsonBackReference

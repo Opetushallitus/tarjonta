@@ -8,7 +8,7 @@ import org.apache.commons.beanutils.BeanUtilsBean;
 /**
  * See: http://stackoverflow.com/questions/1301697/helper-in-order-to-copy-non-null-properties-from-object-to-another-java
  */
-public class NullAwareBeanUtilsBean extends BeanUtilsBean{
+public class NullAwareBeanUtilsBean extends BeanUtilsBean {
 
     @Override
     public void copyProperty(Object dest, String name, Object value)

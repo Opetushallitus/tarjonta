@@ -16,7 +16,7 @@
 package fi.vm.sade.tarjonta.dao.impl.util;
 
 import com.google.common.base.Preconditions;
-import com.mysema.query.types.expr.BooleanExpression;
+import com.querydsl.core.types.dsl.BooleanExpression;
 
 /**
  *

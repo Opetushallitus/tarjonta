@@ -15,19 +15,19 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.generic.model.BaseEntity;
+import java.sql.Types;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Lob;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.UniqueConstraint;
 
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,12 +59,12 @@ public class Massakopiointi extends BaseEntity {
     private Tyyppi type;
 
     @Lob
-    @Type(type = "org.hibernate.type.TextType")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Column(name = "json", length = 100000)
     private String json;
 
     @Lob
-    @Type(type = "org.hibernate.type.TextType")
+    //@Type(type = "org.hibernate.type.TextType")
     @Column(name = "meta", length = 100000)
     private String meta;
 

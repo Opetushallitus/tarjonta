@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
@@ -30,8 +31,6 @@ import fi.vm.sade.tarjonta.shared.ParameterServices;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,14 +41,13 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author jani
  */
-@CrossOriginResourceSharing(allowAllOrigins = true)
 public class PermissionResourceImplV1 implements PermissionV1Resource {
 
     private static final Logger LOG = LoggerFactory.getLogger(PermissionResourceImplV1.class);
 
     @Autowired
     private ContextDataService contextDataService;
-    
+
     @Autowired
     private HakuDAO hakuDao;
 
@@ -61,10 +59,10 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
 
     @Autowired
     private PermissionChecker permissionChecker;
-    
+
     @Autowired
     private ParameterServices parameterServices;
-   
+
     @Secured({ROLE_READ, ROLE_UPDATE, ROLE_CRUD})
     @Override
     public ResultV1RDTO<String> authorize() {
@@ -99,14 +97,14 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
         }
     }
 
-    
+
     private static final String PERMISSION_CREATE = "create";
     private static final String PERMISSION_UPDATE = "update";
     private static final String PERMISSION_UPDATE_LIMITED = "updateLimited";
     private static final String PERMISSION_REMOVE = "remove";
     private static final String PERMISSION_COPY = "copy";
     private static final String PERMISSION_HAKU_CAN_ADD_REMOVE_HAKUKOHDE = "addRemoveHakukohde";
-    
+
     // http://localhost:8084/tarjonta-service/rest/v1/permission/permissions/haku/1.2.246.562.29.45401879304
     // http://localhost:8084/tarjonta-service/rest/v1/permission/permissions/hakukohde/1.2.246.562.20.46022392388
     @Override
@@ -121,12 +119,12 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
                 // Possible additional checks
             }
         }
-        
+
         if ("hakukohde".equalsIgnoreCase(type)) {
             Hakukohde hakukohde = processHakukohdePermissions(key, result);
             if (hakukohde != null) {
                 // Possible additional checks
-            }            
+            }
         }
 
         if ("koulutus".equalsIgnoreCase(type)) {
@@ -134,18 +132,18 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
             if (komoto != null) {
             }
         }
-        
+
         if ("organisaatio".equalsIgnoreCase(type)) {
-            Map subResults = new HashMap();            
-            result.put("organisaatio", subResults);            
+            Map subResults = new HashMap();
+            result.put("organisaatio", subResults);
             // TODO implement organisaatio checks
         }
 
         LOG.info("getPermissions({}, {}) -> {}", new Object[] {type, key, result});
-        
+
         return result;
     }
-    
+
     private Haku processHakuPermissions(String key, Map parentResult) {
         LOG.debug("processHakuPermissions({}, {})", key, parentResult);
 
@@ -175,10 +173,10 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
                 result.put(PERMISSION_HAKU_CAN_ADD_REMOVE_HAKUKOHDE, true);
                 return h;
             }
-            
+
             // Does the haku accept new hakukohdes / removals still?
             result.put(PERMISSION_HAKU_CAN_ADD_REMOVE_HAKUKOHDE, parameterServices.parameterCanAddHakukohdeToHaku(key));
-            
+
             //
             // Check "real" permissions
             //
@@ -200,9 +198,9 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
             } catch (Exception ex) {
                 result.put(PERMISSION_UPDATE, false);
                 result.put(PERMISSION_UPDATE_LIMITED, false);
-                result.put(PERMISSION_COPY, false);                
+                result.put(PERMISSION_COPY, false);
             }
-        }        
+        }
         return h;
     }
 
@@ -229,9 +227,9 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
             if (h != null) {
                 processHakuPermissions(h.getOid(), parentResult);
             }
-            
+
             if (permissionChecker.isOphCrud()) {
-                LOG.debug("Hakukohde permissions? YES SIR!");                
+                LOG.debug("Hakukohde permissions? YES SIR!");
                 result.put(PERMISSION_COPY, true);
                 result.put(PERMISSION_CREATE, true);
                 result.put(PERMISSION_REMOVE, true);
@@ -239,13 +237,13 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
                 result.put(PERMISSION_UPDATE_LIMITED, false);
                 return hk;
             }
-            
+
             boolean permissionCanUpdateHakukohde;
 
             try {
                 permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(key);
                 permissionCanUpdateHakukohde = true;
-                
+
                 result.put(PERMISSION_UPDATE, true);
                 result.put(PERMISSION_COPY, true); // If can update can copy?
 
@@ -257,22 +255,22 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
 
                 LOG.debug("  (permission) cannot update/copy hakukohde: {}", key);
             }
-            
+
             try {
                 permissionChecker.checkRemoveHakukohde(key);
                 LOG.debug("  (permission) can remove hakukohde: {}", key);
                 result.put(PERMISSION_REMOVE, true);
             } catch (Exception ex) {
                 LOG.debug("  (permission) cannot remove hakukohde: {}", key);
-                result.put(PERMISSION_REMOVE, false);                
+                result.put(PERMISSION_REMOVE, false);
             }
-            
+
             if (h != null) {
                 // Check if hakukohde can be edit now that it is attached to haku
                 if (permissionCanUpdateHakukohde) {
                     boolean canEdit = parameterServices.parameterCanEditHakukohde(h.getOid());
                     boolean canEditLimited = parameterServices.parameterCanEditHakukohdeLimited(h.getOid());
-                    
+
                     result.put(PERMISSION_UPDATE, canEdit || canEditLimited);
                     result.put(PERMISSION_UPDATE_LIMITED, !canEdit && canEditLimited);
                 }
@@ -296,9 +294,9 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
         KoulutusmoduuliToteutus komoto = komotoDao.findKomotoByOid(key);
         if (komoto != null) {
             updateStateTransferInformation(result, komoto.getTila());
-            
+
             if (permissionChecker.isOphCrud()) {
-                LOG.debug("Komoto permissions? YES SIR!");                
+                LOG.debug("Komoto permissions? YES SIR!");
                 result.put(PERMISSION_COPY, true);
                 result.put(PERMISSION_CREATE, true);
                 result.put(PERMISSION_REMOVE, true);
@@ -321,14 +319,14 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
             try {
                 permissionChecker.checkRemoveKoulutus(key);
                 result.put(PERMISSION_REMOVE, true);
-            } catch (Exception ex) {                
+            } catch (Exception ex) {
                 result.put(PERMISSION_REMOVE, false);
             }
 
             // TODO more checks here!
-            LOG.warn("HOW TO check parameters edit / edit limited permissions since can belong to multiple hakukohdes and thus to multipel hakus?");            
+            LOG.warn("HOW TO check parameters edit / edit limited permissions since can belong to multiple hakukohdes and thus to multipel hakus?");
         }
-        
+
         return komoto;
     }
 
@@ -336,7 +334,7 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
         if (result == null) {
             return;
         }
-        
+
         Map<String, Object> states = new HashMap<String, Object>();
         result.put("states", states);
 
@@ -344,10 +342,10 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
         if (fromTila == null) {
             fromTila = TarjontaTila.LUONNOS;
         }
-        
+
         for (TarjontaTila targetTila : TarjontaTila.values()) {
             states.put(targetTila.name(), fromTila.acceptsTransitionTo(targetTila));
         }
     }
-    
+
 }

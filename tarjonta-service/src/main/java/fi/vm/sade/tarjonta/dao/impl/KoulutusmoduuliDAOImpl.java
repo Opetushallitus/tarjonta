@@ -17,13 +17,13 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.mysema.query.BooleanBuilder;
-import com.mysema.query.SearchResults;
-import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.types.EntityPath;
-import com.mysema.query.types.Predicate;
-import com.mysema.query.types.expr.BooleanExpression;
-import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAQueryBase;
+import com.querydsl.jpa.impl.JPAQuery;
+import fi.vm.sade.tarjonta.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.*;
@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -253,7 +253,7 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         return findAll();
     }
 
-    protected JPAQuery from(EntityPath<?>... o) {
+    protected JPAQueryBase from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }
 
@@ -366,7 +366,7 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         Koulutusmoduuli findByOid = findByOid(komoOid);
         Preconditions.checkArgument(findByOid != null, "Delete failed, entity not found.");
         findByOid.setTila(TarjontaTila.POISTETTU);
-        //TODO: add field for the entity 
+        //TODO: add field for the entity
         //findByOid.setLastUpdatedByOid(userOid);
     }
 

@@ -15,7 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import fi.vm.sade.tarjonta.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.HakuaikaDAO;
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import org.springframework.stereotype.Repository;

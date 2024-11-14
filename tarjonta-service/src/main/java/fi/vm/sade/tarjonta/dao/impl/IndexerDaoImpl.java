@@ -15,17 +15,16 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import com.mysema.query.BooleanBuilder;
-import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.jpa.impl.JPAUpdateClause;
-import com.mysema.query.types.EntityPath;
-import com.mysema.query.types.Predicate;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.model.*;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
 
@@ -38,7 +37,7 @@ public class IndexerDaoImpl implements IndexerDAO {
     @Override
     public List<Long> findAllHakukohdeIds() {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
-        return q(hakukohde).list(hakukohde.id);
+        return queryFactory().select(hakukohde.id).from(hakukohde).fetch();
     }
 
     @Override
@@ -46,23 +45,23 @@ public class IndexerDaoImpl implements IndexerDAO {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
         final Predicate where = bb(komo.lukiolinjaUri.isNotNull()).or(komo.koulutusohjelmaUri.isNotNull().or(komoto.nimi.isNotNull()).or(komo.nimi.isNotNull())).getValue();
-        return q(komoto).join(komoto.koulutusmoduuli, komo).where(where).list(komoto.id);
+        return queryFactory().select(komoto.id).from(komoto).join(komoto.koulutusmoduuli, komo).where(where).fetch();
     }
 
     @Override
     public List<Long> findUnindexedHakukohdeIds() {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
-        return q(hakukohde).where(hakukohde.viimIndeksointiPvm.isNull().or(hakukohde.viimIndeksointiPvm.before(hakukohde.lastUpdateDate))).list(hakukohde.id);
+        return queryFactory().select(hakukohde.id).from(hakukohde).where(hakukohde.viimIndeksointiPvm.isNull().or(hakukohde.viimIndeksointiPvm.before(hakukohde.lastUpdateDate))).fetch();
     }
 
     @Override
     public List<Long> findUnindexedKoulutusIds() {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        return q(komoto).where(
+        return queryFactory().select(komoto.id).from(komoto).where(
                 bb(komoto.viimIndeksointiPvm.isNull()
                         .or(komoto.viimIndeksointiPvm.before(komoto.updated)))
                         .and(komoto.alkamisVuosi.isNotNull())
-        ).list(komoto.id);
+        ).fetch();
     }
 
     @Override
@@ -125,9 +124,9 @@ public class IndexerDaoImpl implements IndexerDAO {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
         final QKoulutusOwner owner = QKoulutusOwner.koulutusOwner;
 
-        List<Long> koulutusIds = q(komoto).leftJoin(komoto.owners, owner).where(
+        List<Long> koulutusIds = queryFactory().select(komoto.id).from(komoto).leftJoin(komoto.owners, owner).where(
                 bb(owner.ownerOid.in(organizationOids).or(komoto.tarjoaja.in(organizationOids))))
-                .distinct().list(komoto.id);
+                .distinct().fetch();
 
         if (koulutusIds.isEmpty()) return;
 
@@ -135,8 +134,8 @@ public class IndexerDaoImpl implements IndexerDAO {
                 .where(komoto.id.in(koulutusIds))
                 .setNull(komoto.viimIndeksointiPvm).execute();
 
-        List<Long> hakukohdeIds = q(hakukohde).join(hakukohde.koulutusmoduuliToteutuses, komoto)
-                                    .where(komoto.id.in(koulutusIds)).distinct().list(hakukohde.id);
+        List<Long> hakukohdeIds = queryFactory().select(hakukohde.id).from(hakukohde).join(hakukohde.koulutusmoduuliToteutuses, komoto)
+                                    .where(komoto.id.in(koulutusIds)).distinct().fetch();
 
         if (hakukohdeIds.isEmpty()) return;
 
@@ -149,7 +148,7 @@ public class IndexerDaoImpl implements IndexerDAO {
         return new BooleanBuilder(initial);
     }
 
-    private JPAQuery q(EntityPath<?> entityPath) {
-        return new JPAQuery(entityManager).from(entityPath);
+    private JPAQueryFactory queryFactory() {
+        return new JPAQueryFactory(entityManager);
     }
 }

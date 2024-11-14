@@ -1,10 +1,10 @@
 package fi.vm.sade.tarjonta.dao.impl;
 
-
-import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.types.EntityPath;
-import com.mysema.query.types.expr.BooleanExpression;
-import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAQueryBase;
+import com.querydsl.jpa.impl.JPAQuery;
+import fi.vm.sade.tarjonta.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KuvausDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
@@ -148,7 +148,7 @@ public class KuvausDaoImpl extends AbstractJpaDAOImpl<ValintaperusteSoraKuvaus, 
         }
     }
 
-    protected JPAQuery from(EntityPath<?>... o) {
+    protected JPAQueryBase from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }
 }

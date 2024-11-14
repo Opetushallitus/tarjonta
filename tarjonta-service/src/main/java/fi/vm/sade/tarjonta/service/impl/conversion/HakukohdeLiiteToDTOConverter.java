@@ -15,7 +15,7 @@ package fi.vm.sade.tarjonta.service.impl.conversion;/*
  * European Union Public Licence for more details.
  */
 
-import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
+import fi.vm.sade.tarjonta.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Osoite;

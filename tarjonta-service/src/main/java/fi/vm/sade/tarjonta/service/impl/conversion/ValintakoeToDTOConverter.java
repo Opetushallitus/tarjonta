@@ -15,10 +15,10 @@ package fi.vm.sade.tarjonta.service.impl.conversion;/*
  * European Union Public Licence for more details.
  */
 
-import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.model.Pisteraja;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
+import fi.vm.sade.tarjonta.service.conversion.AbstractFromDomainConverter;
 import fi.vm.sade.tarjonta.service.types.AjankohtaTyyppi;
 import fi.vm.sade.tarjonta.service.types.PisterajaTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
@@ -55,13 +55,13 @@ public class ValintakoeToDTOConverter extends AbstractFromDomainConverter<Valint
         if (valintakoe.getLastUpdatedByOid() != null) {
             valintakoeTyyppi.setViimeisinPaivittajaOid(valintakoe.getLastUpdatedByOid());
         }
-        
+
         return valintakoeTyyppi;
     }
-    
+
     private List<PisterajaTyyppi> convertPisterajat(Set<Pisteraja> pisterajat) {
         List<PisterajaTyyppi> pisterajaTyypit = new ArrayList<PisterajaTyyppi>();
-        
+
         for (Pisteraja pisteraja:pisterajat) {
             PisterajaTyyppi pisterajatyyppi = new PisterajaTyyppi();
             pisterajatyyppi.setAlinHyvaksyttyPistemaara(pisteraja.getAlinHyvaksyttyPistemaara() != null ? pisteraja.getAlinHyvaksyttyPistemaara().doubleValue() : null);
@@ -71,7 +71,7 @@ public class ValintakoeToDTOConverter extends AbstractFromDomainConverter<Valint
             pisterajatyyppi.setValinnanPisteraja(ValinnanPisterajaTyyppi.fromValue(pisteraja.getValinnanPisterajaTyyppi()));
             pisterajaTyypit.add(pisterajatyyppi);
         }
-        
+
         return pisterajaTyypit;
     }
 

@@ -26,8 +26,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAQueryBase;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
+import fi.vm.sade.tarjonta.model.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,31 +42,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.jpa.impl.JPAUpdateClause;
-import com.mysema.query.types.EntityPath;
-import com.mysema.query.types.expr.BooleanExpression;
-
-import fi.vm.sade.generic.model.BaseEntity;
-import fi.vm.sade.security.SadeUserDetailsWrapper;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
-import fi.vm.sade.tarjonta.model.QHaku;
-import fi.vm.sade.tarjonta.model.QHakukohde;
-import fi.vm.sade.tarjonta.model.QKielivalikoima;
-import fi.vm.sade.tarjonta.model.QKoulutusSisaltyvyys;
-import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
-import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.QPisteraja;
-import fi.vm.sade.tarjonta.model.QValintakoe;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
@@ -97,34 +83,29 @@ public class PublicationDataServiceImpl implements PublicationDataService {
 
         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
-        //QMonikielinenTeksti kr = new QMonikielinenTeksti("koulutuksenrakenne");
-        //QMonikielinenTeksti jom = new QMonikielinenTeksti("jatkoopintomahdollisuudet");
-        //QMonikielinenTeksti ak = new QMonikielinenTeksti("arviointikriteerit");
-        //QMonikielinenTeksti lkv = new QMonikielinenTeksti("loppukoevaatimukset");
         QMonikielinenTeksti nimi = new QMonikielinenTeksti("nimi");
         QKoulutusSisaltyvyys sl = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
         QKielivalikoima kielivalikoima = QKielivalikoima.kielivalikoima;
 
         final BooleanExpression criteria = komoto.tila.in(TarjontaTila.publicValues()).and(komo.tila.eq(TarjontaTila.JULKAISTU));
 
-        return from(komoto).
-                leftJoin(komoto.ammattinimikes).fetch().
-                leftJoin(komoto.avainsanas).fetch().
-                leftJoin(komoto.opetuskielis).fetch().
-                leftJoin(komoto.opetusmuotos).fetch().
-                leftJoin(komoto.koulutuslajis).fetch().
-                //leftJoin(komoto.loppukoeVaatimukset, lkv).fetch().leftJoin(lkv.tekstis).fetch().
-                //leftJoin(komoto.arviointikriteerit, ak).fetch().leftJoin(ak.tekstis).fetch().
-                leftJoin(komoto.linkkis).fetch().
-                leftJoin(komoto.koulutusmoduuli, komo).fetch().
-                leftJoin(komoto.lukiodiplomit).fetch().
-                leftJoin(komoto.tarjotutKielet, kielivalikoima).fetch().leftJoin(kielivalikoima.kielet).fetch().
-                //leftJoin(komo.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().
-                //leftJoin(komo.jatkoOpintoMahdollisuudet, jom).fetch().leftJoin(jom.tekstis).fetch().
-                leftJoin(komo.nimi, nimi).fetch().leftJoin(nimi.tekstis).fetch().
-                leftJoin(komo.sisaltyvyysList, sl).fetch().leftJoin(sl.alamoduuliList).fetch().
+        return queryFactory().selectFrom(komoto).
+                leftJoin(komoto.ammattinimikes).
+                leftJoin(komoto.avainsanas).
+                leftJoin(komoto.opetuskielis).
+                leftJoin(komoto.opetusmuotos).
+                leftJoin(komoto.koulutuslajis).
+                leftJoin(komoto.linkkis).
+                leftJoin(komoto.koulutusmoduuli, komo).
+                leftJoin(komoto.lukiodiplomit).
+                leftJoin(komoto.tarjotutKielet, kielivalikoima).
+                leftJoin(kielivalikoima.kielet).
+                leftJoin(komo.nimi, nimi).
+                leftJoin(nimi.tekstis).
+                leftJoin(komo.sisaltyvyysList, sl).
+                leftJoin(sl.alamoduuliList).
                 where(criteria).
-                distinct().list(komoto);
+                distinct().fetch();
     }
 
     @Override
@@ -141,19 +122,19 @@ public class PublicationDataServiceImpl implements PublicationDataService {
 
         final BooleanExpression criteria = hakukohde.tila.in(TarjontaTila.publicValues());
 
-        return from(hakukohde).
-                leftJoin(hakukohde.valintakoes, valintakoe).fetch().
-                leftJoin(valintakoe.kuvaus, kuvaus).fetch().
-                leftJoin(valintakoe.pisterajat, pisterajat).fetch().
-                leftJoin(valintakoe.lisanaytot, lisanaytto).fetch().
-                leftJoin(kuvaus.tekstis).fetch().
-                leftJoin(hakukohde.liites).fetch().
-                leftJoin(hakukohde.koulutusmoduuliToteutuses, komoto).fetch().
-                leftJoin(komoto.koulutusmoduuli).fetch().
-                leftJoin(hakukohde.lisatiedot, lisatiedot).fetch().
-                leftJoin(lisatiedot.tekstis).fetch().
+        return queryFactory().selectFrom(hakukohde).
+                leftJoin(hakukohde.valintakoes, valintakoe).
+                leftJoin(valintakoe.kuvaus, kuvaus).
+                leftJoin(valintakoe.pisterajat, pisterajat).
+                leftJoin(valintakoe.lisanaytot, lisanaytto).
+                leftJoin(kuvaus.tekstis).
+                leftJoin(hakukohde.liites).
+                leftJoin(hakukohde.koulutusmoduuliToteutuses, komoto).
+                leftJoin(komoto.koulutusmoduuli).
+                leftJoin(hakukohde.lisatiedot, lisatiedot).
+                leftJoin(lisatiedot.tekstis).
                 where(criteria).
-                distinct().list(hakukohde);
+                distinct().fetch();
     }
 
     @Override
@@ -164,11 +145,11 @@ public class PublicationDataServiceImpl implements PublicationDataService {
 
         BooleanExpression criteria = haku.tila.in(TarjontaTila.publicValues());
 
-        return from(haku).
-                leftJoin(haku.nimi, nimi).fetch().
-                leftJoin(nimi.tekstis).fetch().
+        return queryFactory().selectFrom(haku).
+                leftJoin(haku.nimi, nimi).
+                leftJoin(nimi.tekstis).
                 where(criteria).
-                distinct().list(haku);
+                distinct().fetch();
 
     }
 
@@ -216,25 +197,25 @@ public class PublicationDataServiceImpl implements PublicationDataService {
 
         switch (tyyppi.getTyyppi()) {
             case HAKU:
-                fromStatus = ((Haku) isNullEntity(from(QHaku.haku).
+                fromStatus = ((Haku) isNullEntity(queryFactory().selectFrom(QHaku.haku).
                         where(QHaku.haku.oid.eq(oid)).
-                        singleResult(QHaku.haku), oid)).getTila();
+                        fetchOne(), oid)).getTila();
                 break;
             case HAKUKOHDE:
-                fromStatus = ((Hakukohde) isNullEntity(from(QHakukohde.hakukohde).
+                fromStatus = ((Hakukohde) isNullEntity(queryFactory().selectFrom(QHakukohde.hakukohde).
                         where(QHakukohde.hakukohde.oid.eq(oid)).
-                        singleResult(QHakukohde.hakukohde), oid)).getTila();
+                        fetchOne(), oid)).getTila();
                 break;
             case KOMO:
-                fromStatus = ((Koulutusmoduuli) isNullEntity(from(QKoulutusmoduuli.koulutusmoduuli).
+                fromStatus = ((Koulutusmoduuli) isNullEntity(queryFactory().selectFrom(QKoulutusmoduuli.koulutusmoduuli).
                         where(QKoulutusmoduuli.koulutusmoduuli.oid.eq(oid)).
-                        singleResult(QKoulutusmoduuli.koulutusmoduuli), oid)).getTila();
+                        fetchOne(), oid)).getTila();
 
                 break;
             case KOMOTO:
-                fromStatus = ((KoulutusmoduuliToteutus) isNullEntity(from(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus).
+                fromStatus = ((KoulutusmoduuliToteutus) isNullEntity(queryFactory().selectFrom(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus).
                         where(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.oid.eq(oid)).
-                        singleResult(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus), oid)).getTila();
+                        fetchOne(), oid)).getTila();
                 break;
             default:
                 throw new RuntimeException("Unsupported tarjonta type : " + tyyppi.getTyyppi());
@@ -243,7 +224,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         //the business rules for status codes.
         return fromStatus.acceptsTransitionTo(tyyppi.getTila());
 
-        //An parent object check is not implemented, but now we can 
+        //An parent object check is not implemented, but now we can
         //manage with the simple status check.
     }
 
@@ -278,10 +259,6 @@ public class PublicationDataServiceImpl implements PublicationDataService {
             throw new RuntimeException("No result found by OID '" + oid + "'.");
         }
         return obj;
-    }
-
-    protected JPAQuery from(EntityPath<?>... o) {
-        return new JPAQuery(em).from(o);
     }
 
     @Transactional
@@ -341,7 +318,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 komoUpdate.execute();
                 break;
             case KOMOTO:
-                //updates komoto and also hakukohde, if it's saved as ready. 
+                //updates komoto and also hakukohde, if it's saved as ready.
 
                 JPAUpdateClause komotoUpdate = new JPAUpdateClause(em, QKoulutusmoduuliToteutus.koulutusmoduuliToteutus);
                 BooleanExpression qToteutus = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.oid.in(oids);
@@ -382,11 +359,11 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 .and(qHakukohde.haku.tila.eq(TarjontaTila.JULKAISTU))
                 .and(qKomoto.tila.eq(fromStatus));
 
-        List<KoulutusmoduuliToteutus> komotos = from(qHakukohde, qKomoto)
+        List<KoulutusmoduuliToteutus> komotos = (List<KoulutusmoduuliToteutus>) queryFactory().from(qHakukohde, qKomoto)
                 .join(qKomoto.hakukohdes, qHakukohde)
                 .where(criteria)
                 .distinct()
-                .list(qKomoto);
+                .fetch();
 
         for (KoulutusmoduuliToteutus komoto : komotos) {
             // älä peruuta koulutusta, jos sillä on edelleen julkaistu-tilassa oleva hakukohde
@@ -428,11 +405,11 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                                             .and(hakukohde.haku.tila.eq(hakuRequiredStatus))
                                             .and(hakukohde.tila.in(hakukohdeRequiredStatus));
 
-        return from(hakukohde, komoto)
+        return (List<Hakukohde>) queryFactory().from(hakukohde, komoto)
                 .join(komoto.hakukohdes, hakukohde)
                 .where(criteria)
                 .distinct()
-                .list(hakukohde);
+                .fetch();
     }
 
     /**
@@ -534,9 +511,9 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         if (komotoOIDs != null && !komotoOIDs.isEmpty()) {
             QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
 
-            final List<String> komoOids = from(komoto).where(komoto.oid.in(komotoOIDs)
+            final List<String> komoOids = queryFactory().select(komoto.koulutusmoduuli.oid).from(komoto).where(komoto.oid.in(komotoOIDs)
                     .and(komoto.koulutusmoduuli.koulutustyyppiEnum.eq(ModuulityyppiEnum.KORKEAKOULUTUS)))
-                    .list(komoto.koulutusmoduuli.oid);
+                    .fetch();
 
             if (komoOids != null && !komoOids.isEmpty()) {
                 QKoulutusmoduuli m = QKoulutusmoduuli.koulutusmoduuli;
@@ -561,5 +538,9 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         String oid = authentication.getName();
         Preconditions.checkNotNull(oid, "User oid cannot be null.");
         return oid;
+    }
+
+    protected JPAQueryFactory queryFactory() {
+        return new JPAQueryFactory(em);
     }
 }

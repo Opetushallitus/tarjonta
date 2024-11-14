@@ -20,15 +20,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mysema.query.Tuple;
-import com.mysema.query.jpa.JPASubQuery;
-import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.jpa.impl.JPAUpdateClause;
-import com.mysema.query.types.EntityPath;
-import com.mysema.query.types.expr.BooleanExpression;
-import com.mysema.query.types.expr.StringExpression;
-import com.mysema.query.types.path.EnumPath;
-import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.jpa.JPAQueryBase;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAUpdateClause;
+import fi.vm.sade.tarjonta.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.*;
@@ -42,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 import java.util.*;
 
 import static fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils.and;
@@ -260,7 +259,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         return (KoulutusmoduuliToteutus) query.getSingleResult();
     }
 
-    protected JPAQuery from(EntityPath<?>... o) {
+    protected JPAQueryBase from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }
 
@@ -275,7 +274,8 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
             QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
             QTekstiKaannos nimiTeksti = QTekstiKaannos.tekstiKaannos;
 
-            JPASubQuery subQuery = new JPASubQuery().from(komo).
+            //JPASubQuery subQuery = new JPASubQuery().from(komo).
+            JPAQuery subQuery = new JPAQuery().from(komo).
                     join(komo.nimi.tekstis, nimiTeksti).
                     where(nimiTeksti.arvo.toLowerCase().contains(matchNimi.toLowerCase()));
 

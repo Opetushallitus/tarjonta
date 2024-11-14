@@ -16,7 +16,7 @@
 package fi.vm.sade.tarjonta.model;
 
 import java.io.Serializable;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 
 /**

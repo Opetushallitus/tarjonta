@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +56,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @author jani
  */
 @Transactional(readOnly = false)
-@CrossOriginResourceSharing(allowAllOrigins = true)
 public class KomoResourceImplV1 implements KomoV1Resource {
 
     private static final boolean NO_IMAGE = false;
@@ -251,7 +249,7 @@ public class KomoResourceImplV1 implements KomoV1Resource {
     }
 
     /*
-     * Search module from DB by koulutus and 'tutkinto-ohjelma' uris.  
+     * Search module from DB by koulutus and 'tutkinto-ohjelma' uris.
      */
     private Koulutusmoduuli searchAndModifyModule(final String oid, fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi tyyppi,
             final String koulutusUri,

@@ -17,7 +17,7 @@ package fi.vm.sade.tarjonta.model;
 
 
 import java.util.Date;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 

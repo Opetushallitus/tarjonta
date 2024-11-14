@@ -1,6 +1,6 @@
 package fi.vm.sade.tarjonta.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity

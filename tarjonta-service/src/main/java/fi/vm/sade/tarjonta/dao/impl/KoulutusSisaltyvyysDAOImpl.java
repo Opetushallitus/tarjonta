@@ -17,17 +17,15 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.springframework.stereotype.Repository;
 
-import com.mysema.query.BooleanBuilder;
-import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.types.EntityPath;
-import com.mysema.query.types.Predicate;
-
-import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import fi.vm.sade.tarjonta.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
@@ -49,8 +47,8 @@ public class KoulutusSisaltyvyysDAOImpl extends
         return new BooleanBuilder(initial);
     }
 
-    private JPAQuery q(EntityPath<?> entityPath) {
-        return new JPAQuery(entityManager).from(entityPath);
+    private JPAQueryFactory queryFactory() {
+        return new JPAQueryFactory(entityManager);
     }
 
     /**
@@ -63,7 +61,7 @@ public class KoulutusSisaltyvyysDAOImpl extends
         final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
         final QKoulutusmoduuli child = QKoulutusmoduuli.koulutusmoduuli;
         final Predicate where = bb(koulutusSisaltyvyys.ylamoduuli.oid.eq(parentKomoOid));
-        return q(koulutusmoduuli).join(koulutusmoduuli.sisaltyvyysList, QKoulutusSisaltyvyys.koulutusSisaltyvyys).join(koulutusSisaltyvyys.alamoduuliList, child).where(where).list(child.oid);
+        return queryFactory().select(child.oid).from(koulutusmoduuli).join(koulutusmoduuli.sisaltyvyysList, QKoulutusSisaltyvyys.koulutusSisaltyvyys).join(koulutusSisaltyvyys.alamoduuliList, child).where(where).fetch();
     }
 
     /**
@@ -75,14 +73,14 @@ public class KoulutusSisaltyvyysDAOImpl extends
         final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
         final QKoulutusmoduuli child = QKoulutusmoduuli.koulutusmoduuli;
         final Predicate where = bb(child.oid.eq(childId));
-        return q(koulutusmoduuli)
+        return queryFactory().select(koulutusSisaltyvyys.ylamoduuli.oid).from(koulutusmoduuli)
                 .join(koulutusmoduuli.sisaltyvyysList, QKoulutusSisaltyvyys.koulutusSisaltyvyys)
                 .leftJoin(koulutusSisaltyvyys.alamoduuliList, child)
                 .where(where)
                 .distinct()
-                .list(koulutusSisaltyvyys.ylamoduuli.oid);
+                .fetch();
     }
-    
+
     @Override
     public void update(KoulutusSisaltyvyys entity) {
         super.update(entity);
@@ -91,7 +89,7 @@ public class KoulutusSisaltyvyysDAOImpl extends
             entityManager.detach(komo);
         }
     }
-    
+
     @Override
     public KoulutusSisaltyvyys insert(KoulutusSisaltyvyys entity) {
         KoulutusSisaltyvyys ent = super.insert(entity);
@@ -101,7 +99,7 @@ public class KoulutusSisaltyvyysDAOImpl extends
         }
         return ent;
     }
-    
+
     @Override
     public void remove(KoulutusSisaltyvyys entity) {
         super.remove(entity);

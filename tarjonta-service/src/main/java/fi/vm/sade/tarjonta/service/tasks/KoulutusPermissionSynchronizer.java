@@ -23,10 +23,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.mail.*;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.*;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -207,7 +207,7 @@ public class KoulutusPermissionSynchronizer {
             mailProps.put("mail.smtp.auth", SMTP_AUTHENTICATE);
             mailProps.put("mail.starttls.enable", SMTP_USE_TLS);
 
-            return Session.getInstance(mailProps, new javax.mail.Authenticator() {
+            return Session.getInstance(mailProps, new jakarta.mail.Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(SMTP_USERNAME, SMTP_PASSWORD);
                 }

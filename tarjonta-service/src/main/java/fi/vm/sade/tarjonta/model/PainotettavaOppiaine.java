@@ -20,7 +20,7 @@ import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
 import java.math.BigDecimal;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**

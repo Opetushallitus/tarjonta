@@ -1,30 +1,28 @@
 package db.migration;
 
-import com.googlecode.flyway.core.api.migration.spring.SpringJdbcMigration;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.*;
 
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
+import org.flywaydb.core.api.migration.BaseJavaMigration;
+import org.flywaydb.core.api.migration.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-/*
-* @author: Tuomas Katva 12/11/13
-*/
-public class V046__addAlkamiskausiAndVuosi implements SpringJdbcMigration{
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
+public class V046__addAlkamiskausiAndVuosi extends BaseJavaMigration {
 
     private static final Logger LOG = LoggerFactory.getLogger(V046__addAlkamiskausiAndVuosi.class);
 
     String koulutusModuuliTotQuery = "SELECT * FROM koulutusmoduuli_toteutus kt WHERE alkamiskausi IS NULL";
 
-    public void migrate(JdbcTemplate jdbcTemplate) throws Exception {
+    public void migrate(Context context) throws Exception {
         LOG.info("RUNNING V046 MIGRATION...");
         System.out.print("RUNNING V046 MIGRATION...");
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(new SingleConnectionDataSource(context.getConnection(), true));
         List<QueryResult> results = jdbcTemplate.query(koulutusModuuliTotQuery,new RowMapper<QueryResult>() {
             @Override
             public QueryResult mapRow(ResultSet resultSet, int i) throws SQLException {
@@ -40,7 +38,7 @@ public class V046__addAlkamiskausiAndVuosi implements SpringJdbcMigration{
         LOG.debug("UPDATING {} rows",results.size());
         System.out.println("UPDATING " + results.size() + " ROWS");
         for (QueryResult result : results) {
-            updateKomoto(result,jdbcTemplate);
+            updateKomoto(result, jdbcTemplate);
         }
     }
 

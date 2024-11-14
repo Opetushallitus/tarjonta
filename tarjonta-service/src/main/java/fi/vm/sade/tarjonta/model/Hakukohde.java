@@ -1,29 +1,11 @@
-/*
- * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- *
- * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
- * soon as they will be approved by the European Commission - subsequent versions
- * of the EUPL (the "Licence");
- *
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * European Union Public Licence for more details.
- */
 package fi.vm.sade.tarjonta.model;
 
-import com.google.common.base.Predicate;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.collect.Iterables;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonManagedReference;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.util.*;
 
@@ -54,7 +36,6 @@ public class Hakukohde extends TarjontaBaseEntity {
     @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "hakukohde", orphanRemoval = true)
     @OrderBy("id ASC")
-    @Sort(type = SortType.NATURAL)
     private SortedSet<Valintakoe> valintakoes = new TreeSet<>();
 
     /**

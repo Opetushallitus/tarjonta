@@ -16,7 +16,6 @@ import fi.vm.sade.tarjonta.service.resources.dto.*;
 import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.*;
 import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,6 @@ import fi.vm.sade.tarjonta.service.resources.HakuResource;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 @Transactional(readOnly = true, rollbackFor = Throwable.class)
-@CrossOriginResourceSharing(allowAllOrigins = true)
 public class HakuResourceImpl implements HakuResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImpl.class);

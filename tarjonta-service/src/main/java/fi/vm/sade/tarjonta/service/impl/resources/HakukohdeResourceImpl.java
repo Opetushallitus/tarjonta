@@ -5,8 +5,6 @@ import java.util.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.model.RestParam;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
@@ -17,8 +15,9 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioKelaDTO;
 import fi.vm.sade.tarjonta.shared.organisaatio.OrganisaatioResultDTO;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.core.Response;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,19 +30,9 @@ import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.core.Response;
-
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
-/**
- * REST API impl.
- *
- * @author mlyly
- * @see HakukohdeResource
- */
 @Transactional(readOnly = true)
-@CrossOriginResourceSharing(allowAllOrigins = true)
 public class HakukohdeResourceImpl implements HakukohdeResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResourceImpl.class);

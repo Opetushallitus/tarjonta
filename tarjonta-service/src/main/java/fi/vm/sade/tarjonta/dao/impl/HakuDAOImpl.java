@@ -17,12 +17,11 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.mysema.query.BooleanBuilder;
-import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.types.EntityPath;
-import com.mysema.query.types.expr.BooleanExpression;
-import com.mysema.query.types.expr.ComparableExpressionBase;
-import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.ComparableExpressionBase;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import fi.vm.sade.tarjonta.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.*;
@@ -33,8 +32,8 @@ import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Match;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
+import jakarta.persistence.Query;
+import jakarta.persistence.TemporalType;
 import java.util.*;
 
 /**
@@ -60,9 +59,9 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     @Override
     public List<Haku> findByKoulutuksenKausi(String kausi, Integer alkamisVuosi) {
         QHaku qHaku = QHaku.haku;
-        return from(qHaku)
+        return queryFactory().selectFrom(qHaku)
                 .where(qHaku.koulutuksenAlkamiskausiUri.eq(kausi.trim()).and(qHaku.koulutuksenAlkamisVuosi.eq((alkamisVuosi))))
-                .list(qHaku);
+                .fetch();
 
     }
 
@@ -78,18 +77,18 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     public Haku findByOid(String oidString) {
         QHaku qHaku = QHaku.haku;
 
-        return from(qHaku)
+        return queryFactory().selectFrom(qHaku)
                 .where(qHaku.oid.eq(oidString.trim()))
-                .singleResult(qHaku);
+                .fetchOne();
     }
 
     @Override
     public List<Haku> findByOids(List<String> oids) {
         QHaku qHaku = QHaku.haku;
 
-        return from(qHaku).join(qHaku.nimi, QMonikielinenTeksti.monikielinenTeksti).fetch()
-                .join(QMonikielinenTeksti.monikielinenTeksti.tekstis, QTekstiKaannos.tekstiKaannos).fetch().where(qHaku.oid.in(oids)).distinct()
-                .list(qHaku);
+        return queryFactory().selectFrom(qHaku).join(qHaku.nimi, QMonikielinenTeksti.monikielinenTeksti)
+                .join(QMonikielinenTeksti.monikielinenTeksti.tekstis, QTekstiKaannos.tekstiKaannos).where(qHaku.oid.in(oids)).distinct()
+                .fetch();
     }
 
     @Override
@@ -98,17 +97,17 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
         QTekstiKaannos qKaannos = QTekstiKaannos.tekstiKaannos;
         QHaku qHaku = QHaku.haku;
 
-        List<Haku> haut = from(qTekstis, qHaku, qKaannos)
+        List<Haku> haut = (List<Haku>) queryFactory().from(qTekstis, qHaku, qKaannos)
                 .join(qHaku.nimi, qTekstis)
                 .join(qTekstis.tekstis, qKaannos)
                 .where(qKaannos.kieliKoodi.eq(kieliKoodi).and(qKaannos.arvo.like("%" + searchString + "%")))
                 .distinct()
-                .list(qHaku);
+                .fetch();
         return haut;
     }
 
-    protected JPAQuery from(EntityPath<?>... o) {
-        return new JPAQuery(getEntityManager()).from(o);
+    protected JPAQueryFactory queryFactory() {
+        return new JPAQueryFactory(getEntityManager());
     }
 
     @Override
@@ -131,12 +130,12 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
 
         }
 
-        JPAQuery q = from(haku);
+        JPAQuery<Haku> q = queryFactory().selectFrom(haku);
         if (whereExpr != null) {
             q = q.where(whereExpr);
         }
 
-        return q.list(haku);
+        return q.fetch();
     }
 
     @Override
@@ -157,7 +156,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
             whereExpr = QuerydslUtils.and(whereExpr, haku.lastUpdateDate.after(lastModifiedSince));
         }
 
-        JPAQuery q = from(haku);
+        JPAQuery<String> q = queryFactory().select(haku.oid).from(haku);
         if (whereExpr != null) {
             q = q.where(whereExpr);
         }
@@ -168,7 +167,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
             q.offset(startIndex);
         }
 
-        return q.list(haku.oid);
+        return q.fetch();
     }
 
     @Override
@@ -306,12 +305,12 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
         QRyhmaliitos qRyhmaliitos = QRyhmaliitos.ryhmaliitos;
         QHaku qHaku = QHaku.haku;
 
-        return from(qHaku, qHakukohde, qRyhmaliitos)
+        return queryFactory().select(qRyhmaliitos.ryhmaOid).from(qHaku, qHakukohde, qRyhmaliitos)
                 .where(qHakukohde.haku.eq(qHaku)
                         .and(qHaku.oid.eq(hakuOid))
                         .and(qRyhmaliitos.hakukohde.eq(qHakukohde)))
                 .distinct()
-                .list(qRyhmaliitos.ryhmaOid);
+                .fetch();
     }
 
     @Override

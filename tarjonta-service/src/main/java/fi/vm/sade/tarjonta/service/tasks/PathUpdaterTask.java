@@ -74,8 +74,8 @@ public class PathUpdaterTask {
                     new Object[] {
                         cacheName,
                         _cacheManager.getCache(cacheName).getSize(),
-                        _cacheManager.getCache(cacheName).getStatistics().getCacheHits(),
-                        _cacheManager.getCache(cacheName).getStatistics().getCacheMisses()
+                        _cacheManager.getCache(cacheName).getStatistics().cacheHitCount(),
+                        _cacheManager.getCache(cacheName).getStatistics().cacheMissCount()
                     });
         }
     }

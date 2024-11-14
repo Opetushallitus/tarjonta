@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.PreDestroy;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -303,7 +303,7 @@ public final class AuditLog {
         if (data.textValue().length() <= maxLength) {
             return data;
         } else {
-            String truncated = (new Integer(data.textValue().hashCode())).toString();
+            String truncated = String.valueOf(data.textValue().hashCode());
             return TextNode.valueOf(truncated);
         }
     }

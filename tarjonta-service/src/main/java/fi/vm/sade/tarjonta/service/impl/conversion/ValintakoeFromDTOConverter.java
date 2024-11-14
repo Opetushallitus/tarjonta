@@ -15,9 +15,9 @@ package fi.vm.sade.tarjonta.service.impl.conversion;/*
  * European Union Public Licence for more details.
  */
 
-import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
 import fi.vm.sade.tarjonta.model.Pisteraja;
 import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
+import fi.vm.sade.tarjonta.service.conversion.AbstractToDomainConverter;
 import fi.vm.sade.tarjonta.service.types.AjankohtaTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
 import fi.vm.sade.tarjonta.model.Valintakoe;
@@ -61,7 +61,7 @@ public class ValintakoeFromDTOConverter extends AbstractToDomainConverter<Valint
 
         return valintakoe;
     }
-    
+
     private Set<Pisteraja> convertPisterajat(Valintakoe vk, List<PisterajaTyyppi> pisterajaTyypit) {
         Set<Pisteraja> pisterajat = new HashSet<Pisteraja>();
         for (PisterajaTyyppi pisterajaTyyppi:pisterajaTyypit) {
