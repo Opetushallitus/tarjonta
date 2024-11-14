@@ -18,54 +18,50 @@ package fi.vm.sade.tarjonta.model;
  */
 import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
-import java.math.BigDecimal;
-
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
- *
  * @author: Tuomas Katva
  */
 @Entity
-@JsonIgnoreProperties({"id","version"})
+@JsonIgnoreProperties({"id", "version"})
 @Table(name = "painotettavaoppiaine")
 @EntityListeners(XssFilterListener.class)
 public class PainotettavaOppiaine extends TarjontaBaseEntity {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-    @FilterXss
-    private String oppiaine;
-    private BigDecimal painokerroin;
+  /** */
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * @return the oppiaine
-     */
-    public String getOppiaine() {
-        return oppiaine;
-    }
+  @FilterXss private String oppiaine;
+  private BigDecimal painokerroin;
 
-    /**
-     * @param oppiaine the oppiaine to set
-     */
-    public void setOppiaine(String oppiaine) {
-        this.oppiaine = oppiaine;
-    }
+  /**
+   * @return the oppiaine
+   */
+  public String getOppiaine() {
+    return oppiaine;
+  }
 
-    /**
-     * @return the painokerroin
-     */
-    public BigDecimal  getPainokerroin() {
-        return painokerroin;
-    }
+  /**
+   * @param oppiaine the oppiaine to set
+   */
+  public void setOppiaine(String oppiaine) {
+    this.oppiaine = oppiaine;
+  }
 
-    /**
-     * @param painokerroin the painokerroin to set
-     */
-    public void setPainokerroin(BigDecimal painokerroin) {
-        this.painokerroin = painokerroin;
-    }
+  /**
+   * @return the painokerroin
+   */
+  public BigDecimal getPainokerroin() {
+    return painokerroin;
+  }
+
+  /**
+   * @param painokerroin the painokerroin to set
+   */
+  public void setPainokerroin(BigDecimal painokerroin) {
+    this.painokerroin = painokerroin;
+  }
 }

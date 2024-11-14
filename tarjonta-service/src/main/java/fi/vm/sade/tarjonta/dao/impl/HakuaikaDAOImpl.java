@@ -20,10 +20,6 @@ import fi.vm.sade.tarjonta.dao.HakuaikaDAO;
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import org.springframework.stereotype.Repository;
 
-/**
- *
- */
+/** */
 @Repository
-public class HakuaikaDAOImpl extends AbstractJpaDAOImpl<Long, Hakuaika> implements HakuaikaDAO {
-}
-
+public class HakuaikaDAOImpl extends AbstractJpaDAOImpl<Long, Hakuaika> implements HakuaikaDAO {}

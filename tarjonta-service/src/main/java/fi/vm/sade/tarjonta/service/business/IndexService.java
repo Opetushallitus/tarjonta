@@ -4,11 +4,11 @@ import java.util.List;
 
 public interface IndexService {
 
-    int indexHakukohdeBatch(List<Long> hakukohdeIdt, int batch_size, int index);
+  int indexHakukohdeBatch(List<Long> hakukohdeIdt, int batch_size, int index);
 
-    void indexKoulutukset(List<Long> ids);
+  void indexKoulutukset(List<Long> ids);
 
-    void indexHakukohteet(List<Long> ids);
+  void indexHakukohteet(List<Long> ids);
 
-    int indexKoulutusBatch(List<Long> koulutukset, int batch_size, int index);
+  int indexKoulutusBatch(List<Long> koulutukset, int batch_size, int index);
 }

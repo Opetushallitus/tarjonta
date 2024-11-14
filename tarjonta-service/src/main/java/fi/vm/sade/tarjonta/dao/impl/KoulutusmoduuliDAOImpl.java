@@ -18,11 +18,10 @@ package fi.vm.sade.tarjonta.dao.impl;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAQueryBase;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import fi.vm.sade.tarjonta.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
@@ -36,402 +35,505 @@ import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import jakarta.persistence.Query;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 /**
- *
  * @author Marko Lyly
  */
 @Repository
-public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, Long> implements KoulutusmoduuliDAO {
+public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, Long>
+    implements KoulutusmoduuliDAO {
 
-    @SuppressWarnings("unused")
-    private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliDAO.class);
+  @SuppressWarnings("unused")
+  private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliDAO.class);
 
-    @Autowired
-    private OidService oidService;
+  @Autowired private OidService oidService;
 
-    @Override
-    public Koulutusmoduuli findByOid(String oid) {
-        QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
-        BooleanExpression oidEq = moduuli.oid.eq(oid);
+  @Override
+  public Koulutusmoduuli findByOid(String oid) {
+    QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
+    BooleanExpression oidEq = moduuli.oid.eq(oid);
 
-        return from(moduuli).where(oidEq).singleResult(moduuli);
+    return queryFactory().selectFrom(moduuli).where(oidEq).fetchOne();
+  }
+
+  @Override
+  public List<Koulutusmoduuli> find(String tila, int startIndex, int pageSize) {
+    return findBy(Koulutusmoduuli.TILA_COLUMN_NAME, tila, startIndex, pageSize);
+  }
+
+  @Override
+  public List<Koulutusmoduuli> findByKoulutuksenTunnisteOid(String tunnisteOid) {
+    QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
+    return queryFactory()
+        .selectFrom(moduuli)
+        .where(moduuli.koulutuksenTunnisteOid.eq(tunnisteOid))
+        .fetch();
+  }
+
+  public List<KoulutusmoduuliToteutus> findKomotoByHakukohde(Hakukohde hakukohde) {
+    QHakukohde qHakukohde = QHakukohde.hakukohde;
+    QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+
+    return queryFactory()
+        .select(qKomoto)
+        .from(qHakukohde, qKomoto)
+        .join(qKomoto.hakukohdes, qHakukohde)
+        .where(qHakukohde.oid.eq(hakukohde.getOid()))
+        .fetch();
+  }
+
+  private BooleanBuilder bb(Predicate initial) {
+    return new BooleanBuilder(initial);
+  }
+
+  @Override
+  public List<KoulutusmoduuliToteutus> findActiveKomotosByKomoOid(String komoOid) {
+    QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+    return queryFactory()
+        .selectFrom(qKomoto)
+        .where(
+            qKomoto
+                .koulutusmoduuli
+                .oid
+                .eq(komoOid)
+                .and(bb(qKomoto.tila.notIn(TarjontaTila.POISTETTU))))
+        .fetch();
+  }
+
+  @Override
+  public List<Koulutusmoduuli> getAlamoduuliList(String oid) {
+
+    QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
+    QKoulutusmoduuli ylamoduuli = new QKoulutusmoduuli("ylamoduuli");
+    QKoulutusSisaltyvyys sisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
+    BooleanExpression oidEq = ylamoduuli.oid.eq(oid);
+
+    return queryFactory()
+        .selectFrom(moduuli)
+        .join(moduuli.sisaltyvyysList, sisaltyvyys)
+        .join(sisaltyvyys.ylamoduuli, ylamoduuli)
+        .where(oidEq)
+        .fetch();
+  }
+
+  @Override
+  public List<Koulutusmoduuli> search(SearchCriteria criteria) {
+
+    QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
+    BooleanExpression whereExpr = null;
+    QMonikielinenTeksti nimi = QMonikielinenTeksti.monikielinenTeksti;
+
+    // todo: are we searching for LOI or LOS - that group by e.g. per organisaatio is
+    // take from different attribute
+    // Expression groupBy = groupBy(criteria);
+    if (criteria.getNimiQuery() != null) {
+      // todo: FIX THIS
+      // whereExpr = and(whereExpr, moduuli.nimi.tekstis.like("%" + criteria.getNimiQuery() + "%"));
     }
 
-    @Override
-    public List<Koulutusmoduuli> find(String tila, int startIndex, int pageSize) {
-        return findBy(Koulutusmoduuli.TILA_COLUMN_NAME, tila, startIndex, pageSize);
+    if (criteria.getKoulutusKoodi() != null) {
+      whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.eq(criteria.getKoulutusKoodi()));
     }
 
-    @Override
-    public List<Koulutusmoduuli> findByKoulutuksenTunnisteOid(String tunnisteOid) {
-        QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
-        return from(moduuli).where(moduuli.koulutuksenTunnisteOid.eq(tunnisteOid)).list(moduuli);
+    if (criteria.getKoulutusohjelmaKoodi() != null) {
+      whereExpr =
+          QuerydslUtils.and(
+              whereExpr, moduuli.koulutusohjelmaUri.eq(criteria.getKoulutusohjelmaKoodi()));
     }
 
-    public List<KoulutusmoduuliToteutus> findKomotoByHakukohde(Hakukohde hakukohde) {
-        QHakukohde qHakukohde = QHakukohde.hakukohde;
-        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-
-        return from(qHakukohde, qKomoto)
-                .join(qKomoto.hakukohdes, qHakukohde)
-                .where(qHakukohde.oid.eq(hakukohde.getOid()))
-                .list(qKomoto);
+    if (criteria.getLukiolinjaKoodiUri() != null) {
+      whereExpr =
+          QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.eq(criteria.getLukiolinjaKoodiUri()));
     }
 
-    private BooleanBuilder bb(Predicate initial) {
-        return new BooleanBuilder(initial);
+    if (criteria.getLikeKoulutusohjelmaKoodiUriWithoutVersion() != null) {
+      whereExpr =
+          QuerydslUtils.and(
+              whereExpr,
+              moduuli.koulutusohjelmaUri.like(
+                  criteria.getLikeKoulutusohjelmaKoodiUriWithoutVersion() + "%"));
     }
 
-    @Override
-    public List<KoulutusmoduuliToteutus> findActiveKomotosByKomoOid(String komoOid) {
-        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        return from(qKomoto)
-                .where(qKomoto.koulutusmoduuli.oid.eq(komoOid).and(bb(qKomoto.tila.notIn(TarjontaTila.POISTETTU))))
-                .list(qKomoto);
+    if (criteria.getLikeLukiolinjaKoodiUriUriWithoutVersion() != null) {
+      whereExpr =
+          QuerydslUtils.and(
+              whereExpr,
+              moduuli.lukiolinjaUri.like(
+                  criteria.getLikeLukiolinjaKoodiUriUriWithoutVersion() + "%"));
     }
 
-    @Override
-    public List<Koulutusmoduuli> getAlamoduuliList(String oid) {
-
-        QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
-        QKoulutusmoduuli ylamoduuli = new QKoulutusmoduuli("ylamoduuli");
-        QKoulutusSisaltyvyys sisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
-        BooleanExpression oidEq = ylamoduuli.oid.eq(oid);
-
-        return (List<Koulutusmoduuli>) from(moduuli).
-                join(moduuli.sisaltyvyysList, sisaltyvyys).
-                join(sisaltyvyys.ylamoduuli, ylamoduuli).
-                where(oidEq).
-                list(moduuli);
-
+    if (criteria.getLikeKoulutusKoodiUriWithoutVersion() != null) {
+      whereExpr =
+          QuerydslUtils.and(
+              whereExpr,
+              moduuli.koulutusUri.like(
+                  "%" + criteria.getLikeKoulutusKoodiUriWithoutVersion() + "%"));
     }
 
-    @Override
-    public List<Koulutusmoduuli> search(SearchCriteria criteria) {
-
-        QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
-        BooleanExpression whereExpr = null;
-        QMonikielinenTeksti nimi = QMonikielinenTeksti.monikielinenTeksti;
-
-        // todo: are we searching for LOI or LOS - that group by e.g. per organisaatio is
-        // take from different attribute
-        //Expression groupBy = groupBy(criteria);
-        if (criteria.getNimiQuery() != null) {
-            // todo: FIX THIS
-            //whereExpr = and(whereExpr, moduuli.nimi.tekstis.like("%" + criteria.getNimiQuery() + "%"));
-        }
-
-        if (criteria.getKoulutusKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.eq(criteria.getKoulutusKoodi()));
-        }
-
-        if (criteria.getKoulutusohjelmaKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaUri.eq(criteria.getKoulutusohjelmaKoodi()));
-        }
-
-        if (criteria.getLukiolinjaKoodiUri() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.eq(criteria.getLukiolinjaKoodiUri()));
-        }
-
-        if (criteria.getLikeKoulutusohjelmaKoodiUriWithoutVersion() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaUri.like(criteria.getLikeKoulutusohjelmaKoodiUriWithoutVersion() + "%"));
-        }
-
-        if (criteria.getLikeLukiolinjaKoodiUriUriWithoutVersion() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.like(criteria.getLikeLukiolinjaKoodiUriUriWithoutVersion() + "%"));
-        }
-
-        if (criteria.getLikeKoulutusKoodiUriWithoutVersion() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.like("%" + criteria.getLikeKoulutusKoodiUriWithoutVersion() + "%"));
-        }
-
-        //Like search by given uri from koulutusohjelma, osaamisala, lukiolinja
-        if (criteria.getLikeOhjelmaKoodiUriWithoutVersion() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaUri.like("%" + criteria.getLikeOhjelmaKoodiUriWithoutVersion() + "%")
-                    .or(moduuli.osaamisalaUri.like("%" + criteria.getLikeOhjelmaKoodiUriWithoutVersion() + "%"))
-                    .or(moduuli.lukiolinjaUri.like("%" + criteria.getLikeOhjelmaKoodiUriWithoutVersion() + "%")));
-        }
-
-        if (criteria.getModuulityyppi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutustyyppiEnum.eq(criteria.getModuulityyppi()));
-        }
-
-        if (criteria.getOppilaitostyyppis() != null && !criteria.getOppilaitostyyppis().isEmpty()) {
-            BooleanExpression ors = null;
-
-            for (String oppilaitostyyppi : criteria.getOppilaitostyyppis()) {
-                final BooleanExpression like = moduuli.oppilaitostyyppi.like("%|" + oppilaitostyyppi + "|%");
-                ors = (ors != null) ? ors.or(like) : like;
-            }
-            whereExpr = QuerydslUtils.and(whereExpr, ors);
-        }
-
-        if (!criteria.getKoulutustyyppiUris().isEmpty()) {
-            BooleanExpression ors = null;
-
-            for (String koulutustyyppi : criteria.getKoulutustyyppiUris()) {
-                final BooleanExpression like = moduuli.koulutustyyppiUri.like("%|" + koulutustyyppi + "|%");
-                ors = (ors != null) ? ors.or(like) : like;
-            }
-            whereExpr = QuerydslUtils.and(whereExpr, ors);
-        }
-
-        if (criteria.getToteutustyyppiEnum() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutustyyppiUri.like("%|" + criteria.getToteutustyyppiEnum().uri() + "|%"));
-        }
-
-        if (criteria.getTila() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.tila.eq(criteria.getTila()));
-        }
-
-        if (criteria.getKoulutusmoduuliTyyppi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.moduuliTyyppi.eq(criteria.getKoulutusmoduuliTyyppi()));
-        }
-
-        if (whereExpr == null) {
-            return from(moduuli).
-                    leftJoin(moduuli.nimi, nimi).fetch().
-                    list(moduuli);
-        } else {
-            return from(moduuli).
-                    where(whereExpr).
-                    leftJoin(moduuli.nimi, nimi).fetch().
-                    list(moduuli);
-        }
-
+    // Like search by given uri from koulutusohjelma, osaamisala, lukiolinja
+    if (criteria.getLikeOhjelmaKoodiUriWithoutVersion() != null) {
+      whereExpr =
+          QuerydslUtils.and(
+              whereExpr,
+              moduuli
+                  .koulutusohjelmaUri
+                  .like("%" + criteria.getLikeOhjelmaKoodiUriWithoutVersion() + "%")
+                  .or(
+                      moduuli.osaamisalaUri.like(
+                          "%" + criteria.getLikeOhjelmaKoodiUriWithoutVersion() + "%"))
+                  .or(
+                      moduuli.lukiolinjaUri.like(
+                          "%" + criteria.getLikeOhjelmaKoodiUriWithoutVersion() + "%")));
     }
 
-    @Override
-    public Koulutusmoduuli findTutkintoOhjelma(String koulutusLuokitusUri, String koulutusOhjelmaUri) {
-        QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
-        BooleanExpression whereExpr = null;
-
-        SearchCriteria criteria = new SearchCriteria();
-        criteria.setKoulutusKoodi(koulutusLuokitusUri);
-        criteria.setKoulutusohjelmaKoodi(koulutusOhjelmaUri);
-
-        if (criteria.getKoulutusKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(criteria.getKoulutusKoodi()) + "%"));
-        } else {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.isNull().or(moduuli.koulutusUri.isEmpty()));
-        }
-
-        if (criteria.getKoulutusohjelmaKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(criteria.getKoulutusohjelmaKoodi()) + "%"));
-        } else {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaUri.isEmpty().or(moduuli.koulutusohjelmaUri.isNull()));
-        }
-
-        return from(moduuli).
-                where(whereExpr).
-                singleResult(moduuli);
-
+    if (criteria.getModuulityyppi() != null) {
+      whereExpr =
+          QuerydslUtils.and(whereExpr, moduuli.koulutustyyppiEnum.eq(criteria.getModuulityyppi()));
     }
 
-    @Override
-    public List<Koulutusmoduuli> findAllKomos() {
-        /*QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
-         QMonikielinenTeksti kr = new QMonikielinenTeksti("koulutuksenrakenne");
-         QMonikielinenTeksti jatko = new QMonikielinenTeksti("jatkoopintomahdollisuudet");
-         QMonikielinenTeksti t = new QMonikielinenTeksti("tavoitteet");
-         return from(moduuli).
-         leftJoin(moduuli.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().
-         leftJoin(moduuli.jatkoOpintoMahdollisuudet, jatko).fetch().leftJoin(jatko.tekstis).fetch().
-         leftJoin(moduuli.tavoitteet, t).fetch().leftJoin(t.tekstis).fetch().
-         list(moduuli);*/
-        return findAll();
+    if (criteria.getOppilaitostyyppis() != null && !criteria.getOppilaitostyyppis().isEmpty()) {
+      BooleanExpression ors = null;
+
+      for (String oppilaitostyyppi : criteria.getOppilaitostyyppis()) {
+        final BooleanExpression like =
+            moduuli.oppilaitostyyppi.like("%|" + oppilaitostyyppi + "|%");
+        ors = (ors != null) ? ors.or(like) : like;
+      }
+      whereExpr = QuerydslUtils.and(whereExpr, ors);
     }
 
-    protected JPAQueryBase from(EntityPath<?>... o) {
-        return new JPAQuery(getEntityManager()).from(o);
+    if (!criteria.getKoulutustyyppiUris().isEmpty()) {
+      BooleanExpression ors = null;
+
+      for (String koulutustyyppi : criteria.getKoulutustyyppiUris()) {
+        final BooleanExpression like = moduuli.koulutustyyppiUri.like("%|" + koulutustyyppi + "|%");
+        ors = (ors != null) ? ors.or(like) : like;
+      }
+      whereExpr = QuerydslUtils.and(whereExpr, ors);
     }
 
-    @Override
-    public Koulutusmoduuli findParentKomo(Koulutusmoduuli komo) {
-        if (komo == null) return null;
-        Query query = getEntityManager().createQuery(""
-                + "SELECT y FROM KoulutusSisaltyvyys k "
-                + "JOIN k.alamoduuliList a "
-                + "JOIN k.ylamoduuli y "
-                + "WHERE a.id = :id"
-        );
-        query.setParameter("id", komo.getId());
-        try {
-            return (Koulutusmoduuli) query.getResultList().get(0);
-        } catch (Exception irrelevant) {
-            return null;
-        }
+    if (criteria.getToteutustyyppiEnum() != null) {
+      whereExpr =
+          QuerydslUtils.and(
+              whereExpr,
+              moduuli.koulutustyyppiUri.like("%|" + criteria.getToteutustyyppiEnum().uri() + "|%"));
     }
 
-    @Override
-    public Koulutusmoduuli findLukiolinja(String koulutusLuokitusUri, String lukiolinjaUriUri) {
-        QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
-        BooleanExpression whereExpr = null;
-
-        SearchCriteria criteria = new SearchCriteria();
-        criteria.setKoulutusKoodi(koulutusLuokitusUri);
-        criteria.setLukiolinjaKoodiUri(lukiolinjaUriUri);
-
-        if (criteria.getKoulutusKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(criteria.getKoulutusKoodi()) + "%"));
-        } else {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.isNull().or(moduuli.koulutusUri.isEmpty()));
-        }
-
-        if (criteria.getLukiolinjaKoodiUri() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(criteria.getLukiolinjaKoodiUri()) + "%"));
-        } else {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.isEmpty().or(moduuli.lukiolinjaUri.isNull()));
-        }
-
-        whereExpr.and(moduuli.koulutustyyppiEnum.eq(ModuulityyppiEnum.LUKIOKOULUTUS));
-
-        return from(moduuli).
-                where(whereExpr).
-                singleResult(moduuli);
+    if (criteria.getTila() != null) {
+      whereExpr = QuerydslUtils.and(whereExpr, moduuli.tila.eq(criteria.getTila()));
     }
 
-    @Override
-    public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedAfter) {
-
-        QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
-
-        BooleanExpression whereExpr = null;
-
-        if (tila != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, komo.tila.eq(tila));
-        }
-        if (lastModifiedBefore != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, komo.updated.before(lastModifiedBefore));
-        }
-        if (lastModifiedAfter != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, komo.updated.after(lastModifiedAfter));
-        }
-        List<ModuulityyppiEnum> baseKoulutustyyppi = new ArrayList<ModuulityyppiEnum>();
-
-        baseKoulutustyyppi.add(ModuulityyppiEnum.KORKEAKOULUTUS);
-
-        whereExpr = QuerydslUtils.and(whereExpr, komo.koulutustyyppiEnum.notIn(baseKoulutustyyppi));
-
-        JPAQuery q = from(komo);
-        if (whereExpr != null) {
-            q = q.where(whereExpr);
-        }
-
-        if (count > 0) {
-            q = q.limit(count);
-        }
-
-        if (startIndex > 0) {
-            q.offset(startIndex);
-        }
-
-        return q.list(komo.oid);
+    if (criteria.getKoulutusmoduuliTyyppi() != null) {
+      whereExpr =
+          QuerydslUtils.and(
+              whereExpr, moduuli.moduuliTyyppi.eq(criteria.getKoulutusmoduuliTyyppi()));
     }
 
-    @Override
-    public Koulutusmoduuli createKomoKorkeakoulu(KoulutusmoduuliKoosteTyyppi tyyppi) {
-        Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliKoosteTyyppi object cannot be null!");
-        Koulutusmoduuli komo = EntityUtils.copyFieldsToKoulutusmoduuli(tyyppi);
-        try {
-            komo.setOid(oidService.get(TarjontaOidType.KOMO));
-        } catch (OIDCreationException ex) {
-            throw new TarjontaBusinessException("OID service unavailable.", ex);
-        }
+    if (whereExpr == null) {
+      return queryFactory().selectFrom(moduuli).leftJoin(moduuli.nimi, nimi).fetch();
+    } else {
+      return queryFactory()
+          .selectFrom(moduuli)
+          .where(whereExpr)
+          .leftJoin(moduuli.nimi, nimi)
+          .fetch();
+    }
+  }
 
-        return komo;
+  @Override
+  public Koulutusmoduuli findTutkintoOhjelma(
+      String koulutusLuokitusUri, String koulutusOhjelmaUri) {
+    QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
+    BooleanExpression whereExpr = null;
+
+    SearchCriteria criteria = new SearchCriteria();
+    criteria.setKoulutusKoodi(koulutusLuokitusUri);
+    criteria.setKoulutusohjelmaKoodi(koulutusOhjelmaUri);
+
+    if (criteria.getKoulutusKoodi() != null) {
+      whereExpr =
+          QuerydslUtils.and(
+              whereExpr,
+              moduuli.koulutusUri.like(
+                  TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(criteria.getKoulutusKoodi())
+                      + "%"));
+    } else {
+      whereExpr =
+          QuerydslUtils.and(
+              whereExpr, moduuli.koulutusUri.isNull().or(moduuli.koulutusUri.isEmpty()));
     }
 
-    @Override
-    public Koulutusmoduuli findKoulutus(String koulutusLuokitusUri) {
-        return findTutkintoOhjelma(koulutusLuokitusUri, null);
+    if (criteria.getKoulutusohjelmaKoodi() != null) {
+      whereExpr =
+          QuerydslUtils.and(
+              whereExpr,
+              moduuli.koulutusohjelmaUri.like(
+                  TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(
+                          criteria.getKoulutusohjelmaKoodi())
+                      + "%"));
+    } else {
+      whereExpr =
+          QuerydslUtils.and(
+              whereExpr,
+              moduuli.koulutusohjelmaUri.isEmpty().or(moduuli.koulutusohjelmaUri.isNull()));
     }
 
-    @Override
-    public void safeDelete(final String komoOid, final String userOid) {
-        Preconditions.checkNotNull(komoOid, "Komo OID string object cannot be null.");
-        List<String> oids = Lists.<String>newArrayList();
-        oids.add(komoOid);
-        Koulutusmoduuli findByOid = findByOid(komoOid);
-        Preconditions.checkArgument(findByOid != null, "Delete failed, entity not found.");
-        findByOid.setTila(TarjontaTila.POISTETTU);
-        //TODO: add field for the entity
-        //findByOid.setLastUpdatedByOid(userOid);
+    return queryFactory().selectFrom(moduuli).where(whereExpr).fetchOne();
+  }
+
+  @Override
+  public List<Koulutusmoduuli> findAllKomos() {
+    /*QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
+    QMonikielinenTeksti kr = new QMonikielinenTeksti("koulutuksenrakenne");
+    QMonikielinenTeksti jatko = new QMonikielinenTeksti("jatkoopintomahdollisuudet");
+    QMonikielinenTeksti t = new QMonikielinenTeksti("tavoitteet");
+    return from(moduuli).
+    leftJoin(moduuli.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().
+    leftJoin(moduuli.jatkoOpintoMahdollisuudet, jatko).fetch().leftJoin(jatko.tekstis).fetch().
+    leftJoin(moduuli.tavoitteet, t).fetch().leftJoin(t.tekstis).fetch().
+    list(moduuli);*/
+    return findAll();
+  }
+
+  protected JPAQueryFactory queryFactory() {
+    return new JPAQueryFactory(getEntityManager());
+  }
+
+  @Override
+  public Koulutusmoduuli findParentKomo(Koulutusmoduuli komo) {
+    if (komo == null) return null;
+    Query query =
+        getEntityManager()
+            .createQuery(
+                ""
+                    + "SELECT y FROM KoulutusSisaltyvyys k "
+                    + "JOIN k.alamoduuliList a "
+                    + "JOIN k.ylamoduuli y "
+                    + "WHERE a.id = :id");
+    query.setParameter("id", komo.getId());
+    try {
+      return (Koulutusmoduuli) query.getResultList().get(0);
+    } catch (Exception irrelevant) {
+      return null;
+    }
+  }
+
+  @Override
+  public Koulutusmoduuli findLukiolinja(String koulutusLuokitusUri, String lukiolinjaUriUri) {
+    QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
+    BooleanExpression whereExpr = null;
+
+    SearchCriteria criteria = new SearchCriteria();
+    criteria.setKoulutusKoodi(koulutusLuokitusUri);
+    criteria.setLukiolinjaKoodiUri(lukiolinjaUriUri);
+
+    if (criteria.getKoulutusKoodi() != null) {
+      whereExpr =
+          QuerydslUtils.and(
+              whereExpr,
+              moduuli.koulutusUri.like(
+                  TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(criteria.getKoulutusKoodi())
+                      + "%"));
+    } else {
+      whereExpr =
+          QuerydslUtils.and(
+              whereExpr, moduuli.koulutusUri.isNull().or(moduuli.koulutusUri.isEmpty()));
     }
 
-    /**
-     * 24.06.2014, a method for searching 'tutkinto' or 'tutkinto-ohjelma'
-     * modules. All version information from query parameters will be removed.
-     *
-     * @param tyyppi
-     * @param koulutusUri
-     * @param likeKoulutusohjelmaUri
-     * @param likeOsaamisalaUri
-     * @param likeLukiolinjaUri
-     * @return
-     */
-    @Override
-    public Koulutusmoduuli findModule(final KoulutusmoduuliTyyppi tyyppi, final String koulutusUri,
-            final String likeKoulutusohjelmaUri,
-            final String likeOsaamisalaUri,
-            final String likeLukiolinjaUri) {
-        Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliTyyppi cannot be null!");
-        Preconditions.checkNotNull(koulutusUri, "Koulutus uri cannot be null!");
-
-        QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
-
-        BooleanExpression like = null;
-
-        if (likeKoulutusohjelmaUri != null) {
-            like = moduuli.koulutusohjelmaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeKoulutusohjelmaUri) + "#%");
-        }
-
-        if (likeOsaamisalaUri != null) {
-            like = QuerydslUtils.or(like, moduuli.osaamisalaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeOsaamisalaUri) + "#%"));
-        }
-
-        if (likeLukiolinjaUri != null) {
-            like = moduuli.lukiolinjaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeLukiolinjaUri) + "#%");
-        }
-
-        SearchResults<Koulutusmoduuli> modules = from(moduuli).where(
-                moduuli.moduuliTyyppi.eq(tyyppi)
-                .and(moduuli.koulutusUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(koulutusUri) + "#%"))
-                .and(like)).listResults(moduuli);
-
-        // result of the query should aways be unique, or there is somekind of data error.
-        List<Koulutusmoduuli> results = modules.getResults();
-        if (results.size() > 1) {
-            // If koulutusohjelma uri was not given, try to filter out the results with koulutusohjelma to avoid duplicates. BUG-1640
-            if (likeKoulutusohjelmaUri == null) {
-                List<Koulutusmoduuli> filteredResults = results.stream()
-                        .filter(koulutusmoduuli -> koulutusmoduuli.getKoulutusohjelmaUri() == null)
-                        .collect(Collectors.toList());
-                if (filteredResults.size() == 1) {
-                    results = filteredResults;
-                }
-            }
-
-            if (results.size() > 1) {
-                String oids = results.stream()
-                        .map(koulutusmoduuli -> koulutusmoduuli.getOid())
-                        .reduce(", ", String::concat);
-                log.error("Error in modules: " + oids);
-                throw new RuntimeException("Possible data error - result contains too many modules (" + oids + " ), koulutus uri : '" + koulutusUri + "'." + " ohjelma : '" + likeKoulutusohjelmaUri + "|" + likeOsaamisalaUri + "|" + likeLukiolinjaUri + "'");
-            }
-        }
-
-        return results.size() == 1 ? results.get(0) : null;
+    if (criteria.getLukiolinjaKoodiUri() != null) {
+      whereExpr =
+          QuerydslUtils.and(
+              whereExpr,
+              moduuli.lukiolinjaUri.like(
+                  TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(
+                          criteria.getLukiolinjaKoodiUri())
+                      + "%"));
+    } else {
+      whereExpr =
+          QuerydslUtils.and(
+              whereExpr, moduuli.lukiolinjaUri.isEmpty().or(moduuli.lukiolinjaUri.isNull()));
     }
+
+    whereExpr.and(moduuli.koulutustyyppiEnum.eq(ModuulityyppiEnum.LUKIOKOULUTUS));
+
+    return queryFactory().selectFrom(moduuli).where(whereExpr).fetchOne();
+  }
+
+  @Override
+  public List<String> findOIDsBy(
+      TarjontaTila tila,
+      int count,
+      int startIndex,
+      Date lastModifiedBefore,
+      Date lastModifiedAfter) {
+
+    QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
+
+    BooleanExpression whereExpr = null;
+
+    if (tila != null) {
+      whereExpr = QuerydslUtils.and(whereExpr, komo.tila.eq(tila));
+    }
+    if (lastModifiedBefore != null) {
+      whereExpr = QuerydslUtils.and(whereExpr, komo.updated.before(lastModifiedBefore));
+    }
+    if (lastModifiedAfter != null) {
+      whereExpr = QuerydslUtils.and(whereExpr, komo.updated.after(lastModifiedAfter));
+    }
+    List<ModuulityyppiEnum> baseKoulutustyyppi = new ArrayList<ModuulityyppiEnum>();
+
+    baseKoulutustyyppi.add(ModuulityyppiEnum.KORKEAKOULUTUS);
+
+    whereExpr = QuerydslUtils.and(whereExpr, komo.koulutustyyppiEnum.notIn(baseKoulutustyyppi));
+
+    JPAQuery<String> q = queryFactory().select(komo.oid).from(komo);
+    if (whereExpr != null) {
+      q = q.where(whereExpr);
+    }
+
+    if (count > 0) {
+      q = q.limit(count);
+    }
+
+    if (startIndex > 0) {
+      q.offset(startIndex);
+    }
+
+    return q.fetch();
+  }
+
+  @Override
+  public Koulutusmoduuli createKomoKorkeakoulu(KoulutusmoduuliKoosteTyyppi tyyppi) {
+    Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliKoosteTyyppi object cannot be null!");
+    Koulutusmoduuli komo = EntityUtils.copyFieldsToKoulutusmoduuli(tyyppi);
+    try {
+      komo.setOid(oidService.get(TarjontaOidType.KOMO));
+    } catch (OIDCreationException ex) {
+      throw new TarjontaBusinessException("OID service unavailable.", ex);
+    }
+
+    return komo;
+  }
+
+  @Override
+  public Koulutusmoduuli findKoulutus(String koulutusLuokitusUri) {
+    return findTutkintoOhjelma(koulutusLuokitusUri, null);
+  }
+
+  @Override
+  public void safeDelete(final String komoOid, final String userOid) {
+    Preconditions.checkNotNull(komoOid, "Komo OID string object cannot be null.");
+    List<String> oids = Lists.<String>newArrayList();
+    oids.add(komoOid);
+    Koulutusmoduuli findByOid = findByOid(komoOid);
+    Preconditions.checkArgument(findByOid != null, "Delete failed, entity not found.");
+    findByOid.setTila(TarjontaTila.POISTETTU);
+    // TODO: add field for the entity
+    // findByOid.setLastUpdatedByOid(userOid);
+  }
+
+  /**
+   * 24.06.2014, a method for searching 'tutkinto' or 'tutkinto-ohjelma' modules. All version
+   * information from query parameters will be removed.
+   *
+   * @param tyyppi
+   * @param koulutusUri
+   * @param likeKoulutusohjelmaUri
+   * @param likeOsaamisalaUri
+   * @param likeLukiolinjaUri
+   * @return
+   */
+  @Override
+  public Koulutusmoduuli findModule(
+      final KoulutusmoduuliTyyppi tyyppi,
+      final String koulutusUri,
+      final String likeKoulutusohjelmaUri,
+      final String likeOsaamisalaUri,
+      final String likeLukiolinjaUri) {
+    Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliTyyppi cannot be null!");
+    Preconditions.checkNotNull(koulutusUri, "Koulutus uri cannot be null!");
+
+    QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
+
+    BooleanExpression like = null;
+
+    if (likeKoulutusohjelmaUri != null) {
+      like =
+          moduuli.koulutusohjelmaUri.like(
+              TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeKoulutusohjelmaUri) + "#%");
+    }
+
+    if (likeOsaamisalaUri != null) {
+      like =
+          QuerydslUtils.or(
+              like,
+              moduuli.osaamisalaUri.like(
+                  TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeOsaamisalaUri) + "#%"));
+    }
+
+    if (likeLukiolinjaUri != null) {
+      like =
+          moduuli.lukiolinjaUri.like(
+              TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeLukiolinjaUri) + "#%");
+    }
+
+    List<Koulutusmoduuli> results =
+        queryFactory()
+            .selectFrom(moduuli)
+            .where(
+                moduuli
+                    .moduuliTyyppi
+                    .eq(tyyppi)
+                    .and(
+                        moduuli.koulutusUri.like(
+                            TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(koulutusUri) + "#%"))
+                    .and(like))
+            .fetch();
+
+    if (results.size() > 1) {
+      // If koulutusohjelma uri was not given, try to filter out the results with koulutusohjelma to
+      // avoid duplicates. BUG-1640
+      if (likeKoulutusohjelmaUri == null) {
+        List<Koulutusmoduuli> filteredResults =
+            results.stream()
+                .filter(koulutusmoduuli -> koulutusmoduuli.getKoulutusohjelmaUri() == null)
+                .collect(Collectors.toList());
+        if (filteredResults.size() == 1) {
+          results = filteredResults;
+        }
+      }
+
+      if (results.size() > 1) {
+        String oids =
+            results.stream()
+                .map(koulutusmoduuli -> koulutusmoduuli.getOid())
+                .reduce(", ", String::concat);
+        log.error("Error in modules: " + oids);
+        throw new RuntimeException(
+            "Possible data error - result contains too many modules ("
+                + oids
+                + " ), koulutus uri : '"
+                + koulutusUri
+                + "'."
+                + " ohjelma : '"
+                + likeKoulutusohjelmaUri
+                + "|"
+                + likeOsaamisalaUri
+                + "|"
+                + likeLukiolinjaUri
+                + "'");
+      }
+    }
+
+    return results.size() == 1 ? results.get(0) : null;
+  }
 }

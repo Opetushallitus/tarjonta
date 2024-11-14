@@ -15,10 +15,9 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import fi.vm.sade.security.xssfilter.FilterXss;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,86 +26,83 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import java.util.Date;
 
-import fi.vm.sade.security.xssfilter.FilterXss;
-
-/**
- *
- */
+/** */
 @Entity
-@JsonIgnoreProperties({"id","version"})
+@JsonIgnoreProperties({"id", "version"})
 @Table(name = "valintakoe_ajankohta")
 public class ValintakoeAjankohta extends TarjontaBaseEntity {
 
-    private static final long serialVersionUID = -2304365086611685405L;
+  private static final long serialVersionUID = -2304365086611685405L;
 
-    @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "valintakoe_id", nullable = false)
-    private Valintakoe valintakoe;
+  @JsonBackReference
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "valintakoe_id", nullable = false)
+  private Valintakoe valintakoe;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "alkamisaika", nullable = false)
-    private Date alkamisaika;
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(name = "alkamisaika", nullable = false)
+  private Date alkamisaika;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "paattymisaika", nullable = false)
-    private Date paattymisaika;
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(name = "paattymisaika", nullable = false)
+  private Date paattymisaika;
 
-    @Column(name = "kellonaika_kaytossa", nullable = false)
-    private boolean kellonaikaKaytossa = true;
+  @Column(name = "kellonaika_kaytossa", nullable = false)
+  private boolean kellonaikaKaytossa = true;
 
-    @FilterXss
-    @Column(name = "lisatietoja")
-    private String lisatietoja;
+  @FilterXss
+  @Column(name = "lisatietoja")
+  private String lisatietoja;
 
-    private Osoite ajankohdanOsoite;
+  private Osoite ajankohdanOsoite;
 
-    public Valintakoe getValintakoe() {
-        return valintakoe;
-    }
+  public Valintakoe getValintakoe() {
+    return valintakoe;
+  }
 
-    public void setValintakoe(Valintakoe valintakoe) {
-        this.valintakoe = valintakoe;
-    }
+  public void setValintakoe(Valintakoe valintakoe) {
+    this.valintakoe = valintakoe;
+  }
 
-    public Date getAlkamisaika() {
-        return alkamisaika;
-    }
+  public Date getAlkamisaika() {
+    return alkamisaika;
+  }
 
-    public void setAlkamisaika(Date alkamisaika) {
-        this.alkamisaika = alkamisaika;
-    }
+  public void setAlkamisaika(Date alkamisaika) {
+    this.alkamisaika = alkamisaika;
+  }
 
-    public Date getPaattymisaika() {
-        return paattymisaika;
-    }
+  public Date getPaattymisaika() {
+    return paattymisaika;
+  }
 
-    public void setPaattymisaika(Date paattymisaika) {
-        this.paattymisaika = paattymisaika;
-    }
+  public void setPaattymisaika(Date paattymisaika) {
+    this.paattymisaika = paattymisaika;
+  }
 
-    public String getLisatietoja() {
-        return lisatietoja;
-    }
+  public String getLisatietoja() {
+    return lisatietoja;
+  }
 
-    public void setLisatietoja(String lisatietoja) {
-        this.lisatietoja = lisatietoja;
-    }
+  public void setLisatietoja(String lisatietoja) {
+    this.lisatietoja = lisatietoja;
+  }
 
-    public Osoite getAjankohdanOsoite() {
-        return ajankohdanOsoite;
-    }
+  public Osoite getAjankohdanOsoite() {
+    return ajankohdanOsoite;
+  }
 
-    public void setAjankohdanOsoite(Osoite ajankohdanOsoite) {
-        this.ajankohdanOsoite = ajankohdanOsoite;
-    }
+  public void setAjankohdanOsoite(Osoite ajankohdanOsoite) {
+    this.ajankohdanOsoite = ajankohdanOsoite;
+  }
 
-    public boolean isKellonaikaKaytossa() {
-        return kellonaikaKaytossa;
-    }
+  public boolean isKellonaikaKaytossa() {
+    return kellonaikaKaytossa;
+  }
 
-    public void setKellonaikaKaytossa(boolean kellonaikaKaytossa) {
-        this.kellonaikaKaytossa = kellonaikaKaytossa;
-    }
+  public void setKellonaikaKaytossa(boolean kellonaikaKaytossa) {
+    this.kellonaikaKaytossa = kellonaikaKaytossa;
+  }
 }

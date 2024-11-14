@@ -19,8 +19,6 @@ import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.BinaryData;
 
 /**
- *
  * @author jani
  */
-public interface KuvaDAO extends JpaDAO<BinaryData, Long> {
-}
+public interface KuvaDAO extends JpaDAO<BinaryData, Long> {}

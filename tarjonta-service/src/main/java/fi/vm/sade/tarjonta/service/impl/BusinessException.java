@@ -17,32 +17,27 @@
 
 package fi.vm.sade.tarjonta.service.impl;
 
-
-
-
 /**
- *
  * @author Tuomas Katva
  */
 public class BusinessException extends RuntimeException {
-    
-    private String key;
-    
-    public BusinessException(String key) {
-        super(key);
-        this.key = key;
-    }
-    
-   public BusinessException (String message, Throwable cause) {
-        super(message, cause);
-    }
-    
-   public String getKey() {
-        return key;
-    }
-   
-   public BusinessException (Throwable cause) {
-        super(cause);
-    }
-   
+
+  private String key;
+
+  public BusinessException(String key) {
+    super(key);
+    this.key = key;
+  }
+
+  public BusinessException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public String getKey() {
+    return key;
+  }
+
+  public BusinessException(Throwable cause) {
+    super(cause);
+  }
 }

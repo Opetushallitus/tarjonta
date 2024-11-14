@@ -15,98 +15,100 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import java.util.List;
-
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-
-import org.springframework.stereotype.Repository;
-
 import fi.vm.sade.tarjonta.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.QKoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 
-/**
- *
- */
+/** */
 @Repository
-public class KoulutusSisaltyvyysDAOImpl extends
-        AbstractJpaDAOImpl<KoulutusSisaltyvyys, Long> implements
-        KoulutusSisaltyvyysDAO {
+public class KoulutusSisaltyvyysDAOImpl extends AbstractJpaDAOImpl<KoulutusSisaltyvyys, Long>
+    implements KoulutusSisaltyvyysDAO {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+  @PersistenceContext private EntityManager entityManager;
 
-    private BooleanBuilder bb(Predicate initial) {
-        return new BooleanBuilder(initial);
+  private BooleanBuilder bb(Predicate initial) {
+    return new BooleanBuilder(initial);
+  }
+
+  private JPAQueryFactory queryFactory() {
+    return new JPAQueryFactory(entityManager);
+  }
+
+  /**
+   * Palauttaa koulutusmoduulin childrenit
+   *
+   * @param parentKomoOid
+   * @return
+   */
+  public List<String> getChildren(String parentKomoOid) {
+    final QKoulutusSisaltyvyys koulutusSisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
+    final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
+    final QKoulutusmoduuli child = QKoulutusmoduuli.koulutusmoduuli;
+    final Predicate where = bb(koulutusSisaltyvyys.ylamoduuli.oid.eq(parentKomoOid));
+    return queryFactory()
+        .select(child.oid)
+        .from(koulutusmoduuli)
+        .join(koulutusmoduuli.sisaltyvyysList, QKoulutusSisaltyvyys.koulutusSisaltyvyys)
+        .join(koulutusSisaltyvyys.alamoduuliList, child)
+        .where(where)
+        .fetch();
+  }
+
+  /**
+   * Palauttaa koulutusmoduulin parentit
+   *
+   * @return
+   */
+  public List<String> getParents(String childId) {
+    final QKoulutusSisaltyvyys koulutusSisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
+    final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
+    final QKoulutusmoduuli child = QKoulutusmoduuli.koulutusmoduuli;
+    final Predicate where = bb(child.oid.eq(childId));
+    return queryFactory()
+        .select(koulutusSisaltyvyys.ylamoduuli.oid)
+        .from(koulutusmoduuli)
+        .join(koulutusmoduuli.sisaltyvyysList, QKoulutusSisaltyvyys.koulutusSisaltyvyys)
+        .leftJoin(koulutusSisaltyvyys.alamoduuliList, child)
+        .where(where)
+        .distinct()
+        .fetch();
+  }
+
+  @Override
+  public void update(KoulutusSisaltyvyys entity) {
+    super.update(entity);
+    entityManager.detach(entity.getYlamoduuli());
+    for (Koulutusmoduuli komo : entity.getAlamoduuliList()) {
+      entityManager.detach(komo);
     }
+  }
 
-    private JPAQueryFactory queryFactory() {
-        return new JPAQueryFactory(entityManager);
+  @Override
+  public KoulutusSisaltyvyys insert(KoulutusSisaltyvyys entity) {
+    KoulutusSisaltyvyys ent = super.insert(entity);
+    entityManager.detach(ent.getYlamoduuli());
+    for (Koulutusmoduuli komo : ent.getAlamoduuliList()) {
+      entityManager.detach(komo);
     }
+    return ent;
+  }
 
-    /**
-     * Palauttaa koulutusmoduulin childrenit
-     * @param parentKomoOid
-     * @return
-     */
-    public List<String> getChildren(String parentKomoOid) {
-        final QKoulutusSisaltyvyys koulutusSisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
-        final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
-        final QKoulutusmoduuli child = QKoulutusmoduuli.koulutusmoduuli;
-        final Predicate where = bb(koulutusSisaltyvyys.ylamoduuli.oid.eq(parentKomoOid));
-        return queryFactory().select(child.oid).from(koulutusmoduuli).join(koulutusmoduuli.sisaltyvyysList, QKoulutusSisaltyvyys.koulutusSisaltyvyys).join(koulutusSisaltyvyys.alamoduuliList, child).where(where).fetch();
+  @Override
+  public void remove(KoulutusSisaltyvyys entity) {
+    super.remove(entity);
+    entityManager.detach(entity.getYlamoduuli());
+    for (Koulutusmoduuli komo : entity.getAlamoduuliList()) {
+      entityManager.detach(komo);
     }
-
-    /**
-     * Palauttaa koulutusmoduulin parentit
-     * @return
-     */
-    public List<String> getParents(String childId) {
-        final QKoulutusSisaltyvyys koulutusSisaltyvyys = QKoulutusSisaltyvyys.koulutusSisaltyvyys;
-        final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
-        final QKoulutusmoduuli child = QKoulutusmoduuli.koulutusmoduuli;
-        final Predicate where = bb(child.oid.eq(childId));
-        return queryFactory().select(koulutusSisaltyvyys.ylamoduuli.oid).from(koulutusmoduuli)
-                .join(koulutusmoduuli.sisaltyvyysList, QKoulutusSisaltyvyys.koulutusSisaltyvyys)
-                .leftJoin(koulutusSisaltyvyys.alamoduuliList, child)
-                .where(where)
-                .distinct()
-                .fetch();
-    }
-
-    @Override
-    public void update(KoulutusSisaltyvyys entity) {
-        super.update(entity);
-        entityManager.detach(entity.getYlamoduuli());
-        for(Koulutusmoduuli komo: entity.getAlamoduuliList()){
-            entityManager.detach(komo);
-        }
-    }
-
-    @Override
-    public KoulutusSisaltyvyys insert(KoulutusSisaltyvyys entity) {
-        KoulutusSisaltyvyys ent = super.insert(entity);
-        entityManager.detach(ent.getYlamoduuli());
-        for(Koulutusmoduuli komo: ent.getAlamoduuliList()){
-            entityManager.detach(komo);
-        }
-        return ent;
-    }
-
-    @Override
-    public void remove(KoulutusSisaltyvyys entity) {
-        super.remove(entity);
-        entityManager.detach(entity.getYlamoduuli());
-        for(Koulutusmoduuli komo: entity.getAlamoduuliList()){
-            entityManager.detach(komo);
-        }
-
-    }
+  }
 }

@@ -22,62 +22,70 @@ import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
-
 import java.util.Collection;
 import java.util.List;
 
 /**
- * Service that provides ready-made methods that return tarjonta data which is
- * ready for publishing.
+ * Service that provides ready-made methods that return tarjonta data which is ready for publishing.
  *
  * @author Jukka Raanamo
  */
 public interface PublicationDataService {
 
-    String ACTION_INSERT = "INSERT";
-    String ACTION_UPDATE = "UPDATE";
-    String ACTION_CANCEL = "CANCEL";
-    String DATA_TYPE_KOMOTO = "LOI";
-    String DATA_TYPE_HAKU = "AS";
-    String DATA_TYPE_HAKUKOHDE = "AO";
+  String ACTION_INSERT = "INSERT";
+  String ACTION_UPDATE = "UPDATE";
+  String ACTION_CANCEL = "CANCEL";
+  String DATA_TYPE_KOMOTO = "LOI";
+  String DATA_TYPE_HAKU = "AS";
+  String DATA_TYPE_HAKUKOHDE = "AO";
 
-    /**
-     * Returns a list of KoulutusmoduuliToteutus where: <ul>
-     * <li>{@link KoulutusmoduuliToteutus#getTila() } equal to
-     * {@link TarjontaTila#VALMIS}</li> </ul>
-     *
-     * @return
-     */
-    List<KoulutusmoduuliToteutus> listKoulutusmoduuliToteutus();
+  /**
+   * Returns a list of KoulutusmoduuliToteutus where:
+   *
+   * <ul>
+   *   <li>{@link KoulutusmoduuliToteutus#getTila() } equal to {@link TarjontaTila#VALMIS}
+   * </ul>
+   *
+   * @return
+   */
+  List<KoulutusmoduuliToteutus> listKoulutusmoduuliToteutus();
 
-    /**
-     * Returns a list of Hakukohde where: <ul> <li>{@link Hakukohde#getTila() }
-     * equal to {@link TarjontaTila#VALMIS}</li> </ul>
-     *
-     * @return
-     */
-    List<Hakukohde> listHakukohde();
+  /**
+   * Returns a list of Hakukohde where:
+   *
+   * <ul>
+   *   <li>{@link Hakukohde#getTila() } equal to {@link TarjontaTila#VALMIS}
+   * </ul>
+   *
+   * @return
+   */
+  List<Hakukohde> listHakukohde();
 
-    /**
-     * Return a list of Haku objects ready to be published, i.e: <ul>
-     * <li>{@link Haku#getTila() } equal to {@link TarjontaTila#VALMIS}</li>
-     * </ul>
-     *
-     *
-     * @return
-     */
-    List<Haku> listHaku();
+  /**
+   * Return a list of Haku objects ready to be published, i.e:
+   *
+   * <ul>
+   *   <li>{@link Haku#getTila() } equal to {@link TarjontaTila#VALMIS}
+   * </ul>
+   *
+   * @return
+   */
+  List<Haku> listHaku();
 
-    /**
-     * Throes IllegalArgumentException when an illegal state transfer is attempted.
-     * @param tilaChanges
-     * @return
-     */
-    Tilamuutokset updatePublicationStatus(List<Tila> tilaChanges);
+  /**
+   * Throes IllegalArgumentException when an illegal state transfer is attempted.
+   *
+   * @param tilaChanges
+   * @return
+   */
+  Tilamuutokset updatePublicationStatus(List<Tila> tilaChanges);
 
-    boolean isValidStatusChange(Tila tyyppi);
+  boolean isValidStatusChange(Tila tyyppi);
 
-    List<Hakukohde> searchHakukohteetByKomotoOid(final Collection<String> komotoOids, final TarjontaTila hakuRequiredStatus, final TarjontaTila... hakukohdeRequiredStatus);
+  List<Hakukohde> searchHakukohteetByKomotoOid(
+      final Collection<String> komotoOids,
+      final TarjontaTila hakuRequiredStatus,
+      final TarjontaTila... hakukohdeRequiredStatus);
 
-    List<MonikielinenMetadata> searchMetaData(final String key, final MetaCategory category);
+  List<MonikielinenMetadata> searchMetaData(final String key, final MetaCategory category);
 }

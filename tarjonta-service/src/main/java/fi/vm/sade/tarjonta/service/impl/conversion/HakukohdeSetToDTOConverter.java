@@ -15,54 +15,48 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
-import fi.vm.sade.generic.service.conversion.AbstractFromDomainConverter;
-import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 /**
- *
  * @author Jani Wilén
  */
 public class HakukohdeSetToDTOConverter {
 
-    public static List<HakukohdeTyyppi> convert(Set<Hakukohde> fromSet) {
-        List<HakukohdeTyyppi> toHakuTyyppis = new ArrayList<HakukohdeTyyppi>();
-        if (fromSet != null) {
+  public static List<HakukohdeTyyppi> convert(Set<Hakukohde> fromSet) {
+    List<HakukohdeTyyppi> toHakuTyyppis = new ArrayList<HakukohdeTyyppi>();
+    if (fromSet != null) {
 
-            for (Hakukohde hakukohde : fromSet) {
-                HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
-                hakukohdeTyyppi.setHakukohdeKoodistoNimi(hakukohde.getHakukohdeKoodistoNimi());
-                hakukohdeTyyppi.setHakukohdeNimi(hakukohde.getHakukohdeNimi());
-                hakukohdeTyyppi.setValintaperustekuvausKoodiUri(hakukohde.getValintaperustekuvausKoodiUri());
-                hakukohdeTyyppi.setAloituspaikat(hakukohde.getAloituspaikatLkm());
-                hakukohdeTyyppi.setValinnanAloituspaikat(hakukohde.getValintojenAloituspaikatLkm());
-                hakukohdeTyyppi.setOid(hakukohde.getOid());
-                hakukohdeTyyppi.setHakukohteenTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.fromValue(hakukohde.getTila().name()));
-                hakukohdeTyyppi.setLiitteidenToimitusPvm(hakukohde.getLiitteidenToimitusPvm());
-                hakukohdeTyyppi.setHakukelpoisuusVaatimukset(getHakukelpoisuusVaatimus(hakukohde));
-                toHakuTyyppis.add(hakukohdeTyyppi);
-            }
-
-        }
-
-        return toHakuTyyppis;
+      for (Hakukohde hakukohde : fromSet) {
+        HakukohdeTyyppi hakukohdeTyyppi = new HakukohdeTyyppi();
+        hakukohdeTyyppi.setHakukohdeKoodistoNimi(hakukohde.getHakukohdeKoodistoNimi());
+        hakukohdeTyyppi.setHakukohdeNimi(hakukohde.getHakukohdeNimi());
+        hakukohdeTyyppi.setValintaperustekuvausKoodiUri(
+            hakukohde.getValintaperustekuvausKoodiUri());
+        hakukohdeTyyppi.setAloituspaikat(hakukohde.getAloituspaikatLkm());
+        hakukohdeTyyppi.setValinnanAloituspaikat(hakukohde.getValintojenAloituspaikatLkm());
+        hakukohdeTyyppi.setOid(hakukohde.getOid());
+        hakukohdeTyyppi.setHakukohteenTila(
+            fi.vm.sade.tarjonta.service.types.TarjontaTila.fromValue(hakukohde.getTila().name()));
+        hakukohdeTyyppi.setLiitteidenToimitusPvm(hakukohde.getLiitteidenToimitusPvm());
+        hakukohdeTyyppi.setHakukelpoisuusVaatimukset(getHakukelpoisuusVaatimus(hakukohde));
+        toHakuTyyppis.add(hakukohdeTyyppi);
+      }
     }
 
-    private static String getHakukelpoisuusVaatimus(Hakukohde hakukohde) {
-        if (hakukohde.getHakukelpoisuusVaatimukset() != null && hakukohde.getHakukelpoisuusVaatimukset().size() > 0) {
-           List<String> vaatimukset = new ArrayList<String>(hakukohde.getHakukelpoisuusVaatimukset());
-            return vaatimukset.get(0);
-        } else {
-            return null;
-        }
+    return toHakuTyyppis;
+  }
 
+  private static String getHakukelpoisuusVaatimus(Hakukohde hakukohde) {
+    if (hakukohde.getHakukelpoisuusVaatimukset() != null
+        && hakukohde.getHakukelpoisuusVaatimukset().size() > 0) {
+      List<String> vaatimukset = new ArrayList<String>(hakukohde.getHakukelpoisuusVaatimukset());
+      return vaatimukset.get(0);
+    } else {
+      return null;
     }
-
+  }
 }
-
-

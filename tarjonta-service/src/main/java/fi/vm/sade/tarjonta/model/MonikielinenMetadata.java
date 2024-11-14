@@ -3,88 +3,87 @@ package fi.vm.sade.tarjonta.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
-
 import jakarta.persistence.*;
-
-import org.hibernate.annotations.JdbcTypeCode;
-
 import java.sql.Types;
 import java.util.Date;
+import org.hibernate.annotations.JdbcTypeCode;
 
 /**
- * This entity is used to store "looong" multilanguage texts by key (avain) and category (kategoria).
+ * This entity is used to store "looong" multilanguage texts by key (avain) and category
+ * (kategoria).
  *
  * @author mlyly
  */
 @Entity
-@Table(name = "monikielinen_metadata", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"avain", "kategoria", "kieli"})
-})
+@Table(
+    name = "monikielinen_metadata",
+    uniqueConstraints = {@UniqueConstraint(columnNames = {"avain", "kategoria", "kieli"})})
 @EntityListeners(XssFilterListener.class)
-@JsonIgnoreProperties({"id","version"})
+@JsonIgnoreProperties({"id", "version"})
 public class MonikielinenMetadata extends TarjontaBaseEntity {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
-    // Make translated texts behave more like "metadata".
-    // For example: "uri: Sosiaali- ja Terveysala"
-    private String avain = null;
-    // For example: "SORA", "Valintaperustekuvaus"
-    @FilterXss
-    private String kategoria = null;
-    // For example: "uri: Finnish 358#1"
-    private String kieli = null;
-    @Lob
-    @JdbcTypeCode(Types.LONGVARCHAR)
-    @Basic(fetch = FetchType.EAGER)
-    @FilterXss
-    private String arvo = null;
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(updatable = false, nullable = false)
-    private Date created = new Date();
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(updatable = true, nullable = false)
-    private Date modified = new Date();
+  /** */
+  private static final long serialVersionUID = 1L;
 
-    public String getAvain() {
-        return avain;
-    }
+  // Make translated texts behave more like "metadata".
+  // For example: "uri: Sosiaali- ja Terveysala"
+  private String avain = null;
+  // For example: "SORA", "Valintaperustekuvaus"
+  @FilterXss private String kategoria = null;
+  // For example: "uri: Finnish 358#1"
+  private String kieli = null;
 
-    public void setAvain(String avain) {
-        this.avain = avain;
-    }
+  @Lob
+  @JdbcTypeCode(Types.LONGVARCHAR)
+  @Basic(fetch = FetchType.EAGER)
+  @FilterXss
+  private String arvo = null;
 
-    public String getKategoria() {
-        return kategoria;
-    }
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(updatable = false, nullable = false)
+  private Date created = new Date();
 
-    public void setKategoria(String kategoria) {
-        this.kategoria = kategoria;
-    }
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(updatable = true, nullable = false)
+  private Date modified = new Date();
 
-    public String getKieli() {
-        return kieli;
-    }
+  public String getAvain() {
+    return avain;
+  }
 
-    public void setKieli(String kieli) {
-        this.kieli = kieli;
-    }
+  public void setAvain(String avain) {
+    this.avain = avain;
+  }
 
-    public String getArvo() {
-        return arvo;
-    }
+  public String getKategoria() {
+    return kategoria;
+  }
 
-    public void setArvo(String arvo) {
-        this.arvo = arvo;
-    }
+  public void setKategoria(String kategoria) {
+    this.kategoria = kategoria;
+  }
 
-    public Date getCreated() {
-        return created;
-    }
+  public String getKieli() {
+    return kieli;
+  }
 
-    public Date getModified() {
-        return modified;
-    }
+  public void setKieli(String kieli) {
+    this.kieli = kieli;
+  }
+
+  public String getArvo() {
+    return arvo;
+  }
+
+  public void setArvo(String arvo) {
+    this.arvo = arvo;
+  }
+
+  public Date getCreated() {
+    return created;
+  }
+
+  public Date getModified() {
+    return modified;
+  }
 }

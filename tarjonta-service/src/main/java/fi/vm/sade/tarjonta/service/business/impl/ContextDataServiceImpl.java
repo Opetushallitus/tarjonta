@@ -31,56 +31,56 @@ import org.springframework.stereotype.Component;
 @Component
 public class ContextDataServiceImpl implements ContextDataService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ContextDataServiceImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ContextDataServiceImpl.class);
 
-    private OnrService onrService;
+  private OnrService onrService;
 
-    @Autowired
-    public ContextDataServiceImpl(OnrService onrService) {
-        this.onrService = onrService;
+  @Autowired
+  public ContextDataServiceImpl(OnrService onrService) {
+    this.onrService = onrService;
+  }
+
+  /**
+   * Get user's user-service OID.
+   *
+   * @return user OID
+   */
+  @Override
+  public String getCurrentUserOid() {
+    if (SecurityContextHolder.getContext() == null
+        || SecurityContextHolder.getContext().getAuthentication() == null
+        || SecurityContextHolder.getContext().getAuthentication().getName() == null) {
+      return "NA";
     }
 
-    /**
-     * Get user's user-service OID.
-     *
-     * @return user OID
-     */
-    @Override
-    public String getCurrentUserOid() {
-        if (SecurityContextHolder.getContext() == null
-                || SecurityContextHolder.getContext().getAuthentication() == null
-                || SecurityContextHolder.getContext().getAuthentication().getName() == null) {
-            return "NA";
-        }
+    String userOid = SecurityContextHolder.getContext().getAuthentication().getName();
+    LOG.info("Got user oid from authentication:" + userOid);
+    return userOid;
+  }
 
-        String userOid = SecurityContextHolder.getContext().getAuthentication().getName();
-        LOG.info("Got user oid from authentication:" + userOid);
-        return userOid;
+  /**
+   * Get user's preferred language code. Default or fallback value is 'FI'.
+   *
+   * @return language code
+   */
+  @Override
+  public String getCurrentUserLang() {
+    if (SecurityContextHolder.getContext() == null
+        || SecurityContextHolder.getContext().getAuthentication() == null) {
+      return null;
+    } else {
+
+      String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+      LOG.info("Got user oid from authentication for onr query:" + userId);
+
+      // Call to ONR
+      String userLang = onrService.findUserAsiointikieli(userId);
+      LOG.info("Got user lang from onr:" + userLang);
+
+      if (userLang == null || "".equals(userLang)) {
+        return "FI";
+      }
+      return userLang.toUpperCase();
     }
-
-    /**
-     * Get user's preferred language code. Default or fallback value is 'FI'.
-     *
-     * @return language code
-     */
-    @Override
-    public String getCurrentUserLang() {
-        if (SecurityContextHolder.getContext() == null
-                || SecurityContextHolder.getContext().getAuthentication() == null) {
-            return null;
-        } else {
-
-            String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-            LOG.info("Got user oid from authentication for onr query:" + userId);
-
-            // Call to ONR
-            String userLang = onrService.findUserAsiointikieli(userId);
-            LOG.info("Got user lang from onr:" + userLang);
-
-            if(userLang == null || "".equals(userLang)) {
-                return "FI";
-            }
-            return userLang.toUpperCase();
-        }
-    }
+  }
 }

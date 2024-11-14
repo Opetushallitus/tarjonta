@@ -24,40 +24,41 @@ import java.text.DateFormat;
 import java.util.List;
 
 /**
- *
  * @author jani
  */
 public class JsonFieldFilter {
 
-    private final Gson gson;
+  private final Gson gson;
 
-    public static GsonBuilder createPreConfiguredGsonBuilder() {
-        GsonBuilder b = new GsonBuilder();
-        b.setDateFormat(DateFormat.FULL, DateFormat.FULL);
-        return b;
-    }
+  public static GsonBuilder createPreConfiguredGsonBuilder() {
+    GsonBuilder b = new GsonBuilder();
+    b.setDateFormat(DateFormat.FULL, DateFormat.FULL);
+    return b;
+  }
 
-    public static Gson build(final List<String> fieldExclusions, final List<Class<?>> classExclusions) {
-        GsonBuilder b = createPreConfiguredGsonBuilder();
-        b.addSerializationExclusionStrategy(new ExclusionStrategy() {
-            @Override
-            public boolean shouldSkipField(FieldAttributes f) {
-                return fieldExclusions == null ? false : fieldExclusions.contains(f.getName());
-            }
+  public static Gson build(
+      final List<String> fieldExclusions, final List<Class<?>> classExclusions) {
+    GsonBuilder b = createPreConfiguredGsonBuilder();
+    b.addSerializationExclusionStrategy(
+        new ExclusionStrategy() {
+          @Override
+          public boolean shouldSkipField(FieldAttributes f) {
+            return fieldExclusions == null ? false : fieldExclusions.contains(f.getName());
+          }
 
-            @Override
-            public boolean shouldSkipClass(Class<?> clazz) {
-                return classExclusions == null ? false : classExclusions.contains(clazz);
-            }
+          @Override
+          public boolean shouldSkipClass(Class<?> clazz) {
+            return classExclusions == null ? false : classExclusions.contains(clazz);
+          }
         });
-        return b.create();
-    }
+    return b.create();
+  }
 
-    public JsonFieldFilter(Class clazz, String[] fieldExclusions) {
-        gson = build(Lists.<String>newArrayList(fieldExclusions), null);
-    }
+  public JsonFieldFilter(Class clazz, String[] fieldExclusions) {
+    gson = build(Lists.<String>newArrayList(fieldExclusions), null);
+  }
 
-    public String getJson(Object obj) {
-        return gson.toJson(obj);
-    }
+  public String getJson(Object obj) {
+    return gson.toJson(obj);
+  }
 }

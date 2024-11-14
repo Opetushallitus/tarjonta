@@ -15,251 +15,256 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
-
-/**
- *
- */
+/** */
 @Entity
 @Table(name = "valintakoe")
-@JsonIgnoreProperties({"id","version"})
+@JsonIgnoreProperties({"id", "version"})
 public class Valintakoe extends TarjontaBaseEntity implements Comparable<Valintakoe> {
 
-    private static final long serialVersionUID = 7092585555234995829L;
+  private static final long serialVersionUID = 7092585555234995829L;
 
-    //@Column(name = "hakukohde_id", insertable = false, updatable = false)
-    //private long hakukohdeId;
-    @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "hakukohde_id", nullable = false)
-    private Hakukohde hakukohde;
+  // @Column(name = "hakukohde_id", insertable = false, updatable = false)
+  // private long hakukohdeId;
+  @JsonBackReference
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "hakukohde_id", nullable = false)
+  private Hakukohde hakukohde;
 
-    @Column(name = "valintakoe_nimi")
-    private String valintakoeNimi;
+  @Column(name = "valintakoe_nimi")
+  private String valintakoeNimi;
 
-    /**
-     * Valintakokeen tyyppi. Koodisto uri.
-     */
-    @Column(name = "tyyppiuri")
-    private String tyyppiUri;
+  /** Valintakokeen tyyppi. Koodisto uri. */
+  @Column(name = "tyyppiuri")
+  private String tyyppiUri;
 
-    @Column(name = "kieli")
-    private String kieli;
+  @Column(name = "kieli")
+  private String kieli;
 
-    @JsonManagedReference
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "valintakoe")
-    private Set<ValintakoeAjankohta> ajankohtas = new HashSet<ValintakoeAjankohta>();
+  @JsonManagedReference
+  @OneToMany(
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER,
+      mappedBy = "valintakoe")
+  private Set<ValintakoeAjankohta> ajankohtas = new HashSet<ValintakoeAjankohta>();
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER/*, optional=false*/)
-    @JoinColumn(name = "kuvaus_monikielinenteksti_id"/*, nullable=false*/)
-    private MonikielinenTeksti kuvaus;
+  @OneToOne(
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER /*, optional=false*/)
+  @JoinColumn(name = "kuvaus_monikielinenteksti_id" /*, nullable=false*/)
+  private MonikielinenTeksti kuvaus;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "lisanaytot_monikielinenteksti_id")
-    private MonikielinenTeksti lisanaytot;
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+  @JoinColumn(name = "lisanaytot_monikielinenteksti_id")
+  private MonikielinenTeksti lisanaytot;
 
-    @JsonManagedReference
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "valintakoe")
-    private Set<Pisteraja> pisterajat = new HashSet<Pisteraja>();
+  @JsonManagedReference
+  @OneToMany(
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER,
+      mappedBy = "valintakoe")
+  private Set<Pisteraja> pisterajat = new HashSet<Pisteraja>();
 
-    @Column(name = "viimPaivitysPvm")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastUpdateDate;
+  @Column(name = "viimPaivitysPvm")
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date lastUpdateDate;
 
-    @Column(name = "viimPaivittajaOid")
-    private String lastUpdatedByOid;
+  @Column(name = "viimPaivittajaOid")
+  private String lastUpdatedByOid;
 
-    @PrePersist
-    @PreUpdate
-    public void filterHTMLFields() {
-        filter(getLisanaytot());
-        filter(getKuvaus());
+  @PrePersist
+  @PreUpdate
+  public void filterHTMLFields() {
+    filter(getLisanaytot());
+    filter(getKuvaus());
+  }
+
+  public Set<ValintakoeAjankohta> getAjankohtas() {
+    return ajankohtas;
+  }
+
+  public void removeAjankohta(ValintakoeAjankohta ajankohta) {
+    getAjankohtas().remove(ajankohta);
+  }
+
+  public void addAjankohta(ValintakoeAjankohta ajankohta) {
+    getAjankohtas().add(ajankohta);
+  }
+
+  /**
+   * @return the kuvaus
+   */
+  public MonikielinenTeksti getKuvaus() {
+    return kuvaus;
+  }
+
+  /**
+   * @param kuvaus the kuvaus to set
+   */
+  public void setKuvaus(MonikielinenTeksti kuvaus) {
+    this.kuvaus = kuvaus;
+  }
+
+  /**
+   * Kertaoo valintakokeen tyypin, esim. sovelutuvuuskoe (arvoltaan koodisto uri).
+   *
+   * @return
+   */
+  public String getTyyppiUri() {
+    return tyyppiUri;
+  }
+
+  /**
+   * Tyyppi, koodisto uri.
+   *
+   * @param tyyppiUri
+   */
+  public void setTyyppiUri(String tyyppiUri) {
+    this.tyyppiUri = tyyppiUri;
+  }
+
+  public void setAjankohtas(Set<ValintakoeAjankohta> ajankohtas) {
+    this.ajankohtas = ajankohtas;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
     }
 
-    public Set<ValintakoeAjankohta> getAjankohtas() {
-        return ajankohtas;
+    Valintakoe that = (Valintakoe) o;
+
+    if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) {
+      return false;
     }
 
-    public void removeAjankohta(ValintakoeAjankohta ajankohta) {
-        getAjankohtas().remove(ajankohta);
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + (getId() != null ? getId().hashCode() : 0);
+    return result;
+  }
+
+  @Override
+  public int compareTo(Valintakoe valintakoe) {
+    if (this.getId() == null && valintakoe.getId() == null) {
+      // Some arbitrary ordering
+      return Integer.compare(this.hashCode(), valintakoe.hashCode());
     }
-
-    public void addAjankohta(ValintakoeAjankohta ajankohta) {
-        getAjankohtas().add(ajankohta);
+    if (this.getId() == null) {
+      return 1;
     }
-
-    /**
-     * @return the kuvaus
-     */
-    public MonikielinenTeksti getKuvaus() {
-        return kuvaus;
+    if (valintakoe.getId() == null) {
+      return -1;
     }
+    return this.getId().compareTo(valintakoe.getId());
+  }
 
-    /**
-     * @param kuvaus the kuvaus to set
-     */
-    public void setKuvaus(MonikielinenTeksti kuvaus) {
-        this.kuvaus = kuvaus;
-    }
+  public Hakukohde getHakukohde() {
+    return hakukohde;
+  }
 
-    /**
-     * Kertaoo valintakokeen tyypin, esim. sovelutuvuuskoe (arvoltaan koodisto
-     * uri).
-     *
-     * @return
-     */
-    public String getTyyppiUri() {
-        return tyyppiUri;
-    }
+  public void setHakukohde(Hakukohde hakukohde) {
+    this.hakukohde = hakukohde;
+  }
 
-    /**
-     * Tyyppi, koodisto uri.
-     *
-     * @param tyyppiUri
-     */
-    public void setTyyppiUri(String tyyppiUri) {
-        this.tyyppiUri = tyyppiUri;
-    }
+  /* *
+   * @return the hakukohdeId
+   */
+  /*public long getHakukohdeId() {
+  return hakukohdeId;
+  }*/
 
-    public void setAjankohtas(Set<ValintakoeAjankohta> ajankohtas) {
-        this.ajankohtas = ajankohtas;
-    }
+  /* *
+   * @param hakukohdeId the hakukohdeId to set
+   */
+  /*public void setHakukohdeId(long hakukohdeId) {
+  this.hakukohdeId = hakukohdeId;
+  }*/
+  /**
+   * @return the lisanaytot
+   */
+  public MonikielinenTeksti getLisanaytot() {
+    return lisanaytot;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
+  /**
+   * @param lisanaytot the lisanaytot to set
+   */
+  public void setLisanaytot(MonikielinenTeksti lisanaytot) {
+    this.lisanaytot = lisanaytot;
+  }
 
-        Valintakoe that = (Valintakoe) o;
+  /**
+   * @return the pisterajat
+   */
+  public Set<Pisteraja> getPisterajat() {
+    return pisterajat;
+  }
 
-        if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) {
-            return false;
-        }
+  /**
+   * @param pisterajat the pisterajat to set
+   */
+  public void setPisterajat(Set<Pisteraja> pisterajat) {
+    this.pisterajat.clear();
+    this.pisterajat = pisterajat;
+  }
 
-        return true;
-    }
+  public Date getLastUpdateDate() {
+    return lastUpdateDate;
+  }
 
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (getId() != null ? getId().hashCode() : 0);
-        return result;
-    }
+  public void setLastUpdateDate(Date lastUpdateDate) {
+    this.lastUpdateDate = lastUpdateDate;
+  }
 
-    @Override
-    public int compareTo(Valintakoe valintakoe) {
-        if (this.getId() == null && valintakoe.getId() == null) {
-            // Some arbitrary ordering
-            return Integer.compare(this.hashCode(), valintakoe.hashCode());
-        }
-        if (this.getId() == null) {
-            return 1;
-        }
-        if (valintakoe.getId() == null) {
-            return -1;
-        }
-        return this.getId().compareTo(valintakoe.getId());
-    }
+  public String getLastUpdatedByOid() {
+    return lastUpdatedByOid;
+  }
 
-    public Hakukohde getHakukohde() {
-        return hakukohde;
-    }
+  public void setLastUpdatedByOid(String lastUpdatedByOid) {
+    this.lastUpdatedByOid = lastUpdatedByOid;
+  }
 
-    public void setHakukohde(Hakukohde hakukohde) {
-        this.hakukohde = hakukohde;
-    }
+  public String getKieli() {
+    return kieli;
+  }
 
-    /* *
-     * @return the hakukohdeId
-     */
-    /*public long getHakukohdeId() {
-     return hakukohdeId;
-     }*/
+  public void setKieli(String kieli) {
+    this.kieli = kieli;
+  }
 
-    /* *
-     * @param hakukohdeId the hakukohdeId to set
-     */
-    /*public void setHakukohdeId(long hakukohdeId) {
-     this.hakukohdeId = hakukohdeId;
-     }*/
-    /**
-     * @return the lisanaytot
-     */
-    public MonikielinenTeksti getLisanaytot() {
-        return lisanaytot;
-    }
+  public String getValintakoeNimi() {
+    return valintakoeNimi;
+  }
 
-    /**
-     * @param lisanaytot the lisanaytot to set
-     */
-    public void setLisanaytot(MonikielinenTeksti lisanaytot) {
-        this.lisanaytot = lisanaytot;
-    }
+  public void setValintakoeNimi(String valintakoeNimi) {
+    this.valintakoeNimi = valintakoeNimi;
+  }
 
-    /**
-     * @return the pisterajat
-     */
-    public Set<Pisteraja> getPisterajat() {
-        return pisterajat;
-    }
-
-    /**
-     * @param pisterajat the pisterajat to set
-     */
-    public void setPisterajat(Set<Pisteraja> pisterajat) {
-        this.pisterajat.clear();
-        this.pisterajat = pisterajat;
-    }
-
-    public Date getLastUpdateDate() {
-        return lastUpdateDate;
-    }
-
-    public void setLastUpdateDate(Date lastUpdateDate) {
-        this.lastUpdateDate = lastUpdateDate;
-    }
-
-    public String getLastUpdatedByOid() {
-        return lastUpdatedByOid;
-    }
-
-    public void setLastUpdatedByOid(String lastUpdatedByOid) {
-        this.lastUpdatedByOid = lastUpdatedByOid;
-    }
-
-    public String getKieli() {
-        return kieli;
-    }
-
-    public void setKieli(String kieli) {
-        this.kieli = kieli;
-    }
-
-    public String getValintakoeNimi() {
-        return valintakoeNimi;
-    }
-
-    public void setValintakoeNimi(String valintakoeNimi) {
-        this.valintakoeNimi = valintakoeNimi;
-    }
-
-    public boolean hasPisterajas() {
-        return !pisterajat.isEmpty();
-    }
+  public boolean hasPisterajas() {
+    return !pisterajat.isEmpty();
+  }
 }

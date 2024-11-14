@@ -15,37 +15,30 @@
  */
 package fi.vm.sade.tarjonta.model.util;
 
-import fi.vm.sade.tarjonta.TestUtilityBase;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker.NodeHandler;
-import org.junit.Test;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.concurrent.atomic.AtomicInteger;
-
 import static org.junit.Assert.assertEquals;
 
+import fi.vm.sade.tarjonta.TestUtilityBase;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.junit.Test;
+import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class KoulutusmoduuliTreeWalkerTest extends TestUtilityBase {
 
-    @Test
-    public void testWalk() {
+  @Test
+  public void testWalk() {
 
-        final AtomicInteger counter = new AtomicInteger();
+    final AtomicInteger counter = new AtomicInteger();
 
-        KoulutusTreeWalker.NodeHandler handler = moduuli -> {
-            counter.incrementAndGet();
-            return true;
+    KoulutusTreeWalker.NodeHandler handler =
+        moduuli -> {
+          counter.incrementAndGet();
+          return true;
         };
 
+    new KoulutusTreeWalker(handler).walk(fixtures.createPersistedKoulutusmoduuliStructure());
 
-        new KoulutusTreeWalker(handler).walk(fixtures.createPersistedKoulutusmoduuliStructure());
-
-        // there are 4 nodes but one is shared from via routes
-        assertEquals(5, counter.intValue());
-
-    }
-
+    // there are 4 nodes but one is shared from via routes
+    assertEquals(5, counter.intValue());
+  }
 }
-

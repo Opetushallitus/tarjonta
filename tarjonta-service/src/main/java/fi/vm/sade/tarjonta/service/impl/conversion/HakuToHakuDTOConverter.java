@@ -29,45 +29,45 @@ import java.util.Set;
  */
 public class HakuToHakuDTOConverter extends BaseRDTOConverter<Haku, HakuDTO> {
 
-    @Override
-    public HakuDTO convert(Haku s) {
-        HakuDTO t = new HakuDTO();
+  @Override
+  public HakuDTO convert(Haku s) {
+    HakuDTO t = new HakuDTO();
 
-        t.setOid(s.getOid());
-        t.setVersion(s.getVersion() != null ? s.getVersion().intValue() : -1);
+    t.setOid(s.getOid());
+    t.setVersion(s.getVersion() != null ? s.getVersion().intValue() : -1);
 
-        t.setHakuaikas(convertHakuaikas(s.getHakuaikas()));
+    t.setHakuaikas(convertHakuaikas(s.getHakuaikas()));
 
-        t.setHakukausiUri(s.getHakukausiUri());
-        t.setHakukausiVuosi(s.getHakukausiVuosi());
-        // t.set(s.getHakukohdes());
-        t.setHakulomakeUrl(s.getHakulomakeUrl());
-        t.setHakutapaUri(s.getHakutapaUri());
-        t.setHakutyyppiUri(s.getHakutyyppiUri());
-        t.setHaunTunniste(s.getHaunTunniste());
-        t.setKohdejoukkoUri(s.getKohdejoukkoUri());
-        if (s.getKoulutuksenAlkamisVuosi() != null) {
-            t.setKoulutuksenAlkamisVuosi(s.getKoulutuksenAlkamisVuosi());
-        }
-        t.setKoulutuksenAlkamiskausiUri(s.getKoulutuksenAlkamiskausiUri());
-        t.setModified(s.getLastUpdateDate());
-        t.setModifiedBy(s.getLastUpdatedByOid());
-        t.setNimi(convertMonikielinenTekstiToMap(s.getNimi()));
-        t.setTila(s.getTila() != null ? s.getTila().name() : null);
-        t.setMaxHakukohdes(s.getMaxHakukohdes());
+    t.setHakukausiUri(s.getHakukausiUri());
+    t.setHakukausiVuosi(s.getHakukausiVuosi());
+    // t.set(s.getHakukohdes());
+    t.setHakulomakeUrl(s.getHakulomakeUrl());
+    t.setHakutapaUri(s.getHakutapaUri());
+    t.setHakutyyppiUri(s.getHakutyyppiUri());
+    t.setHaunTunniste(s.getHaunTunniste());
+    t.setKohdejoukkoUri(s.getKohdejoukkoUri());
+    if (s.getKoulutuksenAlkamisVuosi() != null) {
+      t.setKoulutuksenAlkamisVuosi(s.getKoulutuksenAlkamisVuosi());
+    }
+    t.setKoulutuksenAlkamiskausiUri(s.getKoulutuksenAlkamiskausiUri());
+    t.setModified(s.getLastUpdateDate());
+    t.setModifiedBy(s.getLastUpdatedByOid());
+    t.setNimi(convertMonikielinenTekstiToMap(s.getNimi()));
+    t.setTila(s.getTila() != null ? s.getTila().name() : null);
+    t.setMaxHakukohdes(s.getMaxHakukohdes());
 
-        t.setSijoittelu(s.isSijoittelu());
+    t.setSijoittelu(s.isSijoittelu());
 
-        return t;
+    return t;
+  }
+
+  private List<HakuaikaRDTO> convertHakuaikas(Set<Hakuaika> hakuaikas) {
+    List<HakuaikaRDTO> result = new ArrayList<HakuaikaRDTO>();
+
+    for (Hakuaika hakuaika : hakuaikas) {
+      result.add(getConversionService().convert(hakuaika, HakuaikaRDTO.class));
     }
 
-    private List<HakuaikaRDTO> convertHakuaikas(Set<Hakuaika> hakuaikas) {
-        List<HakuaikaRDTO> result = new ArrayList<HakuaikaRDTO>();
-
-        for (Hakuaika hakuaika : hakuaikas) {
-            result.add(getConversionService().convert(hakuaika, HakuaikaRDTO.class));
-        }
-
-        return result;
-    }
+    return result;
+  }
 }

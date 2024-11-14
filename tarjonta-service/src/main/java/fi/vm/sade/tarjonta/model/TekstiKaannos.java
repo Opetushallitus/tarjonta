@@ -25,82 +25,78 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- */
+/** */
 @Entity
 @Table(
-        name = "teksti_kaannos",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"kieli_koodi", "teksti_id"})
-)
-@JsonIgnoreProperties({"id", "version","teksti"})
+    name = "teksti_kaannos",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"kieli_koodi", "teksti_id"}))
+@JsonIgnoreProperties({"id", "version", "teksti"})
 public class TekstiKaannos extends TarjontaBaseEntity {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TekstiKaannos.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TekstiKaannos.class);
 
-    private static final long serialVersionUID = 8949181662473812771L;
+  private static final long serialVersionUID = 8949181662473812771L;
 
-    @Column(name = "kieli_koodi")
-    private String kieliKoodi;
+  @Column(name = "kieli_koodi")
+  private String kieliKoodi;
 
-    @Column(name = "arvo")
-    private String arvo;
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private MonikielinenTeksti teksti;
+  @Column(name = "arvo")
+  private String arvo;
 
-    /**
-     * Constructor for JPA.
-     */
-    protected TekstiKaannos() {
+  @ManyToOne(optional = false, fetch = FetchType.LAZY)
+  private MonikielinenTeksti teksti;
+
+  /** Constructor for JPA. */
+  protected TekstiKaannos() {}
+
+  public TekstiKaannos(MonikielinenTeksti teksti, String kieliKoodi, String arvo) {
+    this.teksti = teksti;
+    this.kieliKoodi = formatKieliKoodi(kieliKoodi);
+    this.arvo = arvo;
+  }
+
+  public String getKieliKoodi() {
+    return kieliKoodi;
+  }
+
+  public String getArvo() {
+    return arvo;
+  }
+
+  public void setArvo(String arvo) {
+    this.arvo = arvo;
+  }
+
+  static String formatKieliKoodi(String value) {
+    return value.trim();
+  }
+
+  @Override
+  public String toString() {
+    return kieliKoodi + ": " + arvo;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
     }
-
-    public TekstiKaannos(MonikielinenTeksti teksti, String kieliKoodi, String arvo) {
-        this.teksti = teksti;
-        this.kieliKoodi = formatKieliKoodi(kieliKoodi);
-        this.arvo = arvo;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    public String getKieliKoodi() {
-        return kieliKoodi;
+    final TekstiKaannos other = (TekstiKaannos) obj;
+    if ((this.kieliKoodi == null)
+        ? (other.kieliKoodi != null)
+        : !this.kieliKoodi.equals(other.kieliKoodi)) {
+      return false;
     }
+    return true;
+  }
 
-    public String getArvo() {
-        return arvo;
-    }
-
-    public void setArvo(String arvo) {
-        this.arvo = arvo;
-    }
-
-    static String formatKieliKoodi(String value) {
-        return value.trim();
-    }
-
-    @Override
-    public String toString() {
-        return kieliKoodi + ": " + arvo;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final TekstiKaannos other = (TekstiKaannos) obj;
-        if ((this.kieliKoodi == null) ? (other.kieliKoodi != null) : !this.kieliKoodi.equals(other.kieliKoodi)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 71 * hash + (this.kieliKoodi != null ? this.kieliKoodi.hashCode() : 0);
-        return hash;
-    }
-
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 71 * hash + (this.kieliKoodi != null ? this.kieliKoodi.hashCode() : 0);
+    return hash;
+  }
 }

@@ -15,17 +15,16 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
+import static com.fasterxml.jackson.databind.JsonMappingException.Reference;
+import static fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.createValidationError;
+
 import com.fasterxml.jackson.databind.JsonMappingException;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-
-import static com.fasterxml.jackson.databind.JsonMappingException.Reference;
-import static fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.createValidationError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Mapping from service exceptions to JAX-RS response objects.
@@ -35,20 +34,22 @@ import static fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.createVal
 @Provider
 public class TarjontaPublicationExceptionMapper implements ExceptionMapper<JsonMappingException> {
 
-    private static final Logger log = LoggerFactory.getLogger(TarjontaPublicationExceptionMapper.class);
+  private static final Logger log =
+      LoggerFactory.getLogger(TarjontaPublicationExceptionMapper.class);
 
-    @Override
-    public Response toResponse(JsonMappingException e) {
-        log.error("JsonMappingException", e);
+  @Override
+  public Response toResponse(JsonMappingException e) {
+    log.error("JsonMappingException", e);
 
-        ResultV1RDTO result = ResultV1RDTO.create(ResultV1RDTO.ResultStatus.ERROR, null, null);
+    ResultV1RDTO result = ResultV1RDTO.create(ResultV1RDTO.ResultStatus.ERROR, null, null);
 
-        for (Reference ref : e.getPath()) {
-            result.addError(createValidationError(ref.getFieldName(), String.format("invalid format for field '%s'", ref.getFieldName())));
-        }
-
-        return Response.status(400).entity(result).build();
+    for (Reference ref : e.getPath()) {
+      result.addError(
+          createValidationError(
+              ref.getFieldName(),
+              String.format("invalid format for field '%s'", ref.getFieldName())));
     }
 
+    return Response.status(400).entity(result).build();
+  }
 }
-

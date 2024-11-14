@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
+import com.mysema.commons.lang.Pair;
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.BinaryData;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
@@ -22,131 +23,140 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import com.mysema.commons.lang.Pair;
-
 import java.util.*;
 
 public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteutus, Long> {
 
-    KoulutusmoduuliToteutus findByOid(String oid);
+  KoulutusmoduuliToteutus findByOid(String oid);
 
-    KoulutusmoduuliToteutus findByUniqueExternalId(String uniqueExternalId);
+  KoulutusmoduuliToteutus findByUniqueExternalId(String uniqueExternalId);
 
-    KoulutusmoduuliToteutus findKomotoByOid(String oid);
+  KoulutusmoduuliToteutus findKomotoByOid(String oid);
 
-    KoulutusmoduuliToteutus findKomotoByKoulutusId(KoulutusIdentification id);
+  KoulutusmoduuliToteutus findKomotoByKoulutusId(KoulutusIdentification id);
 
-    KoulutusmoduuliToteutus findFirstByKomoOid(String komoOid);
+  KoulutusmoduuliToteutus findFirstByKomoOid(String komoOid);
 
-    List<KoulutusmoduuliToteutus> findByCriteria(
-            List<String> tarjoajaOids, String nimi, int koulutusAlkuVuosi, List<Integer> koulutusAlkuKuukaudet);
+  List<KoulutusmoduuliToteutus> findByCriteria(
+      List<String> tarjoajaOids,
+      String nimi,
+      int koulutusAlkuVuosi,
+      List<Integer> koulutusAlkuKuukaudet);
 
-    KoulutusmoduuliToteutus findKomotoWithYhteyshenkilosByOid(String oid);
+  KoulutusmoduuliToteutus findKomotoWithYhteyshenkilosByOid(String oid);
 
-    List<KoulutusmoduuliToteutus> findKoulutusModuuliToteutusesByOids(List<String> oids);
+  List<KoulutusmoduuliToteutus> findKoulutusModuuliToteutusesByOids(List<String> oids);
 
-    List<KoulutusmoduuliToteutus> findFutureKoulutukset(
-            List<ToteutustyyppiEnum> toteutustyyppis,
-            int offset,
-            int limit
-    );
+  List<KoulutusmoduuliToteutus> findFutureKoulutukset(
+      List<ToteutustyyppiEnum> toteutustyyppis, int offset, int limit);
 
-    /**
-     * Return all koulutumoduulitoteutuses in oid list with Hakukohde depencies
-     *
-     * @param komotoOids
-     * @return List<KoulutusmoduuliToteutus>
-     */
-    List<KoulutusmoduuliToteutus> findKoulutusModuulisWithHakukohdesByOids(List<String> komotoOids);
+  /**
+   * Return all koulutumoduulitoteutuses in oid list with Hakukohde depencies
+   *
+   * @param komotoOids
+   * @return List<KoulutusmoduuliToteutus>
+   */
+  List<KoulutusmoduuliToteutus> findKoulutusModuulisWithHakukohdesByOids(List<String> komotoOids);
 
-    List<KoulutusmoduuliToteutus> findSiblingKomotos(KoulutusmoduuliToteutus komoto);
+  List<KoulutusmoduuliToteutus> findSiblingKomotos(KoulutusmoduuliToteutus komoto);
 
-    List<KoulutusmoduuliToteutus> findSameKoulutus(String tarjoaja, String pohjakoulutus,
-                                                   String koulutuskoodi, String koulutusohjelma,
-                                                   List<String> opetuskielis, List<String> koulutuslajis);
+  List<KoulutusmoduuliToteutus> findSameKoulutus(
+      String tarjoaja,
+      String pohjakoulutus,
+      String koulutuskoodi,
+      String koulutusohjelma,
+      List<String> opetuskielis,
+      List<String> koulutuslajis);
 
-    List<KoulutusmoduuliToteutus> findKomotosByKomoTarjoajaPohjakoulutus(
-            Koulutusmoduuli parentKomo, String tarjoaja, String pohjakoulutusvaatimusUri);
+  List<KoulutusmoduuliToteutus> findKomotosByKomoTarjoajaPohjakoulutus(
+      Koulutusmoduuli parentKomo, String tarjoaja, String pohjakoulutusvaatimusUri);
 
-    List<KoulutusmoduuliToteutus> findKomotosByTarjoajanKoulutusOid(String oid);
+  List<KoulutusmoduuliToteutus> findKomotosByTarjoajanKoulutusOid(String oid);
 
-    public List<KoulutusmoduuliToteutus> findKomotosSharingCommonFields(KoulutusmoduuliToteutus komoto);
+  public List<KoulutusmoduuliToteutus> findKomotosSharingCommonFields(
+      KoulutusmoduuliToteutus komoto);
 
-    /**
-     * Find list of oid's matching.
-     *
-     * @param tila
-     * @param count
-     * @param startIndex
-     * @param lastModifiedBefore
-     * @param lastModifiedAfter
-     * @return
-     */
-    List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedAfter);
+  /**
+   * Find list of oid's matching.
+   *
+   * @param tila
+   * @param count
+   * @param startIndex
+   * @param lastModifiedBefore
+   * @param lastModifiedAfter
+   * @return
+   */
+  List<String> findOIDsBy(
+      TarjontaTila tila,
+      int count,
+      int startIndex,
+      Date lastModifiedBefore,
+      Date lastModifiedAfter);
 
-    /**
-     * Find list of komoto oids by hakukohdeid
-     *
-     * @param id
-     * @return
-     */
-    List<String> findOidsByHakukohdeId(long id);
+  /**
+   * Find list of komoto oids by hakukohdeid
+   *
+   * @param id
+   * @return
+   */
+  List<String> findOidsByHakukohdeId(long id);
 
-    /**
-     * Finds KOMOTO OIDs by KOMO oid.
-     *
-     * @param oid
-     * @param count
-     * @param startIndex
-     * @return
-     */
-    List<String> findOidsByKomoOid(String oid, int count, int startIndex);
+  /**
+   * Finds KOMOTO OIDs by KOMO oid.
+   *
+   * @param oid
+   * @param count
+   * @param startIndex
+   * @return
+   */
+  List<String> findOidsByKomoOid(String oid, int count, int startIndex);
 
-    List<String> findOidsByKomoOids(Set<String> komoOids);
+  List<String> findOidsByKomoOids(Set<String> komoOids);
 
-    /**
-     * Find an image by KOMOTO OID and language URI.
-     *
-     * @param komotoOid
-     * @param kieliUri
-     * @return
-     */
-    BinaryData findKuvaByKomotoOidAndKieliUri(final String komotoOid, final String kieliUri);
+  /**
+   * Find an image by KOMOTO OID and language URI.
+   *
+   * @param komotoOid
+   * @param kieliUri
+   * @return
+   */
+  BinaryData findKuvaByKomotoOidAndKieliUri(final String komotoOid, final String kieliUri);
 
-    Map<String, BinaryData> findAllImagesByKomotoOid(final String komotoOid);
+  Map<String, BinaryData> findAllImagesByKomotoOid(final String komotoOid);
 
-    /**
-     * Find komoto ids by hakukohdeids
-     *
-     * @param hakukohdeIds
-     * @param requiredStatus
-     * @return
-     */
-    List<Long> searchKomotoIdsByHakukohdesId(final Collection<Long> hakukohdeIds, final TarjontaTila... requiredStatus);
+  /**
+   * Find komoto ids by hakukohdeids
+   *
+   * @param hakukohdeIds
+   * @param requiredStatus
+   * @return
+   */
+  List<Long> searchKomotoIdsByHakukohdesId(
+      final Collection<Long> hakukohdeIds, final TarjontaTila... requiredStatus);
 
-    /**
-     * Find komoto oids by hakukohdeids
-     *
-     * @param hakukohdeIds
-     * @param requiredStatus
-     * @return
-     */
-    List<String> searchKomotoOIDsByHakukohdesId(final Collection<Long> hakukohdeIds, final TarjontaTila... requiredStatus);
+  /**
+   * Find komoto oids by hakukohdeids
+   *
+   * @param hakukohdeIds
+   * @param requiredStatus
+   * @return
+   */
+  List<String> searchKomotoOIDsByHakukohdesId(
+      final Collection<Long> hakukohdeIds, final TarjontaTila... requiredStatus);
 
-    List<Long> findIdsByoids(Collection<String> oids);
+  List<Long> findIdsByoids(Collection<String> oids);
 
-    /**
-     * Vaihtaa koulutusmoduulin toteutuksen tilan suoraa
-     * poistetuksi/passivoiduksi.
-     *
-     * @param komotoOid
-     * @param userOid
-     */
-    void safeDelete(final String komotoOid, final String userOid);
+  /**
+   * Vaihtaa koulutusmoduulin toteutuksen tilan suoraa poistetuksi/passivoiduksi.
+   *
+   * @param komotoOid
+   * @param userOid
+   */
+  void safeDelete(final String komotoOid, final String userOid);
 
-    void setViimIndeksointiPvmToNull(Long id);
+  void setViimIndeksointiPvmToNull(Long id);
 
-    Pair<ToteutustyyppiEnum, String> getToteutustyyppiAndKoulutusmoduuliOidByKomotoId(Long komotoId);
+  Pair<ToteutustyyppiEnum, String> getToteutustyyppiAndKoulutusmoduuliOidByKomotoId(Long komotoId);
 
-    Pair<Long, TarjontaTila> getFirstIdAndTilaByKomoOid(String komoOid);
+  Pair<Long, TarjontaTila> getFirstIdAndTilaByKomoOid(String komoOid);
 }

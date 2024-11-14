@@ -19,14 +19,13 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.service.resources.v1.LastModifiedV1Resource;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,62 +37,59 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class LastModifiedResourceV1Impl implements LastModifiedV1Resource {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LastModifiedResourceV1Impl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(LastModifiedResourceV1Impl.class);
 
-    @Autowired
-    private HakuDAO hakuDAO;
+  @Autowired private HakuDAO hakuDAO;
 
-    @Autowired
-    private HakukohdeDAO hakukohdeDAO;
+  @Autowired private HakukohdeDAO hakukohdeDAO;
 
-    @Autowired
-    private KoulutusmoduuliDAO koulutusmoduuliDAO;
+  @Autowired private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
-    @Autowired
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+  @Autowired private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
-    @Override
-    public Map<String, List<String>> lastModified(long lastModifiedTs, Boolean deleted) {
-        // If negative, look back that time
-        if (lastModifiedTs < 0) {
-            lastModifiedTs = new Date().getTime() + lastModifiedTs;
-        }
-
-        // If not specified, 5 minutes by default
-        if (lastModifiedTs == 0) {
-            lastModifiedTs = new Date().getTime() - (1000 * 60 * 5);
-        }
-
-        Date ts = new Date(lastModifiedTs);
-        String tsFmt = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(ts);
-
-        LOG.debug("lastModified({}) - search changes since: {}", lastModifiedTs, tsFmt);
-
-        Map<String, List<String>> result = new HashMap<String, List<String>>();
-
-        result.put("koulutusmoduuli", koulutusmoduuliDAO.findOIDsBy(null, 0, 0, null, ts));
-        result.put("koulutusmoduuliToteutus", koulutusmoduuliToteutusDAO.findOIDsBy(null, 0, 0, null, ts));
-        result.put("haku", hakuDAO.findOIDsBy(null, 0, 0, null, ts));
-        result.put("hakukohde", hakukohdeDAO.findOIDsBy(null, 0, 0, null, ts, true));
-
-        if (deleted) {
-            List<String> deletedResults = hakukohdeDAO.findOIDsBy(TarjontaTila.POISTETTU, 0, 0, null, ts, true);
-            List<String> results = result.get("hakukohde");
-            for(String hakukohde : deletedResults) {
-                if (!results.contains(hakukohde)) {
-                        results.add(hakukohde);
-                }
-            }
-            result.put("hakukohde", results);
-        }
-
-        // Add used timestamp to the result
-        List<String> tmp = new ArrayList<String>();
-        tmp.add("" + lastModifiedTs);
-        tmp.add(tsFmt);
-        result.put("lastModifiedTs", tmp);
-
-        return result;
+  @Override
+  public Map<String, List<String>> lastModified(long lastModifiedTs, Boolean deleted) {
+    // If negative, look back that time
+    if (lastModifiedTs < 0) {
+      lastModifiedTs = new Date().getTime() + lastModifiedTs;
     }
 
+    // If not specified, 5 minutes by default
+    if (lastModifiedTs == 0) {
+      lastModifiedTs = new Date().getTime() - (1000 * 60 * 5);
+    }
+
+    Date ts = new Date(lastModifiedTs);
+    String tsFmt = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(ts);
+
+    LOG.debug("lastModified({}) - search changes since: {}", lastModifiedTs, tsFmt);
+
+    Map<String, List<String>> result = new HashMap<String, List<String>>();
+
+    result.put("koulutusmoduuli", koulutusmoduuliDAO.findOIDsBy(null, 0, 0, null, ts));
+    result.put(
+        "koulutusmoduuliToteutus", koulutusmoduuliToteutusDAO.findOIDsBy(null, 0, 0, null, ts));
+    result.put("haku", hakuDAO.findOIDsBy(null, 0, 0, null, ts));
+    result.put("hakukohde", hakukohdeDAO.findOIDsBy(null, 0, 0, null, ts, true));
+
+    if (deleted) {
+      List<String> deletedResults =
+          hakukohdeDAO.findOIDsBy(TarjontaTila.POISTETTU, 0, 0, null, ts, true);
+      List<String> results = result.get("hakukohde");
+      for (String hakukohde : deletedResults) {
+        if (!results.contains(hakukohde)) {
+          results.add(hakukohde);
+        }
+      }
+      result.put("hakukohde", results);
+    }
+
+    // Add used timestamp to the result
+    List<String> tmp = new ArrayList<String>();
+    tmp.add("" + lastModifiedTs);
+    tmp.add(tsFmt);
+    result.put("lastModifiedTs", tmp);
+
+    return result;
+  }
 }

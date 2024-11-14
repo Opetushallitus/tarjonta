@@ -15,26 +15,17 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-/**
- * Vastaa loogisesti mlo:learningOpportunityType attribuuttia.
- */
+/** Vastaa loogisesti mlo:learningOpportunityType attribuuttia. */
 public enum KoulutusmoduuliTyyppi {
 
-    /**
-     * Vastaa mlo:learningOpportunityType->degreeProgramme
-     */
-    TUTKINTO_OHJELMA,
-    /**
-     * 
-     */
-    TUTKINNON_OSA,
-    /**
-     * 
-     */
-    TUTKINTO,
-    
-    OPINTOJAKSO,
-    
-    OPINTOKOKONAISUUS;
-}
+  /** Vastaa mlo:learningOpportunityType->degreeProgramme */
+  TUTKINTO_OHJELMA,
+  /** */
+  TUTKINNON_OSA,
+  /** */
+  TUTKINTO,
 
+  OPINTOJAKSO,
+
+  OPINTOKOKONAISUUS;
+}

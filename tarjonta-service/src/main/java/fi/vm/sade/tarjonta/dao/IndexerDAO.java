@@ -16,34 +16,32 @@
 package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.tarjonta.model.Haku;
-
 import java.util.Date;
 import java.util.List;
 
 public interface IndexerDAO {
 
-    List<Long> findAllHakukohdeIds();
+  List<Long> findAllHakukohdeIds();
 
-    List<Long> findAllKoulutusIds();
+  List<Long> findAllKoulutusIds();
 
-    List<Long> findUnindexedHakukohdeIds();
+  List<Long> findUnindexedHakukohdeIds();
 
-    List<Long> findUnindexedKoulutusIds();
+  List<Long> findUnindexedKoulutusIds();
 
-    Long setKoulutusViimindeksointiPvmToNull();
+  Long setKoulutusViimindeksointiPvmToNull();
 
-    Long setHakukohdeViimindeksointiPvmToNull(Haku haku);
+  Long setHakukohdeViimindeksointiPvmToNull(Haku haku);
 
-    Long setHakukohdeViimindeksointiPvmToNull();
+  Long setHakukohdeViimindeksointiPvmToNull();
 
-    void updateHakukohteesIndexed(List<Long> ids, Date time);
+  void updateHakukohteesIndexed(List<Long> ids, Date time);
 
-    void updateKoulutuksesIndexed(List<Long> ids, Date time);
+  void updateKoulutuksesIndexed(List<Long> ids, Date time);
 
-    void updateHakukohdeIndexed(Long id, Date time);
+  void updateHakukohdeIndexed(Long id, Date time);
 
-    void updateKoulutusIndexed(Long id, Date time);
+  void updateKoulutusIndexed(Long id, Date time);
 
-    void reindexOrganizationChanges(List<String> organizationOids);
-
+  void reindexOrganizationChanges(List<String> organizationOids);
 }

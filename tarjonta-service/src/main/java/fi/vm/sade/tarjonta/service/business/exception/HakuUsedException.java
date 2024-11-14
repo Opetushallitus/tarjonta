@@ -17,26 +17,25 @@
 package fi.vm.sade.tarjonta.service.business.exception;
 
 import fi.vm.sade.javautils.opintopolku_spring_security.SadeBusinessException;
+
 /**
- *
  * @author Tuomas Katva
  */
 public class HakuUsedException extends SadeBusinessException {
-    
-    /*
-     * Exception used to indicate that haku is used by some other entity
-     * 
-     */
-    
-    private String errorKey = HakuUsedException.class.getCanonicalName();
-    
-    public HakuUsedException() {
-        super();
-    }
-    
 
-    @Override
-    public String getErrorKey() {
-        return errorKey;
-    }
+  /*
+   * Exception used to indicate that haku is used by some other entity
+   *
+   */
+
+  private String errorKey = HakuUsedException.class.getCanonicalName();
+
+  public HakuUsedException() {
+    super();
+  }
+
+  @Override
+  public String getErrorKey() {
+    return errorKey;
+  }
 }

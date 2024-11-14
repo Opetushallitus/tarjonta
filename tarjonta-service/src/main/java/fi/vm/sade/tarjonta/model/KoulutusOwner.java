@@ -11,50 +11,49 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * European Union Public Licence for more details. 
+ * European Union Public Licence for more details.
  */
 
 package fi.vm.sade.tarjonta.model;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @Entity
-@JsonIgnoreProperties({"id","version"})
+@JsonIgnoreProperties({"id", "version"})
 @Table(name = KoulutusOwner.TABLE_NAME)
 public class KoulutusOwner extends TarjontaBaseEntity {
 
-    public static final String TABLE_NAME = "koulutusmoduuli_toteutus_owner";
+  public static final String TABLE_NAME = "koulutusmoduuli_toteutus_owner";
 
-    public static final String TARJOAJA = "TARJOAJA";
-    public static final String JARJESTAJA = "JARJESTAJA";
+  public static final String TARJOAJA = "TARJOAJA";
+  public static final String JARJESTAJA = "JARJESTAJA";
 
-    @Column(name = "owneroid")
-    private String ownerOid;
+  @Column(name = "owneroid")
+  private String ownerOid;
 
-    @Column(name = "ownertype")
-    private String ownerType = TARJOAJA;
+  @Column(name = "ownertype")
+  private String ownerType = TARJOAJA;
 
-    public String getOwnerOid() {
-        return ownerOid;
-    }
+  public String getOwnerOid() {
+    return ownerOid;
+  }
 
-    public void setOwnerOid(String ownerOid) {
-        this.ownerOid = ownerOid;
-    }
+  public void setOwnerOid(String ownerOid) {
+    this.ownerOid = ownerOid;
+  }
 
-    public String getOwnerType() {
-        return ownerType;
-    }
+  public String getOwnerType() {
+    return ownerType;
+  }
 
-    public void setOwnerType(String ownerType) {
-        this.ownerType = ownerType;
-    }
+  public void setOwnerType(String ownerType) {
+    this.ownerType = ownerType;
+  }
 
-    public boolean isTarjoaja() {
-        return TARJOAJA.equals(getOwnerType());
-    }
+  public boolean isTarjoaja() {
+    return TARJOAJA.equals(getOwnerType());
+  }
 }

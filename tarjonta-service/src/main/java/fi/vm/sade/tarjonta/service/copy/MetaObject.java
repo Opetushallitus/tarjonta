@@ -21,157 +21,155 @@ import java.util.Set;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- *
  * @author jani
  */
 public class MetaObject implements Serializable {
 
-    private Set<String> komotoOids;
-    private Set<String> hakukohdeOids;
-    private String newKomotoOid;
+  private Set<String> komotoOids;
+  private Set<String> hakukohdeOids;
+  private String newKomotoOid;
 
-    private String newKomoOid;
-    private String newHakukohdeOid;
+  private String newKomoOid;
+  private String newHakukohdeOid;
 
-    private String originalKomoOid;
-    private String originalKomotoOid;
-    private String originalHakuOid;
+  private String originalKomoOid;
+  private String originalKomotoOid;
+  private String originalHakuOid;
 
-    public MetaObject() {
+  public MetaObject() {}
+
+  public void addKomotoOid(String oid) {
+    if (getKomotoOids() == null) {
+      setKomotoOids(Sets.<String>newHashSet());
     }
 
-    public void addKomotoOid(String oid) {
-        if (getKomotoOids() == null) {
-            setKomotoOids(Sets.<String>newHashSet());
-        }
+    if (oid != null) {
+      getKomotoOids().add(oid);
+    }
+  }
 
-        if (oid != null) {
-            getKomotoOids().add(oid);
-        }
+  public void addHakukohdeOid(String oid) {
+    if (getHakukohdeOids() == null) {
+      setHakukohdeOids(Sets.<String>newHashSet());
     }
 
-    public void addHakukohdeOid(String oid) {
-        if (getHakukohdeOids() == null) {
-            setHakukohdeOids(Sets.<String>newHashSet());
-        }
-
-        if (oid != null) {
-            getHakukohdeOids().add(oid);
-        }
+    if (oid != null) {
+      getHakukohdeOids().add(oid);
     }
+  }
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this);
+  }
 
-    /**
-     * @return the hakukohdeOids
-     */
-    public Set<String> getHakukohdeOids() {
-        return hakukohdeOids;
-    }
+  /**
+   * @return the hakukohdeOids
+   */
+  public Set<String> getHakukohdeOids() {
+    return hakukohdeOids;
+  }
 
-    /**
-     * @param hakukohdeOids the hakukohdeOids to set
-     */
-    public void setHakukohdeOids(Set<String> hakukohdeOids) {
-        this.hakukohdeOids = hakukohdeOids;
-    }
+  /**
+   * @param hakukohdeOids the hakukohdeOids to set
+   */
+  public void setHakukohdeOids(Set<String> hakukohdeOids) {
+    this.hakukohdeOids = hakukohdeOids;
+  }
 
-    /**
-     * @return the komotoOids
-     */
-    public Set<String> getKomotoOids() {
-        return komotoOids;
-    }
+  /**
+   * @return the komotoOids
+   */
+  public Set<String> getKomotoOids() {
+    return komotoOids;
+  }
 
-    /**
-     * @param komotoOids the komotoOids to set
-     */
-    public void setKomotoOids(Set<String> komotoOids) {
-        this.komotoOids = komotoOids;
-    }
+  /**
+   * @param komotoOids the komotoOids to set
+   */
+  public void setKomotoOids(Set<String> komotoOids) {
+    this.komotoOids = komotoOids;
+  }
 
-    public Boolean hasNoKomotos() {
-        return getKomotoOids() == null || getKomotoOids().isEmpty();
-    }
+  public Boolean hasNoKomotos() {
+    return getKomotoOids() == null || getKomotoOids().isEmpty();
+  }
 
-    /**
-     * @return the newKomotoOid
-     */
-    public String getNewKomotoOid() {
-        return newKomotoOid;
-    }
+  /**
+   * @return the newKomotoOid
+   */
+  public String getNewKomotoOid() {
+    return newKomotoOid;
+  }
 
-    /**
-     * @param newKomotoOid the newKomotoOid to set
-     */
-    public void setNewKomotoOid(String newKomotoOid) {
-        this.newKomotoOid = newKomotoOid;
-    }
+  /**
+   * @param newKomotoOid the newKomotoOid to set
+   */
+  public void setNewKomotoOid(String newKomotoOid) {
+    this.newKomotoOid = newKomotoOid;
+  }
 
-    /**
-     * @return the originalKomoOid
-     */
-    public String getOriginalKomoOid() {
-        return originalKomoOid;
-    }
+  /**
+   * @return the originalKomoOid
+   */
+  public String getOriginalKomoOid() {
+    return originalKomoOid;
+  }
 
-    /**
-     * @param originalKomoOid the originalKomoOid to set
-     */
-    public void setOriginalKomoOid(String originalKomoOid) {
-        this.originalKomoOid = originalKomoOid;
-    }
+  /**
+   * @param originalKomoOid the originalKomoOid to set
+   */
+  public void setOriginalKomoOid(String originalKomoOid) {
+    this.originalKomoOid = originalKomoOid;
+  }
 
-    /**
-     * @return the originalHakuOid
-     */
-    public String getOriginalHakuOid() {
-        return originalHakuOid;
-    }
+  /**
+   * @return the originalHakuOid
+   */
+  public String getOriginalHakuOid() {
+    return originalHakuOid;
+  }
 
-    /**
-     * @param originalHakuOid the originalHakuOid to set
-     */
-    public void setOriginalHakuOid(String originalHakuOid) {
-        this.originalHakuOid = originalHakuOid;
-    }
+  /**
+   * @param originalHakuOid the originalHakuOid to set
+   */
+  public void setOriginalHakuOid(String originalHakuOid) {
+    this.originalHakuOid = originalHakuOid;
+  }
 
-    /**
-     * @return the originalKomotoOid
-     */
-    public String getOriginalKomotoOid() {
-        return originalKomotoOid;
-    }
+  /**
+   * @return the originalKomotoOid
+   */
+  public String getOriginalKomotoOid() {
+    return originalKomotoOid;
+  }
 
-    /**
-     * @param originalKomotoOid the originalKomotoOid to set
-     */
-    public void setOriginalKomotoOid(String originalKomotoOid) {
-        this.originalKomotoOid = originalKomotoOid;
-    }
+  /**
+   * @param originalKomotoOid the originalKomotoOid to set
+   */
+  public void setOriginalKomotoOid(String originalKomotoOid) {
+    this.originalKomotoOid = originalKomotoOid;
+  }
 
-    /**
-     * @return the newHakukohdeOid
-     */
-    public String getNewHakukohdeOid() {
-        return newHakukohdeOid;
-    }
+  /**
+   * @return the newHakukohdeOid
+   */
+  public String getNewHakukohdeOid() {
+    return newHakukohdeOid;
+  }
 
-    /**
-     * @param newHakukohdeOid the newHakukohdeOid to set
-     */
-    public void setNewHakukohdeOid(String newHakukohdeOid) {
-        this.newHakukohdeOid = newHakukohdeOid;
-    }
+  /**
+   * @param newHakukohdeOid the newHakukohdeOid to set
+   */
+  public void setNewHakukohdeOid(String newHakukohdeOid) {
+    this.newHakukohdeOid = newHakukohdeOid;
+  }
 
-    public void setNewKomoOid(String newKomoOid) {
-        this.newKomoOid = newKomoOid;
-    }
+  public void setNewKomoOid(String newKomoOid) {
+    this.newKomoOid = newKomoOid;
+  }
 
-    public String getNewKomoOid() {
-        return newKomoOid;
-    }
+  public String getNewKomoOid() {
+    return newKomoOid;
+  }
 }
