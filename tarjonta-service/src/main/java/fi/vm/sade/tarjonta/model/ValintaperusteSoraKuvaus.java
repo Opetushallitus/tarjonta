@@ -1,10 +1,12 @@
 package fi.vm.sade.tarjonta.model;
 
 import jakarta.persistence.*;
+import java.sql.Types;
 import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.hibernate.annotations.JdbcTypeCode;
 
 @Entity
 @JsonIgnoreProperties({"id", "version"})
@@ -42,6 +44,7 @@ public class ValintaperusteSoraKuvaus extends TarjontaBaseEntity {
   private String organisaatioTyyppi;
 
   @Column(name = "tyyppi")
+  @JdbcTypeCode(Types.INTEGER)
   private Tyyppi tyyppi;
 
   @Column(name = "kausi")
@@ -52,6 +55,14 @@ public class ValintaperusteSoraKuvaus extends TarjontaBaseEntity {
 
   @Column(name = "tekstis")
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @JoinTable(
+      name = ValintaperusteSoraKuvaus.VALINTAPERUSTEKUVAUSORA_TABLE_NAME + "_monikielinen_metadata",
+      joinColumns =
+          @JoinColumn(
+              name = ValintaperusteSoraKuvaus.VALINTAPERUSTEKUVAUSORA_TABLE_NAME + "_id",
+              referencedColumnName = BaseEntity.ID_COLUMN_NAME),
+      inverseJoinColumns =
+          @JoinColumn(name = "tekstis_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME))
   private List<MonikielinenMetadata> tekstis;
 
   @Column(name = "viimPaivitysPvm")

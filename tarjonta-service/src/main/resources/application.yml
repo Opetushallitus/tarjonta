@@ -1,0 +1,75 @@
+spring:
+  main:
+    banner-mode: "off"
+  mandatory-file-encoding: UTF-8
+  profiles.active: default
+  management:
+    health:
+      diskspace:
+        enabled: false
+  jackson:
+    serialization:
+      write-dates-as-timestamps: true
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 10000
+      max-lifetime: 900000
+  flyway:
+    enabled: true
+    table: schema_version
+    out-of-order: true
+    # Only for initial production release, set false afterwards
+    baseline-on-migrate: false
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: fi.vm.sade.tarjonta.model.naming.LowerCasePhysicalNamingStrategy
+      ddl-auto: validate
+    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      # https://hibernate.atlassian.net/browse/HHH-12368
+      hibernate.jdbc.lob.non_contextual_creation: true
+
+server:
+  servlet:
+    context-path: /tarjonta-service
+  port: 8080
+  tomcat:
+    threads:
+      max: 20
+
+tarjonta-service:
+  uses-ssl-proxy: false
+  disable-same-site-cookie: false
+
+
+cas:
+  service: http://localhost:${server.port}/tarjonta-service
+  send-renew: false
+  key: tarjonta-service
+
+host:
+  #host-cas: virkailija.localhost
+  #host-virkailija: virkailija.localhost
+  host-cas: virkailija.testiopintopolku.fi
+  host-virkailija: virkailija.testiopintopolku.fi
+
+logging:
+  level:
+    root: info
+    org.springframework: warn
+    org.springframework.security: warn
+    org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration: warn
+    org.hibernate.SQL: error
+    fi.vm.sade.auditlog.Audit: info
+    fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter: warn
+    org.apache.http.client.protocol.ResponseProcessCookies: error
+    io.swagger.models.parameters.AbstractSerializableParameter: error
+    org.springframework.web: info
+    org.hibernate: info
+    com.github.dockerjava: info
+    com.zaxxer.hikari: debug

@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5489/tarjonta?ApplicationName=tarjonta-service
+    username: oph
+    password: oph
+
+cas:
+  service: http://localhost:8080/tarjonta-service
+
+host:
+  host-virkailija: virkailija.testiopintopolku.fi
+  host-cas: virkailija.testiopintopolku.fi
+  host-alb: https://virkailija.testiopintopolku.fi

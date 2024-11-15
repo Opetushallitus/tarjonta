@@ -238,7 +238,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
     return hakukohdeDTO;
   }
 
-  private List<ValintakoeRDTO> convertValintakokeet(SortedSet<Valintakoe> valintakoes) {
+  private List<ValintakoeRDTO> convertValintakokeet(Set<Valintakoe> valintakoes) {
     List<ValintakoeRDTO> result = new ArrayList<ValintakoeRDTO>();
 
     for (Valintakoe valintakoe : valintakoes) {

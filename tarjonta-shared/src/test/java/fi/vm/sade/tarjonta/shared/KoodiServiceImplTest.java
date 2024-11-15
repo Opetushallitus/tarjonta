@@ -39,7 +39,7 @@ public class KoodiServiceImplTest {
     httpResponseMock = mock(OphHttpResponse.class);
     when(httpResponseMock.getStatusCode()).thenReturn(200);
 
-    UrlConfiguration properties = new UrlConfiguration();
+    UrlConfiguration properties = new UrlConfiguration(null);
     properties.addOverride("host.virkailija", "localhost");
     OphHttpClient httpClient =
         new OphHttpClient(httpClientProxyMock, HttpClientConfiguration.CALLER_ID, properties);

@@ -46,7 +46,7 @@ public class Hakukohde extends TarjontaBaseEntity {
       mappedBy = "hakukohde",
       orphanRemoval = true)
   @OrderBy("id ASC")
-  private SortedSet<Valintakoe> valintakoes = new TreeSet<>();
+  private Set<Valintakoe> valintakoes = new HashSet<>();
 
   /** The koodisto uri of the name of this hakukohde object. */
   @Column(name = "hakukohde_nimi")
@@ -123,6 +123,7 @@ public class Hakukohde extends TarjontaBaseEntity {
   private MonikielinenTeksti lisatiedot;
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+  @CollectionTable(name = Hakukohde.TABLE_NAME + "_" + PainotettavaOppiaine.TABLE_NAME)
   private Set<PainotettavaOppiaine> painotettavatOppiaineet = new HashSet<PainotettavaOppiaine>();
 
   @OneToMany(
@@ -375,7 +376,7 @@ public class Hakukohde extends TarjontaBaseEntity {
   /**
    * @return the valintakoes
    */
-  public SortedSet<Valintakoe> getValintakoes() {
+  public Set<Valintakoe> getValintakoes() {
     if (valintakoes == null) {
       valintakoes = new TreeSet<>();
     }

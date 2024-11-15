@@ -185,6 +185,12 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
   private Set<Hakukohde> hakukohdes = new HashSet<Hakukohde>();
 
   @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @JoinTable(
+      name = TABLE_NAME + "_yhteyshenkilo",
+      joinColumns =
+          @JoinColumn(name = TABLE_NAME + "_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME),
+      inverseJoinColumns =
+          @JoinColumn(name = "yhteyshenkilos_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME))
   private Set<Yhteyshenkilo> yhteyshenkilos = new HashSet<Yhteyshenkilo>();
 
   @ElementCollection(fetch = FetchType.EAGER)
@@ -205,6 +211,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
   // Lukiospesifeja kenttia
   @MapKey(name = "key")
   @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinTable(
+      name = TABLE_NAME + "_kielivalikoima",
+      joinColumns =
+          @JoinColumn(name = TABLE_NAME + "_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME),
+      inverseJoinColumns = @JoinColumn(name = "tarjotutkielet_id"))
   private Map<String, Kielivalikoima> tarjotutKielet = new HashMap<String, Kielivalikoima>();
 
   @ElementCollection(fetch = FetchType.EAGER)
@@ -223,6 +234,8 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
   @JoinTable(
       name = TABLE_NAME + "_tekstit",
+      joinColumns =
+          @JoinColumn(name = TABLE_NAME + "_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME),
       inverseJoinColumns = @JoinColumn(name = "monikielinen_teksti_id"))
   @MapKeyEnumerated(EnumType.STRING)
   @MapKeyColumn(name = "teksti", nullable = false)
@@ -232,6 +245,8 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
   @JoinTable(
       name = TABLE_NAME + "_kuvat",
+      joinColumns =
+          @JoinColumn(name = TABLE_NAME + "_id", referencedColumnName = BaseEntity.ID_COLUMN_NAME),
       inverseJoinColumns = @JoinColumn(name = "binary_data_id"))
   @MapKeyColumn(name = "kieli_uri", nullable = false)
   private Map<String, BinaryData> kuvat = new HashMap<String, BinaryData>();

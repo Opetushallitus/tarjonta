@@ -13,7 +13,8 @@ public class BaseEntity implements Serializable {
 
   @Id
   @Column(name = ID_COLUMN_NAME, unique = true, nullable = false)
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+  @SequenceGenerator(name = "hibernate_sequence", allocationSize = 1)
   private Long id;
 
   @Version

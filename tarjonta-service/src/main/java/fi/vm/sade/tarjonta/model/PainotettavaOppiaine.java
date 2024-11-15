@@ -27,9 +27,11 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  */
 @Entity
 @JsonIgnoreProperties({"id", "version"})
-@Table(name = "painotettavaoppiaine")
+@Table(name = PainotettavaOppiaine.TABLE_NAME)
 @EntityListeners(XssFilterListener.class)
 public class PainotettavaOppiaine extends TarjontaBaseEntity {
+
+  public static final String TABLE_NAME = "painotettavaoppiaine";
 
   /** */
   private static final long serialVersionUID = 1L;

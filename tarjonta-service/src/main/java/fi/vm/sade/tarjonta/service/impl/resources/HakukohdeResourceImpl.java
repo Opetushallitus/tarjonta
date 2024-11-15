@@ -408,7 +408,7 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
       return result;
     }
 
-    SortedSet<Valintakoe> valintakoes = hakukohde.getValintakoes();
+    Set<Valintakoe> valintakoes = hakukohde.getValintakoes();
     for (Valintakoe valintakoe : valintakoes) {
       LOG.debug("  process: vk.id = {}", valintakoe.getId());
 

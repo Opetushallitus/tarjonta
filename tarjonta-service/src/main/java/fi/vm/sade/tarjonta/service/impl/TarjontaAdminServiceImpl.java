@@ -272,7 +272,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     return hakukohdeLiites;
   }
 
-  private List<ValintakoeTyyppi> convertValintakoeTyyppis(SortedSet<Valintakoe> valintakoes) {
+  private List<ValintakoeTyyppi> convertValintakoeTyyppis(Set<Valintakoe> valintakoes) {
     ArrayList<ValintakoeTyyppi> valintakoeTyyppis = new ArrayList<ValintakoeTyyppi>();
 
     for (Valintakoe valintakoe : valintakoes) {

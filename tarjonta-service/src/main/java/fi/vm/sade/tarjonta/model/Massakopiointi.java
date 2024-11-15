@@ -19,14 +19,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.UniqueConstraint;
-import java.sql.Types;
 import java.util.Date;
-import org.hibernate.annotations.JdbcTypeCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,13 +53,9 @@ public class Massakopiointi extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private Tyyppi type;
 
-  @Lob
-  @JdbcTypeCode(Types.LONGVARCHAR)
   @Column(name = "json", length = 100000)
   private String json;
 
-  @Lob
-  // @Type(type = "org.hibernate.type.TextType")
   @Column(name = "meta", length = 100000)
   private String meta;
 

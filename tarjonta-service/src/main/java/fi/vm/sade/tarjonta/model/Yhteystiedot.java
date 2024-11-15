@@ -14,10 +14,7 @@ public class Yhteystiedot extends TarjontaBaseEntity {
   public static final String TABLE_NAME = "yhteystiedot";
   private static final long serialVersionUID = 2820464295959137992L;
 
-  @JoinColumn(name = "hakukohde_id", nullable = false)
-  @JsonIgnore
-  @JsonBackReference
-  private Hakukohde hakukohde;
+  @ManyToOne @JsonIgnore @JsonBackReference private Hakukohde hakukohde;
 
   @Column(name = "lang")
   private String lang;
