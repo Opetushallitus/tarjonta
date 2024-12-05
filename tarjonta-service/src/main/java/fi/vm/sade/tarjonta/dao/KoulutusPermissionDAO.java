@@ -17,14 +17,11 @@ package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
-
-import java.util.Date;
 import java.util.List;
 
-public interface KoulutusPermissionDAO extends JpaDAO<KoulutusPermission, Long>  {
+public interface KoulutusPermissionDAO extends JpaDAO<KoulutusPermission, Long> {
 
-    List<KoulutusPermission> findByOrganization(List<String> orgOids);
+  List<KoulutusPermission> findByOrganization(List<String> orgOids);
 
-    Long removeAll();
-
+  Long removeAll();
 }

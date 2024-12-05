@@ -16,48 +16,42 @@
 package fi.vm.sade.tarjonta.service.search.it;
 
 import fi.vm.sade.tarjonta.service.search.SolrServerFactory;
-import org.apache.commons.io.FileUtils;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.core.CoreContainer;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-
-
 @Component
 @Profile("embedded-solr")
 public class EmbeddedSolrServerFactory extends SolrServerFactory {
 
-    private EmbeddedSolrServer server = null;
+  private EmbeddedSolrServer server = null;
 
-    @Override
-    public SolrServer getSolrServer(String collection) {
-        if (server == null) {
+  @Override
+  public SolrServer getSolrServer(String collection) {
+    if (server == null) {
 
-            String solrHome = "src/main/resources/solr";
+      String solrHome = "src/main/resources/solr";
 
-            System.setProperty("solr.solr.home", solrHome);
-            System.setProperty("solr.data.dir", "target/solr-data");
+      System.setProperty("solr.solr.home", solrHome);
+      System.setProperty("solr.data.dir", "target/solr-data");
 
-            CoreContainer coreContainer = new CoreContainer(solrHome);
-            coreContainer.load();
-            server = new EmbeddedSolrServer(coreContainer, collection);
+      CoreContainer coreContainer = new CoreContainer(solrHome);
+      coreContainer.load();
+      server = new EmbeddedSolrServer(coreContainer, collection);
 
-            System.clearProperty("solr.solr.home");
-            System.clearProperty("solr.data.dir");
-        }
-        return server;
+      System.clearProperty("solr.solr.home");
+      System.clearProperty("solr.data.dir");
     }
-    
-    @Override
-    public SolrServer getOrganisaatioSolrServer() {
-        return getSolrServer("organisaatiot");
-    }
-    
-    @Override
-    public void afterPropertiesSet() throws Exception {
-     
-    }
+    return server;
+  }
+
+  @Override
+  public SolrServer getOrganisaatioSolrServer() {
+    return getSolrServer("organisaatiot");
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {}
 }

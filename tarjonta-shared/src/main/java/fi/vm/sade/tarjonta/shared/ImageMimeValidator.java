@@ -18,14 +18,13 @@ package fi.vm.sade.tarjonta.shared;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author jani
  */
 public class ImageMimeValidator {
 
-    private static final String IMAGE_PATTERN = "^image/(jpg|jpeg|png|gif|bmp)$";
+  private static final String IMAGE_PATTERN = "^image/(jpg|jpeg|png|gif|bmp)$";
 
-    public static boolean isValid(String mime) {
-        return Pattern.compile(IMAGE_PATTERN).matcher(mime).matches();
-    }
+  public static boolean isValid(String mime) {
+    return Pattern.compile(IMAGE_PATTERN).matcher(mime).matches();
+  }
 }

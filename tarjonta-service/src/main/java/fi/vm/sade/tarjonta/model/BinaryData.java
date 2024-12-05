@@ -15,9 +15,7 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import javax.persistence.*;
-
-import fi.vm.sade.generic.model.BaseEntity;
+import jakarta.persistence.*;
 
 /**
  * Store images and other binary data.
@@ -26,39 +24,37 @@ import fi.vm.sade.generic.model.BaseEntity;
  */
 @Entity
 public class BinaryData extends BaseEntity {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-    private String filename;
-    private String mimeType;
+  /** */
+  private static final long serialVersionUID = 1L;
 
-    @Lob
-    @Basic(fetch=FetchType.LAZY)
-    private byte[] data;
+  private String filename;
+  private String mimeType;
 
-    public byte[] getData() {
-        return data;
-    }
+  @Lob
+  @Basic(fetch = FetchType.LAZY)
+  private byte[] data;
 
-    public void setData(byte[] data) {
-        this.data = data;
-    }
+  public byte[] getData() {
+    return data;
+  }
 
-    public String getFilename() {
-        return filename;
-    }
+  public void setData(byte[] data) {
+    this.data = data;
+  }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
+  public String getFilename() {
+    return filename;
+  }
 
-    public String getMimeType() {
-        return mimeType;
-    }
+  public void setFilename(String filename) {
+    this.filename = filename;
+  }
 
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
-    }
+  public String getMimeType() {
+    return mimeType;
+  }
 
+  public void setMimeType(String mimeType) {
+    this.mimeType = mimeType;
+  }
 }

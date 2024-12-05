@@ -6,26 +6,25 @@ import java.util.List;
 
 public class HakukohteetVastaus implements Serializable {
 
-    private final static long serialVersionUID = 100L;
+  private static final long serialVersionUID = 100L;
 
-    private int hitCount = 0;
+  private int hitCount = 0;
 
-    public List<HakukohdePerustieto> getHakukohteet() {
-        return hakukohteet;
-    }
+  public List<HakukohdePerustieto> getHakukohteet() {
+    return hakukohteet;
+  }
 
-    public void setHakukohteet(List<HakukohdePerustieto> hakukohteet) {
-        this.hakukohteet = hakukohteet;
-    }
+  public void setHakukohteet(List<HakukohdePerustieto> hakukohteet) {
+    this.hakukohteet = hakukohteet;
+  }
 
-    public int getHitCount() {
-        return hitCount;
-    }
+  public int getHitCount() {
+    return hitCount;
+  }
 
-    public void setHitCount(int hitCount) {
-        this.hitCount = hitCount;
-    }
+  public void setHitCount(int hitCount) {
+    this.hitCount = hitCount;
+  }
 
-    private List<HakukohdePerustieto> hakukohteet = new ArrayList<HakukohdePerustieto>();
-
+  private List<HakukohdePerustieto> hakukohteet = new ArrayList<HakukohdePerustieto>();
 }

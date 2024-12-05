@@ -15,54 +15,48 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import org.junit.Test;
-
-import java.util.Date;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.Date;
+import org.junit.Test;
+
 /**
- *
  * @author Jukka Raanamo
  */
 public class KoulutusmoduuliTest {
 
-    @Test
-    public void testGetTilaAfterCreate() {
-        Koulutusmoduuli moduuli = newModuuli();
-        assertEquals(TarjontaTila.LUONNOS, moduuli.getTila());
-    }
+  @Test
+  public void testGetTilaAfterCreate() {
+    Koulutusmoduuli moduuli = newModuuli();
+    assertEquals(TarjontaTila.LUONNOS, moduuli.getTila());
+  }
 
-    @Test
-    public void testUpdateTimestampIsSetAtInsert() {
+  @Test
+  public void testUpdateTimestampIsSetAtInsert() {
 
-        Koulutusmoduuli m = newModuuli();
-        m.beforePersist();
-        assertNotNull(m.getUpdated());
+    Koulutusmoduuli m = newModuuli();
+    m.beforePersist();
+    assertNotNull(m.getUpdated());
+  }
 
-    }
+  @Test
+  public void testUpdateTimestampIsUpdatesAtUpdate() throws Exception {
 
-    @Test
-    public void testUpdateTimestampIsUpdatesAtUpdate() throws Exception {
+    Koulutusmoduuli m = newModuuli();
+    m.beforePersist();
+    Date before = m.getUpdated();
 
-        Koulutusmoduuli m = newModuuli();
-        m.beforePersist();
-        Date before = m.getUpdated();
+    Thread.sleep(50L);
 
-        Thread.sleep(50L);
+    m.beforeUpdate();
+    Date after = m.getUpdated();
 
-        m.beforeUpdate();
-        Date after = m.getUpdated();
+    assertEquals(1, after.compareTo(before));
+  }
 
-        assertEquals(1, after.compareTo(before));
-
-    }
-
-    private Koulutusmoduuli newModuuli() {
-        return new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-    }
-
+  private Koulutusmoduuli newModuuli() {
+    return new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+  }
 }
-

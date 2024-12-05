@@ -16,28 +16,25 @@
 package fi.vm.sade.tarjonta.publication;
 
 /**
- *
  * @author Jani Wilén
  */
 public class ExportParams {
 
-    private boolean showImages = false;
+  private boolean showImages = false;
 
-    public ExportParams() {
-    }
- 
-    
-    /**
-     * @return the showImages
-     */
-    public boolean showImages() {
-        return showImages;
-    }
+  public ExportParams() {}
 
-    /**
-     * @param showImages the showImages to set
-     */
-    public void setShowImages(boolean showImages) {
-        this.showImages = showImages;
-    }
+  /**
+   * @return the showImages
+   */
+  public boolean showImages() {
+    return showImages;
+  }
+
+  /**
+   * @param showImages the showImages to set
+   */
+  public void setShowImages(boolean showImages) {
+    this.showImages = showImages;
+  }
 }

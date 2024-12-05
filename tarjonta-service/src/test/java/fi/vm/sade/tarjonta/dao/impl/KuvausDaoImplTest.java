@@ -15,9 +15,12 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import static junit.framework.Assert.assertTrue;
+
 import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausSearchV1RDTO;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.context.TestExecutionListeners;
@@ -26,51 +29,57 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static junit.framework.Assert.assertTrue;
-
-
-@TestExecutionListeners(listeners = {
-        DependencyInjectionTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class,
-        TransactionalTestExecutionListener.class
-})
+@TestExecutionListeners(
+    listeners = {
+      DependencyInjectionTestExecutionListener.class,
+      DirtiesContextTestExecutionListener.class,
+      TransactionalTestExecutionListener.class
+    })
 @Transactional
 public class KuvausDaoImplTest extends TestUtilityBase {
 
-    @Before
-    public void setUp() {
-        fixtures.createPersistedValintaperustekuvaukset();
-    }
+  @Before
+  public void setUp() {
+    fixtures.createPersistedValintaperustekuvaukset();
+  }
 
-    @Test
-    public void thatTermSearchMatches() {
-        KuvausSearchV1RDTO searhParams = new KuvausSearchV1RDTO();
-        searhParams.setHakusana("Suomi");
+  @Test
+  public void thatTermSearchMatches() {
+    KuvausSearchV1RDTO searhParams = new KuvausSearchV1RDTO();
+    searhParams.setHakusana("Suomi");
 
-        List<ValintaperusteSoraKuvaus> result = kuvausDAO.findBySearchSpec(searhParams, ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
-        assertTrue(result.size() == 1);
+    List<ValintaperusteSoraKuvaus> result =
+        kuvausDAO.findBySearchSpec(
+            searhParams, ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
+    assertTrue(result.size() == 1);
 
-        searhParams.setHakusana("English");
-        result = kuvausDAO.findBySearchSpec(searhParams, ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
-        assertTrue(result.size() == 1);
+    searhParams.setHakusana("English");
+    result =
+        kuvausDAO.findBySearchSpec(
+            searhParams, ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
+    assertTrue(result.size() == 1);
 
-        searhParams.setHakusana("title");
-        result = kuvausDAO.findBySearchSpec(searhParams, ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
-        assertTrue(result.isEmpty());
+    searhParams.setHakusana("title");
+    result =
+        kuvausDAO.findBySearchSpec(
+            searhParams, ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
+    assertTrue(result.isEmpty());
 
-        searhParams.setHakusana(null);
-        result = kuvausDAO.findBySearchSpec(searhParams, ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
-        assertTrue(result.size() == 2);
-    }
+    searhParams.setHakusana(null);
+    result =
+        kuvausDAO.findBySearchSpec(
+            searhParams, ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
+    assertTrue(result.size() == 2);
+  }
 
-    @Test
-    public void thatAvainSearchMatches() {
-        KuvausSearchV1RDTO searhParams = new KuvausSearchV1RDTO();
-        searhParams.setAvain("valintaperusteryhma_01");
+  @Test
+  public void thatAvainSearchMatches() {
+    KuvausSearchV1RDTO searhParams = new KuvausSearchV1RDTO();
+    searhParams.setAvain("valintaperusteryhma_01");
 
-        List<ValintaperusteSoraKuvaus> result = kuvausDAO.findBySearchSpec(searhParams, ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
-        assertTrue(result.size() == 1);
-    }
+    List<ValintaperusteSoraKuvaus> result =
+        kuvausDAO.findBySearchSpec(
+            searhParams, ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
+    assertTrue(result.size() == 1);
+  }
 }

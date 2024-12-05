@@ -15,17 +15,15 @@
  */
 package fi.vm.sade.tarjonta.atdd;
 
+import static org.junit.Assert.assertEquals;
+
 import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
+import java.util.Iterator;
 import org.junit.Test;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Iterator;
-
-import static org.junit.Assert.assertEquals;
-
 
 /**
  * Acceptance tests for OVT-1534
@@ -34,61 +32,55 @@ import static org.junit.Assert.assertEquals;
  */
 @Transactional
 public class OVT1534_KoulutusSisaltyvyysTest extends TestUtilityBase {
-    @Test
-    public void testKoulutusmoduuliSisaltaaKoulutusmouduleita() {
+  @Test
+  public void testKoulutusmoduuliSisaltaaKoulutusmouduleita() {
 
-        Koulutusmoduuli moduuli = fixtures.createPersistedKoulutusmoduuliStructure();
-        assertEquals(2, moduuli.getSisaltyvyysList().size());
+    Koulutusmoduuli moduuli = fixtures.createPersistedKoulutusmoduuliStructure();
+    assertEquals(2, moduuli.getSisaltyvyysList().size());
+  }
 
-    }
+  @Test
+  public void testKoulutusmoduuliVoidaanJakaa() {
 
-    @Test
-    public void testKoulutusmoduuliVoidaanJakaa() {
+    Koulutusmoduuli moduuli = fixtures.createPersistedKoulutusmoduuliStructure();
 
-        Koulutusmoduuli moduuli = fixtures.createPersistedKoulutusmoduuliStructure();
+    Iterator<Koulutusmoduuli> i = moduuli.getAlamoduuliList().iterator();
+    Koulutusmoduuli child1 = i.next();
+    Koulutusmoduuli child2 = i.next();
 
-        Iterator<Koulutusmoduuli> i = moduuli.getAlamoduuliList().iterator();
-        Koulutusmoduuli child1 = i.next();
-        Koulutusmoduuli child2 = i.next();
+    Koulutusmoduuli child3 = child1.getAlamoduuliList().iterator().next();
+    Koulutusmoduuli child4 = child2.getAlamoduuliList().iterator().next();
 
-        Koulutusmoduuli child3 = child1.getAlamoduuliList().iterator().next();
-        Koulutusmoduuli child4 = child2.getAlamoduuliList().iterator().next();
+    assertEquals(child3, child4);
+  }
 
-        assertEquals(child3, child4);
+  @Test
+  public void testKoulutusmoduuliinVoidaanLiittaaUseitaToteutuksia() {
 
-    }
+    Koulutusmoduuli moduuli = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+    KoulutusmoduuliToteutus toteutusA = new KoulutusmoduuliToteutus(moduuli);
+    KoulutusmoduuliToteutus toteutusB = new KoulutusmoduuliToteutus(moduuli);
 
-    @Test
-    public void testKoulutusmoduuliinVoidaanLiittaaUseitaToteutuksia() {
+    moduuli.addKoulutusmoduuliToteutus(toteutusA);
+    moduuli.addKoulutusmoduuliToteutus(toteutusB);
 
-        Koulutusmoduuli moduuli = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-        KoulutusmoduuliToteutus toteutusA = new KoulutusmoduuliToteutus(moduuli);
-        KoulutusmoduuliToteutus toteutusB = new KoulutusmoduuliToteutus(moduuli);
+    // tarkista että toteutukset on liitetty
+    assertEquals(2, moduuli.getKoulutusmoduuliToteutusList().size());
 
-        moduuli.addKoulutusmoduuliToteutus(toteutusA);
-        moduuli.addKoulutusmoduuliToteutus(toteutusB);
+    // tarkista että toteutukset viittaavat oikean moduuliin
+    assertEquals(moduuli, toteutusA.getKoulutusmoduuli());
+    assertEquals(moduuli, toteutusB.getKoulutusmoduuli());
+  }
 
-        // tarkista että toteutukset on liitetty
-        assertEquals(2, moduuli.getKoulutusmoduuliToteutusList().size());
+  @Test(expected = IllegalStateException.class)
+  public void testKoulutusmoduulinToteutuksenKoulutusmoduuliaEiVoiMuuttaa() {
 
-        // tarkista että toteutukset viittaavat oikean moduuliin
-        assertEquals(moduuli, toteutusA.getKoulutusmoduuli());
-        assertEquals(moduuli, toteutusB.getKoulutusmoduuli());
+    Koulutusmoduuli moduuliA = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+    Koulutusmoduuli moduuliB = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
 
-    }
+    KoulutusmoduuliToteutus toteutus = new KoulutusmoduuliToteutus(moduuliA);
 
-    @Test(expected = IllegalStateException.class)
-    public void testKoulutusmoduulinToteutuksenKoulutusmoduuliaEiVoiMuuttaa() {
-
-        Koulutusmoduuli moduuliA = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-        Koulutusmoduuli moduuliB = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-
-        KoulutusmoduuliToteutus toteutus = new KoulutusmoduuliToteutus(moduuliA);
-
-        // yrita vaihtaa modulia
-        toteutus.setKoulutusmoduuli(moduuliB);
-
-    }
-
+    // yrita vaihtaa modulia
+    toteutus.setKoulutusmoduuli(moduuliB);
+  }
 }
-

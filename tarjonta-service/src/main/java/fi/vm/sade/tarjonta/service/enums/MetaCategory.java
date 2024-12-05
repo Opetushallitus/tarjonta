@@ -16,11 +16,9 @@
 package fi.vm.sade.tarjonta.service.enums;
 
 /**
- *
  * @author jani
  */
 public enum MetaCategory {
-
-    SORA_KUVAUS, VALINTAPERUSTEKUVAUS
-
+  SORA_KUVAUS,
+  VALINTAPERUSTEKUVAUS
 }

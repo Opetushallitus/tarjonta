@@ -21,32 +21,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author mlyly
  */
-public class HakukohdeLiiteToHakukohdeLiiteRDTOConverter extends BaseRDTOConverter<HakukohdeLiite, HakukohdeLiiteDTO> {
+public class HakukohdeLiiteToHakukohdeLiiteRDTOConverter
+    extends BaseRDTOConverter<HakukohdeLiite, HakukohdeLiiteDTO> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HakukohdeLiiteToHakukohdeLiiteRDTOConverter.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(HakukohdeLiiteToHakukohdeLiiteRDTOConverter.class);
 
-    @Override
-    public HakukohdeLiiteDTO convert(HakukohdeLiite s) {
-        HakukohdeLiiteDTO t = new HakukohdeLiiteDTO();
+  @Override
+  public HakukohdeLiiteDTO convert(HakukohdeLiite s) {
+    HakukohdeLiiteDTO t = new HakukohdeLiiteDTO();
 
-        if (s != null) {
-            t.setOid("" + s.getId());
+    if (s != null) {
+      t.setOid("" + s.getId());
 
-            t.setErapaiva(s.getErapaiva());
-            // t.setHakukohdeOid(s.getHakukohde());
-            t.setKuvaus(convertMonikielinenTekstiToMap(s.getKuvaus()));
-            t.setModified(s.getLastUpdateDate());
-            t.setModifiedBy(s.getLastUpdatedByOid());
-            t.setLiitteenTyyppiUri(s.getLiitetyyppi());
-            t.setLiitteenTyyppiKoodistonNimi(s.getLiitteenTyyppiKoodistoNimi());
-            t.setSahkoinenToimitusosoite(s.getSahkoinenToimitusosoite());
-            t.setToimitusosoite(getConversionService().convert(s.getToimitusosoite(), OsoiteRDTO.class));
-        }
-
-        return t;
+      t.setErapaiva(s.getErapaiva());
+      // t.setHakukohdeOid(s.getHakukohde());
+      t.setKuvaus(convertMonikielinenTekstiToMap(s.getKuvaus()));
+      t.setModified(s.getLastUpdateDate());
+      t.setModifiedBy(s.getLastUpdatedByOid());
+      t.setLiitteenTyyppiUri(s.getLiitetyyppi());
+      t.setLiitteenTyyppiKoodistonNimi(s.getLiitteenTyyppiKoodistoNimi());
+      t.setSahkoinenToimitusosoite(s.getSahkoinenToimitusosoite());
+      t.setToimitusosoite(getConversionService().convert(s.getToimitusosoite(), OsoiteRDTO.class));
     }
 
+    return t;
+  }
 }

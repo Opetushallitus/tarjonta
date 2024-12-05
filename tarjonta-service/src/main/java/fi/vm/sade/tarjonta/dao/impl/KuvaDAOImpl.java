@@ -15,16 +15,11 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import fi.vm.sade.tarjonta.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KuvaDAO;
 import fi.vm.sade.tarjonta.model.BinaryData;
 
 /**
- *
  * @author jani
  */
-public class KuvaDAOImpl extends AbstractJpaDAOImpl<BinaryData, Long> implements KuvaDAO {
-
-    
-
-}
+public class KuvaDAOImpl extends AbstractJpaDAOImpl<BinaryData, Long> implements KuvaDAO {}

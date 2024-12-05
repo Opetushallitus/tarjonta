@@ -15,6 +15,9 @@
  */
 package fi.vm.sade.tarjonta.service.business;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
@@ -27,55 +30,49 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-
-@TestExecutionListeners(listeners = {
-    DependencyInjectionTestExecutionListener.class,
-    DirtiesContextTestExecutionListener.class,
-    TransactionalTestExecutionListener.class
-})
+@TestExecutionListeners(
+    listeners = {
+      DependencyInjectionTestExecutionListener.class,
+      DirtiesContextTestExecutionListener.class,
+      TransactionalTestExecutionListener.class
+    })
 public class KoulutusBusinessServiceTest extends TestUtilityBase {
 
-    private Koulutusmoduuli tutkintoOhjelma;
-    private KoulutusmoduuliToteutus tutkintoOhjemanToteutus;
-    private TarjontaFixtures fixtures = new TarjontaFixtures();
+  private Koulutusmoduuli tutkintoOhjelma;
+  private KoulutusmoduuliToteutus tutkintoOhjemanToteutus;
+  private TarjontaFixtures fixtures = new TarjontaFixtures();
 
-    @Before
-    public void setUp() {
+  @Before
+  public void setUp() {
 
-        fixtures.recreate();
+    fixtures.recreate();
 
-        tutkintoOhjelma = fixtures.simpleTutkintoOhjelma;
-        tutkintoOhjemanToteutus = fixtures.simpleTutkintoOhjelmaToteutus;
+    tutkintoOhjelma = fixtures.simpleTutkintoOhjelma;
+    tutkintoOhjemanToteutus = fixtures.simpleTutkintoOhjelmaToteutus;
+  }
 
-    }
+  @Test
+  public void testNewKoulutusmoduuliIsInSuunnitteluState() {
 
-    @Test
-    public void testNewKoulutusmoduuliIsInSuunnitteluState() {
+    Koulutusmoduuli k = koulutusBusinessService.create(tutkintoOhjelma);
+    assertEquals(TarjontaTila.LUONNOS, k.getTila());
+  }
 
-        Koulutusmoduuli k = koulutusBusinessService.create(tutkintoOhjelma);
-        assertEquals(TarjontaTila.LUONNOS, k.getTila());
+  @Test
+  public void testCreateKoulutusmoduuliWithToteutus() {
 
-    }
+    KoulutusmoduuliToteutus t =
+        koulutusBusinessService.create(tutkintoOhjemanToteutus, tutkintoOhjelma);
 
-    @Test
-    public void testCreateKoulutusmoduuliWithToteutus() {
+    // check that koulutusmoduuli is assigned
+    assertEquals(tutkintoOhjelma, t.getKoulutusmoduuli());
+  }
 
-        KoulutusmoduuliToteutus t = koulutusBusinessService.create(tutkintoOhjemanToteutus, tutkintoOhjelma);
+  @Test
+  public void testFindByOid() {
 
-        // check that koulutusmoduuli is assigned
-        assertEquals(tutkintoOhjelma, t.getKoulutusmoduuli());
-
-    }
-
-    @Test
-    public void testFindByOid() {
-
-        KoulutusmoduuliToteutus t = koulutusBusinessService.create(tutkintoOhjemanToteutus, tutkintoOhjelma);
-        assertNotNull(t.getOid());
-
-    }
+    KoulutusmoduuliToteutus t =
+        koulutusBusinessService.create(tutkintoOhjemanToteutus, tutkintoOhjelma);
+    assertNotNull(t.getOid());
+  }
 }
-

@@ -4,7 +4,8 @@
     <parent>
         <groupId>fi.vm.sade.tarjonta</groupId>
         <artifactId>tarjonta</artifactId>
-        <version>2017-40-SNAPSHOT</version>
+        <version>2024-46-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -20,7 +21,7 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>${frontend-maven-plugin.version}</version>
+                <version>0.0.25</version>
                 <executions>
                     <execution>
                         <id>install node and npm</id>
@@ -58,7 +59,7 @@
             <plugin>
                 <groupId>com.kelveden</groupId>
                 <artifactId>maven-karma-plugin</artifactId>
-                <version>${maven-karma-plugin.version}</version>
+                <version>1.6</version>
                 <executions>
                     <execution>
                         <phase>test</phase>

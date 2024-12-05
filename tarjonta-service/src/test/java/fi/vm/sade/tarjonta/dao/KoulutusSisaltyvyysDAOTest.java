@@ -15,6 +15,9 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import fi.vm.sade.tarjonta.TestUtilityBase;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
@@ -24,104 +27,94 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-
 @Transactional
 public class KoulutusSisaltyvyysDAOTest extends TestUtilityBase {
 
-    private Koulutusmoduuli parent;
+  private Koulutusmoduuli parent;
 
-    private KoulutusSisaltyvyys rakenne1;
+  private KoulutusSisaltyvyys rakenne1;
 
-    private KoulutusSisaltyvyys rakenne2;
+  private KoulutusSisaltyvyys rakenne2;
 
-    private Koulutusmoduuli child1;
+  private Koulutusmoduuli child1;
 
-    @Before
-    public void setUp() {
+  @Before
+  public void setUp() {
 
-        parent = fixtures.createTutkintoOhjelma();
-        child1 = fixtures.createTutkintoOhjelma();
-        Koulutusmoduuli child2 = fixtures.createTutkintoOhjelma();
+    parent = fixtures.createTutkintoOhjelma();
+    child1 = fixtures.createTutkintoOhjelma();
+    Koulutusmoduuli child2 = fixtures.createTutkintoOhjelma();
 
-        koulutusDAO.insert(child1);
-        koulutusDAO.insert(child2);
-        koulutusDAO.insert(parent);
+    koulutusDAO.insert(child1);
+    koulutusDAO.insert(child2);
+    koulutusDAO.insert(parent);
 
-        rakenne1 = new KoulutusSisaltyvyys();
-        rakenne1.setValintaTyyppi(ValintaTyyppi.ALL_OFF);
-        rakenne1.setYlamoduuli(parent);
-        rakenne1.addAlamoduuli(child1);
+    rakenne1 = new KoulutusSisaltyvyys();
+    rakenne1.setValintaTyyppi(ValintaTyyppi.ALL_OFF);
+    rakenne1.setYlamoduuli(parent);
+    rakenne1.addAlamoduuli(child1);
 
-        rakenne2 = new KoulutusSisaltyvyys();
-        rakenne2.setValintaTyyppi(ValintaTyyppi.ONE_OFF);
-        rakenne2.setYlamoduuli(parent);
-        rakenne2.addAlamoduuli(child1);
+    rakenne2 = new KoulutusSisaltyvyys();
+    rakenne2.setValintaTyyppi(ValintaTyyppi.ONE_OFF);
+    rakenne2.setYlamoduuli(parent);
+    rakenne2.addAlamoduuli(child1);
 
-        sisaltyvyysDAO.insert(rakenne1);
-        sisaltyvyysDAO.insert(rakenne2);
+    sisaltyvyysDAO.insert(rakenne1);
+    sisaltyvyysDAO.insert(rakenne2);
 
-        clear();
+    clear();
+  }
 
-    }
+  @Test
+  public void testInsert() {
 
-    @Test
-    public void testInsert() {
+    Koulutusmoduuli loaded = koulutusDAO.read(parent.getId());
+    assertEquals(2, loaded.getSisaltyvyysList().size());
+  }
 
-        Koulutusmoduuli loaded = koulutusDAO.read(parent.getId());
-        assertEquals(2, loaded.getSisaltyvyysList().size());
+  @Test
+  public void testDelete() {
 
-    }
+    sisaltyvyysDAO.remove(sisaltyvyysDAO.read(rakenne1.getId()));
+    sisaltyvyysDAO.remove(sisaltyvyysDAO.read(rakenne2.getId()));
 
-    @Test
-    public void testDelete() {
+    flush();
+    clear();
 
-        sisaltyvyysDAO.remove(sisaltyvyysDAO.read(rakenne1.getId()));
-        sisaltyvyysDAO.remove(sisaltyvyysDAO.read(rakenne2.getId()));
+    // check that deleting has not been cascaded
+    assertNotNull(koulutusDAO.read(parent.getId()));
+    assertNotNull(koulutusDAO.read(child1.getId()));
 
-        flush();
-        clear();
+    // and that parent does not contain the structure anymore
+    assertEquals(0, koulutusDAO.read(parent.getId()).getSisaltyvyysList().size());
+  }
 
-        // check that deleting has not been cascaded
-        assertNotNull(koulutusDAO.read(parent.getId()));
-        assertNotNull(koulutusDAO.read(child1.getId()));
+  @Test
+  public void testUpdate() {
 
-        // and that parent does not contain the structure anymore
-        assertEquals(0, koulutusDAO.read(parent.getId()).getSisaltyvyysList().size());
+    // re-read since we're going to call merge on the object
+    rakenne1 = sisaltyvyysDAO.read(rakenne1.getId());
+    assertEquals(1, rakenne1.getAlamoduuliList().size());
 
-    }
+    // create and persist new child
+    Koulutusmoduuli newChild = fixtures.createTutkintoOhjelma();
+    koulutusDAO.insert(newChild);
 
-    @Test
-    public void testUpdate() {
+    // add to structure and update
+    rakenne1.addAlamoduuli(newChild);
+    sisaltyvyysDAO.update(rakenne1);
 
-        // re-read since we're going to call merge on the object
-        rakenne1 = sisaltyvyysDAO.read(rakenne1.getId());
-        assertEquals(1, rakenne1.getAlamoduuliList().size());
+    clear();
 
-        // create and persist new child
-        Koulutusmoduuli newChild = fixtures.createTutkintoOhjelma();
-        koulutusDAO.insert(newChild);
+    rakenne1 = sisaltyvyysDAO.read(rakenne1.getId());
+    assertEquals(2, rakenne1.getAlamoduuliList().size());
+  }
 
-        // add to structure and update
-        rakenne1.addAlamoduuli(newChild);
-        sisaltyvyysDAO.update(rakenne1);
+  private void flush() {
+    ((KoulutusmoduuliDAOImpl) koulutusDAO).getEntityManager().flush();
+  }
 
-        clear();
-
-        rakenne1 = sisaltyvyysDAO.read(rakenne1.getId());
-        assertEquals(2, rakenne1.getAlamoduuliList().size());
-
-    }
-
-    private void flush() {
-        ((KoulutusmoduuliDAOImpl) koulutusDAO).getEntityManager().flush();
-    }
-
-    private void clear() {
-        ((KoulutusmoduuliDAOImpl) koulutusDAO).getEntityManager().clear();
-    }
-
+  private void clear() {
+    ((KoulutusmoduuliDAOImpl) koulutusDAO).getEntityManager().clear();
+  }
 }
-

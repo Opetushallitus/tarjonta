@@ -16,22 +16,21 @@
 package fi.vm.sade.tarjonta.service.business;
 
 /**
- *
  * @author jani
  */
 public interface ContextDataService {
 
-    /**
-     * Get user's user-service OID.
-     *
-     * @return user OID
-     */
-    public String getCurrentUserOid();
+  /**
+   * Get user's user-service OID.
+   *
+   * @return user OID
+   */
+  public String getCurrentUserOid();
 
-    /**
-     * Get user's preferred language code. Default or fallback value is 'FI'.
-     *
-     * @return language code
-     */
-    public String getCurrentUserLang();
+  /**
+   * Get user's preferred language code. Default or fallback value is 'FI'.
+   *
+   * @return language code
+   */
+  public String getCurrentUserLang();
 }

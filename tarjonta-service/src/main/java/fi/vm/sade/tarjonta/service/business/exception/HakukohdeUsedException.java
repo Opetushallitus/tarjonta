@@ -17,21 +17,20 @@
 package fi.vm.sade.tarjonta.service.business.exception;
 
 import fi.vm.sade.generic.service.exception.SadeBusinessException;
+
 /**
- *
  * @author Tuomas Katva
  */
 public class HakukohdeUsedException extends SadeBusinessException {
 
-    private String errorKey = HakukohdeUsedException.class.getCanonicalName();
-    
-    public HakukohdeUsedException() {
-        super();
-    }
-    
+  private String errorKey = HakukohdeUsedException.class.getCanonicalName();
 
-    @Override
-    public String getErrorKey() {
-        return errorKey;
-    }
+  public HakukohdeUsedException() {
+    super();
+  }
+
+  @Override
+  public String getErrorKey() {
+    return errorKey;
+  }
 }

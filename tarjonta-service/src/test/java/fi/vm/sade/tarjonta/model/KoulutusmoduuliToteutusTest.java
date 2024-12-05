@@ -1,35 +1,33 @@
 package fi.vm.sade.tarjonta.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import java.util.Calendar;
 import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import java.util.Calendar;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 public class KoulutusmoduuliToteutusTest {
 
-    @Test
-    public void thatMinAndMaxAlkamisPvmIsReturned() {
-        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
+  @Test
+  public void thatMinAndMaxAlkamisPvmIsReturned() {
+    KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
 
-        DateTime minDate = new DateTime();
-        minDate.withYear(2013);
-        DateTime maxDate = new DateTime();
-        maxDate.withYear(2014);
+    DateTime minDate = new DateTime();
+    minDate.withYear(2013);
+    DateTime maxDate = new DateTime();
+    maxDate.withYear(2014);
 
-        komoto.addKoulutuksenAlkamisPvms(minDate.toDate());
-        komoto.addKoulutuksenAlkamisPvms(maxDate.toDate());
+    komoto.addKoulutuksenAlkamisPvms(minDate.toDate());
+    komoto.addKoulutuksenAlkamisPvms(maxDate.toDate());
 
-        assertEquals(DateUtils.truncate(minDate.toDate(), Calendar.DATE), komoto.getMinAlkamisPvm());
-        assertEquals(DateUtils.truncate(maxDate.toDate(), Calendar.DATE), komoto.getMaxAlkamisPvm());
+    assertEquals(DateUtils.truncate(minDate.toDate(), Calendar.DATE), komoto.getMinAlkamisPvm());
+    assertEquals(DateUtils.truncate(maxDate.toDate(), Calendar.DATE), komoto.getMaxAlkamisPvm());
 
-        komoto.getKoulutuksenAlkamisPvms().clear();
+    komoto.getKoulutuksenAlkamisPvms().clear();
 
-        assertNull(komoto.getMinAlkamisPvm());
-        assertNull(komoto.getMaxAlkamisPvm());
-    }
-
+    assertNull(komoto.getMinAlkamisPvm());
+    assertNull(komoto.getMaxAlkamisPvm());
+  }
 }

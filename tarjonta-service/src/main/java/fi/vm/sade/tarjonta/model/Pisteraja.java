@@ -16,119 +16,115 @@ package fi.vm.sade.tarjonta.model;
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
 
-import javax.persistence.*;
-import org.codehaus.jackson.annotate.JsonBackReference;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 /**
- *
  * @author: Tuomas Katva
  */
 @Entity
 @Table(name = "pisteraja")
-@JsonIgnoreProperties({"id","version"})
-public class Pisteraja extends TarjontaBaseEntity  {
+@JsonIgnoreProperties({"id", "version"})
+public class Pisteraja extends TarjontaBaseEntity {
 
-    private static final long serialVersionUID = 1878029033380865674L;
+  private static final long serialVersionUID = 1878029033380865674L;
 
-    public static final BigDecimal DEFAULT_ALIN_HYVAKSYTTY_PISTEMAARA = new BigDecimal("1.00").negate();
+  public static final BigDecimal DEFAULT_ALIN_HYVAKSYTTY_PISTEMAARA =
+      new BigDecimal("1.00").negate();
 
-    @JsonBackReference
-    @ManyToOne (fetch = FetchType.LAZY, optional=false)
-    @JoinColumn(name="valintakoe_id", nullable=false)
-    private Valintakoe valintakoe;
+  @JsonBackReference
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "valintakoe_id", nullable = false)
+  private Valintakoe valintakoe;
 
-    @Column(name="valinnanpisterajatyyppi", nullable=false)
-    private String valinnanPisterajaTyyppi;
+  @Column(name = "valinnanpisterajatyyppi", nullable = false)
+  private String valinnanPisterajaTyyppi;
 
-    @Column(name="alinpistemaara", nullable=false)
-    private BigDecimal alinPistemaara;
+  @Column(name = "alinpistemaara", nullable = false)
+  private BigDecimal alinPistemaara;
 
-    @Column(name="ylinpistemaara", nullable=false)
-    private BigDecimal ylinPistemaara;
+  @Column(name = "ylinpistemaara", nullable = false)
+  private BigDecimal ylinPistemaara;
 
-    @Column(name="alinhyvaksyttypistemaara", nullable=false)
-    private BigDecimal alinHyvaksyttyPistemaara;
+  @Column(name = "alinhyvaksyttypistemaara", nullable = false)
+  private BigDecimal alinHyvaksyttyPistemaara;
 
-    @PreUpdate
-    @PrePersist
-    protected void prePersist() {
-        if("Kokonaispisteet".equals(valinnanPisterajaTyyppi)) {
-            setAlinPistemaara(new BigDecimal("0.00"));
-            setYlinPistemaara(new BigDecimal("0.00"));
-        } else {
-            if(getAlinHyvaksyttyPistemaara() == null) {
-                setAlinHyvaksyttyPistemaara(DEFAULT_ALIN_HYVAKSYTTY_PISTEMAARA);
-            }
-        }
+  @PreUpdate
+  @PrePersist
+  protected void prePersist() {
+    if ("Kokonaispisteet".equals(valinnanPisterajaTyyppi)) {
+      setAlinPistemaara(new BigDecimal("0.00"));
+      setYlinPistemaara(new BigDecimal("0.00"));
+    } else {
+      if (getAlinHyvaksyttyPistemaara() == null) {
+        setAlinHyvaksyttyPistemaara(DEFAULT_ALIN_HYVAKSYTTY_PISTEMAARA);
+      }
     }
+  }
 
-    public Valintakoe getValintakoe() {
-		return valintakoe;
-	}
-    
-    public void setValintakoe(Valintakoe valintakoe) {
-		this.valintakoe = valintakoe;
-	}
-    
-    /**
-     * @return the valinnanPisterajaTyyppi
-     */
-    public String getValinnanPisterajaTyyppi() {
-        return valinnanPisterajaTyyppi;
-    }
+  public Valintakoe getValintakoe() {
+    return valintakoe;
+  }
 
-    /**
-     * @param valinnanPisterajaTyyppi the valinnanPisterajaTyyppi to set
-     */
-    public void setValinnanPisterajaTyyppi(String valinnanPisterajaTyyppi) {
-        this.valinnanPisterajaTyyppi = valinnanPisterajaTyyppi;
-    }
+  public void setValintakoe(Valintakoe valintakoe) {
+    this.valintakoe = valintakoe;
+  }
 
-    /**
-     * @return the alinPistemaara
-     */
-    public BigDecimal getAlinPistemaara() {
-        return alinPistemaara;
-    }
+  /**
+   * @return the valinnanPisterajaTyyppi
+   */
+  public String getValinnanPisterajaTyyppi() {
+    return valinnanPisterajaTyyppi;
+  }
 
-    /**
-     * @param alinPistemaara the alinPistemaara to set
-     */
-    public void setAlinPistemaara(BigDecimal alinPistemaara) {
-        this.alinPistemaara = alinPistemaara;
-    }
+  /**
+   * @param valinnanPisterajaTyyppi the valinnanPisterajaTyyppi to set
+   */
+  public void setValinnanPisterajaTyyppi(String valinnanPisterajaTyyppi) {
+    this.valinnanPisterajaTyyppi = valinnanPisterajaTyyppi;
+  }
 
-    /**
-     * @return the ylinPistemaara
-     */
-    public BigDecimal getYlinPistemaara() {
-        return ylinPistemaara;
-    }
+  /**
+   * @return the alinPistemaara
+   */
+  public BigDecimal getAlinPistemaara() {
+    return alinPistemaara;
+  }
 
-    /**
-     * @param ylinPistemaara the ylinPistemaara to set
-     */
-    public void setYlinPistemaara(BigDecimal ylinPistemaara) {
-        this.ylinPistemaara = ylinPistemaara;
-    }
+  /**
+   * @param alinPistemaara the alinPistemaara to set
+   */
+  public void setAlinPistemaara(BigDecimal alinPistemaara) {
+    this.alinPistemaara = alinPistemaara;
+  }
 
-    /**
-     * @return the alinHyvaksyttyPistemaara
-     */
-    public BigDecimal getAlinHyvaksyttyPistemaara() {
-        return alinHyvaksyttyPistemaara;
-    }
+  /**
+   * @return the ylinPistemaara
+   */
+  public BigDecimal getYlinPistemaara() {
+    return ylinPistemaara;
+  }
 
-    /**
-     * @param alinHyvaksyttyPistemaara the alinHyvaksyttyPistemaara to set
-     */
-    public void setAlinHyvaksyttyPistemaara(BigDecimal alinHyvaksyttyPistemaara) {
-        this.alinHyvaksyttyPistemaara = alinHyvaksyttyPistemaara;
-    }
+  /**
+   * @param ylinPistemaara the ylinPistemaara to set
+   */
+  public void setYlinPistemaara(BigDecimal ylinPistemaara) {
+    this.ylinPistemaara = ylinPistemaara;
+  }
 
+  /**
+   * @return the alinHyvaksyttyPistemaara
+   */
+  public BigDecimal getAlinHyvaksyttyPistemaara() {
+    return alinHyvaksyttyPistemaara;
+  }
 
-
+  /**
+   * @param alinHyvaksyttyPistemaara the alinHyvaksyttyPistemaara to set
+   */
+  public void setAlinHyvaksyttyPistemaara(BigDecimal alinHyvaksyttyPistemaara) {
+    this.alinHyvaksyttyPistemaara = alinHyvaksyttyPistemaara;
+  }
 }

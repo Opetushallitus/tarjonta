@@ -18,24 +18,23 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1.process;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
 
 /**
- *
  * @author mlyly
  */
 public interface ProcessDefinition extends Runnable {
-        /**
-         * @return state as ProcessV1RDTO
-         */
-        ProcessV1RDTO getState();
+  /**
+   * @return state as ProcessV1RDTO
+   */
+  ProcessV1RDTO getState();
 
-        /**
-         * @param state initial state and parameters to the process
-         */
-        void setState(ProcessV1RDTO state);
+  /**
+   * @param state initial state and parameters to the process
+   */
+  void setState(ProcessV1RDTO state);
 
-        /**
-         * Return true is process has been completed and can be removed from "active" process list.
-         *
-         * @return
-         */
-        boolean isCompleted();
+  /**
+   * Return true is process has been completed and can be removed from "active" process list.
+   *
+   * @return
+   */
+  boolean isCompleted();
 }

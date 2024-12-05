@@ -29,3 +29,5 @@ tarjonta-app-angular/nbproject
 tarjonta-app-angular/config/protractor-credentials.js
 pom.xml.versionsBackup
 versioneye.properties
+
+dev.yml

@@ -21,164 +21,157 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
- *
  * @author jani
  */
 public class RestParam {
 
-    private static final String DEFAULT_LANG_CODE = "FI";
-    private Boolean showMeta = true; //default show meta data
-    private Boolean showImg = false; //default do not show images 
-    private String userLang = DEFAULT_LANG_CODE; //default fi
-    private Locale locale;
+  private static final String DEFAULT_LANG_CODE = "FI";
+  private Boolean showMeta = true; // default show meta data
+  private Boolean showImg = false; // default do not show images
+  private String userLang = DEFAULT_LANG_CODE; // default fi
+  private Locale locale;
 
-    public RestParam() {
+  public RestParam() {}
+
+  public RestParam(Boolean showMeta, Boolean showImg, String userLang) {
+    this.setShowMeta(showMeta);
+    this.setShowImg(showImg);
+    this.setUserLang(userLang);
+
+    this.locale = new Locale(getUserLang());
+  }
+
+  public static RestParam byUserRequest(Boolean showMeta, Boolean showImg, String userLang) {
+    return new RestParam(showMeta, showImg, userLang);
+  }
+
+  public static RestParam noImage(Boolean showMeta, String userLang) {
+    return new RestParam(showMeta, false, userLang);
+  }
+
+  public static RestParam noImageAndShowMeta(String userLang) {
+    return new RestParam(true, false, userLang);
+  }
+
+  public static RestParam showImageAndShowMeta(String userLang) {
+    return new RestParam(false, true, userLang);
+  }
+
+  public static RestParam showImageAndNoMeta(String userLang) {
+    return new RestParam(false, true, userLang);
+  }
+
+  public static RestParam showImageAndNoMeta() {
+    return new RestParam(false, true, null);
+  }
+
+  /**
+   * @return the showMeta
+   */
+  public Boolean getShowMeta() {
+    return showMeta;
+  }
+
+  /**
+   * @param showMeta the showMeta to set
+   */
+  public void setShowMeta(Boolean showMeta) {
+    this.showMeta = checkArgsDefaultTrue(showMeta);
+  }
+
+  /**
+   * @return the showImg
+   */
+  public Boolean getShowImg() {
+    return showImg;
+  }
+
+  /**
+   * @param showImg the showImg to set
+   */
+  public void setShowImg(Boolean showImg) {
+    this.showImg = checkArgsDefaultFalse(showImg);
+  }
+
+  /**
+   * @return the userLang
+   */
+  public String getUserLang() {
+    return userLang;
+  }
+
+  /**
+   * @param userLang the userLang to set
+   */
+  public void setUserLang(String userLang) {
+    this.userLang = checkArgsLangCode(userLang);
+  }
+
+  /**
+   * Validate user language code. Default or fallback value is 'FI'.
+   *
+   * @param lang
+   * @return
+   */
+  private static String checkArgsLangCode(String lang) {
+    if (lang == null || lang.isEmpty() || lang.length() != 2) {
+      return DEFAULT_LANG_CODE;
     }
 
-    public RestParam(Boolean showMeta, Boolean showImg, String userLang) {
-        this.setShowMeta(showMeta);
-        this.setShowImg(showImg);
-        this.setUserLang(userLang);
+    return lang;
+  }
 
-        this.locale = new Locale(getUserLang());
+  /**
+   * Validate the show argument. Null is boolean true.
+   *
+   * @param meta
+   * @return
+   */
+  private static boolean checkArgsDefaultTrue(Boolean meta) {
+    return meta != null ? meta : true;
+  }
+
+  /**
+   * Validate the show argument. Null is boolean false.
+   *
+   * @param meta
+   * @return
+   */
+  private static boolean checkArgsDefaultFalse(Boolean meta) {
+    return meta != null ? meta : false;
+  }
+
+  /**
+   * @return the locale
+   */
+  public Locale getLocale() {
+    return locale;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if ((other == null) || (other.getClass() != this.getClass())) {
+      return false;
     }
 
-    public static RestParam byUserRequest(Boolean showMeta, Boolean showImg, String userLang) {
-        return new RestParam(showMeta, showImg, userLang);
-    }
+    RestParam castOther = (RestParam) other;
+    return new EqualsBuilder()
+        .append(this.showImg, castOther.showImg)
+        .append(this.showMeta, castOther.showMeta)
+        .append(this.userLang, castOther.userLang)
+        .isEquals();
+  }
 
-    public static RestParam noImage(Boolean showMeta, String userLang) {
-        return new RestParam(showMeta, false, userLang);
-    }
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder().append(showImg).append(showMeta).append(userLang).toHashCode();
+  }
 
-    public static RestParam noImageAndShowMeta(String userLang) {
-        return new RestParam(true, false, userLang);
-    }
-
-    public static RestParam showImageAndShowMeta(String userLang) {
-        return new RestParam(false, true, userLang);
-    }
-
-    public static RestParam showImageAndNoMeta(String userLang) {
-        return new RestParam(false, true, userLang);
-    }
-
-    public static RestParam showImageAndNoMeta() {
-        return new RestParam(false, true, null);
-    }
-
-    /**
-     * @return the showMeta
-     */
-    public Boolean getShowMeta() {
-        return showMeta;
-    }
-
-    /**
-     * @param showMeta the showMeta to set
-     */
-    public void setShowMeta(Boolean showMeta) {
-        this.showMeta = checkArgsDefaultTrue(showMeta);
-    }
-
-    /**
-     * @return the showImg
-     */
-    public Boolean getShowImg() {
-        return showImg;
-    }
-
-    /**
-     * @param showImg the showImg to set
-     */
-    public void setShowImg(Boolean showImg) {
-        this.showImg = checkArgsDefaultFalse(showImg);
-    }
-
-    /**
-     * @return the userLang
-     */
-    public String getUserLang() {
-        return userLang;
-    }
-
-    /**
-     * @param userLang the userLang to set
-     */
-    public void setUserLang(String userLang) {
-        this.userLang = checkArgsLangCode(userLang);
-    }
-
-    /**
-     * Validate user language code. Default or fallback value is 'FI'.
-     *
-     * @param lang
-     * @return
-     */
-    private static String checkArgsLangCode(String lang) {
-        if (lang == null || lang.isEmpty() || lang.length() != 2) {
-            return DEFAULT_LANG_CODE;
-        }
-
-        return lang;
-    }
-
-    /**
-     * Validate the show argument. Null is boolean true.
-     *
-     * @param meta
-     * @return
-     */
-    private static boolean checkArgsDefaultTrue(Boolean meta) {
-        return meta != null ? meta : true;
-    }
-
-    /**
-     * Validate the show argument. Null is boolean false.
-     *
-     * @param meta
-     * @return
-     */
-    private static boolean checkArgsDefaultFalse(Boolean meta) {
-        return meta != null ? meta : false;
-    }
-
-    /**
-     * @return the locale
-     */
-    public Locale getLocale() {
-        return locale;
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-        if ((other == null) || (other.getClass() != this.getClass())) {
-            return false;
-        }
-
-        RestParam castOther = (RestParam) other;
-        return new EqualsBuilder()
-                .append(this.showImg, castOther.showImg)
-                .append(this.showMeta, castOther.showMeta)
-                .append(this.userLang, castOther.userLang)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(showImg)
-                .append(showMeta)
-                .append(userLang)
-                .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
-    }
-
+  @Override
+  public String toString() {
+    return ReflectionToStringBuilder.toString(this);
+  }
 }

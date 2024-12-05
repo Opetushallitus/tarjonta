@@ -18,42 +18,40 @@ import org.springframework.stereotype.Component;
 @Profile(value = {"default", "solr"})
 public class SolrServerFactory implements InitializingBean {
 
-    private static int TIMEOUT_MILLISECONDS = 10000;
+  private static int TIMEOUT_MILLISECONDS = 10000;
 
-    @Value("${tarjonta.solr.baseurl:}")
-    protected String solrBaseUrl;
+  @Value("${tarjonta.solr.baseurl:}")
+  protected String solrBaseUrl;
 
-    @Value("${organisaatio.solr.url:}")
-    protected String organisaatioSolrUrl;
+  @Value("${organisaatio.solr.url:}")
+  protected String organisaatioSolrUrl;
 
-    public SolrServer getOrganisaatioSolrServer() {
-        return getSolr(organisaatioSolrUrl);
-    }
+  public SolrServer getOrganisaatioSolrServer() {
+    return getSolr(organisaatioSolrUrl);
+  }
 
-    public SolrServer getSolrServer(final String coreName) {
-        final String url = solrBaseUrl + "/" + coreName;
-        return getSolr(url);
-    }
+  public SolrServer getSolrServer(final String coreName) {
+    final String url = solrBaseUrl + "/" + coreName;
+    return getSolr(url);
+  }
 
-    HttpRequestRetryHandler rh;
+  HttpRequestRetryHandler rh;
 
-    private SolrServer getSolr(final String url) {
-        PoolingClientConnectionManager mgr = new PoolingClientConnectionManager();
-        mgr.setDefaultMaxPerRoute(20);
-        mgr.setDefaultMaxPerRoute(100);
-        DefaultHttpClient client = new DefaultHttpClient(mgr);
-        HttpParams params = client.getParams();
-        HttpConnectionParams.setStaleCheckingEnabled(params, true);
-        HttpConnectionParams.setSoTimeout(params, TIMEOUT_MILLISECONDS);
-        client.setHttpRequestRetryHandler(new StandardHttpRequestRetryHandler(3, true));
-        return new HttpSolrServer(url, client);
+  private SolrServer getSolr(final String url) {
+    PoolingClientConnectionManager mgr = new PoolingClientConnectionManager();
+    mgr.setDefaultMaxPerRoute(20);
+    mgr.setDefaultMaxPerRoute(100);
+    DefaultHttpClient client = new DefaultHttpClient(mgr);
+    HttpParams params = client.getParams();
+    HttpConnectionParams.setStaleCheckingEnabled(params, true);
+    HttpConnectionParams.setSoTimeout(params, TIMEOUT_MILLISECONDS);
+    client.setHttpRequestRetryHandler(new StandardHttpRequestRetryHandler(3, true));
+    return new HttpSolrServer(url, client);
+  }
 
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        Preconditions.checkNotNull(solrBaseUrl,
-                "Solr baseurl not specified, application will not work!");
-    }
-
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    Preconditions.checkNotNull(
+        solrBaseUrl, "Solr baseurl not specified, application will not work!");
+  }
 }

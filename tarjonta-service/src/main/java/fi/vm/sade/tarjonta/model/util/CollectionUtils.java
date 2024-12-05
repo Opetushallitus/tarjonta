@@ -17,21 +17,15 @@ package fi.vm.sade.tarjonta.model.util;
 
 import java.util.Collection;
 
-/**
- *
- */
+/** */
 public class CollectionUtils {
 
+  public static <T> T singleItem(Collection<T> collection) {
 
-    public static <T> T singleItem(Collection<T> collection) {
-
-        if (collection == null || collection.isEmpty() || collection.size() > 1) {
-            throw new IllegalStateException("only one item expected in collection: " + collection);
-        }
-
-        return collection.iterator().next();
-
+    if (collection == null || collection.isEmpty() || collection.size() > 1) {
+      throw new IllegalStateException("only one item expected in collection: " + collection);
     }
 
+    return collection.iterator().next();
+  }
 }
-

@@ -16,16 +16,15 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -38,456 +37,424 @@ import java.util.stream.Collectors;
 @MappedSuperclass
 public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements Serializable {
 
-    public static final String OID_COLUMN_NAME = "oid";
+  public static final String OID_COLUMN_NAME = "oid";
 
-    public static final String TILA_COLUMN_NAME = "tila";
+  public static final String TILA_COLUMN_NAME = "tila";
 
-    public static final String ULKOINEN_TUNNISTE_COLUMN_NAME = "ulkoinenTunniste";
+  public static final String ULKOINEN_TUNNISTE_COLUMN_NAME = "ulkoinenTunniste";
 
-    private static final long serialVersionUID = -8023508784857174305L;
+  private static final long serialVersionUID = -8023508784857174305L;
 
-    @Transient
-    private boolean skipPreUpdate = false;
+  @Transient private boolean skipPreUpdate = false;
 
-    @Column(name = OID_COLUMN_NAME, nullable = false, insertable = true, updatable = false, unique = true)
-    private String oid;
+  @Column(
+      name = OID_COLUMN_NAME,
+      nullable = false,
+      insertable = true,
+      updatable = false,
+      unique = true)
+  private String oid;
 
-    @Column(name = TILA_COLUMN_NAME)
-    @Enumerated(EnumType.STRING)
-    private TarjontaTila tila = TarjontaTila.LUONNOS;
+  @Column(name = TILA_COLUMN_NAME)
+  @Enumerated(EnumType.STRING)
+  private TarjontaTila tila = TarjontaTila.LUONNOS;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "viimPaivitysPvm")
-    private Date updated;
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(name = "viimPaivitysPvm")
+  private Date updated;
 
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "koulutusala_uri")
-    private String koulutusalaUri;
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "eqf_uri")
-    private String eqfUri;
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "nqf_uri")
-    private String nqfUri;
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "koulutusaste_uri")
-    private String koulutusasteUri;
+  /** Koodisto uri. See accessors for more info. */
+  @Column(name = "koulutusala_uri")
+  private String koulutusalaUri;
 
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "koulutus_uri")
-    private String koulutusUri;
+  /** Koodisto uri. See accessors for more info. */
+  @Column(name = "eqf_uri")
+  private String eqfUri;
 
-    /**
-     * Koodisto uri. See accessors for more info.
-     *
-     * KoulutusohjelmaUri will be deprecated in near future 2015?, the
-     * osaamisala will replaced this field.
-     */
-    @Column(name = "koulutusohjelma_uri")
-    private String koulutusohjelmaUri;
+  /** Koodisto uri. See accessors for more info. */
+  @Column(name = "nqf_uri")
+  private String nqfUri;
 
-    /**
-     * Koodisto uri like koulutusohjelma. See accessors for more info.
-     */
-    @Column(name = "lukiolinja_uri")
-    private String lukiolinjaUri;
+  /** Koodisto uri. See accessors for more info. */
+  @Column(name = "koulutusaste_uri")
+  private String koulutusasteUri;
 
-    /**
-     * Koodisto uri like koulutusohjelma. See accessors for more info.
-     */
-    @Column(name = "osaamisala_uri")
-    private String osaamisalaUri;
+  /** Koodisto uri. See accessors for more info. */
+  @Column(name = "koulutus_uri")
+  private String koulutusUri;
 
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "tutkinto_uri")
-    private String tutkintoUri;
+  /**
+   * Koodisto uri. See accessors for more info.
+   *
+   * <p>KoulutusohjelmaUri will be deprecated in near future 2015?, the osaamisala will replaced
+   * this field.
+   */
+  @Column(name = "koulutusohjelma_uri")
+  private String koulutusohjelmaUri;
 
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "opintojen_laajuusarvo_uri")
-    private String opintojenLaajuusarvoUri;
+  /** Koodisto uri like koulutusohjelma. See accessors for more info. */
+  @Column(name = "lukiolinja_uri")
+  private String lukiolinjaUri;
 
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "opintojen_laajuusyksikko_uri")
-    private String opintojenLaajuusyksikkoUri;
+  /** Koodisto uri like koulutusohjelma. See accessors for more info. */
+  @Column(name = "osaamisala_uri")
+  private String osaamisalaUri;
 
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "koulutustyyppi_uri")
-    private String koulutustyyppiUri;
+  /** Koodisto uri. See accessors for more info. */
+  @Column(name = "tutkinto_uri")
+  private String tutkintoUri;
 
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "opintoala_uri")
-    private String opintoalaUri;
+  /** Koodisto uri. See accessors for more info. */
+  @Column(name = "opintojen_laajuusarvo_uri")
+  private String opintojenLaajuusarvoUri;
 
-    @Column(name = ULKOINEN_TUNNISTE_COLUMN_NAME)
-    private String ulkoinenTunniste;
+  /** Koodisto uri. See accessors for more info. */
+  @Column(name = "opintojen_laajuusyksikko_uri")
+  private String opintojenLaajuusyksikkoUri;
 
-    protected static String getTutkintonimikeUri(Set<KoodistoUri> tutkintonimikes) {
-        int limit = 1;
-        if (tutkintonimikes.size() > limit) {
-            throw new RuntimeException(String.format("Not allowed error - Too many starting tutkintonimike objects, " +
-                "maybe you are using a wrong method? Expected at most %d tutkintonimike but got %d : %s"
-                , limit, tutkintonimikes.size(), tutkintonimikes.stream().map(KoodistoUri::getKoodiUri).collect(Collectors.toList())));
-        } else if (tutkintonimikes.isEmpty()) {
-            //at least parent komo's tutkintonimike can be null.
-            return null;
-        }
+  /** Koodisto uri. See accessors for more info. */
+  @Column(name = "koulutustyyppi_uri")
+  private String koulutustyyppiUri;
 
-        return tutkintonimikes.iterator().next().getKoodiUri();
+  /** Koodisto uri. See accessors for more info. */
+  @Column(name = "opintoala_uri")
+  private String opintoalaUri;
+
+  @Column(name = ULKOINEN_TUNNISTE_COLUMN_NAME)
+  private String ulkoinenTunniste;
+
+  protected static String getTutkintonimikeUri(Set<KoodistoUri> tutkintonimikes) {
+    int limit = 1;
+    if (tutkintonimikes.size() > limit) {
+      throw new RuntimeException(
+          String.format(
+              "Not allowed error - Too many starting tutkintonimike objects, "
+                  + "maybe you are using a wrong method? Expected at most %d tutkintonimike but got %d : %s",
+              limit,
+              tutkintonimikes.size(),
+              tutkintonimikes.stream().map(KoodistoUri::getKoodiUri).collect(Collectors.toList())));
+    } else if (tutkintonimikes.isEmpty()) {
+      // at least parent komo's tutkintonimike can be null.
+      return null;
     }
 
-    @PreUpdate
-    protected void beforeUpdate() {
-        if (!this.skipPreUpdate) {
-            updated = new Date();
-        }
-    }
+    return tutkintonimikes.iterator().next().getKoodiUri();
+  }
 
-    @PrePersist
-    protected void beforePersist() {
-        updated = new Date();
+  @PreUpdate
+  protected void beforeUpdate() {
+    if (!this.skipPreUpdate) {
+      updated = new Date();
     }
+  }
 
-    /**
-     * OID of this Koulutus. On database level, this does not uniquely identify
-     * Koulutus. For that version needs to be specified.
-     *
-     * @return the koulutusOid
-     */
-    public String getOid() {
-        return oid;
-    }
+  @PrePersist
+  protected void beforePersist() {
+    updated = new Date();
+  }
 
-    /**
-     * Assing the OID. Once this entity is persisted - OID cannot be changed.
-     *
-     * @param koulutusOid the koulutusOid to set
-     */
-    public void setOid(String koulutusOid) {
-        this.oid = koulutusOid;
-    }
+  /**
+   * OID of this Koulutus. On database level, this does not uniquely identify Koulutus. For that
+   * version needs to be specified.
+   *
+   * @return the koulutusOid
+   */
+  public String getOid() {
+    return oid;
+  }
 
-    /**
-     * Returns timestamp when this Koulutusmoduuli was updated or null if has
-     * never been persisted.
-     *
-     * @return
-     */
-    public Date getUpdated() {
-        return updated;
-    }
+  /**
+   * Assing the OID. Once this entity is persisted - OID cannot be changed.
+   *
+   * @param koulutusOid the koulutusOid to set
+   */
+  public void setOid(String koulutusOid) {
+    this.oid = koulutusOid;
+  }
 
-    /**
-     * Returns uri to koodisto representing current state of this Koulutus.
-     *
-     * @return
-     */
-    public TarjontaTila getTila() {
-        return tila;
-    }
+  /**
+   * Returns timestamp when this Koulutusmoduuli was updated or null if has never been persisted.
+   *
+   * @return
+   */
+  public Date getUpdated() {
+    return updated;
+  }
 
-    /**
-     * Set uri to koodisto representing the current state of this Koulutus.
-     *
-     * @param tila
-     */
-    public void setTila(TarjontaTila tila) {
-        // todo: since states come from koodisto, can we do any state lifecycle validation??
-        this.tila = tila;
-    }
+  /**
+   * Returns uri to koodisto representing current state of this Koulutus.
+   *
+   * @return
+   */
+  public TarjontaTila getTila() {
+    return tila;
+  }
 
-    /**
-     * <p>
-     * Koulutusjärjestelmän mukaisia koulutuksia koskeva luokittelu, joka kuvaa
-     * koulutusten sijoittumista tieteen, yhteiskunnan tai työelämän aloille ja
-     * jota käytetään koulutusten suunnitteluun, seurantaan ja säätelyyn
-     * Opetushallinnon Koulutusala 2002 -luokittelun mukaisia koulutusaloja ovat
-     * esimerkiksi kulttuuriala sekä tekniikan ja liikenteen ala.
-     * Koulutusalaluokitteluja on tällä hetkellä (kesäkuu 2012) neljä:
-     * opetushallinnon Koulutusala 2002- ja Koulutusala 1995 -luokittelut,
-     * ISCED-luokittelu sekä Tilastokeskuksen koulutusalaluokittelu.
-     * <br/>
-     * Lähde: OKSA sanasto:
-     * https://confluence.csc.fi/pages/viewpage.action?pageId=8688189
-     * </p>
-     *
-     * @return uri koodistoon
-     */
-    public String getKoulutusalaUri() {
-        return koulutusalaUri;
-    }
+  /**
+   * Set uri to koodisto representing the current state of this Koulutus.
+   *
+   * @param tila
+   */
+  public void setTila(TarjontaTila tila) {
+    // todo: since states come from koodisto, can we do any state lifecycle validation??
+    this.tila = tila;
+  }
 
-    /**
-     * @param koulutusAla the koulutusAla to set
-     */
-    public void setKoulutusalaUri(String koulutusAla) {
-        this.koulutusalaUri = koulutusAla;
-    }
+  /**
+   * Koulutusjärjestelmän mukaisia koulutuksia koskeva luokittelu, joka kuvaa koulutusten
+   * sijoittumista tieteen, yhteiskunnan tai työelämän aloille ja jota käytetään koulutusten
+   * suunnitteluun, seurantaan ja säätelyyn Opetushallinnon Koulutusala 2002 -luokittelun mukaisia
+   * koulutusaloja ovat esimerkiksi kulttuuriala sekä tekniikan ja liikenteen ala.
+   * Koulutusalaluokitteluja on tällä hetkellä (kesäkuu 2012) neljä: opetushallinnon Koulutusala
+   * 2002- ja Koulutusala 1995 -luokittelut, ISCED-luokittelu sekä Tilastokeskuksen
+   * koulutusalaluokittelu. <br>
+   * Lähde: OKSA sanasto: https://confluence.csc.fi/pages/viewpage.action?pageId=8688189
+   *
+   * @return uri koodistoon
+   */
+  public String getKoulutusalaUri() {
+    return koulutusalaUri;
+  }
 
-    /**
-     * EU classification
-     *
-     * @see https://confluence.csc.fi/display/oppija/EQF-luokitus
-     * @see http://en.wikipedia.org/wiki/European_Qualifications_Framework
-     *
-     * @return the eqfLuokitus
-     */
-    public String getEqfUri() {
-        return eqfUri;
-    }
+  /**
+   * @param koulutusAla the koulutusAla to set
+   */
+  public void setKoulutusalaUri(String koulutusAla) {
+    this.koulutusalaUri = koulutusAla;
+  }
 
-    /**
-     * @param eqfUri the eqfLuokitus to set
-     */
-    public void setEqfUri(String eqfUri) {
-        this.eqfUri = eqfUri;
-    }
+  /**
+   * EU classification
+   *
+   * @see https://confluence.csc.fi/display/oppija/EQF-luokitus
+   * @see http://en.wikipedia.org/wiki/European_Qualifications_Framework
+   * @return the eqfLuokitus
+   */
+  public String getEqfUri() {
+    return eqfUri;
+  }
 
-    /**
-     * National Qualification Framework. Describes how Finnish qualification
-     * system connects with EQF.
-     *
-     * @see http://www.oph.fi/mobility/qualifications_frameworks
-     *
-     * @return the nqfLuokitus
-     */
-    public String getNqfUri() {
-        return nqfUri;
-    }
+  /**
+   * @param eqfUri the eqfLuokitus to set
+   */
+  public void setEqfUri(String eqfUri) {
+    this.eqfUri = eqfUri;
+  }
 
-    /**
-     * @param nqfUri the nqfLuokitus to set
-     */
-    public void setNqfUri(String nqfUri) {
-        this.nqfUri = nqfUri;
-    }
+  /**
+   * National Qualification Framework. Describes how Finnish qualification system connects with EQF.
+   *
+   * @see http://www.oph.fi/mobility/qualifications_frameworks
+   * @return the nqfLuokitus
+   */
+  public String getNqfUri() {
+    return nqfUri;
+  }
 
-    /**
-     * Sample content of the actual data:
-     * <pre>
-     * 0	Esiaste
-     * 1	Alempi perusaste
-     * 2	Ylempi perusaste
-     * 3	Keskiaste
-     * 5	Alin korkea-aste
-     * 6	Alempi korkeakouluaste
-     * 7	Ylempi korkeakouluaste
-     * 8	Tutkijakoulutusaste
-     * 9	Koulutusaste tuntematon
-     * </pre>
-     *
-     * @see http://www.stat.fi/meta/luokitukset/koulutusaste/versio.html
-     *
-     * @return uri to koodisto
-     */
-    public String getKoulutusasteUri() {
-        return koulutusasteUri;
-    }
+  /**
+   * @param nqfUri the nqfLuokitus to set
+   */
+  public void setNqfUri(String nqfUri) {
+    this.nqfUri = nqfUri;
+  }
 
-    /**
-     * @param koulutusasteUri the koulutusasteUri to set
-     */
-    public void setKoulutusasteUri(String koulutusasteUri) {
-        this.koulutusasteUri = koulutusasteUri;
-    }
+  /**
+   * Sample content of the actual data:
+   *
+   * <pre>
+   * 0	Esiaste
+   * 1	Alempi perusaste
+   * 2	Ylempi perusaste
+   * 3	Keskiaste
+   * 5	Alin korkea-aste
+   * 6	Alempi korkeakouluaste
+   * 7	Ylempi korkeakouluaste
+   * 8	Tutkijakoulutusaste
+   * 9	Koulutusaste tuntematon
+   * </pre>
+   *
+   * @see http://www.stat.fi/meta/luokitukset/koulutusaste/versio.html
+   * @return uri to koodisto
+   */
+  public String getKoulutusasteUri() {
+    return koulutusasteUri;
+  }
 
-    /**
-     *
-     * @see #setKoulutusUri(java.lang.String)
-     * @return
-     */
-    public String getKoulutusUri() {
-        return koulutusUri;
-    }
+  /**
+   * @param koulutusasteUri the koulutusasteUri to set
+   */
+  public void setKoulutusasteUri(String koulutusasteUri) {
+    this.koulutusasteUri = koulutusasteUri;
+  }
 
-    /**
-     * Tilastokeskuksen maarittelema koulutus luokitus koodi. Arvona on uri
-     * koodistoon joka esittää kyseistä luokitus koodia.
-     *
-     *
-     * @see http://www.stat.fi/meta/luokitukset/koulutus/001-2010/index.html
-     * @param koulutusKoodiUri
-     */
-    public void setKoulutusUri(String koulutusKoodiUri) {
-        this.koulutusUri = koulutusKoodiUri;
-    }
+  /**
+   * @see #setKoulutusUri(java.lang.String)
+   * @return
+   */
+  public String getKoulutusUri() {
+    return koulutusUri;
+  }
 
-    /**
-     * <p>
-     * Pääaineen koulutusohjelman tai vastaavan nimi. Tämä attribuutti on pätevä
-     * silloin kun {@link Koulutusmoduuli#moduuliTyyppi} on
-     * {@link KoulutusmoduuliTyyppi#TUTKINTO_OHJELMA}.
-     * </p>
-     *
-     * <p>
-     * KV vastaavuus: ects:DegreeProgrammeTitle.
-     * </p>
-     *
-     * @return the tutkintoOhjelmanNimi
-     */
-    public String getTutkintoUri() {
-        return tutkintoUri;
-    }
+  /**
+   * Tilastokeskuksen maarittelema koulutus luokitus koodi. Arvona on uri koodistoon joka esittää
+   * kyseistä luokitus koodia.
+   *
+   * @see http://www.stat.fi/meta/luokitukset/koulutus/001-2010/index.html
+   * @param koulutusKoodiUri
+   */
+  public void setKoulutusUri(String koulutusKoodiUri) {
+    this.koulutusUri = koulutusKoodiUri;
+  }
 
-    /**
-     * @param tutkintoUri the tutkintoOhjelmanNimi to set
-     */
-    public void setTutkintoUri(String tutkintoUri) {
-        this.tutkintoUri = tutkintoUri;
-    }
+  /**
+   * Pääaineen koulutusohjelman tai vastaavan nimi. Tämä attribuutti on pätevä silloin kun {@link
+   * Koulutusmoduuli#moduuliTyyppi} on {@link KoulutusmoduuliTyyppi#TUTKINTO_OHJELMA}.
+   *
+   * <p>KV vastaavuus: ects:DegreeProgrammeTitle.
+   *
+   * @return the tutkintoOhjelmanNimi
+   */
+  public String getTutkintoUri() {
+    return tutkintoUri;
+  }
 
-    /**
-     * Palauttaa koodisto uri:n joka viittaa valittuun koulutusohjelmaan.
-     *
-     * Esimerkki koulutusohjelmasta: "Ympäristön suunnittelun ja rakentamisen
-     * koulutusohjelma (1603)"
-     *
-     * @return
-     */
-    public String getKoulutusohjelmaUri() {
-        return koulutusohjelmaUri;
-    }
+  /**
+   * @param tutkintoUri the tutkintoOhjelmanNimi to set
+   */
+  public void setTutkintoUri(String tutkintoUri) {
+    this.tutkintoUri = tutkintoUri;
+  }
 
-    public void setKoulutusohjelmaUri(String koulutusohjelmaUri) {
-        this.koulutusohjelmaUri = koulutusohjelmaUri;
-    }
+  /**
+   * Palauttaa koodisto uri:n joka viittaa valittuun koulutusohjelmaan.
+   *
+   * <p>Esimerkki koulutusohjelmasta: "Ympäristön suunnittelun ja rakentamisen koulutusohjelma
+   * (1603)"
+   *
+   * @return
+   */
+  public String getKoulutusohjelmaUri() {
+    return koulutusohjelmaUri;
+  }
 
-    /**
-     * Laajuuden arvo. Esim. 30.
-     *
-     * @return
-     */
-    public String getOpintojenLaajuusarvoUri() {
-        return opintojenLaajuusarvoUri;
-    }
+  public void setKoulutusohjelmaUri(String koulutusohjelmaUri) {
+    this.koulutusohjelmaUri = koulutusohjelmaUri;
+  }
 
-    /**
-     * Laajuuden yksikko. Sisalto ilmeisesti koodisto uri mutta esitetty tieto
-     * esim. "opintoviikko"
-     *
-     * @return
-     */
-    public String getOpintojenLaajuusyksikkoUri() {
-        return opintojenLaajuusyksikkoUri;
-    }
+  /**
+   * Laajuuden arvo. Esim. 30.
+   *
+   * @return
+   */
+  public String getOpintojenLaajuusarvoUri() {
+    return opintojenLaajuusarvoUri;
+  }
 
-    /**
-     * @return the opintoala
-     */
-    public String getOpintoalaUri() {
-        return opintoalaUri;
-    }
+  /**
+   * Laajuuden yksikko. Sisalto ilmeisesti koodisto uri mutta esitetty tieto esim. "opintoviikko"
+   *
+   * @return
+   */
+  public String getOpintojenLaajuusyksikkoUri() {
+    return opintojenLaajuusyksikkoUri;
+  }
 
-    /**
-     * @param opintoalaUri the opintoala to set
-     */
-    public void setOpintoalaUri(String opintoalaUri) {
-        this.opintoalaUri = opintoalaUri;
-    }
+  /**
+   * @return the opintoala
+   */
+  public String getOpintoalaUri() {
+    return opintoalaUri;
+  }
 
-    public String getLukiolinjaUri() {
-        return lukiolinjaUri;
-    }
+  /**
+   * @param opintoalaUri the opintoala to set
+   */
+  public void setOpintoalaUri(String opintoalaUri) {
+    this.opintoalaUri = opintoalaUri;
+  }
 
-    public void setLukiolinjaUri(String lukiolinjaUri) {
-        this.lukiolinjaUri = lukiolinjaUri;
-    }
+  public String getLukiolinjaUri() {
+    return lukiolinjaUri;
+  }
 
-    /**
-     * Koulutuksen laajuus. yksikkoUri on Koodisto uri joka kertoo laajuuden
-     * yksikon kuten "vuosi", "kuukausi" "opintojakso". Arvo on arvo
-     * edellämainitussa yksikössä.
-     *
-     * @param yksikkoUri
-     * @param arvo
-     */
-    public void setOpintojenLaajuus(String yksikkoUri, String arvo) {
-        setOpintojenLaajuusyksikkoUri(yksikkoUri);
-        setOpintojenLaajuusarvoUri(arvo);
-    }
+  public void setLukiolinjaUri(String lukiolinjaUri) {
+    this.lukiolinjaUri = lukiolinjaUri;
+  }
 
-    /**
-     * @return the koulutustyyppiUri
-     */
-    public String getKoulutustyyppiUri() {
-        return koulutustyyppiUri;
-    }
+  /**
+   * Koulutuksen laajuus. yksikkoUri on Koodisto uri joka kertoo laajuuden yksikon kuten "vuosi",
+   * "kuukausi" "opintojakso". Arvo on arvo edellämainitussa yksikössä.
+   *
+   * @param yksikkoUri
+   * @param arvo
+   */
+  public void setOpintojenLaajuus(String yksikkoUri, String arvo) {
+    setOpintojenLaajuusyksikkoUri(yksikkoUri);
+    setOpintojenLaajuusarvoUri(arvo);
+  }
 
-    /**
-     * @param koulutustyyppiUri the koulutustyyppiUri to set
-     */
-    public void setKoulutustyyppiUri(String koulutustyyppiUri) {
-        this.koulutustyyppiUri = koulutustyyppiUri;
-    }
+  /**
+   * @return the koulutustyyppiUri
+   */
+  public String getKoulutustyyppiUri() {
+    return koulutustyyppiUri;
+  }
 
-    /**
-     * @param opintojenLaajuusyksikkoUri the opintojenLaajuusyksikkoUri to set
-     */
-    public void setOpintojenLaajuusyksikkoUri(String opintojenLaajuusyksikkoUri) {
-        this.opintojenLaajuusyksikkoUri = opintojenLaajuusyksikkoUri;
-    }
+  /**
+   * @param koulutustyyppiUri the koulutustyyppiUri to set
+   */
+  public void setKoulutustyyppiUri(String koulutustyyppiUri) {
+    this.koulutustyyppiUri = koulutustyyppiUri;
+  }
 
-    /**
-     * @param opintojenLaajuusarvoUri the opintojenLaajuusarvoUri to set
-     */
-    public void setOpintojenLaajuusarvoUri(String opintojenLaajuusarvoUri) {
-        this.opintojenLaajuusarvoUri = opintojenLaajuusarvoUri;
-    }
+  /**
+   * @param opintojenLaajuusyksikkoUri the opintojenLaajuusyksikkoUri to set
+   */
+  public void setOpintojenLaajuusyksikkoUri(String opintojenLaajuusyksikkoUri) {
+    this.opintojenLaajuusyksikkoUri = opintojenLaajuusyksikkoUri;
+  }
 
-    /**
-     * Ulkoinen tunniste on koulutusmoduulin yksiloiva tunniste toisessa
-     * jarjestelmassa. Esim. jos tama koulutusmoduuli on tuoto era-ajona
-     * toisesta jarjestelmasta. Sisallon muotoon ei oteta kantaa.
-     *
-     * @return
-     */
-    public String getUlkoinenTunniste() {
-        return ulkoinenTunniste;
-    }
+  /**
+   * @param opintojenLaajuusarvoUri the opintojenLaajuusarvoUri to set
+   */
+  public void setOpintojenLaajuusarvoUri(String opintojenLaajuusarvoUri) {
+    this.opintojenLaajuusarvoUri = opintojenLaajuusarvoUri;
+  }
 
-    /**
-     * @see #getUlkoinenTunniste()
-     * @param ulkoinenTunniste
-     */
-    public void setUlkoinenTunniste(String ulkoinenTunniste) {
-        this.ulkoinenTunniste = ulkoinenTunniste;
-    }
+  /**
+   * Ulkoinen tunniste on koulutusmoduulin yksiloiva tunniste toisessa jarjestelmassa. Esim. jos
+   * tama koulutusmoduuli on tuoto era-ajona toisesta jarjestelmasta. Sisallon muotoon ei oteta
+   * kantaa.
+   *
+   * @return
+   */
+  public String getUlkoinenTunniste() {
+    return ulkoinenTunniste;
+  }
 
-    /**
-     * @return the osaamisalaUri
-     */
-    public String getOsaamisalaUri() {
-        return osaamisalaUri;
-    }
+  /**
+   * @see #getUlkoinenTunniste()
+   * @param ulkoinenTunniste
+   */
+  public void setUlkoinenTunniste(String ulkoinenTunniste) {
+    this.ulkoinenTunniste = ulkoinenTunniste;
+  }
 
-    /**
-     * @param osaamisalaUri the osaamisalaUri to set
-     */
-    public void setOsaamisalaUri(String osaamisalaUri) {
-        this.osaamisalaUri = osaamisalaUri;
-    }
+  /**
+   * @return the osaamisalaUri
+   */
+  public String getOsaamisalaUri() {
+    return osaamisalaUri;
+  }
 
-    public void setSkipPreUpdate(boolean skip) {
-        this.skipPreUpdate = skip;
-    }
+  /**
+   * @param osaamisalaUri the osaamisalaUri to set
+   */
+  public void setOsaamisalaUri(String osaamisalaUri) {
+    this.osaamisalaUri = osaamisalaUri;
+  }
 
+  public void setSkipPreUpdate(boolean skip) {
+    this.skipPreUpdate = skip;
+  }
 }

@@ -25,30 +25,31 @@ import org.slf4j.LoggerFactory;
  *
  * @author mlyly
  */
-public class ValintakoeAjankohtaToValintakoeAjankohtaRDTOConverter extends BaseRDTOConverter<ValintakoeAjankohta, ValintakoeAjankohtaRDTO> {
+public class ValintakoeAjankohtaToValintakoeAjankohtaRDTOConverter
+    extends BaseRDTOConverter<ValintakoeAjankohta, ValintakoeAjankohtaRDTO> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ValintakoeAjankohtaToValintakoeAjankohtaRDTOConverter.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(ValintakoeAjankohtaToValintakoeAjankohtaRDTOConverter.class);
 
-    @Override
-    public ValintakoeAjankohtaRDTO convert(ValintakoeAjankohta s) {
-        LOG.debug("convert({})", s);
+  @Override
+  public ValintakoeAjankohtaRDTO convert(ValintakoeAjankohta s) {
+    LOG.debug("convert({})", s);
 
-        if (s == null) {
-            return null;
-        }
-
-        ValintakoeAjankohtaRDTO t = new ValintakoeAjankohtaRDTO();
-
-        t.setOsoite(getConversionService().convert(s.getAjankohdanOsoite(), OsoiteRDTO.class));
-        t.setAlkaa(s.getAlkamisaika());
-        t.setLisatiedot(s.getLisatietoja());
-        t.setLoppuu(s.getPaattymisaika());
-        t.setKellonaikaKaytossa(s.isKellonaikaKaytossa());
-
-        t.setOid("" + s.getId());
-        t.setVersion(s.getVersion() != null ? s.getVersion().intValue() : 0);
-
-        return t;
+    if (s == null) {
+      return null;
     }
 
+    ValintakoeAjankohtaRDTO t = new ValintakoeAjankohtaRDTO();
+
+    t.setOsoite(getConversionService().convert(s.getAjankohdanOsoite(), OsoiteRDTO.class));
+    t.setAlkaa(s.getAlkamisaika());
+    t.setLisatiedot(s.getLisatietoja());
+    t.setLoppuu(s.getPaattymisaika());
+    t.setKellonaikaKaytossa(s.isKellonaikaKaytossa());
+
+    t.setOid("" + s.getId());
+    t.setVersion(s.getVersion() != null ? s.getVersion().intValue() : 0);
+
+    return t;
+  }
 }

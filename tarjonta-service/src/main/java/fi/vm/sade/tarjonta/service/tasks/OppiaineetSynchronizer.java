@@ -15,16 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Profile("default")
 public class OppiaineetSynchronizer {
 
-    @Autowired
-    private OppiaineDAO oppiaineDAO;
+  @Autowired private OppiaineDAO oppiaineDAO;
 
-    final Logger logger = LoggerFactory.getLogger(OppiaineetSynchronizer.class);
+  final Logger logger = LoggerFactory.getLogger(OppiaineetSynchronizer.class);
 
-    @Transactional
-    @Scheduled(cron = "0 2 * * * ?")
-    public void deleteUnusedOppiaineet() {
-        logger.debug("Deleting unused oppiaineet");
-        oppiaineDAO.deleteUnusedOppiaineet();
-    }
-
+  @Transactional
+  @Scheduled(cron = "0 2 * * * ?")
+  public void deleteUnusedOppiaineet() {
+    logger.debug("Deleting unused oppiaineet");
+    oppiaineDAO.deleteUnusedOppiaineet();
+  }
 }

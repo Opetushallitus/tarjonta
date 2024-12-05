@@ -17,48 +17,42 @@ package fi.vm.sade.tarjonta.service.impl.conversion;
  * European Union Public Licence for more details.
  */
 
-
-import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
-import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
-
+import fi.vm.sade.tarjonta.service.conversion.AbstractToDomainConverter;
+import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import java.util.Calendar;
 
-/**
- * Created by: Tuomas Katva
- */
+/** Created by: Tuomas Katva */
+public class HakukohdeLiiteFromDTOConverter
+    extends AbstractToDomainConverter<HakukohdeLiiteTyyppi, HakukohdeLiite> {
 
-public class HakukohdeLiiteFromDTOConverter extends AbstractToDomainConverter<HakukohdeLiiteTyyppi, HakukohdeLiite> {
+  @Override
+  public HakukohdeLiite convert(HakukohdeLiiteTyyppi hakukohdeLiiteTyyppi) {
 
+    HakukohdeLiite hakukohdeLiite = new HakukohdeLiite();
 
+    if (hakukohdeLiiteTyyppi.getLiitteenId() != null) {
+      hakukohdeLiite.setId(new Long(hakukohdeLiiteTyyppi.getLiitteenId().trim()));
+    }
 
-      @Override
-      public HakukohdeLiite convert(HakukohdeLiiteTyyppi hakukohdeLiiteTyyppi) {
+    hakukohdeLiite.setErapaiva(hakukohdeLiiteTyyppi.getToimitettavaMennessa());
+    hakukohdeLiite.setLiitteenTyyppiKoodistoNimi(
+        hakukohdeLiiteTyyppi.getLiitteenTyyppiKoodistoNimi());
+    hakukohdeLiite.setKuvaus(
+        CommonFromDTOConverter.convertMonikielinenTekstiTyyppiToDomainValue(
+            hakukohdeLiiteTyyppi.getLiitteenKuvaus()));
+    hakukohdeLiite.setLiitetyyppi(hakukohdeLiiteTyyppi.getLiitteenTyyppi());
+    hakukohdeLiite.setSahkoinenToimitusosoite(hakukohdeLiiteTyyppi.getSahkoinenToimitusOsoite());
+    hakukohdeLiite.setToimitusosoite(
+        CommonFromDTOConverter.convertOsoiteToOsoiteTyyppi(
+            hakukohdeLiiteTyyppi.getLiitteenToimitusOsoite()));
 
-             HakukohdeLiite hakukohdeLiite = new HakukohdeLiite();
+    if (hakukohdeLiiteTyyppi.getViimeisinPaivittajaOid() != null) {
+      hakukohdeLiite.setLastUpdatedByOid(hakukohdeLiiteTyyppi.getViimeisinPaivittajaOid());
+    }
 
-             if(hakukohdeLiiteTyyppi.getLiitteenId() != null) {
-                  hakukohdeLiite.setId(new Long(hakukohdeLiiteTyyppi.getLiitteenId().trim()));
-             }
+    hakukohdeLiite.setLastUpdateDate(Calendar.getInstance().getTime());
 
-             hakukohdeLiite.setErapaiva(hakukohdeLiiteTyyppi.getToimitettavaMennessa());
-             hakukohdeLiite.setLiitteenTyyppiKoodistoNimi(hakukohdeLiiteTyyppi.getLiitteenTyyppiKoodistoNimi());
-             hakukohdeLiite.setKuvaus(CommonFromDTOConverter.convertMonikielinenTekstiTyyppiToDomainValue(hakukohdeLiiteTyyppi.getLiitteenKuvaus()));
-             hakukohdeLiite.setLiitetyyppi(hakukohdeLiiteTyyppi.getLiitteenTyyppi());
-             hakukohdeLiite.setSahkoinenToimitusosoite(hakukohdeLiiteTyyppi.getSahkoinenToimitusOsoite());
-             hakukohdeLiite.setToimitusosoite(CommonFromDTOConverter.convertOsoiteToOsoiteTyyppi(hakukohdeLiiteTyyppi.getLiitteenToimitusOsoite()));
-
-             if (hakukohdeLiiteTyyppi.getViimeisinPaivittajaOid() != null) {
-                 hakukohdeLiite.setLastUpdatedByOid(hakukohdeLiiteTyyppi.getViimeisinPaivittajaOid());
-             }
-
-             hakukohdeLiite.setLastUpdateDate(Calendar.getInstance().getTime());
-
-             return hakukohdeLiite;
-      }
-
-
-
-
-
+    return hakukohdeLiite;
+  }
 }

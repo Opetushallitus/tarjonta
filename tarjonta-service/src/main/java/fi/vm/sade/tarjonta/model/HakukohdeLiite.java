@@ -15,189 +15,187 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import java.util.Date;
-import javax.persistence.*;
-
-import com.google.common.base.Preconditions;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
 import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.common.base.Preconditions;
+import jakarta.persistence.*;
+import java.util.Date;
+
 @Entity
-@JsonIgnoreProperties({"id","version", "hibernateLazyInitializer", "handler", "hakukohde"})
+@JsonIgnoreProperties({"id", "version", "hibernateLazyInitializer", "handler", "hakukohde"})
 @Table(name = "hakukohdeliite")
 public class HakukohdeLiite extends TarjontaBaseEntity {
 
-    private static final long serialVersionUID = 6186622208433509334L;
+  private static final long serialVersionUID = 6186622208433509334L;
 
-    @ManyToOne (fetch = FetchType.LAZY, optional=false)
-    @JoinColumn(name="hakukohde_id", nullable=false)
-    private Hakukohde hakukohde;
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "hakukohde_id", nullable = false)
+  private Hakukohde hakukohde;
 
-    @Column(name="vastaanottaja")
-    private String vastaanottaja;
+  @Column(name = "vastaanottaja")
+  private String vastaanottaja;
 
-    @Column(name="hakukohde_liite_nimi", nullable=false)
-    private String hakukohdeLiiteNimi;
+  @Column(name = "hakukohde_liite_nimi", nullable = false)
+  private String hakukohdeLiiteNimi;
 
-    @Column(name = "liitetyyppi")
-    private String liitetyyppi;
+  @Column(name = "liitetyyppi")
+  private String liitetyyppi;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
-    @JoinColumn(name = "kuvaus_teksti_id")
-    private MonikielinenTeksti kuvaus;
+  @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+  @JoinColumn(name = "kuvaus_teksti_id")
+  private MonikielinenTeksti kuvaus;
 
-    @Embedded
-    private Osoite toimitusosoite;
+  @Embedded private Osoite toimitusosoite;
 
-    @Column(name="kieli")
-    private String kieli;
+  @Column(name = "kieli")
+  private String kieli;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="erapaiva")
-    private Date erapaiva;
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(name = "erapaiva")
+  private Date erapaiva;
 
-    @Column(name="sahkoinenToimitusosoite")
-    private String sahkoinenToimitusosoite;
+  @Column(name = "sahkoinenToimitusosoite")
+  private String sahkoinenToimitusosoite;
 
-    @Column(name="viimPaivitysPvm")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastUpdateDate;
+  @Column(name = "viimPaivitysPvm")
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date lastUpdateDate;
 
-    @Column(name="viimPaivittajaOid")
-    private String lastUpdatedByOid;
+  @Column(name = "viimPaivittajaOid")
+  private String lastUpdatedByOid;
 
-    @Column(name = "kaytetaan_hakulomakkeella", nullable = false)
-    private boolean kaytetaanHakulomakkeella = true;
+  @Column(name = "kaytetaan_hakulomakkeella", nullable = false)
+  private boolean kaytetaanHakulomakkeella = true;
 
-    @Column(name="jarjestys")
-    private Integer jarjestys;
+  @Column(name = "jarjestys")
+  private Integer jarjestys;
 
-    @PreUpdate
-    public void filterHTMLFields() {
-        filter(getKuvaus());
-    }
+  @PreUpdate
+  public void filterHTMLFields() {
+    filter(getKuvaus());
+  }
 
-    @PrePersist
-    public void checkConstraints() {
-    	Preconditions.checkState(liitetyyppi!=null || kieli!=null, "Either liitetyyppiuri or kieli must be set");
-        filter(getKuvaus());
-    }
+  @PrePersist
+  public void checkConstraints() {
+    Preconditions.checkState(
+        liitetyyppi != null || kieli != null, "Either liitetyyppiuri or kieli must be set");
+    filter(getKuvaus());
+  }
 
-    public Date getErapaiva() {
-        return erapaiva;
-    }
+  public Date getErapaiva() {
+    return erapaiva;
+  }
 
-    public void setErapaiva(Date erapaiva) {
-        this.erapaiva = erapaiva;
-    }
+  public void setErapaiva(Date erapaiva) {
+    this.erapaiva = erapaiva;
+  }
 
-    public MonikielinenTeksti getKuvaus() {
-        return kuvaus;
-    }
+  public MonikielinenTeksti getKuvaus() {
+    return kuvaus;
+  }
 
-    public void setKuvaus(MonikielinenTeksti kuvaus) {
-        this.kuvaus = kuvaus;
-    }
+  public void setKuvaus(MonikielinenTeksti kuvaus) {
+    this.kuvaus = kuvaus;
+  }
 
-    public String getLiitetyyppi() {
-        return liitetyyppi;
-    }
+  public String getLiitetyyppi() {
+    return liitetyyppi;
+  }
 
-    public void setLiitetyyppi(String liitetyyppi) {
-        this.liitetyyppi = liitetyyppi;
-    }
+  public void setLiitetyyppi(String liitetyyppi) {
+    this.liitetyyppi = liitetyyppi;
+  }
 
-    public String getSahkoinenToimitusosoite() {
-        return sahkoinenToimitusosoite;
-    }
+  public String getSahkoinenToimitusosoite() {
+    return sahkoinenToimitusosoite;
+  }
 
-    public void setSahkoinenToimitusosoite(String sahkoinenToimitusosoite) {
-        this.sahkoinenToimitusosoite = sahkoinenToimitusosoite;
-    }
+  public void setSahkoinenToimitusosoite(String sahkoinenToimitusosoite) {
+    this.sahkoinenToimitusosoite = sahkoinenToimitusosoite;
+  }
 
-    public Osoite getToimitusosoite() {
-        return toimitusosoite;
-    }
+  public Osoite getToimitusosoite() {
+    return toimitusosoite;
+  }
 
-    public void setToimitusosoite(Osoite toimitusosoite) {
-        this.toimitusosoite = toimitusosoite;
-    }
+  public void setToimitusosoite(Osoite toimitusosoite) {
+    this.toimitusosoite = toimitusosoite;
+  }
 
-    public Hakukohde getHakukohde() {
-        return hakukohde;
-    }
+  public Hakukohde getHakukohde() {
+    return hakukohde;
+  }
 
-    public void setHakukohde(Hakukohde hakukohde) {
-        this.hakukohde = hakukohde;
-    }
+  public void setHakukohde(Hakukohde hakukohde) {
+    this.hakukohde = hakukohde;
+  }
 
-    @Deprecated
-    public String getLiitteenTyyppiKoodistoNimi() {
-        return hakukohdeLiiteNimi; //liitteenTyyppiKoodistoNimi;
-    }
+  @Deprecated
+  public String getLiitteenTyyppiKoodistoNimi() {
+    return hakukohdeLiiteNimi; // liitteenTyyppiKoodistoNimi;
+  }
 
-    @Deprecated
-    public void setLiitteenTyyppiKoodistoNimi(String liitteenTyyppiKoodistoNimi) {
-    	hakukohdeLiiteNimi = liitteenTyyppiKoodistoNimi;
-    	//this.liitteenTyyppiKoodistoNimi = liitteenTyyppiKoodistoNimi;
-    }
+  @Deprecated
+  public void setLiitteenTyyppiKoodistoNimi(String liitteenTyyppiKoodistoNimi) {
+    hakukohdeLiiteNimi = liitteenTyyppiKoodistoNimi;
+    // this.liitteenTyyppiKoodistoNimi = liitteenTyyppiKoodistoNimi;
+  }
 
-    public Date getLastUpdateDate() {
-        return lastUpdateDate;
-    }
+  public Date getLastUpdateDate() {
+    return lastUpdateDate;
+  }
 
-    public void setLastUpdateDate(Date lastUpdateDate) {
-        this.lastUpdateDate = lastUpdateDate;
-    }
+  public void setLastUpdateDate(Date lastUpdateDate) {
+    this.lastUpdateDate = lastUpdateDate;
+  }
 
-    public String getLastUpdatedByOid() {
-        return lastUpdatedByOid;
-    }
+  public String getLastUpdatedByOid() {
+    return lastUpdatedByOid;
+  }
 
-    public void setLastUpdatedByOid(String lastUpdatedByOid) {
-        this.lastUpdatedByOid = lastUpdatedByOid;
-    }
+  public void setLastUpdatedByOid(String lastUpdatedByOid) {
+    this.lastUpdatedByOid = lastUpdatedByOid;
+  }
 
-    public String getKieli() {
-        return kieli;
-    }
+  public String getKieli() {
+    return kieli;
+  }
 
-    public void setKieli(String kieli) {
-        this.kieli = kieli;
-    }
+  public void setKieli(String kieli) {
+    this.kieli = kieli;
+  }
 
-    public String getHakukohdeLiiteNimi() {
-        return hakukohdeLiiteNimi;
-    }
+  public String getHakukohdeLiiteNimi() {
+    return hakukohdeLiiteNimi;
+  }
 
-    public void setHakukohdeLiiteNimi(String hakukohdeLiiteNimi) {
+  public void setHakukohdeLiiteNimi(String hakukohdeLiiteNimi) {
 
-        this.hakukohdeLiiteNimi = hakukohdeLiiteNimi;
-    }
+    this.hakukohdeLiiteNimi = hakukohdeLiiteNimi;
+  }
 
-    public void setJarjestys(Integer jarjestys) {
-        this.jarjestys = jarjestys;
-    }
+  public void setJarjestys(Integer jarjestys) {
+    this.jarjestys = jarjestys;
+  }
 
-    public Integer getJarjestys() {
-        return jarjestys;
-    }
+  public Integer getJarjestys() {
+    return jarjestys;
+  }
 
-    public boolean isKaytetaanHakulomakkeella() {
-        return kaytetaanHakulomakkeella;
-    }
+  public boolean isKaytetaanHakulomakkeella() {
+    return kaytetaanHakulomakkeella;
+  }
 
-    public void setKaytetaanHakulomakkeella(boolean kaytetaanHakulomakkeella) {
-        this.kaytetaanHakulomakkeella = kaytetaanHakulomakkeella;
-    }
+  public void setKaytetaanHakulomakkeella(boolean kaytetaanHakulomakkeella) {
+    this.kaytetaanHakulomakkeella = kaytetaanHakulomakkeella;
+  }
 
-    public String getVastaanottaja() {
-        return vastaanottaja;
-    }
+  public String getVastaanottaja() {
+    return vastaanottaja;
+  }
 
-    public void setVastaanottaja(String vastaanottaja) {
-        this.vastaanottaja = vastaanottaja;
-    }
+  public void setVastaanottaja(String vastaanottaja) {
+    this.vastaanottaja = vastaanottaja;
+  }
 }
-

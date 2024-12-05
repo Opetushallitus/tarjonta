@@ -14,6 +14,12 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.stub;
+import static org.mockito.Mockito.when;
+
 import com.google.common.collect.Lists;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.model.Haku;
@@ -32,6 +38,9 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -43,217 +52,241 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.stub;
-import static org.mockito.Mockito.when;
-
-
-@TestExecutionListeners(listeners = {
-    DependencyInjectionTestExecutionListener.class,
-    DirtiesContextTestExecutionListener.class,
-    TransactionalTestExecutionListener.class
-})
+@TestExecutionListeners(
+    listeners = {
+      DependencyInjectionTestExecutionListener.class,
+      DirtiesContextTestExecutionListener.class,
+      TransactionalTestExecutionListener.class
+    })
 @ActiveProfiles("embedded-solr")
 @Transactional()
 public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
 
-    private static final String KOMO2_OID = "another_komo_oid";
-    private static final String KOMOTO2_OID = "another_komoto_oid";
-    private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+  private static final String KOMO2_OID = "another_komo_oid";
+  private static final String KOMOTO2_OID = "another_komoto_oid";
+  private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
-    private Hakukohde hakukohde;
-    private Haku haku;
+  private Hakukohde hakukohde;
+  private Haku haku;
 
-    @Before
-    public void setUp() throws OIDCreationException {
-        reload();
-        haku = fixtures.createHaku();
-        hakuDao.insert(haku);
+  @Before
+  public void setUp() throws OIDCreationException {
+    reload();
+    haku = fixtures.createHaku();
+    hakuDao.insert(haku);
 
-        hakukohde = fixtures.createHakukohde();
-        hakukohde.setHakukohdeKoodistoNimi("hakukohde name");
-        hakukohde.setHakukohdeNimi("hakukohde_koodi_uri");
-        hakukohde.setOid("hakukohde_oid"); //three exams
-        converterToRDTO = mock(EntityConverterToRDTO.class);
-        Whitebox.setInternalState(instance, "converterToRDTO", converterToRDTO);
-        auditHelper = mock(AuditHelper.class);
-        Whitebox.setInternalState(instance, "auditHelper", auditHelper);
-    }
+    hakukohde = fixtures.createHakukohde();
+    hakukohde.setHakukohdeKoodistoNimi("hakukohde name");
+    hakukohde.setHakukohdeNimi("hakukohde_koodi_uri");
+    hakukohde.setOid("hakukohde_oid"); // three exams
+    converterToRDTO = mock(EntityConverterToRDTO.class);
+    Whitebox.setInternalState(instance, "converterToRDTO", converterToRDTO);
+    auditHelper = mock(AuditHelper.class);
+    Whitebox.setInternalState(instance, "auditHelper", auditHelper);
+  }
 
-    @Test
-    public void testSafeDelete() throws ExceptionMessage, Exception {
-        KoulutusKorkeakouluV1RDTO dto = getKoulutus();
+  @Test
+  public void testSafeDelete() throws ExceptionMessage, Exception {
+    KoulutusKorkeakouluV1RDTO dto = getKoulutus();
 
-        //EXPECT
-        permissionChecker.checkCreateKoulutus(ORGANISATION_OID);
-        permissionChecker.checkUpdateKoulutusByTarjoajaOid(ORGANISATION_OID);
+    // EXPECT
+    permissionChecker.checkCreateKoulutus(ORGANISATION_OID);
+    permissionChecker.checkUpdateKoulutusByTarjoajaOid(ORGANISATION_OID);
 
-        /*
-         * INSERT KORKEAKOULU OBJECT 1 TO DB
-         */
-        //a quick test data insert, no unnecessary DTO conversions.
-        KoulutusmoduuliToteutus kt1 = quickKKInsert(dto);
+    /*
+     * INSERT KORKEAKOULU OBJECT 1 TO DB
+     */
+    // a quick test data insert, no unnecessary DTO conversions.
+    KoulutusmoduuliToteutus kt1 = quickKKInsert(dto);
 
-        stub(oidService.get(TarjontaOidType.KOMO)).toReturn(KOMO2_OID);
+    stub(oidService.get(TarjontaOidType.KOMO)).toReturn(KOMO2_OID);
 
-        ResultV1RDTO deleteResult = instance.deleteByOid(null, request);
-        assertEquals("No komoto oid", ResultV1RDTO.ResultStatus.NOT_FOUND, deleteResult.getStatus());
+    ResultV1RDTO deleteResult = instance.deleteByOid(null, request);
+    assertEquals("No komoto oid", ResultV1RDTO.ResultStatus.NOT_FOUND, deleteResult.getStatus());
 
+    /*
+     * SIMPLE DELETE TEST
+     */
+    deleteSuccessTest(kt1);
 
-        /*
-         * SIMPLE DELETE TEST
-         */
-        deleteSuccessTest(kt1);
+    /*
+     * INSERT KORKEAKOULU OBJECT 2 TO DB
+     */
+    stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn(KOMOTO2_OID);
+    KoulutusmoduuliToteutus kt2 = quickKKInsert(dto);
 
-        /*
-         * INSERT KORKEAKOULU OBJECT 2 TO DB
-         */
-        stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn(KOMOTO2_OID);
-        KoulutusmoduuliToteutus kt2 = quickKKInsert(dto);
+    /*
+     * MULTIPLE DELETE TESTS
+     */
+    deleteValidationTests(kt2);
+  }
 
-        /*
-         * MULTIPLE DELETE TESTS
-         */
-        deleteValidationTests(kt2);
-    }
+  private void deleteSuccessTest(final KoulutusmoduuliToteutus persistedKomoto) {
+    final String persistedKomotoOid = persistedKomoto.getOid();
+    final String persistedKomoOid = persistedKomoto.getKoulutusmoduuli().getOid();
 
-    private void deleteSuccessTest(final KoulutusmoduuliToteutus persistedKomoto) {
-        final String persistedKomotoOid = persistedKomoto.getOid();
-        final String persistedKomoOid = persistedKomoto.getKoulutusmoduuli().getOid();
+    when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid))
+        .thenReturn(Lists.<String>newArrayList());
+    when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid))
+        .thenReturn(Lists.<String>newArrayList());
 
-        when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
-        when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
+    KoulutuksetVastaus kv = new KoulutuksetVastaus();
+    List<KoulutusPerustieto> perustiedot = Lists.newArrayList();
+    kv.setKoulutukset(perustiedot);
 
-        KoulutuksetVastaus kv = new KoulutuksetVastaus();
-        List<KoulutusPerustieto> perustiedot = Lists.newArrayList();
-        kv.setKoulutukset(perustiedot);
+    ResultV1RDTO deleteResult = instance.deleteByOid(persistedKomotoOid, request);
+    assertEquals("validation error", ResultV1RDTO.ResultStatus.OK, deleteResult.getStatus());
+    assertEquals(
+        "Validation errors delete koulutus",
+        true,
+        deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
 
-        ResultV1RDTO deleteResult = instance.deleteByOid(persistedKomotoOid, request);
-        assertEquals("validation error", ResultV1RDTO.ResultStatus.OK, deleteResult.getStatus());
-        assertEquals("Validation errors delete koulutus", true, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
+    final KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(persistedKomotoOid);
+    final Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(persistedKomoOid);
 
-        final KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(persistedKomotoOid);
-        final Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(persistedKomoOid);
+    assertEquals("invalid status", TarjontaTila.POISTETTU, komoto.getTila());
+    assertEquals("invalid status", TarjontaTila.POISTETTU, komo.getTila());
 
-        assertEquals("invalid status", TarjontaTila.POISTETTU, komoto.getTila());
-        assertEquals("invalid status", TarjontaTila.POISTETTU, komo.getTila());
+    /* ---------------- NEXT TEST ----------------
+     * ERROR : delete will fail as the status of komoto is 'deleted'.
+     */
+    deleteResult = instance.deleteByOid(persistedKomotoOid, request);
+    assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
+    assertEquals(
+        "Validation",
+        false,
+        deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
+    assertEquals(
+        ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
+    assertEquals("komoto.tila", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
+    assertEquals(
+        KoulutusValidationMessages.KOULUTUS_DELETED.lower(),
+        ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorMessageKey());
+  }
 
-        /* ---------------- NEXT TEST ----------------
-         * ERROR : delete will fail as the status of komoto is 'deleted'.
-         */
-        deleteResult = instance.deleteByOid(persistedKomotoOid, request);
-        assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
-        assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
-        assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
-        assertEquals("komoto.tila", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
-        assertEquals(KoulutusValidationMessages.KOULUTUS_DELETED.lower(), ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorMessageKey());
-    }
+  private void deleteValidationTests(KoulutusmoduuliToteutus persistedKomoto) {
+    final String persistedKomotoOid = persistedKomoto.getOid();
+    final String persistedKomoOid = persistedKomoto.getKoulutusmoduuli().getOid();
 
-    private void deleteValidationTests(KoulutusmoduuliToteutus persistedKomoto) {
-        final String persistedKomotoOid = persistedKomoto.getOid();
-        final String persistedKomoOid = persistedKomoto.getKoulutusmoduuli().getOid();
+    KoulutuksetVastaus kv = new KoulutuksetVastaus();
+    List<KoulutusPerustieto> perustiedot = Lists.newArrayList();
+    kv.setKoulutukset(perustiedot);
 
-        KoulutuksetVastaus kv = new KoulutuksetVastaus();
-        List<KoulutusPerustieto> perustiedot = Lists.newArrayList();
-        kv.setKoulutukset(perustiedot);
+    ArrayList<String> children = Lists.newArrayList();
+    children.add("komo_oid_children");
 
-        ArrayList<String> children = Lists.newArrayList();
-        children.add("komo_oid_children");
+    when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).thenReturn(children);
+    when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid))
+        .thenReturn(Lists.<String>newArrayList());
 
-        when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).thenReturn(children);
-        when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
+    /* ---------------- NEXT TEST ----------------
+     * ERROR IN CHILD
+     */
+    ResultV1RDTO deleteResult = instance.deleteByOid(persistedKomotoOid, request);
+    assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
+    assertEquals(
+        "Validation",
+        false,
+        deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
+    assertEquals(
+        ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
+    assertEquals(
+        "komo.link.childs", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
 
-        /* ---------------- NEXT TEST ----------------
-         * ERROR IN CHILD
-         */
-        ResultV1RDTO deleteResult = instance.deleteByOid(persistedKomotoOid, request);
-        assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
-        assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
-        assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
-        assertEquals("komo.link.childs", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
+    /* ---------------- NEXT TEST ----------------
+     * ERROR IN PARENT
+     */
+    ArrayList<String> parent = Lists.newArrayList();
+    parent.add("komo_oid_parent");
 
+    when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid))
+        .thenReturn(Lists.<String>newArrayList());
+    when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).thenReturn(parent);
 
-        /* ---------------- NEXT TEST ----------------
-         * ERROR IN PARENT
-         */
-        ArrayList<String> parent = Lists.newArrayList();
-        parent.add("komo_oid_parent");
+    deleteResult = instance.deleteByOid(persistedKomotoOid, request);
+    assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
+    assertEquals(
+        "Validation",
+        false,
+        deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
+    assertEquals(
+        ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
+    assertEquals(
+        "komo.link.parents", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
 
-        when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
-        when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).thenReturn(parent);
+    /* ---------------- NEXT TEST ----------------
+     * ERROR IN HAKUKOHDE (1 x hakukohde and 1 x invalid koulutus)
+     */
+    final KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(persistedKomotoOid);
 
-        deleteResult = instance.deleteByOid(persistedKomotoOid, request);
-        assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
-        assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
-        assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
-        assertEquals("komo.link.parents", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
+    hakukohde.addKoulutusmoduuliToteutus(komoto);
+    komoto.addHakukohde(hakukohde);
+    hakukohde.setHaku(haku);
+    hakukohdeDao.insert(hakukohde);
 
-        /* ---------------- NEXT TEST ----------------
-         * ERROR IN HAKUKOHDE (1 x hakukohde and 1 x invalid koulutus)
-         */
-        final KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(persistedKomotoOid);
+    kv = new KoulutuksetVastaus();
+    perustiedot = Lists.newArrayList();
+    KoulutusPerustieto koulutusPerustieto = new KoulutusPerustieto();
+    koulutusPerustieto.setKomotoOid(KOMOTO_OID);
+    perustiedot.add(koulutusPerustieto);
 
-        hakukohde.addKoulutusmoduuliToteutus(komoto);
-        komoto.addHakukohde(hakukohde);
-        hakukohde.setHaku(haku);
-        hakukohdeDao.insert(hakukohde);
+    kv.setKoulutukset(perustiedot);
 
-        kv = new KoulutuksetVastaus();
-        perustiedot = Lists.newArrayList();
-        KoulutusPerustieto koulutusPerustieto = new KoulutusPerustieto();
-        koulutusPerustieto.setKomotoOid(KOMOTO_OID);
-        perustiedot.add(koulutusPerustieto);
+    when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid))
+        .thenReturn(Lists.<String>newArrayList());
+    when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid))
+        .thenReturn(Lists.<String>newArrayList());
 
-        kv.setKoulutukset(perustiedot);
+    deleteResult = instance.deleteByOid(persistedKomotoOid, request);
+    assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
+    assertEquals(
+        "Validation",
+        false,
+        deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
+    assertEquals(
+        ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
+    // assertEquals("komo.invalid.transition", ((ErrorV1RDTO)
+    // deleteResult.getErrors().get(0)).getErrorField());
+    assertEquals(
+        "komoto.hakukohdes", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
 
-        when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
-        when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
+    /* ---------------- NEXT TEST ----------------
+     * SUCCESS IN HAKUKOHDE (1 x hakukohde, 1 x invalid koulutus, 1 x valid koulutus)
+     */
+    kv = new KoulutuksetVastaus();
+    perustiedot = Lists.newArrayList();
+    koulutusPerustieto = new KoulutusPerustieto();
+    koulutusPerustieto.setKomotoOid(KOMOTO_OID);
+    koulutusPerustieto.setKomotoOid("komoto_oid_valid");
+    perustiedot.add(koulutusPerustieto);
 
-        deleteResult = instance.deleteByOid(persistedKomotoOid, request);
-        assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
-        assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
-        assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
-        //assertEquals("komo.invalid.transition", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
-        assertEquals("komoto.hakukohdes", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
+    kv.setKoulutukset(perustiedot);
 
-        /* ---------------- NEXT TEST ----------------
-         * SUCCESS IN HAKUKOHDE (1 x hakukohde, 1 x invalid koulutus, 1 x valid koulutus)
-         */
-        kv = new KoulutuksetVastaus();
-        perustiedot = Lists.newArrayList();
-        koulutusPerustieto = new KoulutusPerustieto();
-        koulutusPerustieto.setKomotoOid(KOMOTO_OID);
-        koulutusPerustieto.setKomotoOid("komoto_oid_valid");
-        perustiedot.add(koulutusPerustieto);
+    when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid))
+        .thenReturn(Lists.<String>newArrayList());
+    when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid))
+        .thenReturn(Lists.<String>newArrayList());
 
-        kv.setKoulutukset(perustiedot);
+    deleteResult = instance.deleteByOid(persistedKomotoOid, request);
 
-        when(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
-        when(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).thenReturn(Lists.<String>newArrayList());
+    assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
+    assertEquals(
+        "Validation",
+        false,
+        deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
+  }
 
-        deleteResult = instance.deleteByOid(persistedKomotoOid, request);
+  private KoulutusmoduuliToteutus quickKKInsert(KoulutusKorkeakouluV1RDTO dto) throws Exception {
+    /*
+     * INSERT KORKEAKOULU TO DB
+     */
+    // a quick test data insert, no unnecessary DTO conversions.
+    KoulutusmoduuliToteutus kt = Whitebox.invokeMethod(instance, "insertKoulutusKorkeakoulu", dto);
+    assertNotNull(kt);
+    assertNotNull(kt.getOid());
+    assertEquals(TUNNISTE, kt.getUlkoinenTunniste());
+    assertEquals(TarjontaTila.JULKAISTU, kt.getTila());
 
-        assertEquals("validation error", ResultV1RDTO.ResultStatus.ERROR, deleteResult.getStatus());
-        assertEquals("Validation", false, deleteResult.getErrors() == null || deleteResult.getErrors().isEmpty());
-    }
-
-    private KoulutusmoduuliToteutus quickKKInsert(KoulutusKorkeakouluV1RDTO dto) throws Exception {
-        /*
-         * INSERT KORKEAKOULU TO DB
-         */
-        //a quick test data insert, no unnecessary DTO conversions.
-        KoulutusmoduuliToteutus kt = Whitebox.invokeMethod(instance, "insertKoulutusKorkeakoulu", dto);
-        assertNotNull(kt);
-        assertNotNull(kt.getOid());
-        assertEquals(TUNNISTE, kt.getUlkoinenTunniste());
-        assertEquals(TarjontaTila.JULKAISTU, kt.getTila());
-
-        return kt;
-    }
+    return kt;
+  }
 }

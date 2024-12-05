@@ -20,33 +20,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author mlyly
  */
-public class PisterajaToValintakoePisterajaRDTOConverter extends BaseRDTOConverter<Pisteraja, ValintakoePisterajaRDTO> {
+public class PisterajaToValintakoePisterajaRDTOConverter
+    extends BaseRDTOConverter<Pisteraja, ValintakoePisterajaRDTO> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PisterajaToValintakoePisterajaRDTOConverter.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(PisterajaToValintakoePisterajaRDTOConverter.class);
 
-    @Override
-    public ValintakoePisterajaRDTO convert(Pisteraja s) {
+  @Override
+  public ValintakoePisterajaRDTO convert(Pisteraja s) {
 
-
-
-        if (s == null) {
-            return null;
-        }
-
-        ValintakoePisterajaRDTO t = new ValintakoePisterajaRDTO();
-
-        t.setAlinHyvaksyttyPistemaara(s.getAlinHyvaksyttyPistemaara() != null ? s.getAlinHyvaksyttyPistemaara().doubleValue() : null);
-        t.setAlinPistemaara(s.getAlinPistemaara() != null ? s.getAlinPistemaara().doubleValue() : null);
-        t.setTyyppi(s.getValinnanPisterajaTyyppi());
-        t.setYlinPistemaara(s.getYlinPistemaara() != null ? s.getYlinPistemaara().doubleValue() : null);
-
-        t.setOid("" + s.getId());
-        t.setVersion(s.getVersion() != null ? s.getVersion().intValue() : 0);
-
-        return t;
+    if (s == null) {
+      return null;
     }
 
+    ValintakoePisterajaRDTO t = new ValintakoePisterajaRDTO();
+
+    t.setAlinHyvaksyttyPistemaara(
+        s.getAlinHyvaksyttyPistemaara() != null
+            ? s.getAlinHyvaksyttyPistemaara().doubleValue()
+            : null);
+    t.setAlinPistemaara(s.getAlinPistemaara() != null ? s.getAlinPistemaara().doubleValue() : null);
+    t.setTyyppi(s.getValinnanPisterajaTyyppi());
+    t.setYlinPistemaara(s.getYlinPistemaara() != null ? s.getYlinPistemaara().doubleValue() : null);
+
+    t.setOid("" + s.getId());
+    t.setVersion(s.getVersion() != null ? s.getVersion().intValue() : 0);
+
+    return t;
+  }
 }

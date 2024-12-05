@@ -17,53 +17,51 @@ package fi.vm.sade.tarjonta.shared.auth;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Oganisation context. Immutable.
- */
+/** Oganisation context. Immutable. */
 public class OrganisaatioContext {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(OrganisaatioContext.class);
 
-    final String ooid;
+  private static final Logger LOG = LoggerFactory.getLogger(OrganisaatioContext.class);
 
-    private OrganisaatioContext(final String ooid) {
-        this.ooid = ooid;
-    }
+  final String ooid;
 
-    /**
-     * Creates new context.
-     * 
-     * @param ooid
-     *            Organisaatio OID
-     */
-    public static final OrganisaatioContext getContext(final String ooid) {
-        if(ooid==null) {
-            Exception e = new Exception();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PrintWriter pw = new PrintWriter(baos);
-            e.printStackTrace(pw);
-            pw.close();
-            LOG.warn("Someone is  getting org context with null oid, stack trace follows:\n {}", new String(baos.toByteArray()));
-        }
-        return new OrganisaatioContext(ooid);
-    }
+  private OrganisaatioContext(final String ooid) {
+    this.ooid = ooid;
+  }
 
-    @Override
-    public String toString() {
-        return this.getClass().getName() + ": " + ooid;
+  /**
+   * Creates new context.
+   *
+   * @param ooid Organisaatio OID
+   */
+  public static final OrganisaatioContext getContext(final String ooid) {
+    if (ooid == null) {
+      Exception e = new Exception();
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      PrintWriter pw = new PrintWriter(baos);
+      e.printStackTrace(pw);
+      pw.close();
+      LOG.warn(
+          "Someone is  getting org context with null oid, stack trace follows:\n {}",
+          new String(baos.toByteArray()));
     }
-    
-    @Override
-    public int hashCode() {
-        return ooid.hashCode();
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
+    return new OrganisaatioContext(ooid);
+  }
+
+  @Override
+  public String toString() {
+    return this.getClass().getName() + ": " + ooid;
+  }
+
+  @Override
+  public int hashCode() {
+    return ooid.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return super.equals(obj);
+  }
 }

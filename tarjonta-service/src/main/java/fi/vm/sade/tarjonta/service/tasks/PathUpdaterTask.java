@@ -15,69 +15,62 @@
  */
 package fi.vm.sade.tarjonta.service.tasks;
 
+import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import javax.annotation.PostConstruct;
-
+import net.sf.ehcache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import fi.vm.sade.tarjonta.service.search.IndexerResource;
-import net.sf.ehcache.CacheManager;
-import org.springframework.beans.factory.annotation.Qualifier;
-
-
 /**
- *
  * @author mlyly
  */
 @Service
 @EnableScheduling
 public class PathUpdaterTask {
 
-    @Autowired
-    private IndexerResource indexResource;
+  @Autowired private IndexerResource indexResource;
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(PathUpdaterTask.class);
+  private static final Logger LOG = LoggerFactory.getLogger(PathUpdaterTask.class);
 
-    @PostConstruct
-    public void afterCreate() {
-        LOG.info("afterCreate()");
+  @PostConstruct
+  public void afterCreate() {
+    LOG.info("afterCreate()");
+  }
+
+  @Scheduled(cron = "0 0 * * * ?")
+  public void updatePath() {
+    // LOG.debug("updating tarjonta index.");
+    // TODO update tarjonta index
+
+    printCacheStats();
+  }
+
+  @Autowired(required = false)
+  @Qualifier(value = "ehcacheTarjontaService")
+  private CacheManager _cacheManager;
+
+  private void printCacheStats() {
+    LOG.info("SERVICE --- CACHE STATISTICS (name size/hits/misses)");
+
+    if (_cacheManager == null) {
+      LOG.info("  NO EHCACHE ... no stats!");
+      return;
     }
 
-    @Scheduled(cron = "0 0 * * * ?")
-    public void updatePath() {
-        // LOG.debug("updating tarjonta index.");
-        // TODO update tarjonta index
-
-        printCacheStats();
+    for (String cacheName : _cacheManager.getCacheNames()) {
+      LOG.info(
+          "SERVICE ---    {} {}/{}/{}",
+          new Object[] {
+            cacheName,
+            _cacheManager.getCache(cacheName).getSize(),
+            _cacheManager.getCache(cacheName).getStatistics().cacheHitCount(),
+            _cacheManager.getCache(cacheName).getStatistics().cacheMissCount()
+          });
     }
-
-
-    @Autowired(required = false)
-    @Qualifier(value = "ehcacheTarjontaService")
-    private CacheManager _cacheManager;
-
-    private void printCacheStats() {
-        LOG.info("SERVICE --- CACHE STATISTICS (name size/hits/misses)");
-
-        if (_cacheManager == null) {
-            LOG.info("  NO EHCACHE ... no stats!");
-            return;
-        }
-
-        for (String cacheName : _cacheManager.getCacheNames()) {
-            LOG.info("SERVICE ---    {} {}/{}/{}",
-                    new Object[] {
-                        cacheName,
-                        _cacheManager.getCache(cacheName).getSize(),
-                        _cacheManager.getCache(cacheName).getStatistics().getCacheHits(),
-                        _cacheManager.getCache(cacheName).getStatistics().getCacheMisses()
-                    });
-        }
-    }
-
+  }
 }

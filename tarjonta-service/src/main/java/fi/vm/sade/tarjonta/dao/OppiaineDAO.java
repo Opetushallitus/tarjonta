@@ -16,20 +16,16 @@
 package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.generic.dao.JpaDAO;
-import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Oppiaine;
-
-import java.util.Date;
 import java.util.List;
 
 public interface OppiaineDAO extends JpaDAO<Oppiaine, Long> {
 
-    Oppiaine findById(Long id);
+  Oppiaine findById(Long id);
 
-    Oppiaine findOneByOppiaineKieliKoodi(String oppiaine, String kieliKoodi);
+  Oppiaine findOneByOppiaineKieliKoodi(String oppiaine, String kieliKoodi);
 
-    List<Oppiaine> findByOppiaineKieliKoodi(String oppiaine, String kieliKoodi);
+  List<Oppiaine> findByOppiaineKieliKoodi(String oppiaine, String kieliKoodi);
 
-    void deleteUnusedOppiaineet();
-
+  void deleteUnusedOppiaineet();
 }

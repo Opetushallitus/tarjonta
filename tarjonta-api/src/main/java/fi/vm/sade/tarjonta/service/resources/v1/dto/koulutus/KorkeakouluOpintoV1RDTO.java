@@ -5,9 +5,9 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 public class KorkeakouluOpintoV1RDTO extends TutkintoonJohtamatonKoulutusV1RDTO {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public KorkeakouluOpintoV1RDTO() {
-        super(ToteutustyyppiEnum.KORKEAKOULUOPINTO, ModuulityyppiEnum.KORKEAKOULUTUS);
-    }
+  public KorkeakouluOpintoV1RDTO() {
+    super(ToteutustyyppiEnum.KORKEAKOULUOPINTO, ModuulityyppiEnum.KORKEAKOULUTUS);
+  }
 }

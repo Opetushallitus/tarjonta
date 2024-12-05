@@ -4,15 +4,14 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentificat
 
 public class KoulutusNotFoundException extends Exception {
 
-    private KoulutusIdentification komotoId;
+  private KoulutusIdentification komotoId;
 
-    public KoulutusNotFoundException(KoulutusIdentification komotoId) {
-        super();
-        this.komotoId = komotoId;
-    }
+  public KoulutusNotFoundException(KoulutusIdentification komotoId) {
+    super();
+    this.komotoId = komotoId;
+  }
 
-    public KoulutusIdentification getKomotoId() {
-        return komotoId;
-    }
-
+  public KoulutusIdentification getKomotoId() {
+    return komotoId;
+  }
 }

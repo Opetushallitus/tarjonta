@@ -6,20 +6,18 @@ import org.hamcrest.Description;
 
 public class KoodistoCriteriaMatcher extends BaseMatcher<SearchKoodisCriteriaType> {
 
-    private String uri;
+  private String uri;
 
-    public KoodistoCriteriaMatcher(String uri) {
-        this.uri = uri;
-    }
+  public KoodistoCriteriaMatcher(String uri) {
+    this.uri = uri;
+  }
 
-    @Override
-    public boolean matches(Object arg0) {
-        SearchKoodisCriteriaType koodisCriteriaType = (SearchKoodisCriteriaType) arg0;
-        return koodisCriteriaType != null && koodisCriteriaType.getKoodiUris().contains(uri);
-    }
+  @Override
+  public boolean matches(Object arg0) {
+    SearchKoodisCriteriaType koodisCriteriaType = (SearchKoodisCriteriaType) arg0;
+    return koodisCriteriaType != null && koodisCriteriaType.getKoodiUris().contains(uri);
+  }
 
-    @Override
-    public void describeTo(Description arg0) {
-    }
-
+  @Override
+  public void describeTo(Description arg0) {}
 }

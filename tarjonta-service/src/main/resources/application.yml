@@ -1,0 +1,140 @@
+spring:
+  main:
+    banner-mode: "off"
+    allow-circular-references: true
+  mandatory-file-encoding: UTF-8
+  profiles.active: default
+  management:
+    health:
+      diskspace:
+        enabled: false
+  jackson:
+    serialization:
+      write-dates-as-timestamps: true
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 10000
+      max-lifetime: 900000
+  flyway:
+    enabled: true
+    table: schema_version
+    out-of-order: true
+    # Only for initial production release, set false afterwards
+    baseline-on-migrate: false
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: fi.vm.sade.tarjonta.model.naming.LowerCasePhysicalNamingStrategy
+      ddl-auto: validate
+    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      # https://hibernate.atlassian.net/browse/HHH-12368
+      hibernate.jdbc.lob.non_contextual_creation: true
+
+server:
+  servlet:
+    context-path: /tarjonta-service
+  port: 8080
+  tomcat:
+    threads:
+      max: 20
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+
+tarjonta-service:
+  uses-ssl-proxy: false
+  disable-same-site-cookie: false
+  root-organisaatio-oid: 1.2.246.562.10.00000000001
+
+tarjonta-alkamiskausi-syksy: kausi_s
+koodisto-uris.alkamiskausi: kausi
+koodisto-uris.ammattinimikkeet: ammattiluokitus
+koodisto-uris.hakukausi: kausi
+koodisto-uris.hakukohde: hakukohteet
+koodisto-uris.hakutapa: hakutapa
+koodisto-uris.hakutyyppi: hakutyyppi
+koodisto-uris.haunKohdejoukko: haunkohdejoukko
+koodisto-uris.kieli: kieli
+koodisto-uris.koulutuksenAlkamisvuosi: kausi
+koodisto-uris.koulutusala: koulutusalaoph2002
+koodisto-uris.koulutusaste: koulutusasteoph2002
+koodisto-uris.koulutuslaji: koulutuslaji
+koodisto-uris.koulutusohjelma: koulutusohjelmaamm
+koodisto-uris.liitteentyyppi: liitetyypitamm
+koodisto-uris.lukiodiplomit: lukiodiplomit
+koodisto-uris.lukiolinja: lukiolinjat
+koodisto-uris.opetusmuoto: opetusmuoto
+koodisto-uris.opintoala: opintoalaoph2002
+koodisto-uris.opintojenLaajuusyksikko: opintojenlaajuusyksikko
+koodisto-uris.oppiaineet: oppiaineetyleissivistava
+koodisto-uris.oppilaitostyyppi: oppilaitostyyppi
+koodisto-uris.pohjakoulutusvaatimus: pohjakoulutusvaatimustoinenaste
+koodisto-uris.postinumero: posti
+koodisto-uris.sorakuvausryhma: sorakuvaus
+koodisto-uris.suunniteltuKesto: suunniteltukesto
+koodisto-uris.koulutus: koulutus
+koodisto-uris.tutkinto: tutkinto
+koodisto-uris.tutkintonimike: tutkintonimikkeet
+koodisto-uris.valintakokeentyyppi: valintakokeentyyppi
+koodisto-uris.valintaperustekuvausryhma: valintaperustekuvausryhma
+koodisto-uris.tarjontakoulutustyyppi: koulutustyyppi
+koodisto-uris.teemat: teemat
+koodisto-uris.hakukelpoisuusvaatimus: hakukelpoisuusvaatimusta
+koodisto-uris.opintojenLaajuusarvo: opintojenlaajuus
+koodisto-uris.eqf-luokitus: eqf
+koodisto-uris.tutkintonimike_kk: tutkintonimikekk
+koodisto-uris.pohjakoulutusvaatimus_kk: pohjakoulutusvaatimuskorkeakoulut
+koodisto-uris.osaamisala: osaamisala
+koodisto-uris.tutkintoonjohtavakoulutus: tutkintoonjohtavakoulutus
+koodisto-uris.arvo: koulutustyyppifasetti
+koodi-uri.ontutkinto: tutkintoonjohtavakoulutus_1
+koodi-uri.koulutuslaji.nuortenKoulutus: koulutuslaji_n
+koodi-uri.lukio.pohjakoulutusvaatimus: peruskoulu
+koodisto.lang.fi.uri: kieli_fi
+koodisto.lang.en.uri: kieli_en
+koodisto.lang.sv.uri: kieli_sv
+koodisto.hakutapa.jatkuvaHaku.uri: hakutapa_03#1
+invalid.koulutus.report.recipient: virkailija@opintopolku.fi
+
+# Tilapäisiä -> poistettava
+root:
+  organisaatio:
+    oid: 1.2.246.562.10.00000000001
+
+# Tilapäiset loppuu
+
+cas:
+  service: http://localhost:${server.port}/tarjonta-service
+  send-renew: false
+  key: tarjonta-service
+
+host:
+  #host-cas: virkailija.localhost
+  #host-virkailija: virkailija.localhost
+  host-cas: virkailija.testiopintopolku.fi
+  host-virkailija: virkailija.testiopintopolku.fi
+
+logging:
+  level:
+    root: info
+    org.springframework: warn
+    org.springframework.security: warn
+    org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration: warn
+    org.hibernate.SQL: error
+    fi.vm.sade.auditlog.Audit: info
+    fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter: warn
+    org.apache.http.client.protocol.ResponseProcessCookies: error
+    io.swagger.models.parameters.AbstractSerializableParameter: error
+    org.springframework.web: info
+    org.hibernate: info
+    com.github.dockerjava: info
+    com.zaxxer.hikari: debug

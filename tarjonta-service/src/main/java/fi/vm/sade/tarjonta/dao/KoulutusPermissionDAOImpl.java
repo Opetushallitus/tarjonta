@@ -1,35 +1,33 @@
 package fi.vm.sade.tarjonta.dao;
 
-import com.mysema.query.jpa.impl.JPADeleteClause;
-import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.types.EntityPath;
-import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import com.querydsl.jpa.impl.JPADeleteClause;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import fi.vm.sade.tarjonta.model.KoulutusPermission;
 import fi.vm.sade.tarjonta.model.QKoulutusPermission;
+import java.util.List;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public class KoulutusPermissionDAOImpl extends AbstractJpaDAOImpl<KoulutusPermission, Long> implements KoulutusPermissionDAO {
+public class KoulutusPermissionDAOImpl extends AbstractJpaDAOImpl<KoulutusPermission, Long>
+    implements KoulutusPermissionDAO {
 
-    @Override
-    public List<KoulutusPermission> findByOrganization(List<String> orgOids) {
-        QKoulutusPermission qKoulutusPermission = QKoulutusPermission.koulutusPermission;
+  @Override
+  public List<KoulutusPermission> findByOrganization(List<String> orgOids) {
+    QKoulutusPermission qKoulutusPermission = QKoulutusPermission.koulutusPermission;
 
-        return from(qKoulutusPermission)
-                .where(qKoulutusPermission.orgOid.in(orgOids))
-                .list(qKoulutusPermission);
-    }
+    return queryFactory()
+        .selectFrom(qKoulutusPermission)
+        .where(qKoulutusPermission.orgOid.in(orgOids))
+        .fetch();
+  }
 
-    @Override
-    public Long removeAll() {
-        QKoulutusPermission qKoulutusPermission= QKoulutusPermission.koulutusPermission;
-        return new JPADeleteClause(getEntityManager(), qKoulutusPermission).execute();
-    }
+  @Override
+  public Long removeAll() {
+    QKoulutusPermission qKoulutusPermission = QKoulutusPermission.koulutusPermission;
+    return new JPADeleteClause(getEntityManager(), qKoulutusPermission).execute();
+  }
 
-    protected JPAQuery from(EntityPath<?>... o) {
-        return new JPAQuery(getEntityManager()).from(o);
-    }
-
+  protected JPAQueryFactory queryFactory() {
+    return new JPAQueryFactory(getEntityManager());
+  }
 }

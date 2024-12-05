@@ -15,141 +15,176 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import com.mysema.query.BooleanBuilder;
-import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.jpa.impl.JPAUpdateClause;
-import com.mysema.query.types.EntityPath;
-import com.mysema.query.types.Predicate;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.model.*;
-import org.springframework.stereotype.Repository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class IndexerDaoImpl implements IndexerDAO {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+  @PersistenceContext private EntityManager entityManager;
 
-    @Override
-    public List<Long> findAllHakukohdeIds() {
-        final QHakukohde hakukohde = QHakukohde.hakukohde;
-        return q(hakukohde).list(hakukohde.id);
+  @Override
+  public List<Long> findAllHakukohdeIds() {
+    final QHakukohde hakukohde = QHakukohde.hakukohde;
+    return queryFactory().select(hakukohde.id).from(hakukohde).fetch();
+  }
+
+  @Override
+  public List<Long> findAllKoulutusIds() {
+    final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+    final QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
+    final Predicate where =
+        bb(komo.lukiolinjaUri.isNotNull())
+            .or(
+                komo.koulutusohjelmaUri
+                    .isNotNull()
+                    .or(komoto.nimi.isNotNull())
+                    .or(komo.nimi.isNotNull()))
+            .getValue();
+    return queryFactory()
+        .select(komoto.id)
+        .from(komoto)
+        .join(komoto.koulutusmoduuli, komo)
+        .where(where)
+        .fetch();
+  }
+
+  @Override
+  public List<Long> findUnindexedHakukohdeIds() {
+    final QHakukohde hakukohde = QHakukohde.hakukohde;
+    return queryFactory()
+        .select(hakukohde.id)
+        .from(hakukohde)
+        .where(
+            hakukohde
+                .viimIndeksointiPvm
+                .isNull()
+                .or(hakukohde.viimIndeksointiPvm.before(hakukohde.lastUpdateDate)))
+        .fetch();
+  }
+
+  @Override
+  public List<Long> findUnindexedKoulutusIds() {
+    final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+    return queryFactory()
+        .select(komoto.id)
+        .from(komoto)
+        .where(
+            bb(komoto
+                    .viimIndeksointiPvm
+                    .isNull()
+                    .or(komoto.viimIndeksointiPvm.before(komoto.updated)))
+                .and(komoto.alkamisVuosi.isNotNull()))
+        .fetch();
+  }
+
+  @Override
+  public Long setKoulutusViimindeksointiPvmToNull() {
+    final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+    JPAUpdateClause u = new JPAUpdateClause(entityManager, komoto);
+    return u.setNull(komoto.viimIndeksointiPvm).execute();
+  }
+
+  @Override
+  public Long setHakukohdeViimindeksointiPvmToNull(Haku haku) {
+    final QHakukohde hakukohde = QHakukohde.hakukohde;
+    JPAUpdateClause u = new JPAUpdateClause(entityManager, hakukohde);
+    u.where(hakukohde.haku.id.eq(haku.getId()));
+    return u.setNull(hakukohde.viimIndeksointiPvm).execute();
+  }
+
+  @Override
+  public Long setHakukohdeViimindeksointiPvmToNull() {
+    final QHakukohde hakukohde = QHakukohde.hakukohde;
+    JPAUpdateClause u = new JPAUpdateClause(entityManager, hakukohde);
+    return u.setNull(hakukohde.viimIndeksointiPvm).execute();
+  }
+
+  @Override
+  public void updateHakukohteesIndexed(List<Long> ids, Date time) {
+    if (ids != null && !ids.isEmpty()) {
+      final QHakukohde hakukohde = QHakukohde.hakukohde;
+      JPAUpdateClause u = new JPAUpdateClause(entityManager, hakukohde);
+      u.set(hakukohde.viimIndeksointiPvm, time).where(hakukohde.id.in(ids)).execute();
     }
+  }
 
-    @Override
-    public List<Long> findAllKoulutusIds() {
-        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        final QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
-        final Predicate where = bb(komo.lukiolinjaUri.isNotNull()).or(komo.koulutusohjelmaUri.isNotNull().or(komoto.nimi.isNotNull()).or(komo.nimi.isNotNull())).getValue();
-        return q(komoto).join(komoto.koulutusmoduuli, komo).where(where).list(komoto.id);
+  @Override
+  public void updateKoulutuksesIndexed(List<Long> ids, Date time) {
+    if (ids != null && !ids.isEmpty()) {
+      final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+      JPAUpdateClause u = new JPAUpdateClause(entityManager, komoto);
+      u.where(komoto.id.in(ids)).set(komoto.viimIndeksointiPvm, time).execute();
     }
+  }
 
-    @Override
-    public List<Long> findUnindexedHakukohdeIds() {
-        final QHakukohde hakukohde = QHakukohde.hakukohde;
-        return q(hakukohde).where(hakukohde.viimIndeksointiPvm.isNull().or(hakukohde.viimIndeksointiPvm.before(hakukohde.lastUpdateDate))).list(hakukohde.id);
-    }
+  @Override
+  public void updateHakukohdeIndexed(Long id, Date time) {
+    final QHakukohde hakukohde = QHakukohde.hakukohde;
+    JPAUpdateClause u = new JPAUpdateClause(entityManager, hakukohde);
+    u.set(hakukohde.viimIndeksointiPvm, time).where(hakukohde.id.eq(id)).execute();
+  }
 
-    @Override
-    public List<Long> findUnindexedKoulutusIds() {
-        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        return q(komoto).where(
-                bb(komoto.viimIndeksointiPvm.isNull()
-                        .or(komoto.viimIndeksointiPvm.before(komoto.updated)))
-                        .and(komoto.alkamisVuosi.isNotNull())
-        ).list(komoto.id);
-    }
+  @Override
+  public void updateKoulutusIndexed(Long id, Date time) {
+    final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+    JPAUpdateClause u = new JPAUpdateClause(entityManager, komoto);
+    u.where(komoto.id.eq(id)).set(komoto.viimIndeksointiPvm, time).execute();
+  }
 
-    @Override
-    public Long setKoulutusViimindeksointiPvmToNull() {
-        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        JPAUpdateClause u = new JPAUpdateClause(entityManager, komoto);
-        return u.setNull(komoto.viimIndeksointiPvm).execute();
-    }
+  @Override
+  public void reindexOrganizationChanges(List<String> organizationOids) {
+    final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+    final QHakukohde hakukohde = QHakukohde.hakukohde;
+    final QKoulutusOwner owner = QKoulutusOwner.koulutusOwner;
 
-    @Override
-    public Long setHakukohdeViimindeksointiPvmToNull(Haku haku) {
-        final QHakukohde hakukohde = QHakukohde.hakukohde;
-        JPAUpdateClause u = new JPAUpdateClause(entityManager, hakukohde);
-        u.where(hakukohde.haku.id.eq(haku.getId()));
-        return u.setNull(hakukohde.viimIndeksointiPvm).execute();
-    }
+    List<Long> koulutusIds =
+        queryFactory()
+            .select(komoto.id)
+            .from(komoto)
+            .leftJoin(komoto.owners, owner)
+            .where(bb(owner.ownerOid.in(organizationOids).or(komoto.tarjoaja.in(organizationOids))))
+            .distinct()
+            .fetch();
 
-    @Override
-    public Long setHakukohdeViimindeksointiPvmToNull() {
-        final QHakukohde hakukohde = QHakukohde.hakukohde;
-        JPAUpdateClause u = new JPAUpdateClause(entityManager, hakukohde);
-        return u.setNull(hakukohde.viimIndeksointiPvm).execute();
-    }
+    if (koulutusIds.isEmpty()) return;
 
-    @Override
-    public void updateHakukohteesIndexed(List<Long> ids, Date time) {
-        if (ids != null && !ids.isEmpty()) {
-            final QHakukohde hakukohde = QHakukohde.hakukohde;
-            JPAUpdateClause u = new JPAUpdateClause(entityManager, hakukohde);
-            u.set(hakukohde.viimIndeksointiPvm, time).where(hakukohde.id.in(ids)).execute();
-        }
-    }
+    new JPAUpdateClause(entityManager, komoto)
+        .where(komoto.id.in(koulutusIds))
+        .setNull(komoto.viimIndeksointiPvm)
+        .execute();
 
-    @Override
-    public void updateKoulutuksesIndexed(List<Long> ids, Date time) {
-        if (ids != null && !ids.isEmpty()) {
-            final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-            JPAUpdateClause u = new JPAUpdateClause(entityManager, komoto);
-            u.where(komoto.id.in(ids)).set(komoto.viimIndeksointiPvm, time).execute();
-        }
-    }
+    List<Long> hakukohdeIds =
+        queryFactory()
+            .select(hakukohde.id)
+            .from(hakukohde)
+            .join(hakukohde.koulutusmoduuliToteutuses, komoto)
+            .where(komoto.id.in(koulutusIds))
+            .distinct()
+            .fetch();
 
-    @Override
-    public void updateHakukohdeIndexed(Long id, Date time) {
-        final QHakukohde hakukohde = QHakukohde.hakukohde;
-        JPAUpdateClause u = new JPAUpdateClause(entityManager, hakukohde);
-        u.set(hakukohde.viimIndeksointiPvm, time).where(hakukohde.id.eq(id)).execute();
-    }
+    if (hakukohdeIds.isEmpty()) return;
 
-    @Override
-    public void updateKoulutusIndexed(Long id, Date time) {
-        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        JPAUpdateClause u = new JPAUpdateClause(entityManager, komoto);
-        u.where(komoto.id.eq(id)).set(komoto.viimIndeksointiPvm, time).execute();
-    }
+    new JPAUpdateClause(entityManager, hakukohde)
+        .where(hakukohde.id.in(hakukohdeIds))
+        .setNull(hakukohde.viimIndeksointiPvm)
+        .execute();
+  }
 
-    @Override
-    public void reindexOrganizationChanges(List<String> organizationOids) {
-        final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        final QHakukohde hakukohde = QHakukohde.hakukohde;
-        final QKoulutusOwner owner = QKoulutusOwner.koulutusOwner;
+  private BooleanBuilder bb(Predicate initial) {
+    return new BooleanBuilder(initial);
+  }
 
-        List<Long> koulutusIds = q(komoto).leftJoin(komoto.owners, owner).where(
-                bb(owner.ownerOid.in(organizationOids).or(komoto.tarjoaja.in(organizationOids))))
-                .distinct().list(komoto.id);
-
-        if (koulutusIds.isEmpty()) return;
-
-        new JPAUpdateClause(entityManager, komoto)
-                .where(komoto.id.in(koulutusIds))
-                .setNull(komoto.viimIndeksointiPvm).execute();
-
-        List<Long> hakukohdeIds = q(hakukohde).join(hakukohde.koulutusmoduuliToteutuses, komoto)
-                                    .where(komoto.id.in(koulutusIds)).distinct().list(hakukohde.id);
-
-        if (hakukohdeIds.isEmpty()) return;
-
-        new JPAUpdateClause(entityManager, hakukohde)
-                .where(hakukohde.id.in(hakukohdeIds))
-                .setNull(hakukohde.viimIndeksointiPvm).execute();
-    }
-
-    private BooleanBuilder bb(Predicate initial) {
-        return new BooleanBuilder(initial);
-    }
-
-    private JPAQuery q(EntityPath<?> entityPath) {
-        return new JPAQuery(entityManager).from(entityPath);
-    }
+  private JPAQueryFactory queryFactory() {
+    return new JPAQueryFactory(entityManager);
+  }
 }

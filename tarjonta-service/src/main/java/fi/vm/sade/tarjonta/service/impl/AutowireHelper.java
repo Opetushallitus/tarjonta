@@ -9,43 +9,42 @@ import org.springframework.stereotype.Service;
  */
 
 /**
- * Helper class which is able to autowire a specified class. It holds a static reference to the {@link org
- * .springframework.context.ApplicationContext}.
+ * Helper class which is able to autowire a specified class. It holds a static reference to the
+ * {@link org .springframework.context.ApplicationContext}.
  */
 @Service
 public class AutowireHelper implements ApplicationContextAware {
 
-    private static final AutowireHelper INSTANCE = new AutowireHelper();
-    private static ApplicationContext applicationContext;
+  private static final AutowireHelper INSTANCE = new AutowireHelper();
+  private static ApplicationContext applicationContext;
 
-    public AutowireHelper() {
+  public AutowireHelper() {}
+
+  /**
+   * Tries to autowire the specified instance of the class if one of the specified beans which need
+   * to be autowired are null.
+   *
+   * @param classToAutowire the instance of the class which holds @Autowire annotations
+   * @param beansToAutowireInClass the beans which have the @Autowire annotation in the specified
+   *     {#classToAutowire}
+   */
+  public static void autowire(Object classToAutowire, Object... beansToAutowireInClass) {
+    for (Object bean : beansToAutowireInClass) {
+      if (bean == null) {
+        applicationContext.getAutowireCapableBeanFactory().autowireBean(classToAutowire);
+      }
     }
+  }
 
-    /**
-     * Tries to autowire the specified instance of the class if one of the specified beans which need to be autowired
-     * are null.
-     *
-     * @param classToAutowire the instance of the class which holds @Autowire annotations
-     * @param beansToAutowireInClass the beans which have the @Autowire annotation in the specified {#classToAutowire}
-     */
-    public static void autowire(Object classToAutowire, Object... beansToAutowireInClass) {
-        for (Object bean : beansToAutowireInClass) {
-            if (bean == null) {
-                applicationContext.getAutowireCapableBeanFactory().autowireBean(classToAutowire);
-            }
-        }
-    }
+  @Override
+  public void setApplicationContext(final ApplicationContext applicationContext) {
+    AutowireHelper.applicationContext = applicationContext;
+  }
 
-    @Override
-    public void setApplicationContext(final ApplicationContext applicationContext) {
-        AutowireHelper.applicationContext = applicationContext;
-    }
-
-    /**
-     * @return the singleton instance.
-     */
-    public static AutowireHelper getInstance() {
-        return INSTANCE;
-    }
-
+  /**
+   * @return the singleton instance.
+   */
+  public static AutowireHelper getInstance() {
+    return INSTANCE;
+  }
 }

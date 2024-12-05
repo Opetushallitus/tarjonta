@@ -6,32 +6,29 @@ import java.util.List;
 
 public class KomoLink {
 
-    public KomoLink() {
-        // TODO Auto-generated constructor stub
-    }
-    
-    public KomoLink(String parent, String...children){
-        setParent(parent);
-        setChildren(Arrays.asList(children));
-    }
-    
-    public String getParent() {
-        return parent;
-    }
+  public KomoLink() {}
 
-    public void setParent(String parent) {
-        this.parent = parent;
-    }
+  public KomoLink(String parent, String... children) {
+    setParent(parent);
+    setChildren(Arrays.asList(children));
+  }
 
-    public List<String> getChildren() {
-        return children;
-    }
+  public String getParent() {
+    return parent;
+  }
 
-    public void setChildren(List<String> children) {
-        this.children = children;
-    }
+  public void setParent(String parent) {
+    this.parent = parent;
+  }
 
-    private String parent;
-    private List<String> children = new ArrayList<String>();
+  public List<String> getChildren() {
+    return children;
+  }
 
+  public void setChildren(List<String> children) {
+    this.children = children;
+  }
+
+  private String parent;
+  private List<String> children = new ArrayList<String>();
 }

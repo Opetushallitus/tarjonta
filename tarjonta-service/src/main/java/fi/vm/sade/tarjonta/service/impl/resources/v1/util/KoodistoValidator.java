@@ -28,49 +28,59 @@ import org.springframework.stereotype.Component;
 @Component
 public class KoodistoValidator {
 
-    @Autowired
-    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
+  @Autowired private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
-    /**
-     * Validates and adds possible error messages to result if koodisto uris are invalid.
-     *
-     * Validates koodi uris by actually checking that the given koodi uri (may have version #version) exists.
-     *
-     * Error message key is contructed from : errorKeyPrefix + "." + fieldName + ".missing" / ".invalid"
-     *
-     * @param koodiUri
-     * @param required
-     * @param fieldName
-     * @param addErrorsTo
-     * @param errorKeyPrefix
-     * @return false when validation fails
-     */
-    public boolean validateKoodiUri(String koodiUri, boolean required, String fieldName, ResultV1RDTO addErrorsTo, String errorKeyPrefix) {
-        if (isEmpty(koodiUri)) {
-            if (required) {
-                if (addErrorsTo != null) {
-                    addErrorsTo.addError(ErrorV1RDTO.createValidationError(fieldName, errorKeyPrefix + "." + fieldName + ".missing"));
-                }
-                return false;
-            }
-            // OK, empty but not required
-            return true;
+  /**
+   * Validates and adds possible error messages to result if koodisto uris are invalid.
+   *
+   * <p>Validates koodi uris by actually checking that the given koodi uri (may have version
+   * #version) exists.
+   *
+   * <p>Error message key is contructed from : errorKeyPrefix + "." + fieldName + ".missing" /
+   * ".invalid"
+   *
+   * @param koodiUri
+   * @param required
+   * @param fieldName
+   * @param addErrorsTo
+   * @param errorKeyPrefix
+   * @return false when validation fails
+   */
+  public boolean validateKoodiUri(
+      String koodiUri,
+      boolean required,
+      String fieldName,
+      ResultV1RDTO addErrorsTo,
+      String errorKeyPrefix) {
+    if (isEmpty(koodiUri)) {
+      if (required) {
+        if (addErrorsTo != null) {
+          addErrorsTo.addError(
+              ErrorV1RDTO.createValidationError(
+                  fieldName, errorKeyPrefix + "." + fieldName + ".missing"));
         }
-
-        // URI not empty, check thaty koodi can be found from koodisto
-        if (tarjontaKoodistoHelper.getKoodiByUri(koodiUri) == null) {
-            if (addErrorsTo != null) {
-                addErrorsTo.addError(ErrorV1RDTO.createValidationError(fieldName, errorKeyPrefix + "." + fieldName + ".invalid"));
-            }
-            // goddammit, koodi not found
-            return false;
-        }
-
-        // No detected errors
-        return true;
+        return false;
+      }
+      // OK, empty but not required
+      return true;
     }
 
-    private boolean isEmpty(String koodiUri) {
-        return koodiUri == null || koodiUri.trim().isEmpty();
+    // URI not empty, check thaty koodi can be found from koodisto
+    if (tarjontaKoodistoHelper.getKoodiByUri(koodiUri) == null) {
+      if (addErrorsTo != null) {
+        addErrorsTo.addError(
+            ErrorV1RDTO.createValidationError(
+                fieldName, errorKeyPrefix + "." + fieldName + ".invalid"));
+      }
+      // goddammit, koodi not found
+      return false;
     }
+
+    // No detected errors
+    return true;
+  }
+
+  private boolean isEmpty(String koodiUri) {
+    return koodiUri == null || koodiUri.trim().isEmpty();
+  }
 }

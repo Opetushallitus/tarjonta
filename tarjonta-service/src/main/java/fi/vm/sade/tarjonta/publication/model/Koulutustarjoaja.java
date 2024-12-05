@@ -24,15 +24,13 @@ package fi.vm.sade.tarjonta.publication.model;
  */
 public class Koulutustarjoaja {
 
-    private String organisaatioOid;
+  private String organisaatioOid;
 
-    public Koulutustarjoaja(String oid) {
-        this.organisaatioOid = oid;
-    }
+  public Koulutustarjoaja(String oid) {
+    this.organisaatioOid = oid;
+  }
 
-    public String getOrganisaatioOid() {
-        return organisaatioOid;
-    }
-
+  public String getOrganisaatioOid() {
+    return organisaatioOid;
+  }
 }
-

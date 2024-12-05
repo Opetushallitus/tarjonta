@@ -20,101 +20,90 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import java.util.Set;
 
 /**
- * Helper class that traverses the "tree" of Koulutus in breath first and performs a test on tree nodes using WalkTester.
- * This can be used to e.g. find parents or children.
+ * Helper class that traverses the "tree" of Koulutus in breath first and performs a test on tree
+ * nodes using WalkTester. This can be used to e.g. find parents or children.
  *
  * @author Jukka Raanamo
  */
 public class KoulutusTreeWalker {
 
-    private int walkedDepth;
+  private int walkedDepth;
 
-    private int maxDepth;
+  private int maxDepth;
 
-    private NodeHandler matcher;
+  private NodeHandler matcher;
 
-    public KoulutusTreeWalker(int maxDepth, NodeHandler matcher) {
+  public KoulutusTreeWalker(int maxDepth, NodeHandler matcher) {
 
-        this.maxDepth = maxDepth;
-        this.matcher = matcher;
+    this.maxDepth = maxDepth;
+    this.matcher = matcher;
+  }
 
+  public KoulutusTreeWalker(NodeHandler handler) {
+    this(-1, handler);
+  }
+
+  public void walk(Koulutusmoduuli startNode) {
+    walkInternal(startNode);
+  }
+
+  private boolean walkInternal(Koulutusmoduuli moduuli) {
+
+    if (maxDepth != -1 && walkedDepth == maxDepth) {
+      return false;
     }
 
-    public KoulutusTreeWalker(NodeHandler handler) {
-        this(-1, handler);
+    if (!matcher.match(moduuli)) {
+      return false;
     }
 
-    public void walk(Koulutusmoduuli startNode) {
-        walkInternal(startNode);
-    }
-
-    private boolean walkInternal(Koulutusmoduuli moduuli) {
-
-        if (maxDepth != -1 && walkedDepth == maxDepth) {
-            return false;
+    final Set<KoulutusSisaltyvyys> nextSet = moduuli.getSisaltyvyysList();
+    for (KoulutusSisaltyvyys s : nextSet) {
+      for (Koulutusmoduuli o : s.getAlamoduuliList()) {
+        if (!walkInternal(o)) {
+          return false;
         }
-
-        if (!matcher.match(moduuli)) {
-            return false;
-        }
-
-        final Set<KoulutusSisaltyvyys> nextSet = moduuli.getSisaltyvyysList();
-        for (KoulutusSisaltyvyys s : nextSet) {
-            for (Koulutusmoduuli o : s.getAlamoduuliList()) {
-                if (!walkInternal(o)) {
-                    return false;
-                }
-            }
-        }
-
-        // keep walking
-        return true;
+      }
     }
+
+    // keep walking
+    return true;
+  }
+
+  /** */
+  public interface NodeHandler {
 
     /**
+     * Tests if walking the tree should continue past given Koulutus.
      *
+     * @param moduuli
+     * @return
      */
-    public interface NodeHandler {
+    public boolean match(Koulutusmoduuli koulutus);
+  }
 
-        /**
-         * Tests if walking the tree should continue past given Koulutus.
-         *
-         * @param moduuli
-         * @return
-         */
-        public boolean match(Koulutusmoduuli koulutus);
+  /** WalkTester that stops when a node equal to match node is found. */
+  public static class EqualsMatcher implements NodeHandler {
 
+    private boolean found;
+
+    private Koulutusmoduuli koulutus;
+
+    public EqualsMatcher(Koulutusmoduuli koulutus) {
+      this.koulutus = koulutus;
     }
 
-
-    /**
-     * WalkTester that stops when a node equal to match node is found.
-     */
-    public static class EqualsMatcher implements NodeHandler {
-
-        private boolean found;
-
-        private Koulutusmoduuli koulutus;
-
-        public EqualsMatcher(Koulutusmoduuli koulutus) {
-            this.koulutus = koulutus;
-        }
-
-        @Override
-        public boolean match(Koulutusmoduuli k) {
-            if (koulutus.equals(k)) {
-                found = true;
-                return false;
-            }
-            return true;
-        }
-
-        public boolean isFound() {
-            return found;
-        }
-
+    @Override
+    public boolean match(Koulutusmoduuli k) {
+      if (koulutus.equals(k)) {
+        found = true;
+        return false;
+      }
+      return true;
     }
 
-
+    public boolean isFound() {
+      return found;
+    }
+  }
 }
-

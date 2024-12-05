@@ -13,37 +13,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * This class contains helper functions needed in different classes related to audit log. This is meant to be more
- * easily mocked than private helper methos inside target class.
+ * This class contains helper functions needed in different classes related to audit log. This is
+ * meant to be more easily mocked than private helper methos inside target class.
  */
-
-
 @Component
 public class AuditHelper {
 
-    private final ContextDataService contextDataService;
+  private final ContextDataService contextDataService;
 
-    private final EntityConverterToRDTO converterToRDTO;
+  private final EntityConverterToRDTO converterToRDTO;
 
-    private final ConverterV1 converterV1;
+  private final ConverterV1 converterV1;
 
-    @Autowired
-    public AuditHelper(ContextDataService contextDataService, EntityConverterToRDTO converterToRDTO, ConverterV1 converterV1) {
-        this.contextDataService = contextDataService;
-        this.converterToRDTO = converterToRDTO;
-        this.converterV1 = converterV1;
-    }
+  @Autowired
+  public AuditHelper(
+      ContextDataService contextDataService,
+      EntityConverterToRDTO converterToRDTO,
+      ConverterV1 converterV1) {
+    this.contextDataService = contextDataService;
+    this.converterToRDTO = converterToRDTO;
+    this.converterV1 = converterV1;
+  }
 
+  public KoulutusV1RDTO getKomotoAsDto(KoulutusmoduuliToteutus komoto) {
+    final RestParam param = RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang());
+    return KoulutusResourceImplV1.convert(converterToRDTO, komoto, param);
+  }
 
-    public KoulutusV1RDTO getKomotoAsDto(KoulutusmoduuliToteutus komoto) {
-        final RestParam param = RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang());
-        return KoulutusResourceImplV1.convert(converterToRDTO, komoto, param);
-    }
-
-    public HakuV1RDTO getHakuAsDto(Haku haku) {
-        return converterV1.fromHakuToHakuRDTO(haku, false);
-    }
-
-
-
+  public HakuV1RDTO getHakuAsDto(Haku haku) {
+    return converterV1.fromHakuToHakuRDTO(haku, false);
+  }
 }

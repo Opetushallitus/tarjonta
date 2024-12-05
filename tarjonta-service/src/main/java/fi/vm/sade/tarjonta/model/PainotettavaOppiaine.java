@@ -16,56 +16,54 @@ package fi.vm.sade.tarjonta.model;
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 
-import javax.persistence.*;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
 /**
- *
  * @author: Tuomas Katva
  */
 @Entity
-@JsonIgnoreProperties({"id","version"})
-@Table(name = "painotettavaoppiaine")
+@JsonIgnoreProperties({"id", "version"})
+@Table(name = PainotettavaOppiaine.TABLE_NAME)
 @EntityListeners(XssFilterListener.class)
 public class PainotettavaOppiaine extends TarjontaBaseEntity {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-    @FilterXss
-    private String oppiaine;
-    private BigDecimal painokerroin;
+  public static final String TABLE_NAME = "painotettavaoppiaine";
 
-    /**
-     * @return the oppiaine
-     */
-    public String getOppiaine() {
-        return oppiaine;
-    }
+  /** */
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * @param oppiaine the oppiaine to set
-     */
-    public void setOppiaine(String oppiaine) {
-        this.oppiaine = oppiaine;
-    }
+  @FilterXss private String oppiaine;
+  private BigDecimal painokerroin;
 
-    /**
-     * @return the painokerroin
-     */
-    public BigDecimal  getPainokerroin() {
-        return painokerroin;
-    }
+  /**
+   * @return the oppiaine
+   */
+  public String getOppiaine() {
+    return oppiaine;
+  }
 
-    /**
-     * @param painokerroin the painokerroin to set
-     */
-    public void setPainokerroin(BigDecimal painokerroin) {
-        this.painokerroin = painokerroin;
-    }
+  /**
+   * @param oppiaine the oppiaine to set
+   */
+  public void setOppiaine(String oppiaine) {
+    this.oppiaine = oppiaine;
+  }
+
+  /**
+   * @return the painokerroin
+   */
+  public BigDecimal getPainokerroin() {
+    return painokerroin;
+  }
+
+  /**
+   * @param painokerroin the painokerroin to set
+   */
+  public void setPainokerroin(BigDecimal painokerroin) {
+    this.painokerroin = painokerroin;
+  }
 }

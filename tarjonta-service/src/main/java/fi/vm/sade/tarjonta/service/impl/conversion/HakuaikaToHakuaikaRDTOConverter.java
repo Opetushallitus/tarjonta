@@ -27,43 +27,43 @@ import org.apache.commons.lang.StringUtils;
  */
 public class HakuaikaToHakuaikaRDTOConverter extends BaseRDTOConverter<Hakuaika, HakuaikaRDTO> {
 
-    @Override
-    public HakuaikaRDTO convert(Hakuaika s) {
+  @Override
+  public HakuaikaRDTO convert(Hakuaika s) {
 
-        if (s == null) {
-            return null;
+    if (s == null) {
+      return null;
+    }
+
+    HakuaikaRDTO t = new HakuaikaRDTO();
+
+    t.setAlkuPvm(s.getAlkamisPvm());
+    t.setLoppuPvm(s.getPaattymisPvm());
+    t.setNimi(getNimi(s));
+
+    t.setOid("" + s.getId());
+    t.setVersion(s.getVersion() != null ? s.getVersion().intValue() : 0);
+
+    return t;
+  }
+
+  private String getNimi(Hakuaika s) {
+    MonikielinenTeksti nimi = s.getNimi();
+    if (nimi != null) {
+      String finnishName = getFinnishName(nimi);
+      if (StringUtils.isNotBlank(finnishName)) {
+        return finnishName;
+      } else {
+        for (TekstiKaannos kaannos : nimi.getKaannoksetAsList()) {
+          if (StringUtils.isNotBlank(kaannos.getArvo())) {
+            return kaannos.getArvo();
+          }
         }
-
-        HakuaikaRDTO t = new HakuaikaRDTO();
-
-        t.setAlkuPvm(s.getAlkamisPvm());
-        t.setLoppuPvm(s.getPaattymisPvm());
-        t.setNimi(getNimi(s));
-
-        t.setOid("" + s.getId());
-        t.setVersion(s.getVersion() != null ? s.getVersion().intValue() : 0);
-
-        return t;
+      }
     }
+    return "";
+  }
 
-    private String getNimi(Hakuaika s) {
-        MonikielinenTeksti nimi = s.getNimi();
-        if (nimi != null) {
-            String finnishName = getFinnishName(nimi);
-            if (StringUtils.isNotBlank(finnishName)) {
-                return finnishName;
-            } else {
-                for (TekstiKaannos kaannos : nimi.getKaannoksetAsList()) {
-                    if (StringUtils.isNotBlank(kaannos.getArvo())) {
-                        return kaannos.getArvo();
-                    }
-                }
-            }
-        }
-        return "";
-    }
-
-    private String getFinnishName(MonikielinenTeksti nimi) {
-        return nimi.getTekstiForKieliKoodi("kieli_fi");
-    }
+  private String getFinnishName(MonikielinenTeksti nimi) {
+    return nimi.getTekstiForKieliKoodi("kieli_fi");
+  }
 }

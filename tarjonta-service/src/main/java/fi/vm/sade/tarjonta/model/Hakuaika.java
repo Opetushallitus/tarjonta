@@ -15,69 +15,63 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
 import java.util.Date;
-import javax.persistence.*;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
-/**
- *
- */
+/** */
 @Entity
 @JsonIgnoreProperties({"version", "haku", "hibernateLazyInitializer", "handler"})
 @Table(name = Hakuaika.TABLE_NAME)
 public class Hakuaika extends TarjontaBaseEntity {
 
-    public static final String TABLE_NAME = "hakuaika";
+  public static final String TABLE_NAME = "hakuaika";
 
-    private static final long serialVersionUID = 1492826641481066295L;
+  private static final long serialVersionUID = 1492826641481066295L;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "nimi_teksti_id")
-    private MonikielinenTeksti nimi;
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "nimi_teksti_id")
+  private MonikielinenTeksti nimi;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "alkamispvm")
-    private Date alkamisPvm;
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(name = "alkamispvm")
+  private Date alkamisPvm;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "paattymispvm")
-    private Date paattymisPvm;
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(name = "paattymispvm")
+  private Date paattymisPvm;
 
-    @ManyToOne
-    private Haku haku;
+  @ManyToOne private Haku haku;
 
-    public Date getAlkamisPvm() {
-        return alkamisPvm;
-    }
+  public Date getAlkamisPvm() {
+    return alkamisPvm;
+  }
 
-    public void setAlkamisPvm(Date alkamisPvm) {
-        this.alkamisPvm = alkamisPvm;
-    }
+  public void setAlkamisPvm(Date alkamisPvm) {
+    this.alkamisPvm = alkamisPvm;
+  }
 
-    public Date getPaattymisPvm() {
-        return paattymisPvm;
-    }
+  public Date getPaattymisPvm() {
+    return paattymisPvm;
+  }
 
-    public void setPaattymisPvm(Date paattymisPvm) {
-        this.paattymisPvm = paattymisPvm;
-    }
+  public void setPaattymisPvm(Date paattymisPvm) {
+    this.paattymisPvm = paattymisPvm;
+  }
 
-    public Haku getHaku() {
-        return haku;
-    }
+  public Haku getHaku() {
+    return haku;
+  }
 
-    public void setHaku(Haku haku) {
-        this.haku = haku;
-    }
+  public void setHaku(Haku haku) {
+    this.haku = haku;
+  }
 
-    public MonikielinenTeksti getNimi() {
-        return nimi;
-    }
+  public MonikielinenTeksti getNimi() {
+    return nimi;
+  }
 
-    public void setNimi(MonikielinenTeksti nimi) {
-        this.nimi = MonikielinenTeksti.merge(this.nimi, nimi);
-    }
+  public void setNimi(MonikielinenTeksti nimi) {
+    this.nimi = MonikielinenTeksti.merge(this.nimi, nimi);
+  }
 }
-

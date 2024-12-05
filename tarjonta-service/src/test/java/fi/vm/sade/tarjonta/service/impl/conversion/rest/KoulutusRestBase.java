@@ -26,134 +26,134 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
-
 import java.util.Locale;
 import java.util.Set;
 
 /**
- *
  * @author jani
  */
 abstract class KoulutusRestBase {
 
-    protected static final Locale FI = new Locale("FI");
-    protected static final String NOT_TESTED = "this test will ingnore this data field";
-    protected static final Set<KoodistoUri> SET_KOMOTO_TUTKINTONIMIKE = Sets.newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE)));
-    protected static final Set<KoodistoUri> SET_KOMO_TUTKINTONIMIKE = Sets.newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE)));
+  protected static final Locale FI = new Locale("FI");
+  protected static final String NOT_TESTED = "this test will ingnore this data field";
+  protected static final Set<KoodistoUri> SET_KOMOTO_TUTKINTONIMIKE =
+      Sets.newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE)));
+  protected static final Set<KoodistoUri> SET_KOMO_TUTKINTONIMIKE =
+      Sets.newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE)));
 
-    protected enum Type {
+  protected enum Type {
+    BOTH,
+    KOMO,
+    KOMO_CHILD,
+    KOMOTO,
+    NOT_TESTED,
+    RETURN_NULL
+  };
 
-        BOTH,
-        KOMO,
-        KOMO_CHILD,
-        KOMOTO,
-        NOT_TESTED,
-        RETURN_NULL
+  protected enum Nullable {
+    ALLOW_NULL(true),
+    NOT_NULL(false);
 
-    };
+    private boolean b;
 
-    protected enum Nullable {
-
-        ALLOW_NULL(true),
-        NOT_NULL(false);
-
-        private boolean b;
-
-        Nullable(boolean b) {
-            this.b = b;
-        }
-
-        /**
-         * @return the b
-         */
-        public boolean isAllowed() {
-            return b;
-        }
-
-    };
+    Nullable(boolean b) {
+      this.b = b;
+    }
 
     /**
-     * Test of convert method, of class EntityConverterToRDTO.
+     * @return the b
      */
-    protected static String testKey(final EntityConverterToRDTOTest.Type prefix, final FieldNames field) {
-        Preconditions.checkNotNull(prefix, "prefix value cannot be null.");
-        Preconditions.checkNotNull(field, "field enum cannot be null.");
-        return new StringBuilder(prefix.name()).append("_").append(field).toString();
+    public boolean isAllowed() {
+      return b;
     }
+  };
 
-    protected static void korkeakouluPopulateBaseValues(EntityConverterToRDTOTest.Type type, BaseKoulutusmoduuli m) {
-        Preconditions.checkNotNull(type, "Type value cannot be null.");
-        Preconditions.checkNotNull(m, "BaseKoulutusmoduuli object cannot be null.");
+  /** Test of convert method, of class EntityConverterToRDTO. */
+  protected static String testKey(
+      final EntityConverterToRDTOTest.Type prefix, final FieldNames field) {
+    Preconditions.checkNotNull(prefix, "prefix value cannot be null.");
+    Preconditions.checkNotNull(field, "field enum cannot be null.");
+    return new StringBuilder(prefix.name()).append("_").append(field).toString();
+  }
 
-        m.setOpintoalaUri(testKey(type, FieldNames.OPINTOALA));
-        m.setKoulutusalaUri(testKey(type, FieldNames.KOULUTUSALA));
-        m.setKoulutusasteUri(testKey(type, FieldNames.KOULUTUSASTE));
-        m.setKoulutusUri(testKey(type, FieldNames.KOULUTUS));
-        m.setKoulutusohjelmaUri(testKey(type, FieldNames.KOULUTUSOHJELMA));
-        m.setOpintojenLaajuusarvoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO));
-        m.setOpintojenLaajuusyksikkoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO));
+  protected static void korkeakouluPopulateBaseValues(
+      EntityConverterToRDTOTest.Type type, BaseKoulutusmoduuli m) {
+    Preconditions.checkNotNull(type, "Type value cannot be null.");
+    Preconditions.checkNotNull(m, "BaseKoulutusmoduuli object cannot be null.");
 
-        m.setTutkintoUri(testKey(type, FieldNames.TUTKINTO));
-        m.setUlkoinenTunniste(testKey(type, FieldNames.TUNNISTE));
-        m.setNqfUri(testKey(type, FieldNames.NQF));
-        m.setEqfUri(testKey(type, FieldNames.EQF));
-        m.setKoulutustyyppiUri(testKey(type, FieldNames.KOULUTUSTYYPPI));
-    }
+    m.setOpintoalaUri(testKey(type, FieldNames.OPINTOALA));
+    m.setKoulutusalaUri(testKey(type, FieldNames.KOULUTUSALA));
+    m.setKoulutusasteUri(testKey(type, FieldNames.KOULUTUSASTE));
+    m.setKoulutusUri(testKey(type, FieldNames.KOULUTUS));
+    m.setKoulutusohjelmaUri(testKey(type, FieldNames.KOULUTUSOHJELMA));
+    m.setOpintojenLaajuusarvoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO));
+    m.setOpintojenLaajuusyksikkoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO));
 
-    protected static void lukioPopulateBaseValues(EntityConverterToRDTOTest.Type type, BaseKoulutusmoduuli m) {
-        Preconditions.checkNotNull(type, "Type value cannot be null.");
-        Preconditions.checkNotNull(m, "BaseKoulutusmoduuli object cannot be null.");
+    m.setTutkintoUri(testKey(type, FieldNames.TUTKINTO));
+    m.setUlkoinenTunniste(testKey(type, FieldNames.TUNNISTE));
+    m.setNqfUri(testKey(type, FieldNames.NQF));
+    m.setEqfUri(testKey(type, FieldNames.EQF));
+    m.setKoulutustyyppiUri(testKey(type, FieldNames.KOULUTUSTYYPPI));
+  }
 
-        m.setOpintoalaUri(testKey(type, FieldNames.OPINTOALA));
-        m.setKoulutusalaUri(testKey(type, FieldNames.KOULUTUSALA));
-        m.setKoulutusasteUri(testKey(type, FieldNames.KOULUTUSASTE));
-        m.setKoulutusUri(testKey(type, FieldNames.KOULUTUS));
-        m.setOpintojenLaajuusarvoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO));
-        m.setOpintojenLaajuusyksikkoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO));
-        m.setUlkoinenTunniste(testKey(type, FieldNames.TUNNISTE));
-        m.setNqfUri(testKey(type, FieldNames.NQF));
-        m.setEqfUri(testKey(type, FieldNames.EQF));
-        m.setKoulutustyyppiUri(testKey(type, FieldNames.KOULUTUSTYYPPI));
-    }
+  protected static void lukioPopulateBaseValues(
+      EntityConverterToRDTOTest.Type type, BaseKoulutusmoduuli m) {
+    Preconditions.checkNotNull(type, "Type value cannot be null.");
+    Preconditions.checkNotNull(m, "BaseKoulutusmoduuli object cannot be null.");
 
-    protected static void lukioPopulateChildKomoBaseValues(Koulutusmoduuli m) {
-        Preconditions.checkNotNull(m, "Koulutusmoduuli object cannot be null.");
-        m.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-        m.setOid(EntityConverterToRDTOTest.Type.KOMO_CHILD.name());
-        m.setKoulutusUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.KOULUTUS));
-        m.setNqfUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.NQF));
-        m.setEqfUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.EQF));
-        m.setLukiolinjaUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.LUKIOLINJA));
-        m.setTutkintonimikeUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.TUTKINTONIMIKE));
-        m.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
-    }
+    m.setOpintoalaUri(testKey(type, FieldNames.OPINTOALA));
+    m.setKoulutusalaUri(testKey(type, FieldNames.KOULUTUSALA));
+    m.setKoulutusasteUri(testKey(type, FieldNames.KOULUTUSASTE));
+    m.setKoulutusUri(testKey(type, FieldNames.KOULUTUS));
+    m.setOpintojenLaajuusarvoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO));
+    m.setOpintojenLaajuusyksikkoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO));
+    m.setUlkoinenTunniste(testKey(type, FieldNames.TUNNISTE));
+    m.setNqfUri(testKey(type, FieldNames.NQF));
+    m.setEqfUri(testKey(type, FieldNames.EQF));
+    m.setKoulutustyyppiUri(testKey(type, FieldNames.KOULUTUSTYYPPI));
+  }
 
-    protected static KoodiV1RDTO toKoodiUri(final String type) {
-        return new KoodiV1RDTO(type, 1, null);
-    }
+  protected static void lukioPopulateChildKomoBaseValues(Koulutusmoduuli m) {
+    Preconditions.checkNotNull(m, "Koulutusmoduuli object cannot be null.");
+    m.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+    m.setOid(EntityConverterToRDTOTest.Type.KOMO_CHILD.name());
+    m.setKoulutusUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.KOULUTUS));
+    m.setNqfUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.NQF));
+    m.setEqfUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.EQF));
+    m.setLukiolinjaUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.LUKIOLINJA));
+    m.setTutkintonimikeUri(
+        testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.TUTKINTONIMIKE));
+    m.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
+  }
 
-    protected static KoodiV1RDTO toKoodiUri(final EntityConverterToRDTOTest.Type type, final FieldNames field) {
-        return new KoodiV1RDTO(testKey(type, field), 1, null);
-    }
+  protected static KoodiV1RDTO toKoodiUri(final String type) {
+    return new KoodiV1RDTO(type, 1, null);
+  }
 
-    protected static NimiV1RDTO toKoodiUriNimi(final EntityConverterToRDTOTest.Type type, final FieldNames field) {
-        NimiV1RDTO dto = new NimiV1RDTO();
-        dto.setUri(testKey(type, field));
-        return dto;
-    }
+  protected static KoodiV1RDTO toKoodiUri(
+      final EntityConverterToRDTOTest.Type type, final FieldNames field) {
+    return new KoodiV1RDTO(testKey(type, field), 1, null);
+  }
 
-    protected static KoodiUrisV1RDTO toKoodiUris(final EntityConverterToRDTOTest.Type type, final FieldNames field) {
-        KoodiUrisV1RDTO uris = new KoodiUrisV1RDTO();
-        uris.setUris(Maps.<String, Integer>newHashMap());
-        uris.getUris().put(testKey(type, field), 1);
-        return uris;
-    }
+  protected static NimiV1RDTO toKoodiUriNimi(
+      final EntityConverterToRDTOTest.Type type, final FieldNames field) {
+    NimiV1RDTO dto = new NimiV1RDTO();
+    dto.setUri(testKey(type, field));
+    return dto;
+  }
 
-    protected static KoodiUrisV1RDTO toKoodiUris(final EntityConverterToRDTOTest.Type type) {
-        KoodiUrisV1RDTO uris = new KoodiUrisV1RDTO();
-        uris.setUris(Maps.<String, Integer>newHashMap());
-        uris.getUris().put(type.name(), 1);
-        return uris;
-    }
+  protected static KoodiUrisV1RDTO toKoodiUris(
+      final EntityConverterToRDTOTest.Type type, final FieldNames field) {
+    KoodiUrisV1RDTO uris = new KoodiUrisV1RDTO();
+    uris.setUris(Maps.<String, Integer>newHashMap());
+    uris.getUris().put(testKey(type, field), 1);
+    return uris;
+  }
 
+  protected static KoodiUrisV1RDTO toKoodiUris(final EntityConverterToRDTOTest.Type type) {
+    KoodiUrisV1RDTO uris = new KoodiUrisV1RDTO();
+    uris.setUris(Maps.<String, Integer>newHashMap());
+    uris.getUris().put(type.name(), 1);
+    return uris;
+  }
 }

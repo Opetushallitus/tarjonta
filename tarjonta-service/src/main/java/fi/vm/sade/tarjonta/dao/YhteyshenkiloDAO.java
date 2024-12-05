@@ -17,12 +17,9 @@ package fi.vm.sade.tarjonta.dao;
 
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
-import java.util.List;
 
-/**
- *
- */
+/** */
 public interface YhteyshenkiloDAO extends JpaDAO<Yhteyshenkilo, Long> {
 
-    public Yhteyshenkilo findByOid(String oid);
+  public Yhteyshenkilo findByOid(String oid);
 }

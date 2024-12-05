@@ -9,34 +9,34 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class OnrService {
-    private static final Logger LOG = LoggerFactory.getLogger(OnrService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(OnrService.class);
 
-    private final CachingRestClient cachingRestClient;
-    private final UrlConfiguration urlConfiguration;
-    private final String callerId = "1.2.246.562.10.00000000001.tarjonta.tarjonta-shared";
+  private final CachingRestClient cachingRestClient;
+  private final UrlConfiguration urlConfiguration;
+  private final String callerId = "1.2.246.562.10.00000000001.tarjonta.tarjonta-shared";
 
-    @Autowired
-    public OnrService(UrlConfiguration urlConfiguration,
-                      @Value("${cas.service.oppijanumerorekisteri-service}") String targetService,
-                      @Value("${tarjonta.oppijanumerorekisteri.username}") String clientAppUser,
-                      @Value("${tarjonta.oppijanumerorekisteri.password}") String clientAppPass) {
-        this.urlConfiguration = urlConfiguration;
+  @Autowired
+  public OnrService(
+      UrlConfiguration urlConfiguration,
+      @Value("${cas.services.oppijanumerorekisteri-service}") String targetService,
+      @Value("${cas.username}") String clientAppUser,
+      @Value("${cas.password}") String clientAppPass) {
+    this.urlConfiguration = urlConfiguration;
 
-        cachingRestClient = new CachingRestClient(callerId);
-        cachingRestClient.setWebCasUrl(urlConfiguration.url("cas.url"));
-        cachingRestClient.setCasService(targetService);
-        cachingRestClient.setUsername(clientAppUser);
-        cachingRestClient.setPassword(clientAppPass);
+    cachingRestClient = new CachingRestClient(callerId);
+    cachingRestClient.setWebCasUrl(urlConfiguration.url("cas.url"));
+    cachingRestClient.setCasService(targetService);
+    cachingRestClient.setUsername(clientAppUser);
+    cachingRestClient.setPassword(clientAppPass);
+  }
+
+  public String findUserAsiointikieli(String oid) {
+    try {
+      String url = urlConfiguration.url("oppijanumerorekisteri.henkilo.asiointiKieli", oid);
+      return cachingRestClient.getAsString(url);
+    } catch (Exception e) {
+      LOG.error("Getting virkailija asiointikieli from ONR failed", e);
+      throw new RuntimeException(e);
     }
-
-    public String findUserAsiointikieli(String oid) {
-        try {
-            String url = urlConfiguration.url("oppijanumerorekisteri.henkilo.asiointiKieli", oid);
-            return cachingRestClient.getAsString(url);
-        } catch (Exception e) {
-            LOG.error("Getting virkailija asiointikieli from ONR failed", e);
-            throw new RuntimeException(e);
-        }
-    }
-
+  }
 }

@@ -19,21 +19,19 @@ import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import org.springframework.core.convert.converter.Converter;
 
 /**
- *
  * @author mlyly
  */
 public class OsoiteToOsoiteRDTOConverter implements Converter<Osoite, OsoiteRDTO> {
 
-    @Override
-    public OsoiteRDTO convert(Osoite s) {
-        OsoiteRDTO t = new OsoiteRDTO();
+  @Override
+  public OsoiteRDTO convert(Osoite s) {
+    OsoiteRDTO t = new OsoiteRDTO();
 
-        t.setOsoiterivi1(s.getOsoiterivi1());
-        t.setOsoiterivi2(s.getOsoiterivi2());
-        t.setPostinumero(s.getPostinumero());
-        t.setPostitoimipaikka(s.getPostitoimipaikka());
+    t.setOsoiterivi1(s.getOsoiterivi1());
+    t.setOsoiterivi2(s.getOsoiterivi2());
+    t.setPostinumero(s.getPostinumero());
+    t.setPostitoimipaikka(s.getPostitoimipaikka());
 
-        return t;
-    }
-
+    return t;
+  }
 }

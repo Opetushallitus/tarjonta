@@ -31,56 +31,56 @@ import org.slf4j.LoggerFactory;
  *
  * @author mlyly
  */
-public class ValintakoeToValintakoeRDTOConverter extends BaseRDTOConverter<Valintakoe, ValintakoeRDTO> {
+public class ValintakoeToValintakoeRDTOConverter
+    extends BaseRDTOConverter<Valintakoe, ValintakoeRDTO> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ValintakoeToValintakoeRDTOConverter.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(ValintakoeToValintakoeRDTOConverter.class);
 
-    @Override
-    public ValintakoeRDTO convert(Valintakoe s) {
-        LOG.debug("convert({})", s);
+  @Override
+  public ValintakoeRDTO convert(Valintakoe s) {
+    LOG.debug("convert({})", s);
 
-        if (s == null) {
-            return null;
-        }
-
-        ValintakoeRDTO t = new ValintakoeRDTO();
-
-        t.setCreated(null);
-        t.setCreatedBy(null);
-        t.setModified(s.getLastUpdateDate());
-        t.setModifiedBy(s.getLastUpdatedByOid());
-        t.setOid("" + s.getId());
-        t.setVersion(s.getVersion() != null ? s.getVersion().intValue() : 0);
-        t.setKuvaus(convertMonikielinenTekstiToMap(s.getKuvaus()));
-        t.setLisanaytot(convertMonikielinenTekstiToMap(s.getLisanaytot()));
-        t.setTyyppiUri(s.getTyyppiUri());
-
-        t.setValintakoeAjankohtas(convertAjankohtas(s.getAjankohtas()));
-        t.setValintakoePisterajas(convertPisterajat(s.getPisterajat()));
-
-        return t;
+    if (s == null) {
+      return null;
     }
 
+    ValintakoeRDTO t = new ValintakoeRDTO();
 
-    private List<ValintakoePisterajaRDTO> convertPisterajat(Set<Pisteraja> pisterajat) {
-        List<ValintakoePisterajaRDTO> result = new ArrayList<ValintakoePisterajaRDTO>();
+    t.setCreated(null);
+    t.setCreatedBy(null);
+    t.setModified(s.getLastUpdateDate());
+    t.setModifiedBy(s.getLastUpdatedByOid());
+    t.setOid("" + s.getId());
+    t.setVersion(s.getVersion() != null ? s.getVersion().intValue() : 0);
+    t.setKuvaus(convertMonikielinenTekstiToMap(s.getKuvaus()));
+    t.setLisanaytot(convertMonikielinenTekstiToMap(s.getLisanaytot()));
+    t.setTyyppiUri(s.getTyyppiUri());
 
-        for (Pisteraja pisteraja : pisterajat) {
-            result.add(getConversionService().convert(pisteraja, ValintakoePisterajaRDTO.class));
-        }
+    t.setValintakoeAjankohtas(convertAjankohtas(s.getAjankohtas()));
+    t.setValintakoePisterajas(convertPisterajat(s.getPisterajat()));
 
-        return result;
+    return t;
+  }
+
+  private List<ValintakoePisterajaRDTO> convertPisterajat(Set<Pisteraja> pisterajat) {
+    List<ValintakoePisterajaRDTO> result = new ArrayList<ValintakoePisterajaRDTO>();
+
+    for (Pisteraja pisteraja : pisterajat) {
+      result.add(getConversionService().convert(pisteraja, ValintakoePisterajaRDTO.class));
     }
 
-    private List<ValintakoeAjankohtaRDTO> convertAjankohtas(Set<ValintakoeAjankohta> ajankohtas) {
-        List<ValintakoeAjankohtaRDTO> result = new ArrayList<ValintakoeAjankohtaRDTO>();
+    return result;
+  }
 
-        for (ValintakoeAjankohta valintakoeAjankohta : ajankohtas) {
-            result.add(getConversionService().convert(valintakoeAjankohta, ValintakoeAjankohtaRDTO.class));
-        }
+  private List<ValintakoeAjankohtaRDTO> convertAjankohtas(Set<ValintakoeAjankohta> ajankohtas) {
+    List<ValintakoeAjankohtaRDTO> result = new ArrayList<ValintakoeAjankohtaRDTO>();
 
-        return result;
+    for (ValintakoeAjankohta valintakoeAjankohta : ajankohtas) {
+      result.add(
+          getConversionService().convert(valintakoeAjankohta, ValintakoeAjankohtaRDTO.class));
     }
 
-
+    return result;
+  }
 }
