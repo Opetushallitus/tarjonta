@@ -1,27 +1,28 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+
 import java.io.Serializable;
 import java.util.Date;
 
 public class BaseV1RDTO implements Serializable {
 
-  @ApiModelProperty(value = "Luontipäivä ja aika", required = true)
+  @Parameter(name = "Luontipäivä ja aika", required = true)
   private Date created;
 
-  @ApiModelProperty(value = "Luonnin suorittajan nimi", required = true)
+  @Parameter(name = "Luonnin suorittajan nimi", required = true)
   private String createdBy;
 
-  @ApiModelProperty(value = "Viimeinen muokkauspäivä ja aika", required = true)
+  @Parameter(name = "Viimeinen muokkauspäivä ja aika", required = true)
   private Date modified;
 
-  @ApiModelProperty(value = "Muokkauksen suorittajan nimi", required = true)
+  @Parameter(name = "Muokkauksen suorittajan nimi", required = true)
   private String modifiedBy;
 
-  @ApiModelProperty(value = "Objektin yksilöivä tunniste", required = true)
+  @Parameter(name = "Objektin yksilöivä tunniste", required = true)
   private String oid;
 
-  @ApiModelProperty(value = "Objektin versio numero", required = true)
+  @Parameter(name = "Objektin versio numero", required = true)
   private Long version;
 
   public BaseV1RDTO() {}

@@ -1,9 +1,10 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.io.Serializable;
 
-@ApiModel(value = "V1 HakukohdeRyhma REST-api model, used by KK-ui")
+@Tag(name = "V1 HakukohdeRyhma REST-api model, used by KK-ui")
 public class HakukohdeRyhmaV1RDTO implements Serializable {
 
   public enum ActionCode {

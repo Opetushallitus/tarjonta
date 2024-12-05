@@ -50,7 +50,7 @@ public class MassCopyTest extends TestUtilityBase {
 
   @Autowired @InjectMocks HakuV1Resource hakuV1Resource;
 
-  @Value("${root.organisaatio.oid}")
+  @Value("${tarjonta-service.root-organisaatio-oid}")
   protected String ophOid;
 
   @Autowired PlatformTransactionManager tm;

@@ -16,11 +16,11 @@ package fi.vm.sade.tarjonta.model;
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  * @author: Tuomas Katva

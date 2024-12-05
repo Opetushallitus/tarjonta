@@ -18,6 +18,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.oidgenerator.OIDGenerator;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
@@ -38,8 +39,6 @@ import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.publication.model.RestParam;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auditlog.AuditHelper;
 import fi.vm.sade.tarjonta.service.auditlog.AuditLog;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
@@ -147,8 +146,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
   @Autowired private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
   @Autowired private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
-  @Autowired private OidService oidService;
 
   @Autowired private KoulutusSearchService koulutusSearchService;
 
@@ -893,11 +890,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
           // Luo virtuaalinen komo
           Koulutusmoduuli virtualKomo = new Koulutusmoduuli();
-          try {
-            virtualKomo.setOid(oidService.get(TarjontaOidType.KOMO));
-          } catch (OIDCreationException ex) {
-            LOG.error("OIDService failed!", ex);
-          }
+          virtualKomo.setOid(OIDGenerator.generateOID(TarjontaOidType.KOMO.getValue()));
           virtualKomo.setKoulutusUri(komo.getKoulutusUri());
           virtualKomo.setTila(TarjontaTila.JULKAISTU);
           virtualKomo.setModuuliTyyppi(

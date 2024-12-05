@@ -2,15 +2,16 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+
 import java.util.Map;
 
 public class ValmistavaKoulutusV1RDTO extends KoulutusGenericV1RDTO {
 
-  @ApiModelProperty(value = "Opintojen laajuuden arvo (ei koodistosta)", required = false)
+  @Parameter(name = "Opintojen laajuuden arvo (ei koodistosta)", required = false)
   private String opintojenLaajuusarvoKannassa;
 
-  @ApiModelProperty(value = "Koulutusohjelman nimi kannassa", required = false)
+  @Parameter(name = "Koulutusohjelman nimi kannassa", required = false)
   private Map<String, String> koulutusohjelmanNimiKannassa;
 
   public ValmistavaKoulutusV1RDTO(

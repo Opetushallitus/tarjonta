@@ -1,42 +1,43 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.BaseV1RDTO;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.HashMap;
 
-@ApiModel(value = "Tilastokeskuksen koulutuskoodiin liittyvät relaatiot")
+@Tag(name = "Tilastokeskuksen koulutuskoodiin liittyvät relaatiot")
 public class KoulutusmoduuliStandardRelationV1RDTO extends BaseV1RDTO {
 
-  @ApiModelProperty(value = "Kuusinumeroinen tilastokeskuksen koulutuskoodi", required = true)
+  @Parameter(name = "Kuusinumeroinen tilastokeskuksen koulutuskoodi", required = true)
   private KoodiV1RDTO koulutuskoodi;
 
-  @ApiModelProperty(value = "OPH2002 koulutusaste-koodi", required = true)
+  @Parameter(name = "OPH2002 koulutusaste-koodi", required = true)
   private KoodiV1RDTO koulutusaste;
 
-  @ApiModelProperty(value = "OPH2002 koulutusala-koodi", required = true)
+  @Parameter(name = "OPH2002 koulutusala-koodi", required = true)
   private KoodiV1RDTO koulutusala;
 
-  @ApiModelProperty(value = "OPH2002 opintoala-koodi", required = true)
+  @Parameter(name = "OPH2002 opintoala-koodi", required = true)
   private KoodiV1RDTO opintoala;
 
-  @ApiModelProperty(value = "OPH tutkinto-koodi", required = true)
+  @Parameter(name = "OPH tutkinto-koodi", required = true)
   private KoodiV1RDTO tutkinto;
 
-  @ApiModelProperty(value = "EQF-koodi", required = true)
+  @Parameter(name = "EQF-koodi", required = true)
   private KoodiV1RDTO eqf;
 
-  @ApiModelProperty(value = "NQF-koodi", required = true)
+  @Parameter(name = "NQF-koodi", required = true)
   private KoodiV1RDTO nqf;
 
-  @ApiModelProperty(value = "Opintojen laajusyksikko-koodi", required = true)
+  @Parameter(name = "Opintojen laajusyksikko-koodi", required = true)
   private KoodiV1RDTO opintojenLaajuusyksikko;
 
-  @ApiModelProperty(value = "Koulutustyyppi-koodi", required = true)
+  @Parameter(name = "Koulutustyyppi-koodi", required = true)
   private KoodiV1RDTO koulutustyyppi;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "Kaikki haettuun koodiin sisaltyvat koulutusohjelma-, osaamisala- tai lukiolinja-tyyppiset koodit.")
   private KoodiUrisV1RDTO ohjelmas;
 

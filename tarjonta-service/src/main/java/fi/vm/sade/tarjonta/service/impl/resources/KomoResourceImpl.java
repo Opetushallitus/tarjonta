@@ -15,11 +15,10 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources;
 
+import fi.vm.sade.oidgenerator.OIDGenerator;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.resources.KomoResource;
 import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
@@ -49,18 +48,12 @@ public class KomoResourceImpl implements KomoResource {
   @Autowired private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
   @Autowired private ConversionService conversionService;
 
-  @Autowired private OidService oidService;
-
   // GET /komo/hello
   @Override
   public String hello() {
-    try {
-      LOG.debug("/komo/hello -- hello()");
-      return "Well hello! Have a nice OID - " + oidService.get(TarjontaOidType.KOMO);
-    } catch (OIDCreationException ex) {
-      LOG.error("Failed", ex);
-      return "ERROR - SEE LOG";
-    }
+    LOG.debug("/komo/hello -- hello()");
+    return "Well hello! Have a nice OID - "
+        + OIDGenerator.generateOID(TarjontaOidType.KOMO.getValue());
   }
 
   // GET /komo/{oid}

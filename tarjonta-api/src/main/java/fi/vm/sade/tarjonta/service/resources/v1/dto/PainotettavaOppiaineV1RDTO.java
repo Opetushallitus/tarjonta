@@ -1,16 +1,17 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.math.BigDecimal;
 
-@ApiModel(value = "V1 Hakukohde's painotettava oppiaine REST-api model")
+@Tag(name = "V1 Hakukohde's painotettava oppiaine REST-api model")
 public class PainotettavaOppiaineV1RDTO extends BaseV1RDTO {
 
-  @ApiModelProperty(value = "Oppiainee's name uri", required = true)
+  @Parameter(name = "Oppiainee's name uri", required = true)
   private String oppiaineUri;
 
-  @ApiModelProperty(value = "Oppiainee's weight", required = true)
+  @Parameter(name = "Oppiainee's weight", required = true)
   private BigDecimal painokerroin;
 
   public String getOppiaineUri() {

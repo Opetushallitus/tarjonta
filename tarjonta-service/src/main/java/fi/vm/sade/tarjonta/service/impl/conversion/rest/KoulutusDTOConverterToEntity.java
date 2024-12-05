@@ -18,13 +18,12 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import fi.vm.sade.oidgenerator.OIDGenerator;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.OppiaineDAO;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
@@ -57,7 +56,6 @@ public class KoulutusDTOConverterToEntity {
   @Autowired private KoulutusKuvausV1RDTO<KomoTeksti> komoKuvausConverters;
   @Autowired private KoulutusKuvausV1RDTO<KomotoTeksti> komotoKuvausConverters;
   @Autowired private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-  @Autowired private OidService oidService;
   @Autowired private KoulutusCommonConverter commonConverter;
   @Autowired private KoulutusmoduuliDAO koulutusmoduuliDAO;
   @Autowired private IndexerResource indexerResource;
@@ -95,20 +93,15 @@ public class KoulutusDTOConverterToEntity {
       // insert new komo&komoto data to database.
       komo = new Koulutusmoduuli();
       komoto.setKoulutusmoduuli(komo);
-      try {
-        if (newKomoOid == null) {
-          newKomoOid = oidService.get(TarjontaOidType.KOMO);
-        }
-        komo.setOid(newKomoOid);
-
-        if (newKomotoOid == null) {
-          newKomotoOid = oidService.get(TarjontaOidType.KOMOTO);
-        }
-        komoto.setOid(newKomotoOid);
-      } catch (OIDCreationException ex) {
-        // XXX Should signal error!
-        LOG.error("OIDService failed!", ex);
+      if (newKomoOid == null) {
+        newKomoOid = OIDGenerator.generateOID(TarjontaOidType.KOMO.getValue());
       }
+      komo.setOid(newKomoOid);
+
+      if (newKomotoOid == null) {
+        newKomotoOid = OIDGenerator.generateOID(TarjontaOidType.KOMOTO.getValue());
+      }
+      komoto.setOid(newKomotoOid);
     }
 
     if (dto instanceof KoulutusKorkeakouluV1RDTO) {
@@ -286,12 +279,7 @@ public class KoulutusDTOConverterToEntity {
       komo = koulutusmoduuliDAO.findByOid(dto.getKomoOid());
       Preconditions.checkNotNull(komo, "KOMO object not found.");
       komoto.setKoulutusmoduuli(komo);
-      try {
-        komoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
-      } catch (OIDCreationException ex) {
-        // XXX Should signal error!
-        LOG.error("OIDService failed!", ex);
-      }
+      komoto.setOid(OIDGenerator.generateOID(TarjontaOidType.KOMOTO.getValue()));
     }
 
     Preconditions.checkNotNull(komo, "KOMO object cannot be null.");
@@ -479,12 +467,7 @@ public class KoulutusDTOConverterToEntity {
       komo = koulutusmoduuliDAO.findByOid(dto.getKomoOid());
       Preconditions.checkNotNull(komo, "KOMO object not found.");
       komoto.setKoulutusmoduuli(komo);
-      try {
-        komoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
-      } catch (OIDCreationException ex) {
-        // XXX Should signal error!
-        LOG.error("OIDService failed!", ex);
-      }
+      komoto.setOid(OIDGenerator.generateOID(TarjontaOidType.KOMOTO.getValue()));
     }
 
     Preconditions.checkNotNull(komo, "KOMO object cannot be null.");
@@ -719,12 +702,7 @@ public class KoulutusDTOConverterToEntity {
       komoto = nayttoKomoto.getValmistavaKoulutus();
     } else {
       // follow base komoto
-      try {
-        komoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
-      } catch (OIDCreationException ex) {
-        // XXX Should signal error!
-        LOG.error("OIDService failed!", ex);
-      }
+      komoto.setOid(OIDGenerator.generateOID(TarjontaOidType.KOMOTO.getValue()));
     }
 
     Preconditions.checkNotNull(komoto, "KOMOTO object cannot be null.");

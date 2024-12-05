@@ -80,7 +80,7 @@ public class SecurityConfigDefault {
   @Bean
   public TicketValidator ticketValidator() {
     Cas20ProxyTicketValidator ticketValidator =
-        new Cas20ProxyTicketValidator(ophProperties.url("cas.url"));
+        new Cas20ProxyTicketValidator(ophProperties.url("cas.url") + "/cas");
     ticketValidator.setAcceptAnyProxy(true);
     return ticketValidator;
   }

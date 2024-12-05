@@ -1,26 +1,27 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.math.BigDecimal;
 
-@ApiModel(value = "V1 Valintakoe's pisteraja REST-api model")
+@Tag(name = "V1 Valintakoe's pisteraja REST-api model")
 public class ValintakoePisterajaV1RDTO {
 
   public static final String PAASYKOE = "Paasykoe";
   public static final String LISAPISTEET = "Lisapisteet";
   public static final String KOKONAISPISTEET = "Kokonaispisteet";
 
-  @ApiModelProperty(value = "Pisteraja's pisterajatyyppi", required = true)
+  @Parameter(name = "Pisteraja's pisterajatyyppi", required = true)
   private String pisterajatyyppi;
 
-  @ApiModelProperty(value = "Pisteraja's alin pistemäärä")
+  @Parameter(name = "Pisteraja's alin pistemäärä")
   private BigDecimal alinPistemaara;
 
-  @ApiModelProperty(value = "Pisteraja's ylin pistemäärä")
+  @Parameter(name = "Pisteraja's ylin pistemäärä")
   private BigDecimal ylinPistemaara;
 
-  @ApiModelProperty(value = "Pisteraja's alin hyväksytty pistemäärä")
+  @Parameter(name = "Pisteraja's alin hyväksytty pistemäärä")
   private BigDecimal alinHyvaksyttyPistemaara;
 
   public String getPisterajatyyppi() {

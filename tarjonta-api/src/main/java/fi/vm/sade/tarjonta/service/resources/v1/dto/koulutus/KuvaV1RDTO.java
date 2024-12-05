@@ -1,22 +1,23 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.io.Serializable;
 
-@ApiModel(value = "Kuvan syöttämiseen ja hakemiseen käytettävä rajapintaolio")
+@Tag(name = "Kuvan syöttämiseen ja hakemiseen käytettävä rajapintaolio")
 public class KuvaV1RDTO implements Serializable {
 
-  @ApiModelProperty(value = "Koodisto kieli uri", required = false)
+  @Parameter(name = "Koodisto kieli uri", required = false)
   private String kieliUri;
 
-  @ApiModelProperty(value = "Tiedoston alkuperäinen nimi", required = true)
+  @Parameter(name = "Tiedoston alkuperäinen nimi", required = true)
   private String filename;
 
-  @ApiModelProperty(value = "Tiedoston tyyppi (image/jpeg, image/png jne.)", required = true)
+  @Parameter(name = "Tiedoston tyyppi (image/jpeg, image/png jne.)", required = true)
   private String mimeType;
 
-  @ApiModelProperty(value = "Kuvatiedosto base64-enkoodauksella", required = true)
+  @Parameter(name = "Kuvatiedosto base64-enkoodauksella", required = true)
   private String base64data;
 
   public KuvaV1RDTO() {}

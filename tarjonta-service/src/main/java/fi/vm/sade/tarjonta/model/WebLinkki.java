@@ -15,11 +15,11 @@
  */
 package fi.vm.sade.tarjonta.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /** Typed, localized url to a an external resource. */
 @Embeddable

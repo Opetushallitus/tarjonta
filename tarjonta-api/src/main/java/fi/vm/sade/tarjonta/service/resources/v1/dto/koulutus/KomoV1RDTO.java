@@ -5,79 +5,79 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@ApiModel(
-    value = "Ysittäisen koulutusmoduulin luontiin ja tiedon hakemiseen käytettävä rajapintaolio")
+@Tag(
+    name = "Ysittäisen koulutusmoduulin luontiin ja tiedon hakemiseen käytettävä rajapintaolio")
 public class KomoV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
 
   private static final long serialVersionUID = 1L;
 
-  @ApiModelProperty(value = "Koulutusmoduulin yksilöivä tunniste")
+  @Parameter(name = "Koulutusmoduulin yksilöivä tunniste")
   private String komoOid;
 
-  @ApiModelProperty(
-      value = "Tarjoaja tai organisaation johon koulutus on liitetty",
+  @Parameter(
+          name = "Tarjoaja tai organisaation johon koulutus on liitetty",
       required = true)
   private OrganisaatioV1RDTO organisaatio;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "Tutkinto-ohjelman tunniste, oppilaitoksen oma tunniste järjestettävälle koulutukselle",
       required = true)
   private String tunniste;
 
-  @ApiModelProperty(value = "Nimi monella kielella", required = false)
+  @Parameter(name = "Nimi monella kielella", required = false)
   private NimiV1RDTO nimi;
 
-  @ApiModelProperty(
-      value = "Moduulin julkaisun tila",
+  @Parameter(
+          name = "Moduulin julkaisun tila",
       required = true) // allowableValues = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU"
   private TarjontaTila tila;
 
-  @ApiModelProperty(value = "Koulutuksen koulutusmoduulin tyyppi", required = true)
+  @Parameter(name = "Koulutuksen koulutusmoduulin tyyppi", required = true)
   private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
 
-  @ApiModelProperty(value = "Koulutuksen koulutusastetyyppi", required = true)
+  @Parameter(name = "Koulutuksen koulutusastetyyppi", required = true)
   private KoulutusasteTyyppi koulutusasteTyyppi;
 
-  @ApiModelProperty(value = "Koulutuksen koulutusmoduulin monikieliset kuvaustekstit")
+  @Parameter(name = "Koulutuksen koulutusmoduulin monikieliset kuvaustekstit")
   private KuvausV1RDTO<KomoTeksti> kuvausKomo;
 
-  @ApiModelProperty(value = "Koulutuksen suunntellun keston arvo", required = true)
+  @Parameter(name = "Koulutuksen suunntellun keston arvo", required = true)
   private String suunniteltuKestoArvo;
 
-  @ApiModelProperty(
-      value = "Koulutuksen suunntellun keston tyyppi (koodisto koodi uri)",
+  @Parameter(
+          name = "Koulutuksen suunntellun keston tyyppi (koodisto koodi uri)",
       required = true)
   private KoodiV1RDTO suunniteltuKestoTyyppi;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "OPH oppilaitostyyppi-koodit (vain ammatillisella- ja lukio-koulutuksella) Huom! Tieto saattaa poistu tulevissa versioissa-",
       required = true)
   private KoodiUrisV1RDTO oppilaitostyyppis;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "OPH tutkintonimike-koodit (korkeakoulutuksella eri koodistot kuin ammatillisella- ja lukio-koulutuksella)",
       required = true)
   private KoodiUrisV1RDTO tutkintonimikes;
 
-  @ApiModelProperty(value = "Opintojen laajuuden arvo", required = true)
+  @Parameter(name = "Opintojen laajuuden arvo", required = true)
   private KoodiV1RDTO opintojenLaajuusarvo;
 
-  @ApiModelProperty(value = "OPH koulutustyyppi-koodit", required = false)
+  @Parameter(name = "OPH koulutustyyppi-koodit", required = false)
   private KoodiUrisV1RDTO koulutustyyppis;
 
-  @ApiModelProperty(value = "OPH lukiolinja-koodi", required = false)
+  @Parameter(name = "OPH lukiolinja-koodi", required = false)
   private KoodiV1RDTO lukiolinja;
 
-  @ApiModelProperty(value = "OPH osaamisala-koodi", required = false)
+  @Parameter(name = "OPH osaamisala-koodi", required = false)
   private KoodiV1RDTO osaamisala;
 
-  @ApiModelProperty(value = "OPH koulutusohjelma-koodi", required = false)
+  @Parameter(name = "OPH koulutusohjelma-koodi", required = false)
   private KoodiV1RDTO koulutusohjelma;
 
   public KomoV1RDTO() {}

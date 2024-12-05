@@ -6,6 +6,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -14,8 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 
 @Path("/v1/kuvaus")
-@Api(
-    value = "/v1/kuvaus",
+@Tag(
+    name = "/v1/kuvaus",
     description =
         "Palauttaa monikielisiä kuvauksia, esimerkiksi valintaperustekuvaus tai SORA-kuvaus.")
 public interface KuvausV1Resource {

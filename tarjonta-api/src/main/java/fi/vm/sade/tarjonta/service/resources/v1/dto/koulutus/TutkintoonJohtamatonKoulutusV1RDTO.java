@@ -2,7 +2,8 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,31 +12,31 @@ public abstract class TutkintoonJohtamatonKoulutusV1RDTO extends KoulutusV1RDTO 
 
   private static final long serialVersionUID = 1L;
 
-  @ApiModelProperty(value = "Koulutuksen loppumispvm")
+  @Parameter(name = "Koulutuksen loppumispvm")
   private Date koulutuksenLoppumisPvm;
 
-  @ApiModelProperty(value = "Opintojen laajuus opintopisteissä (vapaa teksti)")
+  @Parameter(name = "Opintojen laajuus opintopisteissä (vapaa teksti)")
   private String opintojenLaajuusPistetta;
 
-  @ApiModelProperty(value = "Opettaja")
+  @Parameter(name = "Opettaja")
   private String opettaja;
 
-  @ApiModelProperty(value = "Oppiaine")
+  @Parameter(name = "Oppiaine")
   private String oppiaine;
 
-  @ApiModelProperty(value = "Koulutusryhmät OID listana", required = false)
+  @Parameter(name = "Koulutusryhmät OID listana", required = false)
   private Set<String> koulutusRyhmaOids = new HashSet<String>();
 
-  @ApiModelProperty(value = "Opinnon tyyppi")
+  @Parameter(name = "Opinnon tyyppi")
   private String opinnonTyyppiUri;
 
-  @ApiModelProperty(value = "Alkuperäinen koulutus, joka järjestetään")
+  @Parameter(name = "Alkuperäinen koulutus, joka järjestetään")
   private String tarjoajanKoulutus;
 
-  @ApiModelProperty(value = "Opintokokonaisuus, johon koulutus kuuluu")
+  @Parameter(name = "Opintokokonaisuus, johon koulutus kuuluu")
   private String opintokokonaisuusOid;
 
-  @ApiModelProperty(value = "Opintokokonaisuuteen kuuluvat opintojaksot")
+  @Parameter(name = "Opintokokonaisuuteen kuuluvat opintojaksot")
   private Set<String> opintojaksoOids = new HashSet<String>();
 
   public TutkintoonJohtamatonKoulutusV1RDTO(

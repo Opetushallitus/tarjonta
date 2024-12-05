@@ -17,10 +17,10 @@ package fi.vm.sade.tarjonta.model;
 
 import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.base.Preconditions;
 import jakarta.persistence.*;
 import java.util.Date;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @Entity
 @JsonIgnoreProperties({"id", "version", "hibernateLazyInitializer", "handler", "hakukohde"})

@@ -2,41 +2,42 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import fi.vm.sade.tarjonta.service.resources.dto.BaseRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@ApiModel(value = "V1 Hakukohde's attachment(liite) REST-api model, used by KK-ui")
+@Tag(name = "V1 Hakukohde's attachment(liite) REST-api model, used by KK-ui")
 public class HakukohdeLiiteV1RDTO extends BaseRDTO {
 
   private static final long serialVersionUID = 1L;
 
-  @ApiModelProperty(value = "Liite's hakukohde oid", required = true)
+  @Parameter(name = "Liite's hakukohde oid", required = true)
   private String hakukohdeOid;
 
-  @ApiModelProperty(value = "Liite's name language uri", required = true)
+  @Parameter(name = "Liite's name language uri", required = true)
   private String kieliUri;
 
-  @ApiModelProperty(
-      value = "Liite's name's language's name, used for displaying the value",
+  @Parameter(
+          name = "Liite's name's language's name, used for displaying the value",
       required = false)
   private String kieliNimi;
 
-  @ApiModelProperty(value = "Liite's name", required = true)
+  @Parameter(name = "Liite's name", required = true)
   private String liitteenNimi;
 
-  @ApiModelProperty(value = "Liite's receiver", required = false)
+  @Parameter(name = "Liite's receiver", required = false)
   private String liitteenVastaanottaja;
 
-  @ApiModelProperty(value = "Liite's tyyppi", required = true)
+  @Parameter(name = "Liite's tyyppi", required = true)
   private String liitteenTyyppi;
 
-  @ApiModelProperty(value = "Liite's order", required = false)
+  @Parameter(name = "Liite's order", required = false)
   private Integer jarjestys;
 
-  @ApiModelProperty(value = "Should this liite be used in hakulomake")
+  @Parameter(name = "Should this liite be used in hakulomake")
   private boolean kaytetaanHakulomakkeella = true;
 
   private Map<String, String> liitteenKuvaukset;

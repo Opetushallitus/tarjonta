@@ -4,7 +4,8 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -13,23 +14,23 @@ public abstract class NayttotutkintoV1RDTO extends KoulutusV1RDTO {
   private static final Date beginningOfJanuary2018 =
       Date.from(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("EET")).toInstant());
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+      name =
           "OPH tutkintonimike-koodit (korkeakoulutuksella eri koodistot kuin ammatillisella- ja lukio-koulutuksella)")
   private KoodiUrisV1RDTO tutkintonimikes;
 
-  @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan", required = false)
+  @Parameter(name = "HTTP-linkki opetussuunnitelmaan", required = false)
   private String linkkiOpetussuunnitelmaan;
 
-  @ApiModelProperty(
-      value = "Tarjoaja tai organisaation johon koulutus on liitetty",
+  @Parameter(
+          name = "Tarjoaja tai organisaation johon koulutus on liitetty",
       required = true)
   private OrganisaatioV1RDTO jarjestavaOrganisaatio;
 
-  @ApiModelProperty(value = "Valmistavan koulutukseen tarvittavat tiedot", required = false)
+  @Parameter(name = "Valmistavan koulutukseen tarvittavat tiedot", required = false)
   private ValmistavaV1RDTO valmistavaKoulutus;
 
-  @ApiModelProperty(value = "Osaamisalan tarkenne", required = false)
+  @Parameter(name = "Osaamisalan tarkenne", required = false)
   private String tarkenne;
 
   protected NayttotutkintoV1RDTO(

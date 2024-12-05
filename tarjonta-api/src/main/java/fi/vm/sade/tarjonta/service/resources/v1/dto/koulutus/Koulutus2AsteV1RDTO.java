@@ -2,14 +2,14 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
 
 public abstract class Koulutus2AsteV1RDTO extends KoulutusGenericV1RDTO {
 
-  @ApiModelProperty(value = "Kielivalikoimat", required = true)
+  @Parameter(name = "Kielivalikoimat", required = true)
   private KoodiValikoimaV1RDTO kielivalikoima;
 
-  @ApiModelProperty(value = "Tutkintonimike", required = true)
+  @Parameter(name = "Tutkintonimike", required = true)
   private KoodiV1RDTO tutkintonimike;
 
   protected Koulutus2AsteV1RDTO(

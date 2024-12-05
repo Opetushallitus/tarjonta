@@ -46,7 +46,7 @@ public class OppilaitosKoodiRelations {
 
   @Autowired private OrganisaatioService organisaatioService;
 
-  @Value("${root.organisaatio.oid:}")
+  @Value("${tarjonta-service.root-organisaatio-oid}")
   private String rootOphOid;
 
   /**

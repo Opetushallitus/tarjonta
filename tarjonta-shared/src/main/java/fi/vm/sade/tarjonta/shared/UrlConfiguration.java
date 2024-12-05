@@ -1,8 +1,6 @@
 package fi.vm.sade.tarjonta.shared;
 
 import fi.vm.sade.properties.OphProperties;
-import java.nio.file.Paths;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;

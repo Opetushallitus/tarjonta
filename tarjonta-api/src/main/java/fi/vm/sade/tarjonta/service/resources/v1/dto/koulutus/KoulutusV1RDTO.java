@@ -8,15 +8,16 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.types.*;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-@ApiModel(value = "Koulutuksien yleiset tiedot sisältävä rajapintaolio")
+@Tag(name = "Koulutuksien yleiset tiedot sisältävä rajapintaolio")
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
     property = "toteutustyyppi",
@@ -66,157 +67,157 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 })
 public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
 
-  @ApiModelProperty(
-      value = "Koulutuksen toteutuksen tarkasti yksiloiva enumeraatio",
+  @Parameter(
+      name = "Koulutuksen toteutuksen tarkasti yksiloiva enumeraatio",
       required = true)
   private ToteutustyyppiEnum toteutustyyppi;
 
-  @ApiModelProperty(value = "Koulutusmoduulin karkeasti yksilöivä enumeraatio", required = true)
+  @Parameter(name = "Koulutusmoduulin karkeasti yksilöivä enumeraatio", required = true)
   private ModuulityyppiEnum moduulityyppi;
 
-  @ApiModelProperty(value = "Koulutusmoduulin yksilöivä tunniste")
+  @Parameter(name = "Koulutusmoduulin yksilöivä tunniste")
   private String komoOid;
 
-  @ApiModelProperty(value = "Koulutusmoduulin totetuksen yksilöivä tunniste")
+  @Parameter(name = "Koulutusmoduulin totetuksen yksilöivä tunniste")
   private String komotoOid;
 
-  @ApiModelProperty(
-      value = "Tarjoaja tai organisaation johon koulutus on liitetty",
+  @Parameter(
+          name = "Tarjoaja tai organisaation johon koulutus on liitetty",
       required = true)
   private OrganisaatioV1RDTO organisaatio;
 
-  @ApiModelProperty(
-      value = "Tutkinto-ohjelman nimi monella kielella, ainakin yksi kieli pitää olla täytetty",
+  @Parameter(
+          name = "Tutkinto-ohjelman nimi monella kielella, ainakin yksi kieli pitää olla täytetty",
       required = true)
   private NimiV1RDTO koulutusohjelma;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "Tutkinto-ohjelman tunniste, oppilaitoksen oma tunniste järjestettävälle koulutukselle",
       required = false)
   private String tunniste;
 
-  @ApiModelProperty(
-      value = "Oppilaitoksen globaalisti uniikki tunniste koulutukselle",
+  @Parameter(
+          name = "Oppilaitoksen globaalisti uniikki tunniste koulutukselle",
       required = false)
   private String uniqueExternalId;
 
-  @ApiModelProperty(value = "Hakijalle näytettävä tunniste", required = false)
+  @Parameter(name = "Hakijalle näytettävä tunniste", required = false)
   private String hakijalleNaytettavaTunniste;
 
   // OTHER DATA
-  @ApiModelProperty(value = "Koulutuksen julkaisun tila", required = true)
+  @Parameter(name = "Koulutuksen julkaisun tila", required = true)
   // allowableValues = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU"
   private TarjontaTila tila;
 
-  @ApiModelProperty(value = "Koulutuksen koulutusmoduulin tyyppi", required = true)
+  @Parameter(name = "Koulutuksen koulutusmoduulin tyyppi", required = true)
   private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
 
-  @ApiModelProperty(value = "Koulutuksen koulutusmoduulin monikieliset kuvaustekstit")
+  @Parameter(name = "Koulutuksen koulutusmoduulin monikieliset kuvaustekstit")
   private KuvausV1RDTO<KomoTeksti> kuvausKomo;
 
-  @ApiModelProperty(value = "Koulutuksen koulutusmoduulin toteutuksen monikieliset kuvaustekstit")
+  @Parameter(name = "Koulutuksen koulutusmoduulin toteutuksen monikieliset kuvaustekstit")
   private KuvausV1RDTO<KomotoTeksti> kuvausKomoto;
 
-  @ApiModelProperty(value = "Koulutuksen suunntellun keston arvo", required = true)
+  @Parameter(name = "Koulutuksen suunntellun keston arvo", required = true)
   private String suunniteltuKestoArvo;
 
-  @ApiModelProperty(
-      value = "Koulutuksen suunntellun keston tyyppi (koodisto koodi uri)",
+  @Parameter(
+          name = "Koulutuksen suunntellun keston tyyppi (koodisto koodi uri)",
       required = true)
   private KoodiV1RDTO suunniteltuKestoTyyppi;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "Koulutuksen alkamiskausi koodisto koodi uri, jos ei määritetty ainakin yksi alkamispvm pitää olla valittuna")
   private KoodiV1RDTO koulutuksenAlkamiskausi;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "Koulutuksen alkamisvuosi, jos ei määritetty ainakin yksi alkamispvm pitää olla valittuna")
   private Integer koulutuksenAlkamisvuosi;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "Koulutuksen alkamispvm, voi olla tyhjä, jos tyhjä alkamiskausi ja alkamisvuosi pitää olla valittuna")
   private Set<Date> koulutuksenAlkamisPvms;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "Koulutuksen opetuskielet, ainakin yksi kieli pitää olla syötetty (sisältää koodisto koodi uri:a)",
       required = true)
   private KoodiUrisV1RDTO opetuskielis;
 
-  @ApiModelProperty(
-      value = "Koulutuksen opetusmuodot (sisältää koodisto koodi uri:a)",
+  @Parameter(
+          name = "Koulutuksen opetusmuodot (sisältää koodisto koodi uri:a)",
       required = true)
   private KoodiUrisV1RDTO opetusmuodos;
 
-  @ApiModelProperty(
-      value = "Koulutuksen opetusajat (esim. Iltaopetus) (sisältää koodisto koodi uri:a)",
+  @Parameter(
+          name = "Koulutuksen opetusajat (esim. Iltaopetus) (sisältää koodisto koodi uri:a)",
       required = true)
   private KoodiUrisV1RDTO opetusAikas;
 
-  @ApiModelProperty(
-      value = "Koulutuksen opetuspaikat (sisältää koodisto koodi uri:a)",
+  @Parameter(
+          name = "Koulutuksen opetuspaikat (sisältää koodisto koodi uri:a)",
       required = true)
   private KoodiUrisV1RDTO opetusPaikkas;
 
-  @ApiModelProperty(value = "Opintojen laajuuden arvo", required = true)
+  @Parameter(name = "Opintojen laajuuden arvo", required = true)
   private KoodiV1RDTO opintojenLaajuusarvo;
 
-  @ApiModelProperty(value = "Opintojen järjestäjät", required = false)
+  @Parameter(name = "Opintojen järjestäjät", required = false)
   private Set<String> opetusJarjestajat;
 
-  @ApiModelProperty(value = "Opintojen tarjoajat", required = false)
+  @Parameter(name = "Opintojen tarjoajat", required = false)
   private Set<String> opetusTarjoajat;
 
-  @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
+  @Parameter(name = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
   private KoodiUrisV1RDTO ammattinimikkeet;
 
-  @ApiModelProperty(value = "Koulutuksen aiheet (sisältää koodisto koodi uri:a)")
+  @Parameter(name = "Koulutuksen aiheet (sisältää koodisto koodi uri:a)")
   private KoodiUrisV1RDTO aihees;
 
-  @ApiModelProperty(value = "Koulutuksen yläpuoliset kouloutukset")
+  @Parameter(name = "Koulutuksen yläpuoliset kouloutukset")
   private Set<String> parents;
 
-  @ApiModelProperty(value = "Koulutuksen lapset")
+  @Parameter(name = "Koulutuksen lapset")
   private Set<String> children;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "Koulutuksen hinta (korvaa vanhan Double-tyyppisen hinnan, koska pitää tukea myös muita kun numeroita)")
   private String hintaString;
 
-  @ApiModelProperty(
-      value = "Koulutuksen hinta, on pakollinen jos koulutus on merkitty maksulliseksi",
+  @Parameter(
+          name = "Koulutuksen hinta, on pakollinen jos koulutus on merkitty maksulliseksi",
       required = false)
   private Double hinta;
 
-  @ApiModelProperty(value = "Valitaan opintojen maksullisuuden (false=koulutus ei vaadi maksua)")
+  @Parameter(name = "Valitaan opintojen maksullisuuden (false=koulutus ei vaadi maksua)")
   private Boolean opintojenMaksullisuus;
 
-  @ApiModelProperty(value = "Onko koulutus avoimen yliopiston/ammattikorkeakoulun koulutus")
+  @Parameter(name = "Onko koulutus avoimen yliopiston/ammattikorkeakoulun koulutus")
   private Boolean isAvoimenYliopistonKoulutus;
 
-  @ApiModelProperty(value = "Oppiaineet")
+  @Parameter(name = "Oppiaineet")
   private Set<OppiaineV1RDTO> oppiaineet;
 
-  @ApiModelProperty(value = "Opintopolussa näytettävä koulutuksen alkaminen")
+  @Parameter(name = "Opintopolussa näytettävä koulutuksen alkaminen")
   private Map opintopolkuAlkamiskausi;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "Map-rakenne ylimääräisille parametreille, joita voi tarvittaessa hyödyntää tallennuksen yhteydessä")
   private Map<String, String> extraParams;
 
-  @ApiModelProperty(value = "Koulutukseen sisältyvät koulutuskoodit", required = false)
+  @Parameter(name = "Koulutukseen sisältyvät koulutuskoodit", required = false)
   private KoodiUrisV1RDTO sisaltyvatKoulutuskoodit;
 
-  @ApiModelProperty(value = "Koulutukset, joihin tämä koulutus sisältyy", required = false)
+  @Parameter(name = "Koulutukset, joihin tämä koulutus sisältyy", required = false)
   private Set<KoulutusIdentification> sisaltyyKoulutuksiin;
 
-  @ApiModelProperty(value = "Koulutuslaji-koodi", required = false)
+  @Parameter(name = "Koulutuslaji-koodi", required = false)
   private KoodiV1RDTO koulutuslaji;
 
   public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {

@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import fi.vm.sade.oidgenerator.OIDGenerator;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
@@ -16,7 +17,6 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
-import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auditlog.AuditHelper;
 import fi.vm.sade.tarjonta.service.auditlog.AuditLog;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
@@ -104,8 +104,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
   @Autowired private HakukohdeDAO hakukohdeDAO;
 
   @Autowired private ConverterV1 converterV1;
-
-  @Autowired private OidService oidService;
 
   @Autowired private PermissionChecker permissionChecker;
 
@@ -422,7 +420,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
       if (isNew) {
         permissionChecker.checkCreateHakuWithOrgs(hakuDto.getTarjoajaOids());
 
-        hakuDto.setOid(oidService.get(TarjontaOidType.HAKU));
+        hakuDto.setOid(OIDGenerator.generateOID(TarjontaOidType.HAKU.getValue()));
         LOG.debug("updateHakue() - NEW haku! - oid ==> {}", hakuDto.getOid());
       } else {
         LOG.debug("updateHaku() - OLD haku - find by oid");

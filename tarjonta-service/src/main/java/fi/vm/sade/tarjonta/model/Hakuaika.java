@@ -15,9 +15,9 @@
  */
 package fi.vm.sade.tarjonta.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.util.Date;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /** */
 @Entity

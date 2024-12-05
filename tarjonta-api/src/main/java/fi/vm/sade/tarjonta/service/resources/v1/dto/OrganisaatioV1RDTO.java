@@ -1,14 +1,15 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.ArrayList;
 import java.util.List;
 
-@ApiModel(value = "Organisaation/tarjoajan syötämiseen ja näyttämiseen käytettävä rajapintaolio")
+@Tag(name = "Organisaation/tarjoajan syötämiseen ja näyttämiseen käytettävä rajapintaolio")
 public class OrganisaatioV1RDTO extends BaseV1RDTO {
 
-  @ApiModelProperty(value = "Organisaation yksilöivä tunniste", required = true)
+  @Parameter(name = "Organisaation yksilöivä tunniste", required = true)
   private String oid;
 
   private String nimi;

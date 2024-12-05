@@ -1,33 +1,34 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.HashMap;
 
-@ApiModel(value = "Tilastokeskuksen koulutuskoodiin liittyvät relaatiot")
+@Tag(name = "Tilastokeskuksen koulutuskoodiin liittyvät relaatiot")
 public class KoulutusmoduuliAmmatillinenRelationV1RDTO
     extends KoulutusmoduuliStandardRelationV1RDTO {
 
   // KOODISTO KOMO DATA OBJECTS:
-  @ApiModelProperty(value = "OPH tutkintonimike-koodit", required = true)
+  @Parameter(name = "OPH tutkintonimike-koodit", required = true)
   private KoodiV1RDTO tutkintonimike;
 
-  @ApiModelProperty(value = "OPH tutkintonimike-koodit", required = true)
+  @Parameter(name = "OPH tutkintonimike-koodit", required = true)
   private KoodiUrisV1RDTO tutkintonimikes;
 
-  @ApiModelProperty(value = "Opintojen laajuuden arvot", required = true)
+  @Parameter(name = "Opintojen laajuuden arvot", required = true)
   private KoodiV1RDTO opintojenLaajuusarvo;
 
-  @ApiModelProperty(value = "Pohjakoulutusvaatimus-koodi", required = true)
+  @Parameter(name = "Pohjakoulutusvaatimus-koodi", required = true)
   private KoodiV1RDTO pohjakoulutusvaatimus;
 
-  @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
+  @Parameter(name = "Koulutuslaji-koodi", required = true)
   private KoodiV1RDTO koulutuslaji;
 
-  @ApiModelProperty(value = "Osaamisala-koodi", required = true)
+  @Parameter(name = "Osaamisala-koodi", required = true)
   private KoodiV1RDTO osaamisala;
 
-  @ApiModelProperty(value = "koulutusohjelma-koodi")
+  @Parameter(name = "koulutusohjelma-koodi")
   private KoodiV1RDTO koulutusohjelma;
 
   public KoodiV1RDTO getTutkintonimike() {

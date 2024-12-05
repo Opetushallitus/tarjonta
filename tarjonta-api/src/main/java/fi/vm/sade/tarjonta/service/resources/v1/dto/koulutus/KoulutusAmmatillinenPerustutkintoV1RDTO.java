@@ -2,16 +2,17 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+
 import java.util.Map;
 
 public class KoulutusAmmatillinenPerustutkintoV1RDTO extends Koulutus2AsteV1RDTO {
 
-  @ApiModelProperty(value = "Koulutuksen-tavoitteet", required = false)
+  @Parameter(name = "Koulutuksen-tavoitteet", required = false)
   private Map<String, String> koulutuksenTavoitteet;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "OPH tutkintonimike-koodit (korkeakoulutuksella eri koodistot kuin ammatillisella- ja lukio-koulutuksella)")
   private KoodiUrisV1RDTO tutkintonimikes;
 

@@ -1,44 +1,45 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Map;
+
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 
-@ApiModel(value = "Koodisto koodi uri:n syötämiseen ja näyttämiseen käytettävä rajapintaolio")
+@Tag(name = "Koodisto koodi uri:n syötämiseen ja näyttämiseen käytettävä rajapintaolio")
 public class KoodiV1RDTO implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri (lisätietoa)")
+  @Parameter(name = "Käytetyn koodisto koodin kieli uri (lisätietoa)")
   private String kieliUri;
 
-  @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n versio (lisätietoa)")
+  @Parameter(name = "Käytetyn koodisto koodin kieli uri:n versio (lisätietoa)")
   private Integer kieliVersio;
 
-  @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n iso-kielikoodi (lisätietoa)")
+  @Parameter(name = "Käytetyn koodisto koodin kieli uri:n iso-kielikoodi (lisätietoa)")
   private String kieliArvo;
 
-  @ApiModelProperty(value = "Käytetyn koodisto koodin kieli uri:n nimen kielikäännös (lisätietoa)")
+  @Parameter(name = "Käytetyn koodisto koodin kieli uri:n nimen kielikäännös (lisätietoa)")
   private String kieliKaannos;
 
-  @ApiModelProperty(value = "Koodisto koodin uri", required = true)
+  @Parameter(name = "Koodisto koodin uri", required = true)
   private String uri;
 
-  @ApiModelProperty(
-      value = "Koodisto koodin versio, koodisto koodi uri:a syötettäessä pakollinen tieto",
+  @Parameter(
+          name = "Koodisto koodin versio, koodisto koodi uri:a syötettäessä pakollinen tieto",
       required = true)
   private Integer versio = 1;
 
-  @ApiModelProperty(value = "Koodisto koodin uri:n arvo (lisätietoa)")
+  @Parameter(name = "Koodisto koodin uri:n arvo (lisätietoa)")
   private String arvo;
 
-  @ApiModelProperty(value = "Koodisto koodin uri:n nimen kielikäännos (lisätietoa)")
+  @Parameter(name = "Koodisto koodin uri:n nimen kielikäännos (lisätietoa)")
   private String nimi;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "Monikielisen lisätiedon näyttämiseen tarkoitettu avain-arvopari, jossa avain on koodisto kieli uri ja arvo on rajapintaolio",
       required = false)
   private Map<String, KoodiV1RDTO> meta;

@@ -1,28 +1,28 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@ApiModel(value = "Tilastokeskuksen koulutuskoodiin liittyvät relaatiot")
+@Tag(name = "Tilastokeskuksen koulutuskoodiin liittyvät relaatiot")
 public class KoulutusmoduuliLukioRelationV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
 
-  @ApiModelProperty(value = "OPH tutkintonimike-koodit", required = true)
+  @Parameter(name = "OPH tutkintonimike-koodit", required = true)
   private KoodiV1RDTO tutkintonimike;
 
-  @ApiModelProperty(value = "Opintojen laajuuden arvot", required = true)
+  @Parameter(name = "Opintojen laajuuden arvot", required = true)
   private KoodiV1RDTO opintojenLaajuusarvo;
 
-  @ApiModelProperty(value = "Pohjakoulutusvaatimus-koodi", required = true)
+  @Parameter(name = "Pohjakoulutusvaatimus-koodi", required = true)
   private KoodiV1RDTO pohjakoulutusvaatimus;
 
-  @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
+  @Parameter(name = "Koulutuslaji-koodi", required = true)
   private KoodiV1RDTO koulutuslaji;
 
-  @ApiModelProperty(value = "Lukiolinja-koodi", required = true)
+  @Parameter(name = "Lukiolinja-koodi", required = true)
   private KoodiV1RDTO lukiolinja;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "Lukiolinja-koodi, REST-rajapinnan selkeyttämisen vuoksi lukiolinja-koodiston tietoa kuljetetaan myös koulutusohjelma-kentässä")
   private KoodiV1RDTO koulutusohjelma;
 

@@ -2,30 +2,30 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
 
 public class ModuuliTuloksetV1RDTO extends BaseV1RDTO {
 
   private static final long serialVersionUID = 1L;
 
-  @ApiModelProperty(value = "Koulutusmoduulin tyyppi", required = true)
+  @Parameter(name = "Koulutusmoduulin tyyppi", required = true)
   private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
 
-  @ApiModelProperty(
-      value = "Koulutusmoduulin käyttämä ohjelma uri (koulutusohjelma, lukiolinja tai osaamisala)",
+  @Parameter(
+          name = "Koulutusmoduulin käyttämä ohjelma uri (koulutusohjelma, lukiolinja tai osaamisala)",
       required = true)
   private String ohjelmaUri;
 
-  @ApiModelProperty(value = "Koulutusmoduulin koulutusohjelma uri, jos olemassa", required = false)
+  @Parameter(name = "Koulutusmoduulin koulutusohjelma uri, jos olemassa", required = false)
   private String koulutusohjelmaUri;
 
-  @ApiModelProperty(value = "Koulutusmoduulin lukiolinja uri, jos olemassa", required = false)
+  @Parameter(name = "Koulutusmoduulin lukiolinja uri, jos olemassa", required = false)
   private String lukiolinjaUri;
 
-  @ApiModelProperty(value = "Koulutusmoduulin osaamisala uri, jos olemassa", required = false)
+  @Parameter(name = "Koulutusmoduulin osaamisala uri, jos olemassa", required = false)
   private String osaamisalaUri;
 
-  @ApiModelProperty(value = "Kuusinumeroinen tilastokeskuksen koulutuskoodin uri", required = true)
+  @Parameter(name = "Kuusinumeroinen tilastokeskuksen koulutuskoodin uri", required = true)
   private String koulutuskoodiUri;
 
   public ModuuliTuloksetV1RDTO(

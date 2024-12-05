@@ -1,21 +1,21 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
 
 public class KuvausSearchV1RDTO {
-  @ApiModelProperty(value = "Name or part of the description name")
+  @Parameter(name = "Name or part of the description name")
   private String hakusana;
 
-  @ApiModelProperty(value = "Learning institution type")
+  @Parameter(name = "Learning institution type")
   private String oppilaitosTyyppi;
 
-  @ApiModelProperty(value = "Uri of the season")
+  @Parameter(name = "Uri of the season")
   private String kausiUri;
 
-  @ApiModelProperty(value = "Year")
+  @Parameter(name = "Year")
   private Integer vuosi;
 
-  @ApiModelProperty(value = "Avain")
+  @Parameter(name = "Avain")
   private String avain;
 
   public String getHakusana() {

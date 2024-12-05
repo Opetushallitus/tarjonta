@@ -6,13 +6,13 @@ public enum TarjontaOidType {
   HAKUKOHDE(20),
   HAKU(29);
 
-  private final String value;
+  private final int value;
 
-  public String getValue() {
+  public int getValue() {
     return value;
   }
 
   private TarjontaOidType(int value) {
-    this.value = Integer.toString(value);
+    this.value = value;
   }
 }

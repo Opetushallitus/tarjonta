@@ -8,6 +8,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.oidgenerator.OIDGenerator;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -16,8 +17,6 @@ import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auditlog.AuditLog;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
@@ -83,8 +82,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
   @Autowired private ConverterV1 converterV1;
 
   @Autowired private PermissionChecker permissionChecker;
-
-  @Autowired private OidService oidService;
 
   @Autowired private ContextDataService contextDataService;
 
@@ -552,11 +549,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     String newHakukohdeOid = null;
-    try {
-      newHakukohdeOid = oidService.get(TarjontaOidType.HAKUKOHDE);
-    } catch (OIDCreationException ex) {
-      LOG.warn("UNABLE TO GET OID : {}", ex.toString());
-    }
+    newHakukohdeOid = OIDGenerator.generateOID(TarjontaOidType.HAKUKOHDE.getValue());
 
     hakukohde.setOid(newHakukohdeOid);
     hakukohde.setLastUpdateDate(new Date());

@@ -48,12 +48,14 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author jani
  */
 @Transactional(readOnly = false)
+@Controller
 public class KomoResourceImplV1 implements KomoV1Resource {
 
   private static final boolean NO_IMAGE = false;

@@ -2,53 +2,54 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.HashMap;
 import java.util.Map;
 
-@ApiModel(value = "Korkeakoulutuksen luontiin ja tiedon hakemiseen käytettävä rajapintaolio")
+@Tag(name = "Korkeakoulutuksen luontiin ja tiedon hakemiseen käytettävä rajapintaolio")
 public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
 
   private static final long serialVersionUID = 1L;
 
-  @ApiModelProperty(value = "Suhde hierarkian parent koulutusmoduuliin")
+  @Parameter(name = "Suhde hierarkian parent koulutusmoduuliin")
   private String parentKomoOid;
 
-  @ApiModelProperty(value = "Suhde hierarkian parent koulutusmoduulin toteutukseen")
+  @Parameter(name = "Suhde hierarkian parent koulutusmoduulin toteutukseen")
   private String parentKomotoOid;
 
-  @ApiModelProperty(
-      value = "Koulutuksen pohjakoulutusvaatimukset (sisältää koodisto koodi uri:a)",
+  @Parameter(
+          name = "Koulutuksen pohjakoulutusvaatimukset (sisältää koodisto koodi uri:a)",
       required = true)
   private KoodiUrisV1RDTO pohjakoulutusvaatimukset;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "OPH tutkintonimike-koodit (korkeakoulutuksella eri koodistot kuin ammatillisella- ja lukio-koulutuksella)",
       required = true)
   private KoodiUrisV1RDTO tutkintonimikes;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "Maisterin koulutukseen (maisteri+kandi) liitettävän kandidaatin koulutuksen koulutuskoodi",
       required = false)
   private KoodiV1RDTO kandidaatinKoulutuskoodi;
 
-  @ApiModelProperty(
-      value = "Opintojen rakenteen kuvat eroteltuna kooditon kieli uri:lla.",
+  @Parameter(
+          name = "Opintojen rakenteen kuvat eroteltuna kooditon kieli uri:lla.",
       required = false)
   private Map<String, KuvaV1RDTO> opintojenRakenneKuvas;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "tunniste, joka yksilöi KK-koulutuksen (aiemmin tähän käytettiin komonOidia, katso KJOH-973)")
   private String koulutuksenTunnisteOid;
 
-  @ApiModelProperty(value = "Johtaa korkekoulututkintoon.")
+  @Parameter(name = "Johtaa korkekoulututkintoon.")
   private boolean johtaaTutkintoon;
 
-  @ApiModelProperty(value = "koulutuksen laajuus - koulutustyyppifasettikoodi KI:lle")
+  @Parameter(name = "koulutuksen laajuus - koulutustyyppifasettikoodi KI:lle")
   private KoodiV1RDTO koulutuksenLaajuusKoodi;
 
   public KoodiUrisV1RDTO getTutkintonimikes() {

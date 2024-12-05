@@ -18,7 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 /** By default executes tests as CRUD_USER, override before to customize */
 public abstract class SecurityAwareTestBase extends TestUtilityBase {
 
-  @Value("${root.organisaatio.oid}")
+  @Value("${tarjonta-service.root-organisaatio-oid}")
   protected String ophOid;
 
   private OidProvider oidProvider;

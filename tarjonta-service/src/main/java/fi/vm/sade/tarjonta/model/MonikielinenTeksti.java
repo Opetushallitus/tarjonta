@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import jakarta.persistence.CascadeType;
@@ -29,7 +30,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.hibernate.Hibernate;
 
 /** Translatable texts with modest "metadata" properties. */

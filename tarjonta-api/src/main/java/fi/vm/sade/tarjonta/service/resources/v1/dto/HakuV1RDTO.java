@@ -2,122 +2,123 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.*;
+
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 
-@ApiModel(value = "Haku REST-api malli (rajapinnan versio V1)")
+@Tag(name = "Haku REST-api malli (rajapinnan versio V1)")
 public class HakuV1RDTO extends BaseV1RDTO {
 
-  @ApiModelProperty(value = "Hakukauden koodisto uri", required = true)
+  @Parameter(name = "Hakukauden koodisto uri", required = true)
   private String hakukausiUri;
 
-  @ApiModelProperty(value = "Hakukauden vuosi", required = true)
+  @Parameter(name = "Hakukauden vuosi", required = true)
   private int hakukausiVuosi;
 
-  @ApiModelProperty(value = "Hakutapa koodisto uri", required = true)
+  @Parameter(name = "Hakutapa koodisto uri", required = true)
   private String hakutapaUri;
 
-  @ApiModelProperty(value = "Hakulomakkeen www-osoite", required = false)
+  @Parameter(name = "Hakulomakkeen www-osoite", required = false)
   private String hakulomakeUri;
 
-  @ApiModelProperty(value = "Ataru lomakeavain", required = false)
+  @Parameter(name = "Ataru lomakeavain", required = false)
   private String ataruLomakeAvain;
 
-  @ApiModelProperty(value = "Hakutyypin koodisto uri", required = true)
+  @Parameter(name = "Hakutyypin koodisto uri", required = true)
   private String hakutyyppiUri;
 
-  @ApiModelProperty(value = "Haun kohdejoukko koodisto uri", required = true)
+  @Parameter(name = "Haun kohdejoukko koodisto uri", required = true)
   private String kohdejoukkoUri;
 
-  @ApiModelProperty(value = "Haun kohdejoukon tarkenne", required = false)
+  @Parameter(name = "Haun kohdejoukon tarkenne", required = false)
   private String kohdejoukonTarkenne;
 
-  @ApiModelProperty(value = "Koulutuksen alkamisvuosi", required = true)
+  @Parameter(name = "Koulutuksen alkamisvuosi", required = true)
   private int koulutuksenAlkamisVuosi;
 
-  @ApiModelProperty(value = "Koulutuksen alkamiskausi koodisto uri", required = true)
+  @Parameter(name = "Koulutuksen alkamiskausi koodisto uri", required = true)
   private String koulutuksenAlkamiskausiUri;
 
-  @ApiModelProperty(value = "Haun tila (LUONNOS, JULKAISTU, VALMIS, ...)", required = true)
+  @Parameter(name = "Haun tila (LUONNOS, JULKAISTU, VALMIS, ...)", required = true)
   private String tila;
 
-  @ApiModelProperty(value = "Ylioppilastutkinto antaa hakukelpoisuuden", required = false)
+  @Parameter(name = "Ylioppilastutkinto antaa hakukelpoisuuden", required = false)
   private Boolean ylioppilastutkintoAntaaHakukelpoisuuden;
 
-  @ApiModelProperty(value = "Lista hakukohteista joilla ylioppilastutkinto antaa hakukelpoisuuden")
+  @Parameter(name = "Lista hakukohteista joilla ylioppilastutkinto antaa hakukelpoisuuden")
   private List<String> hakukohdeOidsYlioppilastutkintoAntaaHakukelpoisuuden;
 
-  @ApiModelProperty(value = "Käytetäänkö järjestelmän sijoittelupalvelua", required = true)
+  @Parameter(name = "Käytetäänkö järjestelmän sijoittelupalvelua", required = true)
   private boolean sijoittelu;
 
-  @ApiModelProperty(value = "Käytetäänkö järjestelmän hakulomaketta", required = true)
+  @Parameter(name = "Käytetäänkö järjestelmän hakulomaketta", required = true)
   private boolean jarjestelmanHakulomake;
 
-  @ApiModelProperty(value = "Lista haun hakuaikoja", required = true)
+  @Parameter(name = "Lista haun hakuaikoja", required = true)
   private List<HakuaikaV1RDTO> hakuaikas;
 
-  @ApiModelProperty(value = "Haun hakukohdehteiden OID lista", required = true)
+  @Parameter(name = "Haun hakukohdehteiden OID lista", required = true)
   private List<String> hakukohdeOids;
 
-  @ApiModelProperty(value = "Haun tunniste", required = true)
+  @Parameter(name = "Haun tunniste", required = true)
   private String haunTunniste;
 
-  @ApiModelProperty(value = "Haun monikielinen nimi", required = true)
+  @Parameter(name = "Haun monikielinen nimi", required = true)
   private Map<String, String> nimi = new HashMap<String, String>();
 
-  @ApiModelProperty(value = "Koodiston avattua metadataa", required = false)
+  @Parameter(name = "Koodiston avattua metadataa", required = false)
   private Map<String, KoodiV1RDTO> koodiMeta;
 
-  @ApiModelProperty(value = "Maksimi hakukohteiden lukumäärä", required = true)
+  @Parameter(name = "Maksimi hakukohteiden lukumäärä", required = true)
   private int maxHakukohdes;
 
-  @ApiModelProperty(value = "Voiko hakija jättää useita hakemuksia tähän hakuun", required = true)
+  @Parameter(name = "Voiko hakija jättää useita hakemuksia tähän hakuun", required = true)
   private boolean canSubmitMultipleApplications;
 
-  @ApiModelProperty(value = "Tarjoaja organisatio oidit. Hakukohteita liittävät.", required = false)
+  @Parameter(name = "Tarjoaja organisatio oidit. Hakukohteita liittävät.", required = false)
   private String[] organisaatioOids;
 
-  @ApiModelProperty(value = "Tarjoaja organisatio oidit. Muokkaajat.", required = false)
+  @Parameter(name = "Tarjoaja organisatio oidit. Muokkaajat.", required = false)
   private String[] tarjoajaOids;
 
-  @ApiModelProperty(
-      value = "Hakukohteet järjestettävä prioriteettijärjestykseen.",
+  @Parameter(
+          name = "Hakukohteet järjestettävä prioriteettijärjestykseen.",
       required = false)
   private boolean usePriority;
 
-  @ApiModelProperty(value = "Isäntähaku, johon haku mahdollisesti linkittyy", required = false)
+  @Parameter(name = "Isäntähaku, johon haku mahdollisesti linkittyy", required = false)
   private String parentHakuOid;
 
-  @ApiModelProperty(value = "Sisältyvät haut", required = false)
+  @Parameter(name = "Sisältyvät haut", required = false)
   private Set<String> sisaltyvatHaut = new HashSet<String>();
 
-  @ApiModelProperty(value = "Hakuun liittyvät organisaatioryhmät", required = false)
+  @Parameter(name = "Hakuun liittyvät organisaatioryhmät", required = false)
   private List<String> organisaatioryhmat;
 
-  @ApiModelProperty(value = "Haun koulutusmoduulin tyyppi")
+  @Parameter(name = "Haun koulutusmoduulin tyyppi")
   private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
 
-  @ApiModelProperty(value = "Mihin asti haku näytetään opintopolussa", required = false)
+  @Parameter(name = "Mihin asti haku näytetään opintopolussa", required = false)
   private Date opintopolunNayttaminenLoppuu;
 
-  @ApiModelProperty(value = "Maksumuuri käytössä", required = false)
+  @Parameter(name = "Maksumuuri käytössä", required = false)
   private boolean maksumuuriKaytossa = false;
 
-  @ApiModelProperty(value = "Tunnistus käytössä", required = false)
+  @Parameter(name = "Tunnistus käytössä", required = false)
   private boolean tunnistusKaytossa = false;
 
-  @ApiModelProperty(value = "Onko yhden paikan sääntö voimassa haulle ja miksi", required = true)
+  @Parameter(name = "Onko yhden paikan sääntö voimassa haulle ja miksi", required = true)
   private YhdenPaikanSaanto yhdenPaikanSaanto;
 
-  @ApiModelProperty(value = "Käytetäänkö haussa tarjonnan automaattista sykkausta")
+  @Parameter(name = "Käytetäänkö haussa tarjonnan automaattista sykkausta")
   private boolean autosyncTarjonta = false;
 
-  @ApiModelProperty(value = "Päivämäärä, josta lähin tarjonnan automaattinen synkkaus on käytössä")
+  @Parameter(name = "Päivämäärä, josta lähin tarjonnan automaattinen synkkaus on käytössä")
   private Date autosyncTarjontaFrom;
 
-  @ApiModelProperty(value = "Päivämäärä, johon asti tarjonnan automaattinen synkkaus on käytössä")
+  @Parameter(name = "Päivämäärä, johon asti tarjonnan automaattinen synkkaus on käytössä")
   private Date autosyncTarjontaTo;
 
   public void addKoodiMeta(KoodiV1RDTO koodi) {
@@ -437,12 +438,12 @@ public class HakuV1RDTO extends BaseV1RDTO {
     this.autosyncTarjontaTo = autosyncTarjontaTo;
   }
 
-  @ApiModel(value = "Yhden paikan säännön voimassaolotieto haulle")
+  @Tag(name = "Yhden paikan säännön voimassaolotieto haulle")
   public static class YhdenPaikanSaanto {
-    @ApiModelProperty(value = "Yhden paikan sääntö voimassa", required = true)
+    @Parameter(name = "Yhden paikan sääntö voimassa", required = true)
     private boolean voimassa;
 
-    @ApiModelProperty(value = "Yhden paikan säännön perustelu", required = true)
+    @Parameter(name = "Yhden paikan säännön perustelu", required = true)
     private String syy;
 
     public YhdenPaikanSaanto() {}

@@ -22,7 +22,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
   public static final String HAKUJENHALLINTA = "HAKUJENHALLINTA";
 
   // OPH oid
-  @Value("${root.organisaatio.oid}")
+  @Value("${tarjonta-service.root-organisaatio-oid}")
   String rootOrgOid;
 
   public TarjontaPermissionServiceImpl() {

@@ -22,11 +22,10 @@ import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
+import fi.vm.sade.oidgenerator.OIDGenerator;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.exception.DataErrorException;
 import fi.vm.sade.tarjonta.service.copy.NullAwareBeanUtilsBean;
@@ -73,8 +72,6 @@ public class ConverterV1 {
   @Autowired HakuDAO hakuDao;
 
   @Autowired KoulutusmoduuliDAO komoDao;
-
-  @Autowired private OidService oidService;
 
   @Autowired KoulutusmoduuliToteutusDAO komotoDao;
 
@@ -219,8 +216,7 @@ public class ConverterV1 {
     return hakuDTO;
   }
 
-  public Haku convertHakuV1DRDTOToHaku(HakuV1RDTO hakuV1RDTO, Haku haku)
-      throws OIDCreationException {
+  public Haku convertHakuV1DRDTOToHaku(HakuV1RDTO hakuV1RDTO, Haku haku) {
     if (hakuV1RDTO == null) {
       return null;
     }
@@ -229,7 +225,7 @@ public class ConverterV1 {
       haku = new Haku();
 
       if (hakuV1RDTO.getOid() == null) {
-        hakuV1RDTO.setOid(oidService.get(TarjontaOidType.HAKU));
+        hakuV1RDTO.setOid(OIDGenerator.generateOID(TarjontaOidType.HAKU.getValue()));
       }
     }
 
@@ -461,7 +457,7 @@ public class ConverterV1 {
     ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = new ValintaperusteSoraKuvaus();
 
     if (kuvausV1RDTO.getKuvauksenTunniste() != null) {
-      valintaperusteSoraKuvaus.setId(new Long(kuvausV1RDTO.getKuvauksenTunniste()));
+      valintaperusteSoraKuvaus.setId(Long.valueOf(kuvausV1RDTO.getKuvauksenTunniste()));
     }
 
     if (kuvausV1RDTO.getKuvauksenNimet() != null) {

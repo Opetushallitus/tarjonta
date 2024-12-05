@@ -1,37 +1,38 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+
 import java.util.HashMap;
 
 public class KuvausV1RDTO extends BaseV1RDTO {
 
-  @ApiModelProperty(value = "Unique id of the description")
+  @Parameter(name = "Unique id of the description")
   private String kuvauksenTunniste;
 
-  @ApiModelProperty(
-      value = "HashMap containing description names and description name language",
+  @Parameter(
+          name = "HashMap containing description names and description name language",
       required = true)
   private HashMap<String, String> kuvauksenNimet;
 
-  @ApiModelProperty(value = "Organization type on which description is bound to", required = true)
+  @Parameter(name = "Organization type on which description is bound to", required = true)
   private String organisaatioTyyppi;
 
-  @ApiModelProperty(
-      value = "Type of the description",
+  @Parameter(
+          name = "Type of the description",
       required = true,
-      allowableValues = "valintaperustekuvaus,SORA")
+      example = "valintaperustekuvaus,SORA")
   private String kuvauksenTyyppi;
 
-  @ApiModelProperty(value = "Period-Uri of the description", required = true)
+  @Parameter(name = "Period-Uri of the description", required = true)
   private String kausi;
 
-  @ApiModelProperty(value = "Year of the description", required = true)
+  @Parameter(name = "Year of the description", required = true)
   private Integer vuosi;
 
-  @ApiModelProperty(value = "HashMap containing descriptions and description languages")
+  @Parameter(name = "HashMap containing descriptions and description languages")
   private HashMap<String, String> kuvaukset;
 
-  @ApiModelProperty(value = "Koodisto-key used by 2.-degree")
+  @Parameter(name = "Koodisto-key used by 2.-degree")
   private String avain;
 
   public HashMap<String, String> getKuvauksenNimet() {

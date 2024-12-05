@@ -18,10 +18,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mysema.commons.lang.Pair;
+import fi.vm.sade.oidgenerator.OIDGenerator;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auditlog.AuditLog;
 import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
 import fi.vm.sade.tarjonta.service.copy.MetaObject;
@@ -70,8 +69,6 @@ public class MassCommitProcess {
   @Autowired private KoulutusUtilService koulutusUtilService;
 
   @Autowired private HakuDAO hakuDAO;
-
-  @Autowired private OidService oidService;
 
   @Autowired private ConverterV1 converterV1;
 
@@ -259,11 +256,7 @@ public class MassCommitProcess {
 
           final Haku haku = (Haku) EntityToJsonHelper.convertToEntity(hakuJson, Haku.class);
           haku.setTila(TarjontaTila.KOPIOITU);
-          try {
-            haku.setOid(oidService.get(TarjontaOidType.HAKU));
-          } catch (OIDCreationException ex) {
-            LOG.error("OidService failed", ex);
-          }
+          haku.setOid(OIDGenerator.generateOID(TarjontaOidType.HAKU.getValue()));
 
           for (Hakuaika hakuaika : haku.getHakuaikas()) {
             hakuaikas.put(hakuaika.getId(), hakuaika);

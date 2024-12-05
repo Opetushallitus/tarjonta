@@ -20,13 +20,12 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.oidgenerator.OIDGenerator;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
@@ -58,11 +57,10 @@ public class KomoRDTOConverterToEntity {
   private static final boolean ALLOW_NULL_KOODI_URI = true;
   @Autowired private KoulutusKuvausV1RDTO<KomoTeksti> komoKuvausConverters;
   @Autowired private KoulutusmoduuliDAO koulutusmoduuliDAO;
-  @Autowired private OidService oidService;
   @Autowired private TarjontaKoodistoHelper tarjontaKoodistoHelper;
   private final KoodistoURI koodistoUri = new KoodistoURI();
 
-  @Value("${root.organisaatio.oid}")
+  @Value("${tarjonta-service.root-organisaatio-oid}")
   String rootOrgOid;
 
   public Koulutusmoduuli convert(KomoV1RDTO dto) {
@@ -75,11 +73,7 @@ public class KomoRDTOConverterToEntity {
       // update komo & komoto
       komo = koulutusmoduuliDAO.findByOid(dto.getOid());
     } else {
-      try {
-        komo.setOid(oidService.get(TarjontaOidType.KOMO));
-      } catch (OIDCreationException ex) {
-        LOG.error("OIDService failed!", ex);
-      }
+      komo.setOid(OIDGenerator.generateOID(TarjontaOidType.KOMO.getValue()));
     }
     Preconditions.checkNotNull(komo, "Komo entity cannot be null.");
     Preconditions.checkNotNull(

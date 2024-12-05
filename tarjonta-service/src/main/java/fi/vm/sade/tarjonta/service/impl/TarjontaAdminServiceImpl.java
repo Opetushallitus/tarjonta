@@ -20,6 +20,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import fi.vm.sade.oidgenerator.OIDGenerator;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -42,8 +43,6 @@ import fi.vm.sade.tarjonta.publication.GeneerinenTilaTyyppiToTilaFunction;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.service.GenericFault;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
@@ -120,7 +119,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
   @Autowired private KoulutusSearchService searchService;
   @Autowired private PermissionChecker permissionChecker;
   @Autowired private OrganisaatioService organisaatioService;
-  @Autowired private OidService oidService;
   @Autowired private ParameterServices parameterServices;
 
   private final String ERILLISHAKU_URI = "hakutapa_02";
@@ -169,7 +167,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     permissionChecker.checkUpdateHakukohdeByValintakoeTunniste(valintakoeTunniste);
 
     Valintakoe valintakoe = new Valintakoe();
-    valintakoe.setId(new Long(valintakoeTunniste));
+    valintakoe.setId(Long.valueOf(valintakoeTunniste));
 
     hakukohdeDAO.removeValintakoe(valintakoe);
   }
@@ -1073,9 +1071,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     try {
       TarjontaOidType type = TarjontaOidType.valueOf(parameters);
-      return oidService.get(type);
-    } catch (OIDCreationException e) {
-      throw new RuntimeException("Could not create oid", e);
+      return OIDGenerator.generateOID(type.getValue());
     } catch (IllegalArgumentException iae) {
       throw new RuntimeException(
           "Unknown type:" + parameters + " use one of: " + TarjontaOidType.values());

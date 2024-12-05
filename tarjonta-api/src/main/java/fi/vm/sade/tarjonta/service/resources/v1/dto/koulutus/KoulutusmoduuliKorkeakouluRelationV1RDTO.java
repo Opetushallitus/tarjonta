@@ -1,17 +1,18 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.HashMap;
 
-@ApiModel(value = "Tilastokeskuksen korkeakoulun koulutuskoodiin liittyvät relaatiot")
+@Tag(name = "Tilastokeskuksen korkeakoulun koulutuskoodiin liittyvät relaatiot")
 public class KoulutusmoduuliKorkeakouluRelationV1RDTO
     extends KoulutusmoduuliStandardRelationV1RDTO {
 
-  @ApiModelProperty(value = "OPH tutkintonimike-koodit", required = true)
+  @Parameter(name = "OPH tutkintonimike-koodit", required = true)
   private KoodiUrisV1RDTO tutkintonimikes;
 
-  @ApiModelProperty(value = "Opintojen laajuuden arvot", required = true)
+  @Parameter(name = "Opintojen laajuuden arvot", required = true)
   private KoodiUrisV1RDTO opintojenLaajuusarvos;
 
   public KoodiUrisV1RDTO getTutkintonimikes() {

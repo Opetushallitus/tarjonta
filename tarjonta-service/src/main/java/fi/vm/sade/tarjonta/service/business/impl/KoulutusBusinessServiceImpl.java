@@ -16,14 +16,13 @@
 package fi.vm.sade.tarjonta.service.business.impl;
 
 import com.google.common.base.Preconditions;
+import fi.vm.sade.oidgenerator.OIDGenerator;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
 import fi.vm.sade.tarjonta.model.BaseEntity;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
@@ -53,7 +52,6 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
   private static final Logger LOG = LoggerFactory.getLogger(KoulutusBusinessServiceImpl.class);
 
-  @Autowired private OidService oidService;
   @Autowired private KoulutusmoduuliDAO koulutusmoduuliDAO;
   @Autowired private KoulutusmoduuliToteutusDAOImpl koulutusmoduuliToteutusDAO;
   @Autowired private YhteyshenkiloDAO yhteyshenkiloDAO;
@@ -295,11 +293,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
       parentKomoto.setTila(EntityUtils.convertTila(koulutus.getTila()));
       parentKomoto.setKoulutusmoduuli(parentKomo);
       parentKomoto.setToteutustyyppi(toteutustyyppi); // only for future/angular use
-      try {
-        parentKomoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
-      } catch (OIDCreationException e) {
-        throw new RuntimeException(e);
-      }
+      parentKomoto.setOid(OIDGenerator.generateOID(TarjontaOidType.KOMOTO.getValue()));
       EntityUtils.copyFields(
           parentKomoto.getTekstit(), koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
       // parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
@@ -336,11 +330,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
   }
 
   private String generateOid() {
-    try {
-      return oidService.get(TarjontaOidType.KOMOTO);
-    } catch (OIDCreationException ex) {
-      throw new TarjontaBusinessException("OID service unavailable.", ex);
-    }
+    return OIDGenerator.generateOID(TarjontaOidType.KOMOTO.getValue());
   }
 
   private boolean isNew(BaseEntity e) {

@@ -5,11 +5,12 @@ import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusIdentification;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.*;
 
-@ApiModel(value = "V1 Hakukohde REST-api model, used by KK-ui")
+@Tag(name = "V1 Hakukohde REST-api model, used by KK-ui")
 public class HakukohdeV1RDTO extends BaseV1RDTO {
 
   private static final long serialVersionUID = 1L;
@@ -17,8 +18,8 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
   private String hakukohteenNimi;
   private String hakukohteenNimiUri;
 
-  @ApiModelProperty(
-      value = "Hashmap containing hakukohde names and name language",
+  @Parameter(
+      name = "Hashmap containing hakukohde names and name language",
       required = false)
   private Map<String, String> hakukohteenNimet;
 
@@ -26,20 +27,20 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
   private Map<String, KoulutusmoduuliTarjoajatiedotV1RDTO> koulutusmoduuliToteutusTarjoajatiedot;
   private Set<String> tarjoajaOids;
 
-  @ApiModelProperty(value = "Hakukohde's haku's oid", required = true)
+  @Parameter(name = "Hakukohde's haku's oid", required = true)
   private String hakuOid;
 
-  @ApiModelProperty(value = "Hakukohde's haku's inner application period", required = false)
+  @Parameter(name = "Hakukohde's haku's inner application period", required = false)
   private String hakuaikaId;
 
   private List<String> hakukelpoisuusvaatimusUris;
   private List<String> opintoOikeusUris;
 
-  @ApiModelProperty(value = "Hakukohde's related koulutus oids", required = true)
+  @Parameter(name = "Hakukohde's related koulutus oids", required = true)
   private List<String> hakukohdeKoulutusOids;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "Hakukohde's related koulutukset (same as hakukohdeKoulutusOids but different format)")
   private Set<KoulutusIdentification> koulutukset;
 
@@ -49,7 +50,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
   private Integer alinValintaPistemaara;
   private Integer ylinValintapistemaara;
 
-  @ApiModelProperty(value = "Hakukohde's aloituspaikat amount", required = true)
+  @Parameter(name = "Hakukohde's aloituspaikat amount", required = true)
   private Integer aloituspaikatLkm;
 
   private Integer edellisenVuodenHakijatLkm;
@@ -57,18 +58,18 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
   private String sahkoinenToimitusOsoite;
   private String soraKuvausKoodiUri;
 
-  @ApiModelProperty(
-      value = "Hakukohde's state",
+  @Parameter(
+          name = "Hakukohde's state",
       required = true,
-      allowableValues = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU")
+      example = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU")
   private TarjontaTila tila;
 
   private String valintaperustekuvausKoodiUri;
   private Date liitteidenToimitusPvm;
   private String ulkoinenTunniste;
 
-  @ApiModelProperty(
-      value = "Oppilaitoksen globaalisti uniikki tunniste hakukohteelle",
+  @Parameter(
+      name = "Oppilaitoksen globaalisti uniikki tunniste hakukohteelle",
       required = false)
   private String uniqueExternalId;
 
@@ -104,28 +105,28 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
   private String kelaLinjaTarkenne;
   private Integer ensikertalaistenAloituspaikat;
 
-  @ApiModelProperty(value = "Liitepyyntöjen pohjakoulutusvaatimukset")
+  @Parameter(name = "Liitepyyntöjen pohjakoulutusvaatimukset")
   private List<String> pohjakoulutusliitteet;
 
-  @ApiModelProperty(
-      value =
+  @Parameter(
+          name =
           "Jos ylioppilastutkinto tai kansainvälinen ylioppilastutkinto, ei muiden tutkintojen liitepyyntöjä.")
   private Boolean josYoEiMuitaLiitepyyntoja;
 
-  @ApiModelProperty(value = "Hakulomakkeen www-osoite")
+  @Parameter(name = "Hakulomakkeen www-osoite")
   private String hakulomakeUrl;
 
-  @ApiModelProperty(value = "Atarulomakkeen avain")
+  @Parameter(name = "Atarulomakkeen avain")
   private String ataruLomakeAvain;
 
-  @ApiModelProperty(
-      value = "Onko haulle asetettu hakulomakkeen url ylikirjoitettu hakukohdekohtaisella urlilla")
+  @Parameter(
+          name = "Onko haulle asetettu hakulomakkeen url ylikirjoitettu hakukohdekohtaisella urlilla")
   private Boolean overridesHaunHakulomakeUrl;
 
   private String ohjeetUudelleOpiskelijalle;
 
-  @ApiModelProperty(
-      value = "Onko yhden paikan sääntö voimassa hakukohteelle ja miksi",
+  @Parameter(
+          name = "Onko yhden paikan sääntö voimassa hakukohteelle ja miksi",
       required = true)
   private HakuV1RDTO.YhdenPaikanSaanto yhdenPaikanSaanto;
 

@@ -3,45 +3,46 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto;
 import fi.vm.sade.tarjonta.service.resources.dto.BaseRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@ApiModel(value = "V1 Hakukohde's valintakoe REST-api model, used by KK-ui")
+@Tag(name = "V1 Hakukohde's valintakoe REST-api model, used by KK-ui")
 public class ValintakoeV1RDTO extends BaseRDTO {
 
-  @ApiModelProperty(value = "Valintakoe's hakukohde oid", required = true)
+  @Parameter(name = "Valintakoe's hakukohde oid", required = true)
   private String hakukohdeOid;
 
-  @ApiModelProperty(value = "Valintakoe's name language uri", required = true)
+  @Parameter(name = "Valintakoe's name language uri", required = true)
   private String kieliUri;
 
-  @ApiModelProperty(
-      value = "Valintakoe's name's language's name, used for displaying the value",
+  @Parameter(
+          name = "Valintakoe's name's language's name, used for displaying the value",
       required = false)
   private String kieliNimi;
 
-  @ApiModelProperty(value = "Valintakoe's name ", required = true)
+  @Parameter(name = "Valintakoe's name ", required = true)
   private String valintakoeNimi;
 
-  @ApiModelProperty(value = "Valintakoe's tyyppi", required = true)
+  @Parameter(name = "Valintakoe's tyyppi", required = true)
   private String valintakoetyyppi;
 
   private TekstiRDTO valintakokeenKuvaus;
 
-  @ApiModelProperty(value = "Valintakoe's dates")
+  @Parameter(name = "Valintakoe's dates")
   private List<ValintakoeAjankohtaRDTO> valintakoeAjankohtas;
 
-  @ApiModelProperty(value = "Valintakoe's pisterajat")
+  @Parameter(name = "Valintakoe's pisterajat")
   private List<ValintakoePisterajaV1RDTO> pisterajat = new ArrayList<ValintakoePisterajaV1RDTO>();
 
-  @ApiModelProperty(value = "Valintakoe's multilanguage kuvaukset")
+  @Parameter(name = "Valintakoe's multilanguage kuvaukset")
   private Map<String, String> kuvaukset = new HashMap<String, String>();
 
-  @ApiModelProperty(value = "Valintakoe's multilanguage lisänäytöt")
+  @Parameter(name = "Valintakoe's multilanguage lisänäytöt")
   private Map<String, String> lisanaytot = new HashMap<String, String>();
 
   public String getKieliUri() {

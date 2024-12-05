@@ -18,9 +18,9 @@ public class OnrService {
   @Autowired
   public OnrService(
       UrlConfiguration urlConfiguration,
-      @Value("${cas.service.oppijanumerorekisteri-service}") String targetService,
-      @Value("${tarjonta.oppijanumerorekisteri.username}") String clientAppUser,
-      @Value("${tarjonta.oppijanumerorekisteri.password}") String clientAppPass) {
+      @Value("${cas.services.oppijanumerorekisteri-service}") String targetService,
+      @Value("${cas.username}") String clientAppUser,
+      @Value("${cas.password}") String clientAppPass) {
     this.urlConfiguration = urlConfiguration;
 
     cachingRestClient = new CachingRestClient(callerId);

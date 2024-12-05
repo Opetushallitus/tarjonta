@@ -1,11 +1,12 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.*;
 
-@ApiModel(
-    value = "Näyttää hakukohteeseen valittujen koulutustusmoduulien toteutuksien yhteensopivuuden.")
+@Tag(
+        name = "Näyttää hakukohteeseen valittujen koulutustusmoduulien toteutuksien yhteensopivuuden.")
 public class ValitutKoulutuksetV1RDTO extends BaseV1RDTO {
 
   private static final long serialVersionUID = 1L;

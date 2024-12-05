@@ -1,11 +1,11 @@
 package fi.vm.sade.tarjonta.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.sql.Types;
 import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.NotNull;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.hibernate.annotations.JdbcTypeCode;
 
 @Entity
