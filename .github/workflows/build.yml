@@ -41,7 +41,7 @@ jobs:
         run: |
           node -v
           npm -v
-          mvn clean package -B -Dbranch=${GITHUB_REF_NAME} -Drevision=${GITHUB_SHA} -DbuildNumber=${GITHUB_RUN_NUMBER}
+          mvn clean package -B -Dbranch=${GITHUB_REF_NAME} -Drevision=${GITHUB_SHA} -DbuildNumber=${GITHUB_RUN_NUMBER} --settings settings.xml
           node -v
           npm -v
       - uses: actions/cache@v4
