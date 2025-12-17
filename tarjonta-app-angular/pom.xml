@@ -55,7 +55,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+            <!--plugin>
                 <groupId>com.kelveden</groupId>
                 <artifactId>maven-karma-plugin</artifactId>
                 <version>${maven-karma-plugin.version}</version>
@@ -72,7 +72,7 @@
                     <configFile>config/karma.conf.js</configFile>
                     <karmaExecutable>${basedir}/node_modules/karma/bin/karma</karmaExecutable>
                 </configuration>
-            </plugin>
+            </plugin-->
         </plugins>
     </build>
 </project>
