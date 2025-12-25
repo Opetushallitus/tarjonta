@@ -40,7 +40,7 @@
     <commons-logging.version>1.1.3</commons-logging.version>
     <customfield.version>1.0.0</customfield.version>
     <cxf-codegen-plugin.version>3.3.0</cxf-codegen-plugin.version>
-    <cxf.version>3.3.0</cxf.version>
+    <cxf.version>3.3.5</cxf.version>
     <dbunit-maven-plugin.version>1.0-beta-3</dbunit-maven-plugin.version>
     <easymock.version>3.1</easymock.version>
     <ehcache-core.version>2.5.0</ehcache-core.version>
@@ -57,7 +57,7 @@
     <h2.version>1.3.175</h2.version>
     <hamcrest.version>1.3</hamcrest.version>
     <hibernate-jpa-2.0-api.version>1.0.1.Final</hibernate-jpa-2.0-api.version>
-    <hibernate.version>4.1.0.Final</hibernate.version>
+    <hibernate.version>6.0.19.Final</hibernate.version>
     <hibernate4-maven-plugin.version>0.2.0</hibernate4-maven-plugin.version>
     <HikariCP.version>3.2.0</HikariCP.version>
     <hsqldb.version>2.0.0</hsqldb.version>
@@ -103,7 +103,7 @@
     <organisaatio.api.version>2018-6-SNAPSHOT</organisaatio.api.version>
     <organisaatio.solr.version>2018-6-SNAPSHOT</organisaatio.solr.version>
     <paranamer.version>2.5.2</paranamer.version>
-    <postgresql.version>42.2.5</postgresql.version>
+    <postgresql.version>42.2.13</postgresql.version>
     <powermock.version>1.4.12</powermock.version>
     <properties-maven-plugin.version>1.0-alpha-2</properties-maven-plugin.version>
     <quartz.version>1.8.6</quartz.version>
@@ -113,7 +113,7 @@
     <servlet.version>3.0.1</servlet.version>
     <slf4j.version>1.7.5</slf4j.version>
     <solr.version>4.10.4</solr.version>
-    <spring-security.version>4.2.3.RELEASE</spring-security.version>
+    <spring-security.version>4.2.16.RELEASE</spring-security.version>
     <spring.version>4.3.10.RELEASE</spring.version>
     <springockito.version>1.0.4</springockito.version>
     <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
