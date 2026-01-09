@@ -40,7 +40,7 @@
     <commons-logging.version>1.1.3</commons-logging.version>
     <customfield.version>1.0.0</customfield.version>
     <cxf-codegen-plugin.version>3.3.0</cxf-codegen-plugin.version>
-    <cxf.version>3.3.0</cxf.version>
+    <cxf.version>3.3.8</cxf.version>
     <dbunit-maven-plugin.version>1.0-beta-3</dbunit-maven-plugin.version>
     <easymock.version>3.1</easymock.version>
     <ehcache-core.version>2.5.0</ehcache-core.version>
@@ -66,7 +66,7 @@
     <httpcore.version>4.4.9</httpcore.version>
     <httpmime.version>4.3.1</httpmime.version>
     <jackson-asl.version>1.9.13</jackson-asl.version>
-    <jackson.version>2.10.1</jackson.version>
+    <jackson.version>2.13.4</jackson.version>
     <java-cas.version>0.5.0-SNAPSHOT</java-cas.version>
     <java-utils.version>0.3.0-SNAPSHOT</java-utils.version>
     <java-utils.httpclient.version>0.3.0-SNAPSHOT</java-utils.httpclient.version>
@@ -113,7 +113,7 @@
     <servlet.version>3.0.1</servlet.version>
     <slf4j.version>1.7.5</slf4j.version>
     <solr.version>4.10.4</solr.version>
-    <spring-security.version>4.2.3.RELEASE</spring-security.version>
+    <spring-security.version>5.5.7</spring-security.version>
     <spring.version>4.3.10.RELEASE</spring.version>
     <springockito.version>1.0.4</springockito.version>
     <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
