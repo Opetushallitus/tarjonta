@@ -61,8 +61,8 @@
     <hibernate4-maven-plugin.version>0.2.0</hibernate4-maven-plugin.version>
     <HikariCP.version>3.2.0</HikariCP.version>
     <hsqldb.version>2.0.0</hsqldb.version>
-    <httpclient.version>4.5.2</httpclient.version>
-    <httpcomponents.version>4.5.2</httpcomponents.version>
+    <httpclient.version>4.5.13</httpclient.version>
+    <httpcomponents.version>4.5.13</httpcomponents.version>
     <httpcore.version>4.4.9</httpcore.version>
     <httpmime.version>4.3.1</httpmime.version>
     <jackson-asl.version>1.9.13</jackson-asl.version>
