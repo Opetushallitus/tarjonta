@@ -23,7 +23,7 @@
     "karma-ng-html2js-preprocessor": "~0.1.0",
     "karma-ng-scenario": "~1.0.0",
     "karma-phantomjs-launcher": "~1.0.4",
-    "lodash": "^3.5.0",
+    "lodash": "^4.17.19",
     "phantomjs": "~2.1.7",
     "q": "^1.1.1",
     "request": "2.88.0",
